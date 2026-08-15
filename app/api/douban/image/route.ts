@@ -1,7 +1,15 @@
 import { NextResponse } from 'next/server';
 import { isAllowedDoubanImageUrl } from '@/lib/utils/security';
+import { buildDoubanImageCandidates } from '@/lib/server/douban-image';
 
 export const runtime = 'edge';
+
+const REQUEST_HEADERS = {
+    'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+    Accept: 'image/jpeg,image/png,image/gif,*/*;q=0.8',
+    Referer: 'https://movie.douban.com/',
+};
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -17,10 +25,7 @@ export async function GET(request: Request) {
     }
 
     // ── Cloudflare Cache API ──────────────────────────
-    // 用原始请求 URL 作为缓存键，same URL = same cache entry
     const cacheKey = new Request(request.url, { method: 'GET' });
-
-    // 尝试从 Cloudflare 边缘缓存读取
     // @ts-ignore — caches.default 是 Cloudflare Workers 专有 API
     const cache = typeof caches !== 'undefined' && caches.default ? caches.default : null;
 
@@ -33,69 +38,60 @@ export async function GET(request: Request) {
         }
     }
 
-    // ── 从豆瓣图床拉取图片 ────────────────────────────
-    try {
-        // 超时 8 秒
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 8000);
+    // ── 从豆瓣图床拉取图片（多镜像自动容灾） ────────────────────────────
+    let lastStatus = 502;
+    let lastError = 'Error fetching image';
 
-        const imageResponse = await fetch(imageUrl, {
-            headers: {
-                'User-Agent':
-                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-                Accept: 'image/jpeg,image/png,image/gif,*/*;q=0.8',
-                Referer: 'https://movie.douban.com/',
-            },
-            signal: controller.signal,
-        });
+    for (const candidate of buildDoubanImageCandidates(imageUrl)) {
+        try {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 6000);
 
-        clearTimeout(timer);
+            const imageResponse = await fetch(candidate, {
+                headers: REQUEST_HEADERS,
+                signal: controller.signal,
+            });
 
-        if (!imageResponse.ok) {
-            return NextResponse.json(
-                { error: imageResponse.statusText },
-                { status: imageResponse.status }
-            );
-        }
+            clearTimeout(timer);
 
-        const contentType = imageResponse.headers.get('content-type');
-
-        if (!imageResponse.body) {
-            return NextResponse.json(
-                { error: 'Image response has no body' },
-                { status: 500 }
-            );
-        }
-
-        // 构建响应（需要 clone body 才能同时写缓存和返回）
-        const body = await imageResponse.arrayBuffer();
-
-        const headers = new Headers();
-        if (contentType) headers.set('Content-Type', contentType);
-        // 浏览器 + CDN 缓存 6 个月
-        headers.set('Cache-Control', 'public, max-age=15720000, s-maxage=15720000');
-
-        const response = new Response(body, { status: 200, headers });
-
-        // 异步写入 Cloudflare 边缘缓存（不阻塞响应）
-        if (cache) {
-            try {
-                // waitUntil 在 next.js edge 中不可用，用 cache.put 直接写
-                // cache.put 是异步但不需要 await 阻塞响应
-                const cacheResponse = new Response(body, { status: 200, headers });
-                cache.put(cacheKey, cacheResponse).catch(() => {});
-            } catch {
-                // 缓存写入失败不影响正常响应
+            if (!imageResponse.ok) {
+                lastStatus = imageResponse.status;
+                lastError = imageResponse.statusText || 'Error fetching image';
+                continue; // 尝试下一个镜像
             }
-        }
 
-        return response;
-    } catch (error: any) {
-        // 超时或网络错误
-        const isTimeout = error?.name === 'AbortError';
-        return NextResponse.json(
-            { error: isTimeout ? 'Image fetch timeout' : 'Error fetching image' },
-            { status: isTimeout ? 504 : 500 }
-        );
+            if (!imageResponse.body) {
+                lastStatus = 500;
+                lastError = 'Image response has no body';
+                continue;
+            }
+
+            const contentType = imageResponse.headers.get('content-type') || 'image/jpeg';
+            const body = await imageResponse.arrayBuffer();
+
+            const headers = new Headers();
+            headers.set('Content-Type', contentType);
+            headers.set('Cache-Control', 'public, max-age=15720000, s-maxage=15720000');
+            headers.set('Access-Control-Allow-Origin', '*');
+
+            const response = new Response(body, { status: 200, headers });
+
+            // 写入边缘缓存
+            if (cache) {
+                try {
+                    const cacheResponse = new Response(body, { status: 200, headers });
+                    cache.put(cacheKey, cacheResponse).catch(() => {});
+                } catch {}
+            }
+
+            return response;
+        } catch (err: any) {
+            // 网络不可达或超时，继续尝试下一个镜像候选
+            lastStatus = err?.name === 'AbortError' ? 504 : 502;
+            lastError = err?.message || 'Mirror unreachable';
+            continue;
+        }
     }
+
+    return NextResponse.json({ error: lastError }, { status: lastStatus });
 }

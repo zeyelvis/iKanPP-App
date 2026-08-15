@@ -14,6 +14,7 @@ import { usePlayerSettings } from './hooks/usePlayerSettings';
 import { useDanmaku } from './hooks/useDanmaku';
 import { useIsIOS, useIsMobile } from '@/lib/hooks/mobile/useDeviceDetection';
 import { useDoubleTap } from '@/lib/hooks/mobile/useDoubleTap';
+import { shouldHidePlayerCursor } from '@/lib/player/cursor-visibility';
 import './web-fullscreen.css';
 
 interface DesktopVideoPlayerProps {
@@ -283,11 +284,19 @@ export function DesktopVideoPlayer({
     isSkipModeActive: data.showSkipForwardIndicator || data.showSkipBackwardIndicator,
   });
 
+  const shouldHideCursor = shouldHidePlayerCursor({
+    isFullscreen: data.isFullscreen,
+    isPlaying: data.isPlaying,
+    showControls: data.showControls,
+    hasInteractiveOverlay: data.showSpeedMenu || data.showMoreMenu || data.showVolumeBar,
+  });
+
   return (
     <div
       ref={containerRef}
       className={`kvideo-container relative aspect-video bg-black rounded-[var(--radius-2xl)] group ${data.isFullscreen && fullscreenType === 'window' ? 'is-web-fullscreen' : ''
         } ${shouldForceLandscape ? 'force-landscape' : ''}`}
+      style={{ cursor: shouldHideCursor ? 'none' : undefined }}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => isPlaying && setShowControls(false)}
     >

@@ -8,6 +8,7 @@ import { persist } from 'zustand/middleware';
 import type { VideoHistoryItem, Episode } from '@/lib/types';
 import { clearSegmentsForUrl, clearAllCache } from '@/lib/utils/cacheManager';
 import { profiledKey } from '@/lib/utils/profile-storage';
+import { keepRenderableHistory } from '@/lib/utils/sync-records';
 
 const MAX_HISTORY_ITEMS = 50;
 
@@ -204,7 +205,7 @@ const createHistoryStore = (name: string) =>
         },
 
         importHistory: (history) => {
-          set({ viewingHistory: history });
+          set({ viewingHistory: keepRenderableHistory(history) });
         },
       }),
       {
@@ -216,10 +217,13 @@ const createHistoryStore = (name: string) =>
             const oldHistory = persistedState?.viewingHistory || [];
             return {
               ...persistedState,
-              viewingHistory: migrateHistory(oldHistory),
+              viewingHistory: keepRenderableHistory(migrateHistory(oldHistory)),
             };
           }
-          return persistedState as HistoryStore;
+          return {
+            ...persistedState,
+            viewingHistory: keepRenderableHistory(persistedState?.viewingHistory || []),
+          } as HistoryStore;
         },
       }
     )

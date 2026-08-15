@@ -7,6 +7,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { FavoriteItem } from '@/lib/types';
 import { profiledKey } from '@/lib/utils/profile-storage';
+import { keepRenderableFavorites } from '@/lib/utils/sync-records';
 
 const MAX_FAVORITES = 100;
 
@@ -109,11 +110,15 @@ const createFavoritesStore = (name: string) =>
                 },
 
                 importFavorites: (favorites) => {
-                    set({ favorites });
+                    set({ favorites: keepRenderableFavorites(favorites) });
                 },
             }),
             {
                 name,
+                migrate: (persistedState: any) => ({
+                    ...persistedState,
+                    favorites: keepRenderableFavorites(persistedState?.favorites || []),
+                }) as FavoritesStore,
             }
         )
     );
