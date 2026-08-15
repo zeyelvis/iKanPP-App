@@ -136,6 +136,14 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
+        {/* 🚀 外部图片 CDN 预连接 — 消除 DNS+TLS 延迟，直接提升 LCP */}
+        <link rel="preconnect" href="https://image.tmdb.org" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://img2.doubanio.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://img9.doubanio.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://image.tmdb.org" />
+        <link rel="dns-prefetch" href="https://img2.doubanio.com" />
+        <link rel="dns-prefetch" href="https://img9.doubanio.com" />
+        <link rel="dns-prefetch" href="https://api.themoviedb.org" />
         {/* PWA Manifest */}
         <link rel="manifest" href="/manifest.json" />
         {/* Apple PWA Support */}

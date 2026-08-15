@@ -13,9 +13,9 @@ import Image from 'next/image';
 import { useRankingData } from './hooks/useRankingData';
 
 /** 带加载骨架 / 失败占位的海报图片 */
-function PosterImage({ src, alt, sizes, className, style, fill = true }: {
+function PosterImage({ src, alt, sizes, className, style, fill = true, priority = false }: {
     src: string; alt: string; sizes: string; className?: string;
-    style?: React.CSSProperties; fill?: boolean;
+    style?: React.CSSProperties; fill?: boolean; priority?: boolean;
 }) {
     const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
     return (
@@ -44,6 +44,8 @@ function PosterImage({ src, alt, sizes, className, style, fill = true }: {
                 style={style}
                 sizes={sizes}
                 unoptimized
+                priority={priority}
+                loading={priority ? 'eager' : 'lazy'}
                 onLoad={() => setStatus('loaded')}
                 onError={() => setStatus('error')}
             />
@@ -224,6 +226,7 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
                                 className="object-cover transition-all duration-700"
                                 style={{ objectPosition: 'center 25%' }}
                                 sizes="45vw"
+                                priority
                             />
                         ) : (
                             <PosterImage
@@ -231,6 +234,7 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
                                 alt={active.title}
                                 className="object-cover scale-125 blur-2xl brightness-[0.3] saturate-150"
                                 sizes="45vw"
+                                priority
                             />
                         )}
                         {/* 渐变叠加 — 底部文字区域加深，上半部分保持透明 */}
@@ -388,6 +392,7 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
                                     alt={movie.title}
                                     className="object-cover transition-transform duration-500 group-hover/card:scale-110"
                                     sizes="150px"
+                                    priority={idx < 3}
                                 />
 
                                 {/* 排名角标 */}
