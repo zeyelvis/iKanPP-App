@@ -19,6 +19,7 @@ import { settingsStore } from '@/lib/store/settings-store';
 import { premiumModeSettingsStore } from '@/lib/store/premium-mode-settings';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { getSourceName } from '@/lib/utils/source-names';
+import { RelatedKeywords } from '@/components/search/RelatedKeywords';
 
 function PlayerContent() {
   const searchParams = useSearchParams();
@@ -534,6 +535,16 @@ function PlayerContent() {
                     <ShareButton title={videoData.vod_name || title || ''} size={20} />
                   </div>
                 </div>
+              )}
+
+              {/* 智能相关影视与长尾词推荐 */}
+              {(videoData?.vod_name || title) && (
+                <RelatedKeywords
+                  query={videoData?.vod_name || title || ''}
+                  onKeywordClick={(keyword) => {
+                    router.push(`/?q=${encodeURIComponent(keyword)}`);
+                  }}
+                />
               )}
             </div>
 

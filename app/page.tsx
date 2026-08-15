@@ -69,6 +69,8 @@ function HomePage() {
             availableSources={availableSources}
             loading={loading}
             latencies={latencies}
+            query={query}
+            onSearch={handleSearch}
           />
         )}
 

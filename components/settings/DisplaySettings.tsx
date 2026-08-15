@@ -11,6 +11,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { Icons } from '@/components/ui/Icon';
 import { setTVMode } from '@/lib/hooks/useTVDetection';
 import { useIsTV } from '@/lib/contexts/TVContext';
+import { useGeoLocation } from '@/lib/hooks/useGeoLocation';
 
 interface DisplaySettingsProps {
     realtimeLatency: boolean;
@@ -31,6 +32,7 @@ export function DisplaySettings({
 }: DisplaySettingsProps) {
     const { theme, setTheme } = useTheme();
     const isTV = useIsTV();
+    const { geo, loading: geoLoading } = useGeoLocation();
     const tvModeSetting = typeof window !== 'undefined'
         ? (localStorage.getItem('kvideo-tv-mode') || 'auto')
         : 'auto';
@@ -136,7 +138,7 @@ export function DisplaySettings({
             </div>
 
             {/* Search Display Mode */}
-            <div>
+            <div className="mb-6">
                 <h3 className="font-medium text-[var(--text-color)] mb-2">搜索结果显示方式</h3>
                 <p className="text-sm text-[var(--text-color-secondary)] mb-4">
                     选择搜索结果的展示模式
@@ -162,6 +164,30 @@ export function DisplaySettings({
                         <div className="font-semibold">合并同名源</div>
                         <div className="text-sm opacity-80 mt-1">相同名称的视频合并为一个卡片</div>
                     </button>
+                </div>
+            </div>
+
+            {/* Geo & Network Status */}
+            <div className="pt-5 border-t border-[var(--glass-border)]">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h3 className="font-medium text-[var(--text-color)] flex items-center gap-1.5">
+                            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            全球边缘直连状态 (GEO)
+                        </h3>
+                        <p className="text-xs text-[var(--text-color-secondary)] mt-1">
+                            {geoLoading ? (
+                                '正在检测最近的 Cloudflare 边缘加速节点...'
+                            ) : geo ? (
+                                <>
+                                    当前接入：<span className="font-semibold text-[var(--text-color)]">{geo.countryName} {geo.city ? `(${geo.city})` : ''}</span> · 节点：<span className="text-[var(--accent-color)] font-medium">{geo.cfNode}</span>
+                                    {geo.isOverseas && <span className="ml-1.5 px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-medium">海外免翻墙直连</span>}
+                                </>
+                            ) : (
+                                'Cloudflare Anycast 全球边缘就近分发已就绪'
+                            )}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

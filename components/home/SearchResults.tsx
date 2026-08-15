@@ -5,6 +5,7 @@ import { SourceBadges } from '@/components/search/SourceBadges';
 import { TypeBadges } from '@/components/search/TypeBadges';
 import { LanguageBadges } from '@/components/search/LanguageBadges';
 import { VideoGrid } from '@/components/search/VideoGrid';
+import { RelatedKeywords } from '@/components/search/RelatedKeywords';
 import { useSourceBadges } from '@/lib/hooks/useSourceBadges';
 import { useTypeBadges } from '@/lib/hooks/useTypeBadges';
 import { useLanguageBadges } from '@/lib/hooks/useLanguageBadges';
@@ -17,6 +18,8 @@ interface SearchResultsProps {
     loading: boolean;
     isPremium?: boolean;
     latencies?: Record<string, number>;
+    query?: string;
+    onSearch?: (query: string) => void;
 }
 
 export function SearchResults({
@@ -25,6 +28,8 @@ export function SearchResults({
     loading,
     isPremium = false,
     latencies = {},
+    query = '',
+    onSearch,
 }: SearchResultsProps) {
     // 过滤器折叠状态（默认折叠）
     const [filtersExpanded, setFiltersExpanded] = useState(false);
@@ -125,6 +130,12 @@ export function SearchResults({
                     </div>
                 </div>
             )}
+
+            {/* 智能相关搜索推荐与 SEO 深度内链 */}
+            <RelatedKeywords
+                query={query || results[0]?.vod_name || ''}
+                onKeywordClick={onSearch}
+            />
 
             {/* Display filtered videos */}
             <VideoGrid
