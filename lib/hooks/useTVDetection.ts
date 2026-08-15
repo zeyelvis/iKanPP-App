@@ -6,9 +6,9 @@
 
 import { useState, useEffect } from 'react';
 
-// 电视浏览器 UA 关键词
+// 真实电视/机顶盒专用 UA 关键词
 const TV_USER_AGENT_PATTERNS = [
-  /smarttv/i,
+  /smart-?tv/i,
   /tizen/i,
   /webos/i,
   /firetv/i,
@@ -25,10 +25,8 @@ const TV_USER_AGENT_PATTERNS = [
   /whale/i,       // 三星 Whale
   /mibox/i,       // 小米盒子
   /roku/i,        // Roku
-  /silk/i,        // Amazon Silk (Fire TV / tablets)
   /philipstv/i,   // Philips 飞利浦
-  /sharp/i,       // Sharp TV
-  /\\btv\\b/i,    // 通用 "TV" 关键词（需要词边界避免误匹配 captive 等词）
+  /\b(apple|android|smart|opera|hisense|sony|tcl|lg|samsung)tv\b/i,
 ];
 
 const STORAGE_KEY = 'kvideo-tv-mode';
@@ -48,8 +46,17 @@ export function useTVDetection(): boolean {
       return;
     }
 
-    // 2. UA 匹配
-    const ua = navigator.userAgent;
+    // 2. URL 参数检查 (例如 ?mode=tv 或 ?tv=1)
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('tv') === '1' || urlParams.get('mode') === 'tv') {
+        setIsTV(true);
+        return;
+      }
+    }
+
+    // 3. 精确 UA 匹配真实电视设备
+    const ua = navigator.userAgent || '';
     const uaMatch = TV_USER_AGENT_PATTERNS.some(pattern => pattern.test(ua));
 
     if (uaMatch) {
@@ -57,16 +64,7 @@ export function useTVDetection(): boolean {
       return;
     }
 
-    // 3. 启发式：大屏 + 无触摸 = 很可能是 TV
-    //    放宽条件：不再要求低 DPI（很多现代 TV 也有高分屏）
-    const isLargeScreen = window.innerWidth >= 1200;
-    const hasNoTouch = !('ontouchstart' in window) && navigator.maxTouchPoints === 0;
-
-    if (isLargeScreen && hasNoTouch) {
-      setIsTV(true);
-      return;
-    }
-
+    // 普通 PC / Mac 电脑正常使用现代自适应桌面布局，绝不启用 TV 模式
     setIsTV(false);
   }, []);
 
