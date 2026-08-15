@@ -2,7 +2,7 @@
  * Supabase 认证封装
  * 注册、登录、登出、VIP 状态查询
  */
-import { supabase } from './client';
+import { supabase, isSupabaseConfigured } from './client';
 
 // 生成 6 位邀请码
 function generateInviteCode(): string {
@@ -268,6 +268,9 @@ export async function getReferralRecords(userId: string) {
  * 监听认证状态变化
  */
 export function onAuthStateChange(callback: (user: any) => void) {
+    if (!isSupabaseConfigured) {
+        return { data: { subscription: { unsubscribe: () => {} } } };
+    }
     return supabase.auth.onAuthStateChange((_event, session) => {
         callback(session?.user || null);
     });

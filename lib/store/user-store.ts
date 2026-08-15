@@ -5,7 +5,7 @@
 'use client';
 
 import { create } from 'zustand';
-import { supabase } from '@/lib/supabase/client';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase/client';
 import { signIn, signUp, signOut, getProfile, checkVipStatus, onAuthStateChange, type SupabaseRole } from '@/lib/supabase/auth';
 
 export interface UserProfile {
@@ -44,13 +44,18 @@ export const useUserStore = create<UserState>((set, get) => ({
     initialize: async () => {
         if (get().initialized) return;
 
+        if (!isSupabaseConfigured) {
+            set({ initialized: true, loading: false });
+            return;
+        }
+
         try {
             const { data: { session } } = await supabase.auth.getSession();
             if (session?.user) {
                 await get().refreshProfile();
             }
         } catch (err) {
-            console.error('初始化用户状态失败:', err);
+            console.warn('初始化用户状态失败:', err);
         } finally {
             set({ initialized: true });
         }
