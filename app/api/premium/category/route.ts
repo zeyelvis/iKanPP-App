@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
+import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
+import { isSafeExternalUrl } from '@/lib/utils/security';
 
 export const runtime = 'edge';
-import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
 
 // ==================== 内存缓存 ====================
 const CACHE_TTL = 30 * 60 * 1000; // 30 分钟
@@ -42,6 +43,7 @@ function buildSourceUrl(source: any): URL {
  */
 async function fetchFromSource(source: any, params: Record<string, string>): Promise<any[]> {
     try {
+        if (!source || !isSafeExternalUrl(source.baseUrl)) return [];
         const url = buildSourceUrl(source);
         for (const [k, v] of Object.entries(params)) {
             url.searchParams.set(k, v);
@@ -100,7 +102,7 @@ async function handleCategoryRequest(
     limit: number
 ) {
     try {
-        const enabledSources = sourceList.filter(s => s.enabled !== false);
+        const enabledSources = sourceList.filter(s => s && s.enabled !== false && isSafeExternalUrl(s.baseUrl));
 
         if (enabledSources.length === 0) {
             return NextResponse.json({ videos: [], error: 'No enabled sources' }, { status: 500 });

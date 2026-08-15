@@ -1,5 +1,5 @@
 /**
- * 安全工具模块 — URL 验证 + 速率限制
+ * 安全工具模块 — URL 验证 + 速率限制 + 恒定时间比较
  */
 
 // ====== SSRF 防护：URL 白名单验证 ======
@@ -14,19 +14,22 @@ const DOUBAN_IMAGE_WHITELIST = [
     'img9.doubanio.com',
 ];
 
-/** 禁止访问的内网 IP 段 */
+/** 禁止访问的内网 IP 段与危险主机名 */
 const PRIVATE_IP_PATTERNS = [
-    /^127\./,                          // localhost
-    /^10\./,                           // 10.0.0.0/8
-    /^172\.(1[6-9]|2\d|3[01])\./,     // 172.16.0.0/12
-    /^192\.168\./,                     // 192.168.0.0/16
-    /^169\.254\./,                     // Link-local
+    /^127\./,                          // 127.0.0.0/8 (localhost)
+    /^10\./,                           // 10.0.0.0/8 (Private A)
+    /^172\.(1[6-9]|2\d|3[01])\./,     // 172.16.0.0/12 (Private B)
+    /^192\.168\./,                     // 192.168.0.0/16 (Private C)
+    /^169\.254\./,                     // 169.254.0.0/16 (Link-local & Cloud Metadata)
     /^0\./,                            // 0.0.0.0/8
+    /^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./, // 100.64.0.0/10 (CGNAT)
+    /^198\.18\./,                      // 198.18.0.0/15 (Benchmarking)
     /^fc00:/i,                         // IPv6 ULA
     /^fe80:/i,                         // IPv6 Link-local
     /^::1$/,                           // IPv6 localhost
     /^localhost$/i,
     /^metadata\.google\.internal$/i,   // GCP metadata
+    /^169\.254\.169\.254$/,            // AWS/GCP/Azure metadata IP
 ];
 
 /** 允许的 URL 协议 */
@@ -51,20 +54,34 @@ export function isAllowedDoubanImageUrl(urlStr: string): boolean {
 /**
  * 验证 URL 是否安全（非内网、合法协议）
  */
-export function isSafeExternalUrl(urlStr: string): boolean {
+export function isSafeExternalUrl(urlStr: string | null | undefined): boolean {
+    if (!urlStr || typeof urlStr !== 'string') return false;
     try {
-        const url = new URL(urlStr);
+        const url = new URL(urlStr.trim());
         // 仅允许 http/https
         if (!ALLOWED_PROTOCOLS.includes(url.protocol)) return false;
         const hostname = url.hostname.toLowerCase();
         // 禁止内网 IP/域名
         if (PRIVATE_IP_PATTERNS.some(pattern => pattern.test(hostname))) return false;
-        // 禁止无点的主机名（如 localhost, intranet）
+        // 禁止无点的主机名（如 localhost, intranet），除了可能存在的特殊合法顶级域
         if (!hostname.includes('.')) return false;
         return true;
     } catch {
         return false;
     }
+}
+
+// ====== 常量时间字符串比较（防时序侧信道攻击） ======
+
+export function constantTimeCompare(a: string, b: string): boolean {
+    if (typeof a !== 'string' || typeof b !== 'string') return false;
+    if (a.length !== b.length) return false;
+
+    let result = 0;
+    for (let i = 0; i < a.length; i++) {
+        result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    }
+    return result === 0;
 }
 
 // ====== 速率限制（内存级，适用于 Edge Runtime） ======
@@ -112,7 +129,7 @@ export function isRateLimited(key: string, maxRequests: number, windowMs: number
 }
 
 /**
- * 从请求中提取客户端 IP
+ * 从请求中提取客户端真实 IP
  */
 export function getClientIp(request: Request): string {
     const headers = request.headers;

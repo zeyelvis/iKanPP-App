@@ -1,9 +1,42 @@
 import type { NextConfig } from "next";
 
+const securityHeaders = [
+  {
+    key: 'X-Content-Type-Options',
+    value: 'nosniff',
+  },
+  {
+    key: 'X-Frame-Options',
+    value: 'SAMEORIGIN',
+  },
+  {
+    key: 'Referrer-Policy',
+    value: 'strict-origin-when-cross-origin',
+  },
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=()',
+  },
+  {
+    key: 'X-XSS-Protection',
+    value: '1; mode=block',
+  },
+];
+
 const nextConfig: NextConfig = {
   // Performance optimizations
   reactStrictMode: true,
   poweredByHeader: false,
+
+  // Global Security Headers
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: securityHeaders,
+      },
+    ];
+  },
 
   // Compiler optimizations
   compiler: {
@@ -103,7 +136,6 @@ const nextConfig: NextConfig = {
         hostname: '**.top',
       },
     ],
-    // Add image optimization for better performance
     formats: ['image/webp'],
     minimumCacheTTL: 60,
   },

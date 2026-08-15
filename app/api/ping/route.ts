@@ -4,23 +4,22 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isSafeExternalUrl } from '@/lib/utils/security';
 
 export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
     try {
-        const body = await request.json();
+        const body = await request.json().catch(() => ({}));
         const { url } = body;
 
         if (!url || typeof url !== 'string') {
             return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });
         }
 
-        // Validate URL format
-        try {
-            new URL(url);
-        } catch {
-            return NextResponse.json({ error: 'Invalid URL format' }, { status: 400 });
+        // HIGH-1 修复：SSRF 防护 — 严禁对内网/本地端口进行探测
+        if (!isSafeExternalUrl(url)) {
+            return NextResponse.json({ error: 'URL not allowed' }, { status: 403 });
         }
 
         const startTime = performance.now();
@@ -28,12 +27,14 @@ export async function POST(request: NextRequest) {
         try {
             // Use HEAD request for faster ping (less data transfer)
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+            const timeoutId = setTimeout(() => controller.abort(), 4000); // 4s timeout
 
             await fetch(url, {
                 method: 'HEAD',
                 signal: controller.signal,
-                mode: 'no-cors', // Allow cross-origin requests
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (compatible; PingService/1.0)',
+                },
             });
 
             clearTimeout(timeoutId);
@@ -42,15 +43,18 @@ export async function POST(request: NextRequest) {
             const latency = Math.round(endTime - startTime);
 
             return NextResponse.json({ latency, success: true });
-        } catch (fetchError) {
+        } catch {
             // If HEAD fails, try GET with timeout
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            const timeoutId = setTimeout(() => controller.abort(), 4000);
 
             try {
                 await fetch(url, {
                     method: 'GET',
                     signal: controller.signal,
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (compatible; PingService/1.0)',
+                    },
                 });
                 clearTimeout(timeoutId);
 
@@ -61,7 +65,6 @@ export async function POST(request: NextRequest) {
                 clearTimeout(timeoutId);
                 const endTime = performance.now();
                 const latency = Math.round(endTime - startTime);
-                // Still return latency even on error (timeout = slow)
                 return NextResponse.json({ latency, success: false, timeout: true });
             }
         }

@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getVideoDetail } from '@/lib/api/client';
 import { getSourceById } from '@/lib/api/video-sources';
+import { isSafeExternalUrl } from '@/lib/utils/security';
 
 export const runtime = 'edge';
 
@@ -39,9 +40,10 @@ async function handleDetailRequest(id: string | null, source: string | null, met
     sourceConfig = getSourceById(source);
   }
 
-  if (!sourceConfig) {
+  // MED-1 修复：校验 sourceConfig 是否合法且非内网目标
+  if (!sourceConfig || !isSafeExternalUrl(sourceConfig.baseUrl)) {
     return NextResponse.json(
-      { error: 'Invalid source configuration' },
+      { error: 'Invalid or forbidden source configuration' },
       { status: 400 }
     );
   }

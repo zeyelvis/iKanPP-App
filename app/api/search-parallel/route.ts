@@ -8,6 +8,7 @@ import { NextRequest } from 'next/server';
 import { searchVideos } from '@/lib/api/client';
 import { getSourceById } from '@/lib/api/video-sources';
 import { getSourceName } from '@/lib/utils/source-names';
+import { isSafeExternalUrl } from '@/lib/utils/security';
 
 export const runtime = 'edge';
 
@@ -30,9 +31,9 @@ export async function POST(request: NextRequest) {
           return;
         }
 
-        // Use provided sources or fallback to empty (client should provide them)
+        // MED-1 修复：SSRF 校验，过滤掉指向内网或非法协议的恶意数据源
         const sources = Array.isArray(sourceConfigs) && sourceConfigs.length > 0
-          ? sourceConfigs
+          ? sourceConfigs.filter((s: any) => s && isSafeExternalUrl(s.baseUrl))
           : [];
 
         if (sources.length === 0) {

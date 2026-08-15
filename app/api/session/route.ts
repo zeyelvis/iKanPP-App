@@ -1,5 +1,5 @@
 /**
- * 会话管理 API — 多设备限制
+ * 会话管理 API — 多设备限制与安全校验
  * 每账号最多 3 台设备同时在线
  * 操作：register（注册设备）、heartbeat（心跳）、logout（登出清理）
  */
@@ -13,10 +13,13 @@ const SESSION_TIMEOUT_MS = 5 * 60 * 1000; // 5 分钟无心跳视为离线
 
 // 使用 service role 绕过 RLS（服务端需要查询/删除其他设备的记录）
 function getServiceClient() {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    // 如果没有 service key，降级用 anon key（受 RLS 限制但基本可用）
-    const key = serviceKey || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || (!serviceKey && !anonKey)) {
+        throw new Error('Supabase configuration missing');
+    }
+    const key = serviceKey || anonKey!;
     return createClient(url, key);
 }
 
@@ -29,7 +32,7 @@ function getAnonClient() {
 
 export async function POST(request: NextRequest) {
     try {
-        const body = await request.json();
+        const body = await request.json().catch(() => ({}));
         const { action, userId, deviceId, deviceName } = body;
 
         if (!action || !userId || !deviceId) {
@@ -39,21 +42,38 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // HIGH-3 修复：验证 JWT 身份与 userId 一致
         const authHeader = request.headers.get('authorization');
-        const token = authHeader?.replace('Bearer ', '');
-        if (token) {
-            // 如果提供了 token，验证身份
+        const token = authHeader?.replace('Bearer ', '').trim();
+
+        // HIGH-2 修复：对 register 和 heartbeat 强制执行严格的 JWT 身份核验，杜绝未授权踢人
+        if (action === 'register' || action === 'heartbeat') {
+            if (!token) {
+                return NextResponse.json(
+                    { success: false, error: '未授权：必须提供身份凭证' },
+                    { status: 401 }
+                );
+            }
+
             const anonClient = getAnonClient();
             const { data: { user: authUser }, error } = await anonClient.auth.getUser(token);
+
             if (error || !authUser || authUser.id !== userId) {
+                return NextResponse.json(
+                    { success: false, error: '身份验证失败：Token 与用户不匹配' },
+                    { status: 403 }
+                );
+            }
+        } else if (action === 'logout' && token) {
+            // logout 操作如果有 token 也尽量校验
+            const anonClient = getAnonClient();
+            const { data: { user: authUser } } = await anonClient.auth.getUser(token);
+            if (authUser && authUser.id !== userId) {
                 return NextResponse.json(
                     { success: false, error: '身份验证失败' },
                     { status: 403 }
                 );
             }
         }
-        // 注意：sendBeacon 无法设置自定义 header，logout 时允许无 token（降级处理）
 
         const supabase = getServiceClient();
         const ip = request.headers.get('cf-connecting-ip') ||

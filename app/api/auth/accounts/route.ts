@@ -4,6 +4,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { constantTimeCompare } from '@/lib/utils/security';
 
 export const runtime = 'edge';
 
@@ -53,10 +54,10 @@ function getAccountList(): AccountInfo[] {
 }
 
 export async function GET(request: Request) {
-  // HIGH-2 修复：需要管理员密码才能查看账号列表
+  // 需要管理员密码才能查看账号列表（常量时间比较）
   const authHeader = request.headers.get('authorization');
-  const token = authHeader?.replace('Bearer ', '');
-  if (!token || (token !== effectiveAdminPassword)) {
+  const token = authHeader?.replace('Bearer ', '').trim();
+  if (!token || !effectiveAdminPassword || !constantTimeCompare(token, effectiveAdminPassword)) {
     return NextResponse.json({ error: '未授权访问' }, { status: 401 });
   }
 

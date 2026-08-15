@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { isRateLimited, getClientIp } from '@/lib/utils/security';
+import { isRateLimited, getClientIp, constantTimeCompare } from '@/lib/utils/security';
 
 export const runtime = 'edge';
 
@@ -73,7 +73,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    // HIGH-1 修复：速率限制 — 每 IP 每分钟最多 5 次登录尝试
+    // 速率限制 — 每 IP 每分钟最多 5 次登录尝试
     const ip = getClientIp(request);
     if (isRateLimited(`auth:${ip}`, 5, 60_000)) {
       return NextResponse.json(
@@ -82,14 +82,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { password } = await request.json();
+    const { password } = await request.json().catch(() => ({}));
 
     if (!password || typeof password !== 'string') {
       return NextResponse.json({ valid: false, message: 'Password required' }, { status: 400 });
     }
 
-    // 1. Check admin password
-    if (effectiveAdminPassword && password === effectiveAdminPassword) {
+    // 1. Check admin password（常量时间比较）
+    if (effectiveAdminPassword && constantTimeCompare(password, effectiveAdminPassword)) {
       const profileId = await generateProfileId(password);
       return NextResponse.json({
         valid: true,
@@ -100,10 +100,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // 2. Check ACCOUNTS entries
+    // 2. Check ACCOUNTS entries（常量时间比较）
     const accounts = parseAccounts();
     for (const account of accounts) {
-      if (password === account.password) {
+      if (constantTimeCompare(password, account.password)) {
         const profileId = await generateProfileId(password);
         return NextResponse.json({
           valid: true,
