@@ -49,7 +49,7 @@ function HomePage() {
 
       {/* Search Loading Animation */}
       {loading && (
-        <div className="max-w-7xl mx-auto px-4 mt-4">
+        <div className="fluid-container mt-4">
           <div className="max-w-3xl mx-auto">
             <SearchLoadingAnimation
               currentSource=""
@@ -61,7 +61,7 @@ function HomePage() {
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <main className="fluid-container pb-20">
         {/* Results Section */}
         {(results.length >= 1 || (!loading && results.length > 0)) && (
           <SearchResults

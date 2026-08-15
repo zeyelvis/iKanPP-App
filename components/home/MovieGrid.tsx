@@ -45,7 +45,7 @@ export function MovieGrid({
 
       {/* 影片网格 */}
       {!loading && movies.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+        <div className="movie-fluid-grid">
           {movies.map((movie, index) => (
             <MovieCard
               key={movie.id}
@@ -133,9 +133,9 @@ export function MovieGrid({
 
 function MovieGridLoading() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-      {[...Array(10)].map((_, i) => (
-        <div key={i} className="skeleton-card skeleton-shimmer" style={{ animationDelay: `${i * 0.08}s` }} />
+    <div className="movie-fluid-grid">
+      {[...Array(14)].map((_, i) => (
+        <div key={i} className="skeleton-card skeleton-shimmer aspect-[2/3] rounded-[var(--radius-2xl)]" style={{ animationDelay: `${i * 0.05}s` }} />
       ))}
     </div>
   );

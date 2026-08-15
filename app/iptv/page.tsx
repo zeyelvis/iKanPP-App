@@ -47,7 +47,7 @@ export default function IPTVPage() {
         {/* 全局统一 Navbar */}
         <Navbar />
 
-        <div className="container mx-auto px-4 pt-4 pb-8 max-w-7xl">
+        <div className="fluid-container pt-4 pb-8">
           {/* 页面标题 */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">

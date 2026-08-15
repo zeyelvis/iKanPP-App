@@ -45,7 +45,7 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
         onMovieClick(movie);
       }}
       data-focusable
-      className="group cursor-pointer hover:translate-y-[-4px] transition-all duration-300 ease-out"
+      className="group cursor-pointer movie-card-hover"
       style={{
         position: 'relative',
         zIndex: 1,
@@ -66,9 +66,9 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
               src={proxiedCover}
               alt={movie.title}
               fill
-              className={`object-cover transition-transform duration-500 group-hover:scale-110 rounded-[var(--radius-2xl)] ${imageLoaded ? 'img-fade-in' : 'opacity-0'}`}
-              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-              loading={index < 6 ? 'eager' : 'lazy'}
+              className={`object-cover transition-transform duration-500 group-hover:scale-105 rounded-[var(--radius-2xl)] ${imageLoaded ? 'img-fade-in' : 'opacity-0'}`}
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, (max-width: 1600px) 16vw, 12vw"
+              loading={index < 8 ? 'eager' : 'lazy'}
               unoptimized
               referrerPolicy="no-referrer"
               onLoad={() => setImageLoaded(true)}
@@ -80,7 +80,7 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
               alt={movie.title}
               fill
               className="object-cover rounded-[var(--radius-2xl)]"
-              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, (max-width: 1600px) 16vw, 12vw"
               unoptimized
               onError={() => setFallbackError(true)}
             />
@@ -92,30 +92,30 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
           {/* 评分标签 */}
           {movie.rate && parseFloat(movie.rate) > 0 ? (
             <div
-              className="absolute top-2 right-2 bg-black/80 px-2.5 py-1.5 flex items-center gap-1.5 rounded-[var(--radius-full)]"
+              className="absolute top-2 right-2 bg-black/80 px-2 py-1 flex items-center gap-1 rounded-[var(--radius-full)] backdrop-blur-sm"
             >
-              <Icons.Star size={12} className="text-yellow-400 fill-yellow-400" />
+              <Icons.Star size={11} className="text-yellow-400 fill-yellow-400" />
               <span className="text-xs font-bold text-white">
                 {movie.rate}
               </span>
             </div>
           ) : (
             <div
-              className="absolute top-2 right-2 bg-emerald-500/90 px-2.5 py-1 rounded-[var(--radius-full)]"
+              className="absolute top-2 right-2 bg-emerald-500/90 px-2 py-0.5 rounded-[var(--radius-full)] backdrop-blur-sm"
             >
               <span className="text-[10px] font-bold text-white">🆕 新上线</span>
             </div>
           )}
           {/* Hover 时底部渐变叠加 - 播放提示 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4 rounded-[var(--radius-2xl)]">
-            <span className="bg-[var(--accent-color)] text-white text-xs font-semibold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
-              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-3 rounded-[var(--radius-2xl)]">
+            <span className="bg-[var(--accent-color)] text-white text-xs font-semibold px-3.5 py-1 rounded-full flex items-center gap-1 shadow-lg">
+              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
               立即播放
             </span>
           </div>
         </div>
-        <div className="pt-3">
-          <h3 className="font-semibold text-sm text-center text-[var(--text-color)] line-clamp-2 group-hover:text-[var(--accent-color)] transition-colors">
+        <div className="pt-2.5 px-0.5">
+          <h3 className="movie-card-title font-medium text-center text-[var(--text-color)] line-clamp-2 group-hover:text-[var(--accent-color)] transition-colors">
             {movie.title}
           </h3>
         </div>

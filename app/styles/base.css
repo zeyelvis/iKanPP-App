@@ -176,9 +176,71 @@ nav {
 }
 
 /* ============================================================
-   TV Mode Styles — 8 轮迭代实测优化版
-   适配：三星 Tizen / LG webOS / 海信 VIDAA / Android TV 等
-   设计标准：10-foot UI（3 米观看距离）
+   2026 Fluid Responsive Architecture (Mobile / Desktop / TV)
+   ============================================================ */
+
+/* 核心流式内容容器 — 手机端 100%，桌面宽屏自适应延伸至 1800px */
+.fluid-container {
+    width: 100%;
+    max-width: 1800px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: clamp(1rem, 2.5vw, 2.5rem);
+    padding-right: clamp(1rem, 2.5vw, 2.5rem);
+}
+
+/* 核心影视海报自适应流式网格：
+   - 移动端 (<640px): 严格 2 列 (每张卡片 ~160px-180px)
+   - 平板/折叠屏 (640px-1023px): 3~4 列
+   - 桌面 1080p/笔记本 (1024px-1599px): 5~6 列 (每张卡片 ~165px-190px)
+   - 超宽屏 2K/4K (1600px+): 7~9 列
+*/
+.movie-fluid-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .movie-fluid-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 1rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .movie-fluid-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1.25rem;
+    }
+}
+
+@media (min-width: 1600px) {
+    .movie-fluid-grid {
+        grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+/* 流式卡片标题与排版 */
+.movie-card-title {
+    font-size: clamp(0.8125rem, 0.75rem + 0.2vw, 0.9375rem);
+    line-height: 1.35;
+}
+
+/* 桌面端精致悬浮微交互 */
+@media (hover: hover) and (pointer: fine) {
+    .movie-card-hover {
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .movie-card-hover:hover {
+        transform: translateY(-4px);
+    }
+}
+
+/* ============================================================
+   TV Mode Styles — 10-foot UI（3 米观看距离）
    ============================================================ */
 
 /* --- 1. 全局基础 --- */
@@ -317,6 +379,7 @@ body.tv-mode .content-type-toggle > div[class*="rounded-full"]:not(button) {
 }
 
 /* --- 6. 网格布局 — 4 列大卡片（排除设置页 3 列等小网格） --- */
+body.tv-mode .movie-fluid-grid,
 body.tv-mode .grid.grid-cols-2,
 body.tv-mode .grid.sm\:grid-cols-3,
 body.tv-mode .grid.md\:grid-cols-4,

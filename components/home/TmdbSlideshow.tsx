@@ -183,17 +183,17 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
     if (loading || currentData.length === 0) {
         return (
             <div className="mb-3">
-                <div className="hidden sm:flex gap-3 h-[280px]">
-                    <div className="w-[42%] min-w-[320px] slideshow-skeleton skeleton-shimmer rounded-2xl" />
+                <div className="hidden sm:flex gap-3 h-[clamp(260px,18vw,320px)]">
+                    <div className="w-[38%] min-w-[300px] max-w-[480px] slideshow-skeleton skeleton-shimmer rounded-2xl" />
                     <div className="flex-1 flex gap-3 overflow-hidden">
-                        {[...Array(5)].map((_, i) => (
-                            <div key={i} className="w-[130px] shrink-0 skeleton-shimmer rounded-xl" style={{ animationDelay: `${i * 0.1}s` }} />
+                        {[...Array(6)].map((_, i) => (
+                            <div key={i} className="w-[clamp(120px,9vw,155px)] shrink-0 skeleton-shimmer rounded-xl" style={{ animationDelay: `${i * 0.08}s` }} />
                         ))}
                     </div>
                 </div>
-                <div className="mobile-only-section flex gap-3 overflow-hidden h-[220px]">
+                <div className="mobile-only-section flex gap-3 overflow-hidden h-[210px]">
                     {[...Array(3)].map((_, i) => (
-                        <div key={i} className="w-[140px] shrink-0 skeleton-shimmer rounded-xl" style={{ animationDelay: `${i * 0.1}s` }} />
+                        <div key={i} className="w-[130px] shrink-0 skeleton-shimmer rounded-xl" style={{ animationDelay: `${i * 0.08}s` }} />
                     ))}
                 </div>
             </div>
@@ -207,11 +207,11 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
         <div className="mb-3" onKeyDown={handleKeyDown} tabIndex={0} data-focusable>
 
             {/* === 桌面端：左 TMDB Hero + 右卡片列表 === */}
-            <div className="hidden sm:flex gap-3 h-[280px]">
+            <div className="hidden sm:flex gap-3 h-[clamp(260px,18vw,320px)]">
 
                 {/* 左侧 Hero — TMDB Backdrop 背景 */}
                 <div
-                    className="hero-left-panel relative w-[42%] min-w-[320px] rounded-2xl overflow-hidden cursor-pointer group"
+                    className="hero-left-panel relative w-[38%] min-w-[300px] max-w-[480px] rounded-2xl overflow-hidden cursor-pointer group"
                     onClick={() => handleMovieClick(active)}
                     style={{ isolation: 'isolate' }}
                 >
@@ -375,7 +375,7 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
                         {currentData.map((movie, idx) => (
                             <div
                                 key={movie.id || idx}
-                                className={`relative shrink-0 w-[130px] lg:w-[145px] rounded-xl overflow-hidden cursor-pointer group/card transition-all duration-300 ${idx === activeIndex
+                                className={`relative shrink-0 w-[clamp(115px,8.5vw,145px)] rounded-xl overflow-hidden cursor-pointer group/card transition-all duration-300 ${idx === activeIndex
                                     ? 'ring-2 ring-[var(--accent-color)] shadow-lg shadow-[var(--accent-color)]/20'
                                     : 'ring-1 ring-white/10 hover:ring-white/25'
                                     }`}

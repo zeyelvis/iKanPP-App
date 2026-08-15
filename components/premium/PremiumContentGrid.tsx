@@ -30,7 +30,7 @@ export function PremiumContentGrid({
 
     return (
         <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+            <div className="movie-fluid-grid">
                 {videos.map((video) => (
                     <Link
                         key={`${video.source}-${video.vod_id}`}
@@ -109,10 +109,10 @@ export function PremiumContentGrid({
 
 function PremiumGridLoading() {
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 py-4">
-            {Array.from({ length: 10 }).map((_, i) => (
-                <div key={i} style={{ animationDelay: `${i * 0.06}s` }}>
-                    <div className="aspect-[2/3] rounded-xl skeleton-shimmer mb-2" />
+        <div className="movie-fluid-grid">
+            {[...Array(14)].map((_, i) => (
+                <div key={i} className="p-0">
+                    <div className="aspect-[2/3] rounded-[var(--radius-2xl)] skeleton-shimmer mb-2" />
                     <div className="h-4 w-3/4 skeleton-shimmer rounded mb-1" />
                     <div className="h-3 w-1/2 skeleton-shimmer rounded" />
                 </div>

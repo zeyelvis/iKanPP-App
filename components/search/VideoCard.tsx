@@ -67,7 +67,7 @@ export const VideoCard = memo<VideoCardProps>(({
                                 alt={video.vod_name}
                                 fill
                                 className="object-cover rounded-[var(--radius-2xl)]"
-                                sizes="(max-width: 640px) 33vw, (max-width: 1024px) 20vw, 16vw"
+                                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, (max-width: 1600px) 16vw, 12vw"
                                 loading="eager"
                                 unoptimized
                                 referrerPolicy="no-referrer"
@@ -92,7 +92,7 @@ export const VideoCard = memo<VideoCardProps>(({
                         <div className="absolute top-2 left-2 right-2 z-10 flex items-center justify-between gap-1">
                             <div className="flex items-center gap-1 min-w-0">
                                 {video.sourceName && (
-                                    <Badge variant="primary" className="bg-[var(--accent-color)] flex-shrink-0 max-w-[50%] truncate">
+                                    <Badge variant="primary" className="bg-[var(--accent-color)] flex-shrink-0 max-w-[50%] truncate text-[10px]">
                                         {video.sourceName}
                                     </Badge>
                                 )}
@@ -155,7 +155,7 @@ export const VideoCard = memo<VideoCardProps>(({
                     </div>
 
                     {/* Info */}
-                    <div className="p-3 flex-1 flex flex-col">
+                    <div className="p-2.5 flex-1 flex flex-col">
                         {(() => {
                             const { cleanTitle, quality } = parseVideoTitle(video.vod_name);
                             // Visual priority: Quality from title tag, then vod_remarks
@@ -163,7 +163,7 @@ export const VideoCard = memo<VideoCardProps>(({
 
                             return (
                                 <>
-                                    <h4 className="font-semibold text-sm text-[var(--text-color)] line-clamp-2 min-h-[2.5rem] mb-1">
+                                    <h4 className="movie-card-title font-semibold text-[var(--text-color)] line-clamp-2 min-h-[2.2rem] mb-1">
                                         {cleanTitle}
                                     </h4>
                                     {displayQuality && (

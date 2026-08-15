@@ -22,7 +22,7 @@ export function Footer() {
             <div style={{
                 background: 'linear-gradient(180deg, var(--background-color) 0%, color-mix(in srgb, var(--background-color) 95%, #000) 100%)',
             }}>
-                <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
+                <div className="fluid-container">
 
                     {/* 上层：品牌 + 导航 + 快捷说明 */}
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 py-10">
