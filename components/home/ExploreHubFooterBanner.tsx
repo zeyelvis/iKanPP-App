@@ -32,11 +32,20 @@ const HUB_FEATURES: HubFeature[] = [
     borderHover: 'hover:border-amber-500/50',
   },
   {
+    title: '🏮 国创国漫',
+    tag: 'GUOMAN HUB',
+    desc: '东方玄幻修真年番 · 3D 末世科幻巨制',
+    href: '/guoman',
+    tags: ['凡人修仙', '遮天', '完美世界', '仙逆', '吞噬星空', '剑来'],
+    gradient: 'from-orange-950/40 via-amber-900/10 to-transparent',
+    borderHover: 'hover:border-orange-500/50',
+  },
+  {
     title: '⚡ 动漫新番',
     tag: 'ANIME HUB',
-    desc: '当季热血新番 · 国创巅峰 · 经典剧场版',
+    desc: '当季热血新番 · 日本连载 · 经典剧场版',
     href: '/anime',
-    tags: ['2026 新番', '热血战斗', '奇幻冒险', '国漫巨制', '治愈日常'],
+    tags: ['2026 新番', '热血战斗', '奇幻冒险', '咒术回战', '治愈日常'],
     gradient: 'from-purple-950/40 via-indigo-900/10 to-transparent',
     borderHover: 'hover:border-purple-500/50',
   },
@@ -75,8 +84,8 @@ export function ExploreHubFooterBanner() {
         </Link>
       </div>
 
-      {/* 4 大专区卡片 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 5 大专区卡片 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {HUB_FEATURES.map((hub) => (
           <Link
             key={hub.title}

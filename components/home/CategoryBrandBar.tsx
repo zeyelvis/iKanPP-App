@@ -36,8 +36,18 @@ const HUB_TILES: HubTile[] = [
     border: 'group-hover:border-amber-500/50',
   },
   {
+    title: '国创国漫',
+    subtitle: '玄幻年番 · 凡人/遮天/仙逆',
+    icon: '🏮',
+    tag: 'GUOMAN',
+    href: '/guoman',
+    gradient: 'from-orange-600/30 via-amber-500/10 to-transparent',
+    glow: 'group-hover:shadow-[0_8px_30px_rgba(249,115,22,0.25)]',
+    border: 'group-hover:border-orange-500/50',
+  },
+  {
     title: '动漫新番',
-    subtitle: '当季连载 · 国创巅峰 · 经典',
+    subtitle: '当季连载 · 日本新番 · 经典',
     icon: '⚡',
     tag: 'ANIME',
     href: '/anime',
@@ -94,7 +104,7 @@ export function CategoryBrandBar() {
         </span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 sm:gap-4">
         {HUB_TILES.map((tile) => (
           <Link
             key={tile.title}

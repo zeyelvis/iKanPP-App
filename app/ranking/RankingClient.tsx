@@ -22,11 +22,12 @@ interface RankingItem {
 }
 
 const RANK_CATEGORIES = [
-  { id: 'movie_hot', label: '🎬 电影热度总榜', type: 'movie', tag: '热门' },
-  { id: 'tv_hot', label: '📺 电视剧热度榜', type: 'tv', tag: '热门' },
-  { id: 'movie_high', label: '⭐ 豆瓣高分神作', type: 'movie', tag: '豆瓣高分' },
-  { id: 'anime_hot', label: '⚡ 动漫新番热播榜', type: 'tv', tag: '日本动画' },
-  { id: 'variety_hot', label: '🎤 热门综艺榜', type: 'tv', tag: '综艺' },
+  { id: 'movie_hot', label: '🎬 电影热度榜', type: 'movie', tag: '热门', genre: '', region: '' },
+  { id: 'tv_hot', label: '📺 电视剧热播榜', type: 'tv', tag: '热门', genre: '', region: '' },
+  { id: 'guoman_hot', label: '🏮 国漫风云榜', type: 'tv', tag: '国产动画', genre: '国漫', region: '国产动画' },
+  { id: 'anime_hot', label: '⚡ 日本新番榜', type: 'tv', tag: '日本动画', genre: '动漫', region: '日本动画' },
+  { id: 'movie_high', label: '⭐ 豆瓣高分神作', type: 'movie', tag: '豆瓣高分', genre: '', region: '' },
+  { id: 'variety_hot', label: '🎤 热门综艺榜', type: 'tv', tag: '综艺', genre: '', region: '' },
 ];
 
 export default function RankingClient() {
@@ -40,11 +41,15 @@ export default function RankingClient() {
     const fetchRankData = async () => {
       setLoading(true);
       try {
-        const res = await fetch(
-          `/api/douban/recommend?tag=${encodeURIComponent(
-            activeTab.tag
-          )}&type=${activeTab.type}&page_limit=50&page_start=0`
-        );
+        const params = new URLSearchParams();
+        params.set('tag', activeTab.tag);
+        params.set('type', activeTab.type);
+        if (activeTab.genre) params.set('genre', activeTab.genre);
+        if (activeTab.region) params.set('region', activeTab.region);
+        params.set('page_limit', '50');
+        params.set('page_start', '0');
+
+        const res = await fetch(`/api/douban/recommend?${params.toString()}`);
         const data = await res.json();
         if (isMounted) {
           setItems(data.subjects || []);

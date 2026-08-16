@@ -9,6 +9,7 @@ const STATIC_ROUTES = [
     { url: '', priority: 1.0, changeFrequency: 'daily' as const },
     { url: '/movie', priority: 0.95, changeFrequency: 'daily' as const },
     { url: '/tv', priority: 0.95, changeFrequency: 'daily' as const },
+    { url: '/guoman', priority: 0.95, changeFrequency: 'daily' as const },
     { url: '/anime', priority: 0.95, changeFrequency: 'daily' as const },
     { url: '/variety', priority: 0.95, changeFrequency: 'daily' as const },
     { url: '/ranking', priority: 0.95, changeFrequency: 'daily' as const },
