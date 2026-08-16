@@ -1,62 +1,21 @@
-'use client';
+import { Metadata } from 'next';
+import MovieClient from './MovieClient';
 
-import { Suspense } from 'react';
-import { CategoryHub } from '@/components/category/CategoryHub';
-
-const GENRES = [
-  { label: '动作', value: '动作' },
-  { label: '喜剧', value: '喜剧' },
-  { label: '爱情', value: '爱情' },
-  { label: '科幻', value: '科幻' },
-  { label: '悬疑', value: '悬疑' },
-  { label: '犯罪', value: '犯罪' },
-  { label: '恐怖', value: '恐怖' },
-  { label: '动画', value: '动画' },
-  { label: '奇幻', value: '奇幻' },
-  { label: '战争', value: '战争' },
-  { label: '纪录片', value: '纪录片' },
-];
-
-const REGIONS = [
-  { label: '华语', value: '华语' },
-  { label: '中国香港', value: '香港' },
-  { label: '中国台湾', value: '台湾' },
-  { label: '美国', value: '欧美' },
-  { label: '日本', value: '日本' },
-  { label: '韩国', value: '韩国' },
-  { label: '英国', value: '英国' },
-  { label: '法国', value: '法国' },
-];
-
-const YEARS = [
-  { label: '2026', value: '2026' },
-  { label: '2025', value: '2025' },
-  { label: '2024', value: '2024' },
-  { label: '2023', value: '2023' },
-  { label: '经典高分', value: '豆瓣高分' },
-];
-
-const SHELVES = [
-  { title: '院线热映 & 最新上线', icon: '✨', badge: 'NEW', tag: '最新' },
-  { title: '豆瓣 9.0+ 影史高分神作', icon: '⭐', badge: 'HIGH RATED', tag: '豆瓣高分' },
-  { title: '好莱坞 & 欧美动作科幻巨制', icon: '🚀', badge: '4K ULTRA', tag: '欧美' },
-  { title: '华语经典口碑电影', icon: '🏮', tag: '华语' },
-];
+export const metadata: Metadata = {
+  title: '电影大厅 - 4K 院线大片 & 豆瓣高分神作免费在线观看 | iKanPP 爱看片片',
+  description: 'iKanPP 电影频道汇聚最新院线大片、好莱坞 4K 动作科幻巨制、豆瓣高分华语经典与影史必看神作。支持动作、喜剧、悬疑、科幻等多维分类筛选，海外华人免翻墙高速播放。',
+  keywords: ['电影', '最新电影', '4K电影', '院线大片', '豆瓣高分电影', '好莱坞大片', '免费电影', '海外看电影', 'iKanPP'],
+  openGraph: {
+    title: '电影大厅 - 4K 院线大片 & 豆瓣高分神作 | iKanPP',
+    description: '全球 4K 院线巨制 · 豆瓣高分神作 · 经典华语佳片，多维筛选随心畅看。',
+    type: 'website',
+    url: 'https://www.ikanpp.com/movie',
+  },
+  alternates: {
+    canonical: 'https://www.ikanpp.com/movie',
+  },
+};
 
 export default function MoviePage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center"><div className="brand-spinner" /></div>}>
-      <CategoryHub
-        categoryTitle="电影大厅"
-        categorySubtitle="全球 4K 院线巨制 · 豆瓣高分神作 · 经典华语佳片"
-        doubanType="movie"
-        activeNav="movie"
-        genres={GENRES}
-        regions={REGIONS}
-        years={YEARS}
-        shelves={SHELVES}
-        defaultTag="热门"
-      />
-    </Suspense>
-  );
+  return <MovieClient />;
 }

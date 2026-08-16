@@ -1,42 +1,47 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 450" fill="none">
   <defs>
-    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#f0f2f5;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#e0e4e8;stop-opacity:1" />
+    <linearGradient id="obsidian-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#161622;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0A0A0F;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="red-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E50914;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#B81D24;stop-opacity:1" />
     </linearGradient>
   </defs>
   
   <!-- Background -->
-  <rect width="300" height="450" fill="url(#bg-gradient)" rx="24"/>
+  <rect width="300" height="450" fill="url(#obsidian-bg)" rx="24"/>
+  <rect width="298" height="448" x="1" y="1" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" rx="23"/>
   
-  <!-- Glass effect overlay -->
-  <rect width="300" height="450" fill="rgba(255, 255, 255, 0.5)" rx="24"/>
-  
-  <!-- Film icon -->
-  <g transform="translate(150, 225)">
-    <!-- Film reel -->
-    <rect x="-60" y="-80" width="120" height="160" rx="8" fill="none" stroke="#6e6e73" stroke-width="4"/>
+  <!-- Center Cinema Reel / Film Icon -->
+  <g transform="translate(150, 210)">
+    <!-- Film Reel Clapperboard Frame -->
+    <rect x="-55" y="-70" width="110" height="140" rx="14" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
     
-    <!-- Film strip holes -->
-    <rect x="-60" y="-70" width="15" height="15" rx="3" fill="#6e6e73"/>
-    <rect x="-60" y="-40" width="15" height="15" rx="3" fill="#6e6e73"/>
-    <rect x="-60" y="-10" width="15" height="15" rx="3" fill="#6e6e73"/>
-    <rect x="-60" y="20" width="15" height="15" rx="3" fill="#6e6e73"/>
-    <rect x="-60" y="50" width="15" height="15" rx="3" fill="#6e6e73"/>
+    <!-- Film strip side perforations -->
+    <circle cx="-42" cy="-50" r="4" fill="rgba(255,255,255,0.2)"/>
+    <circle cx="-42" cy="-25" r="4" fill="rgba(255,255,255,0.2)"/>
+    <circle cx="-42" cy="0" r="4" fill="rgba(255,255,255,0.2)"/>
+    <circle cx="-42" cy="25" r="4" fill="rgba(255,255,255,0.2)"/>
+    <circle cx="-42" cy="50" r="4" fill="rgba(255,255,255,0.2)"/>
     
-    <rect x="45" y="-70" width="15" height="15" rx="3" fill="#6e6e73"/>
-    <rect x="45" y="-40" width="15" height="15" rx="3" fill="#6e6e73"/>
-    <rect x="45" y="-10" width="15" height="15" rx="3" fill="#6e6e73"/>
-    <rect x="45" y="20" width="15" height="15" rx="3" fill="#6e6e73"/>
-    <rect x="45" y="50" width="15" height="15" rx="3" fill="#6e6e73"/>
+    <circle cx="42" cy="-50" r="4" fill="rgba(255,255,255,0.2)"/>
+    <circle cx="42" cy="-25" r="4" fill="rgba(255,255,255,0.2)"/>
+    <circle cx="42" cy="0" r="4" fill="rgba(255,255,255,0.2)"/>
+    <circle cx="42" cy="25" r="4" fill="rgba(255,255,255,0.2)"/>
+    <circle cx="42" cy="50" r="4" fill="rgba(255,255,255,0.2)"/>
     
-    <!-- Play icon in center -->
-    <circle cx="0" cy="0" r="35" fill="#007aff" opacity="0.9"/>
-    <path d="M -10,-15 L -10,15 L 15,0 Z" fill="white"/>
+    <!-- Play Icon in center -->
+    <circle cx="0" cy="0" r="28" fill="url(#red-accent)" filter="drop-shadow(0 4px 12px rgba(229,9,20,0.4))"/>
+    <path d="M -6,-10 L -6,10 L 11,0 Z" fill="#FFFFFF"/>
   </g>
   
-  <!-- "Image Not Available" text -->
-  <text x="150" y="330" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="600" fill="#6e6e73" text-anchor="middle">
-    Image Not Available
+  <!-- iKanPP Film Title -->
+  <text x="150" y="325" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.4)" text-anchor="middle" letter-spacing="1">
+    iKanPP · 影视片库
+  </text>
+  <text x="150" y="348" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="500" fill="rgba(255,255,255,0.2)" text-anchor="middle">
+    封面加载中
   </text>
 </svg>

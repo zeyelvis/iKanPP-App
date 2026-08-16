@@ -20,6 +20,7 @@ import { premiumModeSettingsStore } from '@/lib/store/premium-mode-settings';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { getSourceName } from '@/lib/utils/source-names';
 import { RelatedKeywords } from '@/components/search/RelatedKeywords';
+import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 
 function PlayerContent() {
   const searchParams = useSearchParams();
@@ -35,6 +36,10 @@ function PlayerContent() {
   // 消歧义参数：从首页传入的内容类型和年份
   const expectedType = searchParams.get('type'); // 'movie' | 'tv' | null
   const expectedYear = searchParams.get('year'); // e.g. '2025' | null
+
+  // 底部同类推荐片单状态
+  const [relatedMovies, setRelatedMovies] = useState<RailMovie[]>([]);
+  const [loadingRelated, setLoadingRelated] = useState(true);
 
   // === Title-only mode: auto-search all sources and redirect to best match ===
   // Initial state: if we have title but no id/source, we're already in search mode
@@ -248,6 +253,32 @@ function PlayerContent() {
 
     return sources;
   }, [groupedSourcesParam, source, videoId, videoData?.vod_pic, discoveredSources]);
+
+  // 拉取同类高分影视推荐
+  useEffect(() => {
+    let isMounted = true;
+    const fetchRelated = async () => {
+      setLoadingRelated(true);
+      try {
+        const recommendTag = videoData?.type_name || (expectedType === 'tv' ? '热门' : '豆瓣高分');
+        const type = expectedType || (videoData?.type_name?.includes('剧') ? 'tv' : 'movie');
+        const res = await fetch(`/api/douban/recommend?tag=${encodeURIComponent(recommendTag)}&type=${type}&page_limit=14&page_start=0`);
+        const data = await res.json();
+        if (isMounted) {
+          setRelatedMovies(data.subjects || []);
+        }
+      } catch (err) {
+        console.error('Fetch related movies error:', err);
+      } finally {
+        if (isMounted) setLoadingRelated(false);
+      }
+    };
+
+    fetchRelated();
+    return () => {
+      isMounted = false;
+    };
+  }, [videoData?.type_name, expectedType]);
 
   // Wire up the source unavailable handler now that groupedSources is defined
   sourceUnavailableRef.current = () => {
@@ -611,6 +642,22 @@ function PlayerContent() {
             </div>
           </div>
         )}
+
+        {/* 底部：同类口碑影视精选推荐 */}
+        <div className="mt-12 pt-8 border-t border-white/10">
+          <ContentRail
+            title="🍿 喜欢这部影视的观众还在看"
+            icon="✨"
+            badge="RECOMMENDED"
+            movies={relatedMovies}
+            loading={loadingRelated}
+            onMovieClick={(movie) => {
+              const params = new URLSearchParams();
+              params.set('title', movie.title);
+              router.push(`/player?${params.toString()}`);
+            }}
+          />
+        </div>
       </main>
 
       {/* Favorites Sidebar - Left */}

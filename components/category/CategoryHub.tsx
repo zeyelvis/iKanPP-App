@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 import { MovieGrid } from '@/components/home/MovieGrid';
@@ -46,12 +46,29 @@ export function CategoryHub({
   defaultTag = '热门',
 }: CategoryHubProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // 从 URL 初始化筛选状态
+  const initialGenre = searchParams.get('genre') || '';
+  const initialRegion = searchParams.get('region') || '';
+  const initialYear = searchParams.get('year') || '';
 
   // 筛选器状态
-  const [selectedGenre, setSelectedGenre] = useState<string>(genres[0]?.value || '');
-  const [selectedRegion, setSelectedRegion] = useState<string>(regions[0]?.value || '');
-  const [selectedYear, setSelectedYear] = useState<string>(years[0]?.value || '');
+  const [selectedGenre, setSelectedGenre] = useState<string>(initialGenre);
+  const [selectedRegion, setSelectedRegion] = useState<string>(initialRegion);
+  const [selectedYear, setSelectedYear] = useState<string>(initialYear);
   const [selectedSort, setSelectedSort] = useState<'recommend' | 'time' | 'rank'>('recommend');
+
+  // URL 参数同步
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (selectedGenre) params.set('genre', selectedGenre);
+    if (selectedRegion) params.set('region', selectedRegion);
+    if (selectedYear) params.set('year', selectedYear);
+    const qs = params.toString();
+    const newUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
+    window.history.replaceState(null, '', newUrl);
+  }, [selectedGenre, selectedRegion, selectedYear]);
 
   // 货架数据状态
   const [shelfData, setShelfData] = useState<Record<string, RailMovie[]>>({});

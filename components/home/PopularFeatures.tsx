@@ -174,46 +174,46 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         contentType={contentType}
       />
 
-      {/* 4. 货架 1：院线首播/最新 或 热播国产剧 */}
+      {/* 4. 货架 1：最新上映 或 国产新剧 */}
       <ContentRail
-        title={isMovie ? '院线首播 & 最新上映' : '华语热播连续剧'}
+        title={isMovie ? '✨ 院线首播 & 最新上映' : '🔥 2026 华语热播连续剧'}
         icon={isMovie ? '✨' : '🔥'}
-        badge={isMovie ? 'NEW' : 'HOT'}
+        badge="NEW"
         movies={shelf1Movies}
         loading={loadingShelves}
         onMovieClick={handleMovieClick}
-        onViewAll={() => setSelectedTag(tag1)}
+        onViewAll={() => router.push(isMovie ? '/movie?genre=最新' : '/tv?region=国产剧')}
       />
 
-      {/* 5. 货架 2：豆瓣高分 或 欧美顶级神剧 */}
+      {/* 5. 货架 2：豆瓣高分 或 顶级美剧 */}
       <ContentRail
-        title={isMovie ? '豆瓣 8.5+ 影史必看神作' : '顶级欧美神剧精选'}
+        title={isMovie ? '⭐ 豆瓣 8.5+ 影史高分神作' : '🌟 顶级欧美神剧专区'}
         icon={isMovie ? '⭐' : '🌟'}
         badge={isMovie ? 'HIGH RATED' : 'TOP US'}
         movies={shelf2Movies}
         loading={loadingShelves}
         onMovieClick={handleMovieClick}
-        onViewAll={() => setSelectedTag(tag2)}
+        onViewAll={() => router.push(isMovie ? '/movie?genre=豆瓣高分' : '/tv?region=美剧')}
       />
 
-      {/* 6. 货架 3：华语精选 或 人气日韩剧 */}
+      {/* 6. 货架 3：华语经典 或 人气日韩剧 */}
       <ContentRail
-        title={isMovie ? '华语经典口碑大片' : '人气韩剧 & 日剧精选'}
+        title={isMovie ? '🏮 华语经典口碑大片' : '🍿 人气韩剧 & 日剧精选'}
         icon={isMovie ? '🏮' : '🍿'}
         movies={shelf3Movies}
         loading={loadingShelves}
         onMovieClick={handleMovieClick}
-        onViewAll={() => setSelectedTag(tag3)}
+        onViewAll={() => router.push(isMovie ? '/movie?region=华语' : '/tv?region=韩剧')}
       />
 
       {/* 7. 货架 4：好莱坞大片 或 动漫新番 */}
       <ContentRail
-        title={isMovie ? '好莱坞 & 欧美科幻大片' : '热血动漫 & 新番连载'}
+        title={isMovie ? '🚀 好莱坞 & 欧美科幻大片' : '⚡ 热血动漫 & 新番连载'}
         icon={isMovie ? '🚀' : '⚡'}
         movies={shelf4Movies}
         loading={loadingShelves}
         onMovieClick={handleMovieClick}
-        onViewAll={() => setSelectedTag(tag4)}
+        onViewAll={() => router.push(isMovie ? '/movie?region=欧美' : '/anime')}
       />
 
       {/* 8. 🏷️ 深度题材与分类探索区 */}

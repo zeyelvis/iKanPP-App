@@ -75,6 +75,14 @@ select,
     cursor: pointer;
 }
 
+/* TV & Keyboard D-Pad Navigation Focus Ring */
+:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 3px;
+    box-shadow: 0 0 16px rgba(229, 9, 20, 0.5);
+    transition: outline-offset 0.15s ease, box-shadow 0.15s ease;
+}
+
 html {
     scroll-behavior: auto;
     /* 防止水平偏移 — hidden 是回退，clip 是增强（不影响 sticky） */
