@@ -212,45 +212,48 @@ export function VideoPlayer({
   }
 
   return (
-    <div data-no-spatial>
-    <Card hover={false} className="p-0 relative">
-      {/* Mode Indicator Badge - controlled by settings */}
-      {showModeIndicator && (
-        <div className="absolute top-3 right-3 z-30">
-          <span className={`px-2 py-1 text-xs font-medium rounded-full backdrop-blur-md transition-all duration-300 ${useProxy
-            ? 'bg-orange-500/80 text-white'
-            : 'bg-green-500/80 text-white'
-            }`}>
-            {useProxy ? '代理模式' : '直连模式'}
-          </span>
-        </div>
-      )}
-      {videoError ? (
-        <VideoPlayerError
-          error={videoError}
-          onBack={onBack}
-          onRetry={handleRetry}
-          retryCount={retryCount}
-          maxRetries={MAX_MANUAL_RETRIES}
-        />
-      ) : (
-        <CustomVideoPlayer
-          key={`${useProxy ? 'proxy' : 'direct'}-${retryCount}-${source}`} // Remount when switching sources, modes, or retrying
-          src={finalPlayUrl}
-          onError={handleVideoError}
-          onTimeUpdate={handleTimeUpdate}
-          initialTime={getSavedProgress()}
-          shouldAutoPlay={shouldAutoPlay}
-          totalEpisodes={totalEpisodes}
-          currentEpisodeIndex={currentEpisode}
-          onNextEpisode={onNextEpisode}
-          isReversed={isReversed}
-          videoTitle={videoTitle}
-          episodeName={episodeName}
-          nextEpisodeUrl={nextEpisodeUrl}
-        />
-      )}
-    </Card>
+    <div data-no-spatial className="relative group/player">
+      {/* 影院级环境流光氛围（Ambient Glow） */}
+      <div className="absolute -inset-1 sm:-inset-2 bg-gradient-to-r from-red-600/30 via-[var(--accent-color)]/25 to-amber-600/30 rounded-3xl blur-2xl opacity-40 group-hover/player:opacity-70 transition-opacity duration-700 pointer-events-none animate-ambient-glow -z-10" />
+
+      <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-black">
+        {/* Mode Indicator Badge - controlled by settings */}
+        {showModeIndicator && (
+          <div className="absolute top-3 right-3 z-30">
+            <span className={`px-2.5 py-1 text-xs font-bold rounded-full backdrop-blur-md transition-all duration-300 shadow-md ${useProxy
+              ? 'bg-orange-500/90 text-white'
+              : 'bg-emerald-500/90 text-white'
+              }`}>
+              {useProxy ? '代理加速' : '极速直连'}
+            </span>
+          </div>
+        )}
+        {videoError ? (
+          <VideoPlayerError
+            error={videoError}
+            onBack={onBack}
+            onRetry={handleRetry}
+            retryCount={retryCount}
+            maxRetries={MAX_MANUAL_RETRIES}
+          />
+        ) : (
+          <CustomVideoPlayer
+            key={`${useProxy ? 'proxy' : 'direct'}-${retryCount}-${source}`} // Remount when switching sources, modes, or retrying
+            src={finalPlayUrl}
+            onError={handleVideoError}
+            onTimeUpdate={handleTimeUpdate}
+            initialTime={getSavedProgress()}
+            shouldAutoPlay={shouldAutoPlay}
+            totalEpisodes={totalEpisodes}
+            currentEpisodeIndex={currentEpisode}
+            onNextEpisode={onNextEpisode}
+            isReversed={isReversed}
+            videoTitle={videoTitle}
+            episodeName={episodeName}
+            nextEpisodeUrl={nextEpisodeUrl}
+          />
+        )}
+      </div>
     </div>
   );
 }

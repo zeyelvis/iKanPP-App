@@ -30,7 +30,6 @@ interface EpisodeListProps {
   isReversed?: boolean;
   onEpisodeClick: (episode: Episode, index: number) => void;
   onToggleReverse?: (reversed: boolean) => void;
-  // Optional source integration props
   sources?: SourceInfo[];
   currentSource?: string;
   onSourceChange?: (source: SourceInfo) => void;
@@ -48,20 +47,13 @@ export function EpisodeList({
 }: EpisodeListProps) {
   const listRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const [sourceExpanded, setSourceExpanded] = useState(false);
-  const [showAllSources, setShowAllSources] = useState(false);
+  const [selectedRangeIndex, setSelectedRangeIndex] = useState(0);
 
   // Source latency state
   const [latencies, setLatencies] = useState<Record<string, number>>({});
   const [isLoadingLatency, setIsLoadingLatency] = useState(false);
 
   const showSourceSelector = sources && sources.length > 1 && onSourceChange;
-
-  // Current source info
-  const currentSourceInfo = useMemo(() => {
-    if (!sources || !currentSource) return null;
-    return sources.find(s => s.source === currentSource) || null;
-  }, [sources, currentSource]);
 
   // Sort sources by latency
   const sortedSources = useMemo(() => {
@@ -73,447 +65,262 @@ export function EpisodeList({
     });
   }, [sources, latencies]);
 
-  // Resolve source ID to its actual baseUrl for pinging
   const getSourcePingUrl = useCallback((sourceId: string): string | null => {
     const settings = settingsStore.getSettings();
-    const allConfigs = [
-      ...settings.sources,
-      ...settings.premiumSources,
-    ];
+    const allConfigs = [...settings.sources, ...settings.premiumSources];
     const config = allConfigs.find(s => s.id === sourceId);
     return config?.baseUrl || null;
   }, []);
 
-  // Initialize latencies from sources
   useEffect(() => {
     if (!sources) return;
     const initial: Record<string, number> = {};
-    let hasMissing = false;
     sources.forEach(s => {
-      if (s.latency !== undefined) {
-        initial[s.source] = s.latency;
-      } else {
-        hasMissing = true;
-      }
+      if (s.latency !== undefined) initial[s.source] = s.latency;
     });
     setLatencies(initial);
+  }, [sources]);
 
-    // Auto-refresh latencies for sources that don't have them
-    if (hasMissing && sources.length > 1) {
-      const autoRefresh = async () => {
-        const missing = sources.filter(s => s.latency === undefined);
-        const results = await Promise.all(
-          missing.map(async (source) => {
-            try {
-              const pingUrl = getSourcePingUrl(source.source);
-              if (!pingUrl) return { source: source.source, latency: undefined };
-              const response = await fetch('/api/ping', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: pingUrl }),
-              });
-              if (response.ok) {
-                const data = await response.json();
-                return { source: source.source, latency: data.latency as number | undefined };
-              }
-            } catch { /* ignore */ }
-            return { source: source.source, latency: undefined };
-          })
-        );
-        setLatencies(prev => {
-          const updated = { ...prev };
-          results.forEach(({ source, latency }) => {
-            if (latency !== undefined) updated[source] = latency;
-          });
-          return updated;
-        });
-      };
-      autoRefresh();
-    }
-  }, [sources, getSourcePingUrl]);
-
-  // Refresh latencies
   const refreshLatencies = useCallback(async () => {
     if (!sources) return;
     setIsLoadingLatency(true);
-
     const results = await Promise.all(
-      sources.map(async (source) => {
+      sources.map(async source => {
+        const pingUrl = getSourcePingUrl(source.source);
+        if (!pingUrl) return { source: source.source, latency: undefined };
         try {
-          const pingUrl = getSourcePingUrl(source.source);
-          if (!pingUrl) return { source: source.source, latency: undefined };
-          const response = await fetch('/api/ping', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: pingUrl }),
+          const response = await fetch(`/api/ping?url=${encodeURIComponent(pingUrl)}`, {
+            signal: AbortSignal.timeout(3000),
           });
           if (response.ok) {
             const data = await response.json();
             return { source: source.source, latency: data.latency };
           }
-        } catch {
-          // Ignore errors
-        }
+        } catch {}
         return { source: source.source, latency: undefined };
       })
     );
 
     const newLatencies: Record<string, number> = {};
     results.forEach(({ source, latency }) => {
-      if (latency !== undefined) {
-        newLatencies[source] = latency;
-      }
+      if (latency !== undefined) newLatencies[source] = latency;
     });
     setLatencies(newLatencies);
     setIsLoadingLatency(false);
   }, [sources, getSourcePingUrl]);
 
-  // Memoized display episodes - reversed if toggle is on
+  // Display episodes & pagination for large episode counts (e.g. > 30 episodes)
   const displayEpisodes = useMemo(() => {
     if (!episodes) return null;
     return isReversed ? [...episodes].reverse() : episodes;
   }, [episodes, isReversed]);
 
-  // Map display index to original index
-  const getOriginalIndex = useCallback((displayIndex: number) => {
-    if (!episodes || !isReversed) return displayIndex;
-    return episodes.length - 1 - displayIndex;
-  }, [episodes, isReversed]);
+  const getOriginalIndex = useCallback(
+    (displayIndex: number) => {
+      if (!episodes || !isReversed) return displayIndex;
+      return episodes.length - 1 - displayIndex;
+    },
+    [episodes, isReversed]
+  );
 
-  // Map original index to display index (for highlighting current episode)
-  const getDisplayIndex = useCallback((originalIndex: number) => {
-    if (!episodes || !isReversed) return originalIndex;
-    return episodes.length - 1 - originalIndex;
-  }, [episodes, isReversed]);
+  const getDisplayIndex = useCallback(
+    (originalIndex: number) => {
+      if (!episodes || !isReversed) return originalIndex;
+      return episodes.length - 1 - originalIndex;
+    },
+    [episodes, isReversed]
+  );
 
-  // Keyboard navigation
-  useKeyboardNavigation({
-    enabled: true,
-    containerRef: listRef,
-    currentIndex: getDisplayIndex(currentEpisode),
-    itemCount: episodes?.length || 0,
-    orientation: 'vertical',
-    onNavigate: useCallback((index: number) => {
-      buttonRefs.current[index]?.focus();
-      buttonRefs.current[index]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest'
-      });
-    }, []),
-    onSelect: useCallback((displayIndex: number) => {
-      if (episodes) {
-        const originalIndex = getOriginalIndex(displayIndex);
-        if (episodes[originalIndex]) {
-          onEpisodeClick(episodes[originalIndex], originalIndex);
-        }
-      }
-    }, [episodes, onEpisodeClick, getOriginalIndex]),
-  });
+  // Group into tabs if > 30 episodes
+  const EPISODES_PER_TAB = 30;
+  const episodeTabs = useMemo(() => {
+    if (!displayEpisodes || displayEpisodes.length <= EPISODES_PER_TAB) return null;
+    const count = Math.ceil(displayEpisodes.length / EPISODES_PER_TAB);
+    return Array.from({ length: count }, (_, i) => ({
+      start: i * EPISODES_PER_TAB + 1,
+      end: Math.min((i + 1) * EPISODES_PER_TAB, displayEpisodes.length),
+      index: i,
+    }));
+  }, [displayEpisodes]);
 
-  const showReverseToggle = episodes && episodes.length > 1;
+  const currentTabEpisodes = useMemo(() => {
+    if (!displayEpisodes) return [];
+    if (!episodeTabs) return displayEpisodes;
+    const start = selectedRangeIndex * EPISODES_PER_TAB;
+    return displayEpisodes.slice(start, start + EPISODES_PER_TAB);
+  }, [displayEpisodes, episodeTabs, selectedRangeIndex]);
+
+  const isGridFormat = (displayEpisodes?.length || 0) > 4;
 
   return (
-    <Card hover={false}>
-      {/* Integrated Source Selector Header */}
+    <div className="bg-[#0A0A0F]/80 backdrop-blur-2xl rounded-3xl border border-white/10 p-5 sm:p-6 shadow-2xl space-y-6">
+      {/* 1. ⚡ 极速智能测速换源条 */}
       {showSourceSelector && (
-        <div className="mb-4">
-          <button
-            onClick={() => setSourceExpanded(!sourceExpanded)}
-            className="w-full flex items-center justify-between p-3 rounded-[var(--radius-2xl)] bg-[var(--glass-bg)] border border-[var(--glass-border)] hover:bg-[var(--glass-hover)] transition-all duration-200"
-          >
-            <div className="flex items-center gap-2 min-w-0">
-              <Icons.Layers size={16} className="flex-shrink-0 text-[var(--text-color-secondary)]" />
-              <span className="text-sm font-medium text-[var(--text-color)] truncate">
-                {currentSourceInfo?.sourceName || currentSourceInfo?.source || '当前来源'}
-              </span>
-              <Badge variant="primary" className="flex-shrink-0">{sources!.length}</Badge>
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <span className="text-base">⚡</span>
+              <h4 className="text-sm font-bold text-white tracking-tight flex items-center gap-1.5">
+                <span>播放线路</span>
+                <span className="text-[10px] text-white/40 font-normal">({sources.length} 条可用源)</span>
+              </h4>
             </div>
-            <Icons.ChevronDown
-              size={16}
-              className={`flex-shrink-0 text-[var(--text-color-secondary)] transition-transform duration-200 ${sourceExpanded ? 'rotate-180' : ''}`}
-            />
-          </button>
+            <button
+              onClick={refreshLatencies}
+              disabled={isLoadingLatency}
+              className="text-[11px] font-medium text-white/50 hover:text-[var(--accent-color)] flex items-center gap-1 transition-colors cursor-pointer"
+            >
+              <Icons.RefreshCw size={11} className={isLoadingLatency ? 'animate-spin' : ''} />
+              <span>测速</span>
+            </button>
+          </div>
 
-          {/* Expanded source list */}
-          {sourceExpanded && (
-            <div className="mt-2 space-y-2">
-              <div className="flex justify-end">
-                <Button
-                  variant="secondary"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    refreshLatencies();
-                  }}
-                  disabled={isLoadingLatency}
-                  className="flex items-center gap-1.5 text-xs px-2.5 py-1"
+          {/* 横向滑动的极速源药丸切换栏 */}
+          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+            {sortedSources.map((source, idx) => {
+              const isCurrent = source.source === currentSource;
+              const latency = latencies[source.source] ?? source.latency;
+              const isFastest = idx === 0 && (latency || 0) < 150;
+
+              return (
+                <button
+                  key={source.source}
+                  onClick={() => !isCurrent && onSourceChange!(source)}
+                  className={`shrink-0 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all duration-300 flex items-center gap-2 cursor-pointer ${
+                    isCurrent
+                      ? 'bg-[var(--accent-color)] text-white shadow-lg shadow-[var(--accent-color)]/30 scale-102 border border-white/20'
+                      : 'bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10'
+                  }`}
                 >
-                  <Icons.RefreshCw size={12} className={isLoadingLatency ? 'animate-spin' : ''} />
-                  刷新延迟
-                </Button>
-              </div>
-              {(() => {
-                const MAX_VISIBLE = 5;
-                const visibleSources = showAllSources ? sortedSources : sortedSources.slice(0, MAX_VISIBLE);
-                const hasMoreSources = sortedSources.length > MAX_VISIBLE;
-
-                // Group sources by typeName
-                const groupedByType = new Map<string, typeof visibleSources>();
-                for (const source of visibleSources) {
-                  const typeName = source.typeName || '';
-                  if (!groupedByType.has(typeName)) groupedByType.set(typeName, []);
-                  groupedByType.get(typeName)!.push(source);
-                }
-                const hasTypeGroups = groupedByType.size > 1 || (groupedByType.size === 1 && !groupedByType.has(''));
-
-                return (
-                  <>
-                    <div className="space-y-1.5 max-h-[300px] overflow-y-auto">
-                      {hasTypeGroups ? (
-                        Array.from(groupedByType.entries()).map(([typeName, typeSources]) => (
-                          <div key={typeName || '__default'}>
-                            {typeName && (
-                              <div className="text-[10px] font-medium text-[var(--text-color-secondary)] uppercase tracking-wider px-2 pt-2 pb-1">
-                                {typeName}
-                              </div>
-                            )}
-                            {typeSources.map((source, index) => {
-                              const isCurrent = source.source === currentSource;
-                              const latency = latencies[source.source] ?? source.latency;
-                              const globalIndex = sortedSources.indexOf(source);
-
-                              return (
-                                <button
-                                  key={`${source.source}-${index}`}
-                                  onClick={() => {
-                                    if (!isCurrent) {
-                                      onSourceChange!(source);
-                                      setSourceExpanded(false);
-                                    }
-                                  }}
-                                  className={`
-                                    w-full p-2.5 rounded-[var(--radius-2xl)] text-left transition-all duration-200
-                                    flex items-center gap-2.5
-                                    ${isCurrent
-                                      ? 'bg-[var(--accent-color)] text-white shadow-[0_4px_12px_color-mix(in_srgb,var(--accent-color)_50%,transparent)]'
-                                      : 'bg-[var(--glass-bg)] hover:bg-[var(--glass-hover)] text-[var(--text-color)] border border-[var(--glass-border)] cursor-pointer'
-                                    }
-                                  `}
-                                  aria-current={isCurrent ? 'true' : undefined}
-                                >
-                                  {source.pic && (
-                                    <div className="w-10 h-14 rounded-[var(--radius-2xl)] overflow-hidden flex-shrink-0 bg-[color-mix(in_srgb,var(--glass-bg)_50%,transparent)]">
-                                      <Image
-                                        src={source.pic}
-                                        alt=""
-                                        width={40}
-                                        height={56}
-                                        className="w-full h-full object-cover"
-                                        unoptimized
-                                        referrerPolicy="no-referrer"
-                                        onError={(e) => {
-                                          (e.currentTarget as HTMLImageElement).style.display = 'none';
-                                        }}
-                                      />
-                                    </div>
-                                  )}
-                                  <div className="flex-1 min-w-0">
-                                    <div className="font-medium text-sm truncate">
-                                      {source.sourceName || source.source}
-                                    </div>
-                                    {latency !== undefined && (
-                                      <div className="mt-0.5">
-                                        <LatencyBadge latency={latency} />
-                                      </div>
-                                    )}
-                                  </div>
-                                  {isCurrent && (
-                                    <Icons.Play size={14} className="flex-shrink-0" />
-                                  )}
-                                  {!isCurrent && globalIndex < 3 && (
-                                    <Badge
-                                      variant="secondary"
-                                      className={`flex-shrink-0 ${globalIndex === 0 ? 'bg-yellow-500/20 text-yellow-600 border-yellow-500' :
-                                        globalIndex === 1 ? 'bg-gray-400/20 text-gray-600 border-gray-400' :
-                                          'bg-orange-400/20 text-orange-600 border-orange-400'
-                                      }`}
-                                    >
-                                      #{globalIndex + 1}
-                                    </Badge>
-                                  )}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        ))
-                      ) : (
-                        visibleSources.map((source, index) => {
-                          const isCurrent = source.source === currentSource;
-                          const latency = latencies[source.source] ?? source.latency;
-
-                          return (
-                            <button
-                              key={`${source.source}-${index}`}
-                              onClick={() => {
-                                if (!isCurrent) {
-                                  onSourceChange!(source);
-                                  setSourceExpanded(false);
-                                }
-                              }}
-                              className={`
-                                w-full p-2.5 rounded-[var(--radius-2xl)] text-left transition-all duration-200
-                                flex items-center gap-2.5
-                                ${isCurrent
-                                  ? 'bg-[var(--accent-color)] text-white shadow-[0_4px_12px_color-mix(in_srgb,var(--accent-color)_50%,transparent)]'
-                                  : 'bg-[var(--glass-bg)] hover:bg-[var(--glass-hover)] text-[var(--text-color)] border border-[var(--glass-border)] cursor-pointer'
-                                }
-                              `}
-                              aria-current={isCurrent ? 'true' : undefined}
-                            >
-                              {source.pic && (
-                                <div className="w-10 h-14 rounded-[var(--radius-2xl)] overflow-hidden flex-shrink-0 bg-[color-mix(in_srgb,var(--glass-bg)_50%,transparent)]">
-                                  <Image
-                                    src={source.pic}
-                                    alt=""
-                                    width={40}
-                                    height={56}
-                                    className="w-full h-full object-cover"
-                                    unoptimized
-                                    referrerPolicy="no-referrer"
-                                    onError={(e) => {
-                                      (e.currentTarget as HTMLImageElement).style.display = 'none';
-                                    }}
-                                  />
-                                </div>
-                              )}
-                              <div className="flex-1 min-w-0">
-                                <div className="font-medium text-sm truncate">
-                                  {source.sourceName || source.source}
-                                </div>
-                                {latency !== undefined && (
-                                  <div className="mt-0.5">
-                                    <LatencyBadge latency={latency} />
-                                  </div>
-                                )}
-                              </div>
-                              {isCurrent && (
-                                <Icons.Play size={14} className="flex-shrink-0" />
-                              )}
-                              {!isCurrent && index < 3 && (
-                                <Badge
-                                  variant="secondary"
-                                  className={`flex-shrink-0 ${index === 0 ? 'bg-yellow-500/20 text-yellow-600 border-yellow-500' :
-                                    index === 1 ? 'bg-gray-400/20 text-gray-600 border-gray-400' :
-                                      'bg-orange-400/20 text-orange-600 border-orange-400'
-                                  }`}
-                                >
-                                  #{index + 1}
-                                </Badge>
-                              )}
-                            </button>
-                          );
-                        })
-                      )}
-                    </div>
-                    {hasMoreSources && (
-                      <button
-                        onClick={() => setShowAllSources(!showAllSources)}
-                        className="w-full mt-1.5 py-1.5 text-xs text-[var(--text-color-secondary)] hover:text-[var(--accent-color)] flex items-center justify-center gap-1 transition-colors cursor-pointer"
-                      >
-                        {showAllSources ? (
-                          <>收起 <Icons.ChevronDown size={12} className="rotate-180" /></>
-                        ) : (
-                          <>展开更多 ({sortedSources.length - MAX_VISIBLE}) <Icons.ChevronDown size={12} /></>
-                        )}
-                      </button>
-                    )}
-                  </>
-                );
-              })()}
-            </div>
-          )}
+                  <span className={`w-2 h-2 rounded-full ${
+                    isCurrent ? 'bg-white animate-pulse' :
+                    (latency || 0) < 150 ? 'bg-emerald-400' :
+                    (latency || 0) < 350 ? 'bg-amber-400' : 'bg-white/30'
+                  }`} />
+                  <span className="truncate max-w-[100px]">{source.sourceName || source.source}</span>
+                  {latency !== undefined && (
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-md ${
+                      isCurrent ? 'bg-black/30 text-white' : 'bg-white/10 text-white/60'
+                    }`}>
+                      {latency}ms
+                    </span>
+                  )}
+                  {isFastest && !isCurrent && (
+                    <span className="text-[9px] px-1 bg-emerald-500/20 text-emerald-300 rounded font-black">
+                      推荐
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
-      {/* Episode List Header */}
-      <h3 className="text-lg sm:text-xl font-bold text-[var(--text-color)] mb-4 flex items-center gap-2">
-        <Icons.List size={20} className="sm:w-6 sm:h-6" />
-        <span>选集</span>
-        {episodes && (
-          <Badge variant="primary">{episodes.length}</Badge>
-        )}
-        {/* Reverse order toggle button - only show when more than 1 episode */}
-        {showReverseToggle && (
-          <button
-            onClick={() => onToggleReverse?.(!isReversed)}
-            className={`
-              ml-auto p-1.5 rounded-[var(--radius-2xl)] transition-all duration-200
-              ${isReversed
-                ? 'bg-[var(--accent-color)] text-white'
-                : 'bg-[var(--glass-bg)] text-[var(--text-color-secondary)] hover:bg-[var(--glass-hover)] border border-[var(--glass-border)]'
-              }
-            `}
-            aria-label={isReversed ? '恢复正序' : '倒序排列'}
-            title={isReversed ? '恢复正序' : '倒序排列'}
-          >
-            <Icons.ArrowUpDown size={16} />
-          </button>
-        )}
-      </h3>
+      {/* 2. 🎬 剧集选集面板 */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span className="text-base">📺</span>
+            <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
+              <span>正片选集</span>
+              {episodes && (
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-white/10 text-white/80">
+                  共 {episodes.length} 集
+                </span>
+              )}
+            </h3>
+          </div>
 
-      <div
-        ref={listRef}
-        className="max-h-[400px] sm:max-h-[600px] overflow-y-auto space-y-2 pr-2"
-        role="radiogroup"
-        aria-label="剧集选择"
-      >
-        {displayEpisodes && displayEpisodes.length > 0 ? (
-          displayEpisodes.map((episode, displayIndex) => {
-            const originalIndex = getOriginalIndex(displayIndex);
-            const isCurrentEpisode = currentEpisode === originalIndex;
+          {/* 倒序/正序切换 */}
+          {episodes && episodes.length > 1 && (
+            <button
+              onClick={() => onToggleReverse?.(!isReversed)}
+              className={`p-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                isReversed
+                  ? 'bg-[var(--accent-color)] text-white shadow-md'
+                  : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10 border border-white/10'
+              }`}
+              title={isReversed ? '切换为正序' : '切换为倒序'}
+            >
+              <Icons.ArrowUpDown size={13} />
+              <span className="text-[11px]">{isReversed ? '倒序' : '正序'}</span>
+            </button>
+          )}
+        </div>
 
-            return (
+        {/* 选集范围 Tabs（当集数超过 30 集时） */}
+        {episodeTabs && (
+          <div className="flex gap-1.5 overflow-x-auto no-scrollbar mb-3 pb-1">
+            {episodeTabs.map(tab => (
               <button
-                key={originalIndex}
-                ref={(el) => { buttonRefs.current[displayIndex] = el; }}
-                onClick={() => onEpisodeClick(episode, originalIndex)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    onEpisodeClick(episode, originalIndex);
-                  }
-                }}
-                tabIndex={0}
-                role="radio"
-                aria-checked={isCurrentEpisode}
-                aria-current={isCurrentEpisode ? 'true' : undefined}
-                aria-label={`${episode.name || `第 ${originalIndex + 1} 集`}${isCurrentEpisode ? '，当前播放' : ''}`}
-                className={`
-                  w-full px-3 py-2 sm:px-4 sm:py-3 rounded-[var(--radius-2xl)] text-left transition-[var(--transition-fluid)] cursor-pointer
-                  ${isCurrentEpisode
-                    ? 'bg-[var(--accent-color)] text-white shadow-[0_4px_12px_color-mix(in_srgb,var(--accent-color)_50%,transparent)] brightness-110'
-                    : 'bg-[var(--glass-bg)] hover:bg-[var(--glass-hover)] text-[var(--text-color)] border border-[var(--glass-border)]'
-                  }
-                  focus-visible:ring-2 focus-visible:ring-[var(--accent-color)] focus-visible:ring-offset-2
-                `}
+                key={tab.index}
+                onClick={() => setSelectedRangeIndex(tab.index)}
+                className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                  selectedRangeIndex === tab.index
+                    ? 'bg-white/20 text-white border border-white/30'
+                    : 'bg-white/5 text-white/50 hover:text-white hover:bg-white/10'
+                }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className="font-medium text-sm sm:text-base">
-                    {episode.name || `第 ${originalIndex + 1} 集`}
-                  </span>
-                  {isCurrentEpisode && (
-                    <Icons.Play size={16} />
-                  )}
-                </div>
+                {tab.start}-{tab.end}
               </button>
-            );
-          })
-        ) : (
-          <div className="text-center py-8 text-[var(--text-secondary)]">
-            <Icons.Inbox size={48} className="text-[var(--text-color-secondary)] mx-auto mb-2" />
-            <p>暂无剧集信息</p>
+            ))}
           </div>
         )}
+
+        {/* 选集按钮容器 */}
+        <div
+          ref={listRef}
+          className={`max-h-[380px] sm:max-h-[520px] overflow-y-auto pr-1 ${
+            isGridFormat
+              ? 'grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2'
+              : 'space-y-2'
+          }`}
+          role="radiogroup"
+        >
+          {currentTabEpisodes && currentTabEpisodes.length > 0 ? (
+            currentTabEpisodes.map((episode, idxInTab) => {
+              const displayIndex = episodeTabs ? selectedRangeIndex * EPISODES_PER_TAB + idxInTab : idxInTab;
+              const originalIndex = getOriginalIndex(displayIndex);
+              const isCurrentEpisode = currentEpisode === originalIndex;
+
+              return (
+                <button
+                  key={originalIndex}
+                  ref={el => { buttonRefs.current[displayIndex] = el; }}
+                  onClick={() => onEpisodeClick(episode, originalIndex)}
+                  className={`
+                    relative transition-all duration-300 cursor-pointer rounded-2xl flex items-center justify-center font-bold text-center select-none active:scale-95
+                    ${isGridFormat ? 'h-12 text-xs sm:text-sm' : 'w-full py-3 px-4 text-left justify-between'}
+                    ${isCurrentEpisode
+                      ? 'bg-[var(--accent-color)] text-white shadow-xl shadow-[var(--accent-color)]/40 ring-2 ring-white/30 scale-102 z-10'
+                      : 'bg-white/5 hover:bg-white/15 text-white/80 hover:text-white border border-white/10'
+                    }
+                  `}
+                >
+                  <span className="truncate px-1">
+                    {episode.name || `${originalIndex + 1}`}
+                  </span>
+
+                  {/* 正在播放声波均衡器动画 */}
+                  {isCurrentEpisode && (
+                    <div className="absolute right-2.5 flex items-end gap-0.5 h-3.5">
+                      <span className="w-0.5 bg-white rounded-full animate-eq-1" />
+                      <span className="w-0.5 bg-white rounded-full animate-eq-2" />
+                      <span className="w-0.5 bg-white rounded-full animate-eq-3" />
+                    </div>
+                  )}
+                </button>
+              );
+            })
+          ) : (
+            <div className="col-span-full py-12 text-center text-white/30">
+              <Icons.Inbox size={40} className="mx-auto mb-2 opacity-30" />
+              <p className="text-xs">暂无可用剧集</p>
+            </div>
+          )}
+        </div>
       </div>
-    </Card>
+    </div>
   );
 }
