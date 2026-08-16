@@ -58,31 +58,43 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   } = usePopularMovies(selectedTag, tags, contentType);
 
   // 主题货架分片数据获取
-  const [latestMovies, setLatestMovies] = useState<any[]>([]);
-  const [highRateMovies, setHighRateMovies] = useState<any[]>([]);
-  const [chineseMovies, setChineseMovies] = useState<any[]>([]);
+  const [shelf1Movies, setShelf1Movies] = useState<any[]>([]);
+  const [shelf2Movies, setShelf2Movies] = useState<any[]>([]);
+  const [shelf3Movies, setShelf3Movies] = useState<any[]>([]);
+  const [shelf4Movies, setShelf4Movies] = useState<any[]>([]);
   const [loadingShelves, setLoadingShelves] = useState(true);
+
+  // 根据 contentType 动态确定 4 个货架的标签
+  const isMovie = contentType === 'movie';
+  const tag1 = isMovie ? '最新' : '国产剧';
+  const tag2 = isMovie ? '豆瓣高分' : '美剧';
+  const tag3 = isMovie ? '华语' : '韩剧';
+  const tag4 = isMovie ? '欧美' : '日本动画';
 
   useEffect(() => {
     let isMounted = true;
     const fetchShelves = async () => {
       setLoadingShelves(true);
       try {
-        const [resLatest, resHigh, resChinese] = await Promise.allSettled([
-          fetch(`/api/douban/movies?tag=最新&type=${contentType}&page_limit=12&page_start=0`).then(r => r.json()),
-          fetch(`/api/douban/movies?tag=豆瓣高分&type=${contentType}&page_limit=12&page_start=0`).then(r => r.json()),
-          fetch(`/api/douban/movies?tag=华语&type=${contentType}&page_limit=12&page_start=0`).then(r => r.json()),
+        const [res1, res2, res3, res4] = await Promise.allSettled([
+          fetch(`/api/douban/recommend?tag=${encodeURIComponent(tag1)}&type=${contentType}&page_limit=14&page_start=0`).then(r => r.json()),
+          fetch(`/api/douban/recommend?tag=${encodeURIComponent(tag2)}&type=${contentType}&page_limit=14&page_start=0`).then(r => r.json()),
+          fetch(`/api/douban/recommend?tag=${encodeURIComponent(tag3)}&type=${contentType}&page_limit=14&page_start=0`).then(r => r.json()),
+          fetch(`/api/douban/recommend?tag=${encodeURIComponent(tag4)}&type=${contentType}&page_limit=14&page_start=0`).then(r => r.json()),
         ]);
 
         if (isMounted) {
-          if (resLatest.status === 'fulfilled' && resLatest.value?.subjects) {
-            setLatestMovies(resLatest.value.subjects);
+          if (res1.status === 'fulfilled' && res1.value?.subjects?.length) {
+            setShelf1Movies(res1.value.subjects);
           }
-          if (resHigh.status === 'fulfilled' && resHigh.value?.subjects) {
-            setHighRateMovies(resHigh.value.subjects);
+          if (res2.status === 'fulfilled' && res2.value?.subjects?.length) {
+            setShelf2Movies(res2.value.subjects);
           }
-          if (resChinese.status === 'fulfilled' && resChinese.value?.subjects) {
-            setChineseMovies(resChinese.value.subjects);
+          if (res3.status === 'fulfilled' && res3.value?.subjects?.length) {
+            setShelf3Movies(res3.value.subjects);
+          }
+          if (res4.status === 'fulfilled' && res4.value?.subjects?.length) {
+            setShelf4Movies(res4.value.subjects);
           }
         }
       } catch (err) {
@@ -96,7 +108,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
     return () => {
       isMounted = false;
     };
-  }, [contentType]);
+  }, [contentType, tag1, tag2, tag3, tag4]);
 
   const handleMovieClick = (movie: any) => {
     const params = new URLSearchParams();
@@ -162,39 +174,49 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         contentType={contentType}
       />
 
-      {/* 4. 🆕 院线首播 & 最新上映滑轨 */}
+      {/* 4. 货架 1：院线首播/最新 或 热播国产剧 */}
       <ContentRail
-        title="院线首播 & 最新上映"
-        icon="✨"
-        badge="NEW"
-        movies={latestMovies}
+        title={isMovie ? '院线首播 & 最新上映' : '华语热播连续剧'}
+        icon={isMovie ? '✨' : '🔥'}
+        badge={isMovie ? 'NEW' : 'HOT'}
+        movies={shelf1Movies}
         loading={loadingShelves}
         onMovieClick={handleMovieClick}
-        onViewAll={() => setSelectedTag('最新')}
+        onViewAll={() => setSelectedTag(tag1)}
       />
 
-      {/* 5. ⭐ 豆瓣 8.5+ 影史高分神作滑轨 */}
+      {/* 5. 货架 2：豆瓣高分 或 欧美顶级神剧 */}
       <ContentRail
-        title="豆瓣 8.5+ 影史必看神作"
-        icon="⭐"
-        badge="HIGH RATED"
-        movies={highRateMovies}
+        title={isMovie ? '豆瓣 8.5+ 影史必看神作' : '顶级欧美神剧精选'}
+        icon={isMovie ? '⭐' : '🌟'}
+        badge={isMovie ? 'HIGH RATED' : 'TOP US'}
+        movies={shelf2Movies}
         loading={loadingShelves}
         onMovieClick={handleMovieClick}
-        onViewAll={() => setSelectedTag('豆瓣高分')}
+        onViewAll={() => setSelectedTag(tag2)}
       />
 
-      {/* 6. 🏮 华语精选热播专区 */}
+      {/* 6. 货架 3：华语精选 或 人气日韩剧 */}
       <ContentRail
-        title="华语热门热播精选"
-        icon="🏮"
-        movies={chineseMovies}
+        title={isMovie ? '华语经典口碑大片' : '人气韩剧 & 日剧精选'}
+        icon={isMovie ? '🏮' : '🍿'}
+        movies={shelf3Movies}
         loading={loadingShelves}
         onMovieClick={handleMovieClick}
-        onViewAll={() => setSelectedTag('华语')}
+        onViewAll={() => setSelectedTag(tag3)}
       />
 
-      {/* 7. 🏷️ 深度题材与分类探索区 */}
+      {/* 7. 货架 4：好莱坞大片 或 动漫新番 */}
+      <ContentRail
+        title={isMovie ? '好莱坞 & 欧美科幻大片' : '热血动漫 & 新番连载'}
+        icon={isMovie ? '🚀' : '⚡'}
+        movies={shelf4Movies}
+        loading={loadingShelves}
+        onMovieClick={handleMovieClick}
+        onViewAll={() => setSelectedTag(tag4)}
+      />
+
+      {/* 8. 🏷️ 深度题材与分类探索区 */}
       <div className="mt-14 pt-8 border-t border-white/10">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
