@@ -15,6 +15,7 @@ import { PasswordGate } from "@/components/PasswordGate";
 import { AdKeywordsInjector } from "@/components/AdKeywordsInjector";
 import { BackToTop } from "@/components/ui/BackToTop";
 import { ScrollPositionManager } from "@/components/ScrollPositionManager";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { Footer } from "@/components/layout/Footer";
 
 import { Suspense } from 'react';
@@ -215,6 +216,7 @@ export default function RootLayout({
               <Footer />
               <BackToTop />
               <ScrollPositionManager />
+              <MobileBottomNav />
             </PasswordGate>
           </TVProvider>
 

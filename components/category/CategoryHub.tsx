@@ -193,10 +193,10 @@ export function CategoryHub({
         activeCategory={activeNav}
       />
 
-      <div className="fluid-container pt-4 pb-20 space-y-10">
+      <div className="fluid-container pt-3 sm:pt-4 pb-24 sm:pb-20 space-y-6 sm:space-y-10">
         {/* 1. 频道顶部焦点巨幕 (Hero Spotlight) */}
         {heroMovie && (
-          <div className="relative w-full h-[45vh] sm:h-[55vh] lg:h-[60vh] max-h-150 rounded-3xl overflow-hidden shadow-2xl border border-white/10 group select-none">
+          <div className="relative w-full h-[48vh] min-h-[340px] sm:h-[55vh] lg:h-[60vh] max-h-150 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-white/10 group select-none">
             {/* 背景大图 */}
             <div className="absolute inset-0">
               <img
@@ -214,26 +214,26 @@ export function CategoryHub({
             </div>
 
             {/* 巨幕内容 */}
-            <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-10 max-w-2xl">
-              <div className="flex items-center gap-2 mb-2.5">
-                <span className="px-3 py-1 bg-(--accent-color) text-white text-xs font-black rounded-full shadow-lg">
+            <div className="relative z-10 h-full flex flex-col justify-end p-4 sm:p-10 max-w-2xl">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-(--accent-color) text-white text-[11px] sm:text-xs font-black rounded-full shadow-lg">
                   {categoryTitle} · 焦点热播
                 </span>
                 {heroMovie.rate && parseFloat(heroMovie.rate) > 0 && (
-                  <span className="px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 text-xs font-black rounded-full border border-amber-400/30">
+                  <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-black/60 backdrop-blur-md text-amber-300 text-[11px] sm:text-xs font-black rounded-full border border-amber-400/30">
                     ★ 豆瓣 {heroMovie.rate}
                   </span>
                 )}
               </div>
 
-              <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight drop-shadow-2xl mb-4">
+              <h1 className="text-2xl sm:text-5xl font-black text-white tracking-tight drop-shadow-2xl mb-3 sm:mb-4 line-clamp-2">
                 {heroMovie.title}
               </h1>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5 sm:gap-3">
                 <button
                   onClick={() => handleMovieClick(heroMovie)}
-                  className="px-7 py-3 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-2xl text-sm font-bold flex items-center gap-2 shadow-2xl transition-all cursor-pointer"
+                  className="flex-1 sm:flex-none justify-center px-5 sm:px-7 py-2.5 sm:py-3 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-1.5 sm:gap-2 shadow-2xl transition-all cursor-pointer"
                 >
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
@@ -242,9 +242,9 @@ export function CategoryHub({
                 </button>
                 <button
                   onClick={() => handleSearch(heroMovie.title)}
-                  className="px-5 py-3 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-xl text-white rounded-2xl text-sm font-semibold flex items-center gap-2 border border-white/15 transition-all cursor-pointer"
+                  className="flex-1 sm:flex-none justify-center px-4 sm:px-5 py-2.5 sm:py-3 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-xl text-white rounded-xl sm:rounded-2xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 sm:gap-2 border border-white/15 transition-all cursor-pointer"
                 >
-                  <Icons.Search size={16} />
+                  <Icons.Search size={14} />
                   搜全网源
                 </button>
               </div>
@@ -272,7 +272,7 @@ export function CategoryHub({
         </div>
 
         {/* 3. 多维综合分类筛选矩阵 */}
-        <div className="bg-[#0A0A0F]/80 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5">
+        <div className="bg-[#0A0A0F]/90 backdrop-blur-2xl border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-2xl space-y-4 sm:space-y-5">
           <div className="flex items-center justify-between border-b border-white/10 pb-4">
             <div className="flex items-center gap-2.5">
               <span className="text-2xl">🎛️</span>

@@ -274,26 +274,45 @@ export function Navbar({
 
       {/* 移动端下拉分类抽屉 */}
       {mobileMenuOpen && !isPlayer && (
-        <div className="lg:hidden bg-[#0A0A0F]/95 backdrop-blur-3xl border-b border-white/10 px-4 py-4 animate-fade-in">
+        <div className="lg:hidden bg-[#0A0A0F]/98 backdrop-blur-3xl border-b border-white/10 px-4 pt-3 pb-5 animate-fade-in shadow-2xl">
+          <div className="flex items-center justify-between mb-3 px-1">
+            <span className="text-xs font-bold text-white/50 tracking-wider">频道与专区直通</span>
+            <span className="text-[10px] text-white/30">点击切换频道</span>
+          </div>
           <div className="grid grid-cols-3 gap-2">
-            {navCategories.map(cat => (
-              <button
-                key={cat.id}
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  router.push(cat.href);
-                }}
-                className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  cat.isVip
-                    ? 'bg-amber-400/10 text-amber-400 border border-amber-400/30'
-                    : (pathname === cat.href || (cat.href === '/' && pathname === '') || activeCategory === cat.id)
-                    ? 'bg-(--accent-color) text-white shadow-md'
-                    : 'bg-white/5 text-white/80 hover:bg-white/10'
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
+            {navCategories.map(cat => {
+              const isActive = pathname === cat.href || (cat.href === '/' && pathname === '') || activeCategory === cat.id;
+
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    router.push(cat.href);
+                  }}
+                  className={`py-3 px-2 rounded-2xl text-xs font-bold transition-all cursor-pointer flex flex-col items-center justify-center gap-1 active:scale-95 ${
+                    cat.isVip
+                      ? 'bg-amber-400/10 text-amber-400 border border-amber-400/30'
+                      : isActive
+                      ? 'bg-(--accent-color) text-white shadow-lg shadow-(--accent-color)/30 font-black'
+                      : 'bg-white/5 text-white/80 hover:bg-white/10 border border-white/5'
+                  }`}
+                >
+                  <span className="text-sm">
+                    {cat.id === 'home' && '🏠'}
+                    {cat.id === 'movie' && '🎬'}
+                    {cat.id === 'tv' && '📺'}
+                    {cat.id === 'guoman' && '🏮'}
+                    {cat.id === 'anime' && '⚡'}
+                    {cat.id === 'variety' && '🎤'}
+                    {cat.id === 'ranking' && '🏆'}
+                    {cat.id === 'iptv' && '📡'}
+                    {cat.id === 'premium' && '👑'}
+                  </span>
+                  <span>{cat.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

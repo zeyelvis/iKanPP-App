@@ -104,13 +104,13 @@ export function CategoryBrandBar() {
         </span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2.5 sm:gap-4 [&>*:last-child]:col-span-2 sm:[&>*:last-child]:col-span-1">
         {HUB_TILES.map((tile) => (
           <Link
             key={tile.title}
             href={tile.href}
             prefetch={false}
-            className={`group relative overflow-hidden rounded-2xl bg-[#0A0A0F]/90 border border-white/10 p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 ${tile.glow} ${tile.border} cursor-pointer`}
+            className={`group relative overflow-hidden rounded-2xl bg-[#0A0A0F]/90 border border-white/10 p-3.5 sm:p-5 flex flex-col justify-between transition-all duration-300 active:scale-98 hover:-translate-y-1 ${tile.glow} ${tile.border} cursor-pointer`}
           >
             {/* 背景动态流光渐变 */}
             <div

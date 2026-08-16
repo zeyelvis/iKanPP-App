@@ -93,7 +93,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   };
 
   return (
-    <div className="animate-fade-in pb-16">
+    <div className="animate-fade-in pb-28 sm:pb-16">
       {/* 1. 🏆 影院级全景沉浸式巨幕 Billboard */}
       <HeroSlideshow contentType={contentType} onSearch={onSearch} />
 

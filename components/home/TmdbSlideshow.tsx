@@ -155,11 +155,34 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
   const activeBackdrop = backdrops[active.title] || active.cover;
   const displayItems = currentData.slice(0, 6);
 
+  // 移动端左右轻扫手势状态
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStart === null) return;
+    const touchEnd = e.changedTouches[0].clientX;
+    const diff = touchStart - touchEnd;
+    if (diff > 45) {
+      // 向左滑 -> 下一张
+      setActiveIndex(prev => (prev + 1) % Math.min(currentData.length, 6));
+    } else if (diff < -45) {
+      // 向右滑 -> 上一张
+      setActiveIndex(prev => (prev - 1 + Math.min(currentData.length, 6)) % Math.min(currentData.length, 6));
+    }
+    setTouchStart(null);
+  };
+
   return (
     <div
-      className="relative w-full h-[55vh] sm:h-[64vh] lg:h-[72vh] max-h-187.5 rounded-3xl overflow-hidden mb-10 group select-none shadow-2xl border border-white/10"
+      className="relative w-full h-[58vh] min-h-[390px] sm:h-[64vh] lg:h-[72vh] max-h-187.5 rounded-3xl overflow-hidden mb-10 group select-none shadow-2xl border border-white/10"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {/* 1. 全景大图背景 */}
       <div className="absolute inset-0 transition-all duration-1000 ease-out">
@@ -236,12 +259,12 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
           ) : null}
 
           {/* 操作按钮组 */}
-          <div className="flex items-center gap-3.5">
+          <div className="flex items-center gap-2.5 sm:gap-3.5 w-full sm:w-auto">
             <button
               onClick={() => handleMovieClick(active)}
-              className="px-6 sm:px-8 py-3 sm:py-3.5 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-2xl text-sm sm:text-base font-bold flex items-center gap-2.5 shadow-2xl transition-all cursor-pointer hover:shadow-[0_0_25px_rgba(229,9,20,0.6)]"
+              className="flex-1 sm:flex-none justify-center px-5 sm:px-8 py-3 sm:py-3.5 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-2xl text-xs sm:text-base font-bold flex items-center gap-2 shadow-2xl transition-all cursor-pointer hover:shadow-[0_0_25px_rgba(229,9,20,0.6)]"
             >
-              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z" />
               </svg>
               立即播放
@@ -250,9 +273,9 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
             {onSearch && (
               <button
                 onClick={() => onSearch(active.title)}
-                className="px-5 sm:px-6 py-3 sm:py-3.5 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-xl text-white rounded-2xl text-sm sm:text-base font-semibold flex items-center gap-2 border border-white/20 transition-all cursor-pointer"
+                className="flex-1 sm:flex-none justify-center px-4 sm:px-6 py-3 sm:py-3.5 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-xl text-white rounded-2xl text-xs sm:text-base font-semibold flex items-center gap-1.5 sm:gap-2 border border-white/20 transition-all cursor-pointer"
               >
-                <Icons.Search size={18} />
+                <Icons.Search size={16} />
                 全网搜源
               </button>
             )}

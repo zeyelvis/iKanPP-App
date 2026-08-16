@@ -58,6 +58,23 @@
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 移动端安全区辅助类 */
+.pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+.pt-safe {
+    padding-top: env(safe-area-inset-top, 16px);
+}
+.mb-safe {
+    margin-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+/* 移动端触控优化 */
+button, a, input, select, textarea {
+    touch-action: manipulation;
 }
 
 /* Global Pointer Cursor for Interactive Elements */
