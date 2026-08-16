@@ -4,85 +4,16 @@ import { isSafeExternalUrl } from '@/lib/utils/security';
 
 export const runtime = 'edge';
 
-// 豆瓣合法核心主标签
+// 豆瓣电影合法核心标签
 const VALID_MOVIE_TAGS = new Set([
   '热门', '最新', '经典', '可播放', '豆瓣高分', '冷门佳片',
   '华语', '欧美', '韩国', '日本', '动作', '喜剧', '爱情', '科幻', '悬疑', '恐怖', '动画'
 ]);
 
+// 豆瓣电视剧合法核心标签
 const VALID_TV_TAGS = new Set([
-  '热门', '国产剧', '美剧', '英剧', '韩剧', '日剧', '港剧', '日本动画', '综艺', '纪录片'
+  '热门', '国产剧', '美剧', '英剧', '韩剧', '日剧', '港剧', '日本动画', '国产动画', '综艺', '纪录片'
 ]);
-
-/**
- * 将前端任意多维筛选词智能规范化为豆瓣最匹配的检索主标签
- */
-function normalizeDoubanTag(tag: string, type: 'movie' | 'tv'): { primary: string; fallback: string } {
-  const cleanTag = tag.trim();
-
-  if (type === 'movie') {
-    if (VALID_MOVIE_TAGS.has(cleanTag)) {
-      return { primary: cleanTag, fallback: '热门' };
-    }
-
-    // 年份映射
-    if (cleanTag === '2026' || cleanTag === '2025') return { primary: '最新', fallback: '热门' };
-    if (cleanTag === '2024') return { primary: '热门', fallback: '最新' };
-    if (cleanTag === '2023' || cleanTag === '经典高分') return { primary: '经典', fallback: '豆瓣高分' };
-
-    // 地区映射
-    if (cleanTag === '中国香港' || cleanTag === '香港' || cleanTag === '中国台湾' || cleanTag === '台湾') {
-      return { primary: '华语', fallback: '热门' };
-    }
-    if (cleanTag === '美国' || cleanTag === '英国' || cleanTag === '法国' || cleanTag === '欧美') {
-      return { primary: '欧美', fallback: '热门' };
-    }
-
-    // 题材映射
-    if (cleanTag === '犯罪') return { primary: '悬疑', fallback: '热门' };
-    if (cleanTag === '奇幻') return { primary: '科幻', fallback: '热门' };
-    if (cleanTag === '战争') return { primary: '动作', fallback: '热门' };
-    if (cleanTag === '纪录片') return { primary: '冷门佳片', fallback: '热门' };
-
-    return { primary: '热门', fallback: '最新' };
-  } else {
-    // TV / 电视剧 / 动漫 / 综艺
-    if (VALID_TV_TAGS.has(cleanTag)) {
-      return { primary: cleanTag, fallback: '热门' };
-    }
-
-    // 年份映射
-    if (cleanTag === '2026' || cleanTag === '2025' || cleanTag === '2024' || cleanTag === '2023' || cleanTag === '高分必看') {
-      return { primary: '热门', fallback: '国产剧' };
-    }
-
-    // 电视剧题材与地区映射
-    if (['古装', '都市', '悬疑', '爱情', '武侠', '历史', '喜剧', '犯罪', '战争'].includes(cleanTag)) {
-      return { primary: '国产剧', fallback: '热门' };
-    }
-    if (cleanTag === '港剧' || cleanTag === '香港') return { primary: '港剧', fallback: '国产剧' };
-    if (cleanTag === '台剧' || cleanTag === '台湾') return { primary: '国产剧', fallback: '热门' };
-    if (cleanTag === '美剧' || cleanTag === '欧美' || cleanTag === '欧美真人秀') return { primary: '美剧', fallback: '热门' };
-    if (cleanTag === '英剧' || cleanTag === '英国') return { primary: '英剧', fallback: '美剧' };
-    if (cleanTag === '韩剧' || cleanTag === '韩国' || cleanTag === '韩国综艺') return { primary: '韩剧', fallback: '热门' };
-    if (cleanTag === '日剧' || cleanTag === '日本') return { primary: '日剧', fallback: '热门' };
-    if (cleanTag === '泰剧' || cleanTag === '泰国') return { primary: '热门', fallback: '国产剧' };
-
-    // 动漫题材与类型映射
-    if (['日本动画', '热血', '奇幻', '科幻', '冒险', '搞笑', '恋爱', '日常', '治愈', '动漫', '经典神作'].includes(cleanTag)) {
-      return { primary: '日本动画', fallback: '热门' };
-    }
-    if (cleanTag === '国产动画') return { primary: '国产剧', fallback: '日本动画' };
-    if (cleanTag === '欧美动画') return { primary: '美剧', fallback: '日本动画' };
-
-    // 综艺
-    if (['综艺', '真人秀', '脱口秀', '音乐', '喜剧', '美食', '旅行', '访谈', '大陆综艺', '港台综艺'].includes(cleanTag)) {
-      return { primary: '综艺', fallback: '热门' };
-    }
-
-    return { primary: '热门', fallback: '国产剧' };
-  }
-}
 
 /**
  * 抓取豆瓣 API 结果
@@ -115,11 +46,11 @@ async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number,
 }
 
 /**
- * 从高速采集站多源并行抓取，并根据多维条件智能过滤匹配
+ * 从高速采集站抓取并解析特定词
  */
 async function fetchCmsSingleQuery(query: string, pageLimit: number): Promise<any[]> {
   try {
-    const targetSources = DEFAULT_SOURCES.slice(0, 5).filter(s => s && s.enabled !== false && isSafeExternalUrl(s.baseUrl));
+    const targetSources = DEFAULT_SOURCES.slice(0, 4).filter(s => s && s.enabled !== false && isSafeExternalUrl(s.baseUrl));
 
     const results = await Promise.allSettled(
       targetSources.map(async (source) => {
@@ -157,6 +88,7 @@ async function fetchCmsSingleQuery(query: string, pageLimit: number): Promise<an
             area: item.vod_area || '',
             year: item.vod_year || '',
             typeName: item.type_name || '',
+            vodClass: item.vod_class || '',
           });
         }
       }
@@ -184,85 +116,106 @@ export async function GET(request: Request) {
   const pageLimit = Math.min(Math.max(parseInt(searchParams.get('page_limit') || '20', 10) || 20, 1), 50);
   const pageStart = Math.max(parseInt(searchParams.get('page_start') || '0', 10) || 0, 0);
 
-  // 确定针对豆瓣与采集站各自的主检索词
-  // 对于电视剧 (tv):
-  // - 豆瓣的主标签应该是地区（如 "国产剧", "美剧", "韩剧", "日剧", "港剧"）
-  // - 采集站可以精准查题材（如 "古装", "都市", "悬疑", "武侠"）
-  let doubanTag = '';
-  if (region && VALID_TV_TAGS.has(region)) {
-    doubanTag = region;
-  } else if (genre && VALID_MOVIE_TAGS.has(genre) && type === 'movie') {
-    doubanTag = genre;
-  } else if (region && VALID_MOVIE_TAGS.has(region) && type === 'movie') {
-    doubanTag = region;
+  // 1. 确定针对豆瓣的 1~3 个最精准查询 Tag
+  const doubanTags: string[] = [];
+
+  if (type === 'movie') {
+    // 电影地区映射
+    const regionMap: Record<string, string> = {
+      '华语': '华语', '香港': '华语', '中国香港': '华语', '台湾': '华语', '中国台湾': '华语',
+      '欧美': '欧美', '美国': '欧美', '英国': '欧美', '法国': '欧美',
+      '韩国': '韩国', '日本': '日本',
+    };
+    // 电影题材映射
+    const genreMap: Record<string, string> = {
+      '动作': '动作', '喜剧': '喜剧', '爱情': '爱情', '科幻': '科幻', '悬疑': '悬疑',
+      '恐怖': '恐怖', '动画': '动画', '犯罪': '悬疑', '奇幻': '科幻', '战争': '动作', '纪录片': '冷门佳片',
+    };
+    // 年份映射
+    const yearMap: Record<string, string> = {
+      '2026': '最新', '2025': '最新', '2024': '热门', '2023': '经典', '经典高分': '豆瓣高分'
+    };
+
+    if (region && regionMap[region]) doubanTags.push(regionMap[region]);
+    if (genre && genreMap[genre] && !doubanTags.includes(genreMap[genre])) doubanTags.push(genreMap[genre]);
+    if (doubanTags.length === 0 && year && yearMap[year]) doubanTags.push(yearMap[year]);
+    if (doubanTags.length === 0) doubanTags.push(rawTag && VALID_MOVIE_TAGS.has(rawTag) ? rawTag : '热门');
   } else {
-    doubanTag = normalizeDoubanTag(region || genre || rawTag || '热门', type).primary;
+    // 电视剧 / 动漫 / 国漫 / 综艺
+    const tvRegionMap: Record<string, string> = {
+      '国产剧': '国产剧', '美剧': '美剧', '韩剧': '韩剧', '日剧': '日剧',
+      '港剧': '港剧', '香港': '港剧', '英剧': '英剧', '英国': '英剧',
+      '台剧': '国产剧', '台湾': '国产剧', '泰剧': '热门',
+      '日本动画': '日本动画', '国产动画': '国产动画', '国创': '国产动画', '国漫': '国产动画', '动漫': '日本动画',
+      '综艺': '综艺', '纪录片': '纪录片',
+    };
+
+    if (region && tvRegionMap[region]) doubanTags.push(tvRegionMap[region]);
+    else if (genre === '国漫' || genre === '国产动画') doubanTags.push('国产动画');
+    else if (genre === '日本动画' || genre === '动漫') doubanTags.push('日本动画');
+    else if (genre === '综艺') doubanTags.push('综艺');
+    else if (rawTag && VALID_TV_TAGS.has(rawTag)) doubanTags.push(rawTag);
+    else doubanTags.push('国产剧');
   }
 
-  // 采集站主查询词（使用最具体的单一词，避免多词导致采集站 0 匹配）
-  const cmsQuery = genre || region || (year ? (type === 'movie' ? '2026' : '电视剧') : '热门');
-
   try {
-    // 并行获取豆瓣与采集站数据
-    const [doubanRes, cmsRes] = await Promise.allSettled([
-      fetchDoubanSubjects(type, doubanTag, pageLimit, pageStart),
-      fetchCmsSingleQuery(cmsQuery, pageLimit),
-    ]);
+    // 2. 并行抓取豆瓣所有匹配的标签
+    const fetchResults = await Promise.allSettled(
+      doubanTags.map(tag => fetchDoubanSubjects(type, tag, pageLimit, pageStart))
+    );
 
-    const doubanList = doubanRes.status === 'fulfilled' ? doubanRes.value : [];
-    const cmsList = cmsRes.status === 'fulfilled' ? cmsRes.value : [];
+    const pool: any[] = [];
+    const countMap = new Map<string, number>();
 
-    // 智能融合两路数据
-    const seenTitles = new Set<string>();
-    const subjects: any[] = [];
+    fetchResults.forEach(res => {
+      if (res.status === 'fulfilled' && Array.isArray(res.value)) {
+        res.value.forEach(s => {
+          const count = countMap.get(s.title) || 0;
+          countMap.set(s.title, count + 1);
+          if (count === 0) pool.push(s);
+        });
+      }
+    });
 
-    // 1. 如果指定了题材（如 古装），优先放入采集站搜到的精准题材剧集
-    if (genre) {
-      for (const item of cmsList) {
-        if (!seenTitles.has(item.title)) {
-          seenTitles.add(item.title);
-          subjects.push(item);
+    // 3. 如果指定了特殊题材（如 古装 / 悬疑 / 武侠），或者需要补充特定地区，从采集站补充精准匹配内容
+    const needCmsSupplement = (type === 'tv' && genre && !['热门', '全部'].includes(genre)) || (region === '中国香港' || region === '港剧');
+    if (needCmsSupplement) {
+      const cmsQuery = genre || region;
+      const cmsList = await fetchCmsSingleQuery(cmsQuery, 15);
+      cmsList.forEach(item => {
+        if (!countMap.has(item.title)) {
+          countMap.set(item.title, 2); // 给予高优先级
+          pool.unshift(item);
         }
-      }
+      });
     }
 
-    // 2. 补充豆瓣高分热门剧集/电影
-    for (const item of doubanList) {
-      if (!seenTitles.has(item.title)) {
-        seenTitles.add(item.title);
-        subjects.push(item);
-      }
-    }
+    // 4. 精准多维重排算法：
+    // - 命中了多个筛选条件的影片（交集项）排在最前列
+    // - 评分高的优质影片排在前面
+    pool.sort((a, b) => {
+      const countA = countMap.get(a.title) || 0;
+      const countB = countMap.get(b.title) || 0;
+      if (countB !== countA) return countB - countA;
+      return (parseFloat(b.rate) || 0) - (parseFloat(a.rate) || 0);
+    });
 
-    // 3. 补充其余采集站内容
-    for (const item of cmsList) {
-      if (!seenTitles.has(item.title)) {
-        seenTitles.add(item.title);
-        subjects.push(item);
-      }
-    }
-
-    // 4. 若依然为空（极罕见），使用全站兜底热门标签
-    if (subjects.length === 0) {
+    // 5. 若 pool 依然为空（极罕见），兜底加载热门
+    if (pool.length === 0) {
       const fallbackList = await fetchDoubanSubjects(type, type === 'movie' ? '热门' : '国产剧', pageLimit, pageStart);
-      for (const item of fallbackList) {
-        if (!seenTitles.has(item.title)) {
-          seenTitles.add(item.title);
-          subjects.push(item);
-        }
-      }
+      pool.push(...fallbackList);
     }
 
     return NextResponse.json({
-      subjects: subjects.slice(0, pageLimit),
-      tag: doubanTag,
+      subjects: pool.slice(0, pageLimit),
+      tag: doubanTags[0] || '热门',
       genre,
       region,
       year,
-      total: subjects.length,
+      total: pool.length,
     });
   } catch (error) {
-    console.error('Douban Multi-filter API error:', error);
+    console.error('Douban recommend API error:', error);
     return NextResponse.json(
       { subjects: [], error: 'Failed to fetch recommendations' },
       { status: 500 }

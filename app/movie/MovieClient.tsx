@@ -19,8 +19,8 @@ const GENRES = [
 
 const REGIONS = [
   { label: '华语', value: '华语' },
-  { label: '中国香港', value: '香港' },
-  { label: '中国台湾', value: '台湾' },
+  { label: '中国香港', value: '中国香港' },
+  { label: '中国台湾', value: '中国台湾' },
   { label: '美国', value: '欧美' },
   { label: '日本', value: '日本' },
   { label: '韩国', value: '韩国' },
@@ -33,7 +33,7 @@ const YEARS = [
   { label: '2025', value: '2025' },
   { label: '2024', value: '2024' },
   { label: '2023', value: '2023' },
-  { label: '经典高分', value: '豆瓣高分' },
+  { label: '经典高分', value: '经典高分' },
 ];
 
 const SHELVES = [

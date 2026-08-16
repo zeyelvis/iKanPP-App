@@ -21,10 +21,10 @@ const REGIONS = [
   { label: '美剧', value: '美剧' },
   { label: '韩剧', value: '韩剧' },
   { label: '日剧', value: '日剧' },
-  { label: '港剧', value: '香港' },
-  { label: '台剧', value: '台湾' },
-  { label: '英剧', value: '英国' },
-  { label: '泰剧', value: '泰国' },
+  { label: '港剧', value: '港剧' },
+  { label: '台剧', value: '台剧' },
+  { label: '英剧', value: '英剧' },
+  { label: '泰剧', value: '泰剧' },
 ];
 
 const YEARS = [
@@ -32,7 +32,7 @@ const YEARS = [
   { label: '2025', value: '2025' },
   { label: '2024', value: '2024' },
   { label: '2023', value: '2023' },
-  { label: '高分必看', value: '高分' },
+  { label: '高分必看', value: '高分必看' },
 ];
 
 const SHELVES = [
