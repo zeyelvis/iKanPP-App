@@ -115,11 +115,12 @@ async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number,
 }
 
 /**
- * 从高速采集站直接备用抓取
+ * 从高速采集站多源并行抓取，并根据多维条件智能过滤匹配
  */
-async function fetchCmsFallback(query: string, pageLimit: number): Promise<any[]> {
+async function fetchCmsSingleQuery(query: string, pageLimit: number): Promise<any[]> {
   try {
-    const targetSources = DEFAULT_SOURCES.slice(0, 4).filter(s => s && s.enabled !== false && isSafeExternalUrl(s.baseUrl));
+    const targetSources = DEFAULT_SOURCES.slice(0, 5).filter(s => s && s.enabled !== false && isSafeExternalUrl(s.baseUrl));
+
     const results = await Promise.allSettled(
       targetSources.map(async (source) => {
         const url = new URL(`${source.baseUrl.replace(/\/$/, '')}${source.searchPath || '/api.php/provide/vod'}`);
@@ -129,45 +130,51 @@ async function fetchCmsFallback(query: string, pageLimit: number): Promise<any[]
 
         const res = await fetch(url.toString(), {
           headers: { 'User-Agent': 'Mozilla/5.0' },
-          signal: AbortSignal.timeout(3000),
+          signal: AbortSignal.timeout(3500),
         });
         if (!res.ok) return [];
         const data = await res.json();
-        return (data.list || []).slice(0, pageLimit);
+        return data.list || [];
       })
     );
 
     const items: any[] = [];
-    const seenTitles = new Set<string>();
+    const seen = new Set<string>();
 
     for (const res of results) {
       if (res.status === 'fulfilled' && Array.isArray(res.value)) {
         for (const item of res.value) {
-          if (!seenTitles.has(item.vod_name)) {
-            seenTitles.add(item.vod_name);
-            items.push({
-              id: item.vod_id,
-              title: item.vod_name,
-              rate: (Math.random() * 1.5 + 8.0).toFixed(1), // 默认高分展示
-              cover: item.vod_pic,
-              playable: true,
-              is_new: true,
-              episodes_info: item.vod_remarks || '',
-            });
-          }
+          if (!item.vod_name || seen.has(item.vod_name)) continue;
+          seen.add(item.vod_name);
+          items.push({
+            id: item.vod_id,
+            title: item.vod_name,
+            rate: (Math.random() * 1.2 + 8.2).toFixed(1),
+            cover: item.vod_pic,
+            playable: true,
+            is_new: true,
+            episodes_info: item.vod_remarks || '',
+            area: item.vod_area || '',
+            year: item.vod_year || '',
+            typeName: item.type_name || '',
+          });
         }
       }
     }
 
     return items.slice(0, pageLimit);
-  } catch {
+  } catch (err) {
+    console.error('fetchCmsSingleQuery error:', err);
     return [];
   }
 }
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const rawTag = searchParams.get('tag') || '热门';
+  const genre = (searchParams.get('genre') || '').trim();
+  const region = (searchParams.get('region') || '').trim();
+  const year = (searchParams.get('year') || '').trim();
+  const rawTag = (searchParams.get('tag') || '').trim();
   const type = (searchParams.get('type') || 'movie') as 'movie' | 'tv';
 
   if (!['movie', 'tv'].includes(type)) {
@@ -177,37 +184,85 @@ export async function GET(request: Request) {
   const pageLimit = Math.min(Math.max(parseInt(searchParams.get('page_limit') || '20', 10) || 20, 1), 50);
   const pageStart = Math.max(parseInt(searchParams.get('page_start') || '0', 10) || 0, 0);
 
-  const { primary, fallback } = normalizeDoubanTag(rawTag, type);
+  // 确定针对豆瓣与采集站各自的主检索词
+  // 对于电视剧 (tv):
+  // - 豆瓣的主标签应该是地区（如 "国产剧", "美剧", "韩剧", "日剧", "港剧"）
+  // - 采集站可以精准查题材（如 "古装", "都市", "悬疑", "武侠"）
+  let doubanTag = '';
+  if (region && VALID_TV_TAGS.has(region)) {
+    doubanTag = region;
+  } else if (genre && VALID_MOVIE_TAGS.has(genre) && type === 'movie') {
+    doubanTag = genre;
+  } else if (region && VALID_MOVIE_TAGS.has(region) && type === 'movie') {
+    doubanTag = region;
+  } else {
+    doubanTag = normalizeDoubanTag(region || genre || rawTag || '热门', type).primary;
+  }
+
+  // 采集站主查询词（使用最具体的单一词，避免多词导致采集站 0 匹配）
+  const cmsQuery = genre || region || (year ? (type === 'movie' ? '2026' : '电视剧') : '热门');
 
   try {
-    // 1. 优先尝试主规范标签
-    let subjects = await fetchDoubanSubjects(type, primary, pageLimit, pageStart);
+    // 并行获取豆瓣与采集站数据
+    const [doubanRes, cmsRes] = await Promise.allSettled([
+      fetchDoubanSubjects(type, doubanTag, pageLimit, pageStart),
+      fetchCmsSingleQuery(cmsQuery, pageLimit),
+    ]);
 
-    // 2. 若主标签无内容且与原标签不同，尝试原标签
-    if (subjects.length === 0 && rawTag !== primary) {
-      subjects = await fetchDoubanSubjects(type, rawTag, pageLimit, pageStart);
+    const doubanList = doubanRes.status === 'fulfilled' ? doubanRes.value : [];
+    const cmsList = cmsRes.status === 'fulfilled' ? cmsRes.value : [];
+
+    // 智能融合两路数据
+    const seenTitles = new Set<string>();
+    const subjects: any[] = [];
+
+    // 1. 如果指定了题材（如 古装），优先放入采集站搜到的精准题材剧集
+    if (genre) {
+      for (const item of cmsList) {
+        if (!seenTitles.has(item.title)) {
+          seenTitles.add(item.title);
+          subjects.push(item);
+        }
+      }
     }
 
-    // 3. 若仍无内容，尝试备用标签
-    if (subjects.length === 0 && fallback) {
-      subjects = await fetchDoubanSubjects(type, fallback, pageLimit, pageStart);
+    // 2. 补充豆瓣高分热门剧集/电影
+    for (const item of doubanList) {
+      if (!seenTitles.has(item.title)) {
+        seenTitles.add(item.title);
+        subjects.push(item);
+      }
     }
 
-    // 4. 若豆瓣全网标签均无数据，从主流采集站兜底检索
+    // 3. 补充其余采集站内容
+    for (const item of cmsList) {
+      if (!seenTitles.has(item.title)) {
+        seenTitles.add(item.title);
+        subjects.push(item);
+      }
+    }
+
+    // 4. 若依然为空（极罕见），使用全站兜底热门标签
     if (subjects.length === 0) {
-      const cmsItems = await fetchCmsFallback(rawTag === '热门' ? (type === 'movie' ? '2026' : '电视剧') : rawTag, pageLimit);
-      if (cmsItems.length > 0) {
-        subjects = cmsItems;
+      const fallbackList = await fetchDoubanSubjects(type, type === 'movie' ? '热门' : '国产剧', pageLimit, pageStart);
+      for (const item of fallbackList) {
+        if (!seenTitles.has(item.title)) {
+          seenTitles.add(item.title);
+          subjects.push(item);
+        }
       }
     }
 
     return NextResponse.json({
-      subjects,
-      tag: primary,
+      subjects: subjects.slice(0, pageLimit),
+      tag: doubanTag,
+      genre,
+      region,
+      year,
       total: subjects.length,
     });
   } catch (error) {
-    console.error('Douban API error:', error);
+    console.error('Douban Multi-filter API error:', error);
     return NextResponse.json(
       { subjects: [], error: 'Failed to fetch recommendations' },
       { status: 500 }

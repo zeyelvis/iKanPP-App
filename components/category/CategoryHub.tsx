@@ -130,24 +130,29 @@ export function CategoryHub({
 
   // 计算当前有效综合搜索 Tag
   const activeSearchTag = useMemo(() => {
-    // 优先取选中的类型或地区
+    if (selectedGenre && selectedRegion) return `${selectedGenre} ${selectedRegion}`;
     if (selectedGenre) return selectedGenre;
     if (selectedRegion) return selectedRegion;
     if (selectedYear) return selectedYear;
     return defaultTag;
   }, [selectedGenre, selectedRegion, selectedYear, defaultTag]);
 
-  // 加载全库网格数据
+  // 加载全库网格数据（支持多维 1~3 个条件交叉组合）
   const loadGridPage = useCallback(
     async (pageNum: number) => {
       setLoadingGrid(true);
       try {
         const pageStart = pageNum * PAGE_SIZE;
-        const res = await fetch(
-          `/api/douban/recommend?tag=${encodeURIComponent(
-            activeSearchTag
-          )}&type=${doubanType}&page_limit=${PAGE_SIZE}&page_start=${pageStart}`
-        );
+        const params = new URLSearchParams();
+        if (selectedGenre) params.set('genre', selectedGenre);
+        if (selectedRegion) params.set('region', selectedRegion);
+        if (selectedYear) params.set('year', selectedYear);
+        if (activeSearchTag) params.set('tag', activeSearchTag);
+        params.set('type', doubanType);
+        params.set('page_limit', String(PAGE_SIZE));
+        params.set('page_start', String(pageStart));
+
+        const res = await fetch(`/api/douban/recommend?${params.toString()}`);
         const data = await res.json();
         const subjects = data.subjects || [];
 
@@ -161,7 +166,7 @@ export function CategoryHub({
         setLoadingGrid(false);
       }
     },
-    [activeSearchTag, doubanType]
+    [selectedGenre, selectedRegion, selectedYear, activeSearchTag, doubanType]
   );
 
   // 筛选器变化时重置回第 0 页
