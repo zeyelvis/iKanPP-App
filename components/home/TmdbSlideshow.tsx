@@ -84,6 +84,7 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [backdrops, setBackdrops] = useState<Record<string, string | null>>({});
   const [isPaused, setIsPaused] = useState(false);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
   const fetchedRef = useRef<string>('');
 
   const currentData = contentType === 'movie' ? movieRanking : tvRanking;
@@ -154,9 +155,6 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
   const active = currentData[activeIndex] || currentData[0];
   const activeBackdrop = backdrops[active.title] || active.cover;
   const displayItems = currentData.slice(0, 6);
-
-  // 移动端左右轻扫手势状态
-  const [touchStart, setTouchStart] = useState<number | null>(null);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);

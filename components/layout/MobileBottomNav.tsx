@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Home, Film, Tv, Flame, Trophy, User } from 'lucide-react';
@@ -22,8 +23,18 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export function MobileBottomNav() {
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { user } = useUserStore();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // 避免 SSR 水合不一致
+  if (!mounted) {
+    return null;
+  }
 
   // 播放页隐藏底部导航，避免挡住全屏播放器与控制条
   if (pathname?.startsWith('/player')) {
