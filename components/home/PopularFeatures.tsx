@@ -1,12 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createPortal } from 'react-dom';
-import { TagManager } from './TagManager';
-import { MovieGrid } from './MovieGrid';
-import { useTagManager } from './hooks/useTagManager';
-import { usePopularMovies } from './hooks/usePopularMovies';
 import { HeroSlideshow } from './TmdbSlideshow';
 import { Top10Rail } from './Top10Rail';
 import { ContentRail } from './ContentRail';
@@ -14,6 +10,8 @@ import { CategoryBrandBar } from './CategoryBrandBar';
 import { ContinueWatchingRail } from './ContinueWatchingRail';
 import { LiveChannelsPreview } from './LiveChannelsPreview';
 import { PlatformFeaturesStrip } from './PlatformFeaturesStrip';
+import { PersonalizedForYouRail } from './PersonalizedForYouRail';
+import { ExploreHubFooterBanner } from './ExploreHubFooterBanner';
 import { useRankingData } from './hooks/useRankingData';
 import { useUserStore } from '@/lib/store/user-store';
 import { VipPrompt } from '@/components/premium/VipPrompt';
@@ -28,38 +26,11 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   const { user } = useUserStore();
   const [showVipPrompt, setShowVipPrompt] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-
-  const {
-    tags,
-    selectedTag,
-    contentType,
-    newTagInput,
-    showTagManager,
-    justAddedTag,
-    setContentType,
-    setSelectedTag,
-    setNewTagInput,
-    setShowTagManager,
-    setJustAddedTag,
-    handleAddTag,
-    handleDeleteTag,
-    handleRestoreDefaults,
-    handleDragEnd,
-    isLoadingTags,
-  } = useTagManager();
+  const [contentType, setContentType] = useState<'movie' | 'tv'>('movie');
 
   // 排行榜数据（用于 TOP 10 Rail）
   const { movieRanking, tvRanking, loading: rankingLoading } = useRankingData({ limit: 10 });
   const top10Data = contentType === 'movie' ? movieRanking : tvRanking;
-
-  // 主探索区影片
-  const {
-    movies,
-    loading,
-    page,
-    hasMore,
-    goToPage,
-  } = usePopularMovies(selectedTag, tags, contentType);
 
   // 主题货架分片数据获取
   const [shelf1Movies, setShelf1Movies] = useState<any[]>([]);
@@ -121,14 +92,6 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
     router.push(`/player?${params.toString()}`);
   };
 
-  const handleTagSelect = (tagId: string) => {
-    if (tagId === 'custom_高级' || tags.find(t => t.id === tagId)?.label === '高级') {
-      window.location.href = '/premium';
-      return;
-    }
-    setSelectedTag(tagId);
-  };
-
   return (
     <div className="animate-fade-in pb-16">
       {/* 1. 🏆 影院级全景沉浸式巨幕 Billboard */}
@@ -176,7 +139,13 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         </span>
       </div>
 
-      {/* 5. 🥇 Netflix 风格今日 TOP 10 实时排行榜 */}
+      {/* 5. 🎯 猜你喜欢 · 智能定制推荐 */}
+      <PersonalizedForYouRail
+        onMovieClick={handleMovieClick}
+        contentType={contentType}
+      />
+
+      {/* 6. 🥇 Netflix 风格今日 TOP 10 实时排行榜 */}
       <Top10Rail
         movies={top10Data}
         loading={rankingLoading}
@@ -184,7 +153,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         contentType={contentType}
       />
 
-      {/* 6. 货架 1：最新上映 或 国产新剧 */}
+      {/* 7. 货架 1：最新上映 或 国产新剧 */}
       <ContentRail
         title={isMovie ? '✨ 院线首播 & 最新上映' : '🔥 2026 华语热播连续剧'}
         icon={isMovie ? '✨' : '🔥'}
@@ -195,7 +164,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         onViewAll={() => router.push(isMovie ? '/movie?genre=最新' : '/tv?region=国产剧')}
       />
 
-      {/* 7. 货架 2：豆瓣高分 或 顶级美剧 */}
+      {/* 8. 货架 2：豆瓣高分 或 顶级美剧 */}
       <ContentRail
         title={isMovie ? '⭐ 豆瓣 8.5+ 影史高分神作' : '🌟 顶级欧美神剧专区'}
         icon={isMovie ? '⭐' : '🌟'}
@@ -206,10 +175,10 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         onViewAll={() => router.push(isMovie ? '/movie?genre=豆瓣高分' : '/tv?region=美剧')}
       />
 
-      {/* 8. 📡 电视直播精选频道 */}
+      {/* 9. 📡 电视直播精选频道 */}
       <LiveChannelsPreview />
 
-      {/* 9. 货架 3：华语经典 或 人气日韩剧 */}
+      {/* 10. 货架 3：华语经典 或 人气日韩剧 */}
       <ContentRail
         title={isMovie ? '🏮 华语经典口碑大片' : '🍿 人气韩剧 & 日剧精选'}
         icon={isMovie ? '🏮' : '🍿'}
@@ -219,7 +188,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         onViewAll={() => router.push(isMovie ? '/movie?region=华语' : '/tv?region=韩剧')}
       />
 
-      {/* 10. 货架 4：好莱坞大片 或 动漫新番 */}
+      {/* 11. 货架 4：好莱坞大片 或 动漫新番 */}
       <ContentRail
         title={isMovie ? '🚀 好莱坞 & 欧美科幻大片' : '⚡ 热血动漫 & 新番连载'}
         icon={isMovie ? '🚀' : '⚡'}
@@ -229,49 +198,11 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         onViewAll={() => router.push(isMovie ? '/movie?region=欧美' : '/anime')}
       />
 
-      {/* 11. 🛡️ 平台核心特性与极速播放优势 */}
+      {/* 12. 🛡️ 平台核心特性与极速播放优势 */}
       <PlatformFeaturesStrip />
 
-      {/* 8. 🏷️ 深度题材与分类探索区 */}
-      <div className="mt-14 pt-8 border-t border-white/10">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🧭</span>
-            <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-              按类型题材随心探索
-            </h2>
-          </div>
-          <span className="text-xs text-white/40">实时抓取全网最新片单</span>
-        </div>
-
-        {/* 标签选择抽屉 */}
-        <TagManager
-          tags={tags}
-          selectedTag={selectedTag}
-          showTagManager={showTagManager}
-          newTagInput={newTagInput}
-          justAddedTag={justAddedTag}
-          onTagSelect={handleTagSelect}
-          onTagDelete={handleDeleteTag}
-          onToggleManager={() => setShowTagManager(!showTagManager)}
-          onRestoreDefaults={handleRestoreDefaults}
-          onNewTagInputChange={setNewTagInput}
-          onAddTag={handleAddTag}
-          onDragEnd={handleDragEnd}
-          onJustAddedTagHandled={() => setJustAddedTag(false)}
-          isLoadingTags={isLoadingTags}
-        />
-
-        {/* 影片网格 */}
-        <MovieGrid
-          movies={movies}
-          loading={loading}
-          page={page}
-          hasMore={hasMore}
-          onMovieClick={handleMovieClick}
-          onPageChange={goToPage}
-        />
-      </div>
+      {/* 13. 🧭 全库多维分类检索大厅导航卡片 */}
+      <ExploreHubFooterBanner />
 
       {/* VIP 弹窗 */}
       {showVipPrompt && typeof document !== 'undefined' && createPortal(
