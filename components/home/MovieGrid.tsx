@@ -103,7 +103,7 @@ export function MovieGrid({
                     }`}
                     style={isActive ? {
                       background: 'var(--accent-color)',
-                      boxShadow: '0 0 15px rgba(0,122,255,0.3)',
+                      boxShadow: '0 0 15px color-mix(in srgb, var(--accent-color) 40%, transparent)',
                     } : undefined}
                   >
                     {i}
