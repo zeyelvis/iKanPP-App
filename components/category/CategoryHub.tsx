@@ -196,7 +196,7 @@ export function CategoryHub({
       <div className="fluid-container pt-3 sm:pt-4 pb-24 sm:pb-20 space-y-6 sm:space-y-10">
         {/* 1. 频道顶部焦点巨幕 (Hero Spotlight) */}
         {heroMovie && (
-          <div className="relative w-full h-[48vh] min-h-[340px] sm:h-[55vh] lg:h-[60vh] max-h-150 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-white/10 group select-none">
+          <div className="relative w-full h-[48vh] min-h-85 sm:h-[55vh] lg:h-[60vh] max-h-150 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-white/10 group select-none">
             {/* 背景大图 */}
             <div className="absolute inset-0">
               <img
