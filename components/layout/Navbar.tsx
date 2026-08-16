@@ -3,12 +3,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Icons } from '@/components/ui/Icon';
 import { siteConfig } from '@/lib/config/site-config';
 import { LogoIcon } from '@/components/ui/LogoIcon';
 import { getSession, clearSession, hasPermission, type AuthSession } from '@/lib/store/auth-store';
-import { LogOut, User, Crown, Share2 } from 'lucide-react';
+import { LogOut, User, Crown, Share2, Menu, X, Sparkles } from 'lucide-react';
 import { SearchBox } from '@/components/search/SearchBox';
 import { MobileSearchOverlay } from '@/components/search/MobileSearchOverlay';
 import { Button } from '@/components/ui/Button';
@@ -18,306 +18,314 @@ import { useUserStore } from '@/lib/store/user-store';
 import { useSessionGuard } from '@/lib/hooks/useSessionGuard';
 
 interface NavbarProps {
-    /** 导航模式：'home' 首页模式（搜索+完整功能），'player' 播放页模式（返回按钮+精简功能） */
-    variant?: 'home' | 'player';
-    onReset?: () => void;
-    isPremiumMode?: boolean;
-    // 搜索相关 props（仅 home 模式）
-    onSearch?: (query: string) => void;
-    onClearSearch?: () => void;
-    initialQuery?: string;
-    isSearching?: boolean;
+  variant?: 'home' | 'player';
+  onReset?: () => void;
+  isPremiumMode?: boolean;
+  onSearch?: (query: string) => void;
+  onClearSearch?: () => void;
+  initialQuery?: string;
+  isSearching?: boolean;
+  activeCategory?: string;
+  onSelectCategory?: (category: string) => void;
 }
 
 export function Navbar({
-    variant = 'home',
-    onReset,
-    isPremiumMode = false,
-    onSearch,
-    onClearSearch,
-    initialQuery = '',
-    isSearching = false,
+  variant = 'home',
+  onReset,
+  isPremiumMode = false,
+  onSearch,
+  onClearSearch,
+  initialQuery = '',
+  isSearching = false,
+  activeCategory = 'home',
+  onSelectCategory,
 }: NavbarProps) {
-    const router = useRouter();
-    const settingsHref = '/profile?tab=player';
-    const homeHref = isPremiumMode ? '/premium' : '/';
-    const [session, setSessionState] = useState<AuthSession | null>(null);
-    const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-    const [authModalOpen, setAuthModalOpen] = useState(false);
-    const [kickedMessage, setKickedMessage] = useState('');
-    const { user: supabaseUser, initialize: initUser, logout: supabaseLogout } = useUserStore();
+  const router = useRouter();
+  const pathname = usePathname();
+  const settingsHref = '/profile?tab=player';
+  const homeHref = isPremiumMode ? '/premium' : '/';
+  const [session, setSessionState] = useState<AuthSession | null>(null);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [kickedMessage, setKickedMessage] = useState('');
+  const { user: supabaseUser, initialize: initUser, logout: supabaseLogout } = useUserStore();
 
-    // 多设备登录守卫
-    useSessionGuard();
+  useSessionGuard();
 
-    // 监听被踢事件
-    useEffect(() => {
-        const handler = (e: Event) => {
-            const detail = (e as CustomEvent).detail;
-            setKickedMessage(detail?.message || '你的账号已在其他设备登录');
-        };
-        window.addEventListener('session-kicked', handler);
-        return () => window.removeEventListener('session-kicked', handler);
-    }, []);
-
-    useEffect(() => {
-        setSessionState(getSession());
-        initUser();
-    }, [initUser]);
-
-    const handleLogout = () => {
-        clearSession();
-        window.location.href = '/';
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
     };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-    const handleSearch = (query: string) => {
-        onSearch?.(query);
-        setMobileSearchOpen(false);
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      setKickedMessage(detail?.message || '你的账号已在其他设备登录');
     };
+    window.addEventListener('session-kicked', handler);
+    return () => window.removeEventListener('session-kicked', handler);
+  }, []);
 
-    const handleClear = () => {
-        onClearSearch?.();
-    };
+  useEffect(() => {
+    setSessionState(getSession());
+    initUser();
+  }, [initUser]);
 
-    const isPlayer = variant === 'player';
+  const handleLogout = () => {
+    clearSession();
+    window.location.href = '/';
+  };
 
-    return (
-        <nav className="sticky top-0 z-[2000] pt-4 pb-2" style={{
-            transform: 'translate3d(0, 0, 0)',
-            willChange: 'transform'
-        }}>
-            <div className="fluid-container">
-                <div className="bg-[var(--glass-bg)] border border-[var(--glass-border)] shadow-[var(--shadow-sm)] px-3 sm:px-5 py-2 sm:py-3 rounded-[var(--radius-2xl)]" style={{
-                    transform: 'translate3d(0, 0, 0)'
-                }}>
-                    <div className="flex items-center gap-2 sm:gap-4">
-                        {/* Logo */}
-                        {isPlayer ? (
-                            <button
-                                onClick={() => router.push(homeHref)}
-                                className="flex items-center justify-center hover:opacity-80 transition-opacity shrink-0 cursor-pointer"
-                                title={isPremiumMode ? "返回高级主页" : "返回首页"}
-                            >
-                                <LogoIcon size={32} />
-                            </button>
-                        ) : (
-                            <Link
-                                href={homeHref}
-                                className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity cursor-pointer shrink-0"
-                                onClick={onReset}
-                                data-focusable
-                            >
-                                <LogoIcon size={32} />
-                                <div className="hidden sm:block">
-                                    <div className="flex flex-col min-w-0">
-                                        <h1 className="text-lg font-bold truncate" style={{
-                                            background: 'linear-gradient(135deg, #FFB020, #F59E0B, #E67E22)',
-                                            WebkitBackgroundClip: 'text',
-                                            WebkitTextFillColor: 'transparent',
-                                            letterSpacing: '0.02em',
-                                        }}>iKanPP</h1>
-                                        <p className="text-[10px] text-[var(--text-color-secondary)] tracking-wider hidden lg:block">爱看片片 · 精彩无限</p>
-                                    </div>
-                                </div>
-                            </Link>
-                        )}
+  const handleSearch = (query: string) => {
+    onSearch?.(query);
+    setMobileSearchOpen(false);
+  };
 
-                        {/* 播放页：返回按钮 */}
-                        {isPlayer && (
-                            <Button
-                                variant="secondary"
-                                onClick={() => router.back()}
-                                className="flex items-center gap-2"
-                                data-focusable
-                            >
-                                <Icons.ChevronLeft size={20} />
-                                <span className="hidden sm:inline">返回</span>
-                            </Button>
-                        )}
+  const handleClear = () => {
+    onClearSearch?.();
+  };
 
-                        {/* 首页：搜索框 */}
-                        {!isPlayer && onSearch && (
-                            <>
-                                {/* 移动端：搜索图标按钮 */}
-                                <button
-                                    onClick={() => setMobileSearchOpen(true)}
-                                    className="flex sm:!hidden flex-1 items-center gap-2 px-3 py-2 rounded-xl text-sm truncate transition-colors"
-                                    style={{
-                                        color: 'var(--text-color-secondary)',
-                                        background: 'var(--glass-bg, rgba(255,255,255,0.04))',
-                                        border: '1px solid var(--glass-border, rgba(255,255,255,0.06))',
-                                    }}
-                                >
-                                    <Icons.Search size={16} className="shrink-0 opacity-50" />
-                                    <span className="truncate opacity-60">
-                                        {initialQuery || '搜索电影、电视剧、综艺...'}
-                                    </span>
-                                </button>
-                                {/* 桌面端：内嵌搜索框 */}
-                                <div className="hidden sm:block flex-1 min-w-0 max-w-2xl mx-1 sm:mx-auto" style={{ isolation: 'isolate' }}>
-                                    <SearchBox
-                                        onSearch={handleSearch}
-                                        onClear={handleClear}
-                                        initialQuery={initialQuery}
-                                    />
-                                </div>
-                            </>
-                        )}
+  const isPlayer = variant === 'player';
 
-                        {/* 中间弹性占位（播放页） */}
-                        {isPlayer && <div className="flex-1" />}
+  const navCategories = [
+    { id: 'home', label: '首页', href: '/' },
+    { id: 'movie', label: '电影', action: () => onSelectCategory?.('movie') },
+    { id: 'tv', label: '电视剧', action: () => onSelectCategory?.('tv') },
+    { id: 'anime', label: '动漫', action: () => onSearch?.('动漫') },
+    { id: 'variety', label: '综艺', action: () => onSearch?.('综艺') },
+    { id: 'iptv', label: '电视直播', href: '/iptv' },
+    { id: 'premium', label: '午夜版', href: '/premium', isVip: true },
+  ];
 
-                        {/* 右侧图标 */}
-                        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+  return (
+    <nav
+      className={`sticky top-0 z-[2000] w-full transition-all duration-300 ${
+        isScrolled
+          ? 'bg-[#0A0A0F]/90 backdrop-blur-2xl border-b border-white/10 shadow-2xl py-3'
+          : 'bg-gradient-to-b from-black/80 via-black/40 to-transparent py-4'
+      }`}
+    >
+      <div className="fluid-container flex items-center justify-between gap-4">
+        {/* 左侧：Logo + 品牌标识 + 核心分类导航 */}
+        <div className="flex items-center gap-6 lg:gap-8">
+          {isPlayer ? (
+            <button
+              onClick={() => router.push(homeHref)}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0 cursor-pointer"
+              title={isPremiumMode ? '返回高级主页' : '返回首页'}
+            >
+              <LogoIcon size={34} />
+              <span className="font-black text-xl tracking-tight text-white hidden sm:inline">iKanPP</span>
+            </button>
+          ) : (
+            <Link
+              href={homeHref}
+              className="flex items-center gap-2.5 hover:opacity-90 transition-opacity cursor-pointer shrink-0"
+              onClick={onReset}
+            >
+              <LogoIcon size={34} />
+              <div className="flex flex-col">
+                <span
+                  className="text-xl font-black tracking-tight"
+                  style={{
+                    background: 'linear-gradient(135deg, #FF4D4D 0%, #F59E0B 50%, #FFD700 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  iKanPP
+                </span>
+                <span className="text-[9px] text-white/50 tracking-widest font-semibold hidden md:inline -mt-1">
+                  爱看片片 · 流媒体
+                </span>
+              </div>
+            </Link>
+          )}
 
-                            {/* IPTV（仅首页） */}
-                            {!isPlayer && hasPermission('iptv_access') && (
-                                <Link
-                                    href="/iptv"
-                                    className="hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 items-center justify-center rounded-full bg-[var(--glass-bg)] border border-[var(--glass-border)] text-[var(--text-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)] transition-all duration-200 cursor-pointer"
-                                    aria-label="直播"
-                                    title="直播"
-                                    data-focusable
-                                >
-                                    <Icons.TV size={15} className="sm:w-4 sm:h-4" />
-                                </Link>
-                            )}
+          {/* 桌面端：流媒体分类导航菜单 */}
+          {!isPlayer && (
+            <div className="hidden lg:flex items-center gap-1.5">
+              {navCategories.map(cat => {
+                const isActive = activeCategory === cat.id;
 
-                            {!isPlayer && supabaseUser && (
-                                <div className="hidden sm:flex items-center gap-2">
-                                    <Link
-                                        href="/profile"
-                                        className="flex items-center gap-1.5 px-2.5 py-1 bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-full text-xs hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)] transition-all duration-200 cursor-pointer"
-                                        title="个人中心"
-                                    >
-                                        <div className="w-5 h-5 rounded-full bg-[var(--accent-color)]/10 flex items-center justify-center text-[var(--accent-color)] font-bold text-[10px] border border-[var(--glass-border)]">
-                                            {supabaseUser.email.charAt(0).toUpperCase()}
-                                        </div>
-                                        <span className="text-[var(--text-color)] max-w-[80px] truncate">{supabaseUser.email.split('@')[0]}</span>
-                                        {supabaseUser.isVip && (
-                                            <span className="flex items-center gap-0.5 px-1 py-0.5 bg-amber-500/10 text-amber-500 rounded text-[10px] font-medium">
-                                                <Crown size={10} />
-                                                VIP
-                                            </span>
-                                        )}
-                                    </Link>
-                                    <Link
-                                        href="/profile?tab=referral"
-                                        className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--glass-bg)] border border-[var(--glass-border)] text-amber-500 hover:bg-amber-500/10 hover:border-amber-500/30 transition-all duration-200 cursor-pointer"
-                                        aria-label="邀请好友"
-                                        title="邀请好友赚 VIP"
-                                    >
-                                        <Share2 size={14} />
-                                    </Link>
-                                </div>
-                            )}
-                            {!isPlayer && !supabaseUser && (
-                                <button
-                                    onClick={() => setAuthModalOpen(true)}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--accent-color)] text-white rounded-full text-xs font-medium hover:opacity-90 transition-all duration-200 cursor-pointer"
-                                >
-                                    <User size={14} />
-                                    登录
-                                </button>
-                            )}
+                if (cat.href) {
+                  return (
+                    <Link
+                      key={cat.id}
+                      href={cat.href}
+                      className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center gap-1 ${
+                        cat.isVip
+                          ? 'text-amber-400 bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30'
+                          : isActive
+                          ? 'text-white bg-white/15 font-bold shadow-sm'
+                          : 'text-white/70 hover:text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {cat.isVip && <Crown size={12} className="text-amber-400" />}
+                      {cat.label}
+                    </Link>
+                  );
+                }
 
-                            {/* 旧版 Auth 系统用户信息（仅首页桌面端） */}
-                            {!isPlayer && session && !supabaseUser && (
-                                <div className="hidden sm:flex items-center gap-2">
-                                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-full text-xs">
-                                        <div className="w-5 h-5 rounded-full bg-[var(--accent-color)]/10 flex items-center justify-center text-[var(--accent-color)] font-bold text-[10px] border border-[var(--glass-border)]">
-                                            {session.name.charAt(0)}
-                                        </div>
-                                        <span className="text-[var(--text-color)] max-w-[60px] truncate">{session.name}</span>
-                                        {session.role === 'admin' && (
-                                            <span className="px-1 py-0.5 bg-[var(--accent-color)]/10 text-[var(--accent-color)] rounded text-[10px] font-medium">
-                                                管理
-                                            </span>
-                                        )}
-                                    </div>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--glass-bg)] border border-[var(--glass-border)] text-[var(--text-color-secondary)] hover:text-red-500 hover:border-red-500/30 transition-all duration-200 cursor-pointer"
-                                        aria-label="退出登录"
-                                        title="退出登录"
-                                    >
-                                        <LogOut size={14} />
-                                    </button>
-                                </div>
-                            )}
-
-                            {/* 下载 App（仅首页） */}
-                            {!isPlayer && (
-                                <Link
-                                    href="/download"
-                                    className="hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 items-center justify-center rounded-full bg-[var(--glass-bg)] border border-[var(--glass-border)] text-[var(--text-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)] transition-all duration-200 cursor-pointer"
-                                    aria-label="下载 App"
-                                    title="下载 App"
-                                    data-focusable
-                                >
-                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                        <polyline points="7 10 12 15 17 10" />
-                                        <line x1="12" y1="15" x2="12" y2="3" />
-                                    </svg>
-                                </Link>
-                            )}
-
-                            {/* 设置 */}
-                            <Link
-                                href={settingsHref}
-                                className="hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 items-center justify-center rounded-full bg-[var(--glass-bg)] border border-[var(--glass-border)] text-[var(--text-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)] transition-all duration-200 cursor-pointer"
-                                aria-label="设置"
-                                data-focusable
-                            >
-                                <svg className="w-4 h-4" viewBox="0 -960 960 960" fill="currentColor">
-                                    <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
-                                </svg>
-                            </Link>
-
-                            {/* 主题切换（播放页显示） */}
-                            {isPlayer && <ThemeSwitcher />}
-                        </div>
-                    </div>
-                </div>
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={cat.action}
+                    className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center gap-1 ${
+                      isActive
+                        ? 'text-white bg-[var(--accent-color)] font-bold shadow-lg shadow-[var(--accent-color)]/30'
+                        : 'text-white/70 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                );
+              })}
             </div>
+          )}
+        </div>
 
-            {/* 移动端全屏搜索 */}
-            {onSearch && (
-                <MobileSearchOverlay
-                    isOpen={mobileSearchOpen}
-                    onClose={() => setMobileSearchOpen(false)}
-                    onSearch={handleSearch}
-                    initialQuery={initialQuery}
+        {/* 播放页：返回按钮 */}
+        {isPlayer && (
+          <Button
+            variant="secondary"
+            onClick={() => router.back()}
+            className="flex items-center gap-2 bg-white/10 text-white border-white/15 hover:bg-white/20"
+          >
+            <Icons.ChevronLeft size={20} />
+            <span>返回上一页</span>
+          </Button>
+        )}
+
+        {/* 右侧：搜索展开器 + 用户状态 + 快捷功能 */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* 桌面端极简展开式搜索框 */}
+          {!isPlayer && onSearch && (
+            <div className="relative flex items-center">
+              <div className="hidden sm:block w-64 md:w-80 transition-all duration-300">
+                <SearchBox
+                  onSearch={handleSearch}
+                  onClear={handleClear}
+                  initialQuery={initialQuery}
                 />
-            )}
+              </div>
 
-            {/* 登录/注册弹窗 */}
-            <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+              {/* 移动端搜索按钮 */}
+              <button
+                onClick={() => setMobileSearchOpen(true)}
+                className="flex sm:hidden w-9 h-9 items-center justify-center rounded-full bg-white/10 border border-white/15 text-white hover:bg-white/20 transition-all cursor-pointer shadow-md"
+                aria-label="打开搜索"
+              >
+                <Icons.Search size={16} />
+              </button>
+            </div>
+          )}
 
-            {/* 被踢出提示弹窗 */}
-            {kickedMessage && (
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70">
-                    <div className="bg-[#1a1a2e] border border-white/10 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
-                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-500/15 flex items-center justify-center">
-                            <svg className="w-8 h-8 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                                <line x1="12" y1="9" x2="12" y2="13" />
-                                <line x1="12" y1="17" x2="12.01" y2="17" />
-                            </svg>
-                        </div>
-                        <h3 className="text-white font-bold text-lg mb-2">设备登录提醒</h3>
-                        <p className="text-white/60 text-sm mb-6 leading-relaxed">{kickedMessage}</p>
-                        <button
-                            onClick={() => { setKickedMessage(''); setAuthModalOpen(true); }}
-                            className="w-full py-3 rounded-xl text-sm font-semibold text-white cursor-pointer transition-all hover:brightness-110"
-                            style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
-                        >
-                            重新登录
-                        </button>
-                    </div>
+          {/* 用户与 VIP 入口 */}
+          {!isPlayer && supabaseUser && (
+            <div className="flex items-center gap-2">
+              <Link
+                href="/profile"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 border border-white/15 rounded-full text-xs hover:bg-white/20 transition-all cursor-pointer"
+                title="个人中心"
+              >
+                <div className="w-5 h-5 rounded-full bg-[var(--accent-color)] flex items-center justify-center text-white font-black text-[10px]">
+                  {supabaseUser.email.charAt(0).toUpperCase()}
                 </div>
-            )}
-        </nav >
-    );
+                <span className="text-white max-w-[80px] truncate hidden md:inline">
+                  {supabaseUser.email.split('@')[0]}
+                </span>
+                {supabaseUser.isVip && (
+                  <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-amber-500 text-black rounded-full text-[10px] font-black shadow-sm">
+                    <Crown size={10} />
+                    VIP
+                  </span>
+                )}
+              </Link>
+            </div>
+          )}
+
+          {!isPlayer && !supabaseUser && (
+            <button
+              onClick={() => setAuthModalOpen(true)}
+              className="flex items-center gap-1.5 px-4 py-1.5 bg-[var(--accent-color)] text-white rounded-full text-xs sm:text-sm font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer shadow-lg shadow-[var(--accent-color)]/25"
+            >
+              <User size={14} />
+              登录
+            </button>
+          )}
+
+          {/* 设置 */}
+          <Link
+            href={settingsHref}
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-white/80 hover:text-white hover:bg-white/20 transition-all cursor-pointer"
+            aria-label="设置"
+            title="播放与显示设置"
+          >
+            <svg className="w-4 h-4 fill-current" viewBox="0 -960 960 960">
+              <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
+            </svg>
+          </Link>
+
+          {/* 移动端菜单汉堡按钮 */}
+          {!isPlayer && (
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="flex lg:hidden w-9 h-9 items-center justify-center rounded-full bg-white/10 border border-white/15 text-white"
+              aria-label="菜单"
+            >
+              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          )}
+
+          {isPlayer && <ThemeSwitcher />}
+        </div>
+      </div>
+
+      {/* 移动端下拉分类抽屉 */}
+      {mobileMenuOpen && !isPlayer && (
+        <div className="lg:hidden bg-[#0A0A0F]/95 backdrop-blur-3xl border-b border-white/10 px-4 py-4 animate-fade-in">
+          <div className="grid grid-cols-3 gap-2">
+            {navCategories.map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (cat.href) router.push(cat.href);
+                  else cat.action?.();
+                }}
+                className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all ${
+                  cat.isVip
+                    ? 'bg-amber-400/10 text-amber-400 border border-amber-400/30'
+                    : activeCategory === cat.id
+                    ? 'bg-[var(--accent-color)] text-white shadow-md'
+                    : 'bg-white/5 text-white/80 hover:bg-white/10'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 移动端全屏搜索弹层 */}
+      {onSearch && (
+        <MobileSearchOverlay
+          isOpen={mobileSearchOpen}
+          onClose={() => setMobileSearchOpen(false)}
+          onSearch={handleSearch}
+          initialQuery={initialQuery}
+        />
+      )}
+
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+    </nav>
+  );
 }

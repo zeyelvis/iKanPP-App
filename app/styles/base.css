@@ -1,4 +1,59 @@
-/* Base Styles */
+/* ============================================================
+   Cinema-Grade Streaming Rails & Modern Media Components
+   ============================================================ */
+
+/* 横向滑动片单导轨 (Content Rail Scrollbar) */
+.content-rail-scroll {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.content-rail-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* Netflix 风格立体描边大数字 (Top 10 Rank Text) */
+.top10-rank-number {
+    font-size: clamp(4.5rem, 8vw, 7.5rem);
+    font-weight: 900;
+    line-height: 0.85;
+    color: #0A0A0F;
+    -webkit-text-stroke: 3px rgba(255, 255, 255, 0.4);
+    text-stroke: 3px rgba(255, 255, 255, 0.4);
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.8));
+    user-select: none;
+    transition: all 0.3s ease;
+}
+
+.group:hover .top10-rank-number {
+    -webkit-text-stroke: 3px var(--accent-color);
+    text-stroke: 3px var(--accent-color);
+    filter: drop-shadow(0 0 16px rgba(229, 9, 20, 0.6));
+    transform: scale(1.05);
+}
+
+/* 沉浸式 Hero 巨幕环境光晕 */
+.hero-ambient-glow {
+    position: absolute;
+    inset: auto 0 -60px 0;
+    height: 140px;
+    background: linear-gradient(to bottom, transparent, var(--bg-color));
+    pointer-events: none;
+    z-index: 20;
+}
+
+/* 磨砂玻璃流媒体卡片 */
+.cinema-poster-card {
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
+}
+.cinema-poster-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.8), 0 0 20px 2px rgba(229, 9, 20, 0.15);
+}
+
 *,
 *::before,
 *::after {
