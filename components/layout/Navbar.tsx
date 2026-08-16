@@ -95,10 +95,11 @@ export function Navbar({
 
   const navCategories = [
     { id: 'home', label: '首页', href: '/' },
-    { id: 'movie', label: '电影', action: () => onSelectCategory?.('movie') },
-    { id: 'tv', label: '电视剧', action: () => onSelectCategory?.('tv') },
-    { id: 'anime', label: '动漫', action: () => onSearch?.('动漫') },
-    { id: 'variety', label: '综艺', action: () => onSearch?.('综艺') },
+    { id: 'movie', label: '电影', href: '/movie' },
+    { id: 'tv', label: '电视剧', href: '/tv' },
+    { id: 'anime', label: '动漫', href: '/anime' },
+    { id: 'variety', label: '综艺', href: '/variety' },
+    { id: 'ranking', label: '风云榜', href: '/ranking' },
     { id: 'iptv', label: '电视直播', href: '/iptv' },
     { id: 'premium', label: '午夜版', href: '/premium', isVip: true },
   ];
@@ -150,41 +151,25 @@ export function Navbar({
 
           {/* 桌面端：流媒体分类导航菜单 */}
           {!isPlayer && (
-            <div className="hidden lg:flex items-center gap-1.5">
+            <div className="hidden lg:flex items-center gap-1">
               {navCategories.map(cat => {
-                const isActive = activeCategory === cat.id;
-
-                if (cat.href) {
-                  return (
-                    <Link
-                      key={cat.id}
-                      href={cat.href}
-                      className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center gap-1 ${
-                        cat.isVip
-                          ? 'text-amber-400 bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30'
-                          : isActive
-                          ? 'text-white bg-white/15 font-bold shadow-sm'
-                          : 'text-white/70 hover:text-white hover:bg-white/10'
-                      }`}
-                    >
-                      {cat.isVip && <Crown size={12} className="text-amber-400" />}
-                      {cat.label}
-                    </Link>
-                  );
-                }
+                const isActive = pathname === cat.href || (cat.href === '/' && pathname === '') || activeCategory === cat.id;
 
                 return (
-                  <button
+                  <Link
                     key={cat.id}
-                    onClick={cat.action}
+                    href={cat.href}
                     className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center gap-1 ${
-                      isActive
-                        ? 'text-white bg-[var(--accent-color)] font-bold shadow-lg shadow-[var(--accent-color)]/30'
+                      cat.isVip
+                        ? 'text-amber-400 bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30'
+                        : isActive
+                        ? 'text-white bg-[var(--accent-color)] font-bold shadow-lg shadow-[var(--accent-color)]/30 scale-105'
                         : 'text-white/70 hover:text-white hover:bg-white/10'
                     }`}
                   >
+                    {cat.isVip && <Crown size={12} className="text-amber-400" />}
                     {cat.label}
-                  </button>
+                  </Link>
                 );
               })}
             </div>
@@ -297,13 +282,12 @@ export function Navbar({
                 key={cat.id}
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  if (cat.href) router.push(cat.href);
-                  else cat.action?.();
+                  router.push(cat.href);
                 }}
-                className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all ${
+                className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   cat.isVip
                     ? 'bg-amber-400/10 text-amber-400 border border-amber-400/30'
-                    : activeCategory === cat.id
+                    : (pathname === cat.href || (cat.href === '/' && pathname === '') || activeCategory === cat.id)
                     ? 'bg-[var(--accent-color)] text-white shadow-md'
                     : 'bg-white/5 text-white/80 hover:bg-white/10'
                 }`}

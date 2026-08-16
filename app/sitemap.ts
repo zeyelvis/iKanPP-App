@@ -7,8 +7,13 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 // ==================== 1. 核心静态页面 ====================
 const STATIC_ROUTES = [
     { url: '', priority: 1.0, changeFrequency: 'daily' as const },
+    { url: '/movie', priority: 0.95, changeFrequency: 'daily' as const },
+    { url: '/tv', priority: 0.95, changeFrequency: 'daily' as const },
+    { url: '/anime', priority: 0.95, changeFrequency: 'daily' as const },
+    { url: '/variety', priority: 0.95, changeFrequency: 'daily' as const },
+    { url: '/ranking', priority: 0.95, changeFrequency: 'daily' as const },
+    { url: '/iptv', priority: 0.85, changeFrequency: 'daily' as const },
     { url: '/download', priority: 0.8, changeFrequency: 'weekly' as const },
-    { url: '/iptv', priority: 0.8, changeFrequency: 'daily' as const },
     { url: '/about', priority: 0.6, changeFrequency: 'monthly' as const },
     { url: '/faq', priority: 0.6, changeFrequency: 'monthly' as const },
     { url: '/referral', priority: 0.5, changeFrequency: 'monthly' as const },
