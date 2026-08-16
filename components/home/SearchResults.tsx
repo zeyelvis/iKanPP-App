@@ -76,14 +76,14 @@ export function SearchResults({
                     {/* 折叠/展开按钮 */}
                     <button
                         onClick={() => setFiltersExpanded(!filtersExpanded)}
-                        className="flex items-center gap-2 text-sm text-[var(--text-color-secondary)] hover:text-[var(--accent-color)] transition-colors mb-3 cursor-pointer"
+                        className="flex items-center gap-2 text-sm text-(--text-color-secondary) hover:text-(--accent-color) transition-colors mb-3 cursor-pointer"
                     >
                         <Icons.Settings size={14} />
                         <span>
                             {filtersExpanded ? '收起筛选' : '展开筛选'}
                         </span>
                         {activeFilterCount > 0 && (
-                            <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-[var(--accent-color)] text-white min-w-[18px] text-center">
+                            <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-(--accent-color) text-white min-w-4.5 text-center">
                                 {activeFilterCount}
                             </span>
                         )}
@@ -95,7 +95,7 @@ export function SearchResults({
 
                     {/* 过滤器内容 */}
                     <div
-                        className={`transition-all duration-300 ease-in-out overflow-hidden ${filtersExpanded ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
+                        className={`transition-all duration-300 ease-in-out overflow-hidden ${filtersExpanded ? 'max-h-150 opacity-100' : 'max-h-0 opacity-0'
                             }`}
                     >
                         {/* Source Badges */}

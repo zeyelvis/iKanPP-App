@@ -191,7 +191,7 @@ export function CategoryHub({
       <div className="fluid-container pt-4 pb-20 space-y-10">
         {/* 1. 频道顶部焦点巨幕 (Hero Spotlight) */}
         {heroMovie && (
-          <div className="relative w-full h-[45vh] sm:h-[55vh] lg:h-[60vh] max-h-[600px] rounded-3xl overflow-hidden shadow-2xl border border-white/10 group select-none">
+          <div className="relative w-full h-[45vh] sm:h-[55vh] lg:h-[60vh] max-h-150 rounded-3xl overflow-hidden shadow-2xl border border-white/10 group select-none">
             {/* 背景大图 */}
             <div className="absolute inset-0">
               <img
@@ -204,14 +204,14 @@ export function CategoryHub({
                 className="w-full h-full object-cover scale-105 transition-transform duration-1000 group-hover:scale-108"
                 style={{ objectPosition: 'center 25%' }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/70 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0F]/90 via-[#0A0A0F]/40 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-[#0A0A0F] via-[#0A0A0F]/70 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-r from-[#0A0A0F]/90 via-[#0A0A0F]/40 to-transparent" />
             </div>
 
             {/* 巨幕内容 */}
             <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-10 max-w-2xl">
               <div className="flex items-center gap-2 mb-2.5">
-                <span className="px-3 py-1 bg-[var(--accent-color)] text-white text-xs font-black rounded-full shadow-lg">
+                <span className="px-3 py-1 bg-(--accent-color) text-white text-xs font-black rounded-full shadow-lg">
                   {categoryTitle} · 焦点热播
                 </span>
                 {heroMovie.rate && parseFloat(heroMovie.rate) > 0 && (
@@ -228,7 +228,7 @@ export function CategoryHub({
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => handleMovieClick(heroMovie)}
-                  className="px-7 py-3 bg-[var(--accent-color)] hover:brightness-110 active:scale-95 text-white rounded-2xl text-sm font-bold flex items-center gap-2 shadow-2xl transition-all cursor-pointer"
+                  className="px-7 py-3 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-2xl text-sm font-bold flex items-center gap-2 shadow-2xl transition-all cursor-pointer"
                 >
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
@@ -285,7 +285,7 @@ export function CategoryHub({
                   setSelectedRegion('');
                   setSelectedYear('');
                 }}
-                className="text-xs text-[var(--accent-color)] hover:underline flex items-center gap-1 font-semibold cursor-pointer"
+                className="text-xs text-(--accent-color) hover:underline flex items-center gap-1 font-semibold cursor-pointer"
               >
                 <Icons.RefreshCw size={12} />
                 重置筛选
@@ -302,7 +302,7 @@ export function CategoryHub({
                   onClick={() => setSelectedGenre('')}
                   className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
                     selectedGenre === ''
-                      ? 'bg-[var(--accent-color)] text-white font-bold shadow-md'
+                      ? 'bg-(--accent-color) text-white font-bold shadow-md'
                       : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
                   }`}
                 >
@@ -314,7 +314,7 @@ export function CategoryHub({
                     onClick={() => setSelectedGenre(g.value)}
                     className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
                       selectedGenre === g.value
-                        ? 'bg-[var(--accent-color)] text-white font-bold shadow-md'
+                        ? 'bg-(--accent-color) text-white font-bold shadow-md'
                         : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
                     }`}
                   >
@@ -334,7 +334,7 @@ export function CategoryHub({
                   onClick={() => setSelectedRegion('')}
                   className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
                     selectedRegion === ''
-                      ? 'bg-[var(--accent-color)] text-white font-bold shadow-md'
+                      ? 'bg-(--accent-color) text-white font-bold shadow-md'
                       : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
                   }`}
                 >
@@ -346,7 +346,7 @@ export function CategoryHub({
                     onClick={() => setSelectedRegion(r.value)}
                     className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
                       selectedRegion === r.value
-                        ? 'bg-[var(--accent-color)] text-white font-bold shadow-md'
+                        ? 'bg-(--accent-color) text-white font-bold shadow-md'
                         : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
                     }`}
                   >
@@ -366,7 +366,7 @@ export function CategoryHub({
                   onClick={() => setSelectedYear('')}
                   className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
                     selectedYear === ''
-                      ? 'bg-[var(--accent-color)] text-white font-bold shadow-md'
+                      ? 'bg-(--accent-color) text-white font-bold shadow-md'
                       : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
                   }`}
                 >
@@ -378,7 +378,7 @@ export function CategoryHub({
                     onClick={() => setSelectedYear(y.value)}
                     className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
                       selectedYear === y.value
-                        ? 'bg-[var(--accent-color)] text-white font-bold shadow-md'
+                        ? 'bg-(--accent-color) text-white font-bold shadow-md'
                         : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
                     }`}
                   >

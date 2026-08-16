@@ -44,13 +44,13 @@ export function DisplaySettings({
     ];
 
     return (
-        <div className="bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-[var(--radius-2xl)] shadow-[var(--shadow-sm)] p-6 mb-6">
-            <h2 className="text-xl font-semibold text-[var(--text-color)] mb-4">显示设置</h2>
+        <div className="bg-(--glass-bg) border border-(--glass-border) rounded-2xl shadow-(--shadow-sm) p-6 mb-6">
+            <h2 className="text-xl font-semibold text-(--text-color) mb-4">显示设置</h2>
 
             {/* Theme Selector */}
             <div className="mb-6">
-                <h3 className="font-medium text-[var(--text-color)] mb-2">主题模式</h3>
-                <p className="text-sm text-[var(--text-color-secondary)] mb-4">
+                <h3 className="font-medium text-(--text-color) mb-2">主题模式</h3>
+                <p className="text-sm text-(--text-color-secondary) mb-4">
                     选择应用的外观主题
                 </p>
                 <div className="grid grid-cols-3 gap-3">
@@ -58,9 +58,9 @@ export function DisplaySettings({
                         <button
                             key={opt.value}
                             onClick={() => setTheme(opt.value)}
-                            className={`px-3 py-3 rounded-[var(--radius-2xl)] border text-center font-medium transition-all duration-200 cursor-pointer ${theme === opt.value
-                                ? 'bg-[var(--accent-color)] border-[var(--accent-color)] text-white shadow-[0_4px_12px_rgba(var(--accent-color-rgb),0.3)]'
-                                : 'bg-[var(--glass-bg)] border-[var(--glass-border)] text-[var(--text-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)]'
+                            className={`px-3 py-3 rounded-2xl border text-center font-medium transition-all duration-200 cursor-pointer ${theme === opt.value
+                                ? 'bg-(--accent-color) border-(--accent-color) text-white shadow-[0_4px_12px_rgba(var(--accent-color-rgb),0.3)]'
+                                : 'bg-(--glass-bg) border-(--glass-border) text-(--text-color) hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)]'
                                 }`}
                         >
                             <div className="flex flex-col items-center gap-1.5">
@@ -75,11 +75,11 @@ export function DisplaySettings({
 
             {/* TV Mode Selector */}
             <div className="mb-6">
-                <h3 className="font-medium text-[var(--text-color)] mb-2">
+                <h3 className="font-medium text-(--text-color) mb-2">
                     📺 电视模式
                     {isTV && <span className="ml-2 text-xs text-emerald-400 font-normal">(当前已激活)</span>}
                 </h3>
-                <p className="text-sm text-[var(--text-color-secondary)] mb-4">
+                <p className="text-sm text-(--text-color-secondary) mb-4">
                     在电视/大屏设备上放大字体和按钮，支持遥控器方向键导航
                 </p>
                 <div className="grid grid-cols-3 gap-3">
@@ -91,9 +91,9 @@ export function DisplaySettings({
                         <button
                             key={opt.value}
                             onClick={() => setTVMode(opt.value)}
-                            className={`px-3 py-3 rounded-[var(--radius-2xl)] border text-center font-medium transition-all duration-200 cursor-pointer ${tvModeSetting === opt.value
-                                ? 'bg-[var(--accent-color)] border-[var(--accent-color)] text-white shadow-[0_4px_12px_rgba(var(--accent-color-rgb),0.3)]'
-                                : 'bg-[var(--glass-bg)] border-[var(--glass-border)] text-[var(--text-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)]'
+                            className={`px-3 py-3 rounded-2xl border text-center font-medium transition-all duration-200 cursor-pointer ${tvModeSetting === opt.value
+                                ? 'bg-(--accent-color) border-(--accent-color) text-white shadow-[0_4px_12px_rgba(var(--accent-color-rgb),0.3)]'
+                                : 'bg-(--glass-bg) border-(--glass-border) text-(--text-color) hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)]'
                                 }`}
                         >
                             <div className="text-sm font-semibold">{opt.label}</div>
@@ -107,8 +107,8 @@ export function DisplaySettings({
             <div className="mb-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h3 className="font-medium text-[var(--text-color)]">记住滚动位置</h3>
-                        <p className="text-sm text-[var(--text-color-secondary)] mt-1">
+                        <h3 className="font-medium text-(--text-color)">记住滚动位置</h3>
+                        <p className="text-sm text-(--text-color-secondary) mt-1">
                             退出或刷新页面后，自动恢复到之前的滚动位置
                         </p>
                     </div>
@@ -124,8 +124,8 @@ export function DisplaySettings({
             <div className="mb-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h3 className="font-medium text-[var(--text-color)]">实时延迟显示</h3>
-                        <p className="text-sm text-[var(--text-color-secondary)] mt-1">
+                        <h3 className="font-medium text-(--text-color)">实时延迟显示</h3>
+                        <p className="text-sm text-(--text-color-secondary) mt-1">
                             开启后，搜索结果中的延迟数值会每 5 秒更新一次
                         </p>
                     </div>
@@ -139,16 +139,16 @@ export function DisplaySettings({
 
             {/* Search Display Mode */}
             <div className="mb-6">
-                <h3 className="font-medium text-[var(--text-color)] mb-2">搜索结果显示方式</h3>
-                <p className="text-sm text-[var(--text-color-secondary)] mb-4">
+                <h3 className="font-medium text-(--text-color) mb-2">搜索结果显示方式</h3>
+                <p className="text-sm text-(--text-color-secondary) mb-4">
                     选择搜索结果的展示模式
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button
                         onClick={() => onSearchDisplayModeChange('normal')}
-                        className={`px-4 py-3 rounded-[var(--radius-2xl)] border text-left font-medium transition-all duration-200 cursor-pointer ${searchDisplayMode === 'normal'
-                            ? 'bg-[var(--accent-color)] border-[var(--accent-color)] text-white shadow-[0_4px_12px_rgba(var(--accent-color-rgb),0.3)]'
-                            : 'bg-[var(--glass-bg)] border-[var(--glass-border)] text-[var(--text-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)]'
+                        className={`px-4 py-3 rounded-2xl border text-left font-medium transition-all duration-200 cursor-pointer ${searchDisplayMode === 'normal'
+                            ? 'bg-(--accent-color) border-(--accent-color) text-white shadow-[0_4px_12px_rgba(var(--accent-color-rgb),0.3)]'
+                            : 'bg-(--glass-bg) border-(--glass-border) text-(--text-color) hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)]'
                             }`}
                     >
                         <div className="font-semibold">默认显示</div>
@@ -156,9 +156,9 @@ export function DisplaySettings({
                     </button>
                     <button
                         onClick={() => onSearchDisplayModeChange('grouped')}
-                        className={`px-4 py-3 rounded-[var(--radius-2xl)] border text-left font-medium transition-all duration-200 cursor-pointer ${searchDisplayMode === 'grouped'
-                            ? 'bg-[var(--accent-color)] border-[var(--accent-color)] text-white shadow-[0_4px_12px_rgba(var(--accent-color-rgb),0.3)]'
-                            : 'bg-[var(--glass-bg)] border-[var(--glass-border)] text-[var(--text-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)]'
+                        className={`px-4 py-3 rounded-2xl border text-left font-medium transition-all duration-200 cursor-pointer ${searchDisplayMode === 'grouped'
+                            ? 'bg-(--accent-color) border-(--accent-color) text-white shadow-[0_4px_12px_rgba(var(--accent-color-rgb),0.3)]'
+                            : 'bg-(--glass-bg) border-(--glass-border) text-(--text-color) hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)]'
                             }`}
                     >
                         <div className="font-semibold">合并同名源</div>
@@ -168,19 +168,19 @@ export function DisplaySettings({
             </div>
 
             {/* Geo & Network Status */}
-            <div className="pt-5 border-t border-[var(--glass-border)]">
+            <div className="pt-5 border-t border-(--glass-border)">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h3 className="font-medium text-[var(--text-color)] flex items-center gap-1.5">
+                        <h3 className="font-medium text-(--text-color) flex items-center gap-1.5">
                             <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                             全球边缘直连状态 (GEO)
                         </h3>
-                        <p className="text-xs text-[var(--text-color-secondary)] mt-1">
+                        <p className="text-xs text-(--text-color-secondary) mt-1">
                             {geoLoading ? (
                                 '正在检测最近的 Cloudflare 边缘加速节点...'
                             ) : geo ? (
                                 <>
-                                    当前接入：<span className="font-semibold text-[var(--text-color)]">{geo.countryName} {geo.city ? `(${geo.city})` : ''}</span> · 节点：<span className="text-[var(--accent-color)] font-medium">{geo.cfNode}</span>
+                                    当前接入：<span className="font-semibold text-(--text-color)">{geo.countryName} {geo.city ? `(${geo.city})` : ''}</span> · 节点：<span className="text-(--accent-color) font-medium">{geo.cfNode}</span>
                                     {geo.isOverseas && <span className="ml-1.5 px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-medium">海外免翻墙直连</span>}
                                 </>
                             ) : (

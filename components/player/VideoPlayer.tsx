@@ -214,7 +214,7 @@ export function VideoPlayer({
   return (
     <div data-no-spatial className="relative group/player">
       {/* 影院级环境流光氛围（Ambient Glow） */}
-      <div className="absolute -inset-1 sm:-inset-2 bg-gradient-to-r from-red-600/30 via-[var(--accent-color)]/25 to-amber-600/30 rounded-3xl blur-2xl opacity-40 group-hover/player:opacity-70 transition-opacity duration-700 pointer-events-none animate-ambient-glow -z-10" />
+      <div className="absolute -inset-1 sm:-inset-2 bg-linear-to-r from-red-600/30 via-(--accent-color)/25 to-amber-600/30 rounded-3xl blur-2xl opacity-40 group-hover/player:opacity-70 transition-opacity duration-700 pointer-events-none animate-ambient-glow -z-10" />
 
       <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-black">
         {/* Mode Indicator Badge - controlled by settings */}

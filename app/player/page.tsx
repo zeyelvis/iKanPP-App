@@ -488,16 +488,16 @@ function PlayerContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-color)]">
+    <div className="min-h-screen bg-(--bg-color)">
       {/* Glass Navbar */}
       <Navbar variant="player" isPremiumMode={isPremium} />
 
       <main className="fluid-container pb-20">
         {isTitleOnlyMode && titleSearching ? (
           <div className="flex flex-col items-center justify-center py-32">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-[var(--accent-color)] border-t-transparent mb-6"></div>
-            <p className="text-lg font-medium text-[var(--text-color)]">正在搜索最佳片源...</p>
-            <p className="text-sm text-[var(--text-color-secondary)] mt-2">{title}</p>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-(--accent-color) border-t-transparent mb-6"></div>
+            <p className="text-lg font-medium text-(--text-color)">正在搜索最佳片源...</p>
+            <p className="text-sm text-(--text-color-secondary) mt-2">{title}</p>
           </div>
         ) : isTitleOnlyMode && titleSearchError ? (
           <PlayerError
@@ -511,8 +511,8 @@ function PlayerContent() {
           />
         ) : loading ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-[var(--accent-color)] border-t-transparent mb-4"></div>
-            <p className="text-[var(--text-color-secondary)]">正在加载视频详情...</p>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-(--accent-color) border-t-transparent mb-4"></div>
+            <p className="text-(--text-color-secondary)">正在加载视频详情...</p>
           </div>
         ) : videoError && !videoData ? (
           <PlayerError
@@ -559,7 +559,7 @@ function PlayerContent() {
                     size={20}
                     isPremium={isPremium}
                   />
-                  <span className="text-sm text-[var(--text-color-secondary)]">
+                  <span className="text-sm text-(--text-color-secondary)">
                     收藏这个视频
                   </span>
                   <div className="ml-auto">
@@ -669,7 +669,7 @@ function PlayerContent() {
 export default function PlayerPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-color)]">
+      <div className="min-h-screen flex items-center justify-center bg-(--bg-color)">
         <div className="brand-spinner" />
       </div>
     }>

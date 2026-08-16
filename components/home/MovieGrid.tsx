@@ -64,7 +64,7 @@ export function MovieGrid({
           <button
             onClick={() => onPageChange(page - 1)}
             disabled={page === 0}
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed bg-[var(--glass-bg)] border border-[var(--glass-border)] text-[var(--text-color)] hover:bg-[var(--glass-bg-hover)] active:scale-95"
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed bg-(--glass-bg) border border-(--glass-border) text-(--text-color) hover:bg-(--glass-bg-hover) active:scale-95"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M15 18l-6-6 6-6" />
@@ -99,7 +99,7 @@ export function MovieGrid({
                     className={`w-10 h-10 rounded-xl text-sm font-bold transition-all duration-200 cursor-pointer active:scale-95 ${
                       isActive
                         ? 'text-white shadow-lg'
-                        : 'bg-[var(--glass-bg)] border border-[var(--glass-border)] text-[var(--text-color)] hover:bg-[var(--glass-bg-hover)]'
+                        : 'bg-(--glass-bg) border border-(--glass-border) text-(--text-color) hover:bg-(--glass-bg-hover)'
                     }`}
                     style={isActive ? {
                       background: 'var(--accent-color)',
@@ -118,7 +118,7 @@ export function MovieGrid({
           <button
             onClick={() => onPageChange(page + 1)}
             disabled={!hasMore}
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed bg-[var(--glass-bg)] border border-[var(--glass-border)] text-[var(--text-color)] hover:bg-[var(--glass-bg-hover)] active:scale-95"
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed bg-(--glass-bg) border border-(--glass-border) text-(--text-color) hover:bg-(--glass-bg-hover) active:scale-95"
           >
             下一页
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -135,7 +135,7 @@ function MovieGridLoading() {
   return (
     <div className="movie-fluid-grid">
       {[...Array(14)].map((_, i) => (
-        <div key={i} className="skeleton-card skeleton-shimmer aspect-[2/3] rounded-[var(--radius-2xl)]" style={{ animationDelay: `${i * 0.05}s` }} />
+        <div key={i} className="skeleton-card skeleton-shimmer aspect-2/3 rounded-2xl" style={{ animationDelay: `${i * 0.05}s` }} />
       ))}
     </div>
   );
@@ -144,8 +144,8 @@ function MovieGridLoading() {
 function MovieGridEmpty() {
   return (
     <div className="text-center py-20">
-      <Icons.Film size={64} className="text-[var(--text-color-secondary)] mx-auto mb-4" />
-      <p className="text-[var(--text-color-secondary)]">暂无内容</p>
+      <Icons.Film size={64} className="text-(--text-color-secondary) mx-auto mb-4" />
+      <p className="text-(--text-color-secondary)">暂无内容</p>
     </div>
   );
 }

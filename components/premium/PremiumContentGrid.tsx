@@ -42,7 +42,7 @@ export function PremiumContentGrid({
                             e.preventDefault();
                             onVideoClick?.(video);
                         }}
-                        className="group cursor-pointer hover:translate-y-[-2px] transition-transform duration-200 ease-out"
+                        className="group cursor-pointer hover:-translate-y-0.5 transition-transform duration-200 ease-out"
                         style={{
                             position: 'relative',
                             zIndex: 1,
@@ -53,24 +53,24 @@ export function PremiumContentGrid({
                         onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => (e.currentTarget.style.zIndex = '1')}
                     >
                         <Card hover={false} className="p-0 h-full shadow-[0_2px_8px_var(--shadow-color)] hover:shadow-[0_8px_24px_var(--shadow-color)] transition-shadow duration-200 ease-out" blur={false}>
-                            <div className="relative aspect-[2/3] bg-[var(--glass-bg)] rounded-[var(--radius-2xl)]">
+                            <div className="relative aspect-2/3 bg-(--glass-bg) rounded-2xl">
                                 {video.vod_pic ? (
                                     <Image
                                         src={video.vod_pic}
                                         alt={video.vod_name}
                                         fill
                                         sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                                        className="object-cover transition-transform duration-300 group-hover:scale-105 rounded-[var(--radius-2xl)]"
+                                        className="object-cover transition-transform duration-300 group-hover:scale-105 rounded-2xl"
                                         loading="eager"
                                         unoptimized
                                     />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-[var(--text-color-secondary)]">
+                                    <div className="w-full h-full flex items-center justify-center text-(--text-color-secondary)">
                                         无封面
                                     </div>
                                 )}
                                 {video.vod_remarks && (
-                                    <div className="absolute top-2 right-2 bg-black/80 px-2.5 py-1.5 flex items-center gap-1.5 rounded-[var(--radius-full)]">
+                                    <div className="absolute top-2 right-2 bg-black/80 px-2.5 py-1.5 flex items-center gap-1.5 rounded-(--radius-full)">
                                         <span className="text-xs font-bold text-white">
                                             {video.vod_remarks}
                                         </span>
@@ -78,11 +78,11 @@ export function PremiumContentGrid({
                                 )}
                             </div>
                             <div className="p-3">
-                                <h3 className="font-semibold text-sm text-[var(--text-color)] line-clamp-2 group-hover:text-[var(--accent-color)] transition-colors">
+                                <h3 className="font-semibold text-sm text-(--text-color) line-clamp-2 group-hover:text-(--accent-color) transition-colors">
                                     {video.vod_name}
                                 </h3>
                                 {video.type_name && (
-                                    <p className="text-xs text-[var(--text-color-secondary)] mt-1">
+                                    <p className="text-xs text-(--text-color-secondary) mt-1">
                                         {video.type_name}
                                     </p>
                                 )}
@@ -112,7 +112,7 @@ function PremiumGridLoading() {
         <div className="movie-fluid-grid">
             {[...Array(14)].map((_, i) => (
                 <div key={i} className="p-0">
-                    <div className="aspect-[2/3] rounded-[var(--radius-2xl)] skeleton-shimmer mb-2" />
+                    <div className="aspect-2/3 rounded-2xl skeleton-shimmer mb-2" />
                     <div className="h-4 w-3/4 skeleton-shimmer rounded mb-1" />
                     <div className="h-3 w-1/2 skeleton-shimmer rounded" />
                 </div>
@@ -124,7 +124,7 @@ function PremiumGridLoading() {
 function PremiumGridNoMore() {
     return (
         <div className="text-center py-12">
-            <p className="text-[var(--text-color-secondary)]">没有更多内容了</p>
+            <p className="text-(--text-color-secondary)">没有更多内容了</p>
         </div>
     );
 }
@@ -132,8 +132,8 @@ function PremiumGridNoMore() {
 function PremiumGridEmpty() {
     return (
         <div className="text-center py-20">
-            <Icons.Film size={64} className="text-[var(--text-color-secondary)] mx-auto mb-4" />
-            <p className="text-[var(--text-color-secondary)]">暂无内容</p>
+            <Icons.Film size={64} className="text-(--text-color-secondary) mx-auto mb-4" />
+            <p className="text-(--text-color-secondary)">暂无内容</p>
         </div>
     );
 }

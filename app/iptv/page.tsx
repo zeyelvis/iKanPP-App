@@ -24,7 +24,7 @@ export default function IPTVPage() {
           <Icons.TV size={48} className="mx-auto mb-4 text-white/30" />
           <p className="text-white font-bold text-lg mb-2">无权访问 IPTV 电视直播</p>
           <p className="text-sm text-white/50 mb-6">请联系管理员开通直播权限</p>
-          <Link href="/" className="px-6 py-2.5 bg-[var(--accent-color)] text-white rounded-full text-xs font-bold inline-block">
+          <Link href="/" className="px-6 py-2.5 bg-(--accent-color) text-white rounded-full text-xs font-bold inline-block">
             返回首页
           </Link>
         </div>
@@ -54,7 +54,7 @@ export default function IPTVPage() {
         {activeChannel && (
           <div className="relative group/iptv-player rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-black">
             {/* 环境流光 */}
-            <div className="absolute -inset-2 bg-gradient-to-r from-red-600/20 via-[var(--accent-color)]/20 to-blue-600/20 rounded-3xl blur-2xl opacity-50 -z-10" />
+            <div className="absolute -inset-2 bg-linear-to-r from-red-600/20 via-(--accent-color)/20 to-blue-600/20 rounded-3xl blur-2xl opacity-50 -z-10" />
 
             <div className="p-4 sm:p-6 bg-black/40 backdrop-blur-md flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 border-b border-white/10">
               <div className="flex items-center gap-3">
@@ -84,7 +84,7 @@ export default function IPTVPage() {
             </div>
 
             {/* 直播播放器窗口 */}
-            <div className="w-full aspect-video max-h-[620px] bg-black">
+            <div className="w-full aspect-video max-h-155 bg-black">
               <IPTVPlayer
                 channel={activeChannel}
                 onClose={() => {}}
@@ -101,7 +101,7 @@ export default function IPTVPage() {
         <div className="bg-[#0A0A0F]/80 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-2xl">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 flex items-center justify-center rounded-2xl bg-[var(--accent-color)] text-white shadow-lg">
+              <div className="w-10 h-10 flex items-center justify-center rounded-2xl bg-(--accent-color) text-white shadow-lg">
                 <Icons.TV size={20} />
               </div>
               <div>
@@ -113,7 +113,7 @@ export default function IPTVPage() {
 
           {isLoading ? (
             <div className="text-center py-20">
-              <div className="w-12 h-12 border-3 border-[var(--accent-color)]/30 border-t-[var(--accent-color)] rounded-full animate-spin mx-auto mb-4" />
+              <div className="w-12 h-12 border-3 border-(--accent-color)/30 border-t-(--accent-color) rounded-full animate-spin mx-auto mb-4" />
               <p className="text-sm text-white/60">正在拉取最新的超清频道列表...</p>
             </div>
           ) : (

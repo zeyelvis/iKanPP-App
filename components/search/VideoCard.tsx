@@ -51,12 +51,12 @@ export const VideoCard = memo<VideoCardProps>(({
         className="group cursor-pointer block h-full cinema-poster-card"
       >
         <Card
-          className="p-0 flex flex-col h-full bg-[#0A0A0F]/60 backdrop-blur-md rounded-2xl overflow-hidden border border-white/10 shadow-lg group-hover:border-[var(--accent-color)]/50 transition-all duration-300"
+          className="p-0 flex flex-col h-full bg-[#0A0A0F]/60 backdrop-blur-md rounded-2xl overflow-hidden border border-white/10 shadow-lg group-hover:border-(--accent-color)/50 transition-all duration-300"
           hover={false}
           blur={false}
         >
           {/* 海报区域 */}
-          <div className="relative aspect-[2/3] bg-white/5 overflow-hidden">
+          <div className="relative aspect-2/3 bg-white/5 overflow-hidden">
             {proxiedPic ? (
               <Image
                 src={proxiedPic}
@@ -82,12 +82,12 @@ export const VideoCard = memo<VideoCardProps>(({
             <div className="absolute top-2 left-2 right-2 z-10 flex items-center justify-between gap-1 pointer-events-none">
               <div className="flex items-center gap-1 min-w-0">
                 {video.sourceName && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--accent-color)] text-white shadow-md truncate max-w-[90px]">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-(--accent-color) text-white shadow-md truncate max-w-22.5">
                     {video.sourceName}
                   </span>
                 )}
                 {video.type_name && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-black/60 backdrop-blur-md text-white/80 border border-white/10 truncate max-w-[70px]">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-black/60 backdrop-blur-md text-white/80 border border-white/10 truncate max-w-17.5">
                     {video.type_name}
                   </span>
                 )}
@@ -120,8 +120,8 @@ export const VideoCard = memo<VideoCardProps>(({
             )}
 
             {/* 悬停播放遮罩 */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-3">
-              <button className="w-full py-2 bg-[var(--accent-color)] hover:brightness-110 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-lg active:scale-95 transition-all">
+            <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-3">
+              <button className="w-full py-2 bg-(--accent-color) hover:brightness-110 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-lg active:scale-95 transition-all">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M8 5v14l11-7z" />
                 </svg>
@@ -132,7 +132,7 @@ export const VideoCard = memo<VideoCardProps>(({
 
           {/* 底部标题与信息 */}
           <div className="p-3 flex flex-col justify-between flex-1">
-            <h3 className="text-xs sm:text-sm font-bold text-white/90 line-clamp-1 group-hover:text-[var(--accent-color)] transition-colors">
+            <h3 className="text-xs sm:text-sm font-bold text-white/90 line-clamp-1 group-hover:text-(--accent-color) transition-colors">
               {video.vod_name}
             </h3>
 

@@ -56,7 +56,7 @@ export function IPTVChannelGrid({
             placeholder="搜索全国电视频道、卫视、国际台..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--accent-color)] transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-(--accent-color) transition-all"
           />
           {search && (
             <button
@@ -80,7 +80,7 @@ export function IPTVChannelGrid({
             onClick={() => setSelectedGroup(null)}
             className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
               selectedGroup === null
-                ? 'bg-[var(--accent-color)] text-white shadow-lg shadow-[var(--accent-color)]/30 scale-102'
+                ? 'bg-(--accent-color) text-white shadow-lg shadow-(--accent-color)/30 scale-102'
                 : 'bg-white/5 hover:bg-white/10 text-white/60 hover:text-white border border-white/10'
             }`}
           >
@@ -95,7 +95,7 @@ export function IPTVChannelGrid({
                 onClick={() => setSelectedGroup(group)}
                 className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
                   isActive
-                    ? 'bg-[var(--accent-color)] text-white shadow-lg shadow-[var(--accent-color)]/30 scale-102'
+                    ? 'bg-(--accent-color) text-white shadow-lg shadow-(--accent-color)/30 scale-102'
                     : 'bg-white/5 hover:bg-white/10 text-white/60 hover:text-white border border-white/10'
                 }`}
               >
@@ -118,7 +118,7 @@ export function IPTVChannelGrid({
                 group p-3.5 rounded-2xl text-left transition-all duration-200 cursor-pointer flex flex-col justify-between relative overflow-hidden active:scale-95
                 ${
                   isActive
-                    ? 'bg-[var(--accent-color)] text-white shadow-xl shadow-[var(--accent-color)]/40 ring-2 ring-white/40 scale-102'
+                    ? 'bg-(--accent-color) text-white shadow-xl shadow-(--accent-color)/40 ring-2 ring-white/40 scale-102'
                     : 'bg-white/5 hover:bg-white/10 text-white/90 border border-white/10 hover:border-white/20'
                 }
               `}

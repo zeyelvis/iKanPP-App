@@ -81,7 +81,7 @@ export default function RankingClient() {
       <div className="fluid-container pt-6 pb-20 space-y-8">
         {/* 顶部标题 */}
         <div className="text-center max-w-2xl mx-auto space-y-2">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-amber-500/20 via-red-500/20 to-amber-500/20 border border-amber-500/30 rounded-full text-amber-300 text-xs font-black shadow-lg">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-linear-to-r from-amber-500/20 via-red-500/20 to-amber-500/20 border border-amber-500/30 rounded-full text-amber-300 text-xs font-black shadow-lg">
             <span>🏆 全球全网影视风向标</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
@@ -103,7 +103,7 @@ export default function RankingClient() {
                   onClick={() => setActiveTab(tab)}
                   className={`px-4 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 shrink-0 cursor-pointer ${
                     isActive
-                      ? 'bg-[var(--accent-color)] text-white shadow-lg shadow-[var(--accent-color)]/30 scale-102'
+                      ? 'bg-(--accent-color) text-white shadow-lg shadow-(--accent-color)/30 scale-102'
                       : 'text-white/60 hover:text-white hover:bg-white/10'
                   }`}
                 >
@@ -138,7 +138,7 @@ export default function RankingClient() {
                     group p-3 sm:p-4 rounded-3xl transition-all duration-300 flex items-center gap-3 sm:gap-5 border select-none
                     ${
                       isTop3
-                        ? 'bg-gradient-to-r from-white/10 via-white/5 to-transparent border-amber-500/30 hover:border-amber-500/60 shadow-xl'
+                        ? 'bg-linear-to-r from-white/10 via-white/5 to-transparent border-amber-500/30 hover:border-amber-500/60 shadow-xl'
                         : 'bg-[#0A0A0F]/80 backdrop-blur-xl border-white/10 hover:border-white/20 hover:bg-white/10'
                     }
                   `}
@@ -161,7 +161,7 @@ export default function RankingClient() {
                   {/* 海报封面 */}
                   <div
                     onClick={() => handleMovieClick(item)}
-                    className="relative shrink-0 w-16 sm:w-20 aspect-[2/3] rounded-2xl overflow-hidden bg-white/5 cursor-pointer shadow-md group-hover:scale-105 transition-transform"
+                    className="relative shrink-0 w-16 sm:w-20 aspect-2/3 rounded-2xl overflow-hidden bg-white/5 cursor-pointer shadow-md group-hover:scale-105 transition-transform"
                   >
                     <Image
                       src={proxiedCover || '/placeholder-poster.svg'}
@@ -179,7 +179,7 @@ export default function RankingClient() {
                     className="flex-1 min-w-0 cursor-pointer"
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-sm sm:text-base font-bold text-white truncate group-hover:text-[var(--accent-color)] transition-colors">
+                      <h3 className="text-sm sm:text-base font-bold text-white truncate group-hover:text-(--accent-color) transition-colors">
                         {item.title}
                       </h3>
                       {item.rate && parseFloat(item.rate) > 0 && (
@@ -200,7 +200,7 @@ export default function RankingClient() {
                   <div className="shrink-0 flex items-center gap-2">
                     <button
                       onClick={() => handleMovieClick(item)}
-                      className="px-4 sm:px-5 py-2.5 bg-[var(--accent-color)] hover:brightness-110 active:scale-95 text-white rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-lg transition-all cursor-pointer"
+                      className="px-4 sm:px-5 py-2.5 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-lg transition-all cursor-pointer"
                     >
                       <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z" />

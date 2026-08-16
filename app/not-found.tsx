@@ -4,7 +4,7 @@ export default function NotFound() {
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col items-center justify-center p-6 text-center select-none relative overflow-hidden">
       {/* 背景流光 */}
-      <div className="absolute w-96 h-96 bg-[var(--accent-color)]/10 rounded-full blur-3xl -top-20 -left-20 pointer-events-none" />
+      <div className="absolute w-96 h-96 bg-(--accent-color)/10 rounded-full blur-3xl -top-20 -left-20 pointer-events-none" />
       <div className="absolute w-96 h-96 bg-blue-600/10 rounded-full blur-3xl -bottom-20 -right-20 pointer-events-none" />
 
       {/* 404 标志 */}
@@ -33,7 +33,7 @@ export default function NotFound() {
       <div className="flex flex-wrap items-center justify-center gap-3">
         <Link
           href="/"
-          className="px-7 py-3 bg-[var(--accent-color)] hover:brightness-110 active:scale-95 text-white rounded-2xl text-sm font-bold shadow-xl shadow-[var(--accent-color)]/30 transition-all cursor-pointer"
+          className="px-7 py-3 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-2xl text-sm font-bold shadow-xl shadow-(--accent-color)/30 transition-all cursor-pointer"
         >
           返回平台首页
         </Link>

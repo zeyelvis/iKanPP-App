@@ -168,7 +168,7 @@ export function EpisodeList({
             <button
               onClick={refreshLatencies}
               disabled={isLoadingLatency}
-              className="text-[11px] font-medium text-white/50 hover:text-[var(--accent-color)] flex items-center gap-1 transition-colors cursor-pointer"
+              className="text-[11px] font-medium text-white/50 hover:text-(--accent-color) flex items-center gap-1 transition-colors cursor-pointer"
             >
               <Icons.RefreshCw size={11} className={isLoadingLatency ? 'animate-spin' : ''} />
               <span>测速</span>
@@ -188,7 +188,7 @@ export function EpisodeList({
                   onClick={() => !isCurrent && onSourceChange!(source)}
                   className={`shrink-0 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all duration-300 flex items-center gap-2 cursor-pointer ${
                     isCurrent
-                      ? 'bg-[var(--accent-color)] text-white shadow-lg shadow-[var(--accent-color)]/30 scale-102 border border-white/20'
+                      ? 'bg-(--accent-color) text-white shadow-lg shadow-(--accent-color)/30 scale-102 border border-white/20'
                       : 'bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10'
                   }`}
                 >
@@ -197,7 +197,7 @@ export function EpisodeList({
                     (latency || 0) < 150 ? 'bg-emerald-400' :
                     (latency || 0) < 350 ? 'bg-amber-400' : 'bg-white/30'
                   }`} />
-                  <span className="truncate max-w-[100px]">{source.sourceName || source.source}</span>
+                  <span className="truncate max-w-25">{source.sourceName || source.source}</span>
                   {latency !== undefined && (
                     <span className={`text-[10px] px-1.5 py-0.2 rounded-md ${
                       isCurrent ? 'bg-black/30 text-white' : 'bg-white/10 text-white/60'
@@ -238,7 +238,7 @@ export function EpisodeList({
               onClick={() => onToggleReverse?.(!isReversed)}
               className={`p-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
                 isReversed
-                  ? 'bg-[var(--accent-color)] text-white shadow-md'
+                  ? 'bg-(--accent-color) text-white shadow-md'
                   : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10 border border-white/10'
               }`}
               title={isReversed ? '切换为正序' : '切换为倒序'}
@@ -271,7 +271,7 @@ export function EpisodeList({
         {/* 选集按钮容器 */}
         <div
           ref={listRef}
-          className={`max-h-[380px] sm:max-h-[520px] overflow-y-auto pr-1 ${
+          className={`max-h-95 sm:max-h-130 overflow-y-auto pr-1 ${
             isGridFormat
               ? 'grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2'
               : 'space-y-2'
@@ -293,7 +293,7 @@ export function EpisodeList({
                     relative transition-all duration-300 cursor-pointer rounded-2xl flex items-center justify-center font-bold text-center select-none active:scale-95
                     ${isGridFormat ? 'h-12 text-xs sm:text-sm' : 'w-full py-3 px-4 text-left justify-between'}
                     ${isCurrentEpisode
-                      ? 'bg-[var(--accent-color)] text-white shadow-xl shadow-[var(--accent-color)]/40 ring-2 ring-white/30 scale-102 z-10'
+                      ? 'bg-(--accent-color) text-white shadow-xl shadow-(--accent-color)/40 ring-2 ring-white/30 scale-102 z-10'
                       : 'bg-white/5 hover:bg-white/15 text-white/80 hover:text-white border border-white/10'
                     }
                   `}

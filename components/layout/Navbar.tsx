@@ -109,7 +109,7 @@ export function Navbar({
       className={`sticky top-0 z-[2000] w-full transition-all duration-300 ${
         isScrolled
           ? 'bg-[#0A0A0F]/90 backdrop-blur-2xl border-b border-white/10 shadow-2xl py-3'
-          : 'bg-gradient-to-b from-black/80 via-black/40 to-transparent py-4'
+          : 'bg-linear-to-b from-black/80 via-black/40 to-transparent py-4'
       }`}
     >
       <div className="fluid-container flex items-center justify-between gap-4">
@@ -163,7 +163,7 @@ export function Navbar({
                       cat.isVip
                         ? 'text-amber-400 bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30'
                         : isActive
-                        ? 'text-white bg-[var(--accent-color)] font-bold shadow-lg shadow-[var(--accent-color)]/30 scale-105'
+                        ? 'text-white bg-(--accent-color) font-bold shadow-lg shadow-(--accent-color)/30 scale-105'
                         : 'text-white/70 hover:text-white hover:bg-white/10'
                     }`}
                   >
@@ -220,10 +220,10 @@ export function Navbar({
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 border border-white/15 rounded-full text-xs hover:bg-white/20 transition-all cursor-pointer"
                 title="个人中心"
               >
-                <div className="w-5 h-5 rounded-full bg-[var(--accent-color)] flex items-center justify-center text-white font-black text-[10px]">
+                <div className="w-5 h-5 rounded-full bg-(--accent-color) flex items-center justify-center text-white font-black text-[10px]">
                   {supabaseUser.email.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-white max-w-[80px] truncate hidden md:inline">
+                <span className="text-white max-w-20 truncate hidden md:inline">
                   {supabaseUser.email.split('@')[0]}
                 </span>
                 {supabaseUser.isVip && (
@@ -239,7 +239,7 @@ export function Navbar({
           {!isPlayer && !supabaseUser && (
             <button
               onClick={() => setAuthModalOpen(true)}
-              className="flex items-center gap-1.5 px-4 py-1.5 bg-[var(--accent-color)] text-white rounded-full text-xs sm:text-sm font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer shadow-lg shadow-[var(--accent-color)]/25"
+              className="flex items-center gap-1.5 px-4 py-1.5 bg-(--accent-color) text-white rounded-full text-xs sm:text-sm font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer shadow-lg shadow-(--accent-color)/25"
             >
               <User size={14} />
               登录
@@ -248,24 +248,22 @@ export function Navbar({
 
           {/* 设置 */}
           <Link
-            href={settingsHref}
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/15 text-white/80 hover:text-white hover:bg-white/20 transition-all cursor-pointer"
+            href="/settings"
+            className="p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+            title="设置"
             aria-label="设置"
-            title="播放与显示设置"
           >
-            <svg className="w-4 h-4 fill-current" viewBox="0 -960 960 960">
-              <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
-            </svg>
+            <Icons.Settings size={18} />
           </Link>
 
-          {/* 移动端菜单汉堡按钮 */}
+          {/* 移动端汉堡菜单按钮 */}
           {!isPlayer && (
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex lg:hidden w-9 h-9 items-center justify-center rounded-full bg-white/10 border border-white/15 text-white"
-              aria-label="菜单"
+              className="p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors lg:hidden"
+              aria-label="展开导航菜单"
             >
-              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           )}
 
@@ -288,7 +286,7 @@ export function Navbar({
                   cat.isVip
                     ? 'bg-amber-400/10 text-amber-400 border border-amber-400/30'
                     : (pathname === cat.href || (cat.href === '/' && pathname === '') || activeCategory === cat.id)
-                    ? 'bg-[var(--accent-color)] text-white shadow-md'
+                    ? 'bg-(--accent-color) text-white shadow-md'
                     : 'bg-white/5 text-white/80 hover:bg-white/10'
                 }`}
               >

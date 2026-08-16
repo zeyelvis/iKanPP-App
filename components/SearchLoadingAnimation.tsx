@@ -58,15 +58,15 @@ export function SearchLoadingAnimation({
   return (
     <div className="w-full max-w-xl mx-auto py-6 px-6 bg-[#0A0A0F]/80 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl animate-fade-in relative overflow-hidden">
       {/* 顶部微弱红光环境弥散 */}
-      <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-24 bg-[var(--accent-color)]/20 blur-3xl rounded-full pointer-events-none" />
+      <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-24 bg-(--accent-color)/20 blur-3xl rounded-full pointer-events-none" />
 
       {/* 雷达与状态展示 */}
       <div className="flex items-center gap-4 mb-4">
         {/* 中心雷达脉冲 */}
         <div className="relative w-12 h-12 flex items-center justify-center shrink-0">
-          <div className="absolute inset-0 rounded-full bg-[var(--accent-color)]/20 animate-radar-ring" />
-          <div className="absolute inset-2 rounded-full bg-[var(--accent-color)]/40 animate-ping" style={{ animationDuration: '2s' }} />
-          <div className="relative w-8 h-8 rounded-full bg-[var(--accent-color)] flex items-center justify-center text-white shadow-[0_0_15px_rgba(229,9,20,0.6)]">
+          <div className="absolute inset-0 rounded-full bg-(--accent-color)/20 animate-radar-ring" />
+          <div className="absolute inset-2 rounded-full bg-(--accent-color)/40 animate-ping" style={{ animationDuration: '2s' }} />
+          <div className="relative w-8 h-8 rounded-full bg-(--accent-color) flex items-center justify-center text-white shadow-[0_0_15px_rgba(229,9,20,0.6)]">
             <svg className="w-4 h-4 animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <circle cx="12" cy="12" r="10" strokeDasharray="30 20" />
             </svg>
@@ -78,7 +78,7 @@ export function SearchLoadingAnimation({
           <div className="flex items-center justify-between gap-2">
             <h4 className="text-sm sm:text-base font-bold text-white flex items-center gap-1.5">
               <span>全网多源并发雷达检索中</span>
-              <span className="w-4 text-left text-[var(--accent-color)]">{dots}</span>
+              <span className="w-4 text-left text-(--accent-color)">{dots}</span>
             </h4>
             <span className="text-xs font-black text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded-full">
               {Math.round(progress)}%
@@ -95,10 +95,10 @@ export function SearchLoadingAnimation({
       {/* 影院级流光进度条 */}
       <div className="relative w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-red-600 via-[var(--accent-color)] to-amber-500 transition-all duration-300 ease-out rounded-full relative"
+          className="h-full bg-linear-to-r from-red-600 via-(--accent-color) to-amber-500 transition-all duration-300 ease-out rounded-full relative"
           style={{ width: `${progress}%` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+          <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
         </div>
       </div>
 

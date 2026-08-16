@@ -70,7 +70,7 @@ export function Top10Rail({
           <span className="text-2xl">🏆</span>
           <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
             {title || `今日 TOP 10 · ${contentType === 'movie' ? '热门电影' : '热播剧集'}`}
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-red-600 text-white shadow-md">
+            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-linear-to-r from-amber-500 to-red-600 text-white shadow-md">
               实时榜单
             </span>
           </h2>
@@ -107,7 +107,7 @@ export function Top10Rail({
           Array.from({ length: 5 }).map((_, idx) => (
             <div
               key={idx}
-              className="shrink-0 w-[200px] sm:w-[240px] aspect-[16/10] rounded-2xl bg-white/5 animate-pulse"
+              className="shrink-0 w-50 sm:w-60 aspect-16/10 rounded-2xl bg-white/5 animate-pulse"
             />
           ))
         ) : top10List.length > 0 ? (
@@ -129,7 +129,7 @@ export function Top10Rail({
                 </div>
 
                 {/* 紧随的海报卡片 */}
-                <div className="relative flex-1 aspect-[2/3] rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-2xl transition-all duration-300 group-hover:scale-105 group-hover:border-[var(--accent-color)]/60">
+                <div className="relative flex-1 aspect-2/3 rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-2xl transition-all duration-300 group-hover:scale-105 group-hover:border-(--accent-color)/60">
                   <Image
                     src={proxiedCover || '/placeholder-poster.svg'}
                     alt={movie.title}
@@ -149,11 +149,11 @@ export function Top10Rail({
                   )}
 
                   {/* 悬停播放遮罩 */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-2.5">
+                  <div className="absolute inset-0 bg-linear-to-t from-black/95 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-2.5">
                     <p className="text-xs font-bold text-white line-clamp-1 mb-2">
                       {movie.title}
                     </p>
-                    <button className="w-full py-1.5 bg-[var(--accent-color)] hover:brightness-110 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1 shadow-md">
+                    <button className="w-full py-1.5 bg-(--accent-color) hover:brightness-110 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1 shadow-md">
                       <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M8 5v14l11-7z" />
                       </svg>

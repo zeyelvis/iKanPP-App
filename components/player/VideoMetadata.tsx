@@ -26,7 +26,7 @@ export function VideoMetadata({ videoData, source, title }: VideoMetadataProps) 
       <div>
         <div className="flex items-center gap-2 flex-wrap mb-2">
           {source && (
-            <span className="px-3 py-0.5 rounded-full text-xs font-bold bg-[var(--accent-color)] text-white shadow-md flex items-center gap-1">
+            <span className="px-3 py-0.5 rounded-full text-xs font-bold bg-(--accent-color) text-white shadow-md flex items-center gap-1">
               <Icons.Check size={12} />
               {getSourceName(source)}
             </span>
@@ -68,7 +68,7 @@ export function VideoMetadata({ videoData, source, title }: VideoMetadataProps) 
           {cleanContent.length > 120 && (
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-xs font-bold text-[var(--accent-color)] hover:underline cursor-pointer pt-0.5"
+              className="text-xs font-bold text-(--accent-color) hover:underline cursor-pointer pt-0.5"
             >
               {isExpanded ? '收起简介 ▲' : '展开全文 ▼'}
             </button>

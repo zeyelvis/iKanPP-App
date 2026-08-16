@@ -147,7 +147,7 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
 
   if (loading || currentData.length === 0) {
     return (
-      <div className="relative w-full h-[52vh] sm:h-[62vh] lg:h-[70vh] max-h-[720px] rounded-3xl overflow-hidden bg-white/5 animate-pulse mb-8 border border-white/5" />
+      <div className="relative w-full h-[52vh] sm:h-[62vh] lg:h-[70vh] max-h-180 rounded-3xl overflow-hidden bg-white/5 animate-pulse mb-8 border border-white/5" />
     );
   }
 
@@ -157,7 +157,7 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
 
   return (
     <div
-      className="relative w-full h-[55vh] sm:h-[64vh] lg:h-[72vh] max-h-[750px] rounded-3xl overflow-hidden mb-10 group select-none shadow-2xl border border-white/10"
+      className="relative w-full h-[55vh] sm:h-[64vh] lg:h-[72vh] max-h-187.5 rounded-3xl overflow-hidden mb-10 group select-none shadow-2xl border border-white/10"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -173,11 +173,11 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
 
         {/* 2. 电影级三重暗黑渐变叠层 */}
         {/* 底部向上渐变（文字区与内容区无缝融合） */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/60 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-[#0A0A0F] via-[#0A0A0F]/60 to-transparent" />
         {/* 左侧向右渐变（突出左下大字标题） */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0F]/95 via-[#0A0A0F]/50 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-[#0A0A0F]/95 via-[#0A0A0F]/50 to-transparent" />
         {/* 顶部微暗渐变（保障 Navbar 识别度） */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/60 via-transparent to-transparent" />
       </div>
 
       {/* 3. 巨幕内容排版 */}
@@ -185,7 +185,7 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
         <div className="max-w-3xl">
           {/* 榜单热度与类型徽章 */}
           <div className="flex items-center gap-2 flex-wrap mb-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-red-600 to-amber-600 text-white text-xs font-black rounded-full shadow-lg">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-linear-to-r from-red-600 to-amber-600 text-white text-xs font-black rounded-full shadow-lg">
               🔥 #{activeIndex + 1} 全网焦点热播
             </span>
 
@@ -239,7 +239,7 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
           <div className="flex items-center gap-3.5">
             <button
               onClick={() => handleMovieClick(active)}
-              className="px-6 sm:px-8 py-3 sm:py-3.5 bg-[var(--accent-color)] hover:brightness-110 active:scale-95 text-white rounded-2xl text-sm sm:text-base font-bold flex items-center gap-2.5 shadow-2xl transition-all cursor-pointer hover:shadow-[0_0_25px_rgba(229,9,20,0.6)]"
+              className="px-6 sm:px-8 py-3 sm:py-3.5 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-2xl text-sm sm:text-base font-bold flex items-center gap-2.5 shadow-2xl transition-all cursor-pointer hover:shadow-[0_0_25px_rgba(229,9,20,0.6)]"
             >
               <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z" />
@@ -268,7 +268,7 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
             onClick={() => setActiveIndex(idx)}
             className={`relative w-12 h-16 rounded-xl overflow-hidden border-2 transition-all duration-300 cursor-pointer ${
               idx === activeIndex
-                ? 'border-[var(--accent-color)] scale-110 shadow-lg'
+                ? 'border-(--accent-color) scale-110 shadow-lg'
                 : 'border-transparent opacity-50 hover:opacity-100'
             }`}
           >
@@ -284,7 +284,7 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
             key={idx}
             onClick={() => setActiveIndex(idx)}
             className={`h-1.5 rounded-full transition-all duration-300 ${
-              idx === activeIndex ? 'w-5 bg-[var(--accent-color)]' : 'w-1.5 bg-white/30'
+              idx === activeIndex ? 'w-5 bg-(--accent-color)' : 'w-1.5 bg-white/30'
             }`}
             aria-label={`切换到第 ${idx + 1} 张`}
           />

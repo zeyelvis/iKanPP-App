@@ -27,7 +27,7 @@ export default function GlobalError({
           <div className="flex flex-col gap-2.5">
             <button
               onClick={reset}
-              className="w-full py-3 bg-[var(--accent-color)] hover:brightness-110 text-white rounded-xl text-sm font-bold shadow-lg transition-all cursor-pointer"
+              className="w-full py-3 bg-(--accent-color) hover:brightness-110 text-white rounded-xl text-sm font-bold shadow-lg transition-all cursor-pointer"
             >
               重新加载页面
             </button>
