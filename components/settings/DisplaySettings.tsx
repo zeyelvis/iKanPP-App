@@ -47,29 +47,24 @@ export function DisplaySettings({
         <div className="bg-(--glass-bg) border border-(--glass-border) rounded-2xl shadow-(--shadow-sm) p-6 mb-6">
             <h2 className="text-xl font-semibold text-(--text-color) mb-4">显示设置</h2>
 
-            {/* Theme Selector */}
+            {/* Theme Display Card */}
             <div className="mb-6">
-                <h3 className="font-medium text-(--text-color) mb-2">主题模式</h3>
-                <p className="text-sm text-(--text-color-secondary) mb-4">
-                    选择应用的外观主题
-                </p>
-                <div className="grid grid-cols-3 gap-3">
-                    {themeOptions.map((opt) => (
-                        <button
-                            key={opt.value}
-                            onClick={() => setTheme(opt.value)}
-                            className={`px-3 py-3 rounded-2xl border text-center font-medium transition-all duration-200 cursor-pointer ${theme === opt.value
-                                ? 'bg-(--accent-color) border-(--accent-color) text-white shadow-[0_4px_12px_rgba(var(--accent-color-rgb),0.3)]'
-                                : 'bg-(--glass-bg) border-(--glass-border) text-(--text-color) hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)]'
-                                }`}
-                        >
-                            <div className="flex flex-col items-center gap-1.5">
-                                {opt.icon}
-                                <span className="text-sm font-semibold">{opt.label}</span>
-                                <span className="text-xs opacity-70 hidden sm:block">{opt.desc}</span>
+                <h3 className="font-medium text-(--text-color) mb-2">外观主题</h3>
+                <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-black/60 border border-white/10 flex items-center justify-center text-amber-400 shrink-0 shadow-lg">
+                            <Icons.Moon size={20} />
+                        </div>
+                        <div>
+                            <div className="text-sm font-bold text-white flex items-center gap-2">
+                                <span>纯暗黑影院模式 (Cinema Dark)</span>
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">已永久开启</span>
                             </div>
-                        </button>
-                    ))}
+                            <p className="text-xs text-white/50 mt-0.5">
+                                专为电影大片与夜间观影打造，提供最高色彩对比度与沉浸护眼体验
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 

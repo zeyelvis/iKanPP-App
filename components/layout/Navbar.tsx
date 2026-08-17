@@ -12,7 +12,6 @@ import { LogOut, User, Crown, Share2, Menu, X, Sparkles } from 'lucide-react';
 import { SearchBox } from '@/components/search/SearchBox';
 import { MobileSearchOverlay } from '@/components/search/MobileSearchOverlay';
 import { Button } from '@/components/ui/Button';
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { useUserStore } from '@/lib/store/user-store';
 import { useSessionGuard } from '@/lib/hooks/useSessionGuard';
@@ -267,8 +266,6 @@ export function Navbar({
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           )}
-
-          {isPlayer && <ThemeSwitcher />}
         </div>
       </div>
 

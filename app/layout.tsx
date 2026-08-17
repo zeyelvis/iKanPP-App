@@ -135,7 +135,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" suppressHydrationWarning>
+    <html lang="zh-CN" className="dark" suppressHydrationWarning>
       <head>
         {/* 🚀 外部图片 CDN 预连接 — 消除 DNS+TLS 延迟，直接提升 LCP */}
         <link rel="preconnect" href="https://image.tmdb.org" crossOrigin="anonymous" />
@@ -203,7 +203,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dark bg-[#0A0A0F] text-white`}
         suppressHydrationWarning
       >
         <ThemeProvider>
