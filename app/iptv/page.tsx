@@ -49,7 +49,7 @@ export default function IPTVPage() {
     <div className="min-h-screen bg-[#0A0A0F] text-white">
       <Navbar />
 
-      <div className="fluid-container pt-4 pb-16 space-y-8">
+      <div className="fluid-container pt-3 sm:pt-4 pb-28 sm:pb-16 space-y-6 sm:space-y-8">
         {/* 1. 演播室顶部区域：直播播放器与正在播放信息 */}
         {activeChannel && (
           <div className="relative group/iptv-player rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-black">

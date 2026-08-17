@@ -183,7 +183,7 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
       onTouchEnd={handleTouchEnd}
     >
       {/* 1. 全景大图背景 */}
-      <div className="absolute inset-0 transition-all duration-1000 ease-out">
+      <div className="absolute inset-0 bg-[#0A0A0F] ambient-mesh-glow transition-all duration-1000 ease-out">
         <PosterImage
           src={activeBackdrop}
           alt={active.title}

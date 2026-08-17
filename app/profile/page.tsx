@@ -134,7 +134,7 @@ function ProfileContent() {
             {/* 顶部导航 — 复用全局 Navbar 保持统一 */}
             <Navbar variant="player" />
 
-            <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-6">
+            <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-6 pb-28 sm:pb-12">
                 {/* 普通用户：单页展示，无侧边栏 */}
                 {!isAdminRole ? (
                     <div className="max-w-2xl mx-auto">

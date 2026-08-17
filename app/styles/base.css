@@ -33,7 +33,7 @@
     transform: scale(1.05);
 }
 
-/* 沉浸式 Hero 巨幕环境光晕 */
+/* 沉浸式 Hero 巨幕环境光晕与流光网格 */
 .hero-ambient-glow {
     position: absolute;
     inset: auto 0 -60px 0;
@@ -41,6 +41,10 @@
     background: linear-gradient(to bottom, transparent, var(--bg-color));
     pointer-events: none;
     z-index: 20;
+}
+
+.ambient-mesh-glow {
+    background: radial-gradient(circle at 50% 30%, rgba(229, 9, 20, 0.18) 0%, rgba(139, 92, 246, 0.12) 40%, rgba(10, 10, 15, 0.95) 85%);
 }
 
 /* 磨砂玻璃流媒体卡片 */
