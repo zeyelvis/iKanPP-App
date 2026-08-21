@@ -1,4 +1,13 @@
-'use client';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: '隐私政策 (Privacy Policy) | iKanPP 爱看片片',
+  description: 'iKanPP 平台隐私保护政策，了解我们如何严格保护全球海外华人用户的数据隐私与账号安全。',
+  keywords: ['iKanPP隐私政策', '爱看片片隐私条款', 'iKanPP Privacy Policy'],
+  alternates: {
+    canonical: 'https://www.ikanpp.com/privacy',
+  },
+};
 
 export default function PrivacyPolicy() {
     return (

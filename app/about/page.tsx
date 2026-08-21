@@ -1,8 +1,22 @@
-'use client';
-
+import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
+
+export const metadata: Metadata = {
+  title: '关于我们 — 爱看片片的故事 | iKanPP',
+  description: '一个海外留学生的假期逆袭：用 AI 技术打造免费、丝滑、懂海外华人的影视聚合搜索引擎。海外免翻墙直连，专注卓越影音体验。',
+  keywords: ['关于iKanPP', '爱看片片故事', '海外留学生看剧', '海外华人影视', 'iKanPP'],
+  openGraph: {
+    title: '关于我们 — 爱看片片的故事 | iKanPP',
+    description: '一个海外留学生的假期逆袭：用 AI 技术打造免费、丝滑、懂海外华人的影视聚合搜索平台。',
+    type: 'website',
+    url: 'https://www.ikanpp.com/about',
+  },
+  alternates: {
+    canonical: 'https://www.ikanpp.com/about',
+  },
+};
 
 /* ── 结构化数据 ── */
 const organizationSchema = {

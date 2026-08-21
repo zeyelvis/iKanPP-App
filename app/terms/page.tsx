@@ -1,4 +1,13 @@
-'use client';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: '服务条款 (Terms of Service) | iKanPP 爱看片片',
+  description: 'iKanPP 平台用户服务协议与法律声明，了解使用聚合搜索与播放服务的条款与规范。',
+  keywords: ['iKanPP服务条款', '爱看片片用户协议', 'iKanPP Terms of Service'],
+  alternates: {
+    canonical: 'https://www.ikanpp.com/terms',
+  },
+};
 
 export default function TermsOfService() {
     return (
