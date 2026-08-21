@@ -70,9 +70,31 @@ export function CategoryHub({
     window.history.replaceState(null, '', newUrl);
   }, [selectedGenre, selectedRegion, selectedYear]);
 
-  // 货架数据状态
-  const [shelfData, setShelfData] = useState<Record<string, RailMovie[]>>({});
-  const [loadingShelves, setLoadingShelves] = useState(true);
+// ── SWR 频道大厅本地瞬间缓存 ──────────────────────────
+const CATHUB_CACHE_KEY = 'kvideo-cathub-v2-';
+
+function getLocalCatHub(key: string): Record<string, RailMovie[]> | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(CATHUB_CACHE_KEY + key);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function setLocalCatHub(key: string, data: Record<string, RailMovie[]>) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(CATHUB_CACHE_KEY + key, JSON.stringify(data));
+  } catch {}
+}
+
+  // 货架数据状态（SWR: 优先从本地秒级展示）
+  const initialCache = typeof window !== 'undefined' ? getLocalCatHub(activeNav || doubanType) : null;
+  const [shelfData, setShelfData] = useState<Record<string, RailMovie[]>>(() => initialCache || {});
+  const [loadingShelves, setLoadingShelves] = useState<boolean>(() => !initialCache || Object.keys(initialCache).length === 0);
 
   // 全库网格数据
   const [gridMovies, setGridMovies] = useState<any[]>([]);
@@ -91,8 +113,16 @@ export function CategoryHub({
   // 获取多个专属货架片单
   useEffect(() => {
     let isMounted = true;
-    const fetchShelvesData = async () => {
+    const cacheKey = activeNav || doubanType;
+    const cached = getLocalCatHub(cacheKey);
+    if (cached && Object.keys(cached).length > 0) {
+      setShelfData(cached);
+      setLoadingShelves(false);
+    } else {
       setLoadingShelves(true);
+    }
+
+    const fetchShelvesData = async () => {
       try {
         const results = await Promise.allSettled(
           shelves.map((shelf) =>
@@ -109,11 +139,14 @@ export function CategoryHub({
         if (isMounted) {
           const map: Record<string, RailMovie[]> = {};
           results.forEach((res) => {
-            if (res.status === 'fulfilled' && res.value?.tag) {
+            if (res.status === 'fulfilled' && res.value?.tag && res.value.subjects?.length) {
               map[res.value.tag] = res.value.subjects;
             }
           });
-          setShelfData(map);
+          if (Object.keys(map).length > 0) {
+            setShelfData(prev => ({ ...prev, ...map }));
+            setLocalCatHub(cacheKey, map);
+          }
         }
       } catch (err) {
         console.error('Fetch category shelves error:', err);
@@ -126,7 +159,7 @@ export function CategoryHub({
     return () => {
       isMounted = false;
     };
-  }, [shelves, doubanType]);
+  }, [shelves, doubanType, activeNav]);
 
   // 计算当前有效综合搜索 Tag
   const activeSearchTag = useMemo(() => {

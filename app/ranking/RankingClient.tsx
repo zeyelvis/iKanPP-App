@@ -30,16 +30,45 @@ const RANK_CATEGORIES = [
   { id: 'variety_hot', label: '🎤 热门综艺榜', type: 'tv', tag: '综艺', genre: '', region: '' },
 ];
 
+// ── SWR 排行榜本地瞬间缓存 ──────────────────────────
+const RANK_CACHE_KEY = 'kvideo-rank-cache-v2-';
+
+function getLocalRank(id: string): RankingItem[] | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(RANK_CACHE_KEY + id);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+  } catch {}
+  return null;
+}
+
+function setLocalRank(id: string, items: RankingItem[]) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(RANK_CACHE_KEY + id, JSON.stringify(items));
+  } catch {}
+}
+
 export default function RankingClient() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(RANK_CATEGORIES[0]);
-  const [items, setItems] = useState<RankingItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const initialCache = typeof window !== 'undefined' ? getLocalRank(RANK_CATEGORIES[0].id) : null;
+  const [items, setItems] = useState<RankingItem[]>(() => initialCache || []);
+  const [loading, setLoading] = useState(!initialCache || initialCache.length === 0);
 
   useEffect(() => {
     let isMounted = true;
-    const fetchRankData = async () => {
+    const cached = getLocalRank(activeTab.id);
+    if (cached && cached.length > 0) {
+      setItems(cached);
+      setLoading(false);
+    } else {
       setLoading(true);
+    }
+
+    const fetchRankData = async () => {
       try {
         const params = new URLSearchParams();
         params.set('tag', activeTab.tag);
@@ -51,12 +80,12 @@ export default function RankingClient() {
 
         const res = await fetch(`/api/douban/recommend?${params.toString()}`);
         const data = await res.json();
-        if (isMounted) {
-          setItems(data.subjects || []);
+        if (isMounted && data.subjects?.length) {
+          setItems(data.subjects);
+          setLocalRank(activeTab.id, data.subjects);
         }
       } catch (err) {
         console.error('Fetch rank error:', err);
-        if (isMounted) setItems([]);
       } finally {
         if (isMounted) setLoading(false);
       }

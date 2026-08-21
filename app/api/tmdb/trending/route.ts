@@ -140,7 +140,13 @@ export async function POST(request: Request) {
             }
         });
 
-        return NextResponse.json({ backdrops });
+        return NextResponse.json({ backdrops }, {
+            headers: {
+                'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
+                'CDN-Cache-Control': 'public, s-maxage=86400',
+                'Cloudflare-CDN-Cache-Control': 'public, s-maxage=86400',
+            },
+        });
     } catch {
         return NextResponse.json({ backdrops: {} }, { status: 500 });
     }
@@ -163,6 +169,15 @@ export async function GET(request: Request) {
     }
 
     const result = await searchBackdrop(title, lang, type, year);
-    return NextResponse.json({ backdrop: result?.full || null, thumb: result?.thumb || null });
+    return NextResponse.json(
+        { backdrop: result?.full || null, thumb: result?.thumb || null },
+        {
+            headers: {
+                'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
+                'CDN-Cache-Control': 'public, s-maxage=86400',
+                'Cloudflare-CDN-Cache-Control': 'public, s-maxage=86400',
+            },
+        }
+    );
 }
 

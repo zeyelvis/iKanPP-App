@@ -52,6 +52,12 @@ export async function GET(request: Request) {
             year: subject.year || '',
             types: subject.types || [],
             region: Array.isArray(subject.region) ? subject.region.join(' / ') : (subject.region || ''),
+        }, {
+            headers: {
+                'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
+                'CDN-Cache-Control': 'public, s-maxage=86400',
+                'Cloudflare-CDN-Cache-Control': 'public, s-maxage=86400',
+            },
         });
     } catch (error) {
         console.error('Douban detail API error:', error);

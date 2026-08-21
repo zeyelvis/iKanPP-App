@@ -213,6 +213,12 @@ export async function GET(request: Request) {
       region,
       year,
       total: pool.length,
+    }, {
+      headers: {
+        'Cache-Control': 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400',
+        'CDN-Cache-Control': 'public, s-maxage=3600',
+        'Cloudflare-CDN-Cache-Control': 'public, s-maxage=3600',
+      },
     });
   } catch (error) {
     console.error('Douban recommend API error:', error);

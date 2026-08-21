@@ -21,6 +21,29 @@ interface PopularFeaturesProps {
   onSearch?: (query: string) => void;
 }
 
+// ── SWR 本地瞬间缓存 ──────────────────────────
+const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v2-';
+
+function getLocalShelves(type: 'movie' | 'tv') {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(SHELVES_CACHE_KEY + type);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && Array.isArray(parsed.s1) && parsed.s1.length > 0) {
+      return parsed;
+    }
+  } catch {}
+  return null;
+}
+
+function setLocalShelves(type: 'movie' | 'tv', data: { s1: any[]; s2: any[]; s3: any[]; s4: any[] }) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(SHELVES_CACHE_KEY + type, JSON.stringify(data));
+  } catch {}
+}
+
 export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   const router = useRouter();
   const { user } = useUserStore();
@@ -32,12 +55,13 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   const { movieRanking, tvRanking, loading: rankingLoading } = useRankingData({ limit: 10 });
   const top10Data = contentType === 'movie' ? movieRanking : tvRanking;
 
-  // 主题货架分片数据获取
-  const [shelf1Movies, setShelf1Movies] = useState<any[]>([]);
-  const [shelf2Movies, setShelf2Movies] = useState<any[]>([]);
-  const [shelf3Movies, setShelf3Movies] = useState<any[]>([]);
-  const [shelf4Movies, setShelf4Movies] = useState<any[]>([]);
-  const [loadingShelves, setLoadingShelves] = useState(true);
+  // 主题货架分片数据获取（SWR: 优先从本地秒级展示）
+  const initialCache = typeof window !== 'undefined' ? getLocalShelves(contentType) : null;
+  const [shelf1Movies, setShelf1Movies] = useState<any[]>(() => initialCache?.s1 || []);
+  const [shelf2Movies, setShelf2Movies] = useState<any[]>(() => initialCache?.s2 || []);
+  const [shelf3Movies, setShelf3Movies] = useState<any[]>(() => initialCache?.s3 || []);
+  const [shelf4Movies, setShelf4Movies] = useState<any[]>(() => initialCache?.s4 || []);
+  const [loadingShelves, setLoadingShelves] = useState<boolean>(() => !initialCache);
 
   // 根据 contentType 动态确定 4 个货架的标签
   const isMovie = contentType === 'movie';
@@ -48,8 +72,18 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
 
   useEffect(() => {
     let isMounted = true;
-    const fetchShelves = async () => {
+    const cache = getLocalShelves(contentType);
+    if (cache) {
+      setShelf1Movies(cache.s1);
+      setShelf2Movies(cache.s2);
+      setShelf3Movies(cache.s3);
+      setShelf4Movies(cache.s4);
+      setLoadingShelves(false);
+    } else {
       setLoadingShelves(true);
+    }
+
+    const fetchShelves = async () => {
       try {
         const [res1, res2, res3, res4] = await Promise.allSettled([
           fetch(`/api/douban/recommend?tag=${encodeURIComponent(tag1)}&type=${contentType}&page_limit=14&page_start=0`).then(r => r.json()),
@@ -59,17 +93,23 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         ]);
 
         if (isMounted) {
-          if (res1.status === 'fulfilled' && res1.value?.subjects?.length) {
-            setShelf1Movies(res1.value.subjects);
-          }
-          if (res2.status === 'fulfilled' && res2.value?.subjects?.length) {
-            setShelf2Movies(res2.value.subjects);
-          }
-          if (res3.status === 'fulfilled' && res3.value?.subjects?.length) {
-            setShelf3Movies(res3.value.subjects);
-          }
-          if (res4.status === 'fulfilled' && res4.value?.subjects?.length) {
-            setShelf4Movies(res4.value.subjects);
+          const s1 = res1.status === 'fulfilled' && res1.value?.subjects?.length ? res1.value.subjects : [];
+          const s2 = res2.status === 'fulfilled' && res2.value?.subjects?.length ? res2.value.subjects : [];
+          const s3 = res3.status === 'fulfilled' && res3.value?.subjects?.length ? res3.value.subjects : [];
+          const s4 = res4.status === 'fulfilled' && res4.value?.subjects?.length ? res4.value.subjects : [];
+
+          if (s1.length) setShelf1Movies(s1);
+          if (s2.length) setShelf2Movies(s2);
+          if (s3.length) setShelf3Movies(s3);
+          if (s4.length) setShelf4Movies(s4);
+
+          if (s1.length || s2.length) {
+            setLocalShelves(contentType, {
+              s1: s1.length ? s1 : (cache?.s1 || []),
+              s2: s2.length ? s2 : (cache?.s2 || []),
+              s3: s3.length ? s3 : (cache?.s3 || []),
+              s4: s4.length ? s4 : (cache?.s4 || []),
+            });
           }
         }
       } catch (err) {
