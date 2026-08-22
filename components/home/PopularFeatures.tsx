@@ -24,7 +24,7 @@ interface PopularFeaturesProps {
 }
 
 // ── SWR 本地瞬间缓存 ──────────────────────────
-const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v3-';
+const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v4-';
 
 function getLocalShelves(type: 'movie' | 'tv') {
   if (typeof window === 'undefined') return null;

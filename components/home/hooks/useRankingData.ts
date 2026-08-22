@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTrendingStore } from '@/lib/store/trending-store';
 
+import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+
 interface RankingMovie {
     id: string;
     title: string;
@@ -23,7 +25,7 @@ interface UseRankingDataOptions {
 }
 
 // ── localStorage 缓存 ──────────────────────────
-const CACHE_PREFIX = 'kvideo-ranking-';
+const CACHE_PREFIX = 'kvideo-ranking-v8-';
 const CACHE_TTL_MS = 30 * 60 * 1000; // 30 分钟
 
 interface CacheEntry { data: RankingMovie[]; ts: number; }
@@ -55,15 +57,36 @@ function fetchWithTimeout(url: string, timeoutMs: number = 12000): Promise<Respo
 }
 
 /**
+ * 转换预置数据为 RankingMovie 格式
+ */
+function getPrebakedRanking(type: 'movie' | 'tv'): RankingMovie[] {
+    const prebaked = PREBAKED_HOME_DATA[type];
+    const list = [...prebaked.s1, ...prebaked.s2, ...prebaked.s3, ...prebaked.s4];
+    return list.map(item => ({
+        id: item.id,
+        title: item.title,
+        cover: item.cover,
+        rate: item.rate || '9.0',
+        url: `/player?title=${encodeURIComponent(item.title)}`,
+        year: item.year,
+        types: item.types,
+    }));
+}
+
+/**
  * 获取排行榜数据：按 contentType 懒加载，不再同时拉 movie + tv。
  * Detail 信息按需加载（仅 active 项），不再批量请求。
- *
- * 修复: 添加超时 + 错误状态 + 强制加载兜底
  */
 export function useRankingData({ limit = 10 }: UseRankingDataOptions = {}) {
-    const [movieRanking, setMovieRanking] = useState<RankingMovie[]>([]);
-    const [tvRanking, setTvRanking] = useState<RankingMovie[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [movieRanking, setMovieRanking] = useState<RankingMovie[]>(() => {
+        const cached = typeof window !== 'undefined' ? getRankingCache('movie') : null;
+        return cached && cached.length > 0 ? cached : getPrebakedRanking('movie').slice(0, limit);
+    });
+    const [tvRanking, setTvRanking] = useState<RankingMovie[]>(() => {
+        const cached = typeof window !== 'undefined' ? getRankingCache('tv') : null;
+        return cached && cached.length > 0 ? cached : getPrebakedRanking('tv').slice(0, limit);
+    });
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const movieFetchedRef = useRef(false);
     const tvFetchedRef = useRef(false);
