@@ -67,11 +67,14 @@ export function setSession(session: AuthSession): void {
   const data = JSON.stringify(session);
   // 始终持久化到 localStorage，关闭浏览器后登录状态不会丢失
   localStorage.setItem(SESSION_KEY, data);
+  // 触发全局广播事件，通知 Navbar、Profile 等所有组件同步刷新
+  window.dispatchEvent(new Event('auth-changed'));
 }
 
 export function clearSession(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem('kvideo_local_user');
   // 清理旧版 sessionStorage (向后兼容)
   sessionStorage.removeItem(SESSION_KEY);
   // Clear search cache so new session gets fresh results
@@ -79,6 +82,8 @@ export function clearSession(): void {
   // Also clear old unlock keys for backward compat cleanup
   sessionStorage.removeItem('kvideo-unlocked');
   localStorage.removeItem('kvideo-unlocked');
+  // 触发全局广播事件
+  window.dispatchEvent(new Event('auth-changed'));
 }
 
 export function isAdmin(): boolean {

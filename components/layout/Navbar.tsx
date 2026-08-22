@@ -72,13 +72,24 @@ export function Navbar({
   }, []);
 
   useEffect(() => {
-    setSessionState(getSession());
-    initUser();
+    const updateAuthState = () => {
+      setSessionState(getSession());
+      initUser();
+    };
+
+    updateAuthState();
+
+    window.addEventListener('auth-changed', updateAuthState);
+    window.addEventListener('storage', updateAuthState);
+    return () => {
+      window.removeEventListener('auth-changed', updateAuthState);
+      window.removeEventListener('storage', updateAuthState);
+    };
   }, [initUser]);
 
   const handleLogout = () => {
+    supabaseLogout();
     clearSession();
-    window.location.href = '/';
   };
 
   const handleSearch = (query: string) => {
@@ -213,7 +224,7 @@ export function Navbar({
           )}
 
           {/* 用户与 VIP 入口 */}
-          {!isPlayer && supabaseUser && (
+          {!isPlayer && (supabaseUser || session) && (
             <div className="flex items-center gap-2">
               <Link
                 href="/profile"
@@ -221,22 +232,22 @@ export function Navbar({
                 title="个人中心"
               >
                 <div className="w-5 h-5 rounded-full bg-(--accent-color) flex items-center justify-center text-white font-black text-[10px]">
-                  {supabaseUser.email.charAt(0).toUpperCase()}
+                  {(supabaseUser?.email || session?.name || 'U').charAt(0).toUpperCase()}
                 </div>
-                <span className="text-white max-w-20 truncate hidden md:inline">
-                  {supabaseUser.email.split('@')[0]}
+                <span className="text-white max-w-24 truncate hidden md:inline font-medium">
+                  {supabaseUser?.email ? supabaseUser.email.split('@')[0] : (session?.name || 'VIP会员')}
                 </span>
-                {supabaseUser.isVip && (
+                {(supabaseUser?.isVip || session?.role === 'super_admin' || session?.role === 'admin') && (
                   <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-amber-500 text-black rounded-full text-[10px] font-black shadow-sm">
                     <Crown size={10} />
-                    VIP
+                    {session?.role === 'super_admin' ? '管理' : 'VIP'}
                   </span>
                 )}
               </Link>
             </div>
           )}
 
-          {!isPlayer && !supabaseUser && (
+          {!isPlayer && !supabaseUser && !session && (
             <button
               onClick={() => setAuthModalOpen(true)}
               className="flex items-center gap-1.5 px-4 py-1.5 bg-(--accent-color) text-white rounded-full text-xs sm:text-sm font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer shadow-lg shadow-(--accent-color)/25"

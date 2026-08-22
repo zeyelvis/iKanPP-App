@@ -32,6 +32,16 @@ const COMMON_WEAK_PASSWORDS = new Set([
     'qwertyui', 'iloveyou', 'trustno1', 'sunshine1', 'princess1',
 ]);
 
+function validateAccount(val: string): { valid: boolean; error?: string } {
+    if (!val) return { valid: false, error: '请输入账号或邮箱' };
+    if (val.includes('@')) {
+        return validateEmail(val);
+    }
+    // 纯用户名/账号（如 admin888 / vip888）
+    if (val.length < 2) return { valid: false, error: '账号至少 2 个字符' };
+    return { valid: true };
+}
+
 // ─── 校验函数 ──────────────────────────────
 
 function validateEmail(email: string): { valid: boolean; error?: string } {
@@ -47,17 +57,8 @@ function validateEmail(email: string): { valid: boolean; error?: string } {
 
 function validatePassword(password: string): { valid: boolean; error?: string } {
     if (!password) return { valid: false, error: '请输入密码' };
-    if (password.length < 8) return { valid: false, error: '密码至少 8 位' };
+    if (password.length < 6) return { valid: false, error: '密码至少 6 位' };
     if (password.length > 64) return { valid: false, error: '密码不能超过 64 位' };
-    if (!/^[\x20-\x7E]+$/.test(password)) {
-        return { valid: false, error: '密码只能包含英文字母、数字和符号' };
-    }
-    if (!/[a-z]/.test(password)) return { valid: false, error: '密码需包含至少一个小写字母' };
-    if (!/[A-Z]/.test(password)) return { valid: false, error: '密码需包含至少一个大写字母' };
-    if (!/[0-9]/.test(password)) return { valid: false, error: '密码需包含至少一个数字' };
-    if (COMMON_WEAK_PASSWORDS.has(password.toLowerCase())) {
-        return { valid: false, error: '密码过于简单，请使用更复杂的密码' };
-    }
     return { valid: true };
 }
 
@@ -227,15 +228,15 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
 
     // 失焦校验（不在打字时校验）
     const handleEmailBlur = useCallback(() => {
-        const val = emailRef.current?.value.replace(/\s/g, '').toLowerCase() || '';
+        const val = emailRef.current?.value.trim() || '';
         if (emailRef.current) emailRef.current.value = val;
         if (val) {
-            const result = validateEmail(val);
+            const result = tab === 'login' ? validateAccount(val) : validateEmail(val);
             setEmailError(result.valid ? '' : (result.error || ''));
         } else {
             setEmailError('');
         }
-    }, []);
+    }, [tab]);
 
     const handlePasswordBlur = useCallback(() => {
         const val = passwordRef.current?.value || '';
@@ -300,21 +301,21 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        const email = emailRef.current?.value.replace(/\s/g, '').toLowerCase() || '';
+        const account = emailRef.current?.value.trim() || '';
         const password = passwordRef.current?.value || '';
-        if (!email || !password) { setError('请填写邮箱和密码'); return; }
-        const emailResult = validateEmail(email);
-        if (!emailResult.valid) { setEmailError(emailResult.error || ''); return; }
+        if (!account || !password) { setError('请填写账号和密码'); return; }
+        const accountResult = validateAccount(account);
+        if (!accountResult.valid) { setEmailError(accountResult.error || ''); return; }
         const verified = await verifyTurnstile();
         if (!verified) return;
         try {
-            await login(email, password);
+            await login(account, password);
             onClose();
             resetForm();
         } catch (err: any) {
             turnstileTokenRef.current = '';
             turnstileRef.current?.reset();
-            setError(err.message === 'Invalid login credentials' ? '邮箱或密码错误' : err.message || '登录失败');
+            setError(err.message === 'Invalid login credentials' ? '账号或密码错误' : err.message || '登录失败');
         }
     };
 

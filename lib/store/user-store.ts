@@ -57,6 +57,33 @@ export const useUserStore = create<UserState>((set, get) => ({
                         return;
                     }
                 }
+
+                // 如果本地有 auth-store 的 session（如在 /settings 登录），自动同步为 user
+                const authSession = getSession();
+                if (authSession) {
+                    const isSuper = authSession.role === 'super_admin';
+                    const isAdminOrVip = authSession.role === 'admin' || isSuper;
+                    const now = new Date();
+                    const vipUntil = isSuper || isAdminOrVip 
+                        ? new Date('2099-12-31T23:59:59Z') 
+                        : new Date(now.getTime() + 30 * 86400000);
+
+                    const syncedUser: UserProfile = {
+                        id: authSession.profileId,
+                        email: `${authSession.name || authSession.role}@ikanpp.com`,
+                        inviteCode: isSuper ? 'ADMIN888' : 'VIP888',
+                        referredBy: null,
+                        vipUntil,
+                        isVip: true,
+                        totalInvites: 0,
+                        isAdmin: isSuper || authSession.role === 'admin',
+                        role: isSuper ? 'super_admin' : 'admin',
+                        createdAt: now.toISOString(),
+                    };
+                    localStorage.setItem('kvideo_local_user', JSON.stringify(syncedUser));
+                    set({ user: syncedUser, initialized: true, loading: false });
+                    return;
+                }
             } catch {}
         }
 
@@ -117,7 +144,7 @@ export const useUserStore = create<UserState>((set, get) => ({
 
                         const userProf: UserProfile = {
                             id: authData.profileId,
-                            email: email || `${authData.role}@ikanpp.com`,
+                            email: email || `${authData.name || authData.role}@ikanpp.com`,
                             inviteCode: isSuper ? 'ADMIN888' : 'VIP888',
                             referredBy: null,
                             vipUntil,
@@ -131,6 +158,7 @@ export const useUserStore = create<UserState>((set, get) => ({
                         set({ user: userProf });
                         if (typeof window !== 'undefined') {
                             localStorage.setItem('kvideo_local_user', JSON.stringify(userProf));
+                            window.dispatchEvent(new Event('auth-changed'));
                         }
                         return;
                     }
@@ -144,6 +172,9 @@ export const useUserStore = create<UserState>((set, get) => ({
                 try {
                     await signIn(email, password);
                     await get().refreshProfile();
+                    if (typeof window !== 'undefined') {
+                        window.dispatchEvent(new Event('auth-changed'));
+                    }
                     return;
                 } catch (sbErr: any) {
                     if (sbErr?.message === 'Invalid login credentials') {
@@ -170,6 +201,7 @@ export const useUserStore = create<UserState>((set, get) => ({
             set({ user: userProf });
             if (typeof window !== 'undefined') {
                 localStorage.setItem('kvideo_local_user', JSON.stringify(userProf));
+                window.dispatchEvent(new Event('auth-changed'));
             }
         } finally {
             set({ loading: false });
@@ -184,6 +216,9 @@ export const useUserStore = create<UserState>((set, get) => ({
                 try {
                     await signUp(email, password, referralCode);
                     await get().refreshProfile();
+                    if (typeof window !== 'undefined') {
+                        window.dispatchEvent(new Event('auth-changed'));
+                    }
                     return;
                 } catch (sbErr: any) {
                     console.warn('Supabase 注册失败，进入本地注册模式:', sbErr?.message);
@@ -207,6 +242,7 @@ export const useUserStore = create<UserState>((set, get) => ({
             set({ user: userProf });
             if (typeof window !== 'undefined') {
                 localStorage.setItem('kvideo_local_user', JSON.stringify(userProf));
+                window.dispatchEvent(new Event('auth-changed'));
             }
         } finally {
             set({ loading: false });
@@ -223,6 +259,7 @@ export const useUserStore = create<UserState>((set, get) => ({
         clearAuthSession();
         if (typeof window !== 'undefined') {
             localStorage.removeItem('kvideo_local_user');
+            window.dispatchEvent(new Event('auth-changed'));
         }
         set({ user: null });
     },

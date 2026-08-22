@@ -77,7 +77,12 @@ function ProfileContent() {
         ...(user?.role === 'super_admin' ? [ADMIN_TAB] : []),
     ] : [];
 
-    useEffect(() => { initialize(); }, [initialize]);
+    useEffect(() => {
+        initialize();
+        const handler = () => initialize();
+        window.addEventListener('auth-changed', handler);
+        return () => window.removeEventListener('auth-changed', handler);
+    }, [initialize]);
 
     // 用户登录后自动同步全局视频源配置
     useEffect(() => {
