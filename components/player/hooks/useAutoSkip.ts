@@ -9,6 +9,7 @@ interface UseAutoSkipProps {
     currentTime: number;
     duration: number;
     isPlaying: boolean;
+    isPremium?: boolean;
     totalEpisodes?: number;
     currentEpisodeIndex?: number;
     onNextEpisode?: () => void;
@@ -27,6 +28,7 @@ export function useAutoSkip({
     currentTime,
     duration,
     isPlaying,
+    isPremium = false,
     totalEpisodes = 1,
     currentEpisodeIndex = 0,
     onNextEpisode,
@@ -39,7 +41,7 @@ export function useAutoSkip({
         skipIntroSeconds,
         autoSkipOutro,
         skipOutroSeconds,
-    } = usePlayerSettings();
+    } = usePlayerSettings(isPremium);
 
     // Track if we've already skipped intro for this video session
     const hasSkippedIntroRef = useRef(false);
@@ -107,6 +109,7 @@ export function useAutoSkip({
 
         // Prevent double trigger for the same source URL
         if (lastHandledSrcRef.current === src) {
+            console.log(`[AutoSkip] Ignoring ${reason} trigger: already handled for this source`);
             return;
         }
 
@@ -114,9 +117,11 @@ export function useAutoSkip({
         // This is a critical guard against infinite loops where the trigger might be called repeatedly
         // before the parent component has a chance to unmount or change the source.
         if (isTransitioningToNextEpisode) {
+            console.log(`[AutoSkip] Ignoring ${reason} trigger: already transitioning`);
             return;
         }
 
+        console.log(`[AutoSkip] Triggering next episode via ${reason}`);
         lastHandledSrcRef.current = src;
         // Set transitioning state for custom loading indicator
         setIsTransitioningToNextEpisode(true);
@@ -145,6 +150,7 @@ export function useAutoSkip({
         // Only skip if we're in the intro zone (between 0 and skipIntroSeconds)
         if (currentTime >= 0 && currentTime < skipIntroSeconds && currentTime < duration) {
             if (video.readyState >= 2) { // HAVE_CURRENT_DATA or better
+                console.log(`[AutoSkip] Jumping from ${currentTime}s to intro skip point ${skipIntroSeconds}s`);
                 video.currentTime = Math.min(skipIntroSeconds, duration - 1);
                 hasSkippedIntroRef.current = true;
             }
@@ -194,6 +200,7 @@ export function useAutoSkip({
 
             // Only auto-trigger if video is actually playing
             if (isPlaying) {
+                console.log(`[AutoSkip] Outro detected: ${remainingTime.toFixed(1)}s remaining`);
                 hasTriggeredOutroSkipRef.current = true;
 
                 // If we can advance to next episode, do it
@@ -203,6 +210,7 @@ export function useAutoSkip({
                     // Otherwise just seek to end to trigger ended event
                     const video = videoRef.current;
                     if (video) {
+                        console.log('[AutoSkip] No next episode, seeking to end');
                         video.currentTime = duration;
                     }
                 }
@@ -214,6 +222,7 @@ export function useAutoSkip({
 
     // Handle video ended event for auto-next
     const handleVideoEnded = useCallback(() => {
+        console.log(`[AutoSkip] Video ended naturally`);
         if (!autoNextEpisode) return;
         if (!canAdvanceToNext()) return;
         if (hasTriggeredOutroSkipRef.current) return;

@@ -3,6 +3,13 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import type { DanmakuComment } from '@/lib/types/danmaku';
 import { settingsStore } from '@/lib/store/settings-store';
+import {
+  clampDanmakuY,
+  haveDanmakuCanvasMetricsChanged,
+  resolveDanmakuCanvasMetrics,
+  scaleDanmakuCoordinate,
+  type DanmakuCanvasMetrics,
+} from '@/lib/player/danmaku-canvas-utils';
 
 interface DanmakuCanvasProps {
   comments: DanmakuComment[];
@@ -12,7 +19,7 @@ interface DanmakuCanvasProps {
 }
 
 interface ActiveDanmaku {
-  comment: DanmakuComment;
+  comment: DanmakuComment & { _expiry?: number };
   x: number;
   y: number;
   speed: number;
@@ -24,8 +31,58 @@ const SCROLL_DURATION = 8; // seconds for a comment to cross the screen
 const LANE_HEIGHT_FACTOR = 1.4; // multiplied by font size for lane height
 const TOP_BOTTOM_DURATION = 4; // seconds for top/bottom comments to stay visible
 const MAX_LANES = 20;
+const DEFAULT_DANMAKU_SETTINGS_SNAPSHOT = '0.7|20|0.5';
 
-export function DanmakuCanvas({ comments, currentTime, isPlaying, duration }: DanmakuCanvasProps) {
+interface DanmakuSettingsSnapshot {
+  opacity: number;
+  fontSize: number;
+  displayArea: number;
+}
+
+function readCssPixelValue(value: string): number | undefined {
+  if (!value.endsWith('px')) return undefined;
+
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function readCanvasMetrics(canvas: HTMLCanvasElement): DanmakuCanvasMetrics | null {
+  const style = window.getComputedStyle(canvas);
+  const rect = canvas.getBoundingClientRect();
+
+  return resolveDanmakuCanvasMetrics({
+    computedWidth: readCssPixelValue(style.width),
+    computedHeight: readCssPixelValue(style.height),
+    clientWidth: canvas.clientWidth,
+    clientHeight: canvas.clientHeight,
+    offsetWidth: canvas.offsetWidth,
+    offsetHeight: canvas.offsetHeight,
+    boundingWidth: rect.width,
+    boundingHeight: rect.height,
+    devicePixelRatio: window.devicePixelRatio,
+  });
+}
+
+function getDanmakuSettingsSnapshot(): string {
+  const settings = settingsStore.getSettings();
+  return `${settings.danmakuOpacity}|${settings.danmakuFontSize}|${settings.danmakuDisplayArea}`;
+}
+
+function subscribeToDanmakuSettings(listener: () => void): () => void {
+  return settingsStore.subscribe(listener);
+}
+
+function parseDanmakuSettingsSnapshot(snapshot: string): DanmakuSettingsSnapshot {
+  const [rawOpacity, rawFontSize, rawDisplayArea] = snapshot.split('|').map(Number);
+
+  return {
+    opacity: Number.isFinite(rawOpacity) ? rawOpacity : 0.7,
+    fontSize: Number.isFinite(rawFontSize) ? rawFontSize : 20,
+    displayArea: Number.isFinite(rawDisplayArea) ? rawDisplayArea : 0.5,
+  };
+}
+
+export function DanmakuCanvas({ comments, currentTime, isPlaying }: DanmakuCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const activeRef = useRef<ActiveDanmaku[]>([]);
   const lastTimeRef = useRef(currentTime);
@@ -33,50 +90,135 @@ export function DanmakuCanvas({ comments, currentTime, isPlaying, duration }: Da
   const rafRef = useRef<number>(0);
   const lastSpawnTimeRef = useRef(-1);
   const laneSlotsRef = useRef<number[]>(new Array(MAX_LANES).fill(0)); // tracks when each lane becomes free
+  const metricsRef = useRef<DanmakuCanvasMetrics | null>(null);
 
-  // Settings (read reactively)
-  const [opacity, setOpacity] = React.useState(0.7);
-  const [fontSize, setFontSize] = React.useState(20);
-  const [displayArea, setDisplayArea] = React.useState(0.5);
+  const settingsSnapshot = React.useSyncExternalStore(
+    subscribeToDanmakuSettings,
+    getDanmakuSettingsSnapshot,
+    () => DEFAULT_DANMAKU_SETTINGS_SNAPSHOT,
+  );
+  const { opacity, fontSize, displayArea } = React.useMemo(
+    () => parseDanmakuSettingsSnapshot(settingsSnapshot),
+    [settingsSnapshot],
+  );
 
-  useEffect(() => {
-    const s = settingsStore.getSettings();
-    setOpacity(s.danmakuOpacity);
-    setFontSize(s.danmakuFontSize);
-    setDisplayArea(s.danmakuDisplayArea);
-    const unsub = settingsStore.subscribe(() => {
-      const ns = settingsStore.getSettings();
-      setOpacity(ns.danmakuOpacity);
-      setFontSize(ns.danmakuFontSize);
-      setDisplayArea(ns.danmakuDisplayArea);
-    });
-    return unsub;
-  }, []);
+  const syncCanvasSize = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
 
-  // Handle canvas resize
+    const next = readCanvasMetrics(canvas);
+    if (!next) return null;
+
+    const previous = metricsRef.current;
+    if (!haveDanmakuCanvasMetricsChanged(previous, next)) {
+      return next;
+    }
+
+    canvas.width = next.bitmapWidth;
+    canvas.height = next.bitmapHeight;
+
+    const dimensionsChanged = Boolean(
+      previous &&
+      (Math.abs(previous.width - next.width) > 0.5 || Math.abs(previous.height - next.height) > 0.5)
+    );
+
+    if (previous && dimensionsChanged) {
+      const effectiveHeight = next.height * displayArea;
+
+      activeRef.current = activeRef.current.map((danmaku) => {
+        const type = danmaku.comment.type || 'scroll';
+        const y = clampDanmakuY(
+          scaleDanmakuCoordinate(danmaku.y, previous.height, next.height),
+          fontSize,
+          effectiveHeight,
+        );
+
+        if (type === 'scroll') {
+          return {
+            ...danmaku,
+            x: scaleDanmakuCoordinate(danmaku.x, previous.width, next.width),
+            y,
+            speed: (next.width + danmaku.width) / SCROLL_DURATION,
+          };
+        }
+
+        return {
+          ...danmaku,
+          x: (next.width - danmaku.width) / 2,
+          y,
+        };
+      });
+
+      laneSlotsRef.current = new Array(MAX_LANES).fill(0);
+    }
+
+    metricsRef.current = next;
+    return next;
+  }, [displayArea, fontSize]);
+
+  // Handle canvas resize. Use layout dimensions rather than transformed bounding
+  // dimensions, otherwise CSS-rotated iOS fullscreen can stretch the canvas.
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
+    let rafId: number | null = null;
+    let timeoutIds: number[] = [];
+
+    const clearScheduledResize = () => {
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+
+      for (const timeoutId of timeoutIds) {
+        window.clearTimeout(timeoutId);
+      }
+      timeoutIds = [];
     };
 
-    resize();
-    const observer = new ResizeObserver(resize);
-    observer.observe(canvas);
-    return () => observer.disconnect();
-  }, []);
+    const scheduleResize = () => {
+      syncCanvasSize();
+      clearScheduledResize();
+
+      rafId = window.requestAnimationFrame(() => {
+        rafId = null;
+        syncCanvasSize();
+      });
+      timeoutIds = [
+        window.setTimeout(syncCanvasSize, 120),
+        window.setTimeout(syncCanvasSize, 360),
+      ];
+    };
+
+    scheduleResize();
+
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(scheduleResize) : null;
+    observer?.observe(canvas);
+
+    const visualViewport = window.visualViewport;
+    window.addEventListener('resize', scheduleResize);
+    window.addEventListener('orientationchange', scheduleResize);
+    visualViewport?.addEventListener('resize', scheduleResize);
+    visualViewport?.addEventListener('scroll', scheduleResize);
+
+    return () => {
+      clearScheduledResize();
+      observer?.disconnect();
+      window.removeEventListener('resize', scheduleResize);
+      window.removeEventListener('orientationchange', scheduleResize);
+      visualViewport?.removeEventListener('resize', scheduleResize);
+      visualViewport?.removeEventListener('scroll', scheduleResize);
+    };
+  }, [syncCanvasSize]);
 
   // Clear on seek (when currentTime jumps significantly)
   useEffect(() => {
     const timeDiff = Math.abs(currentTime - lastTimeRef.current);
     if (timeDiff > 2) {
       activeRef.current = [];
-      lastSpawnTimeRef.current = -1;
+      // Set to currentTime so only comments from the new position forward are spawned
+      lastSpawnTimeRef.current = currentTime;
       laneSlotsRef.current = new Array(MAX_LANES).fill(0);
     }
     lastTimeRef.current = currentTime;
@@ -87,9 +229,11 @@ export function DanmakuCanvas({ comments, currentTime, isPlaying, duration }: Da
     const canvas = canvasRef.current;
     if (!canvas || !comments.length) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const canvasWidth = rect.width;
-    const effectiveHeight = rect.height * displayArea;
+    const metrics = metricsRef.current ?? syncCanvasSize();
+    if (!metrics) return;
+
+    const canvasWidth = metrics.width;
+    const effectiveHeight = metrics.height * displayArea;
     const laneHeight = fontSize * LANE_HEIGHT_FACTOR;
 
     // Find comments in the time window [lastSpawn, time]
@@ -163,7 +307,7 @@ export function DanmakuCanvas({ comments, currentTime, isPlaying, duration }: Da
           : effectiveHeight - bestLane * laneHeight - fontSize * 0.4;
 
         activeRef.current.push({
-          comment: { ...c, _expiry: time + TOP_BOTTOM_DURATION } as any,
+          comment: { ...c, _expiry: time + TOP_BOTTOM_DURATION },
           x: (canvasWidth - textWidth) / 2,
           y,
           speed: 0,
@@ -174,7 +318,7 @@ export function DanmakuCanvas({ comments, currentTime, isPlaying, duration }: Da
     }
 
     lastSpawnTimeRef.current = windowEnd;
-  }, [comments, fontSize, displayArea]);
+  }, [comments, displayArea, fontSize, syncCanvasSize]);
 
   // Animation loop
   useEffect(() => {
@@ -185,17 +329,18 @@ export function DanmakuCanvas({ comments, currentTime, isPlaying, duration }: Da
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      const w = rect.width;
-      const h = rect.height;
+      const metrics = metricsRef.current ?? syncCanvasSize();
+      if (!metrics) {
+        rafRef.current = requestAnimationFrame(animate);
+        return;
+      }
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (!isPlaying) {
         // When paused, still draw active comments frozen in place
         ctx.save();
-        ctx.scale(dpr, dpr);
+        ctx.scale(metrics.dpr, metrics.dpr);
         ctx.globalAlpha = opacity;
         ctx.font = `bold ${fontSize}px sans-serif`;
         ctx.textBaseline = 'middle';
@@ -234,7 +379,7 @@ export function DanmakuCanvas({ comments, currentTime, isPlaying, duration }: Da
           }
         } else {
           // Top/bottom: remove when expired
-          const expiry = (d.comment as any)._expiry || 0;
+          const expiry = d.comment._expiry || 0;
           if (currentTime < expiry) {
             newActive.push(d);
           }
@@ -244,7 +389,7 @@ export function DanmakuCanvas({ comments, currentTime, isPlaying, duration }: Da
 
       // Draw
       ctx.save();
-      ctx.scale(dpr, dpr);
+      ctx.scale(metrics.dpr, metrics.dpr);
       ctx.globalAlpha = opacity;
       ctx.font = `bold ${fontSize}px sans-serif`;
       ctx.textBaseline = 'middle';
@@ -267,7 +412,7 @@ export function DanmakuCanvas({ comments, currentTime, isPlaying, duration }: Da
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       lastRafTimeRef.current = 0;
     };
-  }, [isPlaying, currentTime, opacity, fontSize, spawnComments]);
+  }, [isPlaying, currentTime, opacity, fontSize, spawnComments, syncCanvasSize]);
 
   return (
     <canvas

@@ -15,6 +15,7 @@ export interface ModeSettings {
   skipIntroSeconds: number;
   autoSkipOutro: boolean;
   skipOutroSeconds: number;
+  seekStepSeconds?: number;
   showModeIndicator: boolean;
   adFilterMode: AdFilterMode;
   fullscreenType: 'auto' | 'native' | 'window';
@@ -39,6 +40,7 @@ function getDefaultModeSettings(): ModeSettings {
     skipIntroSeconds: 0,
     autoSkipOutro: false,
     skipOutroSeconds: 0,
+    seekStepSeconds: 10,
     showModeIndicator: false,
     adFilterMode: 'heuristic',
     fullscreenType: 'auto',

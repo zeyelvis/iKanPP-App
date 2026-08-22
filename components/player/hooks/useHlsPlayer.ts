@@ -2,10 +2,12 @@ import { useEffect, useRef } from 'react';
 import Hls from 'hls.js';
 import { usePlayerSettings } from './usePlayerSettings';
 import { filterM3u8Ad } from '@/lib/utils/m3u8-utils';
+import { useRuntimeFeatures } from '@/components/RuntimeFeaturesProvider';
 
 interface UseHlsPlayerProps {
     videoRef: React.RefObject<HTMLVideoElement | null>;
     src: string;
+    isPremium?: boolean;
     autoPlay?: boolean;
     onAutoPlayPrevented?: (error: Error) => void;
     onError?: (message: string) => void;
@@ -14,15 +16,15 @@ interface UseHlsPlayerProps {
 export function useHlsPlayer({
     videoRef,
     src,
+    isPremium = false,
     autoPlay = false,
     onAutoPlayPrevented,
     onError
 }: UseHlsPlayerProps) {
     const hlsRef = useRef<Hls | null>(null);
-    const { adFilterMode, adKeywords } = usePlayerSettings();
+    const { adFilterMode, adKeywords } = usePlayerSettings(isPremium);
+    const { mediaProxyEnabled } = useRuntimeFeatures();
     const isAdFilterEnabled = adFilterMode !== 'off';
-
-    // 导出 hlsRef 供 useStallDetection 等外部 hook 使用
 
     useEffect(() => {
         const video = videoRef.current;
@@ -40,7 +42,10 @@ export function useHlsPlayer({
         // Check if HLS is supported natively (Safari, Mobile Chrome)
         const isNativeHlsSupported = video.canPlayType('application/vnd.apple.mpegurl');
 
-        if (Hls.isSupported()) {
+        // Check if MSE is available (required by HLS.js)
+        const isMSESupported = Hls.isSupported();
+
+        if (isMSESupported) {
 
             // Define custom loader class to intercept manifest loading
             // We use 'any' cast because default loader type might not be strictly exposed in all typings
@@ -76,20 +81,11 @@ export function useHlsPlayer({
                     enableWorker: true,
                     lowLatencyMode: false,
 
-                    // CORS fix: some CDNs (e.g. wujinapi) return conflicting headers
-                    // (Access-Control-Allow-Origin: * AND Access-Control-Allow-Credentials: true)
-                    // which causes browsers to block requests with credentials
-                    xhrSetup: (xhr: XMLHttpRequest) => {
-                        xhr.withCredentials = false;
-                    },
-
-                    // Buffer Settings（TV 浏览器需要更宽松的参数）
-                    maxBufferLength: 60,
-                    maxMaxBufferLength: 120,
-                    maxBufferSize: 60 * 1000 * 1000,
-                    maxBufferHole: 2,        // 从 0.5 增大：容忍更大的 buffer 空洞，避免 seek 后卡死
-                    nudgeOffset: 0.2,        // 新增：卡顿时自动微幅前进跳过空洞
-                    nudgeMaxRetry: 5,        // 新增：最多重试 5 次微幅前进
+                    // Buffer Settings
+                    maxBufferLength: 120,
+                    maxMaxBufferLength: 240,
+                    maxBufferSize: 120 * 1000 * 1000,
+                    maxBufferHole: 0.5,
 
                     // Start with more buffer
                     startFragPrefetch: true,
@@ -120,7 +116,7 @@ export function useHlsPlayer({
                     levelLoadingTimeOut: 10000,
 
                     // Backbuffer
-                    backBufferLength: 30,
+                    backBufferLength: 90,
                 };
 
                 // Use custom loader if ad filtering is enabled
@@ -143,17 +139,30 @@ export function useHlsPlayer({
 
                 // Manifest Parsed Handler
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    // Check for HEVC
+                    // Filter HEVC levels: prefer H.264 for compatibility
                     if (hls) {
                         const levels = hls.levels;
                         if (levels && levels.length > 0) {
-                            const hasHEVC = levels.some(level =>
-                                level.videoCodec?.toLowerCase().includes('hev') ||
-                                level.videoCodec?.toLowerCase().includes('h265')
-                            );
+                            const h264Indices: number[] = [];
+                            let hasHEVC = false;
+                            levels.forEach((level, index) => {
+                                const codec = level.videoCodec?.toLowerCase() || '';
+                                if (codec.includes('hev') || codec.includes('h265') || codec.includes('hvc')) {
+                                    hasHEVC = true;
+                                } else {
+                                    h264Indices.push(index);
+                                }
+                            });
                             if (hasHEVC) {
-                                console.warn('[HLS] ⚠️ HEVC detected');
-                                onError?.('检测到 HEVC/H.265 编码，当前浏览器可能不支持');
+                                if (h264Indices.length > 0) {
+                                    // H.264 alternatives exist — lock to first H.264 level
+                                    console.info('[HLS] HEVC detected, using H.264 level for compatibility');
+                                    hls.currentLevel = h264Indices[0];
+                                } else {
+                                    // All levels are HEVC — warn user
+                                    console.warn('[HLS] ⚠️ All levels are HEVC, browser may not support');
+                                    onError?.('检测到 HEVC/H.265 编码，当前浏览器可能不支持');
+                                }
                             }
                         }
                     }
@@ -172,45 +181,32 @@ export function useHlsPlayer({
                 const MAX_RETRIES = 3;
 
                 hls.on(Hls.Events.ERROR, (event, data) => {
-                    // === Non-fatal 错误处理（特别是 seek 后的 buffer stall）===
-                    if (!data.fatal) {
-                        if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
-                            console.warn('[HLS] Non-fatal buffer stall detected, attempting recovery...');
-                            // 主动重新开始加载当前位置的分片
-                            if (video.currentTime > 0) {
-                                hls?.startLoad(video.currentTime);
-                            }
+                    if (data.fatal) {
+                        switch (data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                networkErrorRetries++;
+                                if (networkErrorRetries <= MAX_RETRIES) {
+                                    hls?.startLoad();
+                                } else {
+                                    onError?.('网络错误：无法加载视频流');
+                                    hls?.destroy();
+                                }
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                mediaErrorRetries++;
+                                if (mediaErrorRetries <= MAX_RETRIES) {
+                                    hls?.recoverMediaError();
+                                } else {
+                                    onError?.('媒体错误：视频格式不支持或已损坏');
+                                    hls?.destroy();
+                                }
+                                break;
+                            default:
+                                console.error('[HLS] Fatal error, cannot recover:', data);
+                                onError?.(`致命错误：${data.details || '未知错误'}`);
+                                hls?.destroy();
+                                break;
                         }
-                        return;
-                    }
-
-                    // === Fatal 错误处理 ===
-                    switch (data.type) {
-                        case Hls.ErrorTypes.NETWORK_ERROR:
-                            networkErrorRetries++;
-                            if (networkErrorRetries <= MAX_RETRIES) {
-                                console.warn(`[HLS] Network error, retry ${networkErrorRetries}/${MAX_RETRIES}`);
-                                hls?.startLoad();
-                            } else {
-                                onError?.('网络错误：无法加载视频流');
-                                hls?.destroy();
-                            }
-                            break;
-                        case Hls.ErrorTypes.MEDIA_ERROR:
-                            mediaErrorRetries++;
-                            if (mediaErrorRetries <= MAX_RETRIES) {
-                                console.warn(`[HLS] Media error, recovering... ${mediaErrorRetries}/${MAX_RETRIES}`);
-                                hls?.recoverMediaError();
-                            } else {
-                                onError?.('媒体错误：视频格式不支持或已损坏');
-                                hls?.destroy();
-                            }
-                            break;
-                        default:
-                            console.error('[HLS] Fatal error, cannot recover:', data);
-                            onError?.(`致命错误：${data.details || '未知错误'}`);
-                            hls?.destroy();
-                            break;
                     }
                 });
             } else {
@@ -231,6 +227,9 @@ export function useHlsPlayer({
                         if (!res.ok) throw new Error(`HTTP ${res.status}`);
                         return await res.text();
                     } catch (e) {
+                        if (!mediaProxyEnabled) {
+                            throw e;
+                        }
                         console.warn(`[HLS Native] Fetch failed for ${url}, trying proxy...`, e);
                         const proxiedUrl = `/api/proxy?url=${encodeURIComponent(url)}`;
                         const res = await fetch(proxiedUrl);
@@ -391,8 +390,32 @@ export function useHlsPlayer({
                 video.src = src;
             }
         } else {
-            console.error('[HLS] HLS not supported');
-            onError?.('当前浏览器不支持 HLS 视频播放');
+            // Neither MSE nor native HLS supported
+            // Try direct playback as last resort (works for mp4 and some browser WebView)
+            console.warn('[HLS] No MSE or native HLS support. Trying direct playback...');
+            video.src = src;
+
+            let directFailed = false;
+            const handleCanPlay = () => {
+                directFailed = false;
+            };
+            const handleError = () => {
+                if (directFailed) return;
+                directFailed = true;
+                if (!mediaProxyEnabled) {
+                    onError?.('当前浏览器不支持 HLS 视频播放。建议使用 Chrome、Edge 或 Safari 浏览器。');
+                    return;
+                }
+                // Try proxied URL as final attempt
+                const proxiedUrl = `/api/proxy?url=${encodeURIComponent(src)}`;
+                video.src = proxiedUrl;
+                video.addEventListener('error', () => {
+                    onError?.('当前浏览器不支持 HLS 视频播放。建议使用 Chrome、Edge 或 Safari 浏览器。');
+                }, { once: true });
+            };
+
+            video.addEventListener('canplay', handleCanPlay, { once: true });
+            video.addEventListener('error', handleError, { once: true });
         }
 
         return () => {
@@ -401,8 +424,5 @@ export function useHlsPlayer({
             }
             extraBlobs.forEach(url => URL.revokeObjectURL(url));
         };
-    }, [src, videoRef, autoPlay, onAutoPlayPrevented, onError, isAdFilterEnabled, adFilterMode, adKeywords]);
-
-    // 导出 hlsRef 供外部 hook 调用 HLS 恢复 API
-    return { hlsRef };
+    }, [src, videoRef, autoPlay, onAutoPlayPrevented, onError, isAdFilterEnabled, adFilterMode, adKeywords, mediaProxyEnabled]);
 }

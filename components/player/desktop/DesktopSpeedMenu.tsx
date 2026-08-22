@@ -38,17 +38,12 @@ export function DesktopSpeedMenu({
             setIsFullscreen(nativeFullscreen || windowFullscreen);
         };
         document.addEventListener('fullscreenchange', updateFullscreen);
-        // 使用 MutationObserver 替代 setInterval 检测网页全屏 CSS 类变化
-        let observer: MutationObserver | null = null;
-        if (containerRef.current) {
-            const target = containerRef.current.closest('.kvideo-container') || containerRef.current;
-            observer = new MutationObserver(updateFullscreen);
-            observer.observe(target, { attributes: true, attributeFilter: ['class'] });
-        }
+        // Also check periodically for window fullscreen changes (CSS class based)
+        const interval = setInterval(updateFullscreen, 500);
         updateFullscreen();
         return () => {
             document.removeEventListener('fullscreenchange', updateFullscreen);
-            observer?.disconnect();
+            clearInterval(interval);
         };
     }, [containerRef]);
 

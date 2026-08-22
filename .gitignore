@@ -49,6 +49,7 @@ contrast-test-results.json
 /android-mobile/app/build
 /android-mobile/build
 /android-mobile/local.properties
+original_kvideo/
 /ios/KVideo/build
 /ios/KVideo/KVideo.xcodeproj
 /macos/KVideo/build

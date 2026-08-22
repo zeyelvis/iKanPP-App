@@ -7,6 +7,8 @@ import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
 import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
 import { createSubscription } from '@/lib/utils/source-import-utils';
 
+export type LocaleOption = 'zh-CN' | 'zh-TW';
+
 export type SortOption =
   | 'default'
   | 'relevance'
@@ -21,6 +23,18 @@ export type SearchDisplayMode = 'normal' | 'grouped';
 export type AdFilterMode = 'off' | 'keyword' | 'heuristic' | 'aggressive';
 export type ProxyMode = 'retry' | 'none' | 'always';
 
+export const DEFAULT_SEEK_STEP_SECONDS = 10;
+export const MIN_SEEK_STEP_SECONDS = 1;
+export const MAX_SEEK_STEP_SECONDS = 120;
+
+export function normalizeSeekStepSeconds(value: unknown): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return DEFAULT_SEEK_STEP_SECONDS;
+  }
+
+  return Math.min(MAX_SEEK_STEP_SECONDS, Math.max(MIN_SEEK_STEP_SECONDS, Math.round(value)));
+}
+
 export interface AppSettings {
   sources: VideoSource[];
   premiumSources: VideoSource[];
@@ -34,6 +48,7 @@ export interface AppSettings {
   skipIntroSeconds: number;
   autoSkipOutro: boolean;
   skipOutroSeconds: number;
+  seekStepSeconds: number;
   showModeIndicator: boolean; // Show '直连模式'/'代理模式' badge on player
   adFilter: boolean; // Filter ad tags from m3u8 (legacy, kept for compatibility)
   adFilterMode: AdFilterMode; // 'off' | 'keyword' | 'heuristic' | 'aggressive'
@@ -46,12 +61,15 @@ export interface AppSettings {
   proxyMode: ProxyMode; // Proxy behavior: 'retry' | 'none' | 'always'
   rememberScrollPosition: boolean; // Remember scroll position when navigating back or refreshing
   personalizedRecommendations: boolean; // Show personalized recommendations based on watch history
+  videoTogetherEnabled: boolean; // Show VideoTogether entry on supported player pages
   // Danmaku settings
   danmakuEnabled: boolean; // Show danmaku overlay on video
   danmakuApiUrl: string; // Self-hosted danmaku API endpoint
   danmakuOpacity: number; // 0.1 - 1.0
   danmakuFontSize: number; // px
   danmakuDisplayArea: number; // 0.25 | 0.5 | 0.75 | 1.0
+  locale: LocaleOption; // 'zh-CN' (Simplified) or 'zh-TW' (Traditional)
+  blockedCategories: string[]; // Category keywords to hide from search results (e.g. '伦理')
 }
 
 import { exportSettings, importSettings, SEARCH_HISTORY_KEY, WATCH_HISTORY_KEY } from './settings-helpers';
@@ -106,7 +124,7 @@ function getDefaultAppSettings(): AppSettings {
     sources: getDefaultSources(),
     premiumSources: getDefaultPremiumSources(),
     subscriptions: getEnvSubscriptions(),
-    sortBy: 'date-desc',
+    sortBy: 'default',
     searchHistory: true,
     watchHistory: true,
     autoNextEpisode: true,
@@ -114,23 +132,45 @@ function getDefaultAppSettings(): AppSettings {
     skipIntroSeconds: 0,
     autoSkipOutro: false,
     skipOutroSeconds: 0,
+    seekStepSeconds: DEFAULT_SEEK_STEP_SECONDS,
     showModeIndicator: false,
     adFilter: false,
     adFilterMode: 'heuristic',
     adKeywords: [],
     realtimeLatency: false,
-    searchDisplayMode: 'grouped',
+    searchDisplayMode: 'normal',
     episodeReverseOrder: false,
-    fullscreenType: 'native',
+    fullscreenType: 'auto',
     proxyMode: 'retry',
     rememberScrollPosition: true,
     personalizedRecommendations: true,
+    videoTogetherEnabled: false,
     danmakuEnabled: false,
     danmakuApiUrl: process.env.NEXT_PUBLIC_DANMAKU_API_URL || '',
     danmakuOpacity: 0.7,
     danmakuFontSize: 20,
     danmakuDisplayArea: 0.5,
+    locale: 'zh-CN',
+    blockedCategories: [],
   };
+}
+
+export function hasStoredAppSetting(key: keyof AppSettings): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  const stored = localStorage.getItem(SETTINGS_KEY);
+  if (!stored) {
+    return false;
+  }
+
+  try {
+    const parsed = JSON.parse(stored);
+    return Object.prototype.hasOwnProperty.call(parsed, key);
+  } catch {
+    return false;
+  }
 }
 
 export const settingsStore = {
@@ -177,15 +217,8 @@ export const settingsStore = {
       });
 
       // Filter out invalid sources (missing baseUrl etc)
-      let validSources = (Array.isArray(parsed.sources) ? parsed.sources : getDefaultSources())
+      const validSources = (Array.isArray(parsed.sources) ? parsed.sources : getDefaultSources())
         .filter((s: any) => s && s.id && s.name && s.baseUrl);
-
-      // Auto-merge any new default sources that don't exist in user's saved sources
-      const existingIds = new Set(validSources.map((s: any) => s.id));
-      const newDefaults = getDefaultSources().filter(ds => !existingIds.has(ds.id));
-      if (newDefaults.length > 0) {
-        validSources = [...validSources, ...newDefaults];
-      }
 
       const validPremiumSources = (Array.isArray(parsed.premiumSources) ? parsed.premiumSources : getDefaultPremiumSources())
         .filter((s: any) => s && s.id && s.name && s.baseUrl);
@@ -203,6 +236,7 @@ export const settingsStore = {
         skipIntroSeconds: typeof parsed.skipIntroSeconds === 'number' ? parsed.skipIntroSeconds : 0,
         autoSkipOutro: parsed.autoSkipOutro !== undefined ? parsed.autoSkipOutro : false,
         skipOutroSeconds: typeof parsed.skipOutroSeconds === 'number' ? parsed.skipOutroSeconds : 0,
+        seekStepSeconds: normalizeSeekStepSeconds(parsed.seekStepSeconds),
         showModeIndicator: parsed.showModeIndicator !== undefined ? parsed.showModeIndicator : false,
         adFilter: parsed.adFilter !== undefined ? parsed.adFilter : false,
         adFilterMode: parsed.adFilterMode || 'heuristic',
@@ -214,11 +248,14 @@ export const settingsStore = {
         proxyMode: (parsed.proxyMode === 'retry' || parsed.proxyMode === 'none' || parsed.proxyMode === 'always') ? parsed.proxyMode : 'retry',
         rememberScrollPosition: parsed.rememberScrollPosition !== undefined ? parsed.rememberScrollPosition : true,
         personalizedRecommendations: parsed.personalizedRecommendations !== undefined ? parsed.personalizedRecommendations : true,
+        videoTogetherEnabled: parsed.videoTogetherEnabled !== undefined ? parsed.videoTogetherEnabled : false,
         danmakuEnabled: parsed.danmakuEnabled !== undefined ? parsed.danmakuEnabled : false,
         danmakuApiUrl: typeof parsed.danmakuApiUrl === 'string' ? (parsed.danmakuApiUrl || process.env.NEXT_PUBLIC_DANMAKU_API_URL || '') : (process.env.NEXT_PUBLIC_DANMAKU_API_URL || ''),
         danmakuOpacity: typeof parsed.danmakuOpacity === 'number' ? parsed.danmakuOpacity : 0.7,
         danmakuFontSize: typeof parsed.danmakuFontSize === 'number' ? parsed.danmakuFontSize : 20,
         danmakuDisplayArea: typeof parsed.danmakuDisplayArea === 'number' ? parsed.danmakuDisplayArea : 0.5,
+        locale: parsed.locale === 'zh-TW' ? 'zh-TW' : 'zh-CN',
+        blockedCategories: Array.isArray(parsed.blockedCategories) ? parsed.blockedCategories : [],
       };
     } catch {
       // Even if localStorage fails, we should return defaults + ENV subscriptions
@@ -311,54 +348,21 @@ export const settingsStore = {
     }
   },
 
-  /**
-   * 从 Supabase 拉取全局视频源，合并到本地 localStorage
-   * - 全局源的 ID 存在于本地 → 更新为全局版本（管理员更改优先）
-   * - 全局源的 ID 不存在于本地 → 添加
-   * - 本地有但全局没有的源 → 保留（用户自定义源）
-   */
-  async syncGlobalSources(): Promise<boolean> {
-    if (typeof window === 'undefined') return false;
-
+  async syncGlobalSources(): Promise<void> {
     try {
       const { getGlobalSources, getGlobalPremiumSources } = await import('@/lib/supabase/global-config');
-
-      const [globalSources, globalPremiumSources] = await Promise.all([
-        getGlobalSources(),
-        getGlobalPremiumSources(),
-      ]);
-
-      if (!globalSources && !globalPremiumSources) return false;
-
-      const current = this.getSettings();
-      let changed = false;
-
-      // 合并普通源
-      if (globalSources && Array.isArray(globalSources) && globalSources.length > 0) {
-        const globalIds = new Set(globalSources.map(s => s.id));
-        // 全局源 + 用户自定义源（不在全局中的）
-        const userCustomSources = current.sources.filter(s => !globalIds.has(s.id) && !getDefaultSources().some(ds => ds.id === s.id));
-        current.sources = [...globalSources, ...userCustomSources];
-        changed = true;
+      const sources = await getGlobalSources();
+      const premiumSources = await getGlobalPremiumSources();
+      if (sources && Array.isArray(sources) && sources.length > 0) {
+        const current = this.getSettings();
+        this.saveSettings({
+          ...current,
+          sources,
+          ...(premiumSources && Array.isArray(premiumSources) && premiumSources.length > 0 ? { premiumSources } : {})
+        });
       }
-
-      // 合并 Premium 源
-      if (globalPremiumSources && Array.isArray(globalPremiumSources) && globalPremiumSources.length > 0) {
-        const globalPremiumIds = new Set(globalPremiumSources.map(s => s.id));
-        const userCustomPremium = current.premiumSources.filter(s => !globalPremiumIds.has(s.id) && !getDefaultPremiumSources().some(ds => ds.id === s.id));
-        current.premiumSources = [...globalPremiumSources, ...userCustomPremium];
-        changed = true;
-      }
-
-      if (changed) {
-        this.saveSettings(current);
-        console.log('✅ 全局视频源已同步');
-      }
-
-      return changed;
-    } catch (err) {
-      console.warn('全局配置同步失败:', err);
-      return false;
+    } catch (e) {
+      console.warn('syncGlobalSources failed:', e);
     }
-  },
+  }
 };

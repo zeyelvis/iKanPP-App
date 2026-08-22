@@ -10,6 +10,46 @@ interface LatencyInfo {
   level: 'excellent' | 'good' | 'fair' | 'slow';
 }
 
+export interface LatencyProbeTarget {
+  id: string;
+  baseUrl: string;
+}
+
+export interface LatencyProbeResult {
+  id: string;
+  latency: number | null;
+}
+
+export async function probeLatencyTargets(
+  targets: LatencyProbeTarget[],
+  probe: (target: LatencyProbeTarget) => Promise<number | null>,
+  concurrency: number = 4,
+): Promise<LatencyProbeResult[]> {
+  if (targets.length === 0) return [];
+
+  const results = new Array<LatencyProbeResult>(targets.length);
+  const workerCount = Math.min(
+    targets.length,
+    Math.max(1, Math.floor(concurrency)),
+  );
+  let nextIndex = 0;
+
+  const workers = Array.from({ length: workerCount }, async () => {
+    while (nextIndex < targets.length) {
+      const index = nextIndex;
+      nextIndex += 1;
+      const target = targets[index];
+      results[index] = {
+        id: target.id,
+        latency: await probe(target),
+      };
+    }
+  });
+
+  await Promise.all(workers);
+  return results;
+}
+
 /**
  * Get latency information with color coding
  * @param latency - Response time in milliseconds

@@ -6,7 +6,7 @@ import { useDesktopPlayerLogic } from './hooks/useDesktopPlayerLogic';
 import { useHlsPlayer } from './hooks/useHlsPlayer';
 import { useAutoSkip } from './hooks/useAutoSkip';
 import { useStallDetection } from './hooks/useStallDetection';
-import { useEpisodePrefetch } from './hooks/useEpisodePrefetch';
+import { useVideoResolution } from './hooks/useVideoResolution';
 import { DesktopControlsWrapper } from './desktop/DesktopControlsWrapper';
 import { DesktopOverlayWrapper } from './desktop/DesktopOverlayWrapper';
 import { DanmakuCanvas } from './DanmakuCanvas';
@@ -14,8 +14,45 @@ import { usePlayerSettings } from './hooks/usePlayerSettings';
 import { useDanmaku } from './hooks/useDanmaku';
 import { useIsIOS, useIsMobile } from '@/lib/hooks/mobile/useDeviceDetection';
 import { useDoubleTap } from '@/lib/hooks/mobile/useDoubleTap';
+import { settingsStore, DEFAULT_SEEK_STEP_SECONDS } from '@/lib/store/settings-store';
+import { premiumModeSettingsStore } from '@/lib/store/premium-mode-settings';
 import { shouldHidePlayerCursor } from '@/lib/player/cursor-visibility';
 import './web-fullscreen.css';
+
+type WebFullscreenSize = 'full' | 'large' | 'focused';
+
+const WEB_FULLSCREEN_SIZE_KEY = 'kvideo-web-fullscreen-size';
+const WEB_FULLSCREEN_SIZE_ORDER: WebFullscreenSize[] = ['full', 'large', 'focused'];
+const WEB_FULLSCREEN_SCALE: Record<WebFullscreenSize, number> = {
+  full: 1,
+  large: 0.92,
+  focused: 0.84,
+};
+
+interface ViewportMetrics {
+  width: number;
+  height: number;
+}
+
+type LegacyInlineVideoProps = React.VideoHTMLAttributes<HTMLVideoElement> & {
+  'webkit-playsinline'?: 'true';
+};
+
+const LEGACY_INLINE_VIDEO_PROPS: LegacyInlineVideoProps = {
+  'webkit-playsinline': 'true',
+};
+
+function readViewportMetrics(): ViewportMetrics {
+  if (typeof window === 'undefined') {
+    return { width: 0, height: 0 };
+  }
+
+  const viewport = window.visualViewport;
+  return {
+    width: Math.round(viewport?.width ?? window.innerWidth ?? 0),
+    height: Math.round(viewport?.height ?? window.innerHeight ?? 0),
+  };
+}
 
 interface DesktopVideoPlayerProps {
   src: string;
@@ -32,8 +69,9 @@ interface DesktopVideoPlayerProps {
   // Danmaku props
   videoTitle?: string;
   episodeName?: string;
-  // 下一集 URL（用于预加载）
-  nextEpisodeUrl?: string | null;
+  isPremium?: boolean;
+  // Resolution callback
+  onResolutionDetected?: (info: import('./hooks/useVideoResolution').VideoResolutionInfo) => void;
 }
 
 export function DesktopVideoPlayer({
@@ -49,39 +87,63 @@ export function DesktopVideoPlayer({
   isReversed = false,
   videoTitle = '',
   episodeName = '',
-  nextEpisodeUrl = null,
+  isPremium = false,
+  onResolutionDetected,
 }: DesktopVideoPlayerProps) {
   const { refs, data, actions } = useDesktopPlayerState();
-  const { fullscreenType: settingsFullscreenType } = usePlayerSettings();
+  const { fullscreenType: settingsFullscreenType } = usePlayerSettings(isPremium);
   const isIOS = useIsIOS();
   const isMobile = useIsMobile();
+  const [viewportMetrics, setViewportMetrics] = React.useState<ViewportMetrics>(() => readViewportMetrics());
+  const [seekStepSeconds, setSeekStepSeconds] = React.useState(DEFAULT_SEEK_STEP_SECONDS);
+  const [webFullscreenSize, setWebFullscreenSize] = React.useState<WebFullscreenSize>(() => {
+    if (typeof window === 'undefined') return 'full';
+    const saved = localStorage.getItem(WEB_FULLSCREEN_SIZE_KEY);
+    return saved === 'large' || saved === 'focused' || saved === 'full' ? saved : 'full';
+  });
+  const [fullscreenClock, setFullscreenClock] = React.useState('');
+
+  // Detect actual video resolution
+  const videoResolution = useVideoResolution(refs.videoRef);
+
+  // Notify parent when resolution is detected
+  React.useEffect(() => {
+    if (videoResolution && onResolutionDetected) {
+      onResolutionDetected(videoResolution);
+    }
+  }, [videoResolution, onResolutionDetected]);
 
   // Danmaku
-  const { danmakuEnabled, setDanmakuEnabled, comments: danmakuComments } = useDanmaku({
+  const { danmakuEnabled, comments: danmakuComments } = useDanmaku({
     videoTitle,
     episodeName,
     episodeIndex: currentEpisodeIndex,
   });
 
-  // State to track if device is in landscape mode
-  const [isLandscape, setIsLandscape] = React.useState(true);
+  const updateViewportMetrics = React.useCallback(() => {
+    setViewportMetrics((current) => {
+      const next = readViewportMetrics();
+      if (current.width === next.width && current.height === next.height) {
+        return current;
+      }
+      return next;
+    });
+  }, []);
 
   React.useEffect(() => {
-    const checkOrientation = () => {
-      // Check if width > height
-      if (typeof window !== 'undefined') {
-        setIsLandscape(window.innerWidth > window.innerHeight);
-      }
-    };
+    updateViewportMetrics();
 
-    checkOrientation();
-    window.addEventListener('resize', checkOrientation);
-    window.addEventListener('orientationchange', checkOrientation);
+    const visualViewport = window.visualViewport;
+    window.addEventListener('resize', updateViewportMetrics);
+    window.addEventListener('orientationchange', updateViewportMetrics);
+    visualViewport?.addEventListener('resize', updateViewportMetrics);
+
     return () => {
-      window.removeEventListener('resize', checkOrientation);
-      window.removeEventListener('orientationchange', checkOrientation);
+      window.removeEventListener('resize', updateViewportMetrics);
+      window.removeEventListener('orientationchange', updateViewportMetrics);
+      visualViewport?.removeEventListener('resize', updateViewportMetrics);
     };
-  }, []);
+  }, [updateViewportMetrics]);
 
   // Use user preference for fullscreen type, resolving 'auto' to device default
   // Auto Rules:
@@ -91,19 +153,74 @@ export function DesktopVideoPlayer({
     ? (isIOS ? 'window' : isMobile ? 'window' : 'native') // Treat all mobile as window for consistency if auto
     : settingsFullscreenType;
 
+  const isLandscape = viewportMetrics.width > viewportMetrics.height;
+
   // Check if we need to force landscape (iOS + Fullscreen + Portrait)
-  const shouldForceLandscape = data.isFullscreen && fullscreenType === 'window' && isIOS && !isLandscape;
+  const shouldForceLandscape = data.fullscreenMode === 'window' && isIOS && !isLandscape;
+
+  React.useEffect(() => {
+    updateViewportMetrics();
+
+    if (data.fullscreenMode !== 'window') return;
+
+    const rafId = window.requestAnimationFrame(updateViewportMetrics);
+    const timeoutId = window.setTimeout(updateViewportMetrics, 250);
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      window.clearTimeout(timeoutId);
+    };
+  }, [data.fullscreenMode, src, updateViewportMetrics]);
+
+  React.useEffect(() => {
+    localStorage.setItem(WEB_FULLSCREEN_SIZE_KEY, webFullscreenSize);
+  }, [webFullscreenSize]);
+
+  React.useEffect(() => {
+    const store = isPremium ? premiumModeSettingsStore : settingsStore;
+
+    const syncSeekStep = () => {
+      setSeekStepSeconds(store.getSettings().seekStepSeconds ?? DEFAULT_SEEK_STEP_SECONDS);
+    };
+
+    syncSeekStep();
+    const unsubscribe = store.subscribe(syncSeekStep);
+    return () => unsubscribe();
+  }, [isPremium]);
+
+  React.useEffect(() => {
+    if (!data.isFullscreen) {
+      setFullscreenClock('');
+      return;
+    }
+
+    const formatter = new Intl.DateTimeFormat('zh-CN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+
+    const updateClock = () => {
+      setFullscreenClock(formatter.format(new Date()));
+    };
+
+    updateClock();
+    const interval = window.setInterval(updateClock, 30000);
+    return () => window.clearInterval(interval);
+  }, [data.isFullscreen]);
 
   // Initialize HLS Player
-  const { hlsRef } = useHlsPlayer({
+  useHlsPlayer({
     videoRef: refs.videoRef,
     src,
+    isPremium,
     autoPlay: shouldAutoPlay
   });
 
   const {
     videoRef,
     containerRef,
+    moreMenuTimeoutRef,
   } = refs;
 
   const {
@@ -114,20 +231,15 @@ export function DesktopVideoPlayer({
 
   const {
     setShowControls,
+    setBufferedTime,
     setIsLoading,
-    setCurrentTime,
-    setDuration,
   } = actions;
 
   // Reset loading state and show spinner when source changes
   React.useEffect(() => {
     setIsLoading(true);
-    // 换集时重置，避免新集初始加载触发帧冻结
-    hasPlayedRef.current = false;
-    if (seekOverlayRef.current?.parentElement) {
-      seekOverlayRef.current.parentElement.removeChild(seekOverlayRef.current);
-    }
-  }, [src, setIsLoading]);
+    setBufferedTime(0);
+  }, [src, setBufferedTime, setIsLoading]);
 
   const logic = useDesktopPlayerLogic({
     src,
@@ -139,15 +251,17 @@ export function DesktopVideoPlayer({
     data,
     actions,
     fullscreenType,
-    isForceLandscape: shouldForceLandscape
+    isForceLandscape: shouldForceLandscape,
+    seekStepSeconds,
   });
 
   // Auto-skip intro/outro and auto-next episode
-  const { isOutroActive, isTransitioningToNextEpisode } = useAutoSkip({
+  const { isTransitioningToNextEpisode } = useAutoSkip({
     videoRef,
     currentTime,
     duration,
     isPlaying,
+    isPremium,
     totalEpisodes,
     currentEpisodeIndex,
     onNextEpisode,
@@ -158,98 +272,11 @@ export function DesktopVideoPlayer({
   // Sensitive stalling detection (e.g. video stuck but HTML5 state says playing)
   useStallDetection({
     videoRef,
-    hlsRef,
     isPlaying: data.isPlaying,
     isDraggingProgressRef: refs.isDraggingProgressRef,
     setIsLoading: actions.setIsLoading,
     isTransitioningToNextEpisode
   });
-
-  // 下一集预加载：outro 阶段提前拉取 manifest + 首个分片
-  useEpisodePrefetch({
-    nextEpisodeUrl,
-    isOutroActive,
-    isPlaying: data.isPlaying,
-  });
-
-  // === Seek 帧冻结遮罩 ===
-  // 在用户主动 seek 前截取当前帧覆盖在视频上方，防止 TV 浏览器闪白屏/黑屏
-  // ⚠️ 只在视频首次播放后才启用，避免初始加载阶段 HLS 内部 seeking 事件触发多次闪白
-  const seekOverlayRef = React.useRef<HTMLImageElement | null>(null);
-  const seekCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
-  const hasPlayedRef = React.useRef(false);
-
-  const handleSeeking = React.useCallback(() => {
-    const video = videoRef.current;
-    const container = containerRef.current;
-    // 门控：初始加载阶段不启用帧冻结（HLS 内部 seek 会触发多次 seeking 事件）
-    if (!video || !container || video.readyState < 2 || !hasPlayedRef.current) return;
-
-    try {
-      // 创建离屏 canvas 截取当前帧
-      if (!seekCanvasRef.current) {
-        seekCanvasRef.current = document.createElement('canvas');
-      }
-      const canvas = seekCanvasRef.current;
-      canvas.width = video.videoWidth || 640;
-      canvas.height = video.videoHeight || 360;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      // 将截图转为 dataURL
-      const frameUrl = canvas.toDataURL('image/jpeg', 0.85);
-
-      // 创建/复用覆盖 img 元素
-      if (!seekOverlayRef.current) {
-        const img = document.createElement('img');
-        img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;pointer-events:none;transition:opacity 0.15s ease-out;';
-        seekOverlayRef.current = img;
-      }
-      const overlay = seekOverlayRef.current;
-      overlay.src = frameUrl;
-      overlay.style.opacity = '1';
-
-      // 插入到视频旁边（同层级）
-      const videoParent = video.parentElement;
-      if (videoParent && !videoParent.contains(overlay)) {
-        videoParent.appendChild(overlay);
-      }
-    } catch {
-      // canvas 截图可能因 CORS 失败，静默忽略（回退到原始行为）
-    }
-  }, [videoRef, containerRef]);
-
-  // Seek 完成后：移除帧冻结遮罩 + HLS 声画同步恢复
-  const handleSeeked = React.useCallback(() => {
-    // 淡出并移除帧冻结遮罩
-    const overlay = seekOverlayRef.current;
-    if (overlay && overlay.parentElement) {
-      overlay.style.opacity = '0';
-      setTimeout(() => {
-        overlay.parentElement?.removeChild(overlay);
-      }, 160);
-    }
-
-    // 初始加载阶段不执行声画恢复（避免干扰 HLS 正常初始化）
-    if (!hasPlayedRef.current) return;
-
-    // HLS 声画同步恢复
-    const hls = hlsRef.current;
-    const video = videoRef.current;
-    if (!hls || !video) return;
-
-    // 主动要求 HLS 从新位置开始加载分片
-    hls.startLoad(video.currentTime);
-
-    // 延迟 500ms 检测声画同步：如果此时仍在缓冲，调用 recoverMediaError 强制同步解码器
-    setTimeout(() => {
-      if (video && !video.paused && video.readyState < 3) {
-        console.warn('[Seek] Post-seek buffer stall, recovering media...');
-        hls.recoverMediaError();
-      }
-    }, 500);
-  }, [hlsRef, videoRef]);
 
   const {
     handleMouseMove,
@@ -259,8 +286,49 @@ export function DesktopVideoPlayer({
     handlePause,
     handleTimeUpdateEvent,
     handleLoadedMetadata,
+    handleProgressEvent,
     handleVideoError,
   } = logic;
+
+  const cycleWebFullscreenSize = React.useCallback(() => {
+    setWebFullscreenSize((current) => {
+      const currentIndex = WEB_FULLSCREEN_SIZE_ORDER.indexOf(current);
+      return WEB_FULLSCREEN_SIZE_ORDER[(currentIndex + 1) % WEB_FULLSCREEN_SIZE_ORDER.length];
+    });
+  }, []);
+
+  const webFullscreenStyle = React.useMemo<React.CSSProperties | undefined>(() => {
+    if (data.fullscreenMode !== 'window') return undefined;
+    if (viewportMetrics.width <= 0 || viewportMetrics.height <= 0) return undefined;
+
+    const stageWidth = shouldForceLandscape ? viewportMetrics.height : viewportMetrics.width;
+    const stageHeight = shouldForceLandscape ? viewportMetrics.width : viewportMetrics.height;
+
+    return {
+      ['--kvideo-viewport-width' as string]: `${viewportMetrics.width}px`,
+      ['--kvideo-viewport-height' as string]: `${viewportMetrics.height}px`,
+      ['--kvideo-stage-viewport-width' as string]: `${stageWidth}px`,
+      ['--kvideo-stage-viewport-height' as string]: `${stageHeight}px`,
+      ['--kvideo-web-scale' as string]: WEB_FULLSCREEN_SCALE[webFullscreenSize].toString(),
+    };
+  }, [data.fullscreenMode, shouldForceLandscape, viewportMetrics, webFullscreenSize]);
+
+  const shouldHideCursor = shouldHidePlayerCursor({
+    isFullscreen: data.isFullscreen,
+    isPlaying: data.isPlaying,
+    showControls: data.showControls,
+    hasInteractiveOverlay: data.showSpeedMenu || data.showMoreMenu || data.showVolumeBar,
+  });
+
+  const containerStyle = React.useMemo<React.CSSProperties>(() => ({
+    ...(webFullscreenStyle ?? {}),
+    cursor: shouldHideCursor ? 'none' : undefined,
+  }), [webFullscreenStyle, shouldHideCursor]);
+
+  const stageClassName = data.fullscreenMode === 'window'
+    ? 'kvideo-stage kvideo-web-fullscreen-stage'
+    : 'kvideo-stage absolute inset-0';
+  const isTopAlignedWebFullscreen = data.fullscreenMode === 'window' && isMobile && !isLandscape && !shouldForceLandscape;
 
   // Mobile double-tap gesture for skip forward/backward
   const { handleTap } = useDoubleTap({
@@ -284,29 +352,20 @@ export function DesktopVideoPlayer({
     isSkipModeActive: data.showSkipForwardIndicator || data.showSkipBackwardIndicator,
   });
 
-  const shouldHideCursor = shouldHidePlayerCursor({
-    isFullscreen: data.isFullscreen,
-    isPlaying: data.isPlaying,
-    showControls: data.showControls,
-    hasInteractiveOverlay: data.showSpeedMenu || data.showMoreMenu || data.showVolumeBar,
-  });
-
   return (
     <div
       ref={containerRef}
-      className={`kvideo-container relative w-full aspect-video bg-black rounded-[var(--radius-2xl)] group ${data.isFullscreen && fullscreenType === 'window' ? 'is-web-fullscreen' : ''
-        } ${shouldForceLandscape ? 'force-landscape' : ''}`}
-      style={{
-        aspectRatio: '16 / 9',
-        cursor: shouldHideCursor ? 'none' : undefined,
-      }}
-      onMouseMove={handleMouseMove}
+      className={`kvideo-container relative aspect-video bg-black group ${data.fullscreenMode === 'window' ? 'is-web-fullscreen' : ''
+        } ${shouldForceLandscape ? 'force-landscape' : ''} ${isTopAlignedWebFullscreen ? 'top-align-stage' : ''} overflow-hidden rounded-none sm:rounded-[var(--radius-2xl)]`}
+      style={containerStyle}
+      onMouseMove={() => { handleMouseMove(); }}
       onMouseLeave={() => isPlaying && setShowControls(false)}
     >
-      {/* Clipping Wrapper for video and overlays - Restores the 'Liquid Glass' rounded look */}
-      <div className={`absolute inset-0 overflow-hidden pointer-events-none ${data.isFullscreen && fullscreenType === 'window' ? 'rounded-0' : 'rounded-[var(--radius-2xl)]'
-        }`}>
-        <div className="absolute inset-0 pointer-events-auto">
+      <div className={stageClassName}>
+        {/* Clipping Wrapper for video and overlays - Restores the 'Liquid Glass' rounded look */}
+        <div className={`absolute inset-0 overflow-hidden pointer-events-none ${data.fullscreenMode === 'window' ? 'rounded-none' : 'rounded-none sm:rounded-[var(--radius-2xl)]'
+          }`}>
+          <div className="absolute inset-0 pointer-events-auto">
           {/* Video Element */}
           <video
             ref={videoRef}
@@ -315,28 +374,19 @@ export function DesktopVideoPlayer({
             x-webkit-airplay="allow"
             playsInline={true} // Crucial for iOS custom fullscreen to work without native player taking over
             controls={false} // Explicitly disable native controls
-            onPlay={() => { hasPlayedRef.current = true; handlePlay(); }}
+            onPlay={handlePlay}
             onPause={handlePause}
             onTimeUpdate={handleTimeUpdateEvent}
             onLoadedMetadata={handleLoadedMetadata}
+            onProgress={handleProgressEvent}
             onError={handleVideoError}
             onWaiting={() => setIsLoading(true)}
-            onCanPlay={() => {
-              setIsLoading(false);
-              // canPlay 时也清除帧冻结遮罩（兜底）
-              const overlay = seekOverlayRef.current;
-              if (overlay?.parentElement) {
-                overlay.style.opacity = '0';
-                setTimeout(() => overlay.parentElement?.removeChild(overlay), 160);
-              }
-            }}
-            onSeeking={handleSeeking}
-            onSeeked={handleSeeked}
-            onClick={!isMobile ? (e) => {
+            onCanPlay={() => setIsLoading(false)}
+            onClick={!isMobile ? () => {
               togglePlay();
             } : undefined}
             onTouchStart={isMobile ? handleTap : undefined}
-            {...({ 'webkit-playsinline': 'true' } as any)} // Legacy iOS support
+            {...LEGACY_INLINE_VIDEO_PROPS} // Legacy iOS support
           />
 
           {/* Danmaku Canvas */}
@@ -349,10 +399,21 @@ export function DesktopVideoPlayer({
             />
           )}
 
+          {/* Video Resolution Badge - follows controls bar visibility */}
+          {videoResolution && (
+            <div className={`absolute top-3 left-3 z-20 pointer-events-none transition-opacity duration-300 ${data.showControls ? 'opacity-80' : 'opacity-0'}`}>
+              <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold text-white ${videoResolution.color}`}>
+                {videoResolution.label}
+                <span className="font-normal opacity-80">{videoResolution.width}x{videoResolution.height}</span>
+              </span>
+            </div>
+          )}
+
           <DesktopOverlayWrapper
             data={data}
-            actions={actions}
             showControls={data.showControls}
+            isFullscreen={data.isFullscreen}
+            fullscreenClock={fullscreenClock}
             isRotated={shouldForceLandscape}
             onTogglePlay={togglePlay}
             onSkipForward={logic.skipForward}
@@ -360,24 +421,26 @@ export function DesktopVideoPlayer({
             isTransitioningToNextEpisode={isTransitioningToNextEpisode}
             // More Menu Props
             showMoreMenu={data.showMoreMenu}
+            isPremium={isPremium}
             isProxied={src.includes('/api/proxy')}
             onToggleMoreMenu={() => actions.setShowMoreMenu(!data.showMoreMenu)}
             onMoreMenuMouseEnter={() => {
-              if (refs.moreMenuTimeoutRef.current) {
-                clearTimeout(refs.moreMenuTimeoutRef.current);
-                refs.moreMenuTimeoutRef.current = null;
+              if (moreMenuTimeoutRef.current) {
+                clearTimeout(moreMenuTimeoutRef.current);
+                moreMenuTimeoutRef.current = null;
               }
             }}
             onMoreMenuMouseLeave={() => {
-              if (refs.moreMenuTimeoutRef.current) {
-                clearTimeout(refs.moreMenuTimeoutRef.current);
+              if (moreMenuTimeoutRef.current) {
+                clearTimeout(moreMenuTimeoutRef.current);
               }
-              refs.moreMenuTimeoutRef.current = setTimeout(() => {
+              moreMenuTimeoutRef.current = setTimeout(() => {
                 actions.setShowMoreMenu(false);
-                refs.moreMenuTimeoutRef.current = null;
+                moreMenuTimeoutRef.current = null;
               }, 800); // Increased timeout for better stability
             }}
             onCopyLink={logic.handleCopyLink}
+            seekStepSeconds={seekStepSeconds}
             // Speed Menu Props
             playbackRate={data.playbackRate}
             showSpeedMenu={data.showSpeedMenu}
@@ -386,17 +449,19 @@ export function DesktopVideoPlayer({
             onSpeedChange={logic.changePlaybackSpeed}
             onSpeedMenuMouseEnter={logic.clearSpeedMenuTimeout}
             onSpeedMenuMouseLeave={logic.startSpeedMenuTimeout}
+            webFullscreenSize={webFullscreenSize}
+            onCycleWebFullscreenSize={cycleWebFullscreenSize}
             // Portal container
             containerRef={containerRef}
           />
 
-          <DesktopControlsWrapper
-            src={src}
-            data={data}
-            actions={actions}
-            logic={logic}
-            refs={refs}
-          />
+            <DesktopControlsWrapper
+              src={src}
+              data={data}
+              logic={logic}
+              refs={refs}
+            />
+          </div>
         </div>
       </div>
     </div>

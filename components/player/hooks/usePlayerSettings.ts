@@ -1,135 +1,197 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { settingsStore, AdFilterMode } from '@/lib/store/settings-store';
+import {
+    settingsStore,
+    type AppSettings,
+    type AdFilterMode,
+} from '@/lib/store/settings-store';
+import {
+    premiumModeSettingsStore,
+    type ModeSettings,
+} from '@/lib/store/premium-mode-settings';
+import { useRuntimeFeatures } from '@/components/RuntimeFeaturesProvider';
+
+interface PlayerSettingsSnapshot {
+    autoNextEpisode: boolean;
+    autoSkipIntro: boolean;
+    skipIntroSeconds: number;
+    autoSkipOutro: boolean;
+    skipOutroSeconds: number;
+    showModeIndicator: boolean;
+    adFilter: boolean;
+    adFilterMode: AdFilterMode;
+    adKeywords: string[];
+    fullscreenType: 'auto' | 'native' | 'window';
+    proxyMode: 'retry' | 'none' | 'always';
+    danmakuEnabled: boolean;
+    danmakuApiUrl: string;
+    danmakuOpacity: number;
+    danmakuFontSize: number;
+    danmakuDisplayArea: number;
+}
+
+function getPlayerSettingsSnapshot(isPremium: boolean, mediaProxyEnabled: boolean): PlayerSettingsSnapshot {
+    const globalSettings = settingsStore.getSettings();
+    const modeSettings = isPremium ? premiumModeSettingsStore.getSettings() : globalSettings;
+
+    return {
+        autoNextEpisode: modeSettings.autoNextEpisode,
+        autoSkipIntro: modeSettings.autoSkipIntro,
+        skipIntroSeconds: modeSettings.skipIntroSeconds,
+        autoSkipOutro: modeSettings.autoSkipOutro,
+        skipOutroSeconds: modeSettings.skipOutroSeconds,
+        showModeIndicator: modeSettings.showModeIndicator,
+        adFilter: globalSettings.adFilter,
+        adFilterMode: modeSettings.adFilterMode,
+        adKeywords: globalSettings.adKeywords,
+        fullscreenType: modeSettings.fullscreenType,
+        proxyMode: mediaProxyEnabled ? modeSettings.proxyMode : 'none',
+        danmakuEnabled: modeSettings.danmakuEnabled,
+        danmakuApiUrl: modeSettings.danmakuApiUrl,
+        danmakuOpacity: modeSettings.danmakuOpacity,
+        danmakuFontSize: modeSettings.danmakuFontSize,
+        danmakuDisplayArea: modeSettings.danmakuDisplayArea,
+    };
+}
+
+function playerSettingsEqual(a: PlayerSettingsSnapshot, b: PlayerSettingsSnapshot): boolean {
+    return (
+        a.autoNextEpisode === b.autoNextEpisode &&
+        a.autoSkipIntro === b.autoSkipIntro &&
+        a.skipIntroSeconds === b.skipIntroSeconds &&
+        a.autoSkipOutro === b.autoSkipOutro &&
+        a.skipOutroSeconds === b.skipOutroSeconds &&
+        a.showModeIndicator === b.showModeIndicator &&
+        a.adFilter === b.adFilter &&
+        a.adFilterMode === b.adFilterMode &&
+        a.adKeywords === b.adKeywords &&
+        a.fullscreenType === b.fullscreenType &&
+        a.proxyMode === b.proxyMode &&
+        a.danmakuEnabled === b.danmakuEnabled &&
+        a.danmakuApiUrl === b.danmakuApiUrl &&
+        a.danmakuOpacity === b.danmakuOpacity &&
+        a.danmakuFontSize === b.danmakuFontSize &&
+        a.danmakuDisplayArea === b.danmakuDisplayArea
+    );
+}
 
 /**
  * Hook to access and update player settings from the settings store
  * Provides reactive updates when settings change
  */
-export function usePlayerSettings() {
-    const [settings, setSettings] = useState(() => {
-        const stored = settingsStore.getSettings();
-        return {
-            autoNextEpisode: stored.autoNextEpisode,
-            autoSkipIntro: stored.autoSkipIntro,
-            skipIntroSeconds: stored.skipIntroSeconds,
-            autoSkipOutro: stored.autoSkipOutro,
-            skipOutroSeconds: stored.skipOutroSeconds,
-            showModeIndicator: stored.showModeIndicator,
-            adFilter: stored.adFilter,
-            adFilterMode: stored.adFilterMode,
-            adKeywords: stored.adKeywords,
-            fullscreenType: stored.fullscreenType,
-            proxyMode: stored.proxyMode,
-            danmakuEnabled: stored.danmakuEnabled,
-            danmakuApiUrl: stored.danmakuApiUrl,
-            danmakuOpacity: stored.danmakuOpacity,
-            danmakuFontSize: stored.danmakuFontSize,
-            danmakuDisplayArea: stored.danmakuDisplayArea,
-        };
-    });
+export function usePlayerSettings(isPremium: boolean = false) {
+    const { mediaProxyEnabled } = useRuntimeFeatures();
+    const [settings, setSettings] = useState(() => getPlayerSettingsSnapshot(isPremium, mediaProxyEnabled));
 
-    // Subscribe to settings changes
+    // Subscribe to settings changes. Reuse the previous snapshot when
+    // non-player fields change (e.g. episodeReverseOrder) so HLS is not rebuilt.
     useEffect(() => {
-        const unsubscribe = settingsStore.subscribe(() => {
-            const stored = settingsStore.getSettings();
-            setSettings({
-                autoNextEpisode: stored.autoNextEpisode,
-                autoSkipIntro: stored.autoSkipIntro,
-                skipIntroSeconds: stored.skipIntroSeconds,
-                autoSkipOutro: stored.autoSkipOutro,
-                skipOutroSeconds: stored.skipOutroSeconds,
-                showModeIndicator: stored.showModeIndicator,
-                adFilter: stored.adFilter,
-                adFilterMode: stored.adFilterMode,
-                adKeywords: stored.adKeywords,
-                fullscreenType: stored.fullscreenType,
-                proxyMode: stored.proxyMode,
-                danmakuEnabled: stored.danmakuEnabled,
-                danmakuApiUrl: stored.danmakuApiUrl,
-                danmakuOpacity: stored.danmakuOpacity,
-                danmakuFontSize: stored.danmakuFontSize,
-                danmakuDisplayArea: stored.danmakuDisplayArea,
-            });
-        });
-        return unsubscribe;
-    }, []);
+        const syncSettings = () => {
+            const next = getPlayerSettingsSnapshot(isPremium, mediaProxyEnabled);
+            setSettings((prev) => (playerSettingsEqual(prev, next) ? prev : next));
+        };
 
-    const updateSetting = useCallback(<K extends keyof typeof settings>(
-        key: K,
-        value: typeof settings[K]
-    ) => {
+        const modeStore = isPremium ? premiumModeSettingsStore : settingsStore;
+        const unsubscribeModeStore = modeStore.subscribe(syncSettings);
+        const unsubscribeGlobalStore = isPremium ? settingsStore.subscribe(syncSettings) : null;
+
+        syncSettings();
+
+        return () => {
+            unsubscribeModeStore();
+            unsubscribeGlobalStore?.();
+        };
+    }, [isPremium, mediaProxyEnabled]);
+
+    const updateModeSettings = useCallback((partial: Partial<ModeSettings>) => {
+        if (isPremium) {
+            const currentSettings = premiumModeSettingsStore.getSettings();
+            premiumModeSettingsStore.saveSettings({
+                ...currentSettings,
+                ...partial,
+            });
+            return;
+        }
+
         const currentSettings = settingsStore.getSettings();
         settingsStore.saveSettings({
             ...currentSettings,
-            [key]: value,
+            ...partial,
+        });
+    }, [isPremium]);
+
+    const updateGlobalSettings = useCallback((partial: Partial<AppSettings>) => {
+        const currentSettings = settingsStore.getSettings();
+        settingsStore.saveSettings({
+            ...currentSettings,
+            ...partial,
         });
     }, []);
 
     const setAutoNextEpisode = useCallback((value: boolean) => {
-        updateSetting('autoNextEpisode', value);
-    }, [updateSetting]);
+        updateModeSettings({ autoNextEpisode: value });
+    }, [updateModeSettings]);
 
     const setAutoSkipIntro = useCallback((value: boolean) => {
-        updateSetting('autoSkipIntro', value);
-    }, [updateSetting]);
+        updateModeSettings({ autoSkipIntro: value });
+    }, [updateModeSettings]);
 
     const setSkipIntroSeconds = useCallback((value: number) => {
-        updateSetting('skipIntroSeconds', Math.max(0, value));
-    }, [updateSetting]);
+        updateModeSettings({ skipIntroSeconds: Math.max(0, value) });
+    }, [updateModeSettings]);
 
     const setAutoSkipOutro = useCallback((value: boolean) => {
-        updateSetting('autoSkipOutro', value);
-    }, [updateSetting]);
+        updateModeSettings({ autoSkipOutro: value });
+    }, [updateModeSettings]);
 
     const setSkipOutroSeconds = useCallback((value: number) => {
-        updateSetting('skipOutroSeconds', Math.max(0, value));
-    }, [updateSetting]);
+        updateModeSettings({ skipOutroSeconds: Math.max(0, value) });
+    }, [updateModeSettings]);
 
     const setShowModeIndicator = useCallback((value: boolean) => {
-        updateSetting('showModeIndicator', value);
-    }, [updateSetting]);
+        updateModeSettings({ showModeIndicator: value });
+    }, [updateModeSettings]);
 
     const setAdFilter = useCallback((value: boolean) => {
-        updateSetting('adFilter', value);
-    }, [updateSetting]);
+        updateGlobalSettings({ adFilter: value });
+    }, [updateGlobalSettings]);
 
     const setAdFilterMode = useCallback((value: AdFilterMode) => {
-        updateSetting('adFilterMode', value);
-    }, [updateSetting]);
+        updateModeSettings({ adFilterMode: value });
+    }, [updateModeSettings]);
 
     const setAdKeywords = useCallback((value: string[]) => {
-        updateSetting('adKeywords', value);
-    }, [updateSetting]);
+        updateGlobalSettings({ adKeywords: value });
+    }, [updateGlobalSettings]);
 
     const setFullscreenType = useCallback((value: 'auto' | 'native' | 'window') => {
-        updateSetting('fullscreenType', value);
-    }, [updateSetting]);
+        updateModeSettings({ fullscreenType: value });
+    }, [updateModeSettings]);
 
     const setProxyMode = useCallback((value: 'retry' | 'none' | 'always') => {
-        updateSetting('proxyMode', value);
-    }, [updateSetting]);
+        updateModeSettings({ proxyMode: mediaProxyEnabled ? value : 'none' });
+    }, [mediaProxyEnabled, updateModeSettings]);
 
     const setDanmakuEnabled = useCallback((value: boolean) => {
-        updateSetting('danmakuEnabled', value);
-    }, [updateSetting]);
+        updateModeSettings({ danmakuEnabled: value });
+    }, [updateModeSettings]);
 
     const setDanmakuApiUrl = useCallback((value: string) => {
-        updateSetting('danmakuApiUrl', value);
-    }, [updateSetting]);
+        updateModeSettings({ danmakuApiUrl: value });
+    }, [updateModeSettings]);
 
     const setDanmakuOpacity = useCallback((value: number) => {
-        updateSetting('danmakuOpacity', Math.max(0.1, Math.min(1, value)));
-    }, [updateSetting]);
+        updateModeSettings({ danmakuOpacity: Math.max(0.1, Math.min(1, value)) });
+    }, [updateModeSettings]);
 
     const setDanmakuFontSize = useCallback((value: number) => {
-        updateSetting('danmakuFontSize', value);
-    }, [updateSetting]);
+        updateModeSettings({ danmakuFontSize: value });
+    }, [updateModeSettings]);
 
     const setDanmakuDisplayArea = useCallback((value: number) => {
-        updateSetting('danmakuDisplayArea', value);
-    }, [updateSetting]);
+        updateModeSettings({ danmakuDisplayArea: value });
+    }, [updateModeSettings]);
 
     return {
         ...settings,

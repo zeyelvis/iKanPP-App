@@ -8,9 +8,12 @@ interface DesktopControlsProps {
     isPlaying: boolean;
     currentTime: number;
     duration: number;
+    bufferedTime: number;
     volume: number;
     isMuted: boolean;
     isFullscreen: boolean;
+    isNativeFullscreen: boolean;
+    isWebFullscreen: boolean;
 
 
     showVolumeBar: boolean;
@@ -25,6 +28,8 @@ interface DesktopControlsProps {
     onVolumeChange: (e: React.MouseEvent<HTMLDivElement>) => void;
     onVolumeMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
     onToggleFullscreen: () => void;
+    onToggleNativeFullscreen: () => void;
+    onToggleWebFullscreen: () => void;
     onTogglePictureInPicture: () => void;
     onShowAirPlayMenu: () => void;
     onShowCastMenu: () => void;
@@ -39,6 +44,7 @@ export function DesktopControls(props: DesktopControlsProps) {
         showControls,
         currentTime,
         duration,
+        bufferedTime,
         progressBarRef,
         onProgressClick,
         onProgressMouseDown,
@@ -60,14 +66,15 @@ export function DesktopControls(props: DesktopControlsProps) {
                 progressBarRef={progressBarRef}
                 currentTime={currentTime}
                 duration={duration}
+                bufferedTime={bufferedTime}
                 onProgressClick={onProgressClick}
                 onProgressMouseDown={onProgressMouseDown}
                 onProgressTouchStart={onProgressTouchStart}
             />
 
             {/* Controls Bar */}
-            <div className="bg-gradient-to-t from-black/90 via-black/70 to-transparent px-4 pb-4 pt-2">
-                <div className="flex items-center justify-between gap-4">
+            <div className="player-controls-bar bg-gradient-to-t from-black/90 via-black/70 to-transparent px-4 pb-4 pt-2">
+                <div className="player-controls-row flex min-w-0 items-center justify-between gap-4">
                     <DesktopLeftControls {...props} formatTime={formatTime} />
                     <DesktopRightControls {...props} />
                 </div>

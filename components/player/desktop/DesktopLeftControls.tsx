@@ -32,30 +32,33 @@ export function DesktopLeftControls({
     formatTime
 }: DesktopLeftControlsProps) {
     return (
-        <div className="flex items-center gap-1.5 sm:gap-3">
+        <div className="player-controls-left flex min-w-0 flex-1 items-center gap-3">
             {/* Play/Pause */}
             <button
                 onClick={onTogglePlay}
-                className="btn-icon"
+                className="btn-icon shrink-0"
                 aria-label={isPlaying ? 'Pause' : 'Play'}
             >
-                {isPlaying ? <Icons.Pause size={18} /> : <Icons.Play size={18} />}
+                {isPlaying ? <Icons.Pause size={20} /> : <Icons.Play size={20} />}
             </button>
 
             {/* Volume */}
-            <DesktopVolumeControl
-                volumeBarRef={volumeBarRef}
-                volume={volume}
-                isMuted={isMuted}
-                showVolumeBar={showVolumeBar}
-                onToggleMute={onToggleMute}
-                onVolumeChange={onVolumeChange}
-                onVolumeMouseDown={onVolumeMouseDown}
-            />
+            <div className="player-volume-control shrink-0">
+                <DesktopVolumeControl
+                    volumeBarRef={volumeBarRef}
+                    volume={volume}
+                    isMuted={isMuted}
+                    showVolumeBar={showVolumeBar}
+                    onToggleMute={onToggleMute}
+                    onVolumeChange={onVolumeChange}
+                    onVolumeMouseDown={onVolumeMouseDown}
+                />
+            </div>
 
             {/* Time */}
-            <span className="text-white text-xs sm:text-sm font-medium tabular-nums whitespace-nowrap">
-                {formatTime(currentTime)} / {formatTime(duration)}
+            <span className="player-time-display min-w-0 truncate text-sm font-medium text-white tabular-nums">
+                <span>{formatTime(currentTime)}</span>
+                <span className="player-duration-display"> / {formatTime(duration)}</span>
             </span>
         </div>
     );

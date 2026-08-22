@@ -1,5 +1,7 @@
 import { useState, useRef, useMemo } from 'react';
 
+export type FullscreenMode = 'none' | 'native' | 'window';
+
 export function useDesktopPlayerState() {
     const videoRef = useRef<HTMLVideoElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -22,6 +24,7 @@ export function useDesktopPlayerState() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
+    const [bufferedTime, setBufferedTime] = useState(0);
     const [volume, setVolume] = useState(() => {
         if (typeof window !== 'undefined') {
             const saved = localStorage.getItem('kvideo-volume');
@@ -36,6 +39,7 @@ export function useDesktopPlayerState() {
         return false;
     });
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [fullscreenMode, setFullscreenMode] = useState<FullscreenMode>('none');
     const [showControls, setShowControls] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [playbackRate, setPlaybackRate] = useState(() => {
@@ -82,9 +86,11 @@ export function useDesktopPlayerState() {
         isPlaying,
         currentTime,
         duration,
+        bufferedTime,
         volume,
         isMuted,
         isFullscreen,
+        fullscreenMode,
         showControls,
         isLoading,
         playbackRate,
@@ -104,7 +110,7 @@ export function useDesktopPlayerState() {
         showToast,
         showMoreMenu
     }), [
-        isPlaying, currentTime, duration, volume, isMuted, isFullscreen,
+        isPlaying, currentTime, duration, bufferedTime, volume, isMuted, isFullscreen, fullscreenMode,
         showControls, isLoading, playbackRate, showSpeedMenu, isPiPSupported,
         isAirPlaySupported, isCastAvailable, isCasting, skipForwardAmount,
         skipBackwardAmount, showSkipForwardIndicator, showSkipBackwardIndicator,
@@ -116,9 +122,11 @@ export function useDesktopPlayerState() {
         setIsPlaying,
         setCurrentTime,
         setDuration,
+        setBufferedTime,
         setVolume,
         setIsMuted,
         setIsFullscreen,
+        setFullscreenMode,
         setShowControls,
         setIsLoading,
         setPlaybackRate,

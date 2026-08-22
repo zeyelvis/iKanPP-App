@@ -1,15 +1,15 @@
 export interface PlayerCursorVisibilityState {
-    isFullscreen: boolean;
-    isPlaying: boolean;
-    showControls: boolean;
-    hasInteractiveOverlay?: boolean;
+  isFullscreen: boolean;
+  isPlaying: boolean;
+  showControls: boolean;
+  hasInteractiveOverlay?: boolean;
 }
 
 export function shouldHidePlayerCursor({
-    isFullscreen,
-    isPlaying,
-    showControls,
-    hasInteractiveOverlay = false,
+  isFullscreen,
+  isPlaying,
+  showControls,
+  hasInteractiveOverlay = false,
 }: PlayerCursorVisibilityState): boolean {
-    return isFullscreen && isPlaying && !showControls && !hasInteractiveOverlay;
+  return isFullscreen && isPlaying && !showControls && !hasInteractiveOverlay;
 }

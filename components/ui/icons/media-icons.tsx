@@ -69,6 +69,27 @@ export const MediaIcons = {
         </svg>
     ),
 
+    // Web / windowed fullscreen: framed rectangle with expand arrows
+    WebFullscreen: ({ className = "", size = 24 }: IconProps) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M15 3h6v6" />
+            <path d="M14 10l7-7" />
+            <path d="M9 21H3v-6" />
+            <path d="M10 14l-7 7" />
+        </svg>
+    ),
+
+    WebFullscreenExit: ({ className = "", size = 24 }: IconProps) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M9 3v6H3" />
+            <path d="M10 10L3 3" />
+            <path d="M15 21v-6h6" />
+            <path d="M14 14l7 7" />
+        </svg>
+    ),
+
     SkipForward: ({ className = "", size = 24 }: IconProps) => (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
             <polygon points="5 4 15 12 5 20 5 4" />
