@@ -31,7 +31,7 @@ const RANK_CATEGORIES = [
 ];
 
 // ── SWR 排行榜本地瞬间缓存 ──────────────────────────
-const RANK_CACHE_KEY = 'kvideo-rank-cache-v4-';
+const RANK_CACHE_KEY = 'kvideo-rank-cache-v5-';
 
 function getLocalRank(id: string): RankingItem[] | null {
   if (typeof window === 'undefined') return null;

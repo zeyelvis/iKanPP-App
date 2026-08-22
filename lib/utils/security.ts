@@ -4,7 +4,7 @@
 
 // ====== SSRF 防护：URL 白名单验证 ======
 
-/** 豆瓣图片代理允许的域名 */
+/** 允许的图片代理域名白名单 */
 const DOUBAN_IMAGE_WHITELIST = [
     'doubanio.com',
     'douban.com',
@@ -12,6 +12,12 @@ const DOUBAN_IMAGE_WHITELIST = [
     'img2.doubanio.com',
     'img3.doubanio.com',
     'img9.doubanio.com',
+    'lzipic.com',
+    'img.lzipic.com',
+    'liangzipic.com',
+    'img.liangzipic.com',
+    'tmdb.org',
+    'themoviedb.org',
 ];
 
 /** 禁止访问的内网 IP 段与危险主机名 */
