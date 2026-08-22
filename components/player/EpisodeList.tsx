@@ -13,6 +13,31 @@ import type { VideoResolutionInfo } from './hooks/useVideoResolution';
 import type { ResolutionInfo } from '@/lib/hooks/useResolutionProbe';
 import { getCachedResolution } from '@/lib/player/resolution-cache';
 import { getSourceResolutionBadge, shouldExpandForCurrentSource } from '@/lib/player/source-list-utils';
+// 4K (2160P) 原画专线字典
+const FOUR_K_SOURCES = new Set([
+  'hongniu', 'hongniu3', 'haohua_4k', 'blue_4k', 'suoni', 'suoni_sd',
+  'baofeng', 'baofeng_app', 'json1080', 'laosiji_4k', 'midnight_4k', 'yutu', 'hsck', 'jingpin'
+]);
+
+// 1080P 蓝光极清秒播专线字典
+const HD_BLURAY_SOURCES = new Set([
+  'feifan', 'feifan_api', 'feifan1', 'guangsu', 'guangsu_http', 'wolong', 'wolong_cj',
+  'zuida', 'zuida_db', 'baidu', 'jisu', 'liangzi', 'kuaiche', 'leba', 'ck', 'tantan', 'sejie', 'wujin', 'wujin_me', 'wujin_cc', 'wujin_net', 'dytt'
+]);
+
+export function isSource4K(s: { source: string; sourceName?: string }): boolean {
+  return FOUR_K_SOURCES.has(s.source) ||
+         Boolean(s.sourceName?.includes('4K')) ||
+         Boolean(s.sourceName?.includes('2160')) ||
+         Boolean(s.sourceName?.includes('红牛')) ||
+         Boolean(s.sourceName?.includes('暴风')) ||
+         Boolean(s.sourceName?.includes('索尼')) ||
+         Boolean(s.sourceName?.includes('老司机'));
+}
+
+export function isSourceBluRay(s: { source: string; sourceName?: string }): boolean {
+  return !isSource4K(s) && (HD_BLURAY_SOURCES.has(s.source) || Boolean(s.sourceName?.includes('蓝光')) || Boolean(s.sourceName?.includes('极速')));
+}
 
 interface Episode {
   name?: string;
@@ -119,6 +144,12 @@ export function EpisodeList({
   const sortedSources = useMemo(() => {
     if (!sources) return [];
     return [...sources].sort((a, b) => {
+      const isA4K = isSource4K(a);
+      const isB4K = isSource4K(b);
+
+      if (isA4K && !isB4K) return -1;
+      if (!isA4K && isB4K) return 1;
+
       const latA = mergedLatencies[a.source] ?? a.latency ?? Infinity;
       const latB = mergedLatencies[b.source] ?? b.latency ?? Infinity;
       return latA - latB;
@@ -348,10 +379,20 @@ export function EpisodeList({
                 }}
                 className={`flex-1 min-w-0 flex items-center justify-between gap-3 text-left ${sourceSectionCollapsed ? 'cursor-default' : 'cursor-pointer'}`}
               >
-                <div className="flex items-center gap-2 min-w-0">
+                <div className="flex items-center gap-2 min-w-0 flex-wrap">
                   <span className="text-sm font-medium text-[var(--text-color)] truncate">
                     {currentSourceInfo?.sourceName || currentSourceInfo?.source || '当前来源'}
                   </span>
+                  {currentSourceInfo && isSource4K(currentSourceInfo) && (
+                    <span className="px-1.5 py-0.2 bg-gradient-to-r from-amber-500 to-yellow-400 text-black rounded text-[9px] font-black shrink-0 shadow-sm">
+                      ⚡ 4K VIP (2160P)
+                    </span>
+                  )}
+                  {currentSourceInfo && isSourceBluRay(currentSourceInfo) && (
+                    <span className="px-1.5 py-0.2 bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 rounded text-[9px] font-bold shrink-0">
+                      💎 1080P 蓝光
+                    </span>
+                  )}
                   {currentResolution && (
                     <span className={`inline-flex items-center px-1 py-0 rounded text-[9px] font-bold text-white ${currentResolution.color} flex-shrink-0`}>
                       {currentResolution.label}
@@ -463,7 +504,22 @@ export function EpisodeList({
                                   </div>
                                   <div className="flex-1 min-w-0">
                                     <div className="font-medium text-sm truncate flex items-center gap-1.5">
-                                      {source.sourceName || source.source}
+                                      <span className="truncate">{source.sourceName || source.source}</span>
+                                      {isSource4K(source) && (
+                                        <span className="px-1.5 py-0.2 bg-gradient-to-r from-amber-500 to-yellow-400 text-black rounded text-[9px] font-black shrink-0 shadow-sm">
+                                          ⚡ 4K VIP (2160P)
+                                        </span>
+                                      )}
+                                      {isSourceBluRay(source) && (
+                                        <span className="px-1.5 py-0.2 bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 rounded text-[9px] font-bold shrink-0">
+                                          💎 1080P 蓝光
+                                        </span>
+                                      )}
+                                      {latency !== undefined && latency < 200 && (
+                                        <span className="px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded text-[9px] font-bold shrink-0">
+                                          🚀 秒播
+                                        </span>
+                                      )}
                                       {badge ? (
                                         <span className={`inline-flex items-center px-1 py-0 rounded text-[9px] font-bold text-white ${badge.color}`}>
                                           {badge.label}
@@ -485,7 +541,7 @@ export function EpisodeList({
                                   {!isCurrent && globalIndex < 3 && (
                                     <Badge
                                       variant="secondary"
-                                      className={`flex-shrink-0 ${globalIndex === 0 ? 'bg-yellow-500/20 text-yellow-600 border-yellow-500' :
+                                      className={`flex-shrink-0 ${globalIndex === 0 ? 'bg-yellow-500/20 text-yellow-600 border-yellow-500 font-black' :
                                         globalIndex === 1 ? 'bg-gray-400/20 text-gray-600 border-gray-400' :
                                           'bg-orange-400/20 text-orange-600 border-orange-400'
                                       }`}
@@ -543,7 +599,22 @@ export function EpisodeList({
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="font-medium text-sm truncate flex items-center gap-1.5">
-                                  {source.sourceName || source.source}
+                                  <span className="truncate">{source.sourceName || source.source}</span>
+                                  {isSource4K(source) && (
+                                    <span className="px-1.5 py-0.2 bg-gradient-to-r from-amber-500 to-yellow-400 text-black rounded text-[9px] font-black shrink-0 shadow-sm">
+                                      ⚡ 4K VIP (2160P)
+                                    </span>
+                                  )}
+                                  {isSourceBluRay(source) && (
+                                    <span className="px-1.5 py-0.2 bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 rounded text-[9px] font-bold shrink-0">
+                                      💎 1080P 蓝光
+                                    </span>
+                                  )}
+                                  {latency !== undefined && latency < 200 && (
+                                    <span className="px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded text-[9px] font-bold shrink-0">
+                                      🚀 秒播
+                                    </span>
+                                  )}
                                   {badge ? (
                                     <span className={`inline-flex items-center px-1 py-0 rounded text-[9px] font-bold text-white ${badge.color}`}>
                                       {badge.label}
@@ -565,7 +636,7 @@ export function EpisodeList({
                               {!isCurrent && index < 3 && (
                                 <Badge
                                   variant="secondary"
-                                  className={`flex-shrink-0 ${index === 0 ? 'bg-yellow-500/20 text-yellow-600 border-yellow-500' :
+                                  className={`flex-shrink-0 ${index === 0 ? 'bg-yellow-500/20 text-yellow-600 border-yellow-500 font-black' :
                                     index === 1 ? 'bg-gray-400/20 text-gray-600 border-gray-400' :
                                       'bg-orange-400/20 text-orange-600 border-orange-400'
                                   }`}
