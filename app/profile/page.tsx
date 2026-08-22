@@ -15,6 +15,7 @@ import { useUserStore } from '@/lib/store/user-store';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { Navbar } from '@/components/layout/Navbar';
 import { CheckInCard } from '@/components/auth/CheckInCard';
+import { VipRedeemCard } from '@/components/vip/VipRedeemCard';
 
 // Settings 组件复用
 import { PlayerSettings } from '@/components/settings/PlayerSettings';
@@ -442,6 +443,9 @@ function AccountTab({ user, vipExpiry, onLogin }: { user: any; vipExpiry: string
                     </div>
                 </div>
             </div>
+
+            {/* VIP 卡密兑换与权益展示 */}
+            <VipRedeemCard />
 
             {/* 每日签到 */}
             <CheckInCard />
