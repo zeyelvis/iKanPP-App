@@ -490,3 +490,56 @@
         display: none;
     }
 }
+
+/* ====================================================
+   移动端 (Mobile) 播放页与选集/选线交互动效
+   ==================================================== */
+
+/* 当前播放集数音量跳动柱动画 */
+.equalizer-bar {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 1.5px;
+    height: 12px;
+}
+
+.equalizer-bar span {
+    width: 2px;
+    background-color: currentColor;
+    border-radius: 1px;
+    animation: equalizer-jump 0.8s ease-in-out infinite alternate;
+}
+
+.equalizer-bar span:nth-child(1) {
+    height: 40%;
+    animation-delay: 0.1s;
+}
+
+.equalizer-bar span:nth-child(2) {
+    height: 90%;
+    animation-delay: 0.3s;
+}
+
+.equalizer-bar span:nth-child(3) {
+    height: 60%;
+    animation-delay: 0.2s;
+}
+
+@keyframes equalizer-jump {
+    0% {
+        height: 20%;
+    }
+    100% {
+        height: 100%;
+    }
+}
+
+/* 隐藏横向滑动条滚动条并保留顺滑手感 */
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+

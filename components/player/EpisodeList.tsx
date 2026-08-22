@@ -731,12 +731,16 @@ export function EpisodeList({
                       focus-visible:ring-2 focus-visible:ring-[var(--accent-color)] focus-visible:ring-offset-2
                     `}
                   >
-                    <div className={`flex items-center ${isGrid ? 'justify-center gap-1' : 'justify-between'}`}>
-                      <span className={`font-medium ${isGrid ? 'text-xs sm:text-sm truncate' : 'text-sm sm:text-base'}`}>
+                    <div className={`flex items-center ${isGrid ? 'justify-center gap-1.5' : 'justify-between'}`}>
+                      <span className={`font-semibold ${isGrid ? 'text-xs sm:text-sm truncate' : 'text-sm sm:text-base'}`}>
                         {episode.name || `第 ${originalIndex + 1} 集`}
                       </span>
-                      {isCurrentEpisode && !isGrid && (
-                        <Icons.Play size={16} />
+                      {isCurrentEpisode && (
+                        <div className="equalizer-bar text-white flex-shrink-0">
+                          <span />
+                          <span />
+                          <span />
+                        </div>
                       )}
                     </div>
                   </button>

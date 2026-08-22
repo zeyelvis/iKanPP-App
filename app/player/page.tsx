@@ -493,7 +493,7 @@ function PlayerContent() {
       {/* Glass Navbar */}
       <Navbar variant="player" isPremiumMode={isPremium} />
 
-      <main className="fluid-container pb-20">
+      <main className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 pt-1 sm:pt-2 pb-24">
         {isTitleOnlyMode && titleSearching ? (
           <div className="flex flex-col items-center justify-center py-32">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-(--accent-color) border-t-transparent mb-6"></div>
@@ -540,16 +540,17 @@ function PlayerContent() {
                 nextEpisodeUrl={nextEpisodeUrl}
               />
 
-              {/* 移动端专属：位于播放器正下方的片名、类型徽章与快捷操作栏 */}
-              <div className="lg:hidden bg-[#0A0A0F]/80 backdrop-blur-2xl rounded-2xl border border-white/10 p-4 space-y-3 shadow-xl">
-                <div className="flex items-center gap-2 flex-wrap text-xs">
+              {/* 移动端专属：位于播放器正下方的紧凑流光信息卡片 */}
+              <div className="lg:hidden bg-gradient-to-b from-white/[0.08] to-white/[0.03] backdrop-blur-2xl rounded-2xl border border-white/10 p-3.5 space-y-3 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+                {/* 标签栏 */}
+                <div className="flex items-center gap-1.5 flex-wrap text-[11px]">
                   {videoData?.type_name && (
-                    <span className="px-2.5 py-0.5 rounded-full font-bold bg-(--accent-color) text-white shadow-sm">
+                    <span className="px-2.5 py-0.5 rounded-full font-bold bg-(--accent-color) text-white shadow-sm shadow-(--accent-color)/30">
                       {normalizeVideoType(videoData.type_name, videoData.vod_name || title || '').standardType}
                     </span>
                   )}
                   {videoData?.vod_year && (
-                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-white/80">
+                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-white/90 font-medium">
                       {videoData.vod_year}
                     </span>
                   )}
@@ -565,36 +566,50 @@ function PlayerContent() {
                   )}
                 </div>
 
+                {/* 片名与当前播放指示 */}
                 <div className="space-y-1">
-                  <h1 className="text-lg sm:text-xl font-black text-white leading-snug">
+                  <h1 className="text-lg font-black text-white leading-tight tracking-tight">
                     {videoData?.vod_name || title}
                   </h1>
                   {videoData?.episodes?.[currentEpisode]?.name && (
-                    <p className="text-xs text-(--accent-color) font-bold flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-(--accent-color) animate-pulse" />
-                      当前正在播放：{videoData.episodes[currentEpisode].name}
-                    </p>
+                    <div className="text-xs text-(--accent-color) font-semibold flex items-center gap-1.5 pt-0.5">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-(--accent-color) opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-(--accent-color)"></span>
+                      </span>
+                      <span>正在播放：{videoData.episodes[currentEpisode].name}</span>
+                    </div>
                   )}
                 </div>
 
-                {/* 移动端快捷操作栏 */}
+                {/* 移动端快捷操作栏（收藏、分享与当前线路信息） */}
                 <div className="flex items-center justify-between pt-2.5 border-t border-white/10 text-xs">
-                  {videoData && videoId && (
-                    <div className="flex items-center gap-2">
-                      <FavoriteButton
-                        videoId={videoId}
-                        source={source || ''}
-                        title={videoData.vod_name || title || '未知视频'}
-                        poster={videoData.vod_pic}
-                        type={videoData.type_name}
-                        year={videoData.vod_year}
-                        size={18}
-                        isPremium={isPremium}
-                      />
-                      <span className="text-white/60">收藏</span>
+                  <div className="flex items-center gap-3">
+                    {videoData && videoId && (
+                      <div className="flex items-center gap-1.5 text-white/80 hover:text-white transition-colors cursor-pointer">
+                        <FavoriteButton
+                          videoId={videoId}
+                          source={source || ''}
+                          title={videoData.vod_name || title || '未知视频'}
+                          poster={videoData.vod_pic}
+                          type={videoData.type_name}
+                          year={videoData.vod_year}
+                          size={18}
+                          isPremium={isPremium}
+                        />
+                        <span className="text-xs">收藏</span>
+                      </div>
+                    )}
+                    <ShareButton title={videoData?.vod_name || title || ''} size={18} />
+                  </div>
+
+                  {/* 当前线路胶囊提示 */}
+                  {source && (
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] text-white/70">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                      <span>{getSourceName(source)}</span>
                     </div>
                   )}
-                  <ShareButton title={videoData?.vod_name || title || ''} size={18} />
                 </div>
               </div>
 
