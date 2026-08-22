@@ -2,79 +2,49 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import type { TypeBadge } from '@/lib/types';
+import { normalizeVideoType } from '@/lib/utils/taxonomy';
 
 /**
- * Custom hook to automatically collect and track type badges from video results
- *
- * Features:
- * - Auto-collects unique type_name values
- * - Normalizes similar type names (e.g., "动作片" and "动作" merge)
- * - Tracks count per type
- * - Updates dynamically as videos are added/removed
- * - Removes badges when count reaches 0
- * - Supports filtering by selected types
+ * 影视分类聚合与过滤 Hook
+ * 接入全局统一分类清洗引擎，杜绝残缺词与上游脏标签
  */
 
-// Normalize type names to merge near-duplicates
-function normalizeTypeName(type: string): string {
-  // Collapse whitespace and trim
-  let t = type.replace(/\s+/g, '').trim();
-  // Apply NFC unicode normalization
-  t = t.normalize('NFC');
-  // Remove trailing 片/剧/类 suffix for grouping (e.g., "动作片" → "动作", "喜剧片" → "喜剧")
-  // But keep standalone names like "电影", "电视剧" etc.
-  if (t.length > 2 && (t.endsWith('片') || t.endsWith('剧') || t.endsWith('类'))) {
-    t = t.slice(0, -1);
-  }
-  // Lowercase for English name normalization (e.g., "Action" vs "action")
-  t = t.toLowerCase();
-  return t;
-}
-
-export function useTypeBadges<T extends { type_name?: string }>(videos: T[]) {
+export function useTypeBadges<T extends { type_name?: string; vod_name?: string }>(videos: T[]) {
   const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
 
-  // Collect and count type badges from videos
+  // 收集并统计标准规范分类
   const typeBadges = useMemo<TypeBadge[]>(() => {
     const typeMap = new Map<string, { display: string; count: number }>();
 
     videos.forEach(video => {
       if (video.type_name && video.type_name.trim()) {
-        const raw = video.type_name.trim();
-        const normalized = normalizeTypeName(raw);
-        const existing = typeMap.get(normalized);
+        const norm = normalizeVideoType(video.type_name, video.vod_name || '');
+        const badgeLabel = norm.badge;
+        const existing = typeMap.get(badgeLabel);
         if (existing) {
           existing.count++;
-          // Prefer shorter display name (e.g., "动作" over "动作片")
-          if (raw.length < existing.display.length) {
-            existing.display = raw;
-          }
         } else {
-          typeMap.set(normalized, { display: raw, count: 1 });
+          typeMap.set(badgeLabel, { display: badgeLabel, count: 1 });
         }
       }
     });
 
-    // Convert to array and sort by count (descending)
+    // 转换为数组并按出现频次降序排序
     return Array.from(typeMap.entries())
       .map(([, val]) => ({ type: val.display, count: val.count }))
       .sort((a, b) => b.count - a.count);
   }, [videos]);
 
-  // Filter videos by selected types
+  // 根据选中的标准分类进行过滤
   const filteredVideos = useMemo(() => {
     if (selectedTypes.size === 0) {
       return videos;
     }
 
-    // Build a set of normalized selected types
-    const normalizedSelected = new Set(
-      Array.from(selectedTypes).map(normalizeTypeName)
-    );
-
-    return videos.filter(video =>
-      video.type_name && normalizedSelected.has(normalizeTypeName(video.type_name.trim()))
-    );
+    return videos.filter(video => {
+      const norm = normalizeVideoType(video.type_name, video.vod_name || '');
+      return selectedTypes.has(norm.badge) || selectedTypes.has(norm.standardType);
+    });
   }, [videos, selectedTypes]);
 
   // Toggle type selection - useCallback to prevent re-creation

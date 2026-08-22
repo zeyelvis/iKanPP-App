@@ -15,6 +15,7 @@ import { LatencyBadge } from '@/components/ui/LatencyBadge';
 import { FavoriteButton } from '@/components/favorites/FavoriteButton';
 import { Video } from '@/lib/types';
 import { parseVideoTitle } from '@/lib/utils/video';
+import { normalizeVideoType } from '@/lib/utils/taxonomy';
 
 export interface GroupedVideo {
     /** Representative video (lowest latency) */
@@ -176,7 +177,7 @@ export const VideoGroupCard = memo<VideoGroupCardProps>(({
                                 )}
                                 {representative.type_name && (
                                     <Badge variant="secondary" className="text-xs mb-2">
-                                        {representative.type_name}
+                                        {normalizeVideoType(representative.type_name, name).badge}
                                     </Badge>
                                 )}
                                 {representative.vod_year && (

@@ -10,6 +10,7 @@ import { LatencyBadge } from '@/components/ui/LatencyBadge';
 import { FavoriteButton } from '@/components/favorites/FavoriteButton';
 import { Video } from '@/lib/types';
 import { parseVideoTitle } from '@/lib/utils/video';
+import { normalizeVideoType } from '@/lib/utils/taxonomy';
 
 interface VideoCardProps {
   video: Video;
@@ -87,8 +88,8 @@ export const VideoCard = memo<VideoCardProps>(({
                   </span>
                 )}
                 {video.type_name && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-black/60 backdrop-blur-md text-white/80 border border-white/10 truncate max-w-17.5">
-                    {video.type_name}
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-black/60 backdrop-blur-md text-white/90 border border-white/10 truncate max-w-17.5">
+                    {normalizeVideoType(video.type_name, video.vod_name).badge}
                   </span>
                 )}
               </div>

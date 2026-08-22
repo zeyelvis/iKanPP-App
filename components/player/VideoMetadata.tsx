@@ -1,8 +1,7 @@
-'use client';
-
 import { useState } from 'react';
 import { Icons } from '@/components/ui/Icon';
 import { getSourceName } from '@/lib/utils/source-names';
+import { normalizeVideoType } from '@/lib/utils/taxonomy';
 
 function splitPersonNames(str: string): string[] {
   return str.split(/[,，/]/).map(s => s.trim()).filter(Boolean);
@@ -33,7 +32,7 @@ export function VideoMetadata({ videoData, source, title }: VideoMetadataProps) 
           )}
           {videoData?.type_name && (
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-white/80 border border-white/10">
-              {videoData.type_name}
+              {normalizeVideoType(videoData.type_name, videoData.vod_name || title || '').standardType}
             </span>
           )}
           {videoData?.vod_year && (

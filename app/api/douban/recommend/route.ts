@@ -1,6 +1,4 @@
 import { NextResponse } from 'next/server';
-import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
-import { isSafeExternalUrl } from '@/lib/utils/security';
 
 export const runtime = 'edge';
 
@@ -41,62 +39,6 @@ async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number,
     return [];
   } catch (err) {
     console.error(`Fetch douban tag ${tag} error:`, err);
-    return [];
-  }
-}
-
-/**
- * 从高速采集站抓取并解析特定词
- */
-async function fetchCmsSingleQuery(query: string, pageLimit: number): Promise<any[]> {
-  try {
-    const targetSources = DEFAULT_SOURCES.slice(0, 4).filter(s => s && s.enabled !== false && isSafeExternalUrl(s.baseUrl));
-
-    const results = await Promise.allSettled(
-      targetSources.map(async (source) => {
-        const url = new URL(`${source.baseUrl.replace(/\/$/, '')}${source.searchPath || '/api.php/provide/vod'}`);
-        url.searchParams.set('ac', 'detail');
-        url.searchParams.set('wd', query);
-        url.searchParams.set('pg', '1');
-
-        const res = await fetch(url.toString(), {
-          headers: { 'User-Agent': 'Mozilla/5.0' },
-          signal: AbortSignal.timeout(3500),
-        });
-        if (!res.ok) return [];
-        const data = await res.json();
-        return data.list || [];
-      })
-    );
-
-    const items: any[] = [];
-    const seen = new Set<string>();
-
-    for (const res of results) {
-      if (res.status === 'fulfilled' && Array.isArray(res.value)) {
-        for (const item of res.value) {
-          if (!item.vod_name || seen.has(item.vod_name)) continue;
-          seen.add(item.vod_name);
-          items.push({
-            id: item.vod_id,
-            title: item.vod_name,
-            rate: (Math.random() * 1.2 + 8.2).toFixed(1),
-            cover: item.vod_pic,
-            playable: true,
-            is_new: true,
-            episodes_info: item.vod_remarks || '',
-            area: item.vod_area || '',
-            year: item.vod_year || '',
-            typeName: item.type_name || '',
-            vodClass: item.vod_class || '',
-          });
-        }
-      }
-    }
-
-    return items.slice(0, pageLimit);
-  } catch (err) {
-    console.error('fetchCmsSingleQuery error:', err);
     return [];
   }
 }
@@ -150,16 +92,25 @@ export async function GET(request: Request) {
       '综艺': '综艺', '纪录片': '纪录片',
     };
 
-    if (region && tvRegionMap[region]) doubanTags.push(tvRegionMap[region]);
-    else if (genre === '国漫' || genre === '国产动画') doubanTags.push('国产动画');
-    else if (genre === '日本动画' || genre === '动漫') doubanTags.push('日本动画');
-    else if (genre === '综艺') doubanTags.push('综艺');
-    else if (rawTag && VALID_TV_TAGS.has(rawTag)) doubanTags.push(rawTag);
-    else doubanTags.push('国产剧');
+    if (region && tvRegionMap[region]) {
+      doubanTags.push(tvRegionMap[region]);
+    } else if (genre === '国漫' || genre === '国产动画') {
+      doubanTags.push('国产动画');
+    } else if (genre === '日本动画' || genre === '动漫' || genre === '新番') {
+      doubanTags.push('日本动画');
+    } else if (genre === '综艺') {
+      doubanTags.push('综艺');
+    } else if (genre === '纪录片') {
+      doubanTags.push('纪录片');
+    } else if (rawTag && VALID_TV_TAGS.has(rawTag)) {
+      doubanTags.push(rawTag);
+    } else {
+      doubanTags.push('国产剧');
+    }
   }
 
   try {
-    // 2. 并行抓取豆瓣所有匹配的标签
+    // 2. 并行抓取豆瓣匹配的标签池
     const fetchResults = await Promise.allSettled(
       doubanTags.map(tag => fetchDoubanSubjects(type, tag, pageLimit, pageStart))
     );
@@ -177,20 +128,7 @@ export async function GET(request: Request) {
       }
     });
 
-    // 3. 如果指定了特殊题材（如 古装 / 悬疑 / 武侠），或者需要补充特定地区，从采集站补充精准匹配内容
-    const needCmsSupplement = (type === 'tv' && genre && !['热门', '全部'].includes(genre)) || (region === '中国香港' || region === '港剧');
-    if (needCmsSupplement) {
-      const cmsQuery = genre || region;
-      const cmsList = await fetchCmsSingleQuery(cmsQuery, 15);
-      cmsList.forEach(item => {
-        if (!countMap.has(item.title)) {
-          countMap.set(item.title, 2); // 给予高优先级
-          pool.unshift(item);
-        }
-      });
-    }
-
-    // 4. 精准多维重排算法：
+    // 3. 精准多维重排算法：
     // - 命中了多个筛选条件的影片（交集项）排在最前列
     // - 评分高的优质影片排在前面
     pool.sort((a, b) => {
@@ -200,7 +138,7 @@ export async function GET(request: Request) {
       return (parseFloat(b.rate) || 0) - (parseFloat(a.rate) || 0);
     });
 
-    // 5. 若 pool 依然为空（极罕见），兜底加载热门
+    // 4. 若 pool 依然为空（极罕见），兜底加载热门
     if (pool.length === 0) {
       const fallbackList = await fetchDoubanSubjects(type, type === 'movie' ? '热门' : '国产剧', pageLimit, pageStart);
       pool.push(...fallbackList);
