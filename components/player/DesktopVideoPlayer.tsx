@@ -145,12 +145,10 @@ export function DesktopVideoPlayer({
     };
   }, [updateViewportMetrics]);
 
-  // Use user preference for fullscreen type, resolving 'auto' to device default
-  // Auto Rules:
-  // - Mobile: Window Fullscreen (Better for Danmaku/Controls)
-  // - Desktop: Native Fullscreen (Better for PiP/Performance)
+  // 默认全屏偏好：优先设备原生全屏 (Native Fullscreen / 真正的全部全屏)
+  // 如果设备为 iPhone (iOS Safari 不支持容器全屏) 则平滑降级为 window 网页全屏以保留弹幕与控制栏
   const fullscreenType = settingsFullscreenType === 'auto'
-    ? (isIOS ? 'window' : isMobile ? 'window' : 'native') // Treat all mobile as window for consistency if auto
+    ? (isIOS ? 'window' : 'native')
     : settingsFullscreenType;
 
   const isLandscape = viewportMetrics.width > viewportMetrics.height;
