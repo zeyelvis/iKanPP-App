@@ -16,6 +16,7 @@ import { AuthModal } from '@/components/auth/AuthModal';
 import { Navbar } from '@/components/layout/Navbar';
 import { CheckInCard } from '@/components/auth/CheckInCard';
 import { VipRedeemCard } from '@/components/vip/VipRedeemCard';
+import { VipCardManager } from '@/components/admin/VipCardManager';
 
 // Settings 组件复用
 import { PlayerSettings } from '@/components/settings/PlayerSettings';
@@ -895,6 +896,9 @@ function AdminTab({ user }: { user: any }) {
 
     return (
         <div className="space-y-4 sm:space-y-6">
+            {/* VIP 卡密管理中心（生成/核销/查询/作废） */}
+            <VipCardManager />
+
             {/* 提示信息 */}
             {message && (
                 <div className={`p-3 rounded-xl text-sm flex items-center gap-2 ${message.type === 'success'
