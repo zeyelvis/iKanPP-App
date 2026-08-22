@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Play, Eye, ThumbsUp, Sparkles, Clock } from 'lucide-react';
+import { Play, Eye, ThumbsUp, Sparkles, Copy, Check, Heart } from 'lucide-react';
 
 interface JableVideoCardProps {
     video: {
@@ -13,6 +13,7 @@ interface JableVideoCardProps {
         vod_duration?: string;
         type_name?: string;
         vod_year?: string;
+        vod_actor?: string;
     };
     onClick: () => void;
     index?: number;
@@ -21,6 +22,8 @@ interface JableVideoCardProps {
 
 export function JableVideoCard({ video, onClick, index, rankBadge }: JableVideoCardProps) {
     const [imgError, setImgError] = useState(false);
+    const [copied, setCopied] = useState(false);
+    const [isFavorited, setIsFavorited] = useState(false);
 
     // 智能提取番号（如 SSIS-123, FC2-PPV-123456, IPX-999 等）
     const title = video.vod_name || '高清影视大片';
@@ -37,6 +40,21 @@ export function JableVideoCard({ video, onClick, index, rankBadge }: JableVideoC
     const isChineseSub = title.includes('中文字幕') || title.includes('中字') || video.type_name?.includes('中字');
     const is4K = title.includes('4K') || title.includes('原画') || title.includes('蓝光');
     const isUncensored = title.includes('无码') || title.includes('步兵') || title.includes('FC2');
+
+    // 复制番号
+    const handleCopyCode = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!videoCode) return;
+        navigator.clipboard.writeText(videoCode);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    // 收藏点击
+    const handleFavorite = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsFavorited(!isFavorited);
+    };
 
     return (
         <div
@@ -68,6 +86,20 @@ export function JableVideoCard({ video, onClick, index, rankBadge }: JableVideoC
                         <Play size={20} className="fill-white ml-0.5" />
                     </div>
                 </div>
+
+                {/* 右上角快速收藏按钮 */}
+                <button
+                    onClick={handleFavorite}
+                    className={`absolute top-2 right-2 z-20 w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition-all cursor-pointer ${
+                        isFavorited
+                            ? 'bg-rose-500 text-white'
+                            : 'bg-black/40 text-white/70 hover:text-white hover:bg-black/70'
+                    }`}
+                    title={isFavorited ? '已收藏' : '加入收藏'}
+                    aria-label="收藏"
+                >
+                    <Heart size={14} className={isFavorited ? 'fill-white' : ''} />
+                </button>
 
                 {/* 排行榜角标（Top 1 ~ 3） */}
                 {rankBadge !== undefined && (
@@ -117,12 +149,23 @@ export function JableVideoCard({ video, onClick, index, rankBadge }: JableVideoC
 
             {/* 2. 视频信息与元数据 */}
             <div className="p-3 flex flex-col flex-1 justify-between">
-                {/* 番号高亮（如有） */}
+                {/* 番号高亮与复制 */}
                 {videoCode && (
-                    <div className="mb-1">
-                        <span className="inline-block px-1.5 py-0.2 rounded text-[10px] font-black tracking-wider bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                    <div className="mb-1 flex items-center justify-between">
+                        <button
+                            onClick={handleCopyCode}
+                            className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[10px] font-black tracking-wider bg-purple-500/15 text-purple-300 border border-purple-500/30 hover:bg-purple-500/30 transition-colors cursor-pointer"
+                            title="点击复制番号"
+                        >
                             {videoCode}
-                        </span>
+                            {copied ? <Check size={10} className="text-emerald-400" /> : <Copy size={10} className="text-purple-400/60" />}
+                        </button>
+
+                        {video.vod_actor && (
+                            <span className="text-[10px] text-pink-300/80 truncate max-w-28 font-medium">
+                                {video.vod_actor.split(',')[0]}
+                            </span>
+                        )}
                     </div>
                 )}
 

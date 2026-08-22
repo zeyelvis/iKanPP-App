@@ -116,3 +116,39 @@ export const JABLE_POPULAR_TAGS = [
     { label: '⚡ 剧情大作', keyword: '剧情' },
     { label: '🏖️ 户外搭讪', keyword: '搭讪' },
 ];
+
+export interface JableRankingTab {
+    id: string;
+    label: string;
+    keyword: string;
+    icon: string;
+    desc: string;
+}
+
+export const JABLE_RANKING_TABS: JableRankingTab[] = [
+    { id: 'today', label: '今日最热', keyword: '', icon: '🔥', desc: '24小时全网播放最高' },
+    { id: 'weekly', label: '本周榜单', keyword: '精选', icon: '📅', desc: '本周热度飙升' },
+    { id: 'monthly', label: '本月封神', keyword: '大作', icon: '🏆', desc: '本月口碑霸榜巨作' },
+    { id: 'rating', label: '好评最高', keyword: '4K', icon: '❤️', desc: '98%+ 超高好评率' },
+];
+
+export interface JableStudio {
+    id: string;
+    name: string;
+    codePrefix: string;
+    logoText: string;
+    color: string;
+    tag: string;
+    searchKey: string;
+}
+
+export const JABLE_STUDIOS: JableStudio[] = [
+    { id: 's1', name: 'S1 NO.1 STYLE', codePrefix: 'SSIS / SSNI', logoText: 'S1', color: 'from-rose-600 to-red-600', tag: '顶级片商', searchKey: 'S1' },
+    { id: 'moodyz', name: 'MOODYZ', codePrefix: 'MIDE / MIDV', logoText: 'MOODYZ', color: 'from-purple-600 to-indigo-600', tag: '老牌巨头', searchKey: 'MOODYZ' },
+    { id: 'sod', name: 'SOD Create', codePrefix: 'SDDE / STARS', logoText: 'SOD', color: 'from-amber-500 to-orange-600', tag: '创意企划', searchKey: 'SOD' },
+    { id: 'ideapocket', name: 'Idea Pocket', codePrefix: 'IPX / IPZZ', logoText: 'IP', color: 'from-pink-600 to-rose-500', tag: '偶像制造', searchKey: 'IdeaPocket' },
+    { id: 'prestige', name: 'PRESTIGE', codePrefix: 'ABW / ABF', logoText: 'PRESTIGE', color: 'from-cyan-600 to-blue-600', tag: '高画质先锋', searchKey: 'Prestige' },
+    { id: 'madonna', name: 'MADONNA', codePrefix: 'JUL / JUX', logoText: 'MADONNA', color: 'from-violet-700 to-purple-800', tag: '成熟熟女', searchKey: 'Madonna' },
+    { id: 'faleno', name: 'FALENO', codePrefix: 'FSDSS / FPRE', logoText: 'FALENO', color: 'from-emerald-600 to-teal-600', tag: '超新星厂牌', searchKey: 'FALENO' },
+    { id: 'fc2', name: 'FC2-PPV', codePrefix: 'FC2-PPV', logoText: 'FC2', color: 'from-amber-600 to-yellow-600', tag: '素人个人自拍', searchKey: 'FC2' },
+];
