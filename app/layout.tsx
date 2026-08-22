@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./styles/tmdb-slideshow.css";
@@ -20,6 +20,14 @@ import { Footer } from "@/components/layout/Footer";
 
 import { Suspense } from 'react';
 import { ReferralCapture } from '@/components/auth/ReferralCapture';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+  themeColor: '#0A0A0F',
+};
 
 // Server Component specifically for reading env/file (async for best practices)
 async function AdKeywordsWrapper() {
