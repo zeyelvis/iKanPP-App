@@ -22,6 +22,7 @@ import { getSourceName } from '@/lib/utils/source-names';
 import { RelatedKeywords } from '@/components/search/RelatedKeywords';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 import { normalizeVideoType } from '@/lib/utils/taxonomy';
+import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
 
 function PlayerContent() {
   const searchParams = useSearchParams();
@@ -482,6 +483,33 @@ function PlayerContent() {
     return nextEp?.url || null;
   }, [videoData, currentEpisode, isReversed]); // handleEpisodeClick is not memoized, but uses stable hooks setters. wait, handleEpisodeClick is inline too!
 
+  // 构建 Google 富媒体 Schema.org 结构化数据 (JSON-LD)
+  const currentTitle = videoData?.vod_name || title || '热门影视';
+  const isMovieType = expectedType === 'movie' || (!expectedType && (videoData?.type_name?.includes('电影') || videoData?.episodes?.length === 1));
+  const mediaType: 'movie' | 'tv' | 'anime' = isMovieType ? 'movie' : (videoData?.type_name?.includes('动漫') || videoData?.type_name?.includes('动画') ? 'anime' : 'tv');
+
+  const jsonLdData = useMemo(() => {
+    const mediaLd = generateMediaJsonLd({
+      title: currentTitle,
+      type: mediaType,
+      url: typeof window !== 'undefined' ? window.location.href : `https://www.ikanpp.com/player?title=${encodeURIComponent(currentTitle)}`,
+      image: videoData?.vod_pic,
+      description: videoData?.vod_content?.replace(/<[^>]+>/g, '').slice(0, 160) || `在 iKanPP 免费在线观看《${currentTitle}》高清完整版。`,
+      datePublished: videoData?.vod_year || undefined,
+      actors: videoData?.vod_actor ? videoData.vod_actor.split(/[,，/ ]/).map(s => s.trim()).filter(Boolean).slice(0, 5) : undefined,
+      director: videoData?.vod_director?.split(/[,，/ ]/)[0]?.trim() || undefined,
+      numberOfEpisodes: videoData?.episodes?.length || undefined,
+    });
+
+    const breadcrumbLd = generateBreadcrumbJsonLd([
+      { name: '首页', url: 'https://www.ikanpp.com/' },
+      { name: isMovieType ? '电影' : '电视剧', url: `https://www.ikanpp.com/${isMovieType ? 'movie' : 'tv'}` },
+      { name: currentTitle, url: typeof window !== 'undefined' ? window.location.href : `https://www.ikanpp.com/player?title=${encodeURIComponent(currentTitle)}` },
+    ]);
+
+    return [mediaLd, breadcrumbLd];
+  }, [currentTitle, mediaType, isMovieType, videoData]);
+
   // Redirect if no params at all
   if (isTitleOnlyMode && !titleSearching && !titleSearchError && !title) {
     router.push('/');
@@ -490,6 +518,9 @@ function PlayerContent() {
 
   return (
     <div className="min-h-screen bg-(--bg-color)">
+      {/* Google 富媒体 SEO JSON-LD */}
+      <JsonLd data={jsonLdData} />
+
       {/* Glass Navbar */}
       <Navbar variant="player" isPremiumMode={isPremium} />
 

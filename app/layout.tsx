@@ -20,6 +20,7 @@ import { Footer } from "@/components/layout/Footer";
 
 import { Suspense } from 'react';
 import { ReferralCapture } from '@/components/auth/ReferralCapture';
+import { JsonLd, generateWebSiteJsonLd } from '@/components/seo/JsonLd';
 
 export const viewport: Viewport = {
   width: 'device-width',
