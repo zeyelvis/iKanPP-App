@@ -58,9 +58,21 @@ export const useIPTVStore = create<IPTVStore>()(
     (set, get) => ({
       sources: [
         {
-          id: 'default-ioptu-migu',
-          name: '咪咕直播 (自动更新)',
-          url: 'https://raw.githubusercontent.com/ioptu/IPTV.txt2m3u.player/main/migu.m3u',
+          id: 'default-iptv-org-zho',
+          name: '全球中文电视台 (IPTV-ORG)',
+          url: 'https://iptv-org.github.io/iptv/languages/zho.m3u',
+          addedAt: 0,
+        },
+        {
+          id: 'default-iptv-org-hk',
+          name: '香港电视台精选 (IPTV-ORG)',
+          url: 'https://iptv-org.github.io/iptv/countries/hk.m3u',
+          addedAt: 0,
+        },
+        {
+          id: 'default-iptv-org-tw',
+          name: '台湾电视台精选 (IPTV-ORG)',
+          url: 'https://iptv-org.github.io/iptv/countries/tw.m3u',
           addedAt: 0,
         },
       ],
@@ -161,19 +173,36 @@ export const useIPTVStore = create<IPTVStore>()(
     }),
     {
       name: 'kvideo-iptv-store',
-      version: 11,
+      version: 12,
       migrate: (persistedState: any, version: number) => {
-        // 唯一默认源：咪咕直播（每小时自动更新 token，103 频道）
-        const defaultSource = {
-          id: 'default-ioptu-migu',
-          name: '咪咕直播 (自动更新)',
-          url: 'https://raw.githubusercontent.com/ioptu/IPTV.txt2m3u.player/main/migu.m3u',
-          addedAt: 0,
-        };
+        const defaultSources = [
+          {
+            id: 'default-iptv-org-zho',
+            name: '全球中文电视台 (IPTV-ORG)',
+            url: 'https://iptv-org.github.io/iptv/languages/zho.m3u',
+            addedAt: 0,
+          },
+          {
+            id: 'default-iptv-org-hk',
+            name: '香港电视台精选 (IPTV-ORG)',
+            url: 'https://iptv-org.github.io/iptv/countries/hk.m3u',
+            addedAt: 0,
+          },
+          {
+            id: 'default-iptv-org-tw',
+            name: '台湾电视台精选 (IPTV-ORG)',
+            url: 'https://iptv-org.github.io/iptv/countries/tw.m3u',
+            addedAt: 0,
+          },
+        ];
 
         let sources = persistedState.sources || [];
         sources = sources.filter((s: any) => !s.id?.startsWith('default-'));
-        persistedState.sources = [defaultSource, ...sources];
+        persistedState.sources = [...defaultSources, ...sources];
+        persistedState.cachedChannels = [];
+        persistedState.cachedGroups = [];
+        persistedState.cachedChannelsBySource = {};
+        persistedState.lastRefreshed = 0;
         return persistedState;
       },
       partialize: (state) => ({
