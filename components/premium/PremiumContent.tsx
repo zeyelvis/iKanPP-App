@@ -1,56 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { TagManager } from '@/components/home/TagManager';
+import { useState } from 'react';
+import { MidnightHero } from './MidnightHero';
+import { MidnightFilter } from './MidnightFilter';
 import { PremiumContentGrid } from './PremiumContentGrid';
-import { PremiumSlideshow } from './PremiumSlideshow';
-import { usePremiumTagManager } from '@/lib/hooks/usePremiumTagManager';
 import { usePremiumContent } from '@/lib/hooks/usePremiumContent';
-import { usePersonalizedRecommendations } from '@/components/home/hooks/usePersonalizedRecommendations';
+import {
+    MIDNIGHT_CATEGORIES,
+    type MidnightCategory,
+    type MidnightSortType,
+} from '@/lib/constants/midnight-categories';
 
 interface PremiumContentProps {
     onSearch?: (query: string) => void;
 }
 
 export function PremiumContent({ onSearch }: PremiumContentProps) {
-    const {
-        tags,
-        selectedTag,
-        newTagInput,
-        showTagManager,
-        justAddedTag,
-        setSelectedTag,
-        setNewTagInput,
-        setShowTagManager,
-        setJustAddedTag,
-        handleAddTag,
-        handleDeleteTag,
-        handleRestoreDefaults,
-        handleDragEnd,
-    } = usePremiumTagManager();
-
-    const {
-        movies: recommendMovies,
-        loading: recommendLoading,
-        hasMore: recommendHasMore,
-        hasHistory,
-        prefetchRef: recommendPrefetchRef,
-        loadMoreRef: recommendLoadMoreRef,
-    } = usePersonalizedRecommendations(true);
-
-    // Track whether the recommendation tab is active
-    const [isRecommendSelected, setIsRecommendSelected] = useState(hasHistory);
-
-    useEffect(() => {
-        if (hasHistory) {
-            setIsRecommendSelected(true);
-        }
-    }, [hasHistory]);
-
-    const effectiveRecommendSelected = hasHistory && isRecommendSelected;
-
-    // Get the category value from selected tag
-    const categoryValue = tags.find(t => t.id === selectedTag)?.value || '';
+    const [activeCategory, setActiveCategory] = useState('featured');
+    const [activeKeyword, setActiveKeyword] = useState('');
+    const [activeSort, setActiveSort] = useState<MidnightSortType>('recommend');
 
     const {
         videos,
@@ -58,7 +26,16 @@ export function PremiumContent({ onSearch }: PremiumContentProps) {
         hasMore,
         prefetchRef,
         loadMoreRef,
-    } = usePremiumContent(effectiveRecommendSelected ? '' : categoryValue);
+    } = usePremiumContent(activeKeyword);
+
+    const handleCategorySelect = (cat: MidnightCategory) => {
+        setActiveCategory(cat.id);
+        setActiveKeyword(cat.keyword);
+    };
+
+    const handleSortSelect = (sort: MidnightSortType) => {
+        setActiveSort(sort);
+    };
 
     const handleVideoClick = (video: any) => {
         if (onSearch) {
@@ -66,60 +43,36 @@ export function PremiumContent({ onSearch }: PremiumContentProps) {
         }
     };
 
-    const handleRecommendSelect = () => {
-        setIsRecommendSelected(true);
-    };
-
-    const handleRegularTagSelect = (tagId: string) => {
-        setIsRecommendSelected(false);
-        setSelectedTag(tagId);
-    };
-
-    // 将豆瓣推荐数据适配为 PremiumContentGrid 所需的 Video 类型
-    const adaptedRecommendVideos = recommendMovies.map((m: any) => ({
-        vod_id: m.id,
-        vod_name: m.title,
-        vod_pic: m.cover,
-        vod_remarks: m.rate ? `${m.rate}分` : '',
-        type_name: m.sourceLabel || '',
-        source: 'douban',
-    }));
-
     return (
-        <div className="animate-fade-in">            {/* 幻灯片推荐 */}
-            <PremiumSlideshow onSearch={onSearch} />
+        <div className="animate-fade-in space-y-6">
+            {/* 1. 专属暗夜高奢 Hero Banner */}
+            <MidnightHero onSearch={onSearch} />
 
-            <TagManager
-                tags={tags}
-                selectedTag={effectiveRecommendSelected ? '' : selectedTag}
-                showTagManager={showTagManager}
-                newTagInput={newTagInput}
-                justAddedTag={justAddedTag}
-                onTagSelect={handleRegularTagSelect}
-                onTagDelete={handleDeleteTag}
-                onToggleManager={() => setShowTagManager(!showTagManager)}
-                onRestoreDefaults={handleRestoreDefaults}
-                onNewTagInputChange={setNewTagInput}
-                onAddTag={handleAddTag}
-                onDragEnd={handleDragEnd}
-                onJustAddedTagHandled={() => setJustAddedTag(false)}
-                recommendTag={hasHistory ? {
-                    label: '为你推荐',
-                    isSelected: effectiveRecommendSelected,
-                    onSelect: handleRecommendSelect,
-                } : undefined}
+            {/* 2. 专业多维分类与排序矩阵 */}
+            <MidnightFilter
+                activeCategory={activeCategory}
+                activeSort={activeSort}
+                onSelectCategory={handleCategorySelect}
+                onSelectSort={handleSortSelect}
             />
 
-            {effectiveRecommendSelected ? (
-                <PremiumContentGrid
-                    videos={adaptedRecommendVideos}
-                    loading={recommendLoading}
-                    hasMore={recommendHasMore}
-                    onVideoClick={handleVideoClick}
-                    prefetchRef={recommendPrefetchRef}
-                    loadMoreRef={recommendLoadMoreRef}
-                />
-            ) : (
+            {/* 3. 影视内容无尽流网格 */}
+            <div className="space-y-4">
+                <div className="flex items-center justify-between px-1">
+                    <div className="flex items-center gap-2">
+                        <span className="w-1.5 h-4 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full" />
+                        <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                            {MIDNIGHT_CATEGORIES.find(c => c.id === activeCategory)?.label || '今日精选'}
+                        </h3>
+                        <span className="text-xs text-white/40 hidden sm:inline">
+                            · {MIDNIGHT_CATEGORIES.find(c => c.id === activeCategory)?.description}
+                        </span>
+                    </div>
+                    <span className="text-xs text-purple-400 font-medium">
+                        蓝光专线秒播
+                    </span>
+                </div>
+
                 <PremiumContentGrid
                     videos={videos}
                     loading={loading}
@@ -128,7 +81,7 @@ export function PremiumContent({ onSearch }: PremiumContentProps) {
                     prefetchRef={prefetchRef}
                     loadMoreRef={loadMoreRef}
                 />
-            )}
+            </div>
         </div>
     );
 }

@@ -24,15 +24,17 @@ function PremiumHomePage() {
     } = usePremiumHomePage();
 
     return (
-        <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-color)', backgroundImage: 'var(--bg-image)' }}>
-            {/* Glass Navbar */}
+        <div className="min-h-screen bg-[#060609] text-white relative overflow-x-hidden selection:bg-purple-500 selection:text-white">
+            {/* 顶部与环境极光光晕背景 */}
+            <div className="fixed top-0 left-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
+            <div className="fixed top-1/3 right-10 w-96 h-96 bg-pink-600/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+            <div className="fixed bottom-10 left-10 w-80 h-80 bg-amber-600/5 rounded-full blur-[100px] pointer-events-none -z-10" />
+
+            {/* 顶部专属 Navbar */}
             <Navbar onReset={handleReset} isPremiumMode={true} />
 
-            {/* Search Form - Separate from navbar */}
-            <div className="fluid-container mt-6 mb-8 relative" style={{
-                transform: 'translate3d(0, 0, 0)',
-                zIndex: 1000
-            }}>
+            {/* 专属搜索栏 */}
+            <div className="fluid-container mt-6 mb-8 relative z-30">
                 <SearchForm
                     onSearch={handleSearch}
                     onClear={handleReset}
@@ -41,13 +43,13 @@ function PremiumHomePage() {
                     currentSource=""
                     checkedSources={completedSources}
                     totalSources={totalSources}
-                    placeholder="输入关键词开始搜索..."
+                    placeholder="探索 4K 蓝光大片、中文字幕、国产原创与日韩精选..."
                     isPremium={true}
                 />
             </div>
 
             {/* Main Content */}
-            <main className="fluid-container pb-20">
+            <main className="fluid-container pb-24 relative z-10">
                 {/* Results Section */}
                 {(results.length >= 1 || (!loading && results.length > 0)) && (
                     <SearchResults
@@ -65,9 +67,7 @@ function PremiumHomePage() {
 
                 {/* Premium Content - Trending and Latest */}
                 {!loading && !hasSearched && (
-                    <>
-                        <PremiumContent onSearch={handleSearch} />
-                    </>
+                    <PremiumContent onSearch={handleSearch} />
                 )}
             </main>
 
