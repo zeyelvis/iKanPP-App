@@ -216,12 +216,28 @@ export const settingsStore = {
         }
       });
 
-      // Filter out invalid sources (missing baseUrl etc)
-      const validSources = (Array.isArray(parsed.sources) ? parsed.sources : getDefaultSources())
-        .filter((s: any) => s && s.id && s.name && s.baseUrl);
+      // Filter out invalid sources and auto-merge new default sources (Auto-sync to 108 top sources)
+      const defaultSrcs = getDefaultSources();
+      const localSources: VideoSource[] = Array.isArray(parsed.sources) ? parsed.sources : defaultSrcs;
+      const validSourcesMap = new Map<string, VideoSource>(localSources.filter((s: any) => s && s.id && s.name && s.baseUrl).map((s: any) => [s.id, s]));
+      // Auto-append any newly added top sources from DEFAULT_SOURCES
+      defaultSrcs.forEach(ds => {
+        if (!validSourcesMap.has(ds.id)) {
+          validSourcesMap.set(ds.id, ds);
+        }
+      });
+      const validSources = Array.from(validSourcesMap.values());
 
-      const validPremiumSources = (Array.isArray(parsed.premiumSources) ? parsed.premiumSources : getDefaultPremiumSources())
-        .filter((s: any) => s && s.id && s.name && s.baseUrl);
+      const defaultPremSrcs = getDefaultPremiumSources();
+      const localPremSources: VideoSource[] = Array.isArray(parsed.premiumSources) ? parsed.premiumSources : defaultPremSrcs;
+      const validPremMap = new Map<string, VideoSource>(localPremSources.filter((s: any) => s && s.id && s.name && s.baseUrl).map((s: any) => [s.id, s]));
+      // Auto-append any newly added premium sources from PREMIUM_SOURCES
+      defaultPremSrcs.forEach(ps => {
+        if (!validPremMap.has(ps.id)) {
+          validPremMap.set(ps.id, ps);
+        }
+      });
+      const validPremiumSources = Array.from(validPremMap.values());
 
       // Validate that parsed data has all required properties
       return {
