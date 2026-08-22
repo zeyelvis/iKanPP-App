@@ -118,11 +118,11 @@ export function ContentRail({
         className="content-rail-scroll flex gap-3 sm:gap-4 overflow-x-auto pb-4 pt-1 px-1 sm:px-2 scroll-smooth"
       >
         {loading ? (
-          // 骨架屏
+          // 高级流光骨架屏
           Array.from({ length: 7 }).map((_, idx) => (
             <div
               key={idx}
-              className="shrink-0 w-32.5 sm:w-42.5 lg:w-47.5 aspect-2/3 rounded-2xl bg-white/5 animate-pulse"
+              className="shrink-0 w-[118px] sm:w-40 lg:w-46 aspect-2/3 rounded-2xl shimmer-card border border-white/5"
             />
           ))
         ) : movies.length > 0 ? (
@@ -135,35 +135,35 @@ export function ContentRail({
               <div
                 key={movie.id || idx}
                 onClick={() => onMovieClick(movie)}
-                className="cinema-poster-card shrink-0 w-32.5 sm:w-41.25 lg:w-46.25 cursor-pointer group/card select-none"
+                className="cinema-poster-card shrink-0 w-[118px] sm:w-40 lg:w-46 cursor-pointer group/card select-none"
               >
                 {/* 海报卡片 */}
-                <div className="relative aspect-2/3 rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-lg">
+                <div className="relative aspect-2/3 rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.35)] group-hover/card:border-(--accent-color)/40 transition-colors">
                   <Image
                     src={proxiedCover || '/placeholder-poster.svg'}
                     alt={movie.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover/card:scale-108"
-                    sizes="(max-width: 640px) 130px, (max-width: 1024px) 165px, 185px"
+                    sizes="(max-width: 640px) 118px, (max-width: 1024px) 160px, 184px"
                     loading={idx < 6 ? 'eager' : 'lazy'}
                     unoptimized
                   />
 
                   {/* 评分角标 */}
                   {movie.rate && parseFloat(movie.rate) > 0 ? (
-                    <div className="absolute top-2 right-2 bg-black/80 backdrop-blur-md px-2 py-0.5 rounded-full flex items-center gap-1 border border-white/10 shadow-md">
-                      <Icons.Star size={11} className="text-amber-400 fill-amber-400" />
-                      <span className="text-[11px] font-bold text-amber-300">{movie.rate}</span>
+                    <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-black/80 backdrop-blur-md px-1.5 sm:px-2 py-0.5 rounded-full flex items-center gap-1 border border-white/15 shadow-md">
+                      <Icons.Star size={10} className="text-amber-400 fill-amber-400" />
+                      <span className="text-[10px] sm:text-[11px] font-black text-amber-300">{movie.rate}</span>
                     </div>
                   ) : (
-                    <div className="absolute top-2 right-2 bg-emerald-600/90 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/10">
-                      <span className="text-[10px] font-bold text-white">新上线</span>
+                    <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-emerald-600/90 backdrop-blur-md px-1.5 sm:px-2 py-0.5 rounded-full border border-white/15">
+                      <span className="text-[9px] sm:text-[10px] font-bold text-white">新热</span>
                     </div>
                   )}
 
                   {/* 悬停播放光效 */}
-                  <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover/card:opacity-100 transition-all duration-300 flex flex-col justify-end p-3">
-                    <button className="w-full py-2 bg-(--accent-color) hover:brightness-110 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-lg active:scale-95 transition-all">
+                  <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover/card:opacity-100 transition-all duration-300 flex flex-col justify-end p-2.5 sm:p-3">
+                    <button className="w-full py-1.5 sm:py-2 bg-(--accent-color) hover:brightness-110 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-lg active:scale-95 transition-all">
                       <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M8 5v14l11-7z" />
                       </svg>
@@ -173,12 +173,12 @@ export function ContentRail({
                 </div>
 
                 {/* 底部标题与年份 */}
-                <div className="mt-2 px-0.5">
-                  <h3 className="text-xs sm:text-sm font-semibold text-white/90 truncate group-hover/card:text-(--accent-color) transition-colors">
+                <div className="mt-1.5 sm:mt-2 px-0.5">
+                  <h3 className="text-xs sm:text-sm font-semibold text-white/90 truncate group-hover/card:text-(--accent-color) transition-colors leading-snug">
                     {movie.title}
                   </h3>
                   {movie.year && (
-                    <p className="text-[11px] text-white/40 mt-0.5">{movie.year}</p>
+                    <p className="text-[10px] sm:text-[11px] text-white/40 mt-0.5 font-medium">{movie.year}</p>
                   )}
                 </div>
               </div>

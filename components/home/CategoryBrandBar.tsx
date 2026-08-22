@@ -104,13 +104,13 @@ export function CategoryBrandBar() {
         </span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2.5 sm:gap-4 [&>*:last-child]:col-span-2 sm:[&>*:last-child]:col-span-1">
+      <div className="flex overflow-x-auto no-scrollbar sm:grid sm:grid-cols-3 lg:grid-cols-7 gap-2.5 sm:gap-4 pb-2 sm:pb-0 px-0.5 sm:px-0">
         {HUB_TILES.map((tile) => (
           <Link
             key={tile.title}
             href={tile.href}
             prefetch={false}
-            className={`group relative overflow-hidden rounded-2xl bg-[#0A0A0F]/90 border border-white/10 p-3.5 sm:p-5 flex flex-col justify-between transition-all duration-300 active:scale-98 hover:-translate-y-1 ${tile.glow} ${tile.border} cursor-pointer`}
+            className={`group relative overflow-hidden rounded-2xl bg-[#0A0A0F]/90 border border-white/10 p-3 sm:p-5 flex flex-col justify-between transition-all duration-300 active:scale-95 hover:-translate-y-1 ${tile.glow} ${tile.border} cursor-pointer w-34 sm:w-auto shrink-0`}
           >
             {/* 背景动态流光渐变 */}
             <div
@@ -118,24 +118,24 @@ export function CategoryBrandBar() {
             />
 
             {/* 顶部图标与徽章 */}
-            <div className="relative z-10 flex items-center justify-between mb-4">
+            <div className="relative z-10 flex items-center justify-between mb-3 sm:mb-4">
               <span className="text-2xl sm:text-3xl filter drop-shadow-md group-hover:scale-110 transition-transform duration-300">
                 {tile.icon}
               </span>
-              <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-white/10 backdrop-blur-md text-white/70 border border-white/10">
+              <span className="text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded-full bg-white/10 backdrop-blur-md text-white/70 border border-white/10">
                 {tile.tag}
               </span>
             </div>
 
             {/* 标题与描述 */}
             <div className="relative z-10">
-              <h3 className="text-sm sm:text-base font-black text-white group-hover:text-(--accent-color) transition-colors flex items-center gap-1">
+              <h3 className="text-xs sm:text-base font-black text-white group-hover:text-(--accent-color) transition-colors flex items-center gap-1">
                 <span>{tile.title}</span>
-                <span className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-xs">
+                <span className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-xs hidden sm:inline">
                   →
                 </span>
               </h3>
-              <p className="text-[11px] text-white/45 truncate mt-0.5 font-medium">
+              <p className="text-[10px] sm:text-[11px] text-white/45 truncate mt-0.5 font-medium">
                 {tile.subtitle}
               </p>
             </div>

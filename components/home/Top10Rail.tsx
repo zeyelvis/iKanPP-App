@@ -107,7 +107,7 @@ export function Top10Rail({
           Array.from({ length: 5 }).map((_, idx) => (
             <div
               key={idx}
-              className="shrink-0 w-50 sm:w-60 aspect-16/10 rounded-2xl bg-white/5 animate-pulse"
+              className="shrink-0 w-44 sm:w-60 aspect-16/10 rounded-2xl shimmer-card border border-white/5"
             />
           ))
         ) : top10List.length > 0 ? (
@@ -121,7 +121,7 @@ export function Top10Rail({
                 key={movie.id || idx}
                 onClick={() => onMovieClick(movie)}
                 className="shrink-0 flex items-center cursor-pointer group select-none relative"
-                style={{ width: 'clamp(190px, 20vw, 240px)' }}
+                style={{ width: 'clamp(155px, 42vw, 240px)' }}
               >
                 {/* Netflix 风格超大立体镂空描边排名数字 */}
                 <div className="top10-rank-number shrink-0 translate-x-3 sm:translate-x-4 z-10">
