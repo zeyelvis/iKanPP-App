@@ -43,7 +43,7 @@ type FullscreenCapableDocument = Document & {
     exitPictureInPicture?: () => Promise<void>;
 };
 
-type FullscreenCapableElement = HTMLDivElement & {
+type FullscreenCapableElement = HTMLElement & {
     webkitRequestFullscreen?: () => Promise<void>;
     mozRequestFullScreen?: () => Promise<void>;
     msRequestFullscreen?: () => Promise<void>;
@@ -197,19 +197,20 @@ export function useFullscreenControls({
     }, [exitNativeFullscreen, fullscreenMode, lockLandscape, setFullscreenMode, setIsFullscreen]);
 
     const enterNativeFullscreen = useCallback(async () => {
-        const container = containerRef.current as FullscreenCapableElement | null;
+        const targetElement = (containerRef.current || videoRef.current || (typeof document !== 'undefined' ? document.documentElement : null)) as FullscreenCapableElement | null;
         const video = videoRef.current as PiPCapableVideoElement | null;
-        if (!container) return;
+
+        if (!targetElement) return;
 
         try {
-            if (container.requestFullscreen) {
-                await container.requestFullscreen();
-            } else if (container.webkitRequestFullscreen) {
-                await container.webkitRequestFullscreen();
-            } else if (container.mozRequestFullScreen) {
-                await container.mozRequestFullScreen();
-            } else if (container.msRequestFullscreen) {
-                await container.msRequestFullscreen();
+            if (targetElement.requestFullscreen) {
+                await targetElement.requestFullscreen();
+            } else if (targetElement.webkitRequestFullscreen) {
+                await targetElement.webkitRequestFullscreen();
+            } else if (targetElement.mozRequestFullScreen) {
+                await targetElement.mozRequestFullScreen();
+            } else if (targetElement.msRequestFullscreen) {
+                await targetElement.msRequestFullscreen();
             } else if (video?.webkitEnterFullscreen) {
                 video.webkitEnterFullscreen();
             }
@@ -218,7 +219,7 @@ export function useFullscreenControls({
             setIsFullscreen(true);
             await lockLandscape();
         } catch (error) {
-            console.warn('Fullscreen request failed, trying fallback:', error);
+            console.warn('Native fullscreen request failed on container, trying video fallback:', error);
             if (video?.webkitEnterFullscreen) {
                 try {
                     video.webkitEnterFullscreen();
@@ -306,12 +307,20 @@ export function useFullscreenControls({
     }, [enterWindowFullscreen, exitWindowFullscreen, fullscreenMode]);
 
     const toggleNativeFullscreen = useCallback(async () => {
-        if (fullscreenMode === 'native') {
+        const fullscreenDocument = getFullscreenDocument();
+        const isCurrentlyNative = Boolean(
+            fullscreenDocument.fullscreenElement ||
+            fullscreenDocument.webkitFullscreenElement ||
+            fullscreenDocument.mozFullScreenElement ||
+            fullscreenDocument.msFullscreenElement
+        );
+
+        if (isCurrentlyNative || fullscreenMode === 'native') {
             await exitNativeFullscreen();
             return;
         }
 
-        // 如果当前处于网页窗口全屏，先退出网页全屏状态，再进入物理屏幕真全屏
+        // 如果之前在网页全屏状态，直接升级为物理真全屏
         if (fullscreenMode === 'window') {
             exitWindowFullscreen();
         }
@@ -320,30 +329,9 @@ export function useFullscreenControls({
     }, [enterNativeFullscreen, exitNativeFullscreen, exitWindowFullscreen, fullscreenMode]);
 
     const toggleFullscreen = useCallback(async () => {
-        if (fullscreenMode === 'window') {
-            exitWindowFullscreen();
-            return;
-        }
-
-        if (fullscreenMode === 'native') {
-            await exitNativeFullscreen();
-            return;
-        }
-
-        if (fullscreenType === 'window') {
-            await enterWindowFullscreen();
-            return;
-        }
-
-        await enterNativeFullscreen();
-    }, [
-        enterNativeFullscreen,
-        enterWindowFullscreen,
-        exitNativeFullscreen,
-        exitWindowFullscreen,
-        fullscreenMode,
-        fullscreenType,
-    ]);
+        // 主全屏方法统一调用设备物理真全屏
+        await toggleNativeFullscreen();
+    }, [toggleNativeFullscreen]);
 
     useEffect(() => {
         const handleFullscreenChange = () => {
