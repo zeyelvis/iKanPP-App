@@ -212,8 +212,8 @@ export function VideoPlayer({
   }
 
   return (
-    <div data-no-spatial className="w-full">
-      <Card hover={false} className="p-0 overflow-hidden relative">
+    <div data-no-spatial className="w-full aspect-video" style={{ aspectRatio: '16 / 9', maxHeight: '70vh' }}>
+      <Card hover={false} className="p-0 overflow-hidden relative w-full h-full">
         {/* Mode Indicator Badge - controlled by settings */}
         {showModeIndicator && (
           <div className="absolute top-3 right-3 z-30 pointer-events-none">
