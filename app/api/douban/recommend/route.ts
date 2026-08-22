@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { GUOMAN_DATASET } from '@/lib/data/guoman-data';
 
 export const runtime = 'edge';
 
@@ -57,6 +58,52 @@ export async function GET(request: Request) {
 
   const pageLimit = Math.min(Math.max(parseInt(searchParams.get('page_limit') || '36', 10) || 36, 1), 60);
   const pageStart = Math.max(parseInt(searchParams.get('page_start') || '0', 10) || 0, 0);
+
+  // 0. 特殊处理：国漫 / 国产动画（豆瓣官方 API 无此标签，必须走专属精选库）
+  const isGuoman =
+    rawTag === '国产动画' ||
+    rawTag === '国漫' ||
+    rawTag === '国创' ||
+    genre === '国漫' ||
+    genre === '国产动画' ||
+    region === '国产动画' ||
+    region === '国漫' ||
+    region === '国创';
+
+  if (isGuoman) {
+    let list = [...GUOMAN_DATASET];
+
+    // 如果指定了特定题材筛选（如：玄幻、科幻、热血、古风）
+    if (genre && genre !== '国漫' && genre !== '国产动画') {
+      list = list.filter(item => item.types?.some(t => t.includes(genre)));
+    }
+    // 如果指定了年份筛选
+    if (year && !['国产动画', '全部'].includes(year)) {
+      list = list.filter(item => item.year === year);
+    }
+
+    const paged = list.slice(pageStart, pageStart + pageLimit).map(item => ({
+      ...item,
+      cover: item.cover ? `/api/douban/image?url=${encodeURIComponent(item.cover)}` : item.cover,
+      playable: true,
+      is_new: item.year === '2024' || item.year === '2025' || item.year === '2026',
+    }));
+
+    return NextResponse.json({
+      subjects: paged,
+      tag: '国产动画',
+      genre,
+      region,
+      year,
+      total: list.length,
+    }, {
+      headers: {
+        'Cache-Control': 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400',
+        'CDN-Cache-Control': 'public, s-maxage=3600',
+        'Cloudflare-CDN-Cache-Control': 'public, s-maxage=3600',
+      },
+    });
+  }
 
   // 1. 确定针对豆瓣的 1~3 个最精准查询 Tag
   const doubanTags: string[] = [];
