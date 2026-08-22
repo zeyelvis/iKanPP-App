@@ -6,6 +6,7 @@ import { VideoCard } from './VideoCard';
 import { VideoGroupCard, GroupedVideo } from './VideoGroupCard';
 import { settingsStore } from '@/lib/store/settings-store';
 import { Video } from '@/lib/types';
+import { extractCleanBaseTitle } from '@/lib/utils/search';
 
 interface VideoGridProps {
   videos: Video[];
@@ -69,30 +70,22 @@ export const VideoGrid = memo(function VideoGrid({
     return () => unsubscribe();
   }, [pathname, searchParams, videos.length]);
 
-  // 搜索结果去重：同名同年份的视频只保留最优的一个
+  // 搜索结果去重与智能排序：同名同年份的视频聚合为最优卡片，并严格按相关度排序
   const deduplicatedVideos = useMemo(() => {
-    if (displayMode === 'grouped') return videos;
-
     const groups = new Map<string, Video[]>();
     for (const video of videos) {
-      // 标准化名称：去掉括号里的年份后缀，统一大小写
-      const normalizedName = video.vod_name
-        .toLowerCase()
-        .trim()
-        .replace(/\s*[\(（]\d{4}[\)）]\s*$/, '')  // 去掉 (2026) 或 （2026）
-        .replace(/\d{4}$/, '');                    // 去掉末尾年份如 "除恶2026"
-
+      const cleanName = extractCleanBaseTitle(video.vod_name) || video.vod_name.toLowerCase().trim();
       const year = video.vod_year || '';
-      const key = `${normalizedName}__${year}`;
+      const key = `${cleanName}__${year}`;
 
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key)!.push(video);
     }
 
-    return Array.from(groups.values()).map(group => {
+    const dedupedList = Array.from(groups.values()).map(group => {
       if (group.length === 1) return group[0];
 
-      // 保留最优的：优先延迟最低的
+      // 保留最优的：优先延迟最低的源
       const sorted = [...group].sort((a, b) => {
         if (a.latency === undefined) return 1;
         if (b.latency === undefined) return -1;
@@ -100,17 +93,32 @@ export const VideoGrid = memo(function VideoGrid({
       });
 
       const best = { ...sorted[0] };
+      // 聚合最高相关度分值，并根据多源热度加权
+      const maxScore = Math.max(...group.map(v => (v as any).relevanceScore || 0));
+      (best as any).relevanceScore = maxScore + Math.min(group.length * 10, 200);
+
       // 在备注中标注合并了多少个来源
-      if (group.length > 1) {
-        const sourceCount = group.length;
-        const existingRemarks = best.vod_remarks || '';
-        best.vod_remarks = existingRemarks
-          ? `${existingRemarks} · ${sourceCount}个来源`
-          : `${sourceCount}个来源`;
-      }
+      const sourceCount = group.length;
+      const existingRemarks = best.vod_remarks || '';
+      best.vod_remarks = existingRemarks
+        ? `${existingRemarks} · ${sourceCount}个来源`
+        : `${sourceCount}个来源`;
+
       return best;
     });
-  }, [videos, displayMode]);
+
+    // 核心修复：去重后必须严格按相关度 (DESC) 然后按延迟 (ASC) 重排
+    return dedupedList.sort((a, b) => {
+      const scoreA = (a as any).relevanceScore || 0;
+      const scoreB = (b as any).relevanceScore || 0;
+      if (scoreB !== scoreA) {
+        return scoreB - scoreA;
+      }
+      const latencyA = a.latency || 99999;
+      const latencyB = b.latency || 99999;
+      return latencyA - latencyB;
+    });
+  }, [videos]);
 
   if (deduplicatedVideos.length === 0) {
     return null;
@@ -122,15 +130,15 @@ export const VideoGrid = memo(function VideoGrid({
 
     const groups = new Map<string, Video[]>();
 
-    deduplicatedVideos.forEach(video => {
-      const name = video.vod_name.toLowerCase().trim();
-      if (!groups.has(name)) {
-        groups.set(name, []);
+    videos.forEach(video => {
+      const cleanName = extractCleanBaseTitle(video.vod_name) || video.vod_name.toLowerCase().trim();
+      if (!groups.has(cleanName)) {
+        groups.set(cleanName, []);
       }
-      groups.get(name)!.push(video);
+      groups.get(cleanName)!.push(video);
     });
 
-    return Array.from(groups.entries()).map(([, groupVideos]) => {
+    const groupList = Array.from(groups.entries()).map(([, groupVideos]) => {
       // Sort by latency (lowest first) 
       const sorted = [...groupVideos].sort((a, b) => {
         if (a.latency === undefined) return 1;
@@ -138,13 +146,25 @@ export const VideoGrid = memo(function VideoGrid({
         return a.latency - b.latency;
       });
 
+      const maxScore = Math.max(...groupVideos.map(v => (v as any).relevanceScore || 0));
+      const rep = { ...sorted[0] };
+      (rep as any).relevanceScore = maxScore + Math.min(groupVideos.length * 10, 200);
+
       return {
-        representative: sorted[0],
+        representative: rep,
         videos: sorted,
         name: sorted[0].vod_name,
       };
     });
-  }, [deduplicatedVideos, displayMode]);
+
+    // 分组模式下同样严格按相关度从高到低排序
+    return groupList.sort((a, b) => {
+      const scoreA = (a.representative as any).relevanceScore || 0;
+      const scoreB = (b.representative as any).relevanceScore || 0;
+      if (scoreB !== scoreA) return scoreB - scoreA;
+      return (b.videos.length) - (a.videos.length);
+    });
+  }, [videos, displayMode]);
 
   // Callback ref for the load more trigger
   const loadMoreRef = useCallback((node: HTMLDivElement | null) => {
