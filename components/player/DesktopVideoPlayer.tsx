@@ -330,8 +330,12 @@ export function DesktopVideoPlayer({
     : 'kvideo-stage absolute inset-0';
   const isTopAlignedWebFullscreen = data.fullscreenMode === 'window' && isMobile && !isLandscape && !shouldForceLandscape;
 
-  // Mobile double-tap gesture for skip forward/backward
-  const { handleTap } = useDoubleTap({
+  // Mobile long-press fast forward state
+  const [isLongPressFastForward, setIsLongPressFastForward] = React.useState(false);
+  const previousPlaybackRateRef = React.useRef<number>(1.0);
+
+  // Mobile double-tap gesture for skip forward/backward & long-press 2X
+  const { handleTouchStart, handleTouchEnd, handleTouchCancel } = useDoubleTap({
     onSingleTap: handleTouchToggleControls,
     onDoubleTapLeft: () => {
       logic.skipBackward();
@@ -350,6 +354,16 @@ export function DesktopVideoPlayer({
       handleMouseMove();
     },
     isSkipModeActive: data.showSkipForwardIndicator || data.showSkipBackwardIndicator,
+    onLongPressStart: () => {
+      if (!data.isPlaying) return;
+      previousPlaybackRateRef.current = data.playbackRate;
+      logic.changePlaybackSpeed(2.0);
+      setIsLongPressFastForward(true);
+    },
+    onLongPressEnd: () => {
+      logic.changePlaybackSpeed(previousPlaybackRateRef.current || 1.0);
+      setIsLongPressFastForward(false);
+    },
   });
 
   return (
@@ -385,9 +399,26 @@ export function DesktopVideoPlayer({
             onClick={!isMobile ? () => {
               togglePlay();
             } : undefined}
-            onTouchStart={isMobile ? handleTap : undefined}
+            onTouchStart={isMobile ? handleTouchStart : undefined}
+            onTouchEnd={isMobile ? handleTouchEnd : undefined}
+            onTouchCancel={isMobile ? handleTouchCancel : undefined}
             {...LEGACY_INLINE_VIDEO_PROPS} // Legacy iOS support
           />
+
+          {/* Long Press 2X Fast Forward Capsule Badge */}
+          {isLongPressFastForward && (
+            <div className="absolute top-4 sm:top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-scale-in">
+              <div className="bg-black/85 backdrop-blur-xl border border-white/20 px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-[0_8px_32px_rgba(0,0,0,0.8)]">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent-color)] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent-color)]"></span>
+                </span>
+                <span className="text-xs font-black text-white tracking-wider flex items-center gap-1">
+                  ⚡ 2X 倍速播放中
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* Danmaku Canvas */}
           {danmakuEnabled && danmakuComments.length > 0 && (

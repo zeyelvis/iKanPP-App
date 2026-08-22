@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useCallback } from 'react';
 
 interface DoubleTapHandler {
     onDoubleTapLeft: () => void;
@@ -7,10 +7,12 @@ interface DoubleTapHandler {
     onSkipContinueLeft: () => void;
     onSkipContinueRight: () => void;
     isSkipModeActive: boolean;
+    onLongPressStart?: () => void;
+    onLongPressEnd?: () => void;
 }
 
 /**
- * Hook for handling double-tap gestures on mobile devices
+ * Hook for handling double-tap gestures and long-press fast forward on mobile devices
  * Divides the video into left/right zones for skip forward/backward
  */
 export function useDoubleTap({
@@ -20,17 +22,53 @@ export function useDoubleTap({
     onSkipContinueLeft,
     onSkipContinueRight,
     isSkipModeActive,
+    onLongPressStart,
+    onLongPressEnd,
 }: DoubleTapHandler) {
     const lastTapRef = useRef<{ time: number; side: 'left' | 'right' | null }>({
         time: 0,
         side: null,
     });
     const singleTapTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const isLongPressingRef = useRef<boolean>(false);
 
-    const handleTap = (e: React.TouchEvent<HTMLVideoElement>) => {
+    const handleTouchStart = useCallback((e: React.TouchEvent<HTMLVideoElement>) => {
+        isLongPressingRef.current = false;
+        // Start long-press timer (500ms)
+        if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+        longPressTimerRef.current = setTimeout(() => {
+            isLongPressingRef.current = true;
+            if (singleTapTimeoutRef.current) {
+                clearTimeout(singleTapTimeoutRef.current);
+                singleTapTimeoutRef.current = null;
+            }
+            onLongPressStart?.();
+            try {
+                if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                    navigator.vibrate(30);
+                }
+            } catch {}
+        }, 500);
+    }, [onLongPressStart]);
+
+    const handleTouchEnd = useCallback((e: React.TouchEvent<HTMLVideoElement>) => {
+        // Clear long press timer
+        if (longPressTimerRef.current) {
+            clearTimeout(longPressTimerRef.current);
+            longPressTimerRef.current = null;
+        }
+
+        // If long press was active, end it and do not trigger tap
+        if (isLongPressingRef.current) {
+            isLongPressingRef.current = false;
+            onLongPressEnd?.();
+            return;
+        }
+
         const currentTime = Date.now();
         const videoElement = e.currentTarget;
-        const touch = e.touches[0] || e.changedTouches[0];
+        const touch = e.changedTouches[0];
 
         if (!touch || !videoElement) return;
 
@@ -62,8 +100,6 @@ export function useDoubleTap({
 
         // Double tap detected (within 300ms on the same side)
         if (timeDiff < 300 && sameSide) {
-            e.preventDefault();
-
             if (side === 'left') {
                 onDoubleTapLeft();
             } else {
@@ -77,12 +113,35 @@ export function useDoubleTap({
             lastTapRef.current = { time: currentTime, side };
 
             singleTapTimeoutRef.current = setTimeout(() => {
-                // After 300ms, no double tap detected, execute single tap action
                 onSingleTap();
                 singleTapTimeoutRef.current = null;
-            }, 300);
+            }, 280);
         }
-    };
+    }, [
+        isSkipModeActive,
+        onDoubleTapLeft,
+        onDoubleTapRight,
+        onLongPressEnd,
+        onSingleTap,
+        onSkipContinueLeft,
+        onSkipContinueRight,
+    ]);
 
-    return { handleTap };
+    const handleTouchCancel = useCallback(() => {
+        if (longPressTimerRef.current) {
+            clearTimeout(longPressTimerRef.current);
+            longPressTimerRef.current = null;
+        }
+        if (isLongPressingRef.current) {
+            isLongPressingRef.current = false;
+            onLongPressEnd?.();
+        }
+    }, [onLongPressEnd]);
+
+    return {
+        handleTouchStart,
+        handleTouchEnd,
+        handleTouchCancel,
+    };
 }
+
