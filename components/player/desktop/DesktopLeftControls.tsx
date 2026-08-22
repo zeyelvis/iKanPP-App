@@ -32,14 +32,14 @@ export function DesktopLeftControls({
     formatTime
 }: DesktopLeftControlsProps) {
     return (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
             {/* Play/Pause */}
             <button
                 onClick={onTogglePlay}
                 className="btn-icon"
                 aria-label={isPlaying ? 'Pause' : 'Play'}
             >
-                {isPlaying ? <Icons.Pause size={20} /> : <Icons.Play size={20} />}
+                {isPlaying ? <Icons.Pause size={18} /> : <Icons.Play size={18} />}
             </button>
 
             {/* Volume */}
@@ -54,7 +54,7 @@ export function DesktopLeftControls({
             />
 
             {/* Time */}
-            <span className="text-white text-sm font-medium tabular-nums">
+            <span className="text-white text-xs sm:text-sm font-medium tabular-nums whitespace-nowrap">
                 {formatTime(currentTime)} / {formatTime(duration)}
             </span>
         </div>
