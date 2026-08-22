@@ -157,8 +157,18 @@ export function SourceSelector({
 
                             {/* Source Info */}
                             <div className="flex-1 min-w-0">
-                                <div className="font-medium text-sm sm:text-base truncate">
-                                    {source.sourceName || source.source}
+                                <div className="flex items-center gap-2 font-medium text-sm sm:text-base truncate">
+                                    <span className="truncate">{source.sourceName || source.source}</span>
+                                    {(index === 0 || source.sourceName?.includes('4K') || source.sourceName?.includes('蓝光') || source.sourceName?.includes('VIP') || source.sourceName?.includes('官方')) && (
+                                        <span className="flex items-center gap-0.5 px-1.5 py-0.2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 border border-amber-500/40 rounded text-[10px] font-black shrink-0 shadow-sm">
+                                            ⚡ 4K VIP
+                                        </span>
+                                    )}
+                                    {latency !== undefined && latency < 180 && index > 0 && (
+                                        <span className="px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded text-[10px] font-bold shrink-0">
+                                            🚀 秒播
+                                        </span>
+                                    )}
                                 </div>
                                 {latency !== undefined && (
                                     <div className="mt-1">
@@ -176,9 +186,9 @@ export function SourceSelector({
                             {!isCurrent && index < 3 && (
                                 <Badge
                                     variant="secondary"
-                                    className={`flex-shrink-0 ${index === 0 ? 'bg-yellow-500/20 text-yellow-600 border-yellow-500' :
-                                        index === 1 ? 'bg-gray-400/20 text-gray-600 border-gray-400' :
-                                            'bg-orange-400/20 text-orange-600 border-orange-400'
+                                    className={`flex-shrink-0 ${index === 0 ? 'bg-amber-500/20 text-amber-400 border-amber-500/40 font-black' :
+                                        index === 1 ? 'bg-sky-500/20 text-sky-400 border-sky-500/40 font-bold' :
+                                            'bg-purple-500/20 text-purple-400 border-purple-500/40'
                                         }`}
                                 >
                                     #{index + 1}

@@ -11,6 +11,7 @@ import { SearchResults } from '@/components/home/SearchResults';
 import { useHomePage } from '@/lib/hooks/useHomePage';
 import { useLatencyPing } from '@/lib/hooks/useLatencyPing';
 import { AppDownloadBanner } from '@/components/home/AppDownloadBanner';
+import { ResumePlayBubble } from '@/components/home/ResumePlayBubble';
 
 function HomePage() {
   const {
@@ -93,6 +94,9 @@ function HomePage() {
 
       {/* App Download Banner */}
       <AppDownloadBanner />
+
+      {/* 智能断点续播气泡 */}
+      <ResumePlayBubble />
     </div>
   );
 }

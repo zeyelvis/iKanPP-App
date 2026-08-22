@@ -183,7 +183,13 @@ export function VideoPlayer({
   }
 
   return (
-    <div data-no-spatial className="relative">
+    <div data-no-spatial className="relative group">
+      {/* 影院级环境光晕特效 (Ambient Lighting) */}
+      <div 
+        className="absolute -inset-3 sm:-inset-6 bg-gradient-to-r from-amber-500/20 via-orange-600/15 to-purple-600/20 rounded-3xl blur-2xl sm:blur-3xl opacity-50 group-hover:opacity-80 transition-opacity duration-1000 -z-10 pointer-events-none"
+        aria-hidden="true" 
+      />
+
       {/* Mode Indicator Badge - controlled by settings */}
       {showModeIndicator && (
         <div className="absolute top-3 right-3 z-30">
