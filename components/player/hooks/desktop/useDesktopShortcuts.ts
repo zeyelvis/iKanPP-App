@@ -104,6 +104,22 @@ export function useDesktopShortcuts({
                     localStorage.setItem('kvideo-muted', String(newVolUp === 0));
                     showVolumeBarTemporarily();
                     break;
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    if (videoRef.current && videoRef.current.duration) {
+                        e.preventDefault();
+                        const percent = parseInt(e.key, 10) / 10;
+                        videoRef.current.currentTime = videoRef.current.duration * percent;
+                    }
+                    break;
                 case 'arrowdown':
                     e.preventDefault();
                     const newVolDown = Math.max(0, volume - 0.1);
