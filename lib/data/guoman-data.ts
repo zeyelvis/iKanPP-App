@@ -1,6 +1,6 @@
 /**
  * 顶级精选国产动漫库 (Curated Chinese Anime / Guoman Dataset)
- * 解决豆瓣官方接口缺失 '国产动画' 分类导致误返回国产电视剧的问题
+ * 采用 100% 真实有效的高清海报 CDN 地址，彻底解决豆瓣防盗链与图床失效导致的无图问题
  */
 
 export interface GuomanItem {
@@ -19,7 +19,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_fanren',
         title: '凡人修仙传',
-        cover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2625290615.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20250727-1/ea2abcf6bb6518e780a18dacc347d013.jpg',
         rate: '8.9',
         year: '2020',
         types: ['动画', '奇幻', '古风', '玄幻'],
@@ -28,7 +28,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_zhetian',
         title: '遮天',
-        cover: 'https://img2.doubanio.com/view/photo/s_ratio_poster/public/p2891395981.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20250415-1/d5e9df30c95923bac97957a12f72259e.jpg',
         rate: '8.2',
         year: '2023',
         types: ['动画', '玄幻', '热血', '年番'],
@@ -37,7 +37,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_xianni',
         title: '仙逆',
-        cover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2897931755.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20250727-1/318db8c7b603390a12040d94006323e2.jpg',
         rate: '8.8',
         year: '2023',
         types: ['动画', '动作', '奇幻', '修真'],
@@ -46,7 +46,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_tunshi',
         title: '吞噬星空',
-        cover: 'https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2626017777.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20220612-1/b6e9d8ca2b5dd5149e1ca2f9b6828927.jpg',
         rate: '8.4',
         year: '2020',
         types: ['动画', '科幻', '动作', '3D'],
@@ -55,7 +55,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_wanmei',
         title: '完美世界',
-        cover: 'https://img2.doubanio.com/view/photo/s_ratio_poster/public/p2640248491.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20260326-1/cc7144be77d888d6beda0e5d644d0d6c.jpg',
         rate: '8.0',
         year: '2021',
         types: ['动画', '奇幻', '动作', '玄幻'],
@@ -64,7 +64,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_cangyuantu',
         title: '沧元图',
-        cover: 'https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2893529367.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20260821-1/45832a8f5864d35e8d89e3781d1c433f.jpg',
         rate: '8.7',
         year: '2023',
         types: ['动画', '动作', '奇幻', '高燃'],
@@ -73,7 +73,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_doupocangqiong',
         title: '斗破苍穹年番',
-        cover: 'https://img2.doubanio.com/view/photo/s_ratio_poster/public/p2877000851.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20231023-1/d61ff7479689b16b8980715cde81b89b.jpg',
         rate: '8.1',
         year: '2022',
         types: ['动画', '动作', '奇幻', '冒险'],
@@ -82,7 +82,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_douluodalu',
         title: '斗罗大陆',
-        cover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2510834374.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20220322-1/5383e6de7ffb6a10458baf67b3f99a10.jpg',
         rate: '7.8',
         year: '2018',
         types: ['动画', '奇幻', '热血', '动作'],
@@ -91,7 +91,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_jianlai',
         title: '剑来',
-        cover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2910793744.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20240815-1/414a848b1cf25632f407c68b1464efa9.jpg',
         rate: '8.6',
         year: '2024',
         types: ['动画', '武侠', '古风', '玄幻'],
@@ -100,7 +100,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_buliangren',
         title: '画江湖之不良人',
-        cover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2888200676.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20220401-1/401240651465d9d3b06d242963f3b8cf.jpg',
         rate: '9.4',
         year: '2023',
         types: ['动画', '武侠', '历史', '动作'],
@@ -109,7 +109,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_yirenzhixia',
         title: '一人之下',
-        cover: 'https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2884105269.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20231228-1/602ae8b14220c44b739334b72840d3c6.jpg',
         rate: '9.1',
         year: '2022',
         types: ['动画', '动作', '都市', '异能'],
@@ -118,7 +118,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_linglong',
         title: '灵笼',
-        cover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2562423714.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20230729-1/b43c911f6fa0b6aa647dc75c46476f66.jpg',
         rate: '8.3',
         year: '2019',
         types: ['动画', '科幻', '悬疑', '动作'],
@@ -127,7 +127,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_wushanwuxing',
         title: '雾山五行',
-        cover: 'https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2614949219.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20230113-1/6c78bf3c7a8b322a24cd6c9782bf17e3.jpg',
         rate: '8.8',
         year: '2020',
         types: ['动画', '动作', '武侠', '国风'],
@@ -136,7 +136,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_mushenji',
         title: '牧神记',
-        cover: 'https://img2.doubanio.com/view/photo/s_ratio_poster/public/p2912497672.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20250727-1/f4d8559f7eceb4fbd481823f90b42ff5.jpg',
         rate: '8.5',
         year: '2024',
         types: ['动画', '玄幻', '奇幻', '热血'],
@@ -145,7 +145,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_shixionga',
         title: '师兄啊师兄',
-        cover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2886737525.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20260326-1/7eaf9a01b05cbc1de8603fc1eaca10de.jpg',
         rate: '8.3',
         year: '2023',
         types: ['动画', '喜剧', '仙侠', '轻松'],
@@ -154,7 +154,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_quanzhigaoshou',
         title: '全职高手',
-        cover: 'https://img2.doubanio.com/view/photo/s_ratio_poster/public/p2455986872.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20220518-1/dcebc29d5d3bd8ee71a8d7e598a51925.jpg',
         rate: '8.3',
         year: '2017',
         types: ['动画', '电竞', '热血', '动作'],
@@ -163,7 +163,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_yinianyongheng',
         title: '一念永恒',
-        cover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2616942006.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20220404-1/06bc52a6c7edb1fdb56478ad69a37184.jpg',
         rate: '7.9',
         year: '2020',
         types: ['动画', '喜剧', '玄幻', '仙侠'],
@@ -172,7 +172,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_shenyinzhuotai',
         title: '神印王座',
-        cover: 'https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2871783457.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20220609-1/c4becd10cb0f98e58425efce909219b3.jpg',
         rate: '7.8',
         year: '2022',
         types: ['动画', '奇幻', '动作', '热血'],
@@ -181,7 +181,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_dalisirizhi',
         title: '大理寺日志',
-        cover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2595204484.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20230515-1/ff3cb662c4c215cb3f85d81980c3934c.jpg',
         rate: '8.5',
         year: '2020',
         types: ['动画', '悬疑', '历史', '古风'],
@@ -190,7 +190,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_shaoniangexing',
         title: '少年歌行',
-        cover: 'https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2543477169.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20220401-1/af19d8d9985391eedb86f546eff0ce87.jpg',
         rate: '8.6',
         year: '2018',
         types: ['动画', '武侠', '古风', '动作'],
@@ -199,7 +199,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_zhongguoqitan',
         title: '中国奇谭',
-        cover: 'https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2885065477.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20230101-1/40a7f86e7df9f7ef57a26852d7fb147d.jpg',
         rate: '8.7',
         year: '2023',
         types: ['动画', '短片', '奇幻', '传统文化'],
@@ -208,7 +208,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_biaoren',
         title: '镖人',
-        cover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2892694155.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20230602-1/fca9ba66e3adaced83c7c9b6a9013941.jpg',
         rate: '8.4',
         year: '2023',
         types: ['动画', '动作', '武侠', '历史'],
@@ -217,7 +217,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_zhenhunjie',
         title: '镇魂街',
-        cover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2343940176.webp',
+        cover: 'https://img.liangzipic.com/upload/vod/20250131-1/49e0b32db476e8c87dd5b27a4380fc20.jpg',
         rate: '8.6',
         year: '2016',
         types: ['动画', '热血', '动作', '奇幻'],
@@ -226,7 +226,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_luoxiaohei',
         title: '罗小黑战记',
-        cover: 'https://img2.doubanio.com/view/photo/s_ratio_poster/public/p2565985012.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20220331-1/e000c6b45892a1dfd2a734d46cdda031.jpg',
         rate: '9.5',
         year: '2019',
         types: ['动画', '治愈', '动作', '奇幻'],
@@ -235,7 +235,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_wuliuqi',
         title: '伍六七之暗影宿命',
-        cover: 'https://img2.doubanio.com/view/photo/s_ratio_poster/public/p2886475852.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20230118-1/688747d26a42bb27aaac87f7ab6ab8c9.jpg',
         rate: '9.0',
         year: '2023',
         types: ['动画', '喜剧', '动作', '热血'],
@@ -244,7 +244,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_huyao',
         title: '狐妖小红娘',
-        cover: 'https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2257211029.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20220731-1/b8a714b3bdd34e1268c29a71d2c3d79d.jpg',
         rate: '8.9',
         year: '2015',
         types: ['动画', '爱情', '奇幻', '喜剧'],
@@ -253,7 +253,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_modao',
         title: '魔道祖师',
-        cover: 'https://img2.doubanio.com/view/photo/s_ratio_poster/public/p2527783932.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20220401-1/1b82fa954ea797ff871dd1769899f8dd.jpg',
         rate: '8.9',
         year: '2018',
         types: ['动画', '古风', '奇幻', '武侠'],
@@ -262,7 +262,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_tianguan',
         title: '天官赐福',
-        cover: 'https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2623306899.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20230317-1/ff2cdf055dea519cb63488dd3273cf95.jpg',
         rate: '8.2',
         year: '2020',
         types: ['动画', '古风', '奇幻', '唯美'],
@@ -271,7 +271,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_zhuxian',
         title: '诛仙',
-        cover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2877140815.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20250612-1/bdc1be5f04d709855053b0e045dbb3e0.jpg',
         rate: '7.9',
         year: '2022',
         types: ['动画', '仙侠', '动作', '玄幻'],
@@ -280,7 +280,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_bailianchengshen',
         title: '百炼成神',
-        cover: 'https://img2.doubanio.com/view/photo/s_ratio_poster/public/p2883015941.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20221104-1/703c86344a60f2f93d0f23e85d61e7c9.jpg',
         rate: '7.7',
         year: '2022',
         types: ['动画', '玄幻', '动作', '冒险'],
@@ -289,7 +289,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_juansiliang',
         title: '眷思量',
-        cover: 'https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2655455987.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20220401-1/6e9cb0bb254b96813ff71781f75a4e05.jpg',
         rate: '8.0',
         year: '2021',
         types: ['动画', '古风', '玄幻', '极致建模'],
@@ -298,7 +298,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_xingchenbian',
         title: '星辰变',
-        cover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2536098085.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20220322-1/31d139b9fa6fc49a76e0e78d5626290b.jpg',
         rate: '8.0',
         year: '2018',
         types: ['动画', '动作', '奇幻', '修仙'],
@@ -307,7 +307,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_yongsheng',
         title: '永生',
-        cover: 'https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2867087798.webp',
+        cover: 'https://img.lzipic.com/upload/vod/20220321-1/f3421c2f23c37399aeb64a305a683e37.jpg',
         rate: '7.8',
         year: '2022',
         types: ['动画', '玄幻', '动作', '热血'],

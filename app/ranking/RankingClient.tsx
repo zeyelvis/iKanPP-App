@@ -31,7 +31,7 @@ const RANK_CATEGORIES = [
 ];
 
 // ── SWR 排行榜本地瞬间缓存 ──────────────────────────
-const RANK_CACHE_KEY = 'kvideo-rank-cache-v3-';
+const RANK_CACHE_KEY = 'kvideo-rank-cache-v4-';
 
 function getLocalRank(id: string): RankingItem[] | null {
   if (typeof window === 'undefined') return null;
@@ -161,9 +161,10 @@ export default function RankingClient() {
             items.map((item, idx) => {
               const rank = idx + 1;
               const isTop3 = rank <= 3;
-              const proxiedCover = item.cover?.startsWith('http')
-                ? `/api/img-proxy?url=${encodeURIComponent(item.cover)}`
-                : item.cover;
+              const rawCover = item.cover || '';
+              const proxiedCover = rawCover.startsWith('http') && rawCover.includes('doubanio')
+                ? `/api/img-proxy?url=${encodeURIComponent(rawCover)}`
+                : rawCover;
 
               return (
                 <div
@@ -195,7 +196,7 @@ export default function RankingClient() {
                   {/* 海报封面 */}
                   <div
                     onClick={() => handleMovieClick(item)}
-                    className="relative shrink-0 w-14 sm:w-20 aspect-2/3 rounded-xl sm:rounded-2xl overflow-hidden bg-white/5 cursor-pointer shadow-md group-hover:scale-105 transition-transform"
+                    className="relative shrink-0 w-14 sm:w-20 h-20 sm:h-28 rounded-xl sm:rounded-2xl overflow-hidden bg-white/10 cursor-pointer shadow-md group-hover:scale-105 transition-transform"
                   >
                     <Image
                       src={proxiedCover || '/placeholder-poster.svg'}
@@ -204,6 +205,10 @@ export default function RankingClient() {
                       className="object-cover"
                       sizes="80px"
                       unoptimized
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/placeholder-poster.svg';
+                      }}
                     />
                   </div>
 

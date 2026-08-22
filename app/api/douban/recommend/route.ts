@@ -84,7 +84,9 @@ export async function GET(request: Request) {
 
     const paged = list.slice(pageStart, pageStart + pageLimit).map(item => ({
       ...item,
-      cover: item.cover ? `/api/douban/image?url=${encodeURIComponent(item.cover)}` : item.cover,
+      cover: item.cover?.includes('doubanio.com')
+        ? `/api/douban/image?url=${encodeURIComponent(item.cover)}`
+        : item.cover,
       playable: true,
       is_new: item.year === '2024' || item.year === '2025' || item.year === '2026',
     }));
