@@ -236,13 +236,21 @@ export function IPTVPlayer({ channel, onClose, channels, onChannelChange, channe
         clearTimeout(loadingTimeoutRef.current);
         loadingTimeoutRef.current = undefined;
       }
+
+      // 如果还有备用线路，自动平滑切换至下一条线路
+      if (currentRouteIndex < routes.length - 1) {
+        console.log(`[IPTV] 线路 ${currentRouteIndex + 1} 不可用，自动切换至线路 ${currentRouteIndex + 2}...`);
+        setCurrentRouteIndex(prev => prev + 1);
+        return;
+      }
+
       setIsLoading(false);
       setError(msg);
     };
 
     loadingTimeoutRef.current = setTimeout(() => {
       markError('加载超时，请尝试其他线路或频道');
-    }, LOADING_TIMEOUT_MS);
+    }, 15000); // 15 秒超时自动触发切线或报错
 
     if (Hls.isSupported()) {
       const hls = new Hls(HLS_LIVE_CONFIG);

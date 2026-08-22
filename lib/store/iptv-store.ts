@@ -53,29 +53,31 @@ async function fetchWithConcurrencyLimit<T>(
   return results;
 }
 
+const DEFAULT_IPTV_SOURCES: IPTVSource[] = [
+  {
+    id: 'default-guovin-cctv-ws',
+    name: '🔥 国内央视卫视精选 (每日自动维护)',
+    url: 'https://raw.githubusercontent.com/Guovin/iptv-api/gd/output/result.m3u',
+    addedAt: 0,
+  },
+  {
+    id: 'default-vbskycn-iptv4',
+    name: '📡 全球中文与港澳台精选',
+    url: 'https://raw.githubusercontent.com/vbskycn/iptv/master/tv/iptv4.m3u',
+    addedAt: 0,
+  },
+  {
+    id: 'default-iptv-org-zho',
+    name: '🌐 全球电视台精选 (IPTV-ORG)',
+    url: 'https://iptv-org.github.io/iptv/languages/zho.m3u',
+    addedAt: 0,
+  },
+];
+
 export const useIPTVStore = create<IPTVStore>()(
   persist(
     (set, get) => ({
-      sources: [
-        {
-          id: 'default-iptv-org-zho',
-          name: '全球中文电视台 (IPTV-ORG)',
-          url: 'https://iptv-org.github.io/iptv/languages/zho.m3u',
-          addedAt: 0,
-        },
-        {
-          id: 'default-iptv-org-hk',
-          name: '香港电视台精选 (IPTV-ORG)',
-          url: 'https://iptv-org.github.io/iptv/countries/hk.m3u',
-          addedAt: 0,
-        },
-        {
-          id: 'default-iptv-org-tw',
-          name: '台湾电视台精选 (IPTV-ORG)',
-          url: 'https://iptv-org.github.io/iptv/countries/tw.m3u',
-          addedAt: 0,
-        },
-      ],
+      sources: DEFAULT_IPTV_SOURCES,
       cachedChannels: [],
       cachedGroups: [],
       cachedChannelsBySource: {},
@@ -142,29 +144,26 @@ export const useIPTVStore = create<IPTVStore>()(
 
           await fetchWithConcurrencyLimit(tasks, MAX_CONCURRENT);
 
-          // Group channels with the same name into multi-route entries
-          const grouped = groupChannelsByName(allChannels);
+          // Group channels by normalized name across all sources
+          const mergedChannels = groupChannelsByName(allChannels);
 
-          // Build per-source grouped data
-          const cachedChannelsBySource: Record<string, { channels: M3UChannel[]; groups: string[] }> = {};
-          for (const source of sources) {
-            const raw = channelsBySourceRaw[source.id];
-            if (raw) {
-              cachedChannelsBySource[source.id] = {
-                channels: groupChannelsByName(raw),
-                groups: Array.from(groupsBySource[source.id] || []).sort(),
-              };
-            }
+          // Also group per-source channels
+          const channelsBySource: Record<string, { channels: M3UChannel[]; groups: string[] }> = {};
+          for (const [srcId, chList] of Object.entries(channelsBySourceRaw)) {
+            const merged = groupChannelsByName(chList);
+            const grps = Array.from(groupsBySource[srcId] || []);
+            channelsBySource[srcId] = { channels: merged, groups: grps };
           }
 
           set({
-            cachedChannels: grouped,
-            cachedGroups: Array.from(allGroups).sort(),
-            cachedChannelsBySource,
+            cachedChannels: mergedChannels,
+            cachedGroups: Array.from(allGroups),
+            cachedChannelsBySource: channelsBySource,
             lastRefreshed: Date.now(),
             isLoading: false,
           });
-        } catch {
+        } catch (e) {
+          console.error('Failed to refresh IPTV sources', e);
           set({ isLoading: false });
         }
       },
@@ -173,32 +172,11 @@ export const useIPTVStore = create<IPTVStore>()(
     }),
     {
       name: 'kvideo-iptv-store',
-      version: 12,
+      version: 13,
       migrate: (persistedState: any, version: number) => {
-        const defaultSources = [
-          {
-            id: 'default-iptv-org-zho',
-            name: '全球中文电视台 (IPTV-ORG)',
-            url: 'https://iptv-org.github.io/iptv/languages/zho.m3u',
-            addedAt: 0,
-          },
-          {
-            id: 'default-iptv-org-hk',
-            name: '香港电视台精选 (IPTV-ORG)',
-            url: 'https://iptv-org.github.io/iptv/countries/hk.m3u',
-            addedAt: 0,
-          },
-          {
-            id: 'default-iptv-org-tw',
-            name: '台湾电视台精选 (IPTV-ORG)',
-            url: 'https://iptv-org.github.io/iptv/countries/tw.m3u',
-            addedAt: 0,
-          },
-        ];
-
         let sources = persistedState.sources || [];
         sources = sources.filter((s: any) => !s.id?.startsWith('default-'));
-        persistedState.sources = [...defaultSources, ...sources];
+        persistedState.sources = [...DEFAULT_IPTV_SOURCES, ...sources];
         persistedState.cachedChannels = [];
         persistedState.cachedGroups = [];
         persistedState.cachedChannelsBySource = {};
