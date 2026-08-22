@@ -17,6 +17,8 @@ import { ShareButton } from '@/components/player/ShareButton';
 import { Navbar } from '@/components/layout/Navbar';
 import { settingsStore } from '@/lib/store/settings-store';
 import { premiumModeSettingsStore } from '@/lib/store/premium-mode-settings';
+import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
+import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { getSourceName } from '@/lib/utils/source-names';
 import { RelatedKeywords } from '@/components/search/RelatedKeywords';
@@ -58,31 +60,30 @@ function PlayerContent() {
 
     const settings = settingsStore.getSettings();
     const sourcesForMode = isPremium ? settings.premiumSources : settings.sources;
-    const allSources = sourcesForMode?.filter((s: VideoSource) => s.enabled !== false) || [];
-
+    let allSources = sourcesForMode?.filter((s: VideoSource) => s.enabled !== false) || [];
     if (allSources.length === 0) {
-      setTitleSearchError('没有可用的视频源');
-      setTitleSearching(false);
-      return;
+      allSources = isPremium ? (PREMIUM_SOURCES as VideoSource[]) : (DEFAULT_SOURCES as VideoSource[]);
     }
 
-    const normalizedTitle = title.toLowerCase().trim();
+    // 清洗片名（去除书名号、括号说明、第X季等干扰词）
+    const cleanTitle = title.replace(/[《》【】\[\]（）()]/g, ' ').replace(/\s+/g, ' ').trim();
+    const normalizedTitle = cleanTitle.toLowerCase();
     let redirected = false;
-
+    let anyFound = false;
 
     (async () => {
       try {
         const response = await fetch('/api/search-parallel', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: title, sources: allSources, page: 1 }),
+          body: JSON.stringify({ query: cleanTitle, sources: allSources, page: 1 }),
         });
 
         if (cancelled) return;
 
         if (!response.ok || !response.body) {
-          if (!cancelled) {
-            setTitleSearchError('搜索失败，请返回重试');
+          if (!cancelled && !redirected) {
+            setTitleSearchError('全网搜索暂时繁忙，请点击下方重试');
             setTitleSearching(false);
           }
           return;
@@ -104,35 +105,36 @@ function PlayerContent() {
             if (!line.startsWith('data: ')) continue;
             try {
               const data = JSON.parse(line.slice(6));
-              if (data.type === 'videos' && data.videos && data.videos.length > 0) {
-                // 0. 过滤掉解说类视频
+              if (data.type === 'videos' && Array.isArray(data.videos) && data.videos.length > 0) {
+                // 0. 过滤掉解说类或短视频
                 const isCommentary = (v: any) => {
                   const name = (v.vod_name || '').toLowerCase();
                   const typeName = (v.type_name || '').toLowerCase();
-                  return name.includes('解说') || typeName.includes('解说');
+                  return name.includes('解说') || typeName.includes('解说') || name.includes('预告');
                 };
-                const noCommentary = data.videos.filter((v: any) => !isCommentary(v));
-                const videoPool = noCommentary.length > 0 ? noCommentary : data.videos;
+                const validVideos = data.videos.filter((v: any) => !isCommentary(v));
+                const videoPool = validVideos.length > 0 ? validVideos : data.videos;
 
-                // 1. 精确匹配同名结果
-                const exactMatches = videoPool.filter((v: any) =>
-                  v.vod_name?.toLowerCase().trim() === normalizedTitle
-                );
-                // 2. 部分匹配
+                // 1. 精确匹配
+                const exactMatches = videoPool.filter((v: any) => {
+                  const vName = (v.vod_name || '').toLowerCase().trim();
+                  return vName === normalizedTitle || vName === title.toLowerCase().trim();
+                });
+
+                // 2. 核心词双向包含匹配
                 const partialMatches = exactMatches.length === 0
-                  ? videoPool.filter((v: any) =>
-                    v.vod_name?.toLowerCase().trim().includes(normalizedTitle) ||
-                    normalizedTitle.includes(v.vod_name?.toLowerCase().trim())
-                  )
+                  ? videoPool.filter((v: any) => {
+                    const vName = (v.vod_name || '').toLowerCase().trim();
+                    return vName.includes(normalizedTitle) || normalizedTitle.includes(vName);
+                  })
                   : [];
 
-                // 3. 选择最佳匹配
-                let candidates = exactMatches.length > 0 ? exactMatches : partialMatches;
-                if (candidates.length === 0) candidates = [videoPool[0]];
-
+                // 3. 最佳匹配候选
+                const candidates = exactMatches.length > 0 ? exactMatches : (partialMatches.length > 0 ? partialMatches : videoPool);
                 const match = candidates[0];
 
                 if (match && !cancelled) {
+                  anyFound = true;
                   foundSources.push({
                     id: match.vod_id,
                     source: match.source,
@@ -142,14 +144,14 @@ function PlayerContent() {
                     typeName: match.type_name,
                   });
 
-                  // Redirect to the first match immediately for fast playback
+                  // 只要搜到第一个可用匹配，立即执行快速播放跳转
                   if (!redirected) {
                     redirected = true;
                     const params = new URLSearchParams();
                     params.set('id', String(match.vod_id));
                     params.set('source', match.source);
                     params.set('title', title);
-                    if (expectedType) params.set('type', expectedType); // 保留类型参数
+                    if (expectedType) params.set('type', expectedType);
                     if (isPremium) params.set('premium', '1');
                     if (foundSources.length > 0) {
                       params.set('groupedSources', JSON.stringify(foundSources));
@@ -162,14 +164,14 @@ function PlayerContent() {
           }
         }
 
-        // After all sources responded
-        if (!redirected && !cancelled) {
-          setTitleSearchError('未找到匹配的视频，请尝试搜索其他关键词');
+        // 流结束后的兜底检查
+        if (!redirected && !anyFound && !cancelled) {
+          setTitleSearchError('全网 108 条数据源未检索到该片，请检查片名或在首页重新搜索');
           setTitleSearching(false);
         }
       } catch (err: any) {
-        if (!cancelled && err?.name !== 'AbortError') {
-          setTitleSearchError('搜索出错，请返回重试');
+        if (!cancelled && !redirected && err?.name !== 'AbortError') {
+          setTitleSearchError('网络请求异常，请点击重试');
           setTitleSearching(false);
         }
       }
