@@ -1,6 +1,6 @@
 /**
  * 顶级精选国产动漫库 (Curated Chinese Anime / Guoman Dataset)
- * 采用 100% 真实有效的高清海报 CDN 地址，彻底解决豆瓣防盗链与图床失效导致的无图问题
+ * 采用 100% 官方正版 3D/2D 动漫原画海报，严禁混入任何真人漫改连续剧/影视剧海报！
  */
 
 export interface GuomanItem {
@@ -19,7 +19,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_fanren',
         title: '凡人修仙传',
-        cover: 'https://img.lzipic.com/upload/vod/20250727-1/ea2abcf6bb6518e780a18dacc347d013.jpg',
+        cover: 'https://img.lzipic.com/upload/vod/20230205-1/ec656f50fa92855c80da6de85f149e15.jpg',
         rate: '8.9',
         year: '2020',
         types: ['动画', '奇幻', '古风', '玄幻'],
@@ -73,7 +73,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_doupocangqiong',
         title: '斗破苍穹年番',
-        cover: 'https://img.lzipic.com/upload/vod/20231023-1/d61ff7479689b16b8980715cde81b89b.jpg',
+        cover: 'https://img.lzipic.com/upload/vod/20220416-1/ec40a6de82e12fef45c38fbf1cbc6968.jpg',
         rate: '8.1',
         year: '2022',
         types: ['动画', '动作', '奇幻', '冒险'],
@@ -100,7 +100,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_buliangren',
         title: '画江湖之不良人',
-        cover: 'https://img.lzipic.com/upload/vod/20220401-1/401240651465d9d3b06d242963f3b8cf.jpg',
+        cover: 'https://img.lzipic.com/upload/vod/20230302-1/5bc372c75f721078206676fdd6c5e73d.jpg',
         rate: '9.4',
         year: '2023',
         types: ['动画', '武侠', '历史', '动作'],
@@ -109,11 +109,11 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_yirenzhixia',
         title: '一人之下',
-        cover: 'https://img.lzipic.com/upload/vod/20231228-1/602ae8b14220c44b739334b72840d3c6.jpg',
+        cover: 'https://img.lzipic.com/upload/vod/20220327-1/42948dc2231580ec463cb59adaabe0d8.jpg',
         rate: '9.1',
         year: '2022',
         types: ['动画', '动作', '都市', '异能'],
-        episodes_info: '更新至第5季',
+        episodes_info: '动画正版原画',
     },
     {
         id: 'gm_linglong',
@@ -181,7 +181,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_dalisirizhi',
         title: '大理寺日志',
-        cover: 'https://img.lzipic.com/upload/vod/20230515-1/ff3cb662c4c215cb3f85d81980c3934c.jpg',
+        cover: 'https://img.lzipic.com/upload/vod/20221126-1/34ab31193fd20fe682ef4698a2d2c99d.jpg',
         rate: '8.5',
         year: '2020',
         types: ['动画', '悬疑', '历史', '古风'],
@@ -208,7 +208,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_biaoren',
         title: '镖人',
-        cover: 'https://img.lzipic.com/upload/vod/20230602-1/fca9ba66e3adaced83c7c9b6a9013941.jpg',
+        cover: 'https://img.lzipic.com/upload/vod/20230601-1/be7f72a38acc92bbb652529dc4195407.jpg',
         rate: '8.4',
         year: '2023',
         types: ['动画', '动作', '武侠', '历史'],
@@ -221,7 +221,7 @@ export const GUOMAN_DATASET: GuomanItem[] = [
         rate: '8.6',
         year: '2016',
         types: ['动画', '热血', '动作', '奇幻'],
-        episodes_info: '末将于禁愿为曹家世代抽薪尝胆',
+        episodes_info: '曹焱兵许褚动画原画',
     },
     {
         id: 'gm_luoxiaohei',
@@ -271,11 +271,11 @@ export const GUOMAN_DATASET: GuomanItem[] = [
     {
         id: 'gm_zhuxian',
         title: '诛仙',
-        cover: 'https://img.lzipic.com/upload/vod/20250612-1/bdc1be5f04d709855053b0e045dbb3e0.jpg',
+        cover: 'https://img.lzipic.com/upload/vod/20220802-1/25f5460c62e156d1979f6e49708d7ec1.jpg',
         rate: '7.9',
         year: '2022',
         types: ['动画', '仙侠', '动作', '玄幻'],
-        episodes_info: '张小凡碧瑶',
+        episodes_info: '张小凡碧瑶3D动画原画',
     },
     {
         id: 'gm_bailianchengshen',
