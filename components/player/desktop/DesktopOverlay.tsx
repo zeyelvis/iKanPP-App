@@ -174,15 +174,18 @@ export function DesktopOverlay({
                 </button>
             </div>
 
-            {/* Center Play Button (when paused) */}
-            {!isPlaying && !isLoading && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            {/* Center Play Button (when paused: 无论移动端还是桌面端，暂停时均呈现高对比度毛玻璃大播放钮) */}
+            {!isPlaying && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
                     <button
-                        onClick={onTogglePlay}
-                        className="pointer-events-auto w-12 h-12 md:w-20 md:h-20 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onTogglePlay();
+                        }}
+                        className="pointer-events-auto w-16 h-16 md:w-22 md:h-22 rounded-full bg-black/60 hover:bg-(--accent-color) backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-90 cursor-pointer shadow-2xl border border-white/20"
                         aria-label="播放"
                     >
-                        <Icons.Play className="w-6 h-6 md:w-10 md:h-10 text-white ml-1" />
+                        <Icons.Play className="w-8 h-8 md:w-11 md:h-11 text-white ml-1.5 drop-shadow-md" />
                     </button>
                 </div>
             )}

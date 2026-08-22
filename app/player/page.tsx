@@ -21,6 +21,7 @@ import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { getSourceName } from '@/lib/utils/source-names';
 import { RelatedKeywords } from '@/components/search/RelatedKeywords';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
+import { normalizeVideoType } from '@/lib/utils/taxonomy';
 
 function PlayerContent() {
   const searchParams = useSearchParams();
@@ -523,7 +524,7 @@ function PlayerContent() {
         ) : (
           <div className="grid lg:grid-cols-3 gap-6">
             {/* Video Player Section */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-4 sm:space-y-6">
               <VideoPlayer
                 playUrl={playUrl}
                 videoId={videoId || undefined}
@@ -538,6 +539,66 @@ function PlayerContent() {
                 externalTimeRef={playerTimeRef}
                 nextEpisodeUrl={nextEpisodeUrl}
               />
+
+              {/* 移动端专属：位于播放器正下方的片名、类型徽章与快捷操作栏 */}
+              <div className="lg:hidden bg-[#0A0A0F]/80 backdrop-blur-2xl rounded-2xl border border-white/10 p-4 space-y-3 shadow-xl">
+                <div className="flex items-center gap-2 flex-wrap text-xs">
+                  {videoData?.type_name && (
+                    <span className="px-2.5 py-0.5 rounded-full font-bold bg-(--accent-color) text-white shadow-sm">
+                      {normalizeVideoType(videoData.type_name, videoData.vod_name || title || '').standardType}
+                    </span>
+                  )}
+                  {videoData?.vod_year && (
+                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-white/80">
+                      {videoData.vod_year}
+                    </span>
+                  )}
+                  {videoData?.vod_area && (
+                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-white/80">
+                      {videoData.vod_area}
+                    </span>
+                  )}
+                  {videoData?.vod_remarks && (
+                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-white/80">
+                      {videoData.vod_remarks}
+                    </span>
+                  )}
+                </div>
+
+                <div className="space-y-1">
+                  <h1 className="text-lg sm:text-xl font-black text-white leading-snug">
+                    {videoData?.vod_name || title}
+                  </h1>
+                  {videoData?.episodes?.[currentEpisode]?.name && (
+                    <p className="text-xs text-(--accent-color) font-bold flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-(--accent-color) animate-pulse" />
+                      当前正在播放：{videoData.episodes[currentEpisode].name}
+                    </p>
+                  )}
+                </div>
+
+                {/* 移动端快捷操作栏 */}
+                <div className="flex items-center justify-between pt-2.5 border-t border-white/10 text-xs">
+                  {videoData && videoId && (
+                    <div className="flex items-center gap-2">
+                      <FavoriteButton
+                        videoId={videoId}
+                        source={source || ''}
+                        title={videoData.vod_name || title || '未知视频'}
+                        poster={videoData.vod_pic}
+                        type={videoData.type_name}
+                        year={videoData.vod_year}
+                        size={18}
+                        isPremium={isPremium}
+                      />
+                      <span className="text-white/60">收藏</span>
+                    </div>
+                  )}
+                  <ShareButton title={videoData?.vod_name || title || ''} size={18} />
+                </div>
+              </div>
+
+              {/* 桌面端完整详情 */}
               <div className="hidden lg:block">
                 <VideoMetadata
                   videoData={videoData}
@@ -546,9 +607,9 @@ function PlayerContent() {
                 />
               </div>
 
-              {/* Favorite Button for current video */}
+              {/* 桌面端收藏与分享按钮 */}
               {videoData && videoId && (
-                <div className="flex items-center gap-3 mt-4">
+                <div className="hidden lg:flex items-center gap-3 mt-4">
                   <FavoriteButton
                     videoId={videoId}
                     source={source || ''}
@@ -581,16 +642,16 @@ function PlayerContent() {
 
             {/* Sidebar with sticky wrapper */}
             <div className="lg:col-span-1">
-              <div className="lg:sticky lg:top-32 space-y-6">
+              <div className="lg:sticky lg:top-28 space-y-4 sm:space-y-6">
                 {/* Mobile Tabs */}
                 <SegmentedControl
                   options={[
-                    { label: '选集', value: 'episodes' },
-                    { label: '简介', value: 'info' },
+                    { label: `选集 (${videoData?.episodes?.length || 1})`, value: 'episodes' },
+                    { label: '剧情简介', value: 'info' },
                   ]}
                   value={activeTab}
                   onChange={setActiveTab}
-                  className="lg:hidden mb-4"
+                  className="lg:hidden"
                 />
 
                 {/* Info Tab Content - Mobile Only */}

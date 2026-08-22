@@ -95,9 +95,11 @@ export function usePlaybackControls({
         videoRef.current.volume = isMuted ? 0 : volume;
 
         videoRef.current.play().catch((err: Error) => {
-            console.warn('Autoplay was prevented:', err);
+            console.warn('Autoplay was prevented (normal on mobile):', err);
+            setIsLoading(false);
+            setIsPlaying(false);
         });
-    }, [videoRef, setDuration, setIsLoading, initialTime, playbackRate, volume, isMuted]);
+    }, [videoRef, setDuration, setIsLoading, setIsPlaying, initialTime, playbackRate, volume, isMuted]);
 
     // Handle late initialization of initialTime (e.g. from async storage hydration)
     useEffect(() => {
