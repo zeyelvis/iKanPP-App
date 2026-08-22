@@ -5,6 +5,7 @@ import { useParallelSearch } from '@/lib/hooks/useParallelSearch';
 import { useSubscriptionSync } from '@/lib/hooks/useSubscriptionSync';
 import { settingsStore, type SortOption } from '@/lib/store/settings-store';
 import { userSourcesStore } from '@/lib/store/user-sources-store';
+import { resolvePinyinAlias } from '@/lib/utils/pinyin-search';
 
 export function useHomePage() {
     useSubscriptionSync();
@@ -46,6 +47,9 @@ export function useHomePage() {
     const executeSearch = useCallback((searchQuery: string) => {
         if (!searchQuery.trim()) return false;
 
+        // 智能拼音别名自动解析（如 frxxz ➔ 凡人修仙传）
+        const resolvedQuery = resolvePinyinAlias(searchQuery);
+
         const settings = settingsStore.getSettings();
         const enabledSources = settings.sources.filter(s => s.enabled);
 
@@ -62,7 +66,7 @@ export function useHomePage() {
             return false;
         }
 
-        performSearch(searchQuery, allSources, settings.sortBy);
+        performSearch(resolvedQuery, allSources, settings.sortBy);
         hasSearchedWithSourcesRef.current = true;
         return true;
     }, [performSearch]);
