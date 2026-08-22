@@ -197,37 +197,48 @@ export function useFullscreenControls({
     }, [exitNativeFullscreen, fullscreenMode, lockLandscape, setFullscreenMode, setIsFullscreen]);
 
     const enterNativeFullscreen = useCallback(async () => {
-        const targetElement = (containerRef.current || videoRef.current || (typeof document !== 'undefined' ? document.documentElement : null)) as FullscreenCapableElement | null;
+        const container = containerRef.current as FullscreenCapableElement | null;
         const video = videoRef.current as PiPCapableVideoElement | null;
+        const docEl = (typeof document !== 'undefined' ? document.documentElement : null) as FullscreenCapableElement | null;
 
-        if (!targetElement) return;
+        // 优先使用播放器容器，若失败则使用整页顶层节点
+        const targets: (FullscreenCapableElement | PiPCapableVideoElement | null)[] = [container, docEl, video];
 
-        try {
-            if (targetElement.requestFullscreen) {
-                await targetElement.requestFullscreen();
-            } else if (targetElement.webkitRequestFullscreen) {
-                await targetElement.webkitRequestFullscreen();
-            } else if (targetElement.mozRequestFullScreen) {
-                await targetElement.mozRequestFullScreen();
-            } else if (targetElement.msRequestFullscreen) {
-                await targetElement.msRequestFullscreen();
-            } else if (video?.webkitEnterFullscreen) {
-                video.webkitEnterFullscreen();
-            }
-
-            setFullscreenMode('native');
-            setIsFullscreen(true);
-            await lockLandscape();
-        } catch (error) {
-            console.warn('Native fullscreen request failed on container, trying video fallback:', error);
-            if (video?.webkitEnterFullscreen) {
-                try {
+        for (const target of targets) {
+            if (!target) continue;
+            try {
+                if (target.requestFullscreen) {
+                    await target.requestFullscreen();
+                    setFullscreenMode('native');
+                    setIsFullscreen(true);
+                    await lockLandscape();
+                    return;
+                } else if ('webkitRequestFullscreen' in target && (target as any).webkitRequestFullscreen) {
+                    await (target as any).webkitRequestFullscreen();
+                    setFullscreenMode('native');
+                    setIsFullscreen(true);
+                    await lockLandscape();
+                    return;
+                } else if ('mozRequestFullScreen' in target && (target as any).mozRequestFullScreen) {
+                    await (target as any).mozRequestFullScreen();
+                    setFullscreenMode('native');
+                    setIsFullscreen(true);
+                    await lockLandscape();
+                    return;
+                } else if ('msRequestFullscreen' in target && (target as any).msRequestFullscreen) {
+                    await (target as any).msRequestFullscreen();
+                    setFullscreenMode('native');
+                    setIsFullscreen(true);
+                    await lockLandscape();
+                    return;
+                } else if (target === video && video?.webkitEnterFullscreen) {
                     video.webkitEnterFullscreen();
                     setFullscreenMode('native');
                     setIsFullscreen(true);
-                } catch (fallbackError) {
-                    console.error('Final fullscreen fallback failed:', fallbackError);
+                    return;
                 }
+            } catch (err) {
+                console.warn('Attempt to enter native fullscreen failed on target, trying next:', err);
             }
         }
     }, [
