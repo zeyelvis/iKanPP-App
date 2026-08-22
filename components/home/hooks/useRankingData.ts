@@ -25,7 +25,7 @@ interface UseRankingDataOptions {
 }
 
 // ── localStorage 缓存 ──────────────────────────
-const CACHE_PREFIX = 'kvideo-ranking-v8-';
+const CACHE_PREFIX = 'kvideo-ranking-v9-';
 const CACHE_TTL_MS = 30 * 60 * 1000; // 30 分钟
 
 interface CacheEntry { data: RankingMovie[]; ts: number; }
