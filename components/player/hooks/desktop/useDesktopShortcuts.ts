@@ -8,6 +8,7 @@ interface UseDesktopShortcutsProps {
     togglePlay: () => void;
     toggleMute: () => void;
     toggleFullscreen: () => void;
+    toggleNativeFullscreen: () => void;
     toggleWindowFullscreen: () => void;
     togglePictureInPicture: () => void;
     skipForward: () => void;
@@ -27,6 +28,7 @@ export function useDesktopShortcuts({
     togglePlay,
     toggleMute,
     toggleFullscreen,
+    toggleNativeFullscreen,
     toggleWindowFullscreen,
     togglePictureInPicture,
     skipForward,
@@ -63,7 +65,7 @@ export function useDesktopShortcuts({
                     break;
                 case 'f':
                     e.preventDefault();
-                    toggleFullscreen();
+                    toggleNativeFullscreen();
                     break;
                 case 'w':
                     e.preventDefault();

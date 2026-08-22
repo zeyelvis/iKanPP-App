@@ -311,8 +311,13 @@ export function useFullscreenControls({
             return;
         }
 
+        // 如果当前处于网页窗口全屏，先退出网页全屏状态，再进入物理屏幕真全屏
+        if (fullscreenMode === 'window') {
+            exitWindowFullscreen();
+        }
+
         await enterNativeFullscreen();
-    }, [enterNativeFullscreen, exitNativeFullscreen, fullscreenMode]);
+    }, [enterNativeFullscreen, exitNativeFullscreen, exitWindowFullscreen, fullscreenMode]);
 
     const toggleFullscreen = useCallback(async () => {
         if (fullscreenMode === 'window') {

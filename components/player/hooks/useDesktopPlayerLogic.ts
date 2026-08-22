@@ -145,10 +145,14 @@ export function useDesktopPlayerLogic({
     });
 
     useDesktopShortcuts({
-        videoRef, isPlaying, volume, isPiPSupported,
+        videoRef,
+        isPlaying,
+        volume,
+        isPiPSupported,
         togglePlay: playbackControls.togglePlay,
         toggleMute: volumeControls.toggleMute,
         toggleFullscreen: fullscreenControls.toggleFullscreen,
+        toggleNativeFullscreen: fullscreenControls.toggleNativeFullscreen,
         toggleWindowFullscreen: fullscreenControls.toggleWindowFullscreen,
         togglePictureInPicture: fullscreenControls.togglePictureInPicture,
         skipForward: skipControls.skipForward,
