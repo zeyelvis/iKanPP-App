@@ -20,6 +20,7 @@ interface ContentRailProps {
   badge?: string;
   movies: RailMovie[];
   loading?: boolean;
+  isPriority?: boolean;
   onMovieClick: (movie: RailMovie) => void;
   onViewAll?: () => void;
 }
@@ -30,6 +31,7 @@ export function ContentRail({
   badge,
   movies,
   loading = false,
+  isPriority = false,
   onMovieClick,
   onViewAll,
 }: ContentRailProps) {
@@ -145,7 +147,8 @@ export function ContentRail({
                     fill
                     className="object-cover transition-transform duration-500 group-hover/card:scale-108"
                     sizes="(max-width: 640px) 118px, (max-width: 1024px) 160px, 184px"
-                    loading={idx < 6 ? 'eager' : 'lazy'}
+                    loading={isPriority && idx < 4 ? 'eager' : 'lazy'}
+                    decoding="async"
                     unoptimized
                   />
 

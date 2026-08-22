@@ -17,12 +17,14 @@ import { useUserStore } from '@/lib/store/user-store';
 import { VipPrompt } from '@/components/premium/VipPrompt';
 import { AuthModal } from '@/components/auth/AuthModal';
 
+import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+
 interface PopularFeaturesProps {
   onSearch?: (query: string) => void;
 }
 
 // ── SWR 本地瞬间缓存 ──────────────────────────
-const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v2-';
+const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v3-';
 
 function getLocalShelves(type: 'movie' | 'tv') {
   if (typeof window === 'undefined') return null;
@@ -55,13 +57,15 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   const { movieRanking, tvRanking, loading: rankingLoading } = useRankingData({ limit: 10 });
   const top10Data = contentType === 'movie' ? movieRanking : tvRanking;
 
-  // 主题货架分片数据获取（SWR: 优先从本地秒级展示）
+  // 主题货架分片数据获取（SWR: 优先使用本地缓存，新用户首次访问直接秒级呈现预烘焙高清精选数据，0ms 瞬间秒开）
   const initialCache = typeof window !== 'undefined' ? getLocalShelves(contentType) : null;
-  const [shelf1Movies, setShelf1Movies] = useState<any[]>(() => initialCache?.s1 || []);
-  const [shelf2Movies, setShelf2Movies] = useState<any[]>(() => initialCache?.s2 || []);
-  const [shelf3Movies, setShelf3Movies] = useState<any[]>(() => initialCache?.s3 || []);
-  const [shelf4Movies, setShelf4Movies] = useState<any[]>(() => initialCache?.s4 || []);
-  const [loadingShelves, setLoadingShelves] = useState<boolean>(() => !initialCache);
+  const prebaked = PREBAKED_HOME_DATA[contentType];
+
+  const [shelf1Movies, setShelf1Movies] = useState<any[]>(() => initialCache?.s1 || prebaked.s1);
+  const [shelf2Movies, setShelf2Movies] = useState<any[]>(() => initialCache?.s2 || prebaked.s2);
+  const [shelf3Movies, setShelf3Movies] = useState<any[]>(() => initialCache?.s3 || prebaked.s3);
+  const [shelf4Movies, setShelf4Movies] = useState<any[]>(() => initialCache?.s4 || prebaked.s4);
+  const [loadingShelves, setLoadingShelves] = useState<boolean>(false);
 
   // 根据 contentType 动态确定 4 个货架的标签
   const isMovie = contentType === 'movie';
@@ -200,6 +204,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         badge="NEW"
         movies={shelf1Movies}
         loading={loadingShelves}
+        isPriority={true}
         onMovieClick={handleMovieClick}
         onViewAll={() => router.push(isMovie ? '/movie?genre=最新' : '/tv?region=国产剧')}
       />

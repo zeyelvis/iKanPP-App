@@ -14,8 +14,10 @@ const VALID_TV_TAGS = new Set([
   '热门', '国产剧', '美剧', '英剧', '韩剧', '日剧', '港剧', '日本动画', '国产动画', '综艺', '纪录片'
 ]);
 
+import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+
 /**
- * 抓取豆瓣 API 结果
+ * 抓取豆瓣 API 结果（带 2500ms 快速超时熔断，防止海外边缘节点跨国请求卡死）
  */
 async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number, pageStart: number): Promise<any[]> {
   try {
@@ -26,7 +28,8 @@ async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number,
         'Referer': 'https://movie.douban.com/',
         'Accept': 'application/json, text/plain, */*',
       },
-      next: { revalidate: 1800 }, // 30 分钟缓存
+      signal: AbortSignal.timeout(2500), // 2.5s 严格超时熔断，坚决杜绝 10s 长时间卡死
+      next: { revalidate: 86400 }, // 24 小时强效边缘缓存
     });
 
     if (!response.ok) return [];
@@ -39,8 +42,11 @@ async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number,
     }
     return [];
   } catch (err) {
-    console.error(`Fetch douban tag ${tag} error:`, err);
-    return [];
+    console.warn(`[Douban-API] Timeout or error for tag "${tag}", triggering instant prebaked fallback:`, (err as any)?.message || err);
+    // 触发即时预置数据熔断兜底
+    const prebaked = type === 'tv' ? PREBAKED_HOME_DATA.tv : PREBAKED_HOME_DATA.movie;
+    const fallbackList = [...prebaked.s1, ...prebaked.s2, ...prebaked.s3, ...prebaked.s4];
+    return fallbackList.slice(0, pageLimit);
   }
 }
 
@@ -202,9 +208,9 @@ export async function GET(request: Request) {
       total: pool.length,
     }, {
       headers: {
-        'Cache-Control': 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400',
-        'CDN-Cache-Control': 'public, s-maxage=3600',
-        'Cloudflare-CDN-Cache-Control': 'public, s-maxage=3600',
+        'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
+        'CDN-Cache-Control': 'public, s-maxage=86400',
+        'Cloudflare-CDN-Cache-Control': 'public, s-maxage=86400',
       },
     });
   } catch (error) {
