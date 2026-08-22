@@ -212,14 +212,11 @@ export function VideoPlayer({
   }
 
   return (
-    <div data-no-spatial className="relative group/player w-full">
-      {/* 影院级环境流光氛围（Ambient Glow） */}
-      <div className="absolute -inset-1 sm:-inset-2 bg-linear-to-r from-red-600/25 via-(--accent-color)/20 to-amber-600/25 rounded-3xl blur-2xl opacity-40 group-hover/player:opacity-70 transition-opacity duration-700 pointer-events-none animate-ambient-glow -z-10" />
-
-      <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-black w-full">
+    <div data-no-spatial className="w-full">
+      <Card hover={false} className="p-0 overflow-hidden relative">
         {/* Mode Indicator Badge - controlled by settings */}
         {showModeIndicator && (
-          <div className="absolute top-3 right-3 z-30">
+          <div className="absolute top-3 right-3 z-30 pointer-events-none">
             <span className={`px-2.5 py-1 text-xs font-bold rounded-full backdrop-blur-md transition-all duration-300 shadow-md ${useProxy
               ? 'bg-orange-500/90 text-white'
               : 'bg-emerald-500/90 text-white'
@@ -253,7 +250,7 @@ export function VideoPlayer({
             nextEpisodeUrl={nextEpisodeUrl}
           />
         )}
-      </div>
+      </Card>
     </div>
   );
 }
