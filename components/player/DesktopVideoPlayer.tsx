@@ -294,9 +294,12 @@ export function DesktopVideoPlayer({
   return (
     <div
       ref={containerRef}
-      className={`kvideo-container relative w-full h-full bg-black rounded-[var(--radius-2xl)] group ${data.isFullscreen && fullscreenType === 'window' ? 'is-web-fullscreen' : ''
+      className={`kvideo-container relative w-full aspect-video bg-black rounded-[var(--radius-2xl)] group ${data.isFullscreen && fullscreenType === 'window' ? 'is-web-fullscreen' : ''
         } ${shouldForceLandscape ? 'force-landscape' : ''}`}
-      style={{ cursor: shouldHideCursor ? 'none' : undefined }}
+      style={{
+        aspectRatio: '16 / 9',
+        cursor: shouldHideCursor ? 'none' : undefined,
+      }}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => isPlaying && setShowControls(false)}
     >
