@@ -39,7 +39,9 @@ const SHELVES = [
   { title: '2026 华语黄金档热播剧', icon: '🔥', badge: 'HOT', tag: '国产剧' },
   { title: '顶级欧美神剧专区（权游/绝命毒师）', icon: '🌟', badge: 'TOP US', tag: '美剧' },
   { title: '人气爆款韩剧精选', icon: '🍿', badge: 'TRENDING', tag: '韩剧' },
-  { title: '经典口碑高分日剧', icon: '🌸', tag: '日剧' },
+  { title: '经典口碑高分日剧', icon: '🌸', badge: 'JAPAN', tag: '日剧' },
+  { title: '经典 TVB & 港台警匪商战', icon: '🏙️', badge: 'HK TVB', tag: '港剧' },
+  { title: '英伦高分罪案与历史大剧', icon: '👑', badge: 'BRITISH', tag: '英剧' },
 ];
 
 export default function TvClient() {

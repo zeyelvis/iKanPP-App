@@ -55,7 +55,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ subjects: [], error: 'Invalid type' }, { status: 400 });
   }
 
-  const pageLimit = Math.min(Math.max(parseInt(searchParams.get('page_limit') || '20', 10) || 20, 1), 50);
+  const pageLimit = Math.min(Math.max(parseInt(searchParams.get('page_limit') || '36', 10) || 36, 1), 60);
   const pageStart = Math.max(parseInt(searchParams.get('page_start') || '0', 10) || 0, 0);
 
   // 1. 确定针对豆瓣的 1~3 个最精准查询 Tag

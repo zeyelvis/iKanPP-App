@@ -96,12 +96,12 @@ function setLocalCatHub(key: string, data: Record<string, RailMovie[]>) {
   const [shelfData, setShelfData] = useState<Record<string, RailMovie[]>>(() => initialCache || {});
   const [loadingShelves, setLoadingShelves] = useState<boolean>(() => !initialCache || Object.keys(initialCache).length === 0);
 
-  // 全库网格数据
+  // 全库网格数据（每页展示 36 部，完美填满 6/4/3/2 列排版）
   const [gridMovies, setGridMovies] = useState<any[]>([]);
   const [loadingGrid, setLoadingGrid] = useState(false);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const PAGE_SIZE = 20;
+  const PAGE_SIZE = 36;
 
   // 顶部焦点大片（从第一个货架中选取第一部）
   const heroMovie = useMemo(() => {
@@ -110,7 +110,7 @@ function setLocalCatHub(key: string, data: Record<string, RailMovie[]>) {
     return firstList && firstList.length > 0 ? firstList[0] : null;
   }, [shelves, shelfData]);
 
-  // 获取多个专属货架片单
+  // 获取多个专属货架片单（每个横向货架扩容至 20 部）
   useEffect(() => {
     let isMounted = true;
     const cacheKey = activeNav || doubanType;
@@ -129,7 +129,7 @@ function setLocalCatHub(key: string, data: Record<string, RailMovie[]>) {
             fetch(
               `/api/douban/recommend?tag=${encodeURIComponent(
                 shelf.tag
-              )}&type=${doubanType}&page_limit=14&page_start=0`
+              )}&type=${doubanType}&page_limit=20&page_start=0`
             )
               .then((r) => r.json())
               .then((data) => ({ tag: shelf.tag, subjects: data.subjects || [] }))
