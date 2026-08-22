@@ -397,6 +397,9 @@ export function DesktopVideoPlayer({
             onClick={!isMobile ? () => {
               togglePlay();
             } : undefined}
+            onDoubleClick={!isMobile ? () => {
+              logic.toggleNativeFullscreen();
+            } : undefined}
             onTouchStart={isMobile ? handleTouchStart : undefined}
             onTouchEnd={isMobile ? handleTouchEnd : undefined}
             onTouchCancel={isMobile ? handleTouchCancel : undefined}

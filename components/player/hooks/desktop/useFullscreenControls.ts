@@ -201,10 +201,6 @@ export function useFullscreenControls({
         const video = videoRef.current as PiPCapableVideoElement | null;
         if (!container) return;
 
-        if (fullscreenMode === 'window') {
-            exitWindowFullscreen();
-        }
-
         try {
             if (container.requestFullscreen) {
                 await container.requestFullscreen();
@@ -235,8 +231,6 @@ export function useFullscreenControls({
         }
     }, [
         containerRef,
-        exitWindowFullscreen,
-        fullscreenMode,
         lockLandscape,
         setFullscreenMode,
         setIsFullscreen,
