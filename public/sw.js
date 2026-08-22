@@ -167,7 +167,25 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // === 5. 页面 shell 缓存（Network-First + 离线回退）===
+    // === 5. 静态资源与 JS/CSS Bundle 极速缓存（Stale-While-Revalidate）===
+    if (url.pathname.startsWith('/_next/static/') || url.pathname.match(/\.(js|css|woff2|png|svg|ico)$/)) {
+        event.respondWith(
+            caches.open(PAGE_CACHE).then(async (cache) => {
+                const cached = await cache.match(event.request);
+                const fetchPromise = fetch(event.request).then((networkResponse) => {
+                    if (networkResponse && networkResponse.ok) {
+                        cache.put(event.request, networkResponse.clone());
+                    }
+                    return networkResponse;
+                }).catch(() => cached);
+
+                return cached || fetchPromise;
+            })
+        );
+        return;
+    }
+
+    // === 6. 页面 shell 缓存（Network-First + 离线回退）===
     if (event.request.mode === 'navigate') {
         event.respondWith(
             caches.open(PAGE_CACHE).then(async (cache) => {
