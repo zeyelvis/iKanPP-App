@@ -185,21 +185,21 @@ export function SourceSelector({
 
                                     {/* 4K 2160P 黄金徽标 */}
                                     {is4K && (
-                                        <span className="flex items-center gap-0.5 px-2 py-0.5 bg-gradient-to-r from-amber-500 to-yellow-400 text-black rounded-md text-[10px] font-black shrink-0 shadow-md">
+                                        <span className="inline-flex items-center gap-0.5 px-2 py-0.5 bg-amber-400 text-black font-black text-[10px] rounded-md shadow-md shadow-amber-500/40 border border-amber-300 shrink-0">
                                             ⚡ 4K VIP (2160P)
                                         </span>
                                     )}
 
                                     {/* 1080P 蓝光原画徽标 */}
                                     {isBluRay && (
-                                        <span className="px-1.5 py-0.5 bg-blue-500/20 text-cyan-300 border border-cyan-500/30 rounded-md text-[10px] font-bold shrink-0">
+                                        <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-sky-500/20 text-sky-300 border border-sky-400/50 font-bold text-[10px] rounded-md shrink-0">
                                             💎 1080P 蓝光
                                         </span>
                                     )}
 
                                     {/* 极速秒播标识 */}
                                     {latency !== undefined && latency < 200 && (
-                                        <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-md text-[10px] font-bold shrink-0">
+                                        <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 font-bold text-[10px] rounded-md shrink-0">
                                             🚀 秒播
                                         </span>
                                     )}
