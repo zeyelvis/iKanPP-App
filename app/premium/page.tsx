@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { SearchForm } from '@/components/search/SearchForm';
 import { NoResults } from '@/components/search/NoResults';
 import { Navbar } from '@/components/layout/Navbar';
@@ -8,7 +8,10 @@ import { SearchResults } from '@/components/home/SearchResults';
 import { usePremiumHomePage } from '@/lib/hooks/usePremiumHomePage';
 import { PremiumContent } from '@/components/premium/PremiumContent';
 import { FavoritesSidebar } from '@/components/favorites/FavoritesSidebar';
-import { VipGate } from '@/components/premium/VipGate';
+import { VipPrompt } from '@/components/premium/VipPrompt';
+import { AuthModal } from '@/components/auth/AuthModal';
+import { useUserStore } from '@/lib/store/user-store';
+import { Crown, Sparkles, Zap, ShieldCheck } from 'lucide-react';
 
 function PremiumHomePage() {
     const {
@@ -23,6 +26,22 @@ function PremiumHomePage() {
         handleReset,
     } = usePremiumHomePage();
 
+    const { user } = useUserStore();
+    const [showVipModal, setShowVipModal] = useState(false);
+    const [showLoginModal, setShowLoginModal] = useState(false);
+
+    const isVip = user?.isVip ?? false;
+
+    // 当非 VIP 用户点击播放任何视频时的拦截处理
+    const handleInterceptSearch = (keyword: string) => {
+        if (!isVip) {
+            // 如果是非 VIP 用户，提示先解锁 VIP 权限
+            setShowVipModal(true);
+        } else {
+            handleSearch(keyword);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-[#060609] text-white relative overflow-x-hidden selection:bg-purple-500 selection:text-white">
             {/* 顶部与环境极光光晕背景 */}
@@ -33,8 +52,32 @@ function PremiumHomePage() {
             {/* 顶部专属 Navbar */}
             <Navbar onReset={handleReset} isPremiumMode={true} />
 
+            {/* 游客尊享提示条（未开通 VIP 时常驻，高质感悬浮） */}
+            {!isVip && (
+                <div className="fluid-container mt-3">
+                    <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-purple-600/15 border border-amber-500/30 backdrop-blur-xl shadow-lg shadow-amber-500/5">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center shrink-0 shadow-md shadow-amber-500/30">
+                                <Crown size={15} className="text-black font-black" />
+                            </div>
+                            <div className="text-xs sm:text-sm text-white/90 truncate">
+                                <span className="font-bold text-amber-300">午夜版专区预览中</span>
+                                <span className="hidden sm:inline text-white/60 ml-2">· 注册即赠送 30 天 VIP，畅看 36 大专线与 4K 原画</span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setShowVipModal(true)}
+                            className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-black text-xs font-black shrink-0 hover:shadow-lg hover:shadow-amber-500/30 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                        >
+                            ⚡ 立即免费开通 VIP
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* 专属搜索栏 */}
-            <div className="fluid-container mt-6 mb-8 relative z-30">
+            <div className="fluid-container mt-5 mb-8 relative z-30">
                 <SearchForm
                     onSearch={handleSearch}
                     onClear={handleReset}
@@ -73,6 +116,30 @@ function PremiumHomePage() {
 
             {/* Favorites Sidebar - Left */}
             <FavoritesSidebar isPremium={true} />
+
+            {/* VIP 尊享激活弹窗 */}
+            {showVipModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in">
+                    <div className="w-full max-w-4xl relative">
+                        <VipPrompt
+                            asModal={true}
+                            onClose={() => setShowVipModal(false)}
+                            onOpenLogin={() => {
+                                setShowVipModal(false);
+                                setShowLoginModal(true);
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* 登录/注册弹窗 */}
+            {showLoginModal && (
+                <AuthModal
+                    isOpen={showLoginModal}
+                    onClose={() => setShowLoginModal(false)}
+                />
+            )}
         </div>
     );
 }

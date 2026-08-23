@@ -25,6 +25,10 @@ import { RelatedKeywords } from '@/components/search/RelatedKeywords';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 import { normalizeVideoType } from '@/lib/utils/taxonomy';
 import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { useUserStore } from '@/lib/store/user-store';
+import { VipPrompt } from '@/components/premium/VipPrompt';
+import { AuthModal } from '@/components/auth/AuthModal';
+import { Crown, Lock, Sparkles } from 'lucide-react';
 
 function PlayerContent() {
   const searchParams = useSearchParams();
@@ -40,6 +44,11 @@ function PlayerContent() {
   // 消歧义参数：从首页传入的内容类型和年份
   const expectedType = searchParams.get('type'); // 'movie' | 'tv' | null
   const expectedYear = searchParams.get('year'); // e.g. '2025' | null
+  // 用户状态与 VIP 权限检查
+  const { user } = useUserStore();
+  const isVip = user?.isVip ?? false;
+  const [showVipModal, setShowVipModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   // 底部同类推荐片单状态
   const [relatedMovies, setRelatedMovies] = useState<RailMovie[]>([]);
@@ -558,20 +567,63 @@ function PlayerContent() {
           <div className="grid lg:grid-cols-3 gap-6">
             {/* Video Player Section */}
             <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-              <VideoPlayer
-                playUrl={playUrl}
-                videoId={videoId || undefined}
-                currentEpisode={currentEpisode}
-                onBack={() => router.back()}
-                totalEpisodes={videoData?.episodes?.length || 0}
-                onNextEpisode={handleNextEpisode}
-                isReversed={isReversed}
-                isPremium={isPremium}
-                videoTitle={videoData?.vod_name || title || ''}
-                episodeName={videoData?.episodes?.[currentEpisode]?.name || ''}
-                externalTimeRef={playerTimeRef}
-                nextEpisodeUrl={nextEpisodeUrl}
-              />
+              {isPremium && !isVip ? (
+                /* 午夜版专属 VIP 播放权限锁屏卡片 */
+                <div className="relative aspect-video w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-br from-neutral-900 via-[#13111c] to-black border border-amber-500/30 shadow-[0_10px_40px_rgba(0,0,0,0.8),0_0_30px_rgba(245,158,11,0.1)] flex flex-col items-center justify-center p-6 text-center group">
+                  {/* 背景封面模糊暗影 */}
+                  {videoData?.vod_pic && (
+                    <div
+                      className="absolute inset-0 bg-cover bg-center blur-2xl opacity-20 scale-110 pointer-events-none"
+                      style={{ backgroundImage: `url(${videoData.vod_pic})` }}
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
+
+                  {/* 中心皇冠锁 */}
+                  <div className="relative z-10 mb-4">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600 flex items-center justify-center shadow-xl shadow-amber-500/30 border border-amber-300">
+                      <Crown size={32} className="text-black font-black" />
+                    </div>
+                  </div>
+
+                  <h3 className="relative z-10 text-lg sm:text-2xl font-black text-white mb-2 tracking-tight">
+                    午夜专区 <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500">4K 极清原画</span> · 需 VIP 会员权限
+                  </h3>
+                  <p className="relative z-10 text-xs sm:text-sm text-white/60 max-w-md mb-6 leading-relaxed">
+                    您正在观看《{videoData?.vod_name || title}》，开通 VIP 或输入卡密即可解锁全站 36 大午夜专线与 4K 蓝光秒播
+                  </p>
+
+                  {/* 立即解锁按钮 */}
+                  <div className="relative z-10 flex flex-wrap items-center justify-center gap-3 w-full max-w-sm">
+                    <button
+                      onClick={() => setShowVipModal(true)}
+                      className="flex-1 py-3 px-5 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-black font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-amber-500/30 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                    >
+                      <Sparkles size={16} />
+                      <span>立即免费开通 / 激活 VIP</span>
+                    </button>
+                  </div>
+
+                  <p className="relative z-10 text-[11px] text-amber-300/70 mt-3">
+                    🎁 新用户注册即赠送 <strong>30 天全功能 VIP</strong> 体验
+                  </p>
+                </div>
+              ) : (
+                <VideoPlayer
+                  playUrl={playUrl}
+                  videoId={videoId || undefined}
+                  currentEpisode={currentEpisode}
+                  onBack={() => router.back()}
+                  totalEpisodes={videoData?.episodes?.length || 0}
+                  onNextEpisode={handleNextEpisode}
+                  isReversed={isReversed}
+                  isPremium={isPremium}
+                  videoTitle={videoData?.vod_name || title || ''}
+                  episodeName={videoData?.episodes?.[currentEpisode]?.name || ''}
+                  externalTimeRef={playerTimeRef}
+                  nextEpisodeUrl={nextEpisodeUrl}
+                />
+              )}
 
               {/* 移动端专属：位于播放器正下方的紧凑流光信息卡片 */}
               <div className="lg:hidden bg-gradient-to-b from-white/[0.08] to-white/[0.03] backdrop-blur-2xl rounded-2xl border border-white/10 p-3.5 space-y-3 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
@@ -771,6 +823,30 @@ function PlayerContent() {
 
       {/* Favorites Sidebar - Left */}
       <FavoritesSidebar isPremium={isPremium} />
+
+      {/* VIP 尊享激活弹窗 */}
+      {showVipModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in">
+          <div className="w-full max-w-4xl relative">
+            <VipPrompt
+              asModal={true}
+              onClose={() => setShowVipModal(false)}
+              onOpenLogin={() => {
+                setShowVipModal(false);
+                setShowLoginModal(true);
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* 登录/注册弹窗 */}
+      {showLoginModal && (
+        <AuthModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+        />
+      )}
     </div>
   );
 }
