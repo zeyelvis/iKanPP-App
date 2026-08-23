@@ -80,13 +80,11 @@ function PremiumHomePage() {
 export default function PremiumPage() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-color)' }}>
+            <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#060609' }}>
                 <div className="brand-spinner" />
             </div>
         }>
-            <VipGate>
-                <PremiumHomePage />
-            </VipGate>
+            <PremiumHomePage />
         </Suspense>
     );
 }
