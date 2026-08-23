@@ -40,10 +40,16 @@ export function VipGate({ children, fallback }: VipGateProps) {
 
     // 非 VIP / 未登录 → 显示开通引导
     return (
-        <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-color)', backgroundImage: 'var(--bg-image)' }}>
-            <VipPrompt
-                onOpenLogin={() => setShowLogin(true)}
-            />
+        <div className="min-h-screen bg-[#060609] text-white relative overflow-x-hidden selection:bg-amber-500 selection:text-black">
+            {/* 环境光影 */}
+            <div className="fixed top-0 left-1/4 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[160px] pointer-events-none -z-10" />
+            <div className="fixed bottom-10 right-1/4 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[180px] pointer-events-none -z-10" />
+
+            <div className="py-6 sm:py-10">
+                <VipPrompt
+                    onOpenLogin={() => setShowLogin(true)}
+                />
+            </div>
 
             {/* 登录弹窗 */}
             {showLogin && (
