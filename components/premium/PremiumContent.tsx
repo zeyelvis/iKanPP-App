@@ -20,9 +20,10 @@ import { Flame, Crown, Film, Sparkles, Filter, SlidersHorizontal, ShieldCheck } 
 
 interface PremiumContentProps {
     onSearch?: (query: string) => void;
+    onPlayVideo?: (video: any) => void;
 }
 
-export function PremiumContent({ onSearch }: PremiumContentProps) {
+export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
     const [activeCategoryId, setActiveCategoryId] = useState('all');
     const [rankingTabId, setRankingTabId] = useState('today');
     const [searchKeyword, setSearchKeyword] = useState('');
@@ -88,7 +89,9 @@ export function PremiumContent({ onSearch }: PremiumContentProps) {
     };
 
     const handleVideoClick = (video: any) => {
-        if (onSearch) {
+        if (onPlayVideo) {
+            onPlayVideo(video);
+        } else if (onSearch) {
             onSearch(video.vod_name || video.title);
         }
     };
@@ -108,7 +111,7 @@ export function PremiumContent({ onSearch }: PremiumContentProps) {
             />
 
             {/* 2. Hero 推荐大片轮播 */}
-            <MidnightHero onSearch={onSearch} />
+            <MidnightHero onSearch={onSearch} onPlayVideo={onPlayVideo} />
 
             {/* 3. 🔥 时段多 Tab 联动排行榜 */}
             <section className="space-y-4">

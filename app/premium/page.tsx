@@ -1,6 +1,7 @@
 'use client';
 
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { SearchForm } from '@/components/search/SearchForm';
 import { NoResults } from '@/components/search/NoResults';
 import { Navbar } from '@/components/layout/Navbar';
@@ -14,6 +15,7 @@ import { useUserStore } from '@/lib/store/user-store';
 import { Crown, Sparkles, Zap, ShieldCheck } from 'lucide-react';
 
 function PremiumHomePage() {
+    const router = useRouter();
     const {
         query,
         hasSearched,
@@ -26,19 +28,35 @@ function PremiumHomePage() {
         handleReset,
     } = usePremiumHomePage();
 
-    const { user } = useUserStore();
+    const { user, initialize } = useUserStore();
     const [showVipModal, setShowVipModal] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
 
+    // 确保用户状态已初始化
+    useEffect(() => {
+        initialize();
+    }, [initialize]);
+
+    // 监听全局 open-vip-modal 事件（方便子组件任意触发）
+    useEffect(() => {
+        const handleOpenVip = () => setShowVipModal(true);
+        window.addEventListener('open-vip-modal', handleOpenVip);
+        return () => window.removeEventListener('open-vip-modal', handleOpenVip);
+    }, []);
+
     const isVip = user?.isVip ?? false;
 
-    // 当非 VIP 用户点击播放任何视频时的拦截处理
-    const handleInterceptSearch = (keyword: string) => {
+    // 当用户点击播放任何视频时的核心拦截处理
+    const handlePlayVideo = (video: any) => {
+        const title = video?.vod_name || video?.title;
         if (!isVip) {
-            // 如果是非 VIP 用户，提示先解锁 VIP 权限
+            // 未开通 VIP：直接呼出黑金 VIP 尊享激活弹窗
             setShowVipModal(true);
-        } else {
-            handleSearch(keyword);
+            return;
+        }
+        // VIP 会员：直接跳转播放页
+        if (title) {
+            router.push(`/player?title=${encodeURIComponent(title)}&type=tv&premium=1`);
         }
     };
 
@@ -110,7 +128,7 @@ function PremiumHomePage() {
 
                 {/* Premium Content - Trending and Latest */}
                 {!loading && !hasSearched && (
-                    <PremiumContent onSearch={handleSearch} />
+                    <PremiumContent onSearch={handleSearch} onPlayVideo={handlePlayVideo} />
                 )}
             </main>
 

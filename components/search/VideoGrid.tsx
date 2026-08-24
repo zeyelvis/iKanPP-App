@@ -7,6 +7,7 @@ import { VideoGroupCard, GroupedVideo } from './VideoGroupCard';
 import { settingsStore } from '@/lib/store/settings-store';
 import { Video } from '@/lib/types';
 import { extractCleanBaseTitle } from '@/lib/utils/search';
+import { useUserStore } from '@/lib/store/user-store';
 
 interface VideoGridProps {
   videos: Video[];
@@ -183,6 +184,16 @@ export const VideoGrid = memo(function VideoGrid({
 
   // Memoize the click handler
   const handleCardClick = useCallback((e: React.MouseEvent, videoId: string, videoUrl: string) => {
+    // 午夜版专属 VIP 门禁拦截
+    if (isPremium) {
+      const isVip = useUserStore.getState().user?.isVip ?? false;
+      if (!isVip) {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('open-vip-modal'));
+        return;
+      }
+    }
+
     const isMobile = window.innerWidth < 1024;
 
     if (isMobile) {
@@ -193,7 +204,7 @@ export const VideoGrid = memo(function VideoGrid({
         setActiveCardId(videoId);
       }
     }
-  }, [activeCardId]);
+  }, [activeCardId, isPremium]);
 
   // Normal mode items
   const videoItems = useMemo(() => {

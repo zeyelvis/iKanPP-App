@@ -45,7 +45,13 @@ const HERO_SLIDES: HeroSlide[] = [
     },
 ];
 
-export function MidnightHero({ onSearch }: { onSearch?: (query: string) => void }) {
+export function MidnightHero({
+    onSearch,
+    onPlayVideo,
+}: {
+    onSearch?: (query: string) => void;
+    onPlayVideo?: (video: any) => void;
+}) {
     const router = useRouter();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
@@ -73,7 +79,9 @@ export function MidnightHero({ onSearch }: { onSearch?: (query: string) => void 
     const currentSlide = HERO_SLIDES[currentIndex];
 
     const handlePlay = (query: string) => {
-        if (onSearch) {
+        if (onPlayVideo) {
+            onPlayVideo({ vod_name: query, title: query });
+        } else if (onSearch) {
             onSearch(query);
         }
     };
