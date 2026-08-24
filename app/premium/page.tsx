@@ -56,7 +56,8 @@ function PremiumHomePage() {
         }
         // VIP 会员：直接跳转播放页
         if (title) {
-            router.push(`/player?title=${encodeURIComponent(title)}&type=tv&premium=1`);
+            const videoId = video?.vod_id ? String(video.vod_id) : '';
+            router.push(`/player?title=${encodeURIComponent(title)}&type=tv&premium=1&source=jable&id=${encodeURIComponent(videoId)}`);
         }
     };
 
