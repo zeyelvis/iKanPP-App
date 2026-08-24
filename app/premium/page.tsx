@@ -54,10 +54,16 @@ function PremiumHomePage() {
             setShowVipModal(true);
             return;
         }
-        // VIP 会员：直接跳转播放页
+        // VIP 会员：直接跳转播放页（携带真实有效 source 和 id，实现 0ms 瞬间起播）
         if (title) {
             const videoId = video?.vod_id ? String(video.vod_id) : '';
-            router.push(`/player?title=${encodeURIComponent(title)}&type=tv&premium=1&source=jable&id=${encodeURIComponent(videoId)}`);
+            const source = video?.source || '';
+            
+            let playUrl = `/player?title=${encodeURIComponent(title)}&type=tv&premium=1`;
+            if (videoId && source) {
+                playUrl += `&id=${encodeURIComponent(videoId)}&source=${encodeURIComponent(source)}`;
+            }
+            router.push(playUrl);
         }
     };
 

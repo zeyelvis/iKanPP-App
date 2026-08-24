@@ -77,6 +77,13 @@ function PlayerContent() {
     // 清洗片名（去除书名号、括号说明、第X季等干扰词）
     const cleanTitle = title.replace(/[《》【】\[\]（）()]/g, ' ').replace(/\s+/g, ' ').trim();
     const normalizedTitle = cleanTitle.toLowerCase();
+    
+    // 智能提取番号（如 IPZZ-870, SSIS-123, FC2-PPV-123456, MIDE-999 等）
+    const codeMatch = title.match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
+    const videoCode = codeMatch ? codeMatch[0].toUpperCase() : null;
+
+    // 如果提取出了番号（如 IPZZ-870），搜索词直接使用番号！
+    const searchQuery = isPremium && videoCode ? videoCode : cleanTitle;
     let redirected = false;
     let anyFound = false;
 
@@ -85,7 +92,7 @@ function PlayerContent() {
         const response = await fetch('/api/search-parallel', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: cleanTitle, sources: allSources, page: 1 }),
+          body: JSON.stringify({ query: searchQuery, sources: allSources, page: 1 }),
         });
 
         if (cancelled) return;
@@ -124,9 +131,10 @@ function PlayerContent() {
                 const validVideos = data.videos.filter((v: any) => !isCommentary(v));
                 const videoPool = validVideos.length > 0 ? validVideos : data.videos;
 
-                // 1. 精确匹配
+                // 1. 精确匹配（支持番号匹配）
                 const exactMatches = videoPool.filter((v: any) => {
                   const vName = (v.vod_name || '').toLowerCase().trim();
+                  if (videoCode && vName.toUpperCase().includes(videoCode)) return true;
                   return vName === normalizedTitle || vName === title.toLowerCase().trim();
                 });
 
@@ -134,6 +142,7 @@ function PlayerContent() {
                 const partialMatches = exactMatches.length === 0
                   ? videoPool.filter((v: any) => {
                     const vName = (v.vod_name || '').toLowerCase().trim();
+                    if (videoCode && vName.toUpperCase().includes(videoCode)) return true;
                     return vName.includes(normalizedTitle) || normalizedTitle.includes(vName);
                   })
                   : [];

@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
                     vod_name: v.vod_name,
                     vod_pic: v.vod_pic,
                     vod_remarks: v.vod_remarks || '4K 原画',
-                    source: 'jable',
+                    source: v.source || 'hsck',
                 }));
             }
         }

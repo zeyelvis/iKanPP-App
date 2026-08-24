@@ -13,7 +13,7 @@ export const runtime = 'edge';
 /**
  * Shared handler for fetching video details
  */
-async function handleDetailRequest(id: string | null, source: string | null, method: string) {
+async function handleDetailRequest(id: string | null, source: string | null, method: string, request?: NextRequest) {
   // Validate input
   if (!id) {
     return NextResponse.json(
@@ -33,7 +33,8 @@ async function handleDetailRequest(id: string | null, source: string | null, met
   // 专属支持 Jable 原生视频流解析与双轨备用源容灾
   if (source === 'jable') {
     try {
-      const detailRes = await fetch(`${new URL(id, 'http://localhost:3000').origin}/api/premium/stream?id=${encodeURIComponent(id)}`);
+      const origin = request ? request.nextUrl.origin : 'http://localhost:3000';
+      const detailRes = await fetch(`${origin}/api/premium/stream?id=${encodeURIComponent(id)}&code=${encodeURIComponent(id)}`);
       if (detailRes.ok) {
         const streamData = await detailRes.json();
         if (streamData.stream_url) {
@@ -109,7 +110,7 @@ export async function GET(request: NextRequest) {
     const id = searchParams.get('id');
     const source = searchParams.get('source');
 
-    return await handleDetailRequest(id, source, 'GET');
+    return await handleDetailRequest(id, source, 'GET', request);
   } catch (error) {
     console.error('Detail API error:', error);
 
@@ -129,7 +130,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { id, source } = body;
 
-    return await handleDetailRequest(id, source, 'POST');
+    return await handleDetailRequest(id, source, 'POST', request);
   } catch (error) {
     console.error('Detail API error:', error);
 
