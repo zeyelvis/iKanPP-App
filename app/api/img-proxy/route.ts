@@ -36,15 +36,29 @@ export async function GET(request: NextRequest) {
     for (const candidate of candidates) {
         try {
             const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), 6000);
+            const timer = setTimeout(() => controller.abort(), 10000);
+
+            // 智能防盗链 Referer 处理
+            let refererHeader = '';
+            try {
+                const parsedUrl = new URL(candidate);
+                if (candidate.includes('douban')) {
+                    refererHeader = 'https://movie.douban.com/';
+                } else {
+                    refererHeader = `${parsedUrl.protocol}//${parsedUrl.host}/`;
+                }
+            } catch {
+                refererHeader = '';
+            }
 
             const response = await fetch(candidate, {
                 headers: {
-                    'Referer': candidate.includes('douban') ? 'https://movie.douban.com/' : '',
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-                    Accept: 'image/jpeg,image/png,image/gif,image/webp,*/*;q=0.8',
+                    'Referer': refererHeader,
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                    Accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
                 },
                 signal: controller.signal,
+                redirect: 'follow',
             });
 
             clearTimeout(timer);
@@ -72,8 +86,10 @@ export async function GET(request: NextRequest) {
                 headers: {
                     'Content-Type': contentType,
                     'Access-Control-Allow-Origin': '*',
-                    // 7 天强缓存 + CDN 边缘缓存 + SWR
-                    'Cache-Control': 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=86400',
+                    // 30 天 Cloudflare 边缘强缓存 + 浏览器本地强缓存 + SWR 弹性容灾
+                    'Cache-Control': 'public, max-age=2592000, s-maxage=2592000, stale-while-revalidate=604800',
+                    'CDN-Cache-Control': 'public, max-age=2592000',
+                    'Cloudflare-CDN-Cache-Control': 'public, max-age=2592000',
                     'Vary': 'Origin',
                 },
             });

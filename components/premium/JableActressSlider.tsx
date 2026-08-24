@@ -28,7 +28,12 @@ export function JableActressSlider({ onSelectActress }: JableActressSliderProps)
 
             {/* 女优列表横向滑动 */}
             <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pb-2 scroll-smooth">
-                {JABLE_POPULAR_ACTRESSES.map((actress) => (
+                {JABLE_POPULAR_ACTRESSES.map((actress) => {
+                    const proxiedAvatar = actress.avatar?.startsWith('http')
+                        ? `/api/img-proxy?url=${encodeURIComponent(actress.avatar)}`
+                        : actress.avatar;
+
+                    return (
                     <button
                         key={actress.id}
                         onClick={() => onSelectActress(actress)}
@@ -38,7 +43,7 @@ export function JableActressSlider({ onSelectActress }: JableActressSliderProps)
                         <div className="relative w-18 h-18 sm:w-22 sm:h-22 rounded-full p-0.5 bg-gradient-to-tr from-purple-500 via-pink-500 to-amber-400 shadow-lg shadow-purple-950/60 mb-2">
                             <div className="relative w-full h-full rounded-full overflow-hidden bg-neutral-900 border-2 border-[#0A0B12]">
                                 <Image
-                                    src={actress.avatar}
+                                    src={proxiedAvatar}
                                     alt={actress.name}
                                     fill
                                     className="object-cover group-hover:scale-110 transition-transform duration-500"
@@ -58,7 +63,8 @@ export function JableActressSlider({ onSelectActress }: JableActressSliderProps)
                             {actress.tag}
                         </span>
                     </button>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );

@@ -33,6 +33,11 @@ export function JableVideoCard({ video, onClick, index, rankBadge }: JableVideoC
     // 清理标题展示（去除冗余标签）
     const cleanTitle = title.replace(/^(【[^】]+】|\[[^\]]+\]|\([^\)]+\))/g, '').trim();
 
+    // 智能 CDN 代理地址（解决第三方防盗链与慢速直连）
+    const proxiedPic = video.vod_pic?.startsWith('http')
+        ? `/api/img-proxy?url=${encodeURIComponent(video.vod_pic)}`
+        : video.vod_pic;
+
     // 模拟真实的 Jable 播放数据与时长
     const mockViews = Math.floor(10000 + (Math.sin((Number(video.vod_id) || (index ?? 1)) * 99) * 0.5 + 0.5) * 250000);
     const viewsText = mockViews > 10000 ? `${(mockViews / 10000).toFixed(1)}万` : `${mockViews}`;
@@ -63,9 +68,9 @@ export function JableVideoCard({ video, onClick, index, rankBadge }: JableVideoC
         >
             {/* 1. 视频封面与专业角标 */}
             <div className="relative aspect-[16/10] w-full overflow-hidden bg-neutral-900">
-                {!imgError && video.vod_pic ? (
+                {!imgError && proxiedPic ? (
                     <Image
-                        src={video.vod_pic}
+                        src={proxiedPic}
                         alt={cleanTitle}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
