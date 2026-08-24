@@ -117,7 +117,7 @@ export function SourceSelector({
     return (
         <Card hover={false} className={`mt-6 ${className}`}>
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg sm:text-xl font-bold text-[var(--text-color)] flex items-center gap-2">
+                <h3 className="text-lg sm:text-xl font-bold text-(--text-color) flex items-center gap-2">
                     <Icons.Layers size={20} className="sm:w-6 sm:h-6 text-purple-400" />
                     <span>多线路选择 · 4K/蓝光智能选线</span>
                     <Badge variant="primary">{sources.length}</Badge>
@@ -133,7 +133,7 @@ export function SourceSelector({
                 </Button>
             </div>
 
-            <div className="space-y-2 max-h-[340px] overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-85 overflow-y-auto pr-1">
                 {sortedSources.map((source, index) => {
                     const isCurrent = source.source === currentSource;
                     const latency = latencies[source.source] ?? source.latency;
@@ -154,15 +154,15 @@ export function SourceSelector({
                                 w-full p-3 rounded-2xl text-left transition-all duration-200
                                 flex items-center gap-3 cursor-pointer
                                 ${isCurrent
-                                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-600/30 scale-[1.01]'
-                                    : 'bg-[var(--glass-bg)] hover:bg-[var(--glass-hover)] text-[var(--text-color)] border border-[var(--glass-border)] hover:border-purple-500/30'
+                                    ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-600/30 scale-[1.01]'
+                                    : 'bg-(--glass-bg) hover:bg-(--glass-hover) text-(--text-color) border border-(--glass-border) hover:border-purple-500/30'
                                 }
                             `}
                             aria-current={isCurrent ? 'true' : undefined}
                         >
                             {/* 缩略图 */}
                             {source.pic && (
-                                <div className="w-12 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-black/20 border border-white/10">
+                                <div className="w-12 h-16 rounded-xl overflow-hidden shrink-0 bg-black/20 border border-white/10">
                                     <Image
                                         src={source.pic}
                                         alt=""
@@ -227,7 +227,7 @@ export function SourceSelector({
                             {!isCurrent && index < 3 && (
                                 <Badge
                                     variant="secondary"
-                                    className={`flex-shrink-0 ${
+                                    className={`shrink-0 ${
                                         index === 0
                                             ? 'bg-amber-500/20 text-amber-400 border-amber-500/40 font-black'
                                             : index === 1

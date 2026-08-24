@@ -368,14 +368,14 @@ export function DesktopVideoPlayer({
     <div
       ref={containerRef}
       className={`kvideo-container relative aspect-video bg-black group ${data.fullscreenMode === 'window' ? 'is-web-fullscreen' : ''
-        } ${shouldForceLandscape ? 'force-landscape' : ''} ${isTopAlignedWebFullscreen ? 'top-align-stage' : ''} overflow-hidden rounded-none sm:rounded-[var(--radius-2xl)]`}
+        } ${shouldForceLandscape ? 'force-landscape' : ''} ${isTopAlignedWebFullscreen ? 'top-align-stage' : ''} overflow-hidden rounded-none sm:rounded-2xl`}
       style={containerStyle}
       onMouseMove={() => { handleMouseMove(); }}
       onMouseLeave={() => isPlaying && setShowControls(false)}
     >
       <div className={stageClassName}>
         {/* Clipping Wrapper for video and overlays - Restores the 'Liquid Glass' rounded look */}
-        <div className={`absolute inset-0 overflow-hidden pointer-events-none ${data.fullscreenMode === 'window' ? 'rounded-none' : 'rounded-none sm:rounded-[var(--radius-2xl)]'
+        <div className={`absolute inset-0 overflow-hidden pointer-events-none ${data.fullscreenMode === 'window' ? 'rounded-none' : 'rounded-none sm:rounded-2xl'
           }`}>
           <div className="absolute inset-0 pointer-events-auto">
           {/* Video Element */}
@@ -411,8 +411,8 @@ export function DesktopVideoPlayer({
             <div className="absolute top-4 sm:top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-scale-in">
               <div className="bg-black/85 backdrop-blur-xl border border-white/20 px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-[0_8px_32px_rgba(0,0,0,0.8)]">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent-color)] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent-color)]"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-(--accent-color) opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-(--accent-color)"></span>
                 </span>
                 <span className="text-xs font-black text-white tracking-wider flex items-center gap-1">
                   ⚡ 2X 倍速播放中

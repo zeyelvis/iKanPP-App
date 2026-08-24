@@ -73,9 +73,9 @@ function PremiumHomePage() {
             {/* 游客尊享提示条（未开通 VIP 时常驻，高质感悬浮） */}
             {!isVip && (
                 <div className="fluid-container mt-3">
-                    <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-purple-600/15 border border-amber-500/30 backdrop-blur-xl shadow-lg shadow-amber-500/5">
+                    <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-linear-to-r from-amber-500/15 via-yellow-500/10 to-purple-600/15 border border-amber-500/30 backdrop-blur-xl shadow-lg shadow-amber-500/5">
                         <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center shrink-0 shadow-md shadow-amber-500/30">
+                            <div className="w-7 h-7 rounded-xl bg-linear-to-br from-amber-400 to-yellow-600 flex items-center justify-center shrink-0 shadow-md shadow-amber-500/30">
                                 <Crown size={15} className="text-black font-black" />
                             </div>
                             <div className="text-xs sm:text-sm text-white/90 truncate">
@@ -86,7 +86,7 @@ function PremiumHomePage() {
 
                         <button
                             onClick={() => setShowVipModal(true)}
-                            className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-black text-xs font-black shrink-0 hover:shadow-lg hover:shadow-amber-500/30 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                            className="px-3.5 py-1.5 rounded-xl bg-linear-to-r from-amber-400 via-yellow-400 to-amber-500 text-black text-xs font-black shrink-0 hover:shadow-lg hover:shadow-amber-500/30 hover:scale-105 active:scale-95 transition-all cursor-pointer"
                         >
                             ⚡ 立即免费开通 VIP
                         </button>

@@ -136,10 +136,10 @@ export function VipPrompt({ asModal = false, onClose, onOpenLogin }: VipPromptPr
         <div className={`relative ${asModal ? 'py-2' : 'min-h-[85vh] py-8 sm:py-12'} flex items-center justify-center px-4`}>
             
             {/* 顶奢极光黑金玻璃态容器 */}
-            <div className="relative z-10 w-full max-w-3xl mx-auto rounded-3xl bg-gradient-to-b from-[#161320]/98 via-[#0F0D16]/98 to-[#09080E]/98 backdrop-blur-3xl border border-amber-500/25 shadow-[0_25px_90px_rgba(0,0,0,0.85),0_0_50px_rgba(245,158,11,0.12)] p-6 sm:p-9 overflow-hidden">
+            <div className="relative z-10 w-full max-w-3xl mx-auto rounded-3xl bg-linear-to-b from-[#161320]/98 via-[#0F0D16]/98 to-[#09080E]/98 backdrop-blur-3xl border border-amber-500/25 shadow-[0_25px_90px_rgba(0,0,0,0.85),0_0_50px_rgba(245,158,11,0.12)] p-6 sm:p-9 overflow-hidden">
                 
                 {/* 顶部环境流光光晕 */}
-                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-48 bg-gradient-to-b from-amber-500/20 via-yellow-500/10 to-transparent blur-3xl pointer-events-none" />
+                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-48 bg-linear-to-b from-amber-500/20 via-yellow-500/10 to-transparent blur-3xl pointer-events-none" />
                 <div className="absolute top-1/2 right-0 w-64 h-64 bg-purple-600/10 blur-[100px] pointer-events-none" />
 
                 {/* 弹窗关闭按钮 */}
@@ -157,10 +157,10 @@ export function VipPrompt({ asModal = false, onClose, onOpenLogin }: VipPromptPr
                 <div className="text-center relative z-10 space-y-3 pt-2 sm:pt-4">
                     {/* 3D 鎏金皇冠徽章 */}
                     <div className="inline-flex relative mb-1">
-                        <div className="absolute -inset-2 bg-gradient-to-r from-amber-500/40 via-yellow-400/30 to-amber-500/40 rounded-full blur-lg animate-pulse" />
-                        <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-gradient-to-br from-amber-300 via-yellow-500 to-amber-600 p-[1.5px] shadow-2xl shadow-amber-500/30">
-                            <div className="w-full h-full rounded-[14px] bg-gradient-to-br from-[#1C182B] to-[#0A0910] flex items-center justify-center border border-amber-300/30">
-                                <Crown size={32} className="text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-yellow-400 to-amber-500 fill-amber-400 drop-shadow-[0_2px_10px_rgba(245,158,11,0.5)]" />
+                        <div className="absolute -inset-2 bg-linear-to-r from-amber-500/40 via-yellow-400/30 to-amber-500/40 rounded-full blur-lg animate-pulse" />
+                        <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-linear-to-br from-amber-300 via-yellow-500 to-amber-600 p-[1.5px] shadow-2xl shadow-amber-500/30">
+                            <div className="w-full h-full rounded-[14px] bg-linear-to-br from-[#1C182B] to-[#0A0910] flex items-center justify-center border border-amber-300/30">
+                                <Crown size={32} className="text-transparent bg-clip-text bg-linear-to-br from-amber-200 via-yellow-400 to-amber-500 fill-amber-400 drop-shadow-[0_2px_10px_rgba(245,158,11,0.5)]" />
                             </div>
                         </div>
                     </div>
@@ -172,7 +172,7 @@ export function VipPrompt({ asModal = false, onClose, onOpenLogin }: VipPromptPr
                             <span>午夜 18+ 尊荣特权专区</span>
                         </div>
                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight leading-tight">
-                            开启午夜 <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500">4K 极清尊享体验</span>
+                            开启午夜 <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-200 via-yellow-400 to-amber-500">4K 极清尊享体验</span>
                         </h2>
                         <p className="text-white/60 text-xs sm:text-sm max-w-lg mx-auto mt-1.5 leading-relaxed">
                             解锁全站 36 大午夜专线 · 原生 2160P 蓝光原画 · S1/MOODYZ 原盘番号
@@ -187,7 +187,7 @@ export function VipPrompt({ asModal = false, onClose, onOpenLogin }: VipPromptPr
                             onClick={() => setViewMode('plans')}
                             className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
                                 viewMode === 'plans'
-                                    ? 'bg-gradient-to-r from-amber-400 to-yellow-500 text-black shadow-md shadow-amber-500/25 scale-[1.02]'
+                                    ? 'bg-linear-to-r from-amber-400 to-yellow-500 text-black shadow-md shadow-amber-500/25 scale-[1.02]'
                                     : 'text-white/60 hover:text-white hover:bg-white/5'
                             }`}
                         >
@@ -199,7 +199,7 @@ export function VipPrompt({ asModal = false, onClose, onOpenLogin }: VipPromptPr
                             onClick={() => setViewMode('redeem')}
                             className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
                                 viewMode === 'redeem'
-                                    ? 'bg-gradient-to-r from-amber-400 to-yellow-500 text-black shadow-md shadow-amber-500/25 scale-[1.02]'
+                                    ? 'bg-linear-to-r from-amber-400 to-yellow-500 text-black shadow-md shadow-amber-500/25 scale-[1.02]'
                                     : 'text-white/60 hover:text-white hover:bg-white/5'
                             }`}
                         >
@@ -217,9 +217,9 @@ export function VipPrompt({ asModal = false, onClose, onOpenLogin }: VipPromptPr
                         <div className="grid sm:grid-cols-2 gap-4">
                             
                             {/* 方案 1：新用户 30 天免费体验（主推） */}
-                            <div className="relative rounded-2xl bg-gradient-to-b from-amber-500/15 via-yellow-500/5 to-transparent border-2 border-amber-400/60 p-5 shadow-lg shadow-amber-500/10 flex flex-col justify-between group hover:border-amber-400 transition-all">
+                            <div className="relative rounded-2xl bg-linear-to-b from-amber-500/15 via-yellow-500/5 to-transparent border-2 border-amber-400/60 p-5 shadow-lg shadow-amber-500/10 flex flex-col justify-between group hover:border-amber-400 transition-all">
                                 {/* 顶部角标 */}
-                                <div className="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-[10px] font-black tracking-wider shadow-md">
+                                <div className="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full bg-linear-to-r from-amber-400 to-yellow-500 text-black text-[10px] font-black tracking-wider shadow-md">
                                     🔥 热门首选 · 免费赠送
                                 </div>
 
@@ -252,7 +252,7 @@ export function VipPrompt({ asModal = false, onClose, onOpenLogin }: VipPromptPr
                             </div>
 
                             {/* 方案 2：邀请裂变免费续期 15 天 */}
-                            <div className="relative rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 p-5 flex flex-col justify-between transition-all">
+                            <div className="relative rounded-2xl bg-white/3 hover:bg-white/6 border border-white/10 p-5 flex flex-col justify-between transition-all">
                                 <div>
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-300 flex items-center justify-center border border-purple-500/30">
@@ -302,7 +302,7 @@ export function VipPrompt({ asModal = false, onClose, onOpenLogin }: VipPromptPr
                             
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 {VIP_KEY_BENEFITS.map((item, idx) => (
-                                    <div key={idx} className="flex flex-col space-y-1 p-2 rounded-xl bg-white/[0.02]">
+                                    <div key={idx} className="flex flex-col space-y-1 p-2 rounded-xl bg-white/2">
                                         <div className="flex items-center gap-1.5 text-xs font-black text-white">
                                             <CheckCircle2 size={14} className="text-amber-400 shrink-0 fill-amber-400/20" />
                                             <span className="truncate">{item.title}</span>
@@ -320,7 +320,7 @@ export function VipPrompt({ asModal = false, onClose, onOpenLogin }: VipPromptPr
                             {isVip ? (
                                 <button
                                     onClick={onClose}
-                                    className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 text-black font-black text-base flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
+                                    className="w-full py-4 px-6 rounded-2xl bg-linear-to-r from-emerald-400 via-teal-400 to-emerald-500 text-black font-black text-base flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
                                 >
                                     <Play size={18} className="fill-black" />
                                     <span>您已拥有 VIP 尊荣权限 · 立即畅快开播</span>
@@ -329,7 +329,7 @@ export function VipPrompt({ asModal = false, onClose, onOpenLogin }: VipPromptPr
                                 <div className="space-y-3">
                                     <button
                                         onClick={() => setViewMode('redeem')}
-                                        className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-black font-black text-base flex items-center justify-center gap-2 shadow-xl shadow-amber-500/30 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
+                                        className="w-full py-4 px-6 rounded-2xl bg-linear-to-r from-amber-400 via-yellow-400 to-amber-500 text-black font-black text-base flex items-center justify-center gap-2 shadow-xl shadow-amber-500/30 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
                                     >
                                         <Key size={18} />
                                         <span>输入卡密 / 兑换码立即激活</span>
@@ -342,7 +342,7 @@ export function VipPrompt({ asModal = false, onClose, onOpenLogin }: VipPromptPr
                                 <div className="space-y-3">
                                     <button
                                         onClick={onOpenLogin}
-                                        className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-black font-black text-base sm:text-lg flex items-center justify-center gap-2.5 shadow-[0_10px_35px_rgba(245,158,11,0.4)] hover:shadow-[0_15px_45px_rgba(245,158,11,0.6)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
+                                        className="w-full py-4 px-6 rounded-2xl bg-linear-to-r from-amber-400 via-yellow-400 to-amber-500 text-black font-black text-base sm:text-lg flex items-center justify-center gap-2.5 shadow-[0_10px_35px_rgba(245,158,11,0.4)] hover:shadow-[0_15px_45px_rgba(245,158,11,0.6)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
                                     >
                                         <Zap size={20} className="fill-black" />
                                         <span>⚡ 免费注册 / 登录即领 30 天 VIP 体验</span>
@@ -405,7 +405,7 @@ export function VipPrompt({ asModal = false, onClose, onOpenLogin }: VipPromptPr
                             <button
                                 type="submit"
                                 disabled={redeemLoading}
-                                className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-black font-black text-base flex items-center justify-center gap-2 shadow-xl shadow-amber-500/30 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 transition-all cursor-pointer"
+                                className="w-full py-4 px-6 rounded-2xl bg-linear-to-r from-amber-400 via-yellow-400 to-amber-500 text-black font-black text-base flex items-center justify-center gap-2 shadow-xl shadow-amber-500/30 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 transition-all cursor-pointer"
                             >
                                 {redeemLoading ? (
                                     <>

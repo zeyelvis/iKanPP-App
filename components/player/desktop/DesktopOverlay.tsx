@@ -110,7 +110,7 @@ export function DesktopOverlay({
                     className={`absolute top-8 left-1/2 -translate-x-1/2 z-40 transition-opacity duration-300 ${showFullscreenClock ? 'opacity-100' : 'opacity-0'}`}
                     style={{ pointerEvents: 'none' }}
                 >
-                    <div className="min-w-[88px] px-4 py-2 rounded-full bg-black/45 backdrop-blur-md border border-white/15 text-center shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+                    <div className="min-w-22 px-4 py-2 rounded-full bg-black/45 backdrop-blur-md border border-white/15 text-center shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
                         <div className="flex items-center justify-center gap-2 text-white">
                             <Icons.Clock size={14} className="opacity-80" />
                             <span className="text-sm font-semibold tracking-[0.18em] tabular-nums">
@@ -221,9 +221,9 @@ export function DesktopOverlay({
 
             {/* Toast Notification */}
             {showToast && toastMessage && (
-                <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-[200] animate-slide-up">
-                    <div className="bg-[rgba(28,28,30,0.95)] backdrop-blur-[25px] rounded-[var(--radius-2xl)] border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.6)] px-6 py-3 flex items-center gap-3 min-w-[200px]">
-                        <Icons.Check size={18} className="text-[#34c759] flex-shrink-0" />
+                <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-200 animate-slide-up">
+                    <div className="bg-[rgba(28,28,30,0.95)] backdrop-blur-[25px] rounded-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.6)] px-6 py-3 flex items-center gap-3 min-w-50">
+                        <Icons.Check size={18} className="text-[#34c759] shrink-0" />
                         <span className="text-white text-sm font-medium">{toastMessage}</span>
                     </div>
                 </div>

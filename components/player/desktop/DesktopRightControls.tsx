@@ -80,14 +80,14 @@ export function DesktopRightControls({
                 title={isWebFullscreen ? '退出网页全屏 (W)' : '网页窗口全屏 (W)'}
             >
                 {isWebFullscreen
-                    ? <Icons.WebFullscreenExit size={20} className="text-[var(--accent-color)]" />
+                    ? <Icons.WebFullscreenExit size={20} className="text-(--accent-color)" />
                     : <Icons.WebFullscreen size={20} />}
             </button>
 
             {/* Native Fullscreen (设备全部真全屏) */}
             <button
                 onClick={onToggleNativeFullscreen}
-                className={`btn-icon shrink-0 ${isNativeFullscreen ? 'text-[var(--accent-color)]' : ''}`}
+                className={`btn-icon shrink-0 ${isNativeFullscreen ? 'text-(--accent-color)' : ''}`}
                 aria-label={isNativeFullscreen ? '退出全部全屏' : '全部全屏'}
                 title={isNativeFullscreen ? '退出全部全屏 (F 或 双击)' : '全部全屏 (F 或 双击)'}
             >
