@@ -37,7 +37,7 @@ export const JABLE_POPULAR_ACTRESSES: JableActress[] = [
     {
         id: '1',
         name: '河北彩花',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop',
+        avatar: '/images/actresses/kawakita_saika.jpg',
         tag: '国民级偶像',
         videoCount: 128,
         searchKey: '河北彩花',
@@ -45,7 +45,7 @@ export const JABLE_POPULAR_ACTRESSES: JableActress[] = [
     {
         id: '2',
         name: '三上悠亚',
-        avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=300&auto=format&fit=crop',
+        avatar: '/images/actresses/mikami_yua.jpg',
         tag: '超级顶流',
         videoCount: 260,
         searchKey: '三上悠亚',
@@ -53,7 +53,7 @@ export const JABLE_POPULAR_ACTRESSES: JableActress[] = [
     {
         id: '3',
         name: '相泽南',
-        avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=300&auto=format&fit=crop',
+        avatar: '/images/actresses/aizawa_minami.jpg',
         tag: '灰姑娘影后',
         videoCount: 195,
         searchKey: '相泽南',
@@ -61,7 +61,7 @@ export const JABLE_POPULAR_ACTRESSES: JableActress[] = [
     {
         id: '4',
         name: '深田咏美',
-        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=300&auto=format&fit=crop',
+        avatar: '/images/actresses/fukada_eimi.jpg',
         tag: '社交天后',
         videoCount: 310,
         searchKey: '深田咏美',
@@ -69,7 +69,7 @@ export const JABLE_POPULAR_ACTRESSES: JableActress[] = [
     {
         id: '5',
         name: '小宵虎南',
-        avatar: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?q=80&w=300&auto=format&fit=crop',
+        avatar: '/images/actresses/koyoi_konan.jpg',
         tag: '神级身材',
         videoCount: 88,
         searchKey: '小宵虎南',
@@ -77,7 +77,7 @@ export const JABLE_POPULAR_ACTRESSES: JableActress[] = [
     {
         id: '6',
         name: '山岸逢花',
-        avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=300&auto=format&fit=crop',
+        avatar: '/images/actresses/yamagishi_aika.jpg',
         tag: '知性主播',
         videoCount: 142,
         searchKey: '山岸逢花',
@@ -85,7 +85,7 @@ export const JABLE_POPULAR_ACTRESSES: JableActress[] = [
     {
         id: '7',
         name: '葵司',
-        avatar: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=300&auto=format&fit=crop',
+        avatar: '/images/actresses/aoi_tsukasa.jpg',
         tag: '清纯女神',
         videoCount: 175,
         searchKey: '葵司',
@@ -93,7 +93,7 @@ export const JABLE_POPULAR_ACTRESSES: JableActress[] = [
     {
         id: '8',
         name: '明里紬',
-        avatar: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?q=80&w=300&auto=format&fit=crop',
+        avatar: '/images/actresses/akari_tsumugi.jpg',
         tag: '透明系美少女',
         videoCount: 110,
         searchKey: '明里紬',
