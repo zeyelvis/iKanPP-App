@@ -7,6 +7,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getVideoDetail } from '@/lib/api/client';
 import { getSourceById } from '@/lib/api/video-sources';
 import { isSafeExternalUrl } from '@/lib/utils/security';
+import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
+import { fetchJableVideoDetail } from '@/lib/server/jable-scraper';
 
 export const runtime = 'edge';
 
@@ -14,78 +16,123 @@ export const runtime = 'edge';
  * Shared handler for fetching video details
  */
 async function handleDetailRequest(id: string | null, source: string | null, method: string, request?: NextRequest) {
-  // Validate input
   if (!id) {
     return NextResponse.json(
-      { error: 'Missing video ID parameter' },
+      { success: false, error: 'Missing video ID parameter' },
       { status: 400 }
     );
   }
 
-  // Validate source
-  if (!source) {
-    return NextResponse.json(
-      { error: 'Missing source parameter' },
-      { status: 400 }
-    );
-  }
-
-  // 专属支持 Jable 原生视频流解析与双轨备用源容灾
-  if (source === 'jable') {
+  // 1. 专属支持 Jable 原生视频流直解与智能热备
+  if (source === 'jable' || !source) {
     try {
+      // 提取番号
+      const codeMatch = id.match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
+      const videoCode = codeMatch ? codeMatch[0].toUpperCase() : id;
+
+      // 尝试直解 Jable
+      const detail = await fetchJableVideoDetail(id);
+      if (detail && detail.hlsUrl) {
+        const proxiedStreamUrl = detail.hlsUrl.includes('.m3u8')
+          ? `/api/proxy?url=${encodeURIComponent(detail.hlsUrl)}&referer=${encodeURIComponent('https://jable.tv/')}`
+          : detail.hlsUrl;
+
+        return NextResponse.json({
+          success: true,
+          data: {
+            vod_id: id,
+            vod_name: detail.title || id,
+            vod_pic: detail.cover,
+            vod_actor: detail.actors?.join(', ') || '',
+            type_name: detail.tags?.join(', ') || '午夜大片',
+            episodes: [
+              {
+                name: '4K 原画',
+                url: proxiedStreamUrl,
+              }
+            ]
+          }
+        });
+      }
+
+      // 若 Jable 直解未果，向 36 大专线发起番号搜索热备
       const origin = request ? request.nextUrl.origin : 'http://localhost:3000';
-      const detailRes = await fetch(`${origin}/api/premium/stream?id=${encodeURIComponent(id)}&code=${encodeURIComponent(id)}`);
-      if (detailRes.ok) {
-        const streamData = await detailRes.json();
-        if (streamData.stream_url) {
-          return NextResponse.json({
-            success: true,
-            data: {
-              vod_id: id,
-              vod_name: streamData.title || id,
-              vod_pic: streamData.cover,
-              vod_actor: streamData.actors?.join(', ') || '',
-              type_name: streamData.tags?.join(', ') || '午夜大片',
-              episodes: [
-                {
-                  name: '4K 原画',
-                  url: streamData.stream_url,
-                }
-              ]
-            }
-          });
+      const fallbackRes = await fetch(`${origin}/api/premium/category`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sources: PREMIUM_SOURCES,
+          category: videoCode,
+          page: '1',
+          limit: '5'
+        })
+      });
+
+      if (fallbackRes.ok) {
+        const fallbackData = await fallbackRes.json();
+        const matched = fallbackData.videos?.[0];
+
+        if (matched && matched.vod_play_url) {
+          const playList = matched.vod_play_url.split('#');
+          const firstEp = playList[0];
+          const rawUrl = firstEp.includes('$') ? firstEp.split('$')[1] : firstEp;
+
+          if (rawUrl && rawUrl.startsWith('http')) {
+            const proxiedUrl = rawUrl.includes('.m3u8')
+              ? `/api/proxy?url=${encodeURIComponent(rawUrl)}`
+              : rawUrl;
+
+            return NextResponse.json({
+              success: true,
+              data: {
+                vod_id: String(matched.vod_id),
+                vod_name: matched.vod_name || id,
+                vod_pic: matched.vod_pic,
+                vod_actor: matched.vod_actor || '',
+                type_name: matched.type_name || '4K 蓝光',
+                episodes: [
+                  {
+                    name: '4K 极清',
+                    url: proxiedUrl,
+                  }
+                ]
+              }
+            });
+          }
         }
       }
     } catch (e) {
       console.error('[DetailAPI] Jable stream resolve error:', e);
     }
+
+    return NextResponse.json({
+      success: false,
+      error: '该影片暂无可用播放流，正在为您调度其他线路...',
+    });
   }
 
+  // 2. 传统采集源查询
   let sourceConfig;
-
-  // If source is an object (from POST), use it
   if (typeof source === 'object') {
     sourceConfig = source;
   } else {
-    // If source is a string ID (from GET), try to look it up
     sourceConfig = getSourceById(source);
   }
 
-  // MED-1 修复：校验 sourceConfig 是否合法且非内网目标
+  // 若找不到 sourceConfig，尝试在 PREMIUM_SOURCES 中再查一遍
+  if (!sourceConfig) {
+    sourceConfig = PREMIUM_SOURCES.find(s => s.id === source || s.name === source);
+  }
+
   if (!sourceConfig || !isSafeExternalUrl(sourceConfig.baseUrl)) {
     return NextResponse.json(
-      { error: 'Invalid or forbidden source configuration' },
-      { status: 400 }
+      { success: false, error: '暂未配置该视频线路' },
+      { status: 200 }
     );
   }
 
-  // Fetch video detail without validation (already validated during search)
   try {
     const videoDetail = await getVideoDetail(id, sourceConfig);
-
-    // Skip validation - videos are already checked during search
-    // Just return the episodes as-is
-
 
     return NextResponse.json({
       success: true,
@@ -99,7 +146,7 @@ async function handleDetailRequest(id: string | null, source: string | null, met
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch video detail',
       },
-      { status: 500 }
+      { status: 200 }
     );
   }
 }
@@ -124,7 +171,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Support POST method for complex requests
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
