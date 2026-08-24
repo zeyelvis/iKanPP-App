@@ -12,10 +12,12 @@ import { FavoritesSidebar } from '@/components/favorites/FavoritesSidebar';
 import { VipPrompt } from '@/components/premium/VipPrompt';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { useUserStore } from '@/lib/store/user-store';
-import { Crown, Sparkles, Zap, ShieldCheck } from 'lucide-react';
+import { useBossKey } from '@/lib/hooks/useBossKey';
+import { Crown, Sparkles, Zap, ShieldCheck, EyeOff } from 'lucide-react';
 
 function PremiumHomePage() {
     const router = useRouter();
+    const { triggerBossKey } = useBossKey({ redirectUrl: '/movie' });
     const {
         query,
         hasSearched,
@@ -141,6 +143,18 @@ function PremiumHomePage() {
 
             {/* Favorites Sidebar - Left */}
             <FavoritesSidebar isPremium={true} />
+
+            {/* 一键防尴尬「隐私伪装 (Esc)」悬浮胶囊 */}
+            <button
+                onClick={triggerBossKey}
+                className="fixed bottom-6 right-6 z-40 flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-black/85 hover:bg-black text-white/80 hover:text-white border border-white/15 backdrop-blur-xl shadow-xl shadow-black/80 text-xs font-bold transition-all cursor-pointer hover:scale-105 active:scale-95 group"
+                title="按键盘 Esc 键或点击立即伪装切回普通电影页面"
+                aria-label="隐私伪装"
+            >
+                <EyeOff size={14} className="text-amber-400 group-hover:rotate-12 transition-transform" />
+                <span className="hidden sm:inline">隐私伪装</span>
+                <kbd className="hidden sm:inline-block px-1.5 py-0.2 rounded bg-white/10 text-[10px] font-mono text-white/60">Esc</kbd>
+            </button>
 
             {/* VIP 尊享激活弹窗 */}
             {showVipModal && (

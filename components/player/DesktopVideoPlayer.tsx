@@ -432,8 +432,12 @@ export function DesktopVideoPlayer({
             />
           )}
 
-          {/* 专属 iKanPP 4K VIP 尊享品牌台标（常驻微遮罩，100% 遮盖第三方压制硬水印） */}
-          <PlayerBrandLogo isPremium={isPremium} />
+          {/* 专属 iKanPP 4K VIP 尊享品牌台标（智能边界追踪，100% 严丝合缝死死遮盖 Jable 水印） */}
+          <PlayerBrandLogo
+            videoRef={refs.videoRef}
+            containerRef={containerRef}
+            isPremium={isPremium}
+          />
 
           {/* Video Resolution Badge - follows controls bar visibility */}
           {videoResolution && (

@@ -8,6 +8,7 @@ import { JableActressSlider } from './JableActressSlider';
 import { JableStudioSlider } from './JableStudioSlider';
 import { JableTagCloud } from './JableTagCloud';
 import { JableFilterDrawer, type JableFilterState } from './JableFilterDrawer';
+import { ActressDetailModal } from './ActressDetailModal';
 import { usePremiumContent } from '@/lib/hooks/usePremiumContent';
 import {
     JABLE_MAIN_CATEGORIES,
@@ -28,6 +29,8 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
     const [rankingTabId, setRankingTabId] = useState('today');
     const [searchKeyword, setSearchKeyword] = useState('');
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+    const [selectedActress, setSelectedActress] = useState<JableActress | null>(null);
 
     // 主内容请求（支持 Jable 时段榜单与关键词联动）
     const {
@@ -50,13 +53,9 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
         setSearchKeyword('');
     };
 
-    // 选择女优
+    // 选择女优（唤起女神专属独立主页）
     const handleSelectActress = (actress: JableActress) => {
-        if (onSearch) {
-            onSearch(actress.searchKey);
-        } else {
-            setSearchKeyword(actress.searchKey);
-        }
+        setSelectedActress(actress);
     };
 
     // 选择片商
@@ -266,6 +265,14 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
                 isOpen={isFilterOpen}
                 onClose={() => setIsFilterOpen(false)}
                 onApplyFilter={handleApplyFilter}
+            />
+
+            {/* 女神专属独立主页弹窗 */}
+            <ActressDetailModal
+                actress={selectedActress}
+                isOpen={!!selectedActress}
+                onClose={() => setSelectedActress(null)}
+                onPlayVideo={handleVideoClick}
             />
         </div>
     );
