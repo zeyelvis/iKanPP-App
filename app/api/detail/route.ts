@@ -30,6 +30,36 @@ async function handleDetailRequest(id: string | null, source: string | null, met
     );
   }
 
+  // 专属支持 Jable 原生视频流解析与双轨备用源容灾
+  if (source === 'jable') {
+    try {
+      const detailRes = await fetch(`${new URL(id, 'http://localhost:3000').origin}/api/premium/stream?id=${encodeURIComponent(id)}`);
+      if (detailRes.ok) {
+        const streamData = await detailRes.json();
+        if (streamData.stream_url) {
+          return NextResponse.json({
+            success: true,
+            data: {
+              vod_id: id,
+              vod_name: streamData.title || id,
+              vod_pic: streamData.cover,
+              vod_actor: streamData.actors?.join(', ') || '',
+              type_name: streamData.tags?.join(', ') || '午夜大片',
+              episodes: [
+                {
+                  name: '4K 原画',
+                  url: streamData.stream_url,
+                }
+              ]
+            }
+          });
+        }
+      }
+    } catch (e) {
+      console.error('[DetailAPI] Jable stream resolve error:', e);
+    }
+  }
+
   let sourceConfig;
 
   // If source is an object (from POST), use it
