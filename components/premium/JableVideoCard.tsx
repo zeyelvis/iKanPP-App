@@ -8,9 +8,14 @@ interface JableVideoCardProps {
     video: {
         vod_id: string | number;
         vod_name: string;
+        video_code?: string;
         vod_pic?: string;
         vod_remarks?: string;
         vod_duration?: string;
+        duration?: string;
+        views?: string;
+        likes?: string;
+        rating?: number;
         type_name?: string;
         vod_year?: string;
         vod_actor?: string;
@@ -25,10 +30,10 @@ export function JableVideoCard({ video, onClick, index, rankBadge }: JableVideoC
     const [copied, setCopied] = useState(false);
     const [isFavorited, setIsFavorited] = useState(false);
 
-    // 智能提取番号（如 SSIS-123, FC2-PPV-123456, IPX-999 等）
     const title = video.vod_name || '高清影视大片';
-    const codeMatch = title.match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
-    const videoCode = codeMatch ? codeMatch[0].toUpperCase() : null;
+
+    // 提取番号（优先真实字段，次选智能正则提取）
+    const videoCode = video.video_code || (title.match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i)?.[0]?.toUpperCase() ?? null);
 
     // 清理标题展示（去除冗余标签）
     const cleanTitle = title.replace(/^(【[^】]+】|\[[^\]]+\]|\([^\)]+\))/g, '').trim();
@@ -38,10 +43,10 @@ export function JableVideoCard({ video, onClick, index, rankBadge }: JableVideoC
         ? `/api/img-proxy?url=${encodeURIComponent(video.vod_pic)}`
         : video.vod_pic;
 
-    // 模拟真实的 Jable 播放数据与时长
+    // 真实或智能模拟的 Jable 播放数据与时长
     const mockViews = Math.floor(10000 + (Math.sin((Number(video.vod_id) || (index ?? 1)) * 99) * 0.5 + 0.5) * 250000);
-    const viewsText = mockViews > 10000 ? `${(mockViews / 10000).toFixed(1)}万` : `${mockViews}`;
-    const mockRating = Math.floor(92 + ((Number(video.vod_id) || 1) % 8));
+    const viewsText = video.views || (mockViews > 10000 ? `${(mockViews / 10000).toFixed(1)}万` : `${mockViews}`);
+    const displayRating = video.likes ? video.likes.replace('%', '') : String(video.rating || Math.floor(92 + ((Number(video.vod_id) || 1) % 8)));
     const isChineseSub = title.includes('中文字幕') || title.includes('中字') || video.type_name?.includes('中字');
     const is4K = title.includes('4K') || title.includes('原画') || title.includes('蓝光');
     const isUncensored = title.includes('无码') || title.includes('步兵') || title.includes('FC2');
@@ -187,7 +192,7 @@ export function JableVideoCard({ video, onClick, index, rankBadge }: JableVideoC
                     </span>
                     <span className="flex items-center gap-1 text-emerald-400/90 font-medium">
                         <ThumbsUp size={11} />
-                        {mockRating}%
+                        {displayRating}%
                     </span>
                 </div>
             </div>

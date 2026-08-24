@@ -29,14 +29,14 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
     const [searchKeyword, setSearchKeyword] = useState('');
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-    // 主内容请求
+    // 主内容请求（支持 Jable 时段榜单与关键词联动）
     const {
         videos,
         loading,
         hasMore,
         prefetchRef,
         loadMoreRef,
-    } = usePremiumContent(searchKeyword);
+    } = usePremiumContent(searchKeyword, rankingTabId);
 
     // 切换主分类
     const handleSelectCategory = (cat: JableCategory) => {
@@ -45,9 +45,9 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
     };
 
     // 切换时段排行榜 Tab
-    const handleSelectRankingTab = (tabId: string, keyword: string) => {
+    const handleSelectRankingTab = (tabId: string) => {
         setRankingTabId(tabId);
-        setSearchKeyword(keyword);
+        setSearchKeyword('');
     };
 
     // 选择女优
@@ -132,7 +132,7 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
                             return (
                                 <button
                                     key={tab.id}
-                                    onClick={() => handleSelectRankingTab(tab.id, tab.keyword)}
+                                    onClick={() => handleSelectRankingTab(tab.id)}
                                     className={`flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                                         isTabActive
                                             ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-black shadow-md font-black scale-105'

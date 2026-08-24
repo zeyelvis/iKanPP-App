@@ -1,31 +1,37 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useInfiniteScroll } from '@/lib/hooks/useInfiniteScroll';
-import { settingsStore } from '@/lib/store/settings-store';
 
 export interface PremiumVideo {
     vod_id: string | number;
     vod_name: string;
+    video_code?: string;
     vod_pic?: string;
     vod_remarks?: string;
     type_name?: string;
+    duration?: string;
+    views?: string;
+    likes?: string;
+    rating?: number;
     source: string;
 }
 
 const PAGE_LIMIT = 20;
 
-// 客户端内存/持久级 SWR 缓存池
+// 客户端全局 SWR 缓存池
 const clientMemoryCache = new Map<string, PremiumVideo[]>();
 
-export function usePremiumContent(categoryValue: string) {
-    const cacheKey = categoryValue || '_all_';
+export function usePremiumContent(
+    categoryValue: string = '',
+    rankingMode: string = 'today'
+) {
+    // 缓存 key 组合 category 和 rankingMode
+    const cacheKey = categoryValue ? `cat:${categoryValue}` : `mode:${rankingMode}`;
 
-    // 优先从内存缓存中读取初始数据（实现 0ms 瞬间直出）
     const [videos, setVideos] = useState<PremiumVideo[]>(() => {
         return clientMemoryCache.get(cacheKey) || [];
     });
 
     const [loading, setLoading] = useState<boolean>(() => {
-        // 如果已有缓存，不显示全屏加载态
         return !clientMemoryCache.has(cacheKey);
     });
 
@@ -34,42 +40,40 @@ export function usePremiumContent(categoryValue: string) {
 
     const loadingRef = useRef(false);
     const categoryRef = useRef(categoryValue);
+    const modeRef = useRef(rankingMode);
     categoryRef.current = categoryValue;
+    modeRef.current = rankingMode;
 
     const loadVideos = useCallback(async (pageNum: number, append = false) => {
         if (loadingRef.current) return;
 
         loadingRef.current = true;
-        // 只有无缓存数据时才展示主 loading
-        if (!append && (!clientMemoryCache.has(categoryRef.current || '_all_'))) {
+        const currentKey = categoryRef.current ? `cat:${categoryRef.current}` : `mode:${modeRef.current}`;
+        
+        if (!append && !clientMemoryCache.has(currentKey)) {
             setLoading(true);
         }
 
         try {
-            const settings = settingsStore.getSettings();
-            const premiumSources = [
-                ...settings.premiumSources,
-                ...settings.subscriptions.filter(s => (s as any).group === 'premium')
-            ].filter(s => (s as any).enabled !== false);
-
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3500); // 客户端最高 3.5s 超时保护
+            const timeoutId = setTimeout(() => controller.abort(), 4000);
 
-            const response = await fetch('/api/premium/category', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            let apiUrl = `/api/premium/jable?page=${pageNum}`;
+            if (categoryRef.current) {
+                apiUrl += `&mode=search&q=${encodeURIComponent(categoryRef.current)}`;
+            } else {
+                apiUrl += `&mode=${encodeURIComponent(modeRef.current || 'today')}`;
+            }
+
+            const response = await fetch(apiUrl, {
+                method: 'GET',
                 signal: controller.signal,
-                body: JSON.stringify({
-                    sources: premiumSources.length > 0 ? premiumSources : undefined,
-                    category: categoryRef.current,
-                    page: pageNum.toString(),
-                    limit: PAGE_LIMIT.toString()
-                })
+                headers: { 'Accept': 'application/json' },
             });
 
             clearTimeout(timeoutId);
 
-            if (!response.ok) throw new Error('Failed to fetch');
+            if (!response.ok) throw new Error('Failed to fetch from jable API');
 
             const data = await response.json();
             const newVideos: PremiumVideo[] = data.videos || [];
@@ -78,7 +82,7 @@ export function usePremiumContent(categoryValue: string) {
                 setVideos(prev => {
                     const merged = append ? [...prev, ...newVideos] : newVideos;
                     if (pageNum === 1) {
-                        clientMemoryCache.set(categoryRef.current || '_all_', newVideos);
+                        clientMemoryCache.set(currentKey, newVideos);
                     }
                     return merged;
                 });
@@ -86,8 +90,7 @@ export function usePremiumContent(categoryValue: string) {
 
             setHasMore(newVideos.length >= PAGE_LIMIT);
         } catch (error) {
-            console.error('Failed to load videos:', error);
-            // 若为第一页且原本有缓存，则静默容灾，不中断用户体验
+            console.warn('[usePremiumContent] Fetch error, keeping cached data:', error);
             setHasMore(false);
         } finally {
             loadingRef.current = false;
@@ -95,11 +98,11 @@ export function usePremiumContent(categoryValue: string) {
         }
     }, []);
 
-    // 分类变化时触发 SWR 更新
+    // 监听分类或榜单 Tab 变化，0ms 优先展示缓存并触发后台 SWR
     useEffect(() => {
-        const key = categoryValue || '_all_';
+        const key = categoryValue ? `cat:${categoryValue}` : `mode:${rankingMode}`;
         const cached = clientMemoryCache.get(key);
-        
+
         setPage(1);
         if (cached && cached.length > 0) {
             setVideos(cached);
@@ -111,30 +114,7 @@ export function usePremiumContent(categoryValue: string) {
         setHasMore(true);
 
         loadVideos(1, false);
-    }, [categoryValue, loadVideos]);
-
-    // 订阅设置变化，源异步加载完成后重试
-    useEffect(() => {
-        const handleSettingsUpdate = () => {
-            const settings = settingsStore.getSettings();
-            const premiumSources = [
-                ...settings.premiumSources,
-                ...settings.subscriptions.filter(s => (s as any).group === 'premium')
-            ].filter(s => (s as any).enabled !== false);
-
-            if (premiumSources.length > 0 && !loadingRef.current) {
-                setVideos(currentVideos => {
-                    if (currentVideos.length === 0) {
-                        setTimeout(() => loadVideos(1, false), 0);
-                    }
-                    return currentVideos;
-                });
-            }
-        };
-
-        const unsubscribe = settingsStore.subscribe(handleSettingsUpdate);
-        return () => unsubscribe();
-    }, [loadVideos]);
+    }, [categoryValue, rankingMode, loadVideos]);
 
     const { prefetchRef, loadMoreRef } = useInfiniteScroll({
         hasMore,
