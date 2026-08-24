@@ -147,17 +147,34 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                    {topVideos.map((video, idx) => (
-                        <JableVideoCard
-                            key={`top-${video.vod_id}-${idx}`}
-                            video={video}
-                            onClick={() => handleVideoClick(video)}
-                            index={idx}
-                            rankBadge={idx + 1}
-                        />
-                    ))}
-                </div>
+                {videos.length === 0 && loading ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                        {Array.from({ length: 8 }).map((_, idx) => (
+                            <div key={`skel-top-${idx}`} className="flex flex-col rounded-2xl bg-[#0E0F17] border border-white/5 overflow-hidden animate-pulse">
+                                <div className="relative aspect-[16/10] w-full bg-white/5" />
+                                <div className="p-3 space-y-2">
+                                    <div className="h-4 bg-white/10 rounded-md w-3/4" />
+                                    <div className="flex justify-between items-center pt-1">
+                                        <div className="h-3 bg-white/5 rounded w-1/4" />
+                                        <div className="h-3 bg-white/5 rounded w-1/4" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                        {topVideos.map((video, idx) => (
+                            <JableVideoCard
+                                key={`top-${video.vod_id}-${idx}`}
+                                video={video}
+                                onClick={() => handleVideoClick(video)}
+                                index={idx}
+                                rankBadge={idx + 1}
+                            />
+                        ))}
+                    </div>
+                )}
             </section>
 
             {/* 4. 🌸 人气名优女神专区 */}
@@ -190,21 +207,38 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
                     </button>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                    {remainingVideos.map((video, idx) => (
-                        <JableVideoCard
-                            key={`rem-${video.vod_id}-${idx}`}
-                            video={video}
-                            onClick={() => handleVideoClick(video)}
-                            index={idx + 8}
-                        />
-                    ))}
-                </div>
+                {videos.length === 0 && loading ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                        {Array.from({ length: 8 }).map((_, idx) => (
+                            <div key={`skel-rem-${idx}`} className="flex flex-col rounded-2xl bg-[#0E0F17] border border-white/5 overflow-hidden animate-pulse">
+                                <div className="relative aspect-[16/10] w-full bg-white/5" />
+                                <div className="p-3 space-y-2">
+                                    <div className="h-4 bg-white/10 rounded-md w-3/4" />
+                                    <div className="flex justify-between items-center pt-1">
+                                        <div className="h-3 bg-white/5 rounded w-1/4" />
+                                        <div className="h-3 bg-white/5 rounded w-1/4" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                        {remainingVideos.map((video, idx) => (
+                            <JableVideoCard
+                                key={`rem-${video.vod_id}-${idx}`}
+                                video={video}
+                                onClick={() => handleVideoClick(video)}
+                                index={idx + 8}
+                            />
+                        ))}
+                    </div>
+                )}
 
-                {/* 滚动加载指示器 */}
-                {loading && (
-                    <div className="flex items-center justify-center py-12">
-                        <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                {/* 滚动加载指示器（仅在已有内容追加时呈现底部转圈） */}
+                {loading && videos.length > 0 && (
+                    <div className="flex items-center justify-center py-8">
+                        <div className="w-7 h-7 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
                     </div>
                 )}
 

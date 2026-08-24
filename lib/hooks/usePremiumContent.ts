@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useInfiniteScroll } from '@/lib/hooks/useInfiniteScroll';
 import { settingsStore } from '@/lib/store/settings-store';
 
-interface PremiumVideo {
+export interface PremiumVideo {
     vod_id: string | number;
     vod_name: string;
     vod_pic?: string;
@@ -13,13 +13,25 @@ interface PremiumVideo {
 
 const PAGE_LIMIT = 20;
 
+// 客户端内存/持久级 SWR 缓存池
+const clientMemoryCache = new Map<string, PremiumVideo[]>();
+
 export function usePremiumContent(categoryValue: string) {
-    const [videos, setVideos] = useState<PremiumVideo[]>([]);
-    const [loading, setLoading] = useState(false);
+    const cacheKey = categoryValue || '_all_';
+
+    // 优先从内存缓存中读取初始数据（实现 0ms 瞬间直出）
+    const [videos, setVideos] = useState<PremiumVideo[]>(() => {
+        return clientMemoryCache.get(cacheKey) || [];
+    });
+
+    const [loading, setLoading] = useState<boolean>(() => {
+        // 如果已有缓存，不显示全屏加载态
+        return !clientMemoryCache.has(cacheKey);
+    });
+
     const [hasMore, setHasMore] = useState(true);
     const [page, setPage] = useState(1);
 
-    // 用 ref 追踪 loading 状态，避免 useCallback 依赖 loading 导致死循环
     const loadingRef = useRef(false);
     const categoryRef = useRef(categoryValue);
     categoryRef.current = categoryValue;
@@ -28,56 +40,80 @@ export function usePremiumContent(categoryValue: string) {
         if (loadingRef.current) return;
 
         loadingRef.current = true;
-        setLoading(true);
+        // 只有无缓存数据时才展示主 loading
+        if (!append && (!clientMemoryCache.has(categoryRef.current || '_all_'))) {
+            setLoading(true);
+        }
+
         try {
-            // 获取 premium 源
             const settings = settingsStore.getSettings();
             const premiumSources = [
                 ...settings.premiumSources,
                 ...settings.subscriptions.filter(s => (s as any).group === 'premium')
             ].filter(s => (s as any).enabled !== false);
 
-            if (premiumSources.length === 0) {
-                // 源还没加载，不算错，保持 hasMore 以便重试
-                return;
-            }
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3500); // 客户端最高 3.5s 超时保护
 
             const response = await fetch('/api/premium/category', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                signal: controller.signal,
                 body: JSON.stringify({
-                    sources: premiumSources,
+                    sources: premiumSources.length > 0 ? premiumSources : undefined,
                     category: categoryRef.current,
                     page: pageNum.toString(),
                     limit: PAGE_LIMIT.toString()
                 })
             });
 
+            clearTimeout(timeoutId);
+
             if (!response.ok) throw new Error('Failed to fetch');
 
             const data = await response.json();
-            const newVideos = data.videos || [];
+            const newVideos: PremiumVideo[] = data.videos || [];
 
-            setVideos(prev => append ? [...prev, ...newVideos] : newVideos);
+            if (newVideos.length > 0) {
+                setVideos(prev => {
+                    const merged = append ? [...prev, ...newVideos] : newVideos;
+                    if (pageNum === 1) {
+                        clientMemoryCache.set(categoryRef.current || '_all_', newVideos);
+                    }
+                    return merged;
+                });
+            }
+
             setHasMore(newVideos.length >= PAGE_LIMIT);
         } catch (error) {
             console.error('Failed to load videos:', error);
+            // 若为第一页且原本有缓存，则静默容灾，不中断用户体验
             setHasMore(false);
         } finally {
             loadingRef.current = false;
             setLoading(false);
         }
-    }, []); // 不依赖 loading 和 categoryValue，用 ref 代替
+    }, []);
 
-    // 分类变化时重置并重新加载
+    // 分类变化时触发 SWR 更新
     useEffect(() => {
+        const key = categoryValue || '_all_';
+        const cached = clientMemoryCache.get(key);
+        
         setPage(1);
-        setVideos([]);
+        if (cached && cached.length > 0) {
+            setVideos(cached);
+            setLoading(false);
+        } else {
+            setVideos([]);
+            setLoading(true);
+        }
         setHasMore(true);
+
         loadVideos(1, false);
     }, [categoryValue, loadVideos]);
 
-    // 订阅设置变化，源异步加载完成后自动重试
+    // 订阅设置变化，源异步加载完成后重试
     useEffect(() => {
         const handleSettingsUpdate = () => {
             const settings = settingsStore.getSettings();
@@ -86,12 +122,9 @@ export function usePremiumContent(categoryValue: string) {
                 ...settings.subscriptions.filter(s => (s as any).group === 'premium')
             ].filter(s => (s as any).enabled !== false);
 
-            // 如果当前没有视频且有可用源且未在加载，自动重试
             if (premiumSources.length > 0 && !loadingRef.current) {
-                // 获取当前状态判断是否需要重新加载
                 setVideos(currentVideos => {
                     if (currentVideos.length === 0) {
-                        // 用 setTimeout 避免在 setState 回调中执行异步操作
                         setTimeout(() => loadVideos(1, false), 0);
                     }
                     return currentVideos;

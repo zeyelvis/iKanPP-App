@@ -19,8 +19,7 @@ function getCached(key: string): any[] | null {
 }
 
 function setCache(key: string, data: any[]): void {
-    // 限制缓存大小（最多 100 个 key）
-    if (cache.size > 100) {
+    if (cache.size > 200) {
         const oldest = cache.keys().next().value;
         if (oldest) cache.delete(oldest);
     }
@@ -29,9 +28,6 @@ function setCache(key: string, data: any[]): void {
 
 // ==================== 工具函数 ====================
 
-/**
- * 构建正确的采集站 API URL
- */
 function buildSourceUrl(source: any): URL {
     const base = source.baseUrl.replace(/\/$/, '');
     const path = source.searchPath || source.detailPath || '';
@@ -39,7 +35,7 @@ function buildSourceUrl(source: any): URL {
 }
 
 /**
- * 从单个源获取数据
+ * 从单个源高速获取数据（严格 2 秒超时）
  */
 async function fetchFromSource(source: any, params: Record<string, string>): Promise<any[]> {
     try {
@@ -50,12 +46,13 @@ async function fetchFromSource(source: any, params: Record<string, string>): Pro
         }
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 4000); // 4 秒超时
+        const timeoutId = setTimeout(() => controller.abort(), 2000); // 极速 2 秒超时
 
         const response = await fetch(url.toString(), {
             signal: controller.signal,
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                Accept: 'application/json, text/plain, */*',
             },
             next: { revalidate: 1800 },
         });
@@ -78,22 +75,29 @@ async function fetchFromSource(source: any, params: Record<string, string>): Pro
 }
 
 /**
- * 交错合并多源结果
+ * 智能交错合并多源结果并去重
  */
-function interleaveResults(results: any[][]): any[] {
+function interleaveAndDeduplicate(results: any[][]): any[] {
     const interleaved: any[] = [];
+    const seenNames = new Set<string>();
     const maxLen = Math.max(...results.map(r => r.length), 0);
+
     for (let i = 0; i < maxLen; i++) {
         for (let j = 0; j < results.length; j++) {
-            if (results[j][i]) {
-                interleaved.push(results[j][i]);
+            const item = results[j][i];
+            if (item && item.vod_name) {
+                const normalized = item.vod_name.trim().toLowerCase();
+                if (!seenNames.has(normalized)) {
+                    seenNames.add(normalized);
+                    interleaved.push(item);
+                }
             }
         }
     }
     return interleaved;
 }
 
-// ==================== 核心处理 ====================
+// ==================== 核心极速聚合处理 ====================
 
 async function handleCategoryRequest(
     sourceList: any[],
@@ -108,59 +112,25 @@ async function handleCategoryRequest(
             return NextResponse.json({ videos: [], error: 'No enabled sources' }, { status: 500 });
         }
 
-        // 缓存 key
-        const sourceIds = enabledSources.map(s => s.id).sort().join(',');
-        const cacheKey = `${categoryParam || '_all_'}:${page}:${sourceIds}`;
+        // 标准化缓存 key（基于 category 和 page）
+        const cacheKey = `${categoryParam || '_all_'}:${page}`;
 
-        // 检查缓存
+        // 检查边缘内存缓存
         const cached = getCached(cacheKey);
-        if (cached) {
-            return NextResponse.json({ videos: cached, fromCache: true });
+        if (cached && cached.length > 0) {
+            return NextResponse.json({ videos: cached, fromCache: true }, {
+                headers: {
+                    'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=86400',
+                    'CDN-Cache-Control': 'public, s-maxage=900',
+                }
+            });
         }
 
         const isKeywordSearch = categoryParam && !categoryParam.includes(':');
 
-        if (isKeywordSearch) {
-            // ========== 关键词搜索模式 ==========
-            // 分批：前 5 个优先源 + 剩余源并行
-            const prioritySources = enabledSources.slice(0, 5);
-            const restSources = enabledSources.slice(5);
-
-            const params = { ac: 'detail', wd: categoryParam, pg: page.toString() };
-
-            // 第 1 批：优先源
-            const priorityResults = await Promise.all(
-                prioritySources.map(s => fetchFromSource(s, params))
-            );
-
-            // 第 2 批：剩余源（与第 1 批并行开始但不等待）
-            const restPromise = restSources.length > 0
-                ? Promise.all(restSources.map(s => fetchFromSource(s, params)))
-                : Promise.resolve([]);
-
-            // 先用优先源结果
-            let allResults = [...priorityResults];
-
-            // 等待剩余源（最多再等 3 秒）
-            try {
-                const restResults = await Promise.race([
-                    restPromise,
-                    new Promise<any[][]>((resolve) => setTimeout(() => resolve([]), 3000))
-                ]);
-                allResults = [...allResults, ...restResults];
-            } catch {
-                // 剩余源超时，只用优先源结果
-            }
-
-            const videos = interleaveResults(allResults);
-            setCache(cacheKey, videos);
-            return NextResponse.json({ videos });
-        }
-
-        // ========== 分类模式 ==========
+        // 构建请求参数
         const sourceMap = new Map<string, string>();
-
-        if (categoryParam) {
+        if (categoryParam && !isKeywordSearch) {
             categoryParam.split(',').forEach(part => {
                 if (part.includes(':')) {
                     const [sId, tId] = part.split(':');
@@ -169,51 +139,50 @@ async function handleCategoryRequest(
             });
         }
 
-        let targetSources = sourceMap.size > 0
+        const targetSources = sourceMap.size > 0
             ? enabledSources.filter(s => sourceMap.has(s.id))
             : enabledSources;
 
-        if (targetSources.length === 0) {
-            return NextResponse.json({ videos: [], error: 'No matching sources' }, { status: 500 });
-        }
+        // 为避免并发爆炸，选取优先级最高的 10 个源并发竞速
+        const activeSources = targetSources.slice(0, 10);
 
-        // 分批请求
-        const prioritySources = targetSources.slice(0, 5);
-        const restSources = targetSources.slice(5);
-
-        const buildParams = (source: any) => {
-            const p: Record<string, string> = { ac: 'detail', pg: page.toString() };
-            if (sourceMap.has(source.id)) {
-                p.t = sourceMap.get(source.id)!;
+        const fetchPromises = activeSources.map(s => {
+            const params: Record<string, string> = { ac: 'detail', pg: page.toString() };
+            if (isKeywordSearch) {
+                params.wd = categoryParam;
+            } else if (sourceMap.has(s.id)) {
+                params.t = sourceMap.get(s.id)!;
             }
-            return p;
-        };
+            return fetchFromSource(s, params);
+        });
 
-        // 第 1 批
-        const priorityResults = await Promise.all(
-            prioritySources.map(s => fetchFromSource(s, buildParams(s)))
-        );
+        // 极速竞速聚合机制：最多等待 2.2 秒，绝不卡死
+        const timeoutPromise = new Promise<any[]>((resolve) => setTimeout(() => resolve([]), 2200));
 
-        // 第 2 批
-        const restPromise = restSources.length > 0
-            ? Promise.all(restSources.map(s => fetchFromSource(s, buildParams(s))))
-            : Promise.resolve([]);
+        const settledResults = await Promise.race([
+            Promise.allSettled(fetchPromises),
+            timeoutPromise.then(() => [])
+        ]);
 
-        let allResults = [...priorityResults];
+        const validResults: any[][] = Array.isArray(settledResults) && settledResults.length > 0
+            ? settledResults
+                .map(r => r.status === 'fulfilled' ? r.value : [])
+                .filter(arr => arr && arr.length > 0)
+            : [];
 
-        try {
-            const restResults = await Promise.race([
-                restPromise,
-                new Promise<any[][]>((resolve) => setTimeout(() => resolve([]), 3000))
-            ]);
-            allResults = [...allResults, ...restResults];
-        } catch {
-            // 超时
+        let videos = interleaveAndDeduplicate(validResults);
+
+        // 如果本次成功拿到有效结果，写入缓存
+        if (videos.length > 0) {
+            setCache(cacheKey, videos);
         }
 
-        const videos = interleaveResults(allResults);
-        setCache(cacheKey, videos);
-        return NextResponse.json({ videos });
+        return NextResponse.json({ videos }, {
+            headers: {
+                'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=86400',
+                'CDN-Cache-Control': 'public, s-maxage=900',
+            }
+        });
 
     } catch (error) {
         console.error('Category content error:', error);
@@ -230,7 +199,7 @@ export async function POST(request: Request) {
         const { sources, category, page, limit } = body;
 
         return await handleCategoryRequest(
-            sources || [],
+            sources && sources.length > 0 ? sources : PREMIUM_SOURCES,
             category || '',
             parseInt(page || '1'),
             parseInt(limit || '20')
