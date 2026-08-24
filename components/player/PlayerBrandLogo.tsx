@@ -12,20 +12,18 @@ interface PlayerBrandLogoProps {
 }
 
 /**
- * 苹果/好莱坞电影级无缝径向羽化台标（Apple/IMAX Ambient Cinema Watermark）
+ * 苹果/好莱坞双层实体防透光电影级台标（Zero-Leak Ambient Cinema Mask）
  * 
- * 极致美学与细节提升：
- * 1. 采用高阶双重径向烟雾羽化渐变 (Radial Gaussian Feathering)，消除任何可见边界切线
- * 2. 沉浸观影智能呼吸透光：控制条隐藏时优雅降至 70% 极简微透，唤出控制条时瞬间晶亮
- * 3. 黄金比例极简金冠微标，彻底去除任何突兀硬底
- * 4. 严丝合缝零缝隙包覆，100% 彻底吞噬底层所有原站印记
+ * 核心技术突破：
+ * 1. 【核心黑洞层 (Zero-Leak Solid Core)】：水印区域 100% 纯黑绝对不透明 (#000000)，透光率严格为 0%，100% 物理级吞没 jable.tv！
+ * 2. 【外圈柔和烟雾层 (Outer Smoke Feathering)】：从实体黑向右下方以高阶高斯平滑羽化融入画面，完全无可见硬边。
+ * 3. 【全天候 100% 恒定遮挡】：始终保持 opacity: 1 实体覆盖，杜绝任何亮度下的隐约透字。
  */
 export function PlayerBrandLogo({
   videoRef,
   containerRef,
   isPremium = true,
   className = '',
-  showControls = true,
 }: PlayerBrandLogoProps) {
   // 真实画面偏移量
   const [position, setPosition] = useState<{ top: number; left: number; ready: boolean }>({
@@ -105,46 +103,45 @@ export function PlayerBrandLogo({
 
   return (
     <div
-      className={`absolute z-35 pointer-events-none select-none transition-all duration-500 ease-out ${className}`}
+      className={`absolute z-35 pointer-events-none select-none transition-all duration-150 ease-out ${className}`}
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,
-        width: '230px',
-        height: '76px',
-        opacity: position.ready ? (showControls ? 1 : 0.85) : 0,
+        width: '240px',
+        height: '80px',
+        opacity: position.ready ? 1 : 0,
       }}
       aria-hidden="true"
     >
-      {/* 1. 电影级双重径向烟雾羽化底罩（彻底抹平所有切线，像原生暗角般无缝融入） */}
+      {/* 1. 【核心黑洞层】：水印区域 100% 纯黑实体覆写，透光率 0%，彻底物理灭绝 jable.tv */}
+      <div className="absolute top-0 left-0 w-[170px] h-[52px] bg-black" />
+
+      {/* 2. 【外圈柔和烟雾层】：平滑向右下羽化扩散，彻底消除边界任何生硬切线 */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse 110% 100% at 0% 0%, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.85) 38%, rgba(0,0,0,0.4) 65%, rgba(0,0,0,0) 100%)',
-          backdropFilter: 'blur(4px)',
-          WebkitBackdropFilter: 'blur(4px)',
-          maskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 50%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 50%, transparent 100%)',
+          background: 'radial-gradient(ellipse 100% 100% at 0% 0%, #000000 0%, #000000 50%, rgba(0,0,0,0.85) 68%, rgba(0,0,0,0) 100%)',
         }}
       />
 
-      {/* 2. 苹果 / IMAX 极致精巧纯粹原厂台标 */}
-      <div className="relative h-full flex items-start pt-3 pl-3.5 gap-2">
+      {/* 3. 【IMAX 级纯粹尊享台标】：纯正发光字标 */}
+      <div className="relative h-full flex items-start pt-2.5 pl-3.5 gap-2 z-10">
         {/* 纯金微晶金冠标 */}
-        <div className="w-5 h-5 rounded-lg bg-white/5 border border-amber-400/30 flex items-center justify-center shadow-sm shadow-amber-500/20 mt-0.5 shrink-0 backdrop-blur-md">
+        <div className="w-5 h-5 rounded-lg bg-white/10 border border-amber-400/40 flex items-center justify-center shadow-md shadow-amber-500/20 mt-0.5 shrink-0">
           <Crown size={11} className="text-amber-400 font-black drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]" />
         </div>
 
         {/* 黄金排版文字 */}
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5 leading-none">
-            <span className="text-[13px] font-black tracking-wider text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] font-sans">
+            <span className="text-[13px] font-black tracking-wider text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] font-sans">
               iKanPP
             </span>
-            <span className="px-1.5 py-0.2 rounded-full text-[8px] font-black bg-amber-400/15 text-amber-300 border border-amber-400/30 uppercase tracking-tighter drop-shadow-sm">
+            <span className="px-1.5 py-0.2 rounded-full text-[8px] font-black bg-amber-400/20 text-amber-300 border border-amber-400/40 uppercase tracking-tighter shadow-sm">
               4K MAX
             </span>
           </div>
-          <span className="text-[8px] font-bold text-white/55 tracking-[0.2em] uppercase mt-1 drop-shadow-md">
+          <span className="text-[8px] font-bold text-white/70 tracking-[0.2em] uppercase mt-1 drop-shadow-sm">
             {isPremium ? 'VIP CINEMA PRO' : 'ULTRA HD'}
           </span>
         </div>
