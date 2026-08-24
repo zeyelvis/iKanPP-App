@@ -8,22 +8,24 @@ interface PlayerBrandLogoProps {
   containerRef?: React.RefObject<HTMLDivElement | null>;
   isPremium?: boolean;
   className?: string;
+  showControls?: boolean;
 }
 
 /**
- * 电影工业级智能画面吸附台标（Cinematic Ultra HD Watermark）
+ * 苹果/好莱坞电影级无缝径向羽化台标（Apple/IMAX Ambient Cinema Watermark）
  * 
- * 核心优化：
- * 1. 彻底去除生硬突兀的黄色药丸胶囊补丁感
- * 2. 采用好莱坞电影级自然暗角羽化渐变 (Cinematic Vignette)
- * 3. 严格贴合真实视频像素顶角 (renderTop, renderLeft)，彻底吞没 Jable 水印无任何残留
- * 4. 浮现如 Netflix / IMAX 原厂般的极简纯粹 4K 蓝光尊享台标
+ * 极致美学与细节提升：
+ * 1. 采用高阶双重径向烟雾羽化渐变 (Radial Gaussian Feathering)，消除任何可见边界切线
+ * 2. 沉浸观影智能呼吸透光：控制条隐藏时优雅降至 70% 极简微透，唤出控制条时瞬间晶亮
+ * 3. 黄金比例极简金冠微标，彻底去除任何突兀硬底
+ * 4. 严丝合缝零缝隙包覆，100% 彻底吞噬底层所有原站印记
  */
 export function PlayerBrandLogo({
   videoRef,
   containerRef,
   isPremium = true,
   className = '',
+  showControls = true,
 }: PlayerBrandLogoProps) {
   // 真实画面偏移量
   const [position, setPosition] = useState<{ top: number; left: number; ready: boolean }>({
@@ -55,18 +57,16 @@ export function PlayerBrandLogo({
     let renderLeft = 0;
 
     if (containerAspect > videoAspect) {
-      // 左右有黑边，视频高度铺满
       const renderWidth = cHeight * videoAspect;
       renderLeft = (cWidth - renderWidth) / 2;
       renderTop = 0;
     } else {
-      // 上下有黑边，视频宽度铺满
       const renderHeight = cWidth / videoAspect;
       renderTop = (cHeight - renderHeight) / 2;
       renderLeft = 0;
     }
 
-    // 严丝合缝贴死视频画面的最顶角（不留任何缝隙露白）
+    // 严密贴合视频真实画面最顶角
     setPosition({
       top: Math.max(0, Math.round(renderTop)),
       left: Math.max(0, Math.round(renderLeft)),
@@ -105,37 +105,46 @@ export function PlayerBrandLogo({
 
   return (
     <div
-      className={`absolute z-35 pointer-events-none select-none overflow-hidden transition-all duration-150 ${className}`}
+      className={`absolute z-35 pointer-events-none select-none transition-all duration-500 ease-out ${className}`}
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,
-        width: '210px',
-        height: '64px',
-        opacity: position.ready ? 1 : 0.95,
+        width: '230px',
+        height: '76px',
+        opacity: position.ready ? (showControls ? 1 : 0.85) : 0,
       }}
       aria-hidden="true"
     >
-      {/* 1. 电影级左上角自然暗角遮罩（高密度吸收水印，边缘柔和羽化） */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/95 via-black/80 to-transparent backdrop-blur-[6px]" />
+      {/* 1. 电影级双重径向烟雾羽化底罩（彻底抹平所有切线，像原生暗角般无缝融入） */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 110% 100% at 0% 0%, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.85) 38%, rgba(0,0,0,0.4) 65%, rgba(0,0,0,0) 100%)',
+          backdropFilter: 'blur(4px)',
+          WebkitBackdropFilter: 'blur(4px)',
+          maskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 50%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 50%, transparent 100%)',
+        }}
+      />
 
-      {/* 2. 奢华纯粹的 IMAX / Netflix 级原厂发光台标 */}
-      <div className="relative h-full flex items-start pt-2.5 pl-3.5 gap-2">
-        {/* 精致小皇冠微标 */}
-        <div className="w-5 h-5 rounded-md bg-gradient-to-br from-amber-400/90 to-amber-600/90 flex items-center justify-center shadow-sm shadow-amber-500/30 mt-0.5 shrink-0">
-          <Crown size={11} className="text-black font-black" />
+      {/* 2. 苹果 / IMAX 极致精巧纯粹原厂台标 */}
+      <div className="relative h-full flex items-start pt-3 pl-3.5 gap-2">
+        {/* 纯金微晶金冠标 */}
+        <div className="w-5 h-5 rounded-lg bg-white/5 border border-amber-400/30 flex items-center justify-center shadow-sm shadow-amber-500/20 mt-0.5 shrink-0 backdrop-blur-md">
+          <Crown size={11} className="text-amber-400 font-black drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]" />
         </div>
 
-        {/* 电影级无衬线发光文字 */}
+        {/* 黄金排版文字 */}
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5 leading-none">
-            <span className="text-[13px] font-black tracking-widest text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] font-sans">
+            <span className="text-[13px] font-black tracking-wider text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] font-sans">
               iKanPP
             </span>
-            <span className="px-1 py-0.2 rounded text-[8px] font-extrabold bg-amber-500/30 text-amber-300 border border-amber-400/40 uppercase tracking-tighter">
+            <span className="px-1.5 py-0.2 rounded-full text-[8px] font-black bg-amber-400/15 text-amber-300 border border-amber-400/30 uppercase tracking-tighter drop-shadow-sm">
               4K MAX
             </span>
           </div>
-          <span className="text-[8px] font-semibold text-white/50 tracking-wider uppercase mt-1 drop-shadow-sm">
+          <span className="text-[8px] font-bold text-white/55 tracking-[0.2em] uppercase mt-1 drop-shadow-md">
             {isPremium ? 'VIP CINEMA PRO' : 'ULTRA HD'}
           </span>
         </div>

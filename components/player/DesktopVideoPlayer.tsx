@@ -437,6 +437,7 @@ export function DesktopVideoPlayer({
             videoRef={refs.videoRef}
             containerRef={containerRef}
             isPremium={isPremium}
+            showControls={data.showControls}
           />
 
           {/* Video Resolution Badge - follows controls bar visibility */}
