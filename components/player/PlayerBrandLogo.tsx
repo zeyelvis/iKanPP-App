@@ -12,13 +12,13 @@ interface PlayerBrandLogoProps {
 }
 
 /**
- * 苹果/好莱坞无黑底通透高斯磨砂台标（Zero-Black-Card Frost Glass Watermark）
+ * 苹果/好莱坞 56px 超强双通道高斯消融台标（Ultra-Deep Frost Glass Delogo）
  * 
- * 核心设计突破：
- * 1. 【彻底移除黑底】：不再使用任何黑斑或黑色渐变，背景 100% 透出当前视频的实时画面颜色（蓝天即蓝、红砖即红）
- * 2. 【高阶高斯消融】：采用 28px 超强动态 Backdrop Blur，将底层 jable.tv 锐利文字彻底打散消融为柔和纯净背景光
- * 3. 【边缘无痕羽化】：采用 Radial Mask 边缘渐变融合，与原画面无缝衔接
- * 4. 【极简纯净排版】：通透高透玻璃底座 + 纯白高光 iKanPP 4K MAX 徽标
+ * 核心升级：
+ * 1. 【56px 双通道超强高斯核】：核半径从 32px 飙升至 56px，彻底揉碎打散任何高亮白字轮廓
+ * 2. 【高反差像素中和 (Contrast Neutralizer)】：brightness(0.9) + saturate(130%)，彻底抹平高反差字迹亮斑
+ * 3. 【0 黑底 100% 动态透色】：仍然保持通透纯净无黑底，视频是红色即透红，是蓝色即透蓝
+ * 4. 【边缘平滑无痕径向羽化】：Mask Image 边缘平滑淡出，完全无硬边
  */
 export function PlayerBrandLogo({
   videoRef,
@@ -108,27 +108,40 @@ export function PlayerBrandLogo({
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,
-        width: '220px',
-        height: '68px',
+        width: '235px',
+        height: '72px',
         opacity: position.ready ? 1 : 0,
       }}
       aria-hidden="true"
     >
-      {/* 1. 【无黑底高斯磨砂消融层】：0 黑底，直接实时模糊视频原色，将 Jable 锐利文字打散消融 */}
+      {/* 1. 【第一道强力高斯消融】：56px 广域卷积揉碎文字字符 */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          backdropFilter: 'blur(32px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(32px) saturate(180%)',
-          maskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 40%, rgba(0,0,0,0.5) 75%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 40%, rgba(0,0,0,0.5) 75%, transparent 100%)',
+          backdropFilter: 'blur(56px) brightness(0.9) saturate(140%)',
+          WebkitBackdropFilter: 'blur(56px) brightness(0.9) saturate(140%)',
+          background: 'rgba(0, 0, 0, 0.08)',
+          maskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 55%, rgba(0,0,0,0.5) 80%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 55%, rgba(0,0,0,0.5) 80%, transparent 100%)',
         }}
       />
 
-      {/* 2. 【极简纯净原厂台标】：无黑框，通透悬浮 */}
+      {/* 2. 【第二道微晶光雾中和层】：彻底消除高反差残影 */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backdropFilter: 'blur(36px)',
+          WebkitBackdropFilter: 'blur(36px)',
+          background: 'radial-gradient(ellipse 90% 90% at 0% 0%, rgba(255,255,255,0.05) 0%, transparent 80%)',
+          maskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 40%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 40%, transparent 100%)',
+        }}
+      />
+
+      {/* 3. 【极简纯净原厂台标】：无黑框，通透悬浮 */}
       <div className="relative h-full flex items-start pt-2.5 pl-3.5 gap-2.5 z-10">
         {/* 通透微晶皇冠底座 */}
-        <div className="w-6 h-6 rounded-xl bg-black/15 border border-white/20 backdrop-blur-xl flex items-center justify-center shadow-sm mt-0.5 shrink-0">
+        <div className="w-6 h-6 rounded-xl bg-black/20 border border-white/25 backdrop-blur-2xl flex items-center justify-center shadow-md shadow-black/40 mt-0.5 shrink-0">
           <Crown size={12} className="text-amber-400 font-black drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]" />
         </div>
 
