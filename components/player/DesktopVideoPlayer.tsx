@@ -12,6 +12,7 @@ import { DesktopOverlayWrapper } from './desktop/DesktopOverlayWrapper';
 import { DanmakuCanvas } from './DanmakuCanvas';
 import { usePlayerSettings } from './hooks/usePlayerSettings';
 import { useDanmaku } from './hooks/useDanmaku';
+import { PlayerBrandLogo } from './PlayerBrandLogo';
 import { useIsIOS, useIsMobile } from '@/lib/hooks/mobile/useDeviceDetection';
 import { useDoubleTap } from '@/lib/hooks/mobile/useDoubleTap';
 import { settingsStore, DEFAULT_SEEK_STEP_SECONDS } from '@/lib/store/settings-store';
@@ -431,9 +432,12 @@ export function DesktopVideoPlayer({
             />
           )}
 
+          {/* 专属 iKanPP 4K VIP 尊享品牌台标（常驻微遮罩，100% 遮盖第三方压制硬水印） */}
+          <PlayerBrandLogo isPremium={isPremium} />
+
           {/* Video Resolution Badge - follows controls bar visibility */}
           {videoResolution && (
-            <div className={`absolute top-3 left-3 z-20 pointer-events-none transition-opacity duration-300 ${data.showControls ? 'opacity-80' : 'opacity-0'}`}>
+            <div className={`absolute top-3 left-36 z-20 pointer-events-none transition-opacity duration-300 ${data.showControls ? 'opacity-80' : 'opacity-0'}`}>
               <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold text-white ${videoResolution.color}`}>
                 {videoResolution.label}
                 <span className="font-normal opacity-80">{videoResolution.width}x{videoResolution.height}</span>
