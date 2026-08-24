@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Crown, Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Crown } from 'lucide-react';
 
 interface PlayerBrandLogoProps {
   videoRef?: React.RefObject<HTMLVideoElement | null>;
@@ -11,12 +11,13 @@ interface PlayerBrandLogoProps {
 }
 
 /**
- * 智能视频画面边界追踪品牌台标（Smart Video Bounds Tracker）
+ * 电影工业级智能画面吸附台标（Cinematic Ultra HD Watermark）
  * 
- * 核心特性：
- * 1. 动态计算 object-contain 下视频画面的真实渲染坐标（剔除上下/左右黑边偏移）
- * 2. 无论全屏、小窗、旋转或缩放，台标永远吸附在视频真实像素的左上角 (Jable 水印位置)
- * 3. 扩大安全遮罩面积 (176px x 42px) + 不透明毛玻璃，100% 彻底抹去 Jable.tv 字样
+ * 核心优化：
+ * 1. 彻底去除生硬突兀的黄色药丸胶囊补丁感
+ * 2. 采用好莱坞电影级自然暗角羽化渐变 (Cinematic Vignette)
+ * 3. 严格贴合真实视频像素顶角 (renderTop, renderLeft)，彻底吞没 Jable 水印无任何残留
+ * 4. 浮现如 Netflix / IMAX 原厂般的极简纯粹 4K 蓝光尊享台标
  */
 export function PlayerBrandLogo({
   videoRef,
@@ -26,8 +27,8 @@ export function PlayerBrandLogo({
 }: PlayerBrandLogoProps) {
   // 真实画面偏移量
   const [position, setPosition] = useState<{ top: number; left: number; ready: boolean }>({
-    top: 14,
-    left: 14,
+    top: 0,
+    left: 0,
     ready: false,
   });
 
@@ -43,7 +44,7 @@ export function PlayerBrandLogo({
     const cHeight = container.clientHeight;
 
     if (!vWidth || !vHeight || !cWidth || !cHeight) {
-      setPosition({ top: 14, left: 14, ready: true });
+      setPosition({ top: 0, left: 0, ready: true });
       return;
     }
 
@@ -65,10 +66,10 @@ export function PlayerBrandLogo({
       renderLeft = 0;
     }
 
-    // 将遮罩放置在视频真实画面的左上角内部（偏移 12px, 10px）
+    // 严丝合缝贴死视频画面的最顶角（不留任何缝隙露白）
     setPosition({
-      top: Math.max(8, Math.round(renderTop + 10)),
-      left: Math.max(8, Math.round(renderLeft + 12)),
+      top: Math.max(0, Math.round(renderTop)),
+      left: Math.max(0, Math.round(renderLeft)),
       ready: true,
     });
   };
@@ -85,7 +86,6 @@ export function PlayerBrandLogo({
 
     window.addEventListener('resize', updatePosition);
 
-    // 观察容器尺寸变化
     let resizeObserver: ResizeObserver | null = null;
     if (typeof ResizeObserver !== 'undefined' && containerRef?.current) {
       resizeObserver = new ResizeObserver(updatePosition);
@@ -105,28 +105,38 @@ export function PlayerBrandLogo({
 
   return (
     <div
-      className={`absolute z-35 pointer-events-none select-none transition-all duration-200 ${className}`}
+      className={`absolute z-35 pointer-events-none select-none overflow-hidden transition-all duration-150 ${className}`}
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,
-        opacity: position.ready ? 1 : 0.9,
+        width: '210px',
+        height: '64px',
+        opacity: position.ready ? 1 : 0.95,
       }}
       aria-hidden="true"
     >
-      {/* 强化遮罩底板：加大尺寸 (176px x 42px) + 高密度暗黑毛玻璃，彻底消融 Jable 水印 */}
-      <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-[#090A10]/95 backdrop-blur-xl border border-amber-500/40 shadow-2xl shadow-black/90">
-        <div className="w-6 h-6 rounded-xl bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600 flex items-center justify-center shadow-md shadow-amber-500/20 shrink-0">
-          <Crown size={14} className="text-black font-black" />
+      {/* 1. 电影级左上角自然暗角遮罩（高密度吸收水印，边缘柔和羽化） */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/95 via-black/80 to-transparent backdrop-blur-[6px]" />
+
+      {/* 2. 奢华纯粹的 IMAX / Netflix 级原厂发光台标 */}
+      <div className="relative h-full flex items-start pt-2.5 pl-3.5 gap-2">
+        {/* 精致小皇冠微标 */}
+        <div className="w-5 h-5 rounded-md bg-gradient-to-br from-amber-400/90 to-amber-600/90 flex items-center justify-center shadow-sm shadow-amber-500/30 mt-0.5 shrink-0">
+          <Crown size={11} className="text-black font-black" />
         </div>
-        <div className="flex flex-col min-w-0 pr-1">
-          <div className="flex items-center gap-1">
-            <span className="text-xs font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 leading-none">
-              iKanPP 4K
+
+        {/* 电影级无衬线发光文字 */}
+        <div className="flex flex-col">
+          <div className="flex items-center gap-1.5 leading-none">
+            <span className="text-[13px] font-black tracking-widest text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] font-sans">
+              iKanPP
             </span>
-            <Sparkles size={11} className="text-amber-400 shrink-0 animate-pulse" />
+            <span className="px-1 py-0.2 rounded text-[8px] font-extrabold bg-amber-500/30 text-amber-300 border border-amber-400/40 uppercase tracking-tighter">
+              4K MAX
+            </span>
           </div>
-          <span className="text-[9px] font-bold text-white/70 tracking-tight leading-none mt-1">
-            {isPremium ? 'VIP 独家蓝光' : '极速原画'}
+          <span className="text-[8px] font-semibold text-white/50 tracking-wider uppercase mt-1 drop-shadow-sm">
+            {isPremium ? 'VIP CINEMA PRO' : 'ULTRA HD'}
           </span>
         </div>
       </div>
