@@ -13,6 +13,7 @@ export interface JableVideoItem {
     vod_name: string;
     video_code?: string;
     vod_pic: string;
+    preview_url?: string;
     vod_remarks?: string;
     duration?: string;
     views?: string;
@@ -83,11 +84,20 @@ export function parseJableHtml(html: string): JableVideoItem[] {
         if (seenIds.has(videoId)) continue;
         seenIds.add(videoId);
 
-        // 2. 提取封面图 (优先 data-src，次选 src)
+        // 2. 提取封面图与官方动态预览视频链接
         const imgMatch = block.match(/data-src="([^"]+)"/i) || block.match(/src="([^"]+)"/i);
         let pic = imgMatch ? imgMatch[1] : '';
         if (pic.startsWith('//')) {
             pic = 'https:' + pic;
+        }
+
+        const previewMatch = block.match(/data-preview="([^"]+)"/i) || block.match(/preview="([^"]+)"/i);
+        let previewUrl = previewMatch ? previewMatch[1] : undefined;
+        if (!previewUrl && pic && (pic.includes('jable.tv') || pic.includes('videos_screenshots'))) {
+            previewUrl = pic.replace(/\/320x180\/[0-9]+\.jpg/i, '/preview.mp4').replace(/\/preview\.jpg/i, '/preview.mp4');
+        }
+        if (previewUrl && previewUrl.startsWith('//')) {
+            previewUrl = 'https:' + previewUrl;
         }
 
         // 3. 提取标题
@@ -117,6 +127,7 @@ export function parseJableHtml(html: string): JableVideoItem[] {
             vod_name: title,
             video_code: videoCode,
             vod_pic: pic,
+            preview_url: previewUrl,
             vod_remarks: duration ? `${duration} · ${likes || '98%'}` : (likes || '4K 原画'),
             duration,
             views,

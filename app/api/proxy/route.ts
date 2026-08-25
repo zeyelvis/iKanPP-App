@@ -31,6 +31,13 @@ export async function GET(request: NextRequest) {
             if (value) requestHeaders[key] = value;
         });
 
+        // Jable.tv 与其他主流流媒体 CDN 防盗链伪装
+        if (url.includes('jable.tv') || url.includes('assets-cdn.jable.tv')) {
+            requestHeaders['Referer'] = 'https://jable.tv/';
+            requestHeaders['Origin'] = 'https://jable.tv';
+            requestHeaders['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
+        }
+
         const response = await fetchWithRetry({ url, request, headers: requestHeaders });
 
         // If upstream returned an error, pass it through with CORS headers

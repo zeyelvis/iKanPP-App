@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import Hls from 'hls.js';
 import { Play, Heart, Eye, Sparkles } from 'lucide-react';
 import { useFavorites } from '@/lib/store/favorites-store';
 
@@ -25,7 +24,6 @@ export function JableVideoCard({
 
     const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const videoRef = useRef<HTMLVideoElement | null>(null);
-    const hlsRef = useRef<Hls | null>(null);
     const { addFavorite, removeFavorite, isFavorite } = useFavorites(true);
 
     const title = video?.vod_name || video?.title || '未知影片';
@@ -45,49 +43,57 @@ export function JableVideoCard({
     const views = Math.floor(12000 + (seed % 88000));
     const viewsFormatted = views > 10000 ? `${(views / 10000).toFixed(1)}万` : `${views}`;
 
+    // 提取 Jable 官方原版 preview.mp4 动态切片
+    const getJableOfficialPreview = () => {
+        if (video?.preview_url) {
+            return `/api/proxy?url=${encodeURIComponent(video.preview_url)}`;
+        }
+        if (rawPic && (rawPic.includes('jable.tv') || rawPic.includes('videos_screenshots'))) {
+            const jableMp4 = rawPic.replace(/\/320x180\/[0-9]+\.jpg/i, '/preview.mp4').replace(/\/preview\.jpg/i, '/preview.mp4');
+            return `/api/proxy?url=${encodeURIComponent(jableMp4)}`;
+        }
+        return null;
+    };
+
     // 鼠标悬停 200ms 唤醒动态预览
     const handleMouseEnter = () => {
         setIsHovered(true);
         if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
 
         hoverTimeoutRef.current = setTimeout(async () => {
-            try {
-                // 1. 请求真实切片流
-                const res = await fetch(`/api/premium/preview?id=${encodeURIComponent(videoId)}&code=${encodeURIComponent(videoCode || '')}&source=${encodeURIComponent(source)}`);
-                if (!res.ok) return;
-                const data = await res.json();
+            const jableUrl = getJableOfficialPreview();
+            const videoEl = videoRef.current;
 
-                if (data.success && data.preview_url && videoRef.current) {
+            if (jableUrl && videoEl) {
+                videoEl.src = jableUrl;
+                videoEl.play().then(() => {
                     setShowVideo(true);
-                    const videoEl = videoRef.current;
-
-                    if (data.is_m3u8) {
-                        if (Hls.isSupported()) {
-                            if (hlsRef.current) hlsRef.current.destroy();
-                            const hls = new Hls({
-                                enableWorker: true,
-                                maxBufferLength: 6, // 只缓冲几秒作为微预览
-                                maxMaxBufferLength: 10,
-                            });
-                            hls.loadSource(data.preview_url);
-                            hls.attachMedia(videoEl);
-                            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                                videoEl.play().catch(() => {});
-                            });
-                            hlsRef.current = hls;
-                        } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
-                            videoEl.src = data.preview_url;
-                            videoEl.play().catch(() => {});
-                        }
-                    } else {
-                        videoEl.src = data.preview_url;
-                        videoEl.play().catch(() => {});
-                    }
-                }
-            } catch {
-                // 优雅降级保持电影运镜
+                }).catch(() => {
+                    // 若 Jable 直解未果，尝试通过 API 补充
+                    fetchFallbackPreview();
+                });
+            } else {
+                fetchFallbackPreview();
             }
         }, 200);
+    };
+
+    const fetchFallbackPreview = async () => {
+        try {
+            const res = await fetch(`/api/premium/preview?id=${encodeURIComponent(videoId)}&code=${encodeURIComponent(videoCode || '')}&source=${encodeURIComponent(source)}`);
+            if (!res.ok) return;
+            const data = await res.json();
+
+            if (data.success && data.preview_url && videoRef.current) {
+                const videoEl = videoRef.current;
+                videoEl.src = data.preview_url;
+                videoEl.play().then(() => {
+                    setShowVideo(true);
+                }).catch(() => {});
+            }
+        } catch {
+            // 保持电影运镜
+        }
     };
 
     const handleMouseLeave = () => {
@@ -97,11 +103,6 @@ export function JableVideoCard({
         if (hoverTimeoutRef.current) {
             clearTimeout(hoverTimeoutRef.current);
             hoverTimeoutRef.current = null;
-        }
-
-        if (hlsRef.current) {
-            hlsRef.current.destroy();
-            hlsRef.current = null;
         }
 
         if (videoRef.current) {
@@ -114,7 +115,6 @@ export function JableVideoCard({
     useEffect(() => {
         return () => {
             if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-            if (hlsRef.current) hlsRef.current.destroy();
         };
     }, []);
 
@@ -144,7 +144,7 @@ export function JableVideoCard({
         >
             {/* 1. 封面海报与动态微视频预览区 */}
             <div className="relative aspect-[16/10] w-full bg-[#0E0F17] overflow-hidden">
-                {/* 静态海报（带 Ken Burns 电影级悬停平滑运镜拉伸） */}
+                {/* 静态海报（带 Ken Burns 电影级悬停平滑运镜） */}
                 {rawPic && !imgError ? (
                     <Image
                         src={rawPic}
@@ -163,7 +163,7 @@ export function JableVideoCard({
                     </div>
                 )}
 
-                {/* 真实 M3U8/MP4 动态微视频切片（静音循环播放） */}
+                {/* Jable 官方原版 preview.mp4 动态切片（静音循环播放） */}
                 <video
                     ref={videoRef}
                     autoPlay
@@ -175,7 +175,7 @@ export function JableVideoCard({
                     }`}
                 />
 
-                {/* 悬停多重渐变暗影与扫描光效 */}
+                {/* 悬停多重渐变暗影 */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0B0C14] via-black/20 to-transparent opacity-80 group-hover:opacity-30 transition-opacity z-10 pointer-events-none" />
 
                 {/* 排行榜名次徽章 */}
