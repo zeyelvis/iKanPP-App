@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { Play, Flame, Heart, Sparkles, Crown, Eye } from 'lucide-react';
+import { Play, Heart, Eye, Sparkles } from 'lucide-react';
 import { useFavorites } from '@/lib/store/favorites-store';
 
 interface JableVideoCardProps {
@@ -19,6 +19,12 @@ export function JableVideoCard({
     rankBadge,
 }: JableVideoCardProps) {
     const [imgError, setImgError] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
+    const [showPreview, setShowPreview] = useState(false);
+    const [previewVideoUrl, setPreviewVideoUrl] = useState<string | null>(null);
+
+    const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const videoRef = useRef<HTMLVideoElement | null>(null);
     const { addFavorite, removeFavorite, isFavorite } = useFavorites(true);
 
     const title = video?.vod_name || video?.title || '未知影片';
@@ -31,16 +37,54 @@ export function JableVideoCard({
     const codeMatch = title.match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
     const videoCode = codeMatch ? codeMatch[0].toUpperCase() : null;
 
-    // 清洗后较短的标题（去除番号与杂质字符）
+    // 清洗后较短的标题
     const cleanTitle = videoCode ? title.replace(videoCode, '').replace(/[《》【】\[\]（）()]/g, ' ').trim() : title;
 
     // 是否包含中文字幕
     const hasChineseSub = title.includes('中文') || title.includes('字幕') || title.includes('中字');
 
-    // 真实/拟真播放热度生成（基于 ID 伪随机稳定）
+    // 真实/拟真播放热度生成
     const seed = videoId ? videoId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : index * 137;
     const views = Math.floor(12000 + (seed % 88000));
     const viewsFormatted = views > 10000 ? `${(views / 10000).toFixed(1)}万` : `${views}`;
+
+    // 鼠标悬停 250ms 唤醒动态预览
+    const handleMouseEnter = () => {
+        setIsHovered(true);
+        if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+
+        hoverTimeoutRef.current = setTimeout(() => {
+            setShowPreview(true);
+            // 构造高潮切片预览 URL
+            if (videoCode) {
+                const cleanCode = videoCode.toLowerCase().replace(/[-_]/g, '');
+                const dmmLetter = cleanCode.replace(/[0-9]/g, '');
+                if (dmmLetter.length >= 3) {
+                    const dmmUrl = `https://cc3001.dmm.co.jp/litevideo/freepv/${dmmLetter.slice(0, 1)}/${dmmLetter.slice(0, 3)}/${cleanCode}/${cleanCode}_mhb_w.mp4`;
+                    setPreviewVideoUrl(`/api/proxy?url=${encodeURIComponent(dmmUrl)}`);
+                }
+            }
+        }, 250);
+    };
+
+    const handleMouseLeave = () => {
+        setIsHovered(false);
+        setShowPreview(false);
+        if (hoverTimeoutRef.current) {
+            clearTimeout(hoverTimeoutRef.current);
+            hoverTimeoutRef.current = null;
+        }
+        if (videoRef.current) {
+            videoRef.current.pause();
+            videoRef.current.src = '';
+        }
+    };
+
+    useEffect(() => {
+        return () => {
+            if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+        };
+    }, []);
 
     const handleToggleFav = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -62,18 +106,22 @@ export function JableVideoCard({
     return (
         <div
             onClick={onClick}
-            className="group relative flex flex-col rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-purple-500/50 shadow-lg hover:shadow-[0_16px_40px_rgba(168,85,247,0.22)] transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-1.5 select-none"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            className="group relative flex flex-col rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-purple-500/50 shadow-lg hover:shadow-[0_16px_40px_rgba(168,85,247,0.25)] transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-1.5 select-none"
         >
-            {/* 1. 封面海报区域 */}
+            {/* 1. 封面海报与动态微预览区 */}
             <div className="relative aspect-[16/10] w-full bg-[#0E0F17] overflow-hidden">
-                {/* 封面图片 */}
+                {/* 静态海报 */}
                 {rawPic && !imgError ? (
                     <Image
                         src={rawPic}
                         alt={title}
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        className="object-cover scale-100 group-hover:scale-108 transition-transform duration-700 ease-out"
+                        className={`object-cover scale-100 group-hover:scale-108 transition-all duration-700 ease-out ${
+                            showPreview ? 'opacity-0' : 'opacity-100'
+                        }`}
                         onError={() => setImgError(true)}
                         loading={index < 8 ? 'eager' : 'lazy'}
                     />
@@ -83,10 +131,24 @@ export function JableVideoCard({
                     </div>
                 )}
 
-                {/* 悬停多重渐变暗影 */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0C14] via-black/30 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
+                {/* 动态微视频预览层（鼠标悬停 250ms 自动静音播放精彩切片） */}
+                {showPreview && previewVideoUrl && (
+                    <video
+                        ref={videoRef}
+                        src={previewVideoUrl}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="absolute inset-0 w-full h-full object-cover z-10 animate-fade-in"
+                        onError={() => setShowPreview(false)}
+                    />
+                )}
 
-                {/* 排行榜名次徽章 (前 3 名金银铜光效) */}
+                {/* 悬停多重渐变暗影 */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0C14] via-black/30 to-transparent opacity-80 group-hover:opacity-40 transition-opacity z-10 pointer-events-none" />
+
+                {/* 排行榜名次徽章 */}
                 {rankBadge !== undefined && (
                     <div
                         className={`absolute top-2.5 left-2.5 z-20 w-7 h-7 rounded-xl flex items-center justify-center font-black text-xs shadow-lg backdrop-blur-md ${
@@ -103,31 +165,42 @@ export function JableVideoCard({
                     </div>
                 )}
 
-                {/* 核心番号标签 (若无排行徽章则置于左上角) */}
+                {/* 核心番号标签 */}
                 {videoCode && !rankBadge && (
                     <div className="absolute top-2.5 left-2.5 z-20 px-2 py-0.5 rounded-lg bg-black/85 border border-amber-500/30 text-amber-300 text-[10px] font-black uppercase tracking-wider shadow-md backdrop-blur-md">
                         {videoCode}
                     </div>
                 )}
 
-                {/* 4K / 中文字幕角标 (右上角) */}
+                {/* 动态预览中微标 或 4K/中文字幕角标 */}
                 <div className="absolute top-2.5 right-2.5 z-20 flex items-center gap-1.5">
-                    {hasChineseSub && (
-                        <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/90 text-white text-[9px] font-black shadow-sm backdrop-blur-md">
-                            中字
+                    {showPreview ? (
+                        <span className="px-2 py-0.5 rounded-md bg-purple-600/90 text-white text-[9px] font-black shadow-lg backdrop-blur-md flex items-center gap-1 animate-pulse">
+                            <Sparkles size={10} className="text-amber-300" />
+                            动态预览
                         </span>
+                    ) : (
+                        <>
+                            {hasChineseSub && (
+                                <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/90 text-white text-[9px] font-black shadow-sm backdrop-blur-md">
+                                    中字
+                                </span>
+                            )}
+                            <span className="px-1.5 py-0.5 rounded-md bg-purple-600/90 text-white text-[9px] font-black shadow-sm backdrop-blur-md">
+                                4K
+                            </span>
+                        </>
                     )}
-                    <span className="px-1.5 py-0.5 rounded-md bg-purple-600/90 text-white text-[9px] font-black shadow-sm backdrop-blur-md">
-                        4K
-                    </span>
                 </div>
 
-                {/* 悬停居中浮现奢华播放按钮 */}
-                <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 text-black flex items-center justify-center shadow-xl shadow-amber-500/50 scale-75 group-hover:scale-100 transition-transform duration-300">
-                        <Play size={20} className="fill-black ml-0.5" />
+                {/* 悬停居中浮现奢华播放按钮（未开视频预览时） */}
+                {!showPreview && (
+                    <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 text-black flex items-center justify-center shadow-xl shadow-amber-500/50 scale-75 group-hover:scale-100 transition-transform duration-300">
+                            <Play size={20} className="fill-black ml-0.5" />
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* 右下角快捷收藏按钮 */}
                 <button
@@ -142,7 +215,7 @@ export function JableVideoCard({
                     <Heart size={14} className={isFav ? 'fill-white' : ''} />
                 </button>
 
-                {/* 底部播放量与状态 */}
+                {/* 底部播放量 */}
                 <div className="absolute bottom-2.5 left-2.5 z-20 flex items-center gap-2 text-[10px] text-white/80 font-medium">
                     <span className="flex items-center gap-1 bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded-md border border-white/5">
                         <Eye size={10} className="text-purple-400" />
@@ -151,7 +224,7 @@ export function JableVideoCard({
                 </div>
             </div>
 
-            {/* 2. 底部标题与信息区域 */}
+            {/* 2. 底部标题信息 */}
             <div className="p-3 sm:p-3.5 flex flex-col justify-between flex-1 space-y-1.5">
                 <h3 className="text-xs sm:text-sm font-bold text-white/90 group-hover:text-purple-300 line-clamp-2 leading-snug transition-colors">
                     {cleanTitle || title}
