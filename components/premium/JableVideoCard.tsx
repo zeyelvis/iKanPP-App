@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import Hls from 'hls.js';
 import { Play, Heart, Eye, Sparkles } from 'lucide-react';
 import { useFavorites } from '@/lib/store/favorites-store';
 
@@ -20,13 +21,11 @@ export function JableVideoCard({
 }: JableVideoCardProps) {
     const [imgError, setImgError] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
-    const [showVideoPreview, setShowVideoPreview] = useState(false);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-    const [frameIndex, setFrameIndex] = useState(1); // 10 帧快照画廊索引
+    const [showVideo, setShowVideo] = useState(false);
 
     const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-    const frameIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const videoRef = useRef<HTMLVideoElement | null>(null);
+    const hlsRef = useRef<Hls | null>(null);
     const { addFavorite, removeFavorite, isFavorite } = useFavorites(true);
 
     const title = video?.vod_name || video?.title || '未知影片';
@@ -38,8 +37,6 @@ export function JableVideoCard({
     // 智能提取番号 (如 IPZZ-870, SSIS-123)
     const codeMatch = title.match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
     const videoCode = codeMatch ? codeMatch[0].toUpperCase() : null;
-
-    // 清洗后较短的标题
     const cleanTitle = videoCode ? title.replace(videoCode, '').replace(/[《》【】\[\]（）()]/g, ' ').trim() : title;
     const hasChineseSub = title.includes('中文') || title.includes('字幕') || title.includes('中字');
 
@@ -48,78 +45,78 @@ export function JableVideoCard({
     const views = Math.floor(12000 + (seed % 88000));
     const viewsFormatted = views > 10000 ? `${(views / 10000).toFixed(1)}万` : `${views}`;
 
-    // 智能计算动态切片源
-    const getSmartPreviewUrl = () => {
-        // 1. 如果是 Jable 原版封面，直接替换为官方 preview.mp4
-        if (rawPic.includes('jable.tv') || rawPic.includes('videos_screenshots')) {
-            const jableMp4 = rawPic.replace(/\/320x180\/[0-9]+\.jpg/i, '/preview.mp4').replace(/\/preview\.jpg/i, '/preview.mp4');
-            return `/api/proxy?url=${encodeURIComponent(jableMp4)}&referer=${encodeURIComponent('https://jable.tv/')}`;
-        }
-
-        // 2. 如果有标准番号，使用 DMM 官方全球极速直连 45 秒高潮切片
-        if (videoCode) {
-            const cleanCode = videoCode.toLowerCase().replace(/[-_]/g, '');
-            const dmmLetter = cleanCode.replace(/[0-9]/g, '');
-            if (dmmLetter.length >= 2) {
-                const dmmUrl = `https://cc3001.dmm.co.jp/litevideo/freepv/${dmmLetter.slice(0, 1)}/${dmmLetter.slice(0, 3)}/${cleanCode}/${cleanCode}_mhb_w.mp4`;
-                return `/api/proxy?url=${encodeURIComponent(dmmUrl)}`;
-            }
-        }
-
-        return null;
-    };
-
     // 鼠标悬停 200ms 唤醒动态预览
     const handleMouseEnter = () => {
         setIsHovered(true);
         if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
 
-        hoverTimeoutRef.current = setTimeout(() => {
-            const url = getSmartPreviewUrl();
-            if (url) {
-                setPreviewUrl(url);
-                setShowVideoPreview(true);
-            }
+        hoverTimeoutRef.current = setTimeout(async () => {
+            try {
+                // 1. 请求真实切片流
+                const res = await fetch(`/api/premium/preview?id=${encodeURIComponent(videoId)}&code=${encodeURIComponent(videoCode || '')}&source=${encodeURIComponent(source)}`);
+                if (!res.ok) return;
+                const data = await res.json();
 
-            // 同步启动多帧故事板轮播（双保险机制）
-            if (rawPic.includes('/320x180/')) {
-                frameIntervalRef.current = setInterval(() => {
-                    setFrameIndex((prev) => (prev % 10) + 1);
-                }, 350);
+                if (data.success && data.preview_url && videoRef.current) {
+                    setShowVideo(true);
+                    const videoEl = videoRef.current;
+
+                    if (data.is_m3u8) {
+                        if (Hls.isSupported()) {
+                            if (hlsRef.current) hlsRef.current.destroy();
+                            const hls = new Hls({
+                                enableWorker: true,
+                                maxBufferLength: 6, // 只缓冲几秒作为微预览
+                                maxMaxBufferLength: 10,
+                            });
+                            hls.loadSource(data.preview_url);
+                            hls.attachMedia(videoEl);
+                            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                                videoEl.play().catch(() => {});
+                            });
+                            hlsRef.current = hls;
+                        } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+                            videoEl.src = data.preview_url;
+                            videoEl.play().catch(() => {});
+                        }
+                    } else {
+                        videoEl.src = data.preview_url;
+                        videoEl.play().catch(() => {});
+                    }
+                }
+            } catch {
+                // 优雅降级保持电影运镜
             }
         }, 200);
     };
 
     const handleMouseLeave = () => {
         setIsHovered(false);
-        setShowVideoPreview(false);
-        setFrameIndex(1);
+        setShowVideo(false);
 
         if (hoverTimeoutRef.current) {
             clearTimeout(hoverTimeoutRef.current);
             hoverTimeoutRef.current = null;
         }
-        if (frameIntervalRef.current) {
-            clearInterval(frameIntervalRef.current);
-            frameIntervalRef.current = null;
+
+        if (hlsRef.current) {
+            hlsRef.current.destroy();
+            hlsRef.current = null;
         }
+
         if (videoRef.current) {
             videoRef.current.pause();
-            videoRef.current.src = '';
+            videoRef.current.removeAttribute('src');
+            videoRef.current.load();
         }
     };
 
     useEffect(() => {
         return () => {
             if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-            if (frameIntervalRef.current) clearInterval(frameIntervalRef.current);
+            if (hlsRef.current) hlsRef.current.destroy();
         };
     }, []);
-
-    // 动态帧海报地址（当无视频或视频加载中时平滑过渡）
-    const currentFramePic = (isHovered && rawPic.includes('/320x180/'))
-        ? rawPic.replace(/\/320x180\/[0-9]+\.jpg/i, `/320x180/${frameIndex}.jpg`)
-        : rawPic;
 
     const handleToggleFav = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -147,16 +144,16 @@ export function JableVideoCard({
         >
             {/* 1. 封面海报与动态微视频预览区 */}
             <div className="relative aspect-[16/10] w-full bg-[#0E0F17] overflow-hidden">
-                {/* 静态海报 / 动态多帧快照 */}
-                {currentFramePic && !imgError ? (
+                {/* 静态海报（带 Ken Burns 电影级悬停平滑运镜拉伸） */}
+                {rawPic && !imgError ? (
                     <Image
-                        src={currentFramePic}
+                        src={rawPic}
                         alt={title}
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        className={`object-cover scale-100 group-hover:scale-105 transition-transform duration-500 ease-out ${
-                            showVideoPreview ? 'opacity-0' : 'opacity-100'
-                        }`}
+                        className={`object-cover transition-all duration-700 ease-out ${
+                            isHovered ? 'scale-110 translate-x-0.5 -translate-y-0.5' : 'scale-100'
+                        } ${showVideo ? 'opacity-0' : 'opacity-100'}`}
                         onError={() => setImgError(true)}
                         loading={index < 8 ? 'eager' : 'lazy'}
                     />
@@ -166,21 +163,19 @@ export function JableVideoCard({
                     </div>
                 )}
 
-                {/* Jable / DMM 动态微视频预览层（鼠标悬停 200ms 自动静音循环播放） */}
-                {showVideoPreview && previewUrl && (
-                    <video
-                        ref={videoRef}
-                        src={previewUrl}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="absolute inset-0 w-full h-full object-cover z-10 animate-fade-in"
-                        onError={() => setShowVideoPreview(false)}
-                    />
-                )}
+                {/* 真实 M3U8/MP4 动态微视频切片（静音循环播放） */}
+                <video
+                    ref={videoRef}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className={`absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-300 ${
+                        showVideo ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                    }`}
+                />
 
-                {/* 悬停多重渐变暗影 */}
+                {/* 悬停多重渐变暗影与扫描光效 */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0B0C14] via-black/20 to-transparent opacity-80 group-hover:opacity-30 transition-opacity z-10 pointer-events-none" />
 
                 {/* 排行榜名次徽章 */}
@@ -229,7 +224,7 @@ export function JableVideoCard({
                 </div>
 
                 {/* 悬停居中浮现奢华播放按钮 */}
-                {!showVideoPreview && (
+                {!showVideo && (
                     <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
                         <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 text-black flex items-center justify-center shadow-xl shadow-amber-500/50 scale-75 group-hover:scale-100 transition-transform duration-300">
                             <Play size={20} className="fill-black ml-0.5" />
