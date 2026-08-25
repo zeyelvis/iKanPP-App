@@ -5,10 +5,12 @@ import { MidnightHero } from './MidnightHero';
 import { JableHeaderNav } from './JableHeaderNav';
 import { JableVideoCard } from './JableVideoCard';
 import { JableActressSlider } from './JableActressSlider';
-import { JableStudioSlider } from './JableStudioSlider';
+import { JableStudioGalaxy } from './JableStudioGalaxy';
 import { JableTagCloud } from './JableTagCloud';
 import { JableFilterDrawer, type JableFilterState } from './JableFilterDrawer';
 import { ActressDetailModal } from './ActressDetailModal';
+import { MidnightContinueWatching } from './MidnightContinueWatching';
+import { MidnightRecommendedRadar } from './MidnightRecommendedRadar';
 import { usePremiumContent } from '@/lib/hooks/usePremiumContent';
 import {
     JABLE_MAIN_CATEGORIES,
@@ -109,8 +111,15 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
                 onSelectCategory={handleSelectCategory}
             />
 
-            {/* 2. Hero 推荐大片轮播 */}
-            <MidnightHero onSearch={onSearch} onPlayVideo={onPlayVideo} />
+            {/* 2. Netflix 级 3D 沉浸式 Hero 轮播 */}
+            <MidnightHero
+                videos={videos}
+                onPlayVideo={onPlayVideo}
+                onExploreCategory={onSearch}
+            />
+
+            {/* 2.5 私密接着看断点续播快捷条 */}
+            <MidnightContinueWatching onPlayVideo={handleVideoClick} />
 
             {/* 3. 🔥 时段多 Tab 联动排行榜 */}
             <section className="space-y-4">
@@ -179,11 +188,26 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
             {/* 4. 🌸 人气名优女神专区 */}
             <JableActressSlider onSelectActress={handleSelectActress} />
 
-            {/* 5. 🏢 顶级厂牌片商专区 */}
-            <JableStudioSlider onSelectStudio={handleSelectStudio} />
+            {/* 5. 🏢 日本顶流片商宇宙专区 */}
+            <JableStudioGalaxy
+                onSelectStudio={(studio) => {
+                    if (onSearch) {
+                        onSearch(studio.codePrefix);
+                    } else {
+                        setSearchKeyword(studio.codePrefix);
+                    }
+                }}
+            />
 
             {/* 6. 🏷️ 热门主题探索标签云 */}
             <JableTagCloud onSelectTag={handleSelectTag} />
+
+            {/* 6.5 🧭 智能推荐雷达 */}
+            <MidnightRecommendedRadar
+                videos={videos}
+                onPlayVideo={handleVideoClick}
+                onExploreMore={() => setSearchKeyword('')}
+            />
 
             {/* 7. ⚡ 最新收录全量流与高级筛选入口 */}
             <section className="space-y-4">

@@ -2,197 +2,167 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Play, Eye, ThumbsUp, Sparkles, Copy, Check, Heart } from 'lucide-react';
+import { Play, Flame, Heart, Sparkles, Crown, Eye } from 'lucide-react';
+import { useFavorites } from '@/lib/store/favorites-store';
 
 interface JableVideoCardProps {
-    video: {
-        vod_id: string | number;
-        vod_name: string;
-        video_code?: string;
-        vod_pic?: string;
-        vod_remarks?: string;
-        vod_duration?: string;
-        duration?: string;
-        views?: string;
-        likes?: string;
-        rating?: number;
-        type_name?: string;
-        vod_year?: string;
-        vod_actor?: string;
-    };
+    video: any;
     onClick: () => void;
     index?: number;
     rankBadge?: number;
 }
 
-export function JableVideoCard({ video, onClick, index, rankBadge }: JableVideoCardProps) {
+export function JableVideoCard({
+    video,
+    onClick,
+    index = 0,
+    rankBadge,
+}: JableVideoCardProps) {
     const [imgError, setImgError] = useState(false);
-    const [copied, setCopied] = useState(false);
-    const [isFavorited, setIsFavorited] = useState(false);
+    const { addFavorite, removeFavorite, isFavorite } = useFavorites(true);
 
-    const title = video.vod_name || '高清影视大片';
+    const title = video?.vod_name || video?.title || '未知影片';
+    const rawPic = video?.vod_pic || '';
+    const videoId = String(video?.vod_id || '');
+    const source = video?.source || 'hsck';
+    const isFav = isFavorite(videoId, source);
 
-    // 提取番号（优先真实字段，次选智能正则提取）
-    const videoCode = video.video_code || (title.match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i)?.[0]?.toUpperCase() ?? null);
+    // 智能提取番号
+    const codeMatch = title.match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
+    const videoCode = codeMatch ? codeMatch[0].toUpperCase() : null;
 
-    // 清理标题展示（去除冗余标签）
-    const cleanTitle = title.replace(/^(【[^】]+】|\[[^\]]+\]|\([^\)]+\))/g, '').trim();
+    // 清洗后较短的标题（去除番号与杂质字符）
+    const cleanTitle = videoCode ? title.replace(videoCode, '').replace(/[《》【】\[\]（）()]/g, ' ').trim() : title;
 
-    // 智能 CDN 代理地址（解决第三方防盗链与慢速直连）
-    const proxiedPic = video.vod_pic?.startsWith('http')
-        ? `/api/img-proxy?url=${encodeURIComponent(video.vod_pic)}`
-        : video.vod_pic;
+    // 是否包含中文字幕
+    const hasChineseSub = title.includes('中文') || title.includes('字幕') || title.includes('中字');
 
-    // 真实或智能模拟的 Jable 播放数据与时长
-    const mockViews = Math.floor(10000 + (Math.sin((Number(video.vod_id) || (index ?? 1)) * 99) * 0.5 + 0.5) * 250000);
-    const viewsText = video.views || (mockViews > 10000 ? `${(mockViews / 10000).toFixed(1)}万` : `${mockViews}`);
-    const displayRating = video.likes ? video.likes.replace('%', '') : String(video.rating || Math.floor(92 + ((Number(video.vod_id) || 1) % 8)));
-    const isChineseSub = title.includes('中文字幕') || title.includes('中字') || video.type_name?.includes('中字');
-    const is4K = title.includes('4K') || title.includes('原画') || title.includes('蓝光');
-    const isUncensored = title.includes('无码') || title.includes('步兵') || title.includes('FC2');
+    // 真实/拟真播放热度生成（基于 ID 伪随机稳定）
+    const seed = videoId ? videoId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : index * 137;
+    const views = Math.floor(12000 + (seed % 88000));
+    const viewsFormatted = views > 10000 ? `${(views / 10000).toFixed(1)}万` : `${views}`;
 
-    // 复制番号
-    const handleCopyCode = (e: React.MouseEvent) => {
+    const handleToggleFav = (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!videoCode) return;
-        navigator.clipboard.writeText(videoCode);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
-
-    // 收藏点击
-    const handleFavorite = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setIsFavorited(!isFavorited);
+        if (isFav) {
+            removeFavorite(videoId, source);
+        } else {
+            addFavorite({
+                videoId: videoId,
+                title: title,
+                poster: rawPic,
+                source: source,
+                sourceName: '4K 原画',
+                remarks: videoCode || '4K MAX',
+                type: 'tv',
+            });
+        }
     };
 
     return (
         <div
             onClick={onClick}
-            className="group relative flex flex-col rounded-2xl bg-[#0E0F17] border border-white/5 hover:border-purple-500/50 shadow-md hover:shadow-2xl hover:shadow-purple-950/40 transition-all duration-300 cursor-pointer overflow-hidden hover:-translate-y-1"
+            className="group relative flex flex-col rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-purple-500/50 shadow-lg hover:shadow-[0_16px_40px_rgba(168,85,247,0.22)] transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-1.5 select-none"
         >
-            {/* 1. 视频封面与专业角标 */}
-            <div className="relative aspect-[16/10] w-full overflow-hidden bg-neutral-900">
-                {!imgError && proxiedPic ? (
+            {/* 1. 封面海报区域 */}
+            <div className="relative aspect-[16/10] w-full bg-[#0E0F17] overflow-hidden">
+                {/* 封面图片 */}
+                {rawPic && !imgError ? (
                     <Image
-                        src={proxiedPic}
-                        alt={cleanTitle}
+                        src={rawPic}
+                        alt={title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        unoptimized
+                        className="object-cover scale-100 group-hover:scale-108 transition-transform duration-700 ease-out"
                         onError={() => setImgError(true)}
+                        loading={index < 8 ? 'eager' : 'lazy'}
                     />
                 ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center bg-purple-950/20 text-white/30 text-xs p-2 text-center">
-                        <Sparkles size={20} className="text-purple-400 mb-1" />
-                        <span>爱看片片 HD</span>
+                    <div className="w-full h-full bg-gradient-to-br from-purple-950/40 via-slate-900 to-black flex items-center justify-center text-white/30 text-xs font-mono">
+                        {videoCode || '4K 原画'}
                     </div>
                 )}
 
-                {/* 悬停播放暗黑蒙版 */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center text-white shadow-xl shadow-purple-600/40 group-hover:scale-110 active:scale-95 transition-transform">
-                        <Play size={20} className="fill-white ml-0.5" />
+                {/* 悬停多重渐变暗影 */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0C14] via-black/30 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
+
+                {/* 排行榜名次徽章 (前 3 名金银铜光效) */}
+                {rankBadge !== undefined && (
+                    <div
+                        className={`absolute top-2.5 left-2.5 z-20 w-7 h-7 rounded-xl flex items-center justify-center font-black text-xs shadow-lg backdrop-blur-md ${
+                            rankBadge === 1
+                                ? 'bg-gradient-to-br from-amber-400 to-yellow-600 text-black shadow-amber-500/40 scale-105 ring-2 ring-amber-300'
+                                : rankBadge === 2
+                                ? 'bg-gradient-to-br from-slate-200 to-slate-400 text-black shadow-slate-400/40 ring-1 ring-white/60'
+                                : rankBadge === 3
+                                ? 'bg-gradient-to-br from-amber-700 to-orange-800 text-white shadow-amber-900/40'
+                                : 'bg-black/75 text-white/90 border border-white/10'
+                        }`}
+                    >
+                        {rankBadge}
+                    </div>
+                )}
+
+                {/* 核心番号标签 (若无排行徽章则置于左上角) */}
+                {videoCode && !rankBadge && (
+                    <div className="absolute top-2.5 left-2.5 z-20 px-2 py-0.5 rounded-lg bg-black/85 border border-amber-500/30 text-amber-300 text-[10px] font-black uppercase tracking-wider shadow-md backdrop-blur-md">
+                        {videoCode}
+                    </div>
+                )}
+
+                {/* 4K / 中文字幕角标 (右上角) */}
+                <div className="absolute top-2.5 right-2.5 z-20 flex items-center gap-1.5">
+                    {hasChineseSub && (
+                        <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/90 text-white text-[9px] font-black shadow-sm backdrop-blur-md">
+                            中字
+                        </span>
+                    )}
+                    <span className="px-1.5 py-0.5 rounded-md bg-purple-600/90 text-white text-[9px] font-black shadow-sm backdrop-blur-md">
+                        4K
+                    </span>
+                </div>
+
+                {/* 悬停居中浮现奢华播放按钮 */}
+                <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 text-black flex items-center justify-center shadow-xl shadow-amber-500/50 scale-75 group-hover:scale-100 transition-transform duration-300">
+                        <Play size={20} className="fill-black ml-0.5" />
                     </div>
                 </div>
 
-                {/* 右上角快速收藏按钮 */}
+                {/* 右下角快捷收藏按钮 */}
                 <button
-                    onClick={handleFavorite}
-                    className={`absolute top-2 right-2 z-20 w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition-all cursor-pointer ${
-                        isFavorited
-                            ? 'bg-rose-500 text-white'
-                            : 'bg-black/40 text-white/70 hover:text-white hover:bg-black/70'
+                    onClick={handleToggleFav}
+                    className={`absolute bottom-2.5 right-2.5 z-20 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md border transition-all cursor-pointer ${
+                        isFav
+                            ? 'bg-pink-600 border-pink-400 text-white opacity-100 scale-105'
+                            : 'bg-black/60 hover:bg-black/90 border-white/15 text-white/70 hover:text-white opacity-0 group-hover:opacity-100 hover:scale-110'
                     }`}
-                    title={isFavorited ? '已收藏' : '加入收藏'}
-                    aria-label="收藏"
+                    title={isFav ? '已在私密片单中' : '加入私密收藏'}
                 >
-                    <Heart size={14} className={isFavorited ? 'fill-white' : ''} />
+                    <Heart size={14} className={isFav ? 'fill-white' : ''} />
                 </button>
 
-                {/* 排行榜角标（Top 1 ~ 3） */}
-                {rankBadge !== undefined && (
-                    <div className="absolute top-2 left-2 z-10">
-                        <span
-                            className={`px-2 py-0.5 rounded-lg text-xs font-black shadow-lg ${
-                                rankBadge === 1
-                                    ? 'bg-gradient-to-r from-amber-400 to-yellow-500 text-black'
-                                    : rankBadge === 2
-                                    ? 'bg-gradient-to-r from-slate-200 to-zinc-400 text-black'
-                                    : rankBadge === 3
-                                    ? 'bg-gradient-to-r from-amber-600 to-orange-700 text-white'
-                                    : 'bg-black/70 text-white border border-white/20'
-                            }`}
-                        >
-                            TOP {rankBadge}
-                        </span>
-                    </div>
-                )}
-
-                {/* 左下角：中文字幕 / 无码 / 4K 高亮标签 */}
-                <div className="absolute bottom-2 left-2 flex items-center gap-1 z-10">
-                    {isChineseSub && (
-                        <span className="px-1.5 py-0.2 rounded-md bg-emerald-500 text-black text-[10px] font-black shadow-md tracking-tight">
-                            中文字幕
-                        </span>
-                    )}
-                    {isUncensored && (
-                        <span className="px-1.5 py-0.2 rounded-md bg-blue-600 text-white text-[10px] font-black shadow-md">
-                            无码
-                        </span>
-                    )}
-                    {is4K && (
-                        <span className="px-1.5 py-0.2 rounded-md bg-amber-500 text-black text-[10px] font-black shadow-md">
-                            4K
-                        </span>
-                    )}
-                </div>
-
-                {/* 右下角：时长 / 备注角标 */}
-                <div className="absolute bottom-2 right-2 z-10">
-                    <span className="px-1.5 py-0.5 rounded-md bg-black/80 backdrop-blur-md text-white/90 text-[10px] font-bold tracking-tight border border-white/10">
-                        {video.vod_remarks || video.vod_duration || 'HD 高清'}
+                {/* 底部播放量与状态 */}
+                <div className="absolute bottom-2.5 left-2.5 z-20 flex items-center gap-2 text-[10px] text-white/80 font-medium">
+                    <span className="flex items-center gap-1 bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded-md border border-white/5">
+                        <Eye size={10} className="text-purple-400" />
+                        <span>{viewsFormatted}</span>
                     </span>
                 </div>
             </div>
 
-            {/* 2. 视频信息与元数据 */}
-            <div className="p-3 flex flex-col flex-1 justify-between">
-                {/* 番号高亮与复制 */}
-                {videoCode && (
-                    <div className="mb-1 flex items-center justify-between">
-                        <button
-                            onClick={handleCopyCode}
-                            className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[10px] font-black tracking-wider bg-purple-500/15 text-purple-300 border border-purple-500/30 hover:bg-purple-500/30 transition-colors cursor-pointer"
-                            title="点击复制番号"
-                        >
-                            {videoCode}
-                            {copied ? <Check size={10} className="text-emerald-400" /> : <Copy size={10} className="text-purple-400/60" />}
-                        </button>
+            {/* 2. 底部标题与信息区域 */}
+            <div className="p-3 sm:p-3.5 flex flex-col justify-between flex-1 space-y-1.5">
+                <h3 className="text-xs sm:text-sm font-bold text-white/90 group-hover:text-purple-300 line-clamp-2 leading-snug transition-colors">
+                    {cleanTitle || title}
+                </h3>
 
-                        {video.vod_actor && (
-                            <span className="text-[10px] text-pink-300/80 truncate max-w-28 font-medium">
-                                {video.vod_actor.split(',')[0]}
-                            </span>
-                        )}
-                    </div>
-                )}
-
-                {/* 标题 */}
-                <h4 className="text-xs sm:text-sm font-bold text-white/90 group-hover:text-purple-300 line-clamp-2 leading-snug transition-colors mb-2">
-                    {cleanTitle}
-                </h4>
-
-                {/* 底部互动指标：播放量 + 点赞好评率 */}
-                <div className="flex items-center justify-between text-[11px] text-white/40 pt-1 border-t border-white/5">
-                    <span className="flex items-center gap-1">
-                        <Eye size={12} className="text-purple-400/80" />
-                        {viewsText} 播放
+                <div className="flex items-center justify-between pt-1 text-[11px] text-white/40">
+                    <span className="text-amber-400/90 font-mono font-bold">
+                        {videoCode || '4K MAX'}
                     </span>
-                    <span className="flex items-center gap-1 text-emerald-400/90 font-medium">
-                        <ThumbsUp size={11} />
-                        {displayRating}%
+                    <span className="text-[10px] text-white/30">
+                        极速秒播
                     </span>
                 </div>
             </div>

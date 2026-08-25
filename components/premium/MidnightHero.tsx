@@ -2,186 +2,211 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { Play, Sparkles, Shield, ChevronLeft, ChevronRight, EyeOff, Film } from 'lucide-react';
+import { Play, Sparkles, Flame, Crown, Heart, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
+import { useFavorites } from '@/lib/store/favorites-store';
 
-interface HeroSlide {
-    id: string;
-    title: string;
-    description: string;
-    tag: string;
-    badge: string;
-    cover: string;
-    query: string;
+interface MidnightHeroProps {
+    videos?: any[];
+    onPlayVideo?: (video: any) => void;
+    onExploreCategory?: (keyword: string) => void;
 }
 
-const HERO_SLIDES: HeroSlide[] = [
-    {
-        id: '1',
-        title: '2026 年度年度中文字幕大片盛典',
-        description: '全网首发超清原画，官方中文字幕，身临其境的视听盛宴。',
-        tag: '👑 独家精选',
-        badge: '4K 原画',
-        cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1920&auto=format&fit=crop',
-        query: '中文字幕',
-    },
-    {
-        id: '2',
-        title: '华语自制 · 顶级原生高颜值精选',
-        description: '东方韵味极致展现，4K 蓝光极速专线，秒播零等待。',
-        tag: '🏮 国产原创',
-        badge: '极速秒播',
-        cover: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1920&auto=format&fit=crop',
-        query: '国产',
-    },
-    {
-        id: '3',
-        title: '欧美经典剧情巨制 · 影院级宽幕呈现',
-        description: '好莱坞级制作质感，超清无码蓝光画质，全方位震撼感官。',
-        tag: '🎬 欧美巨制',
-        badge: '杜比视界',
-        cover: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1920&auto=format&fit=crop',
-        query: '欧美',
-    },
-];
-
 export function MidnightHero({
-    onSearch,
+    videos = [],
     onPlayVideo,
-}: {
-    onSearch?: (query: string) => void;
-    onPlayVideo?: (video: any) => void;
-}) {
-    const router = useRouter();
+    onExploreCategory,
+}: MidnightHeroProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
+    const { addFavorite, removeFavorite, isFavorite } = useFavorites(true);
 
-    // 自动轮播
+    // 精选前 5 部作为轮播焦点图
+    const heroList = videos.slice(0, 5);
+    const currentVideo = heroList[currentIndex] || videos[0] || null;
+
+    // 6 秒自动平滑轮播
     useEffect(() => {
-        if (isPaused) return;
+        if (heroList.length <= 1 || isPaused) return;
         const timer = setInterval(() => {
-            setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
-        }, 5000);
+            setCurrentIndex((prev) => (prev + 1) % heroList.length);
+        }, 6000);
         return () => clearInterval(timer);
-    }, [isPaused]);
+    }, [heroList.length, isPaused]);
 
-    // 监听 Esc 老板键
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') {
-                router.push('/');
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [router]);
+    if (!currentVideo) {
+        // 缺省极简 Hero
+        return (
+            <div className="relative w-full rounded-3xl overflow-hidden bg-gradient-to-br from-purple-950/40 via-[#0B0C14] to-black border border-purple-500/20 p-8 sm:p-12 mb-8">
+                <div className="max-w-2xl space-y-4">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-black">
+                        <Sparkles size={13} />
+                        <span>iKanPP 午夜 VIP 独家专线</span>
+                    </div>
+                    <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+                        4K 极清画质 · 0 广告秒播
+                    </h1>
+                    <p className="text-sm text-white/60">
+                        收录全网 36 大专线与日本官方名优正版高清库，为您呈现顶级母带视听盛宴。
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
-    const currentSlide = HERO_SLIDES[currentIndex];
+    // 从标题提取番号与女优名
+    const title = currentVideo.vod_name || currentVideo.title || '';
+    const codeMatch = title.match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
+    const videoCode = codeMatch ? codeMatch[0].toUpperCase() : '4K VIP 独家';
+    const cleanTitle = title.replace(/[《》【】\[\]（）()]/g, ' ').replace(videoCode, '').trim();
+    const coverUrl = currentVideo.vod_pic || '';
+    const currentSource = currentVideo.source || 'hsck';
+    const currentVid = String(currentVideo.vod_id);
+    const isFav = isFavorite(currentVid, currentSource);
 
-    const handlePlay = (query: string) => {
-        if (onPlayVideo) {
-            onPlayVideo({ vod_name: query, title: query });
-        } else if (onSearch) {
-            onSearch(query);
+    const handleToggleFav = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (isFav) {
+            removeFavorite(currentVid, currentSource);
+        } else {
+            addFavorite({
+                videoId: currentVid,
+                title: title,
+                poster: coverUrl,
+                source: currentSource,
+                sourceName: '4K 原画',
+                remarks: '4K MAX',
+                type: 'tv',
+            });
         }
     };
 
     return (
         <div
-            className="relative w-full rounded-3xl overflow-hidden mb-8 border border-white/10 shadow-2xl shadow-purple-950/40 group"
-            style={{ minHeight: '380px' }}
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
+            className="relative w-full rounded-3xl overflow-hidden bg-[#07080E] border border-white/10 shadow-2xl shadow-purple-950/40 mb-8 group select-none"
         >
-            {/* 背景大图 */}
-            <div className="absolute inset-0 z-0">
-                <Image
-                    src={currentSlide.cover}
-                    alt={currentSlide.title}
-                    fill
-                    className="object-cover transition-transform duration-1000 scale-105 group-hover:scale-100"
-                    priority
-                    unoptimized
-                />
-                {/* 深度暗黑极光紫金渐变遮罩 */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#060609] via-[#060609]/70 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#060609] via-[#060609]/80 to-transparent" />
+            {/* 1. 4K 超宽景深海报背景图 */}
+            <div className="relative w-full h-[360px] sm:h-[440px] lg:h-[480px]">
+                {coverUrl ? (
+                    <Image
+                        src={coverUrl}
+                        alt={title}
+                        fill
+                        sizes="(max-width: 1200px) 100vw, 1400px"
+                        className="object-cover object-center scale-105 group-hover:scale-100 transition-transform duration-1000 ease-out"
+                        priority
+                    />
+                ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-purple-950 via-slate-900 to-black" />
+                )}
+
+                {/* 电影级多重暗影渐变罩（左侧纯黑实底方便读字，右侧保留剧照） */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#07080E] via-[#07080E]/80 to-transparent w-full sm:w-3/4 z-10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#07080E] via-[#07080E]/40 to-transparent z-10" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#07080E]/60 via-transparent to-transparent z-10" />
             </div>
 
-            {/* 内容区 */}
-            <div className="relative z-10 p-6 sm:p-10 md:p-12 flex flex-col justify-end min-h-[380px] max-w-2xl">
-                {/* 标签 */}
-                <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2.5 py-1 rounded-full text-[11px] font-black tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40 backdrop-blur-md flex items-center gap-1 shadow-sm">
-                        <Sparkles size={11} className="text-purple-300" />
-                        {currentSlide.tag}
+            {/* 2. 左侧核心文案与操作按钮 */}
+            <div className="absolute inset-0 z-20 flex flex-col justify-end sm:justify-center p-6 sm:p-10 lg:p-14 max-w-2xl space-y-4">
+                {/* 顶部标签行 */}
+                <div className="flex flex-wrap items-center gap-2.5">
+                    <span className="px-3 py-1 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 text-black text-xs font-black tracking-wider uppercase shadow-lg shadow-amber-500/30 flex items-center gap-1.5">
+                        <Crown size={13} className="fill-black" />
+                        {videoCode}
                     </span>
-                    <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 backdrop-blur-md">
-                        {currentSlide.badge}
+
+                    <span className="px-2.5 py-0.5 rounded-lg bg-white/10 backdrop-blur-md border border-white/15 text-white/80 text-xs font-bold flex items-center gap-1">
+                        <Flame size={12} className="text-pink-500" />
+                        今日封神榜 TOP {currentIndex + 1}
+                    </span>
+
+                    <span className="px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-extrabold">
+                        99.8% 好评
                     </span>
                 </div>
 
-                {/* 主标题 */}
-                <h2 className="text-2xl sm:text-4xl font-black text-white mb-3 tracking-tight leading-tight drop-shadow-md">
-                    {currentSlide.title}
+                {/* 影片主标题 */}
+                <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight line-clamp-2 drop-shadow-lg">
+                    {cleanTitle || title}
                 </h2>
 
-                {/* 描述 */}
-                <p className="text-xs sm:text-sm text-white/70 mb-6 line-clamp-2 leading-relaxed">
-                    {currentSlide.description}
+                {/* 介绍与特性徽章 */}
+                <p className="text-xs sm:text-sm text-white/70 line-clamp-2 leading-relaxed max-w-xl">
+                    官方正版母带 4K 原画重制，无广告纯净切片。搭载自研超清专线，0 毫秒极速秒播。
                 </p>
 
-                {/* 操作按钮区 */}
-                <div className="flex flex-wrap items-center gap-3">
+                {/* 核心操作按钮 */}
+                <div className="flex items-center gap-3 pt-2">
                     <button
-                        onClick={() => handlePlay(currentSlide.query)}
-                        className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 text-white font-bold text-sm hover:brightness-110 active:scale-95 shadow-xl shadow-purple-600/30 transition-all cursor-pointer"
+                        onClick={() => onPlayVideo && onPlayVideo(currentVideo)}
+                        className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 text-black font-black text-sm shadow-xl shadow-amber-500/30 hover:shadow-amber-500/50 hover:scale-105 active:scale-95 transition-all cursor-pointer"
                     >
-                        <Play size={16} className="fill-white" />
-                        立即探索
+                        <Play size={18} className="fill-black" />
+                        <span>立即 4K 秒播</span>
                     </button>
 
-                    {/* 老板键提示 */}
                     <button
-                        onClick={() => router.push('/')}
-                        className="flex items-center gap-1.5 px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/15 text-white/80 hover:text-white border border-white/10 backdrop-blur-md text-xs font-medium transition-all cursor-pointer"
-                        title="按 Esc 键瞬间退出至首页"
+                        onClick={handleToggleFav}
+                        className={`flex items-center gap-2 px-4 py-3 rounded-2xl border backdrop-blur-xl font-bold text-sm transition-all cursor-pointer hover:scale-105 active:scale-95 ${
+                            isFav
+                                ? 'bg-pink-600/30 border-pink-500/50 text-pink-300'
+                                : 'bg-white/10 hover:bg-white/20 border-white/15 text-white'
+                        }`}
+                        title={isFav ? '已在私密片单中' : '加入私密片单'}
                     >
-                        <EyeOff size={14} className="text-amber-400" />
-                        <span>防窥 (Esc)</span>
+                        <Heart size={16} className={isFav ? 'fill-pink-500 text-pink-500' : ''} />
+                        <span>{isFav ? '已收藏' : '收藏'}</span>
                     </button>
                 </div>
             </div>
 
-            {/* 左右切换箭头 */}
-            <button
-                onClick={() => setCurrentIndex((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1))}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 border border-white/10 text-white flex items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity z-20 cursor-pointer"
-                aria-label="上一张"
-            >
-                <ChevronLeft size={20} />
-            </button>
-            <button
-                onClick={() => setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 border border-white/10 text-white flex items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity z-20 cursor-pointer"
-                aria-label="下一张"
-            >
-                <ChevronRight size={20} />
-            </button>
-
-            {/* 底部指示圆点 */}
-            <div className="absolute bottom-4 right-6 z-20 flex items-center gap-1.5">
-                {HERO_SLIDES.map((_, idx) => (
+            {/* 3. 左右切片切换箭头 (桌面端悬停浮现) */}
+            {heroList.length > 1 && (
+                <>
                     <button
-                        key={idx}
-                        onClick={() => setCurrentIndex(idx)}
-                        className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                            currentIndex === idx ? 'w-6 bg-gradient-to-r from-purple-400 to-amber-400' : 'w-1.5 bg-white/30'
-                        }`}
-                        aria-label={`切换到第 ${idx + 1} 张`}
-                    />
-                ))}
-            </div>
+                        onClick={() => setCurrentIndex((prev) => (prev - 1 + heroList.length) % heroList.length)}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white/70 hover:text-white border border-white/10 flex items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all cursor-pointer hover:scale-110"
+                        aria-label="上一部"
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                    <button
+                        onClick={() => setCurrentIndex((prev) => (prev + 1) % heroList.length)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white/70 hover:text-white border border-white/10 flex items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all cursor-pointer hover:scale-110"
+                        aria-label="下一部"
+                    >
+                        <ChevronRight size={20} />
+                    </button>
+                </>
+            )}
+
+            {/* 4. 底部 5 根动态切片微光进度指示条 */}
+            {heroList.length > 1 && (
+                <div className="absolute bottom-4 right-6 z-30 flex items-center gap-2">
+                    {heroList.map((_, idx) => (
+                        <button
+                            key={`hero-dot-${idx}`}
+                            onClick={() => setCurrentIndex(idx)}
+                            className="group/dot relative h-1.5 rounded-full transition-all cursor-pointer overflow-hidden"
+                            style={{
+                                width: currentIndex === idx ? '32px' : '10px',
+                                background: currentIndex === idx ? 'rgba(245, 158, 11, 0.4)' : 'rgba(255, 255, 255, 0.2)',
+                            }}
+                            aria-label={`切换到第 ${idx + 1} 部`}
+                        >
+                            {currentIndex === idx && (
+                                <div
+                                    className="h-full bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full shadow-[0_0_8px_rgba(245,158,11,1)]"
+                                    style={{
+                                        animation: isPaused ? 'none' : 'heroProgress 6s linear infinite',
+                                    }}
+                                />
+                            )}
+                        </button>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
