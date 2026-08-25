@@ -20,10 +20,12 @@ export function JableVideoCard({
 }: JableVideoCardProps) {
     const [imgError, setImgError] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
-    const [showPreview, setShowPreview] = useState(false);
-    const [previewVideoUrl, setPreviewVideoUrl] = useState<string | null>(null);
+    const [showVideoPreview, setShowVideoPreview] = useState(false);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [frameIndex, setFrameIndex] = useState(1); // 10 帧快照画廊索引
 
     const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const frameIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const { addFavorite, removeFavorite, isFavorite } = useFavorites(true);
 
@@ -33,14 +35,12 @@ export function JableVideoCard({
     const source = video?.source || 'hsck';
     const isFav = isFavorite(videoId, source);
 
-    // 智能提取番号
+    // 智能提取番号 (如 IPZZ-870, SSIS-123)
     const codeMatch = title.match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
     const videoCode = codeMatch ? codeMatch[0].toUpperCase() : null;
 
     // 清洗后较短的标题
     const cleanTitle = videoCode ? title.replace(videoCode, '').replace(/[《》【】\[\]（）()]/g, ' ').trim() : title;
-
-    // 是否包含中文字幕
     const hasChineseSub = title.includes('中文') || title.includes('字幕') || title.includes('中字');
 
     // 真实/拟真播放热度生成
@@ -48,31 +48,60 @@ export function JableVideoCard({
     const views = Math.floor(12000 + (seed % 88000));
     const viewsFormatted = views > 10000 ? `${(views / 10000).toFixed(1)}万` : `${views}`;
 
-    // 鼠标悬停 250ms 唤醒动态预览
+    // 智能计算动态切片源
+    const getSmartPreviewUrl = () => {
+        // 1. 如果是 Jable 原版封面，直接替换为官方 preview.mp4
+        if (rawPic.includes('jable.tv') || rawPic.includes('videos_screenshots')) {
+            const jableMp4 = rawPic.replace(/\/320x180\/[0-9]+\.jpg/i, '/preview.mp4').replace(/\/preview\.jpg/i, '/preview.mp4');
+            return `/api/proxy?url=${encodeURIComponent(jableMp4)}&referer=${encodeURIComponent('https://jable.tv/')}`;
+        }
+
+        // 2. 如果有标准番号，使用 DMM 官方全球极速直连 45 秒高潮切片
+        if (videoCode) {
+            const cleanCode = videoCode.toLowerCase().replace(/[-_]/g, '');
+            const dmmLetter = cleanCode.replace(/[0-9]/g, '');
+            if (dmmLetter.length >= 2) {
+                const dmmUrl = `https://cc3001.dmm.co.jp/litevideo/freepv/${dmmLetter.slice(0, 1)}/${dmmLetter.slice(0, 3)}/${cleanCode}/${cleanCode}_mhb_w.mp4`;
+                return `/api/proxy?url=${encodeURIComponent(dmmUrl)}`;
+            }
+        }
+
+        return null;
+    };
+
+    // 鼠标悬停 200ms 唤醒动态预览
     const handleMouseEnter = () => {
         setIsHovered(true);
         if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
 
         hoverTimeoutRef.current = setTimeout(() => {
-            setShowPreview(true);
-            // 构造高潮切片预览 URL
-            if (videoCode) {
-                const cleanCode = videoCode.toLowerCase().replace(/[-_]/g, '');
-                const dmmLetter = cleanCode.replace(/[0-9]/g, '');
-                if (dmmLetter.length >= 3) {
-                    const dmmUrl = `https://cc3001.dmm.co.jp/litevideo/freepv/${dmmLetter.slice(0, 1)}/${dmmLetter.slice(0, 3)}/${cleanCode}/${cleanCode}_mhb_w.mp4`;
-                    setPreviewVideoUrl(`/api/proxy?url=${encodeURIComponent(dmmUrl)}`);
-                }
+            const url = getSmartPreviewUrl();
+            if (url) {
+                setPreviewUrl(url);
+                setShowVideoPreview(true);
             }
-        }, 250);
+
+            // 同步启动多帧故事板轮播（双保险机制）
+            if (rawPic.includes('/320x180/')) {
+                frameIntervalRef.current = setInterval(() => {
+                    setFrameIndex((prev) => (prev % 10) + 1);
+                }, 350);
+            }
+        }, 200);
     };
 
     const handleMouseLeave = () => {
         setIsHovered(false);
-        setShowPreview(false);
+        setShowVideoPreview(false);
+        setFrameIndex(1);
+
         if (hoverTimeoutRef.current) {
             clearTimeout(hoverTimeoutRef.current);
             hoverTimeoutRef.current = null;
+        }
+        if (frameIntervalRef.current) {
+            clearInterval(frameIntervalRef.current);
+            frameIntervalRef.current = null;
         }
         if (videoRef.current) {
             videoRef.current.pause();
@@ -83,8 +112,14 @@ export function JableVideoCard({
     useEffect(() => {
         return () => {
             if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+            if (frameIntervalRef.current) clearInterval(frameIntervalRef.current);
         };
     }, []);
+
+    // 动态帧海报地址（当无视频或视频加载中时平滑过渡）
+    const currentFramePic = (isHovered && rawPic.includes('/320x180/'))
+        ? rawPic.replace(/\/320x180\/[0-9]+\.jpg/i, `/320x180/${frameIndex}.jpg`)
+        : rawPic;
 
     const handleToggleFav = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -110,17 +145,17 @@ export function JableVideoCard({
             onMouseLeave={handleMouseLeave}
             className="group relative flex flex-col rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-purple-500/50 shadow-lg hover:shadow-[0_16px_40px_rgba(168,85,247,0.25)] transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-1.5 select-none"
         >
-            {/* 1. 封面海报与动态微预览区 */}
+            {/* 1. 封面海报与动态微视频预览区 */}
             <div className="relative aspect-[16/10] w-full bg-[#0E0F17] overflow-hidden">
-                {/* 静态海报 */}
-                {rawPic && !imgError ? (
+                {/* 静态海报 / 动态多帧快照 */}
+                {currentFramePic && !imgError ? (
                     <Image
-                        src={rawPic}
+                        src={currentFramePic}
                         alt={title}
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        className={`object-cover scale-100 group-hover:scale-108 transition-all duration-700 ease-out ${
-                            showPreview ? 'opacity-0' : 'opacity-100'
+                        className={`object-cover scale-100 group-hover:scale-105 transition-transform duration-500 ease-out ${
+                            showVideoPreview ? 'opacity-0' : 'opacity-100'
                         }`}
                         onError={() => setImgError(true)}
                         loading={index < 8 ? 'eager' : 'lazy'}
@@ -131,22 +166,22 @@ export function JableVideoCard({
                     </div>
                 )}
 
-                {/* 动态微视频预览层（鼠标悬停 250ms 自动静音播放精彩切片） */}
-                {showPreview && previewVideoUrl && (
+                {/* Jable / DMM 动态微视频预览层（鼠标悬停 200ms 自动静音循环播放） */}
+                {showVideoPreview && previewUrl && (
                     <video
                         ref={videoRef}
-                        src={previewVideoUrl}
+                        src={previewUrl}
                         autoPlay
                         loop
                         muted
                         playsInline
                         className="absolute inset-0 w-full h-full object-cover z-10 animate-fade-in"
-                        onError={() => setShowPreview(false)}
+                        onError={() => setShowVideoPreview(false)}
                     />
                 )}
 
                 {/* 悬停多重渐变暗影 */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0C14] via-black/30 to-transparent opacity-80 group-hover:opacity-40 transition-opacity z-10 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0C14] via-black/20 to-transparent opacity-80 group-hover:opacity-30 transition-opacity z-10 pointer-events-none" />
 
                 {/* 排行榜名次徽章 */}
                 {rankBadge !== undefined && (
@@ -172,9 +207,9 @@ export function JableVideoCard({
                     </div>
                 )}
 
-                {/* 动态预览中微标 或 4K/中文字幕角标 */}
+                {/* 动态预览微光提示 或 4K/中文字幕角标 */}
                 <div className="absolute top-2.5 right-2.5 z-20 flex items-center gap-1.5">
-                    {showPreview ? (
+                    {isHovered ? (
                         <span className="px-2 py-0.5 rounded-md bg-purple-600/90 text-white text-[9px] font-black shadow-lg backdrop-blur-md flex items-center gap-1 animate-pulse">
                             <Sparkles size={10} className="text-amber-300" />
                             动态预览
@@ -193,8 +228,8 @@ export function JableVideoCard({
                     )}
                 </div>
 
-                {/* 悬停居中浮现奢华播放按钮（未开视频预览时） */}
-                {!showPreview && (
+                {/* 悬停居中浮现奢华播放按钮 */}
+                {!showVideoPreview && (
                     <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
                         <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 text-black flex items-center justify-center shadow-xl shadow-amber-500/50 scale-75 group-hover:scale-100 transition-transform duration-300">
                             <Play size={20} className="fill-black ml-0.5" />
