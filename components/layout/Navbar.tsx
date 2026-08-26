@@ -107,6 +107,7 @@ export function Navbar({
     { id: 'home', label: '首页', href: '/' },
     { id: 'movie', label: '电影', href: '/movie' },
     { id: 'tv', label: '电视剧', href: '/tv' },
+    { id: 'huaren', label: '华人专区', href: '/huaren' },
     { id: 'guoman', label: '国漫', href: '/guoman' },
     { id: 'anime', label: '动漫', href: '/anime' },
     { id: 'variety', label: '综艺', href: '/variety' },
