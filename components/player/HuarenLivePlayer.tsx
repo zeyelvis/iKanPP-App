@@ -23,8 +23,8 @@ export function HuarenLivePlayer({
     const [currentEpisode, setCurrentEpisode] = useState<number>(initialEpisode);
     const [iframeKey, setIframeKey] = useState<number>(0);
 
-    // 目标站官方播放器播放内核 URL
-    const playerUrl = `https://huaren.live/Player/ec?episode=${vodId}-${currentSid}-${currentEpisode}`;
+    // 经过反向代理剥离 X-Frame-Options 后的目标站原生播放器地址
+    const playerUrl = `/api/huaren-embed?episode=${vodId}-${currentSid}-${currentEpisode}`;
 
     // 切换线路
     const handleSwitchSource = (sid: number) => {
