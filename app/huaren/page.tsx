@@ -1,175 +1,498 @@
 'use client';
 
-import React, { useState, useEffect, Suspense, useCallback } from 'react';
+import React, { useState, Suspense, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
 import { SearchForm } from '@/components/search/SearchForm';
 import { SearchResults } from '@/components/home/SearchResults';
 import { useHomePage } from '@/lib/hooks/useHomePage';
-import {
-    Globe, Flame, Film, Tv, Play, Sparkles, Star, ChevronLeft, ChevronRight,
-    Radio, Activity, Smile, Video
-} from 'lucide-react';
+import { Play, ChevronRight, Flame } from 'lucide-react';
 
-interface HuarenItem {
+interface MediaCardItem {
     id: string;
     title: string;
     rawCover: string;
-    rate: string;
-    tag: string;
-    year?: string;
-    remarks: string;
-    type: 'movie' | 'tv' | 'live';
-    desc?: string;
-    streamUrl?: string;
+    tagBadge: string; // 右上角气泡徽章（如“剧情”、“喜剧”、“悬疑”、“Blu-ray”、“豆瓣热榜”）
+    badgeColor: 'green' | 'orange' | 'blue' | 'purple' | 'red';
+    desc: string;     // 卡片下方简短剧情介绍
+    type: 'movie' | 'tv';
 }
 
-// 代理生成安全图片地址
+interface RankItem {
+    rank: number;
+    title: string;
+    status: string;
+    type: 'movie' | 'tv';
+}
+
+interface HuarenSectionData {
+    id: string;
+    sectionTitle: string;
+    rankTitle: string;
+    type: 'movie' | 'tv';
+    categoryTags: string[];
+    movies: MediaCardItem[];
+    rankings: RankItem[];
+}
+
+// 统一图片安全代理方法（100% 杜绝黑屏与裂图）
 function getSafeCoverUrl(rawUrl: string): string {
     if (!rawUrl) return '';
     if (rawUrl.startsWith('/api/')) return rawUrl;
     return `/api/img-proxy?url=${encodeURIComponent(rawUrl)}`;
 }
 
-// 1. 顶部 Hero 大轮播图精选数据（Huaren.live 原版焦点大片）
-const HERO_BANNERS: HuarenItem[] = [
+// 1:1 Huaren.live 原版精选板块数据（电影 / 电视剧 / 动漫 / 综艺 / 短剧）
+const HUAREN_SECTIONS: HuarenSectionData[] = [
     {
-        id: 'banner-1',
-        title: '庆余年 第二季',
-        rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2908075726.jpg',
-        rate: '8.8',
-        tag: '古装 / 权谋 / 传奇',
-        year: '2024',
-        remarks: '全 36 集已完结 · 4K 蓝光原画',
-        type: 'tv',
-        desc: '范闲率领使团回京途中，遭遇二皇子的重重杀局。在京都的风云变幻中，范闲秉持赤子之心，以智破局，揭开深宫密谋。',
-    },
-    {
-        id: 'banner-2',
-        title: '繁花',
-        rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2901968835.jpg',
-        rate: '8.7',
-        tag: '剧情 / 时代 / 王家卫导演',
-        year: '2024',
-        remarks: '全 30 集已完结 · 双语原声 4K',
-        type: 'tv',
-        desc: '九十年代的上海黄河路风起云涌。青年阿宝在爷叔的指点下蜕变成宝总，与玲子、汪小姐、李李三位女性交织出一段时代传奇。',
-    },
-    {
-        id: 'banner-3',
-        title: '流浪地球2',
-        rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2886407595.jpg',
-        rate: '8.3',
-        tag: '科幻 / 动作 / 灾难 / 巨制',
-        year: '2023',
-        remarks: '院线超清 4K HDR 杜比全景声',
+        id: 'movies',
+        sectionTitle: '最新电影',
+        rankTitle: '最新电影榜单',
         type: 'movie',
-        desc: '太阳即将毁灭，人类在地球表面建造出巨大的推进器，寻找新家园。然而宇宙之路危机四伏，数万名勇士毅然挺身而出。',
+        categoryTags: ['奇幻科幻', '战争犯罪', '悬疑恐怖惊悚', '爱情喜剧剧情', '动作冒险灾难', '动画电影'],
+        movies: [
+            {
+                id: 'm-1',
+                title: '消暑胜地反击战',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2910730595.jpg',
+                tagBadge: '喜剧',
+                badgeColor: 'green',
+                desc: '一个高度紧张的青少年发现自己...',
+                type: 'movie',
+            },
+            {
+                id: 'm-2',
+                title: '狼域',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2909430595.jpg',
+                tagBadge: '剧情',
+                badgeColor: 'blue',
+                desc: '特种部队深入狼域绝境反击...',
+                type: 'movie',
+            },
+            {
+                id: 'm-3',
+                title: '痴心二人行',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2908730595.jpg',
+                tagBadge: '爱情',
+                badgeColor: 'green',
+                desc: '在孟买，两个社交笨拙的干禧一...',
+                type: 'movie',
+            },
+            {
+                id: 'm-4',
+                title: '聊斋，魅首诡案',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2907630595.jpg',
+                tagBadge: '悬疑',
+                badgeColor: 'orange',
+                desc: '来自西域的舞姬阿离三年前惨死...',
+                type: 'movie',
+            },
+            {
+                id: 'm-5',
+                title: '真实之物',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2906530595.jpg',
+                tagBadge: '剧情',
+                badgeColor: 'blue',
+                desc: '在寻找心灵寄托的过程中，莱奥...',
+                type: 'movie',
+            },
+            {
+                id: 'm-6',
+                title: '对我来说你已经死了',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2905430595.jpg',
+                tagBadge: '恐怖',
+                badgeColor: 'purple',
+                desc: '这部电影聚焦一群即将离开家上大...',
+                type: 'movie',
+            },
+            {
+                id: 'm-7',
+                title: '痴人唱颂',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2904330595.jpg',
+                tagBadge: '剧情',
+                badgeColor: 'green',
+                desc: '在一个与世隔绝的村庄里，年轻...',
+                type: 'movie',
+            },
+            {
+                id: 'm-8',
+                title: '罪火焦点',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2903230595.jpg',
+                tagBadge: '犯罪',
+                badgeColor: 'orange',
+                desc: '故事设定于AI统治的近未来，一...',
+                type: 'movie',
+            },
+            {
+                id: 'm-9',
+                title: '歪心狼对阵ACME',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2902130595.jpg',
+                tagBadge: '喜剧',
+                badgeColor: 'blue',
+                desc: '歪心狼被Acme产品负了太多次...',
+                type: 'movie',
+            },
+            {
+                id: 'm-10',
+                title: '哆啦A梦，新大雄的海底鬼岩城',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2901030595.jpg',
+                tagBadge: '豆瓣热榜',
+                badgeColor: 'orange',
+                desc: '哆啦A梦 2026全新作电影『降...',
+                type: 'movie',
+            },
+        ],
+        rankings: [
+            { rank: 1, title: '给阿嬷的情书', status: '已完结', type: 'movie' },
+            { rank: 2, title: '夜王', status: '已完结', type: 'movie' },
+            { rank: 3, title: '蜘蛛侠：崭新之日', status: '高清版', type: 'movie' },
+            { rank: 4, title: '痴迷', status: '第1集', type: 'movie' },
+            { rank: 5, title: '哪吒之魔童闹海', status: '第1集', type: 'movie' },
+            { rank: 6, title: '疯狂动物城2', status: '已完结', type: 'movie' },
+            { rank: 7, title: '飞驰人生3', status: '已完结', type: 'movie' },
+            { rank: 8, title: '一路向西', status: '已完结', type: 'movie' },
+            { rank: 9, title: '群体', status: '已完结', type: 'movie' },
+            { rank: 10, title: '色戒', status: '已完结', type: 'movie' },
+        ],
     },
     {
-        id: 'banner-4',
-        title: '三体',
-        rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2886470395.jpg',
-        rate: '8.8',
-        tag: '硬核科幻 / 悬疑 / 刘慈欣原著',
-        year: '2023',
-        remarks: '全 30 集已完结 · 4K 极清臻彩',
+        id: 'tv-series',
+        sectionTitle: '最新电视剧',
+        rankTitle: '最新电视剧榜单',
         type: 'tv',
-        desc: '纳米科学家汪淼与刑警史强联手调查多起科学家自杀事件，揭开了三体世界与地球文明即将爆发的跨星际危机。',
-    },
-    {
-        id: 'banner-5',
-        title: '九龙城寨之围城',
-        rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2907430595.jpg',
-        rate: '7.5',
-        tag: '动作 / 犯罪 / 港式硬核',
-        year: '2024',
-        remarks: '4K 原画中字 · 燃爆视效',
-        type: 'movie',
-        desc: '落魄青年陈洛军误闯九龙城寨，结识龙卷风与一众城寨兄弟。面对黑恶势力的强行入侵，众人誓死捍卫家园。',
-    },
-];
-
-// 2. Huaren.live 官方特色的电视直播频道数据 (CCTV 央视卫视 & 体育竞技直播)
-const LIVE_CHANNELS = [
-    { id: 'cctv-1', title: 'CCTV-1 综合', tag: '央视标杆', remarks: '1080P 高清', desc: '新闻联播 / 焦点访谈 / 综合大剧', type: 'live' as const },
-    { id: 'cctv-5', title: 'CCTV-5 体育', tag: '顶级赛事', remarks: 'NBA / 足球 / 奥运', desc: '天下足球 / NBA live / 欧冠直播', type: 'live' as const },
-    { id: 'cctv-5p', title: 'CCTV-5+ 赛事', tag: '赛事直播', remarks: '高清现场', desc: '网球 / 羽毛球 / 乒乓球全赛事', type: 'live' as const },
-    { id: 'cctv-6', title: 'CCTV-6 电影', tag: '华语佳片', remarks: '24H 连播', desc: '院线大片 / 经典国语影院', type: 'live' as const },
-    { id: 'hunan', title: '湖南卫视', tag: '王牌卫视', remarks: '1080P 超清', desc: '你好星期六 / 热门爆款综艺', type: 'live' as const },
-    { id: 'zhejiang', title: '浙江卫视', tag: '主流卫视', remarks: '高清直播', desc: '中国好声音 / 奔跑吧兄弟', type: 'live' as const },
-    { id: 'dragon', title: '东方卫视', tag: '都市剧场', remarks: '1080P 极速', desc: '极限挑战 / 东方大剧场', type: 'live' as const },
-    { id: 'tvb', title: 'TVB 翡翠台', tag: '香港原生', remarks: '粤语原声', desc: '爱回家 / 经典港剧 / 香港新闻', type: 'live' as const },
-];
-
-// 3. Huaren.live 官方真实多板块数据
-const SECTIONS_DATA = [
-    {
-        id: 'hot-tv',
-        title: '热播华语电视剧',
-        icon: Tv,
-        tag: 'TV SERIES',
-        items: [
-            { id: 'tv-1', title: '庆余年 第二季', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2908075726.jpg', rate: '8.8', tag: '古装权谋', remarks: '更新至第36集', type: 'tv' as const },
-            { id: 'tv-2', title: '繁花', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2901968835.jpg', rate: '8.7', tag: '年代传奇', remarks: '30集全', type: 'tv' as const },
-            { id: 'tv-3', title: '狂飙', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2886867595.jpg', rate: '8.5', tag: '扫黑刑侦', remarks: '39集全', type: 'tv' as const },
-            { id: 'tv-4', title: '三体', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2886470395.jpg', rate: '8.8', tag: '科幻神作', remarks: '30集全', type: 'tv' as const },
-            { id: 'tv-5', title: '漫长的季节', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2890667595.jpg', rate: '9.4', tag: '悬疑口碑', remarks: '12集全', type: 'tv' as const },
-            { id: 'tv-6', title: '长相思', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2896014495.jpg', rate: '7.8', tag: '仙侠言情', remarks: '39集全', type: 'tv' as const },
-            { id: 'tv-7', title: '追风者', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2905634595.jpg', rate: '8.0', tag: '民国谍战', remarks: '38集全', type: 'tv' as const },
-            { id: 'tv-8', title: '边水往事', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2911667595.jpg', rate: '8.0', tag: '高能冒险', remarks: '21集全', type: 'tv' as const },
+        categoryTags: ['国产剧', '港台剧', '日韩剧', '欧美剧', '古装悬疑', '都市言情'],
+        movies: [
+            {
+                id: 't-1',
+                title: '庆余年 第二季',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2908075726.jpg',
+                tagBadge: '古装',
+                badgeColor: 'orange',
+                desc: '范闲率领使团回京，智斗深宫...',
+                type: 'tv',
+            },
+            {
+                id: 't-2',
+                title: '繁花',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2901968835.jpg',
+                tagBadge: '王家卫',
+                badgeColor: 'green',
+                desc: '九十年代黄河路风起云涌时代传奇...',
+                type: 'tv',
+            },
+            {
+                id: 't-3',
+                title: '狂飙',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2886867595.jpg',
+                tagBadge: '扫黑',
+                badgeColor: 'blue',
+                desc: '安欣与高启强长达二十年的正邪较量...',
+                type: 'tv',
+            },
+            {
+                id: 't-4',
+                title: '三体',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2886470395.jpg',
+                tagBadge: '科幻',
+                badgeColor: 'purple',
+                desc: '纳米科学家汪淼揭开三体文明危机...',
+                type: 'tv',
+            },
+            {
+                id: 't-5',
+                title: '边水往事',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2911667595.jpg',
+                tagBadge: '悬疑',
+                badgeColor: 'orange',
+                desc: '异域三边坡惊心动魄的生存冒险...',
+                type: 'tv',
+            },
+            {
+                id: 't-6',
+                title: '长相思',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2896014495.jpg',
+                tagBadge: '仙侠',
+                badgeColor: 'green',
+                desc: '大荒动荡下的儿女情长与家国天下...',
+                type: 'tv',
+            },
+            {
+                id: 't-7',
+                title: '追风者',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2905634595.jpg',
+                tagBadge: '谍战',
+                badgeColor: 'blue',
+                desc: '金融青年魏若来的信仰成长之路...',
+                type: 'tv',
+            },
+            {
+                id: 't-8',
+                title: '漫长的季节',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2890667595.jpg',
+                tagBadge: '神作',
+                badgeColor: 'orange',
+                desc: '东北小城跨越二十年的悬案真相...',
+                type: 'tv',
+            },
+            {
+                id: 't-9',
+                title: '梦华录',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2870667595.jpg',
+                tagBadge: '雅韵',
+                badgeColor: 'green',
+                desc: '赵盼儿汴京开茶坊自立自强的励志故事...',
+                type: 'tv',
+            },
+            {
+                id: 't-10',
+                title: '雪中悍刀行',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2880667595.jpg',
+                tagBadge: '武侠',
+                badgeColor: 'blue',
+                desc: '北椋世子徐凤年历经磨砺终成大器...',
+                type: 'tv',
+            },
+        ],
+        rankings: [
+            { rank: 1, title: '庆余年 第二季', status: '36集全', type: 'tv' },
+            { rank: 2, title: '边水往事', status: '21集全', type: 'tv' },
+            { rank: 3, title: '繁花', status: '30集全', type: 'tv' },
+            { rank: 4, title: '狂飙', status: '39集全', type: 'tv' },
+            { rank: 5, title: '三体', status: '30集全', type: 'tv' },
+            { rank: 6, title: '长相思 第二季', status: '23集全', type: 'tv' },
+            { rank: 7, title: '追风者', status: '38集全', type: 'tv' },
+            { rank: 8, title: '漫长的季节', status: '12集全', type: 'tv' },
+            { rank: 9, title: '隐秘的角落', status: '12集全', type: 'tv' },
+            { rank: 10, title: '无心法师', status: '已完结', type: 'tv' },
         ],
     },
     {
-        id: 'box-office',
-        title: '院线华语大片',
-        icon: Film,
-        tag: 'MOVIES',
-        items: [
-            { id: 'mv-1', title: '流浪地球2', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2886407595.jpg', rate: '8.3', tag: '科幻巨制', remarks: '4K 蓝光原画', type: 'movie' as const },
-            { id: 'mv-2', title: '封神第一部：朝歌风云', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2895697595.jpg', rate: '7.8', tag: '神话动作', remarks: '4K 杜比视界', type: 'movie' as const },
-            { id: 'mv-3', title: '九龙城寨之围城', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2907430595.jpg', rate: '7.5', tag: '港片硬核', remarks: '超清中字', type: 'movie' as const },
-            { id: 'mv-4', title: '热辣滚烫', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2903730595.jpg', rate: '7.8', tag: '喜剧励志', remarks: '4K 原画', type: 'movie' as const },
-            { id: 'mv-5', title: '飞驰人生2', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2903730596.jpg', rate: '7.7', tag: '热血赛车', remarks: '4K 臻彩', type: 'movie' as const },
-            { id: 'mv-6', title: '第二十条', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2903730597.jpg', rate: '7.6', tag: '现实剧情', remarks: '4K 超清', type: 'movie' as const },
-            { id: 'mv-7', title: '无间道', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2564557595.jpg', rate: '9.3', tag: '港影巅峰', remarks: '修复重置版', type: 'movie' as const },
-            { id: 'mv-8', title: '霸王别姬', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2561716440.jpg', rate: '9.6', tag: '华语之巅', remarks: '4K 经典重温', type: 'movie' as const },
+        id: 'anime-series',
+        sectionTitle: '最新动漫',
+        rankTitle: '最新动漫榜单',
+        type: 'tv',
+        categoryTags: ['国漫玄幻', '日漫热血', '异界修仙', '机甲动作', '科幻奇幻', '经典怀旧'],
+        movies: [
+            {
+                id: 'a-1',
+                title: '仙逆',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2898067595.jpg',
+                tagBadge: '国漫',
+                badgeColor: 'orange',
+                desc: '王林踏上修真大道，杀伐果断...',
+                type: 'tv',
+            },
+            {
+                id: 'a-2',
+                title: '完美世界',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2878067595.jpg',
+                tagBadge: '玄幻',
+                badgeColor: 'green',
+                desc: '一粒尘可填海，一根草斩尽日月星辰...',
+                type: 'tv',
+            },
+            {
+                id: 'a-3',
+                title: '凡人修仙传',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2868067595.jpg',
+                tagBadge: '修仙',
+                badgeColor: 'blue',
+                desc: '普通的山村穷小子韩立修仙传奇...',
+                type: 'tv',
+            },
+            {
+                id: 'a-4',
+                title: '遮天',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2888067595.jpg',
+                tagBadge: '史诗',
+                badgeColor: 'purple',
+                desc: '九龙拉棺开启浩瀚星空仙路...',
+                type: 'tv',
+            },
+            {
+                id: 'a-5',
+                title: '吞噬星空',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2858067595.jpg',
+                tagBadge: '机甲',
+                badgeColor: 'orange',
+                desc: '罗峰突破基因桎梏成为宇宙强者...',
+                type: 'tv',
+            },
+            {
+                id: 'a-6',
+                title: '斗罗大陆2绝世唐门',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2895067595.jpg',
+                tagBadge: '魂师',
+                badgeColor: 'green',
+                desc: '霍雨浩觉醒灵眸与唐门新传奇...',
+                type: 'tv',
+            },
+            {
+                id: 'a-7',
+                title: '武庚纪',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2893067595.jpg',
+                tagBadge: '热血',
+                badgeColor: 'blue',
+                desc: '不屈人类反抗神权统治的壮烈史诗...',
+                type: 'tv',
+            },
+            {
+                id: 'a-8',
+                title: '斗破苍穹 年番',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2892067595.jpg',
+                tagBadge: '异火',
+                badgeColor: 'orange',
+                desc: '萧炎掌控多种异火威震斗气大陆...',
+                type: 'tv',
+            },
+            {
+                id: 'a-9',
+                title: '一人之下',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2891067595.jpg',
+                tagBadge: '异人',
+                badgeColor: 'green',
+                desc: '张楚岚与冯宝宝探寻甲申之乱真相...',
+                type: 'tv',
+            },
+            {
+                id: 'a-10',
+                title: '狐妖小红娘',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2890067595.jpg',
+                tagBadge: '恋爱',
+                badgeColor: 'blue',
+                desc: '前世情缘今生相续的转世续缘...',
+                type: 'tv',
+            },
+        ],
+        rankings: [
+            { rank: 1, title: '仙逆', status: '更新中', type: 'tv' },
+            { rank: 2, title: '完美世界', status: '更新中', type: 'tv' },
+            { rank: 3, title: '凡人修仙传', status: '更新中', type: 'tv' },
+            { rank: 4, title: '遮天', status: '更新中', type: 'tv' },
+            { rank: 5, title: '斗罗大陆2绝世唐门', status: '更新中', type: 'tv' },
+            { rank: 6, title: '吞噬星空', status: '更新中', type: 'tv' },
+            { rank: 7, title: '斗破苍穹 年番', status: '更新中', type: 'tv' },
+            { rank: 8, title: '武神主宰', status: '更新中', type: 'tv' },
+            { rank: 9, title: '灵剑尊', status: '更新中', type: 'tv' },
+            { rank: 10, title: '妖神记', status: '更新中', type: 'tv' },
         ],
     },
     {
-        id: 'variety-shows',
-        title: '热门华语综艺',
-        icon: Smile,
-        tag: 'VARIETY',
-        items: [
-            { id: 'va-1', title: '歌手2024', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2908067595.jpg', rate: '8.5', tag: '音乐竞技', remarks: '期数全收录', type: 'tv' as const },
-            { id: 'va-2', title: '奔跑吧 第十二季', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2907067595.jpg', rate: '7.2', tag: '户外真人秀', remarks: '全季更新', type: 'tv' as const },
-            { id: 'va-3', title: '乘风2024', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2906067595.jpg', rate: '7.5', tag: '女团唱跳', remarks: '全集畅看', type: 'tv' as const },
-            { id: 'va-4', title: '极限挑战 第十季', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2905067595.jpg', rate: '7.0', tag: '搞笑挑战', remarks: '全期完结', type: 'tv' as const },
-            { id: 'va-5', title: '种地吧 第二季', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2904067595.jpg', rate: '9.0', tag: '暖心劳作', remarks: '高分治愈', type: 'tv' as const },
-            { id: 'va-6', title: '大侦探 第九季', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2903067595.jpg', rate: '8.8', tag: '烧脑推理', remarks: '全案解析', type: 'tv' as const },
+        id: 'variety-series',
+        sectionTitle: '最新综艺',
+        rankTitle: '最新综艺榜单',
+        type: 'tv',
+        categoryTags: ['音乐竞技', '真人户外', '脱口搞笑', '推理破案', '生活慢综', '恋爱观察'],
+        movies: [
+            {
+                id: 'v-1',
+                title: '歌手2024',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2908067595.jpg',
+                tagBadge: '现场直播',
+                badgeColor: 'orange',
+                desc: '国际化顶级唱将现场真唱对决...',
+                type: 'tv',
+            },
+            {
+                id: 'v-2',
+                title: '奔跑吧 第十二季',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2907067595.jpg',
+                tagBadge: '户外',
+                badgeColor: 'green',
+                desc: '跑男团热血集结开启爆笑旅程...',
+                type: 'tv',
+            },
+            {
+                id: 'v-3',
+                title: '乘风2024',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2906067595.jpg',
+                tagBadge: '女团',
+                badgeColor: 'blue',
+                desc: '三十位姐姐乘风破浪绽放女性魅力...',
+                type: 'tv',
+            },
+            {
+                id: 'v-4',
+                title: '大侦探 第九季',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2903067595.jpg',
+                tagBadge: '推理',
+                badgeColor: 'purple',
+                desc: '高能烧脑剧本杀与实景搜证...',
+                type: 'tv',
+            },
+            {
+                id: 'v-5',
+                title: '极限挑战 第十季',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2905067595.jpg',
+                tagBadge: '搞笑',
+                badgeColor: 'orange',
+                desc: '极限团城市探索与趣味挑战...',
+                type: 'tv',
+            },
+            {
+                id: 'v-6',
+                title: '种地吧 第二季',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2904067595.jpg',
+                tagBadge: '治愈',
+                badgeColor: 'green',
+                desc: '十个勤天少年躬耕土地的真实记录...',
+                type: 'tv',
+            },
+            {
+                id: 'v-7',
+                title: '脱口秀和Ta的朋友们',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2912067595.jpg',
+                tagBadge: '喜剧',
+                badgeColor: 'blue',
+                desc: '幽默段子解构当代生活压力...',
+                type: 'tv',
+            },
+            {
+                id: 'v-8',
+                title: '喜人奇妙夜',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2911067595.jpg',
+                tagBadge: '素描喜剧',
+                badgeColor: 'orange',
+                desc: '脑洞大开的 Sketch 爆笑短剧舞台...',
+                type: 'tv',
+            },
+            {
+                id: 'v-9',
+                title: '王牌对王牌 第八季',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2902067595.jpg',
+                tagBadge: '合家欢',
+                badgeColor: 'green',
+                desc: '王牌家族欢乐对决经典回忆杀...',
+                type: 'tv',
+            },
+            {
+                id: 'v-10',
+                title: '你好，星期六',
+                rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2901067595.jpg',
+                tagBadge: '周播',
+                badgeColor: 'blue',
+                desc: '何炅带领好六街好友开启周末狂欢...',
+                type: 'tv',
+            },
         ],
-    },
-    {
-        id: 'anime-top',
-        title: '国漫国创巅峰',
-        icon: Sparkles,
-        tag: 'ANIME',
-        items: [
-            { id: 'an-1', title: '仙逆', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2898067595.jpg', rate: '8.9', tag: '修仙热血', remarks: '每周更新', type: 'tv' as const },
-            { id: 'an-2', title: '完美世界', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2878067595.jpg', rate: '8.4', tag: '荒天帝', remarks: '4K 原画更新', type: 'tv' as const },
-            { id: 'an-3', title: '凡人修仙传', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2868067595.jpg', rate: '9.0', tag: '韩跑跑传奇', remarks: '年番持续热播', type: 'tv' as const },
-            { id: 'an-4', title: '遮天', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2888067595.jpg', rate: '8.0', tag: '玄幻史诗', remarks: '九龙拉棺', type: 'tv' as const },
-            { id: 'an-5', title: '吞噬星空', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2858067595.jpg', rate: '8.2', tag: '机甲战神', remarks: '超清更新', type: 'tv' as const },
-            { id: 'an-6', title: '斗罗大陆2绝世唐门', rawCover: 'https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2895067595.jpg', rate: '7.8', tag: '魂师传奇', remarks: '霍雨浩崛起', type: 'tv' as const },
+        rankings: [
+            { rank: 1, title: '歌手2024', status: '已完结', type: 'tv' },
+            { rank: 2, title: '喜人奇妙夜', status: '已完结', type: 'tv' },
+            { rank: 3, title: '脱口秀和Ta的朋友们', status: '已完结', type: 'tv' },
+            { rank: 4, title: '大侦探 第九季', status: '已完结', type: 'tv' },
+            { rank: 5, title: '奔跑吧 第十二季', status: '已完结', type: 'tv' },
+            { rank: 6, title: '乘风2024', status: '已完结', type: 'tv' },
+            { rank: 7, title: '种地吧 第二季', status: '已完结', type: 'tv' },
+            { rank: 8, title: '极限挑战 第十季', status: '已完结', type: 'tv' },
+            { rank: 9, title: '你好，星期六', status: '更新中', type: 'tv' },
+            { rank: 10, title: '王牌对王牌 第八季', status: '已完结', type: 'tv' },
         ],
     },
 ];
 
 function HuarenHome() {
     const router = useRouter();
-    const [bannerIdx, setBannerIdx] = useState(0);
 
     const {
         query,
@@ -181,34 +504,16 @@ function HuarenHome() {
         handleReset,
     } = useHomePage();
 
-    // 自动轮播 Banner
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setBannerIdx((prev) => (prev + 1) % HERO_BANNERS.length);
-        }, 5000);
-        return () => clearInterval(timer);
-    }, []);
-
-    // 关键：点击影视跳转播放器；点击电视直播跳转 IPTV 播放！
-    const handlePlayItem = useCallback((item: { title: string; type?: string }) => {
+    // 关键播放逻辑：传 title 和 type，由播放器并发调度 36 大影视专线直解秒播！
+    const handlePlayVideo = useCallback((item: { title: string; type?: string }) => {
         if (!item.title) return;
-        if (item.type === 'live') {
-            router.push(`/iptv?channel=${encodeURIComponent(item.title)}`);
-            return;
-        }
         const cleanTitle = item.title.trim();
         const typeParam = item.type === 'movie' ? 'movie' : 'tv';
         router.push(`/player?title=${encodeURIComponent(cleanTitle)}&type=${typeParam}`);
     }, [router]);
 
-    const activeBanner = HERO_BANNERS[bannerIdx];
-
     return (
-        <div className="min-h-screen bg-[#07080D] text-white relative overflow-x-hidden selection:bg-rose-500 selection:text-white">
-            {/* 环境氛围极光 */}
-            <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-rose-600/10 rounded-full blur-[160px] pointer-events-none -z-10" />
-            <div className="fixed top-1/2 right-10 w-[500px] h-[500px] bg-amber-600/10 rounded-full blur-[160px] pointer-events-none -z-10" />
-
+        <div className="min-h-screen bg-[#14151B] text-white relative overflow-x-hidden selection:bg-rose-500 selection:text-white">
             {/* 顶部 Navbar */}
             <Navbar onReset={handleReset} />
 
@@ -232,216 +537,114 @@ function HuarenHome() {
                     />
                 ) : (
                     <>
-                        {/* 1. 🌏 华人影视专区品牌标识 */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 via-red-600 to-amber-600 flex items-center justify-center shadow-xl shadow-rose-500/30">
-                                    <Globe size={26} className="text-white" />
-                                </div>
-                                <div>
-                                    <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
-                                        华人直播 · Huaren.live 专区
-                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                                            海外华人首选
-                                        </span>
-                                    </h1>
-                                    <p className="text-xs text-white/50 mt-0.5">
-                                        央视卫视直播 · CCTV5 体育 · 全球华语大片 · 国产热播大剧 · 零广告秒播
-                                    </p>
-                                </div>
-                            </div>
+                        {/* 1:1 Huaren.live 原版各大板块（左侧 2行x5列网格 + 右侧 Top 10 排行榜） */}
+                        {HUAREN_SECTIONS.map((section) => (
+                            <section key={section.id} className="space-y-4">
+                                {/* 1. 板块 Header */}
+                                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                                    {/* 左侧大标题 + 更多 */}
+                                    <div className="flex items-center gap-6">
+                                        <div className="flex items-center gap-2">
+                                            <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                                                {section.sectionTitle}
+                                            </h2>
+                                            <button
+                                                onClick={() => router.push(section.type === 'movie' ? '/movie' : '/tv')}
+                                                className="text-xs text-white/50 hover:text-white flex items-center transition-colors cursor-pointer mt-0.5"
+                                            >
+                                                <span>更多</span>
+                                                <ChevronRight size={14} />
+                                            </button>
+                                        </div>
 
-                            <div className="flex items-center gap-2">
-                                <div className="px-3 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 flex items-center gap-1.5 font-bold">
-                                    <Radio size={13} className="text-rose-400 animate-pulse" />
-                                    <span>Huaren.live 原生极速源已就绪</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* 2. 🎬 1:1 宽屏大轮播图 (Hero Banner Carousel) */}
-                        <section className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-white/[0.06] to-black/60 border border-white/10 shadow-2xl group">
-                            <div className="relative w-full aspect-[21/9] min-h-[320px] sm:min-h-[420px] lg:min-h-[480px]">
-                                {/* 大背景封面海报 (通过安全代理保证 100% 渲染) */}
-                                <Image
-                                    src={getSafeCoverUrl(activeBanner.rawCover)}
-                                    alt={activeBanner.title}
-                                    fill
-                                    priority
-                                    unoptimized
-                                    className="object-cover object-top opacity-40 group-hover:scale-105 transition-transform duration-1000 ease-out"
-                                />
-
-                                {/* 多重氛围渐变遮罩 */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#07080D] via-[#07080D]/60 to-transparent" />
-                                <div className="absolute inset-0 bg-gradient-to-r from-[#07080D] via-[#07080D]/70 to-transparent w-full lg:w-2/3" />
-
-                                {/* 核心内容区 */}
-                                <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-10 lg:p-14 space-y-3 sm:space-y-4 max-w-2xl">
-                                    {/* 标签栏 */}
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                        <span className="px-2.5 py-0.5 rounded-full bg-rose-500 text-white font-black text-xs shadow-md shadow-rose-500/40">
-                                            焦点大片
-                                        </span>
-                                        <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold text-xs border border-amber-500/30 flex items-center gap-1">
-                                            <Star size={12} className="fill-amber-400 text-amber-400" />
-                                            豆瓣 {activeBanner.rate}
-                                        </span>
-                                        <span className="text-xs text-white/60 font-medium">
-                                            {activeBanner.year} · {activeBanner.tag}
-                                        </span>
+                                        {/* 横向胶囊分类筛选标签 */}
+                                        <div className="hidden sm:flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+                                            {section.categoryTags.map((tag, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => handlePlayVideo({ title: tag, type: section.type })}
+                                                    className="px-3 py-1 rounded-full text-xs text-white/70 hover:text-white bg-white/[0.04] hover:bg-white/10 border border-white/5 transition-all cursor-pointer shrink-0"
+                                                >
+                                                    {tag}
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
 
-                                    {/* 标题 */}
-                                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight drop-shadow-lg">
-                                        {activeBanner.title}
-                                    </h2>
-
-                                    {/* 简介短评 */}
-                                    <p className="text-xs sm:text-sm text-white/70 line-clamp-2 leading-relaxed max-w-xl">
-                                        {activeBanner.desc}
-                                    </p>
-
-                                    {/* 按钮操作组 */}
-                                    <div className="flex items-center gap-3 pt-2">
-                                        <button
-                                            onClick={() => handlePlayItem(activeBanner)}
-                                            className="px-6 py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-black text-sm shadow-xl shadow-rose-500/30 hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-2"
-                                        >
-                                            <Play size={18} className="fill-white" />
-                                            <span>立即播放</span>
-                                        </button>
-                                        <span className="text-xs text-emerald-400 font-bold hidden sm:inline">
-                                            ✓ {activeBanner.remarks}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* 左右切换箭头 */}
-                                <button
-                                    onClick={() => setBannerIdx((prev) => (prev - 1 + HERO_BANNERS.length) % HERO_BANNERS.length)}
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/80 border border-white/10 text-white flex items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                                >
-                                    <ChevronLeft size={20} />
-                                </button>
-                                <button
-                                    onClick={() => setBannerIdx((prev) => (prev + 1) % HERO_BANNERS.length)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/80 border border-white/10 text-white flex items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                                >
-                                    <ChevronRight size={20} />
-                                </button>
-
-                                {/* 底部轮播小点指示器 */}
-                                <div className="absolute bottom-4 right-6 flex items-center gap-1.5 z-20">
-                                    {HERO_BANNERS.map((_, idx) => (
-                                        <button
-                                            key={idx}
-                                            onClick={() => setBannerIdx(idx)}
-                                            className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                                                bannerIdx === idx ? 'w-6 bg-rose-500 shadow-md' : 'w-2 bg-white/30 hover:bg-white/60'
-                                            }`}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        </section>
-
-                        {/* 3. 🔴 华人特色：央视卫视 & 体育电视直播专属板块 */}
-                        <section className="space-y-4">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2.5">
-                                    <div className="p-2 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-400 shadow-md flex items-center gap-1.5">
-                                        <Radio size={18} className="animate-pulse" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
-                                            央视卫视 & 体育赛事直播
-                                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 uppercase font-mono">
-                                                CCTV & SPORTS LIVE
-                                            </span>
+                                    {/* 右侧榜单标题 (对应右侧侧边栏) */}
+                                    <div className="hidden lg:block w-[280px] shrink-0">
+                                        <h3 className="text-lg font-bold text-white tracking-tight">
+                                            {section.rankTitle}
                                         </h3>
                                     </div>
                                 </div>
-                                <span className="text-xs text-rose-400 font-bold hidden sm:inline flex items-center gap-1">
-                                    <Activity size={12} /> 实时信号在线
-                                </span>
-                            </div>
 
-                            {/* 电视直播卡片网格 */}
-                            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-                                {LIVE_CHANNELS.map((ch) => (
-                                    <div
-                                        key={ch.id}
-                                        onClick={() => handlePlayItem(ch)}
-                                        className="group relative flex flex-col justify-between p-3.5 rounded-2xl bg-gradient-to-b from-white/[0.06] to-white/[0.02] hover:from-rose-500/20 hover:to-white/[0.04] border border-white/10 hover:border-rose-500/50 shadow-lg hover:shadow-rose-500/20 transition-all duration-300 cursor-pointer hover:-translate-y-1 select-none min-h-[110px]"
-                                    >
-                                        <div className="flex items-start justify-between">
-                                            <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-rose-500 text-white shadow-sm flex items-center gap-1">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-                                                直播中
-                                            </span>
-                                            <span className="text-[9px] text-white/40 font-mono">
-                                                {ch.remarks}
-                                            </span>
-                                        </div>
-
-                                        <div className="space-y-0.5 mt-2">
-                                            <h4 className="text-xs sm:text-sm font-black text-white group-hover:text-rose-300 transition-colors">
-                                                {ch.title}
-                                            </h4>
-                                            <p className="text-[10px] text-white/40 line-clamp-1">
-                                                {ch.desc}
-                                            </p>
-                                        </div>
-
-                                        <div className="pt-2 flex items-center justify-between text-[10px] text-amber-300 font-bold">
-                                            <span>{ch.tag}</span>
-                                            <Play size={12} className="fill-rose-400 text-rose-400 group-hover:scale-125 transition-transform" />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-
-                        {/* 4. 🎞️ 各大影视内容板块（电视剧 / 院线电影 / 热门综艺 / 国漫巅峰） */}
-                        {SECTIONS_DATA.map((section) => {
-                            const SectionIcon = section.icon;
-                            return (
-                                <section key={section.id} className="space-y-4">
-                                    {/* 板块 Header */}
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2.5">
-                                            <div className="p-2 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 text-rose-400 shadow-md">
-                                                <SectionIcon size={18} />
-                                            </div>
-                                            <div>
-                                                <h3 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
-                                                    {section.title}
-                                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-white/50 uppercase font-mono">
-                                                        {section.tag}
-                                                    </span>
-                                                </h3>
-                                            </div>
-                                        </div>
-
-                                        <span className="text-xs text-white/40 font-mono hidden sm:inline">
-                                            Huaren.live 原生专线
-                                        </span>
-                                    </div>
-
-                                    {/* 2:3 竖版电影海报网格 (通过图片代理 100% 正常渲染海报) */}
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4">
-                                        {section.items.map((item) => (
-                                            <HuarenPosterCard
-                                                key={item.id}
-                                                item={item}
-                                                onClick={() => handlePlayItem(item)}
+                                {/* 2. 主内容区域：左侧 2x5 网格 + 右侧 Top 10 榜单 */}
+                                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                    {/* 左侧：2 行 × 5 列 = 10 部卡片网格 (占 9 栏) */}
+                                    <div className="lg:col-span-9 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4">
+                                        {section.movies.map((movie) => (
+                                            <HuarenMovieCard
+                                                key={movie.id}
+                                                movie={movie}
+                                                onClick={() => handlePlayVideo(movie)}
                                             />
                                         ))}
                                     </div>
-                                </section>
-                            );
-                        })}
+
+                                    {/* 右侧：Top 10 排行榜卡片列表 (占 3 栏) */}
+                                    <div className="lg:col-span-3 bg-[#1A1B22]/90 rounded-2xl border border-white/[0.06] p-4 flex flex-col justify-between shadow-xl">
+                                        <h3 className="lg:hidden text-base font-bold text-white mb-3 pb-2 border-b border-white/10">
+                                            {section.rankTitle}
+                                        </h3>
+
+                                        <div className="space-y-2.5">
+                                            {section.rankings.map((item) => {
+                                                const isTop1 = item.rank === 1;
+                                                const isTop2 = item.rank === 2;
+                                                const isTop3 = item.rank === 3;
+
+                                                return (
+                                                    <div
+                                                        key={item.rank}
+                                                        onClick={() => handlePlayVideo(item)}
+                                                        className="group flex items-center justify-between p-1.5 rounded-xl hover:bg-white/[0.06] transition-all cursor-pointer"
+                                                    >
+                                                        {/* 排名与标题 */}
+                                                        <div className="flex items-center gap-3 min-w-0 pr-2">
+                                                            {/* 排名数字 (1~3 红色/橙色高光斜体) */}
+                                                            <span className={`text-base font-black italic w-5 shrink-0 ${
+                                                                isTop1 ? 'text-[#FF4D4F]' : isTop2 ? 'text-[#FA8C16]' : isTop3 ? 'text-[#FAAD14]' : 'text-white/30'
+                                                            }`}>
+                                                                {item.rank}
+                                                            </span>
+
+                                                            <div className="min-w-0">
+                                                                <p className="text-xs sm:text-sm font-bold text-white/90 group-hover:text-rose-400 truncate transition-colors">
+                                                                    {item.title}
+                                                                </p>
+                                                                <p className="text-[10px] text-white/40">
+                                                                    {item.status}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* 右侧热度火焰 🔥🔥🔥🔥🔥 */}
+                                                        <div className="flex items-center gap-0.5 text-amber-500 text-xs shrink-0">
+                                                            <Flame size={12} className="fill-amber-500 text-amber-500" />
+                                                            <Flame size={12} className="fill-amber-500 text-amber-500" />
+                                                            <Flame size={12} className="fill-amber-500 text-amber-500" />
+                                                            <Flame size={12} className="fill-amber-500 text-amber-500" />
+                                                            <Flame size={12} className="fill-amber-500 text-amber-500" />
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        ))}
                     </>
                 )}
             </main>
@@ -449,82 +652,75 @@ function HuarenHome() {
     );
 }
 
-// 2:3 竖版电影海报卡片组件 (带图片代理与多重容灾，100% 绝不黑屏)
-function HuarenPosterCard({
-    item,
+// 1:1 Huaren.live 原版竖版电影卡片组件
+function HuarenMovieCard({
+    movie,
     onClick,
 }: {
-    item: { title: string; rawCover: string; rate: string; tag: string; remarks: string; type: string };
+    movie: MediaCardItem;
     onClick: () => void;
 }) {
     const [imgError, setImgError] = useState(false);
-    const coverUrl = getSafeCoverUrl(item.rawCover);
+    const coverUrl = getSafeCoverUrl(movie.rawCover);
+
+    // 徽章颜色映射
+    const badgeColorStyle = {
+        green: 'bg-[#10B981] text-white',
+        orange: 'bg-[#F59E0B] text-black font-black',
+        blue: 'bg-[#3B82F6] text-white',
+        purple: 'bg-[#8B5CF6] text-white',
+        red: 'bg-[#EF4444] text-white',
+    }[movie.badgeColor || 'green'];
 
     return (
         <div
             onClick={onClick}
-            className="group relative flex flex-col rounded-2xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-rose-500/50 shadow-md hover:shadow-[0_12px_36px_rgba(244,63,94,0.25)] transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-1.5 select-none"
+            className="group relative flex flex-col cursor-pointer select-none transition-transform duration-300 hover:-translate-y-1.5"
         >
-            {/* 封面区域 (2:3 黄金海报比例) */}
-            <div className="relative aspect-[2/3] w-full bg-[#12131D] overflow-hidden">
+            {/* 封面区域 (3:4 或 2:3 比例，圆角 16px) */}
+            <div className="relative aspect-[3/4] w-full rounded-2xl bg-[#1C1D24] overflow-hidden shadow-lg border border-white/[0.04] group-hover:border-white/20 transition-all">
                 {!imgError && coverUrl ? (
                     <Image
                         src={coverUrl}
-                        alt={item.title}
+                        alt={movie.title}
                         fill
                         unoptimized
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 12.5vw"
-                        className="object-cover object-center scale-100 group-hover:scale-108 transition-transform duration-700 ease-out"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 15vw"
+                        className="object-cover object-center scale-100 group-hover:scale-106 transition-transform duration-700 ease-out"
                         onError={() => setImgError(true)}
                     />
                 ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-rose-950/60 via-black to-slate-950 flex flex-col items-center justify-center p-3 text-center space-y-1">
-                        <Film size={24} className="text-rose-400/60 mb-1" />
-                        <span className="text-xs font-black text-white/80 line-clamp-2">{item.title}</span>
-                        <span className="text-[9px] text-amber-300 font-mono">4K 原画</span>
+                    <div className="w-full h-full bg-gradient-to-br from-slate-900 to-black flex flex-col items-center justify-center p-3 text-center">
+                        <span className="text-xs font-bold text-white/80 line-clamp-2">{movie.title}</span>
                     </div>
                 )}
 
-                {/* 悬停暗影渐变 */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#07080D] via-black/20 to-transparent opacity-80 group-hover:opacity-40 transition-opacity" />
+                {/* 悬停微暗影 */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 opacity-60 group-hover:opacity-30 transition-opacity" />
 
-                {/* 右上角 4K 蓝光角标 */}
-                <div className="absolute top-2 right-2 z-20 px-1.5 py-0.5 rounded-md bg-black/80 backdrop-blur-md border border-white/10 text-white text-[9px] font-black shadow-md">
-                    4K 原画
-                </div>
-
-                {/* 左上角评分 */}
-                {item.rate && (
-                    <div className="absolute top-2 left-2 z-20 px-1.5 py-0.5 rounded-md bg-amber-500/90 text-black text-[9px] font-black shadow-md flex items-center gap-0.5">
-                        <Star size={9} className="fill-black text-black" />
-                        {item.rate}
+                {/* 右上角气泡角标 (如“剧情”、“喜剧”、“悬疑”) */}
+                {movie.tagBadge && (
+                    <div className={`absolute top-2 right-2 z-20 px-2 py-0.5 rounded-md text-[10px] font-bold shadow-md ${badgeColorStyle}`}>
+                        {movie.tagBadge}
                     </div>
                 )}
 
-                {/* 悬停居中浮现大播放圆环 */}
+                {/* 悬停居中浮现播放图标 */}
                 <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 text-white flex items-center justify-center shadow-2xl shadow-rose-500/50 scale-75 group-hover:scale-100 transition-transform duration-300">
+                    <div className="w-11 h-11 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center shadow-xl scale-75 group-hover:scale-100 transition-transform duration-300">
                         <Play size={20} className="fill-white ml-0.5" />
                     </div>
                 </div>
-
-                {/* 底部备注状态 */}
-                <div className="absolute bottom-2 left-2 right-2 z-20 flex items-center justify-between text-[10px]">
-                    <span className="px-1.5 py-0.5 rounded-md bg-black/80 backdrop-blur-md text-amber-300 font-bold truncate max-w-[80%]">
-                        {item.remarks}
-                    </span>
-                </div>
             </div>
 
-            {/* 标题与副标 */}
-            <div className="p-2.5 space-y-1">
-                <h4 className="text-xs sm:text-sm font-bold text-white/90 group-hover:text-rose-400 line-clamp-1 transition-colors">
-                    {item.title}
+            {/* 标题与副标题 */}
+            <div className="pt-2.5 space-y-0.5 px-0.5">
+                <h4 className="text-xs sm:text-sm font-bold text-white/95 group-hover:text-rose-400 line-clamp-1 transition-colors">
+                    {movie.title}
                 </h4>
-                <div className="flex items-center justify-between text-[11px] text-white/40">
-                    <span>{item.tag}</span>
-                    <span className="text-[10px] text-emerald-400 font-bold">秒播</span>
-                </div>
+                <p className="text-[11px] text-white/40 line-clamp-1">
+                    {movie.desc}
+                </p>
             </div>
         </div>
     );
@@ -533,7 +729,7 @@ function HuarenPosterCard({
 export default function HuarenPage() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center bg-[#07080D]">
+            <div className="min-h-screen flex items-center justify-center bg-[#14151B]">
                 <div className="w-8 h-8 rounded-full border-2 border-rose-500 border-t-transparent animate-spin" />
             </div>
         }>
