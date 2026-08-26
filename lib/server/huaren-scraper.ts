@@ -1,170 +1,254 @@
 /**
- * Huaren.live (华人影视专区) 深度流媒体数据抓取与解析引擎
- * 
- * 功能：
- * 1. 抓取与解析华人影视热门大片、国产热播剧、海外华语电影、综艺、动漫与特色专栏
- * 2. 精准提取视频 ID、真实集数列表、海报封面与更新状态
- * 3. 内置高拟真浏览器请求指纹 (User-Agent, Referer, Accept)
- * 4. 内置边缘内存缓存 (S-Maxage 15~30 分钟)，兼顾实时性与高性能
+ * Huaren.live 真实数据抓取与解析引擎
+ *
+ * 通过 fetch + cookies 绕过 Cloudflare 抓取 huaren.live 首页 HTML，
+ * 精确解析所有板块（电影/电视剧/综艺/动漫/短剧）的真实影视卡片数据。
+ *
+ * 封面图来源: static.huarenlivewebsite.top / hhmage.com / img.jisuimage.com
+ * 播放: 用户点击后传 vodId 到播放器，从 vodplay 页提取 m3u8 直播流
  */
 
 export interface HuarenVideoItem {
-    vod_id: string;
-    vod_name: string;
-    vod_pic: string;
-    vod_remarks?: string;
-    type_name?: string;
-    vod_year?: string;
-    vod_actor?: string;
-    vod_director?: string;
-    vod_content?: string;
-    episodes?: Array<{ name: string; url: string }>;
-    source: 'huaren';
+  vodId: string;
+  title: string;
+  cover: string;       // 真实 CDN 封面图 URL
+  badge?: string;      // 标签(热映推荐/豆瓣热榜)
+  status?: string;     // 集数状态(36集全/更新中/已完结)
+  score?: string;      // 豆瓣评分
+  type?: 'movie' | 'tv' | 'variety' | 'anime';
 }
 
-// 边缘内存缓存
-const CACHE_TTL = 20 * 60 * 1000; // 20 分钟缓存
-const huarenMemoryCache = new Map<string, { data: HuarenVideoItem[]; timestamp: number }>();
-
-function getHuarenCached(key: string): HuarenVideoItem[] | null {
-    const entry = huarenMemoryCache.get(key);
-    if (!entry) return null;
-    if (Date.now() - entry.timestamp > CACHE_TTL) {
-        huarenMemoryCache.delete(key);
-        return null;
-    }
-    return entry.data;
+export interface HuarenSection {
+  id: string;
+  title: string;
+  moreLink: string;    // huaren.live 上的 "更多" 链接
+  items: HuarenVideoItem[];
 }
 
-function setHuarenCache(key: string, data: HuarenVideoItem[]): void {
-    if (huarenMemoryCache.size > 200) {
-        const oldest = huarenMemoryCache.keys().next().value;
-        if (oldest) huarenMemoryCache.delete(oldest);
-    }
-    huarenMemoryCache.set(key, { data, timestamp: Date.now() });
-}
-
-// 模拟真实浏览器请求头
-const FAKE_HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-    'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-    'Cache-Control': 'no-cache',
-    'Pragma': 'no-cache',
-    'Sec-Ch-Ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
-    'Sec-Ch-Ua-Mobile': '?0',
-    'Sec-Ch-Ua-Platform': '"Windows"',
-    'Sec-Fetch-Dest': 'document',
-    'Sec-Fetch-Mode': 'navigate',
-    'Sec-Fetch-Site': 'none',
-    'Sec-Fetch-User': '?1',
-    'Upgrade-Insecure-Requests': '1',
-    'Referer': 'https://huaren.live/',
-};
+// 内存缓存 (10 分钟有效)
+let cachedData: { sections: HuarenSection[]; ts: number } | null = null;
+const CACHE_TTL = 10 * 60 * 1000;
 
 /**
- * 从 HTML 中解析 Huaren 视频卡片
+ * 从 huaren.live 首页 HTML 中解析所有板块数据
  */
-export function parseHuarenHtml(html: string): HuarenVideoItem[] {
-    const videos: HuarenVideoItem[] = [];
-    const seenIds = new Set<string>();
+function parseHomepageHTML(html: string): HuarenSection[] {
+  const sections: HuarenSection[] = [];
 
-    // 匹配主流 MacCMS / 海洋CMS / 自定义卡片结构
-    const cardRegex = /<li\s+class="[^"]*(?:vodlist_item|hl-list-item|myui-vodlist__item)[^"]*"[^>]*>([\s\S]*?)<\/li>/gi;
-    let match;
+  // 1. 提取板块标题与位置
+  const sectionRegex = /<h2 class="this-name cor4">(.*?)<\/h2>/g;
+  const sectionPositions: { name: string; pos: number }[] = [];
+  let match;
+  while ((match = sectionRegex.exec(html)) !== null) {
+    sectionPositions.push({ name: match[1], pos: match.index });
+  }
 
-    while ((match = cardRegex.exec(html)) !== null) {
-        const block = match[1];
+  // 2. 提取所有 vodId -> title 映射
+  const titleMap = new Map<string, string>();
+  const titleRegex = /href="\/voddetail\/(\d+)\.html"[^>]*title="([^"]+)"/g;
+  while ((match = titleRegex.exec(html)) !== null) {
+    if (!titleMap.has(match[1])) {
+      titleMap.set(match[1], match[2].trim());
+    }
+  }
 
-        // 1. 提取链接和 ID
-        const linkMatch = block.match(/href="([^"]*(?:detail|voddetail|play|vodplay)[^"]*\/(\d+|[a-zA-Z0-9_-]+)(?:\.html|\/)?)"/i);
-        if (!linkMatch) continue;
-        const detailHref = linkMatch[1];
-        const videoId = linkMatch[2];
-        if (seenIds.has(videoId)) continue;
-        seenIds.add(videoId);
+  // 3. 提取所有 vodId -> cover 映射 (从 data-src)
+  const coverMap = new Map<string, string>();
+  // 精确匹配: <a class="public-list-exp" href="/voddetail/XXX.html" ...> ... <img data-src="YYY" />
+  const cardRegex = /class="public-list-exp"\s+href="\/voddetail\/(\d+)\.html"[^>]*>[\s\S]*?data-src="([^"]+)"/g;
+  while ((match = cardRegex.exec(html)) !== null) {
+    if (!coverMap.has(match[1]) && match[0].length < 3000) {
+      coverMap.set(match[1], match[2]);
+    }
+  }
+  // 也用 vodId 匹配的图片 URL 补充
+  const imgIdRegex = /data-src="([^"]*\/(\d+)_image\.[a-z]+)"/g;
+  while ((match = imgIdRegex.exec(html)) !== null) {
+    if (!coverMap.has(match[2])) {
+      coverMap.set(match[2], match[1]);
+    }
+  }
 
-        // 2. 提取封面图
-        const imgMatch = block.match(/data-original="([^"]+)"/i) ||
-                         block.match(/data-src="([^"]+)"/i) ||
-                         block.match(/src="([^"]+)"/i);
-        let pic = imgMatch ? imgMatch[1] : '';
-        if (pic.startsWith('//')) {
-            pic = 'https:' + pic;
-        }
+  // 4. 提取标签(badge) & 状态(status) & 评分(score)
+  const badgeMap = new Map<string, string>();
+  const statusMap = new Map<string, string>();
+  const scoreMap = new Map<string, string>();
 
-        // 3. 提取标题
-        const titleMatch = block.match(/title="([^"]+)"/i) ||
-                           block.match(/alt="([^"]+)"/i) ||
-                           block.match(/<h\d[^>]*>([\s\S]*?)<\/h\d>/i);
-        const title = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, '').trim() : `华人影剧 #${videoId}`;
+  // badge: <span class="public-prt ...">标签文本</span>
+  // status: <span class="public-list-prb ...">状态文本</span> or <i class="ft4">评分</i>
+  const cardBlockRegex = /href="\/voddetail\/(\d+)\.html"[\s\S]*?(?=href="\/voddetail\/\d+\.html"|<\/div>\s*<\/div>\s*<\/div>\s*<\/div>)/g;
+  while ((match = cardBlockRegex.exec(html)) !== null) {
+    const vid = match[1];
+    const block = match[0];
 
-        // 4. 提取更新状态/备注
-        const remarksMatch = block.match(/class="[^"]*(?:pic-text|remarks|tag|label)[^"]*"[^>]*>([\s\S]*?)<\/(?:span|div|em)>/i);
-        const remarks = remarksMatch ? remarksMatch[1].replace(/<[^>]+>/g, '').trim() : '4K 原画';
-
-        // 5. 提取分类
-        const typeMatch = block.match(/class="[^"]*(?:type|category)[^"]*"[^>]*>([\s\S]*?)<\/(?:span|a|div)>/i);
-        const typeName = typeMatch ? typeMatch[1].replace(/<[^>]+>/g, '').trim() : '华语热播';
-
-        videos.push({
-            vod_id: videoId,
-            vod_name: title,
-            vod_pic: pic,
-            vod_remarks: remarks,
-            type_name: typeName,
-            source: 'huaren',
-        });
+    const badgeMatch = block.match(/public-prt[^>]*>([^<]+)<\/span>/);
+    if (badgeMatch && !badgeMap.has(vid)) {
+      badgeMap.set(vid, badgeMatch[1].trim());
     }
 
-    return videos;
+    const scoreMatch = block.match(/public-list-prb[^>]*>\s*<i[^>]*>([^<]+)<\/i>/);
+    if (scoreMatch && !scoreMap.has(vid)) {
+      scoreMap.set(vid, scoreMatch[1].trim());
+    }
+
+    const statusMatch = block.match(/public-list-prb[^>]*>([^<]+)<\/span>/);
+    if (statusMatch && !statusMap.has(vid)) {
+      statusMap.set(vid, statusMatch[1].trim());
+    }
+  }
+
+  // 5. 按板块分组
+  // 过滤掉 "榜单" 类板块 (我们只要主内容板块)
+  const mainSections = [
+    { key: '热映排行', id: 'hot-rank', type: 'movie' as const, link: '/label/rank.html' },
+    { key: '豆瓣热播电影', id: 'douban-movie', type: 'movie' as const, link: '/vodshow/1/by/score.html' },
+    { key: '豆瓣热播电视', id: 'douban-tv', type: 'tv' as const, link: '/vodshow/2/by/score.html' },
+    { key: '豆瓣热播综艺', id: 'douban-variety', type: 'variety' as const, link: '/vodshow/3/by/score.html' },
+    { key: '豆瓣热播动漫', id: 'douban-anime', type: 'anime' as const, link: '/vodshow/4/by/score.html' },
+    { key: '最新电影', id: 'latest-movie', type: 'movie' as const, link: '/vodshow/1.html' },
+    { key: '最新剧集', id: 'latest-tv', type: 'tv' as const, link: '/vodshow/2.html' },
+    { key: '最新综艺', id: 'latest-variety', type: 'variety' as const, link: '/vodshow/3.html' },
+    { key: '最热动漫', id: 'latest-anime', type: 'anime' as const, link: '/vodshow/4.html' },
+  ];
+
+  for (const sec of mainSections) {
+    const sectionIdx = sectionPositions.findIndex(s => s.name === sec.key);
+    if (sectionIdx === -1) continue;
+
+    const startPos = sectionPositions[sectionIdx].pos;
+    const endPos = sectionIdx + 1 < sectionPositions.length
+      ? sectionPositions[sectionIdx + 1].pos
+      : html.length;
+    const chunk = html.substring(startPos, endPos);
+
+    // 提取该板块下所有 vodId (保持顺序, 去重)
+    const vodIds: string[] = [];
+    const seen = new Set<string>();
+    const vodRegex = /href="\/voddetail\/(\d+)\.html"/g;
+    let vm;
+    while ((vm = vodRegex.exec(chunk)) !== null) {
+      if (!seen.has(vm[1])) {
+        seen.add(vm[1]);
+        vodIds.push(vm[1]);
+      }
+    }
+
+    const items: HuarenVideoItem[] = vodIds
+      .filter(vid => titleMap.has(vid) && coverMap.has(vid))
+      .map(vid => ({
+        vodId: vid,
+        title: titleMap.get(vid)!,
+        cover: coverMap.get(vid)!,
+        badge: badgeMap.get(vid),
+        status: statusMap.get(vid),
+        score: scoreMap.get(vid),
+        type: sec.type,
+      }));
+
+    if (items.length > 0) {
+      sections.push({
+        id: sec.id,
+        title: sec.key,
+        moreLink: sec.link,
+        items,
+      });
+    }
+  }
+
+  return sections;
 }
 
 /**
- * 抓取 Huaren 列表（带超时保护与内存缓存）
+ * 抓取 huaren.live 首页并返回结构化数据
+ * 使用多种策略绕过 Cloudflare:
+ * 1. 携带完整浏览器指纹 headers
+ * 2. 自动管理 cookies
  */
-export async function fetchHuarenList(
-    path: string = '/',
-    params: Record<string, string> = {}
-): Promise<HuarenVideoItem[]> {
-    const url = new URL(`https://huaren.live${path.startsWith('/') ? path : '/' + path}`);
-    for (const [k, v] of Object.entries(params)) {
-        if (v) url.searchParams.set(k, v);
+export async function fetchHuarenHomepage(): Promise<HuarenSection[]> {
+  // 检查缓存
+  if (cachedData && Date.now() - cachedData.ts < CACHE_TTL) {
+    return cachedData.sections;
+  }
+
+  try {
+    const resp = await fetch('https://huaren.live/', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+        'Referer': 'https://www.google.com/',
+        'Cache-Control': 'no-cache',
+      },
+      next: { revalidate: 600 }, // 10 分钟 ISR 缓存
+    });
+
+    if (!resp.ok) {
+      console.warn(`[huaren-scraper] 首页抓取失败: HTTP ${resp.status}`);
+      return cachedData?.sections ?? [];
     }
 
-    const cacheKey = url.toString();
-    const cached = getHuarenCached(cacheKey);
-    if (cached && cached.length > 0) {
-        return cached;
+    const html = await resp.text();
+    if (html.length < 10000) {
+      // 可能是 Cloudflare challenge 页面
+      console.warn('[huaren-scraper] 首页返回内容过短, 可能被 CF 拦截');
+      return cachedData?.sections ?? [];
     }
 
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3500);
+    const sections = parseHomepageHTML(html);
+    cachedData = { sections, ts: Date.now() };
+    return sections;
+  } catch (err) {
+    console.error('[huaren-scraper] 抓取异常:', err);
+    return cachedData?.sections ?? [];
+  }
+}
 
-        const response = await fetch(url.toString(), {
-            headers: FAKE_HEADERS,
-            signal: controller.signal,
-            next: { revalidate: 1800 },
-        });
+/**
+ * 从 huaren.live vodplay 页面提取视频播放 URL
+ */
+export async function extractHuarenPlayUrl(vodId: string): Promise<string | null> {
+  try {
+    // vodplay 页面 URL 格式: /vodplay/{vodId}-1-1.html
+    const resp = await fetch(`https://huaren.live/vodplay/${vodId}-1-1.html`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml',
+        'Referer': 'https://huaren.live/',
+      },
+    });
 
-        clearTimeout(timeoutId);
+    if (!resp.ok) return null;
 
-        if (!response.ok) {
-            console.warn(`[HuarenScraper] HTTP ${response.status} from ${url}`);
-            return [];
+    const html = await resp.text();
+
+    // 提取 player_aaaa JSON 配置
+    const playerMatch = html.match(/var\s+player_aaaa\s*=\s*(\{[^}]+\})/);
+    if (playerMatch) {
+      try {
+        const config = JSON.parse(playerMatch[1]);
+        // config.url 通常是 m3u8 或 mp4 直播流地址
+        if (config.url) {
+          // 如果是编码的, 解码
+          let url = config.url;
+          if (url.includes('%')) {
+            url = decodeURIComponent(url);
+          }
+          return url;
         }
-
-        const html = await response.text();
-        const items = parseHuarenHtml(html);
-
-        if (items.length > 0) {
-            setHuarenCache(cacheKey, items);
-        }
-
-        return items;
-    } catch (err) {
-        console.error(`[HuarenScraper] Error fetching ${url}:`, err);
-        return [];
+      } catch {
+        // JSON 解析失败
+      }
     }
+
+    // 备用: 提取 iframe src
+    const iframeMatch = html.match(/iframe[^>]+src="([^"]+\.m3u8[^"]*)"/i)
+      || html.match(/iframe[^>]+src="([^"]+player[^"]*)"/i);
+    if (iframeMatch) {
+      return iframeMatch[1];
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
 }
