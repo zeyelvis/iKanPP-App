@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, Suspense, useCallback } from 'react';
+import React, { useState, useEffect, Suspense, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
@@ -19,6 +19,8 @@ function getSafeCoverUrl(rawUrl: string): string {
 
 function HuarenHome() {
     const router = useRouter();
+    // 初始状态使用高保真预置数据实现 0 毫秒首屏秒出，随后后台自动拉取最新实时数据平滑同步
+    const [sections, setSections] = useState<HuarenRealSection[]>(HUAREN_REAL_SECTIONS);
 
     const {
         query,
@@ -29,6 +31,24 @@ function HuarenHome() {
         handleSearch,
         handleReset,
     } = useHomePage();
+
+    // 页面挂载后在后台实时拉取 huaren.live 官方最新更新（新剧/新电影/新榜单）
+    useEffect(() => {
+        let isMounted = true;
+        fetch('/api/huaren?mode=home')
+            .then((res) => res.json())
+            .then((json) => {
+                if (isMounted && json.success && Array.isArray(json.sections) && json.sections.length > 0) {
+                    setSections(json.sections);
+                }
+            })
+            .catch(() => {
+                // 网络异常自动保留预置高保真数据，用户体验不受任何影响
+            });
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     // 播放逻辑：传 title 和 type，由播放器并发调度 36 大影视专线直解秒播！
     const handlePlayVideo = useCallback((item: { title: string; type?: string }) => {
@@ -64,7 +84,7 @@ function HuarenHome() {
                 ) : (
                     <>
                         {/* 1:1 Huaren.live 原版各大板块（左侧 2行x5列网格 + 右侧 Top 10 排行榜） */}
-                        {HUAREN_REAL_SECTIONS.map((section: HuarenRealSection) => (
+                        {sections.map((section: HuarenRealSection) => (
                             <section key={section.id} className="space-y-4">
                                 {/* 1. 板块 Header */}
                                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
