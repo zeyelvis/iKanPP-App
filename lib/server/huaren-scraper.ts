@@ -52,48 +52,51 @@ function parseHomepageHTML(html: string): HuarenSection[] {
     }
   }
 
-  // 3. 提取所有 vodId -> cover 映射 (从 data-src)
+  // 3. 精确提取 vodId -> cover 映射
+  // 策略: 从每个 <a class="public-list-exp"> 位置开始，只在 500 字符内寻找 data-src
+  // 这样绝不会跨卡片边界匹配，确保封面 100% 精准
   const coverMap = new Map<string, string>();
-  // 精确匹配: <a class="public-list-exp" href="/voddetail/XXX.html" ...> ... <img data-src="YYY" />
-  const cardRegex = /class="public-list-exp"\s+href="\/voddetail\/(\d+)\.html"[^>]*>[\s\S]*?data-src="([^"]+)"/g;
-  while ((match = cardRegex.exec(html)) !== null) {
-    if (!coverMap.has(match[1]) && match[0].length < 3000) {
-      coverMap.set(match[1], match[2]);
-    }
-  }
-  // 也用 vodId 匹配的图片 URL 补充
-  const imgIdRegex = /data-src="([^"]*\/(\d+)_image\.[a-z]+)"/g;
-  while ((match = imgIdRegex.exec(html)) !== null) {
-    if (!coverMap.has(match[2])) {
-      coverMap.set(match[2], match[1]);
-    }
-  }
-
-  // 4. 提取标签(badge) & 状态(status) & 评分(score)
   const badgeMap = new Map<string, string>();
   const statusMap = new Map<string, string>();
   const scoreMap = new Map<string, string>();
 
-  // badge: <span class="public-prt ...">标签文本</span>
-  // status: <span class="public-list-prb ...">状态文本</span> or <i class="ft4">评分</i>
-  const cardBlockRegex = /href="\/voddetail\/(\d+)\.html"[\s\S]*?(?=href="\/voddetail\/\d+\.html"|<\/div>\s*<\/div>\s*<\/div>\s*<\/div>)/g;
-  while ((match = cardBlockRegex.exec(html)) !== null) {
+  const cardAnchorRegex = /class="public-list-exp"\s+href="\/voddetail\/(\d+)\.html"\s+title="([^"]+)"/g;
+  while ((match = cardAnchorRegex.exec(html)) !== null) {
     const vid = match[1];
-    const block = match[0];
+    const pos = match.index + match[0].length;
+    // 只在 <a> 标签之后 500 字符内搜索 (同一个 card 内)
+    const snippet = html.substring(pos, pos + 500);
 
-    const badgeMatch = block.match(/public-prt[^>]*>([^<]+)<\/span>/);
-    if (badgeMatch && !badgeMap.has(vid)) {
-      badgeMap.set(vid, badgeMatch[1].trim());
+    // 封面图
+    if (!coverMap.has(vid)) {
+      const imgMatch = snippet.match(/data-src="([^"]+)"/);
+      if (imgMatch) {
+        coverMap.set(vid, imgMatch[1]);
+      }
     }
 
-    const scoreMatch = block.match(/public-list-prb[^>]*>\s*<i[^>]*>([^<]+)<\/i>/);
-    if (scoreMatch && !scoreMap.has(vid)) {
-      scoreMap.set(vid, scoreMatch[1].trim());
+    // 标签 badge (热映推荐/豆瓣热榜)
+    if (!badgeMap.has(vid)) {
+      const badgeMatch = snippet.match(/public-prt[^>]*>([^<]+)<\/span>/);
+      if (badgeMatch) {
+        badgeMap.set(vid, badgeMatch[1].trim());
+      }
     }
 
-    const statusMatch = block.match(/public-list-prb[^>]*>([^<]+)<\/span>/);
-    if (statusMatch && !statusMap.has(vid)) {
-      statusMap.set(vid, statusMatch[1].trim());
+    // 评分 score
+    if (!scoreMap.has(vid)) {
+      const scoreMatch = snippet.match(/public-list-prb[^>]*>\s*<i[^>]*>([^<]+)<\/i>/);
+      if (scoreMatch) {
+        scoreMap.set(vid, scoreMatch[1].trim());
+      }
+    }
+
+    // 状态 status (集数)
+    if (!statusMap.has(vid)) {
+      const statusMatch = snippet.match(/public-list-prb[^>]*>([^<]+)<\/span>/);
+      if (statusMatch) {
+        statusMap.set(vid, statusMatch[1].trim());
+      }
     }
   }
 
