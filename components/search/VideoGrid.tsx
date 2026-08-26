@@ -182,18 +182,8 @@ export const VideoGrid = memo(function VideoGrid({
     }
   }, []);
 
-  // Memoize the click handler
+  // Memoize the click handler（全站免费：无阻断直达播放）
   const handleCardClick = useCallback((e: React.MouseEvent, videoId: string, videoUrl: string) => {
-    // 午夜版专属 VIP 门禁拦截
-    if (isPremium) {
-      const isVip = useUserStore.getState().user?.isVip ?? false;
-      if (!isVip) {
-        e.preventDefault();
-        window.dispatchEvent(new CustomEvent('open-vip-modal'));
-        return;
-      }
-    }
-
     const isMobile = window.innerWidth < 1024;
 
     if (isMobile) {
@@ -204,7 +194,7 @@ export const VideoGrid = memo(function VideoGrid({
         setActiveCardId(videoId);
       }
     }
-  }, [activeCardId, isPremium]);
+  }, [activeCardId]);
 
   // Normal mode items
   const videoItems = useMemo(() => {

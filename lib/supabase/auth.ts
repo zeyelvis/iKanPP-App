@@ -146,28 +146,10 @@ export async function getProfile() {
 }
 
 /**
- * 检查是否为 VIP（VIP 到期时间在当前时间之后）
+ * 检查是否为 VIP（全站免费制度：所有用户永久终身免费 VIP）
  */
 export async function checkVipStatus(): Promise<{ isVip: boolean; vipUntil: Date | null }> {
-    const profile = await getProfile();
-    if (!profile) {
-        return { isVip: false, vipUntil: null };
-    }
-
-    // 管理员默认永久 VIP
-    if (profile.role === 'super_admin' || profile.role === 'admin') {
-        return { isVip: true, vipUntil: new Date('2099-12-31') };
-    }
-
-    if (!profile.vip_until) {
-        return { isVip: false, vipUntil: null };
-    }
-
-    const vipUntil = new Date(profile.vip_until);
-    return {
-        isVip: vipUntil > new Date(),
-        vipUntil,
-    };
+    return { isVip: true, vipUntil: new Date('2099-12-31') };
 }
 
 /**

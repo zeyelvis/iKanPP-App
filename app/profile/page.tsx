@@ -417,16 +417,12 @@ function AccountTab({ user, vipExpiry, onLogin }: { user: any; vipExpiry: string
                                 {user.email || '用户'}
                             </p>
                             <p className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 flex-wrap mt-1">
-                                {user.isVip ? (
-                                    <span className="flex items-center gap-1.5 text-amber-300">
-                                        <Crown size={14} className="text-amber-400" />
-                                        <span className="font-medium">VIP</span>
-                                        <span className="text-white/40">·</span>
-                                        <span className="text-white/50">{vipExpiry}</span>
-                                    </span>
-                                ) : (
-                                    <span className="text-white/40">签到或邀请好友获得 VIP</span>
-                                )}
+                                <span className="flex items-center gap-1.5 text-amber-300">
+                                    <Crown size={14} className="text-amber-400" />
+                                    <span className="font-bold">永久终身尊享 VIP</span>
+                                    <span className="text-white/40">·</span>
+                                    <span className="text-emerald-400 font-bold">全站永久免费</span>
+                                </span>
                             </p>
                         </div>
                     </div>
@@ -437,8 +433,8 @@ function AccountTab({ user, vipExpiry, onLogin }: { user: any; vipExpiry: string
                             <p className="text-[10px] sm:text-xs mt-1 text-white/40">已邀请</p>
                         </div>
                         <div className="text-center p-3 sm:p-4 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                            <p className="text-xl sm:text-3xl font-bold">
-                                {user.isVip ? <span className="text-emerald-400">✓</span> : <span className="text-red-400/60">✗</span>}
+                            <p className="text-xl sm:text-3xl font-bold text-emerald-400">
+                                永久有效
                             </p>
                             <p className="text-[10px] sm:text-xs mt-1 text-white/40">VIP 状态</p>
                         </div>
