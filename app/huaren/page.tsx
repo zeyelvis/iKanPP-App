@@ -138,13 +138,16 @@ function HuarenHome() {
                                                         className="group flex items-center justify-between p-1.5 rounded-xl hover:bg-white/[0.06] transition-all cursor-pointer"
                                                     >
                                                         {/* 排名与标题 */}
-                                                        <div className="flex items-center gap-3 min-w-0 pr-2">
-                                                            {/* 排名数字 (1~3 红色/橙色高光斜体) */}
-                                                            <span className={`text-base font-black italic w-5 shrink-0 ${
-                                                                isTop1 ? 'text-[#FF4D4F]' : isTop2 ? 'text-[#FA8C16]' : isTop3 ? 'text-[#FAAD14]' : 'text-white/30'
-                                                            }`}>
-                                                                {item.rank}
-                                                            </span>
+                                                        <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                                                            {/* NO 标志与排名数字 (1~3 红色/橙色高光斜体) */}
+                                                            <div className="flex items-baseline gap-1 shrink-0 w-8">
+                                                                <span className="text-[10px] italic text-white/30 font-semibold">NO</span>
+                                                                <span className={`text-base font-black italic ${
+                                                                    isTop1 ? 'text-[#FF4D4F]' : isTop2 ? 'text-[#FA8C16]' : isTop3 ? 'text-[#FAAD14]' : 'text-white/40'
+                                                                }`}>
+                                                                    {item.rank}
+                                                                </span>
+                                                            </div>
 
                                                             <div className="min-w-0">
                                                                 <p className="text-xs sm:text-sm font-bold text-white/90 group-hover:text-rose-400 truncate transition-colors">
@@ -192,16 +195,6 @@ function HuarenMovieCard({
     const [imgError, setImgError] = useState(false);
     const coverUrl = getSafeCoverUrl(card.cover);
 
-    // 徽章颜色自动映射
-    const getBadgeStyle = (badge: string) => {
-        if (!badge) return 'bg-emerald-500/90 text-white';
-        if (badge.includes('喜剧') || badge.includes('爱情')) return 'bg-emerald-500/90 text-white';
-        if (badge.includes('剧情') || badge.includes('古装') || badge.includes('动作')) return 'bg-blue-500/90 text-white';
-        if (badge.includes('悬疑') || badge.includes('热榜') || badge.includes('推荐')) return 'bg-amber-500/90 text-black font-black';
-        if (badge.includes('恐怖') || badge.includes('惊悚')) return 'bg-purple-500/90 text-white';
-        return 'bg-rose-500/90 text-white';
-    };
-
     return (
         <div
             onClick={onClick}
@@ -228,10 +221,17 @@ function HuarenMovieCard({
                 {/* 悬停微暗影 */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30 opacity-60 group-hover:opacity-30 transition-opacity" />
 
-                {/* 右上角气泡角标 (如“剧情”、“喜剧”、“悬疑”) */}
+                {/* 右上角彩色气泡角标 (如“甜虐爱情”、“剧情”、“推理”、“戏剧”) */}
                 {card.badge && (
-                    <div className={`absolute top-2 right-2 z-20 px-2 py-0.5 rounded-md text-[10px] font-bold shadow-md ${getBadgeStyle(card.badge)}`}>
+                    <div className={`absolute top-2 right-2 z-20 px-2 py-0.5 rounded-md text-[10px] font-bold shadow-md ${card.badgeColor || 'bg-emerald-500 text-white'}`}>
                         {card.badge}
+                    </div>
+                )}
+
+                {/* 右下角集数角标 (如“16”、“第24集完结”、“第14集”) */}
+                {card.episode && (
+                    <div className="absolute bottom-2 right-2 z-20 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[10px] text-white/90 font-medium">
+                        {card.episode}
                     </div>
                 )}
 
