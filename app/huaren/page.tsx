@@ -7,7 +7,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { SearchForm } from '@/components/search/SearchForm';
 import { SearchResults } from '@/components/home/SearchResults';
 import { useHomePage } from '@/lib/hooks/useHomePage';
-import { Globe, Flame, Film, Play } from 'lucide-react';
+import { Globe, Flame, Film, Play, RotateCcw } from 'lucide-react';
 import { useFavorites } from '@/lib/store/favorites-store';
 
 interface VideoItem {
@@ -44,25 +44,28 @@ function HuarenContent() {
         handleReset,
     } = useHomePage();
 
-    useEffect(() => {
-        let isMounted = true;
+    const fetchVideos = (mode: string) => {
         setLoading(true);
-
-        fetch(`/api/huaren?mode=${currentMode}`)
+        fetch(`/api/huaren?mode=${mode}`)
             .then(res => res.json())
             .then(data => {
-                if (isMounted && data.videos) {
+                if (data && data.videos && Array.isArray(data.videos)) {
                     setVideos(data.videos);
+                } else {
+                    setVideos([]);
                 }
             })
-            .catch(console.error)
+            .catch(err => {
+                console.error('Fetch Huaren videos failed:', err);
+                setVideos([]);
+            })
             .finally(() => {
-                if (isMounted) setLoading(false);
+                setLoading(false);
             });
+    };
 
-        return () => {
-            isMounted = false;
-        };
+    useEffect(() => {
+        fetchVideos(currentMode);
     }, [currentMode]);
 
     const handlePlayVideo = (video: VideoItem) => {
@@ -72,9 +75,9 @@ function HuarenContent() {
         }
     };
 
-    // 精选滑块大片
+    // 精选大片
     const featuredVideos = videos.slice(0, 6);
-    const regularVideos = videos.slice(6);
+    const regularVideos = videos.length > 6 ? videos.slice(6) : videos;
 
     return (
         <div className="min-h-screen bg-[#07080D] text-white relative overflow-x-hidden selection:bg-rose-500 selection:text-white">
@@ -143,7 +146,7 @@ function HuarenContent() {
                         </div>
 
                         {/* 2. 🎞️ 首屏精选平铺画廊 */}
-                        {featuredVideos.length > 0 && (
+                        {!loading && featuredVideos.length > 0 && (
                             <section className="space-y-3">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-sm font-black text-white/90 flex items-center gap-1.5">
@@ -188,6 +191,17 @@ function HuarenContent() {
                                             </div>
                                         </div>
                                     ))}
+                                </div>
+                            ) : videos.length === 0 ? (
+                                <div className="text-center py-16 space-y-3">
+                                    <p className="text-white/40 text-sm">暂无当前分类影视，请稍后刷新重试</p>
+                                    <button
+                                        onClick={() => fetchVideos(currentMode)}
+                                        className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all cursor-pointer inline-flex items-center gap-1.5"
+                                    >
+                                        <RotateCcw size={13} />
+                                        <span>重新加载</span>
+                                    </button>
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
