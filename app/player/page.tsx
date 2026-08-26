@@ -548,26 +548,7 @@ function PlayerContent() {
       <Navbar variant="player" isPremiumMode={isPremium} />
 
       <main className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 pt-1 sm:pt-2 pb-24">
-        {isHuarenSource && videoId ? (
-          <div className="space-y-6 pt-2">
-            <div className="flex items-center justify-between pb-2 border-b border-white/10">
-              <div className="space-y-1">
-                <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                  {title || '华人专区高清热播'}
-                </h1>
-                <p className="text-xs text-white/50">
-                  已直连目标站官方原生视频源（高性能 / 投屏版 / 超清4K）
-                </p>
-              </div>
-            </div>
-
-            <HuarenLivePlayer
-              vodId={videoId}
-              title={title || ''}
-              totalEpisodes={epCountParam ? parseInt(epCountParam, 10) : (expectedType === 'movie' ? 1 : 40)}
-            />
-          </div>
-        ) : isTitleOnlyMode && titleSearching ? (
+        {isTitleOnlyMode && titleSearching ? (
           <div className="flex flex-col items-center justify-center py-32">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-(--accent-color) border-t-transparent mb-6"></div>
             <p className="text-lg font-medium text-(--text-color)">正在搜索最佳片源...</p>

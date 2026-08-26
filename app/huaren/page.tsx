@@ -50,23 +50,12 @@ function HuarenHome() {
         };
     }, []);
 
-    // 播放逻辑：携带目标站原生 vodId 和 source=huaren，直连目标站三大视频源！
-    const handlePlayVideo = useCallback((item: { vodId?: string; title: string; type?: string; episode?: string }) => {
+    // 播放逻辑：传 title 和 type，由成熟的聚合播放系统直连秒播！
+    const handlePlayVideo = useCallback((item: { title: string; type?: string }) => {
         if (!item.title) return;
         const cleanTitle = item.title.trim();
         const typeParam = item.type === 'movie' ? 'movie' : 'tv';
-        
-        if (item.vodId) {
-            // 解析总集数
-            let epCount = 1;
-            if (item.type === 'tv' || item.episode) {
-                const match = (item.episode || '').match(/\d+/);
-                epCount = match ? parseInt(match[0], 10) : (item.type === 'tv' ? 40 : 1);
-            }
-            router.push(`/player?id=${item.vodId}&title=${encodeURIComponent(cleanTitle)}&type=${typeParam}&source=huaren&epCount=${epCount}`);
-        } else {
-            router.push(`/player?title=${encodeURIComponent(cleanTitle)}&type=${typeParam}`);
-        }
+        router.push(`/player?title=${encodeURIComponent(cleanTitle)}&type=${typeParam}`);
     }, [router]);
 
     return (
@@ -145,7 +134,7 @@ function HuarenHome() {
                                                 key={card.vodId}
                                                 card={card}
                                                 type={section.type}
-                                                onClick={() => handlePlayVideo({ vodId: card.vodId, title: card.title, type: section.type, episode: card.episode })}
+                                                onClick={() => handlePlayVideo({ title: card.title, type: section.type })}
                                             />
                                         ))}
                                     </div>
@@ -165,7 +154,7 @@ function HuarenHome() {
                                                 return (
                                                     <div
                                                         key={item.rank}
-                                                        onClick={() => handlePlayVideo({ vodId: item.vodId, title: item.title, type: section.type, episode: item.status })}
+                                                        onClick={() => handlePlayVideo({ title: item.title, type: section.type })}
                                                         className="group flex items-center justify-between p-1.5 rounded-xl hover:bg-white/[0.06] transition-all cursor-pointer"
                                                     >
                                                         {/* 排名与标题 */}
