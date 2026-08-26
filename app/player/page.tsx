@@ -28,6 +28,7 @@ import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/compone
 import { useUserStore } from '@/lib/store/user-store';
 import { VipPrompt } from '@/components/premium/VipPrompt';
 import { AuthModal } from '@/components/auth/AuthModal';
+import { HuarenLivePlayer } from '@/components/player/HuarenLivePlayer';
 import { Crown, Lock, Sparkles } from 'lucide-react';
 
 function PlayerContent() {
@@ -40,10 +41,12 @@ function PlayerContent() {
   const source = searchParams.get('source');
   const title = searchParams.get('title');
   const episodeParam = searchParams.get('episode');
+  const epCountParam = searchParams.get('epCount');
   const groupedSourcesParam = searchParams.get('groupedSources');
   // 消歧义参数：从首页传入的内容类型和年份
   const expectedType = searchParams.get('type'); // 'movie' | 'tv' | null
   const expectedYear = searchParams.get('year'); // e.g. '2025' | null
+  const isHuarenSource = source === 'huaren' && !!videoId;
   // 用户状态与 VIP 权限检查
   const { user } = useUserStore();
   const isVip = user?.isVip ?? false;
@@ -545,7 +548,26 @@ function PlayerContent() {
       <Navbar variant="player" isPremiumMode={isPremium} />
 
       <main className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 pt-1 sm:pt-2 pb-24">
-        {isTitleOnlyMode && titleSearching ? (
+        {isHuarenSource && videoId ? (
+          <div className="space-y-6 pt-2">
+            <div className="flex items-center justify-between pb-2 border-b border-white/10">
+              <div className="space-y-1">
+                <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  {title || '华人专区高清热播'}
+                </h1>
+                <p className="text-xs text-white/50">
+                  已直连目标站官方原生视频源（高性能 / 投屏版 / 超清4K）
+                </p>
+              </div>
+            </div>
+
+            <HuarenLivePlayer
+              vodId={videoId}
+              title={title || ''}
+              totalEpisodes={epCountParam ? parseInt(epCountParam, 10) : (expectedType === 'movie' ? 1 : 40)}
+            />
+          </div>
+        ) : isTitleOnlyMode && titleSearching ? (
           <div className="flex flex-col items-center justify-center py-32">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-(--accent-color) border-t-transparent mb-6"></div>
             <p className="text-lg font-medium text-(--text-color)">正在搜索最佳片源...</p>
