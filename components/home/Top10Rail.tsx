@@ -124,7 +124,7 @@ export function Top10Rail({
                 style={{ width: 'clamp(155px, 42vw, 240px)' }}
               >
                 {/* Netflix 风格超大立体镂空描边排名数字 */}
-                <div className="top10-rank-number shrink-0 translate-x-3 sm:translate-x-4 z-10">
+                <div className="top10-rank-number shrink-0 translate-x-3 sm:translate-x-4 z-10 select-none">
                   {idx + 1}
                 </div>
 
@@ -140,6 +140,23 @@ export function Top10Rail({
                     unoptimized
                   />
 
+                  {/* 冠亚季军专属尊贵角标 */}
+                  {idx === 0 && (
+                    <div className="absolute top-2 left-2 z-20 bg-linear-to-r from-amber-500 to-yellow-300 text-black text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg flex items-center gap-1">
+                      <span>👑 TOP 1</span>
+                    </div>
+                  )}
+                  {idx === 1 && (
+                    <div className="absolute top-2 left-2 z-20 bg-linear-to-r from-slate-300 to-slate-100 text-black text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg flex items-center gap-1">
+                      <span>🥈 TOP 2</span>
+                    </div>
+                  )}
+                  {idx === 2 && (
+                    <div className="absolute top-2 left-2 z-20 bg-linear-to-r from-amber-700 to-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg flex items-center gap-1">
+                      <span>🥉 TOP 3</span>
+                    </div>
+                  )}
+
                   {/* 评分 */}
                   {movie.rate && parseFloat(movie.rate) > 0 && (
                     <div className="absolute top-2 right-2 bg-black/80 backdrop-blur-md px-2 py-0.5 rounded-full flex items-center gap-1 border border-white/10">
@@ -153,11 +170,11 @@ export function Top10Rail({
                     <p className="text-xs font-bold text-white line-clamp-1 mb-2">
                       {movie.title}
                     </p>
-                    <button className="w-full py-1.5 bg-(--accent-color) hover:brightness-110 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1 shadow-md">
+                    <button className="w-full py-1.5 bg-(--accent-color) hover:brightness-110 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1 shadow-md cursor-pointer">
                       <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M8 5v14l11-7z" />
                       </svg>
-                      播放
+                      立即播放
                     </button>
                   </div>
                 </div>

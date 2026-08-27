@@ -28,7 +28,7 @@ export const PREBAKED_HOME_DATA: {
 } = {
   // ── 电影分类 ─────────────────────────────────────────────────────────────
   movie: {
-    // 货架 1: 最新上映 / 院线热播
+    // 货架 1: 今日院线最新 & 2025/2026 爆款上线
     s1: [
       {
         id: 'pb_m_1',
@@ -109,10 +109,30 @@ export const PREBAKED_HOME_DATA: {
         is_new: true,
         playable: true,
         types: ['剧情']
+      },
+      {
+        id: 'pb_m_8_1',
+        title: '毒液：最后一舞',
+        rate: '6.5',
+        cover: 'https://image.tmdb.org/t/p/w500/aosm8Vh9yIHvrstNXssHQGyM9vC.jpg',
+        year: '2024',
+        is_new: true,
+        playable: true,
+        types: ['动作', '科幻']
+      },
+      {
+        id: 'pb_m_8_2',
+        title: '荒野机器人',
+        rate: '8.4',
+        cover: 'https://image.tmdb.org/t/p/w500/wTnV3PCVW5O92JMrFvvrRcV39RU.jpg',
+        year: '2024',
+        is_new: true,
+        playable: true,
+        types: ['动画', '科幻', '家庭']
       }
     ],
 
-    // 货架 2: 豆瓣高分经典
+    // 货架 2: 豆瓣 9.0+ 影史高分神作
     s2: [
       {
         id: 'pb_m_9',
@@ -170,7 +190,7 @@ export const PREBAKED_HOME_DATA: {
       }
     ],
 
-    // 货架 3: 华语精选
+    // 货架 3: 华语经典口碑佳作
     s3: [
       {
         id: 'pb_m_15',
@@ -210,7 +230,7 @@ export const PREBAKED_HOME_DATA: {
       }
     ],
 
-    // 货架 4: 欧美大片
+    // 货架 4: 好莱坞 4K 动作科幻巨制
     s4: [
       {
         id: 'pb_m_19',
@@ -244,8 +264,19 @@ export const PREBAKED_HOME_DATA: {
 
   // ── 电视剧分类 ───────────────────────────────────────────────────────────
   tv: {
-    // 货架 1: 国产热播大剧
+    // 货架 1: 华语热播大剧 & 今日追更
     s1: [
+      {
+        id: 'pb_t_0_1',
+        title: '逐玉',
+        rate: '8.1',
+        cover: 'https://image.tmdb.org/t/p/w500/rV1owsdKtXytJ5eFMOOVTze3mrk.jpg',
+        year: '2025',
+        is_new: true,
+        playable: true,
+        episodes_info: '更新至第36集',
+        types: ['古装', '爱情', '权谋']
+      },
       {
         id: 'pb_t_1',
         title: '庆余年 第二季',
@@ -299,122 +330,148 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         id: 'pb_t_6',
-        title: '去有风的地方',
-        rate: '8.7',
-        cover: 'https://image.tmdb.org/t/p/w500/qaYfoLzWtOLaVoNvOeNBZYIjo1V.jpg',
-        year: '2023',
-        playable: true,
-        episodes_info: '全40集完结',
-        types: ['治愈', '爱情']
-      }
-    ],
-
-    // 货架 2: 高分美剧
-    s2: [
-      {
-        id: 'pb_t_7',
-        title: '绝命毒师 第五季',
-        rate: '9.7',
-        cover: 'https://image.tmdb.org/t/p/w500/rqliuvX7NdknSHu5qaSDfESplQi.jpg',
-        year: '2013',
-        playable: true,
-        episodes_info: '神作完结',
-        types: ['犯罪', '剧情']
-      },
-      {
-        id: 'pb_t_8',
-        title: '权力的游戏 第八季',
-        rate: '9.4',
-        cover: 'https://image.tmdb.org/t/p/w500/6fJ7Gql9rD4C3X1uW2zinlkNwvw.jpg',
-        year: '2019',
-        playable: true,
-        episodes_info: '全集',
-        types: ['奇幻', '史诗']
-      },
-      {
-        id: 'pb_t_9',
-        title: '怪奇物语 第四季',
-        rate: '9.2',
-        cover: 'https://image.tmdb.org/t/p/w500/iTvTODru3s8A4eGqVZzALcipIft.jpg',
-        year: '2022',
-        playable: true,
-        episodes_info: '全9集',
-        types: ['科幻', '恐怖']
-      },
-      {
-        id: 'pb_t_10',
-        title: '最后生还者 第一季',
-        rate: '9.1',
-        cover: 'https://image.tmdb.org/t/p/w500/ydyTjqxZsPlcFSTBNY2INYrmEvk.jpg',
-        year: '2023',
-        playable: true,
-        episodes_info: '全9集',
-        types: ['末日', '冒险']
-      }
-    ],
-
-    // 货架 3: 热门韩剧
-    s3: [
-      {
-        id: 'pb_t_11',
-        title: '黑暗荣耀',
-        rate: '8.9',
-        cover: 'https://image.tmdb.org/t/p/w500/4ANJBZETwHOmtofE5D0QjpCWB9w.jpg',
-        year: '2022',
-        playable: true,
-        episodes_info: '复仇神作',
-        types: ['复仇', '悬疑']
-      },
-      {
-        id: 'pb_t_12',
-        title: '泪之女王',
-        rate: '8.0',
-        cover: 'https://image.tmdb.org/t/p/w500/fFKmhXGukOoi50tDvqSHxz4dmcc.jpg',
+        title: '墨雨云间',
+        rate: '6.6',
+        cover: 'https://image.tmdb.org/t/p/w500/oBf89q6Zc22i4i4R3K5K21zH.jpg',
         year: '2024',
         is_new: true,
         playable: true,
-        episodes_info: '全16集',
-        types: ['爱情', '都市']
+        episodes_info: '全40集完结',
+        types: ['古装', '复仇']
       },
       {
-        id: 'pb_t_13',
-        title: '请回答1988',
-        rate: '9.7',
-        cover: 'https://image.tmdb.org/t/p/w500/cX068rNsLNFnRCTNbqqARhwbhug.jpg',
-        year: '2015',
+        id: 'pb_t_7',
+        title: '边水往事',
+        rate: '8.0',
+        cover: 'https://image.tmdb.org/t/p/w500/u3bZgnGQ9T01sWNhyveQz0w.jpg',
+        year: '2024',
+        is_new: true,
         playable: true,
-        episodes_info: '满分温情神剧',
-        types: ['家庭', '青春']
+        episodes_info: '全21集完结',
+        types: ['剧情', '犯罪', '悬疑']
       }
     ],
 
-    // 货架 4: 热门动漫新番
-    s4: [
+    // 货架 2: 顶尖神级美剧
+    s2: [
       {
-        id: 'pb_t_14',
-        title: '葬送的芙莉莲',
-        rate: '9.5',
-        cover: 'https://image.tmdb.org/t/p/w500/1TtrtRIwXz5BB0gXEl8zgBypl9c.jpg',
+        id: 'pb_t_8',
+        title: '辐射',
+        rate: '8.5',
+        cover: 'https://image.tmdb.org/t/p/w500/AnsZu44Q7AosUf2qJzIeTsdY5V4.jpg',
+        year: '2024',
+        is_new: true,
+        playable: true,
+        episodes_info: '全8集完结',
+        types: ['动作', '科幻', '冒险']
+      },
+      {
+        id: 'pb_t_9',
+        title: '黑袍纠察队 第四季',
+        rate: '8.6',
+        cover: 'https://image.tmdb.org/t/p/w500/2zmTngzbOHQqWdAITxem8KWviMw.jpg',
+        year: '2024',
+        is_new: true,
+        playable: true,
+        episodes_info: '全8集完结',
+        types: ['动作', '科幻']
+      },
+      {
+        id: 'pb_t_10',
+        title: '最后生还者',
+        rate: '8.8',
+        cover: 'https://image.tmdb.org/t/p/w500/uKvVjHNqB5VmOrdxqAt2V7JMrne.jpg',
         year: '2023',
         playable: true,
-        episodes_info: '全28集完结',
-        types: ['动画', '治愈', '奇幻']
+        episodes_info: '全9集完结',
+        types: ['剧情', '动作', '冒险']
+      },
+      {
+        id: 'pb_t_11',
+        title: '权力的游戏',
+        rate: '9.4',
+        cover: 'https://image.tmdb.org/t/p/w500/u3bZgnGQ9T01sWNhyveQz0w.jpg',
+        year: '2011',
+        playable: true,
+        episodes_info: '全8季完结',
+        types: ['剧情', '奇幻']
+      },
+      {
+        id: 'pb_t_12',
+        title: '绝命毒师',
+        rate: '9.6',
+        cover: 'https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg',
+        year: '2008',
+        playable: true,
+        episodes_info: '全5季完结',
+        types: ['剧情', '犯罪', '惊悚']
+      }
+    ],
+
+    // 货架 3: 高分日韩精选
+    s3: [
+      {
+        id: 'pb_t_13',
+        title: '泪之女王',
+        rate: '8.4',
+        cover: 'https://image.tmdb.org/t/p/w500/2Sg3A1z9eJ6m5E3zP1V4x7u8rQ9.jpg',
+        year: '2024',
+        is_new: true,
+        playable: true,
+        episodes_info: '全16集完结',
+        types: ['爱情', '剧情', '喜剧']
+      },
+      {
+        id: 'pb_t_14',
+        title: '黑暗荣耀',
+        rate: '8.9',
+        cover: 'https://image.tmdb.org/t/p/w500/6jO1eL8e1uK7X3m9sP4w8yQ1z5A.jpg',
+        year: '2022',
+        playable: true,
+        episodes_info: '全16集完结',
+        types: ['剧情', '悬疑']
       },
       {
         id: 'pb_t_15',
-        title: '咒术回战 第二季',
-        rate: '9.0',
-        cover: 'https://image.tmdb.org/t/p/w500/kdE1ALF5G6DFMyDU67AyyUklEtn.jpg',
-        year: '2023',
+        title: '请回答1988',
+        rate: '9.7',
+        cover: 'https://image.tmdb.org/t/p/w500/q7b4Z3G3Y4W7K1z8v5A7m4k8x8e.jpg',
+        year: '2015',
         playable: true,
-        episodes_info: '涩谷事变篇',
-        types: ['动画', '热血', '动作']
-      },
+        episodes_info: '全20集完结',
+        types: ['剧情', '喜剧', '爱情']
+      }
+    ],
+
+    // 货架 4: 国创年番 & 热门动漫
+    s4: [
       {
         id: 'pb_t_16',
+        title: '仙逆',
+        rate: '9.2',
+        cover: 'https://image.tmdb.org/t/p/w500/8fzJZQhmkLyZeXdZUi1eE2ZKhkm.jpg',
+        year: '2024',
+        is_new: true,
+        playable: true,
+        episodes_info: '连载中 · 每周一更新',
+        types: ['动画', '动作', '奇幻']
+      },
+      {
+        id: 'pb_t_17',
+        title: '凡人修仙传',
+        rate: '9.0',
+        cover: 'https://image.tmdb.org/t/p/w500/spQm5r317XPNHK1941ChWmqzkZs.jpg',
+        year: '2024',
+        is_new: true,
+        playable: true,
+        episodes_info: '连载中 · 每周日更新',
+        types: ['动画', '奇幻']
+      },
+      {
+        id: 'pb_t_18',
         title: '鬼灭之刃 柱训练篇',
-        rate: '8.4',
-        cover: 'https://image.tmdb.org/t/p/w500/tZ0yGfG4EIox7bYJTxAtqUhoOmR.jpg',
+        rate: '8.6',
+        cover: 'https://image.tmdb.org/t/p/w500/3WvtxVwLnhF4q5y3k6n5c9m4u3x.jpg',
         year: '2024',
         is_new: true,
         playable: true,

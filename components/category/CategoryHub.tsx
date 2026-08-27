@@ -426,6 +426,49 @@ function setLocalCatHub(key: string, data: Record<string, RailMovie[]>) {
               </div>
             </div>
           )}
+
+          {/* 排序方式 */}
+          <div className="flex items-start gap-3 text-xs pt-1 border-t border-white/5">
+            <span className="text-white/40 font-bold shrink-0 pt-1.5 w-12">排序：</span>
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                onClick={() => setSelectedSort('recommend')}
+                className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
+                  selectedSort === 'recommend'
+                    ? 'bg-amber-500 text-black font-black shadow-md'
+                    : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                🔥 综合热度
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedSort('time');
+                  if (!selectedGenre) setSelectedGenre('最新');
+                }}
+                className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
+                  selectedSort === 'time'
+                    ? 'bg-amber-500 text-black font-black shadow-md'
+                    : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                ✨ 最新上映
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedSort('rank');
+                  if (!selectedGenre) setSelectedGenre('豆瓣高分');
+                }}
+                className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
+                  selectedSort === 'rank'
+                    ? 'bg-amber-500 text-black font-black shadow-md'
+                    : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                ⭐ 豆瓣高分
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* 4. 全库海报瀑布流网格 */}
