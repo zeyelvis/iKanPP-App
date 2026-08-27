@@ -28,7 +28,6 @@ import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/compone
 import { useUserStore } from '@/lib/store/user-store';
 import { VipPrompt } from '@/components/premium/VipPrompt';
 import { AuthModal } from '@/components/auth/AuthModal';
-import { HuarenLivePlayer } from '@/components/player/HuarenLivePlayer';
 import { Crown, Lock, Sparkles } from 'lucide-react';
 
 function PlayerContent() {
@@ -46,7 +45,6 @@ function PlayerContent() {
   // 消歧义参数：从首页传入的内容类型和年份
   const expectedType = searchParams.get('type'); // 'movie' | 'tv' | null
   const expectedYear = searchParams.get('year'); // e.g. '2025' | null
-  const isHuarenSource = source === 'huaren' && !!videoId;
   // 用户状态与 VIP 权限检查
   const { user } = useUserStore();
   const isVip = user?.isVip ?? false;
