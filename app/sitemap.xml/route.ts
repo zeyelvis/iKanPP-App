@@ -1,29 +1,29 @@
-import { MetadataRoute } from 'next';
+import { NextResponse } from 'next/server';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 
 export const runtime = 'edge';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 
-// ==================== 1. 核心高权重频道大厅与静态页面 ====================
+// 核心高权重频道大厅与静态页面
 const STATIC_ROUTES = [
-    { url: '', priority: 1.0, changeFrequency: 'daily' as const },
-    { url: '/movie', priority: 0.95, changeFrequency: 'daily' as const },
-    { url: '/tv', priority: 0.95, changeFrequency: 'daily' as const },
-    { url: '/guoman', priority: 0.95, changeFrequency: 'daily' as const },
-    { url: '/anime', priority: 0.95, changeFrequency: 'daily' as const },
-    { url: '/variety', priority: 0.95, changeFrequency: 'daily' as const },
-    { url: '/ranking', priority: 0.95, changeFrequency: 'daily' as const },
-    { url: '/iptv', priority: 0.85, changeFrequency: 'daily' as const },
-    { url: '/download', priority: 0.8, changeFrequency: 'weekly' as const },
-    { url: '/about', priority: 0.6, changeFrequency: 'monthly' as const },
-    { url: '/faq', priority: 0.6, changeFrequency: 'monthly' as const },
-    { url: '/referral', priority: 0.5, changeFrequency: 'monthly' as const },
-    { url: '/privacy', priority: 0.3, changeFrequency: 'yearly' as const },
-    { url: '/terms', priority: 0.3, changeFrequency: 'yearly' as const },
+    { path: '', priority: '1.0', changefreq: 'daily' },
+    { path: '/movie', priority: '0.95', changefreq: 'daily' },
+    { path: '/tv', priority: '0.95', changefreq: 'daily' },
+    { path: '/guoman', priority: '0.95', changefreq: 'daily' },
+    { path: '/anime', priority: '0.95', changefreq: 'daily' },
+    { path: '/variety', priority: '0.95', changefreq: 'daily' },
+    { path: '/ranking', priority: '0.95', changefreq: 'daily' },
+    { path: '/iptv', priority: '0.85', changefreq: 'daily' },
+    { path: '/download', priority: '0.80', changefreq: 'weekly' },
+    { path: '/about', priority: '0.60', changefreq: 'monthly' },
+    { path: '/faq', priority: '0.60', changefreq: 'monthly' },
+    { path: '/referral', priority: '0.50', changefreq: 'monthly' },
+    { path: '/privacy', priority: '0.30', changefreq: 'yearly' },
+    { path: '/terms', priority: '0.30', changefreq: 'yearly' },
 ];
 
-// ==================== 2. 海量热门影视与高分神作种子库 ====================
+// 海量热门影视与高分神作种子库
 const POPULAR_SEED_TITLES = [
     // 2025-2026 最新爆款电影
     { title: '抓娃娃', type: 'movie' },
@@ -128,38 +128,42 @@ const POPULAR_SEED_TITLES = [
     { title: '火影忍者', type: 'tv' },
 ];
 
-// ==================== 3. Sitemap 主函数 ====================
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const now = new Date();
-    const sitemapList: MetadataRoute.Sitemap = [];
-    const seenUrls = new Set<string>();
+const LANGUAGES = ['zh-CN', 'zh-TW', 'zh-HK', 'zh-SG', 'zh-MY', 'en', 'x-default'];
 
-    // 1. 核心静态频道路由（带多地域 hreflang 规范化映射）
+function escapeXml(str: string): string {
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+}
+
+export async function GET() {
+    const now = new Date().toISOString();
+    const seenUrls = new Set<string>();
+    const urlElements: string[] = [];
+
+    // 1. 静态主频道
     for (const route of STATIC_ROUTES) {
-        const fullUrl = `${BASE_URL}${route.url}`;
-        const path = route.url;
+        const fullUrl = `${BASE_URL}${route.path}`;
+        if (seenUrls.has(fullUrl)) continue;
         seenUrls.add(fullUrl);
 
-        sitemapList.push({
-            url: fullUrl,
-            lastModified: now,
-            changeFrequency: route.changeFrequency,
-            priority: route.priority,
-            alternates: {
-                languages: {
-                    'zh-CN': `${BASE_URL}${path}`,
-                    'zh-TW': `${BASE_URL}${path}`,
-                    'zh-HK': `${BASE_URL}${path}`,
-                    'zh-SG': `${BASE_URL}${path}`,
-                    'zh-MY': `${BASE_URL}${path}`,
-                    'en': `${BASE_URL}${path}`,
-                    'x-default': `${BASE_URL}${path}`,
-                },
-            },
-        });
+        const hreflangTags = LANGUAGES.map(
+            (lang) => `<xhtml:link rel="alternate" hreflang="${lang}" href="${escapeXml(fullUrl)}" />`
+        ).join('\n    ');
+
+        urlElements.push(`  <url>
+    <loc>${escapeXml(fullUrl)}</loc>
+    ${hreflangTags}
+    <lastmod>${now}</lastmod>
+    <changefreq>${route.changefreq}</changefreq>
+    <priority>${route.priority}</priority>
+  </url>`);
     }
 
-    // 2. 动态汇聚预烘焙影视库与种子片库
+    // 2. 动态片库（包括预烘焙数据与热门种子）
     const allSubjects = [
         ...PREBAKED_HOME_DATA.movie.s1.map(s => ({ title: s.title, type: 'movie' })),
         ...PREBAKED_HOME_DATA.movie.s2.map(s => ({ title: s.title, type: 'movie' })),
@@ -175,30 +179,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const item of allSubjects) {
         if (!item.title) continue;
         const cleanTitle = item.title.trim();
-        const path = `/player?title=${encodeURIComponent(cleanTitle)}&type=${item.type}`;
-        const fullUrl = `${BASE_URL}${path}`;
+        const rawUrl = `${BASE_URL}/player?title=${encodeURIComponent(cleanTitle)}&type=${item.type}`;
+        if (seenUrls.has(rawUrl)) continue;
+        seenUrls.add(rawUrl);
 
-        if (!seenUrls.has(fullUrl)) {
-            seenUrls.add(fullUrl);
-            sitemapList.push({
-                url: fullUrl,
-                lastModified: now,
-                changeFrequency: 'daily',
-                priority: 0.85,
-                alternates: {
-                    languages: {
-                        'zh-CN': `${BASE_URL}${path}`,
-                        'zh-TW': `${BASE_URL}${path}`,
-                        'zh-HK': `${BASE_URL}${path}`,
-                        'zh-SG': `${BASE_URL}${path}`,
-                        'zh-MY': `${BASE_URL}${path}`,
-                        'en': `${BASE_URL}${path}`,
-                        'x-default': `${BASE_URL}${path}`,
-                    },
-                },
-            });
-        }
+        const escapedUrl = escapeXml(rawUrl);
+        const hreflangTags = LANGUAGES.map(
+            (lang) => `<xhtml:link rel="alternate" hreflang="${lang}" href="${escapedUrl}" />`
+        ).join('\n    ');
+
+        urlElements.push(`  <url>
+    <loc>${escapedUrl}</loc>
+    ${hreflangTags}
+    <lastmod>${now}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>`);
     }
 
-    return sitemapList;
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${urlElements.join('\n')}
+</urlset>`;
+
+    return new NextResponse(xml, {
+        status: 200,
+        headers: {
+            'Content-Type': 'application/xml; charset=utf-8',
+            'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400',
+        },
+    });
 }
