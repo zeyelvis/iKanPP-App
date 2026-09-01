@@ -1,936 +1,208 @@
 'use client';
 
-/**
- * IPTVPlayer - Player for IPTV streams with controls, volume, progress, and sidebar.
- * Supports HLS (via HLS.js), native HLS (Safari), and direct video playback.
- * Features multi-level sidebar (source -> group -> channels), multi-route collapse,
- * and optimized search performance.
- */
-
-import { useRef, useEffect, useState, useCallback, useMemo, useTransition } from 'react';
-import Hls from 'hls.js';
-import { Icons } from '@/components/ui/Icon';
-import type { M3UChannel } from '@/lib/utils/m3u-parser';
-import type { IPTVSource } from '@/lib/store/iptv-store';
-
-const HLS_LIVE_CONFIG: Partial<Hls['config']> = {
-  enableWorker: true,
-  lowLatencyMode: true,
-  liveDurationInfinity: true,
-  manifestLoadingTimeOut: 10000,
-  manifestLoadingMaxRetry: 3,
-  levelLoadingTimeOut: 10000,
-  fragLoadingTimeOut: 20000,
-};
-
-const LOADING_TIMEOUT_MS = 30000;
-const MAX_VISIBLE_ROUTES = 3;
+import { useState, useEffect, useRef } from 'react';
+import { AlertCircle, RefreshCw, Maximize, Minimize, List, X } from 'lucide-react';
+import type { LiveChannel } from '@/lib/data/live-channels';
 
 interface IPTVPlayerProps {
-  channel: M3UChannel;
-  onClose: () => void;
-  channels: M3UChannel[];
-  onChannelChange: (channel: M3UChannel) => void;
-  channelsBySource?: Record<string, { channels: M3UChannel[]; groups: string[] }>;
-  sources?: IPTVSource[];
+  channel: LiveChannel;
+  channels: LiveChannel[];
+  onChannelChange: (channel: LiveChannel) => void;
 }
 
-function getProxiedUrl(url: string, ua?: string, referer?: string): string {
-  let proxyUrl = `/api/iptv/stream?`;
-  if (ua) proxyUrl += `ua=${encodeURIComponent(ua)}&`;
-  if (referer) proxyUrl += `referer=${encodeURIComponent(referer)}&`;
-  proxyUrl += `url=${encodeURIComponent(url)}`;
-  return proxyUrl;
-}
-
-function formatTime(seconds: number): string {
-  if (!isFinite(seconds) || seconds < 0) return '0:00';
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  if (h > 0) return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  return `${m}:${s.toString().padStart(2, '0')}`;
-}
-
-export function IPTVPlayer({ channel, onClose, channels, onChannelChange, channelsBySource, sources }: IPTVPlayerProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const hlsRef = useRef<Hls | null>(null);
+export function IPTVPlayer({ channel, channels, onChannelChange }: IPTVPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const activeChannelRef = useRef<HTMLButtonElement>(null);
-  const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const loadingTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-
+  const [embedUrl, setEmbedUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showSidebar, setShowSidebar] = useState(false);
-  const [sidebarSearch, setSidebarSearch] = useState('');
-  const [filteredResults, setFilteredResults] = useState<M3UChannel[]>([]);
-  const [isSearching, startSearchTransition] = useTransition();
-  const [sidebarVisibleCount, setSidebarVisibleCount] = useState(50);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [showControls, setShowControls] = useState(true);
-  const [isLive, setIsLive] = useState(true);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(1);
-  const [isMuted, setIsMuted] = useState(false);
-  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
-  const [currentRouteIndex, setCurrentRouteIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showAllRoutes, setShowAllRoutes] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(false);
 
-  // Multi-level sidebar state
-  const [activeSourceId, setActiveSourceId] = useState<string | null>(null);
-  const [activeGroup, setActiveGroup] = useState<string | null>(null);
-  const [expandedSources, setExpandedSources] = useState<Set<string>>(new Set());
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
-
-  // Whether we have multi-source data
-  const hasMultiSource = channelsBySource && sources && sources.length > 0;
-
-  // Get current route URL
-  const routes = channel.routes || [channel.url];
-  const currentUrl = routes[currentRouteIndex] || channel.url;
-
-  // Route display - collapse if > MAX_VISIBLE_ROUTES
-  const visibleRoutes = showAllRoutes ? routes : routes.slice(0, MAX_VISIBLE_ROUTES);
-  const hasMoreRoutes = routes.length > MAX_VISIBLE_ROUTES;
-
-  // Auto-scroll to active channel in sidebar
-  useEffect(() => {
-    if (showSidebar && activeChannelRef.current) {
-      activeChannelRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }, [showSidebar, channel.url]);
-
-  // Auto-expand the source/group containing the active channel
-  useEffect(() => {
-    if (channel.sourceId) {
-      setExpandedSources(prev => new Set(prev).add(channel.sourceId!));
-      if (channel.group) {
-        setExpandedGroups(prev => new Set(prev).add(`${channel.sourceId}::${channel.group}`));
-      }
-    }
-  }, [channel.sourceId, channel.group]);
-
-  // Track fullscreen changes (standard + webkit for iOS)
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      const fsElement = document.fullscreenElement || (document as any).webkitFullscreenElement;
-      setIsFullscreen(!!fsElement);
-    };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-
-    // iOS video fullscreen events
-    const video = videoRef.current;
-    const onBeginFs = () => setIsFullscreen(true);
-    const onEndFs = () => setIsFullscreen(false);
-    if (video) {
-      video.addEventListener('webkitbeginfullscreen', onBeginFs);
-      video.addEventListener('webkitendfullscreen', onEndFs);
-    }
-
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-      if (video) {
-        video.removeEventListener('webkitbeginfullscreen', onBeginFs);
-        video.removeEventListener('webkitendfullscreen', onEndFs);
-      }
-    };
-  }, []);
-
-  // Controls auto-hide
-  const resetControlsTimeout = useCallback(() => {
-    setShowControls(true);
-    if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
-    controlsTimeoutRef.current = setTimeout(() => {
-      setShowControls(false);
-    }, 3000);
-  }, []);
-
-  // Video event handlers
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const onPlay = () => setIsPlaying(true);
-    const onPause = () => setIsPlaying(false);
-    const onTimeUpdate = () => {
-      setCurrentTime(video.currentTime);
-      const dur = video.duration;
-      if (isFinite(dur) && dur > 0) {
-        setDuration(dur);
-        setIsLive(false);
-      } else {
-        setIsLive(true);
-      }
-    };
-    const onDurationChange = () => {
-      const dur = video.duration;
-      if (isFinite(dur) && dur > 0) {
-        setDuration(dur);
-        setIsLive(false);
-      }
-    };
-    const onVolumeChange = () => {
-      setVolume(video.volume);
-      setIsMuted(video.muted);
-    };
-
-    video.addEventListener('play', onPlay);
-    video.addEventListener('pause', onPause);
-    video.addEventListener('timeupdate', onTimeUpdate);
-    video.addEventListener('durationchange', onDurationChange);
-    video.addEventListener('volumechange', onVolumeChange);
-
-    return () => {
-      video.removeEventListener('play', onPlay);
-      video.removeEventListener('pause', onPause);
-      video.removeEventListener('timeupdate', onTimeUpdate);
-      video.removeEventListener('durationchange', onDurationChange);
-      video.removeEventListener('volumechange', onVolumeChange);
-    };
-  }, []);
-
-  const loadChannel = useCallback((url: string) => {
-    const video = videoRef.current;
-    if (!video) return;
-
+  // 获取电视频道直播流
+  const fetchLiveStream = async (liveId: string) => {
+    setLoading(true);
     setError(null);
-    setIsLoading(true);
-    setIsLive(true);
-    setCurrentTime(0);
-    setDuration(0);
-
-    // Clean up previous
-    if (hlsRef.current) {
-      hlsRef.current.destroy();
-      hlsRef.current = null;
-    }
-    if (loadingTimeoutRef.current) {
-      clearTimeout(loadingTimeoutRef.current);
-      loadingTimeoutRef.current = undefined;
-    }
-    video.removeAttribute('src');
-    video.load();
-
-    const proxiedUrl = getProxiedUrl(url, channel.httpUserAgent, channel.httpReferrer);
-
-    // Global loading timeout
-    let loadingResolved = false;
-    const markLoaded = () => {
-      if (loadingResolved) return;
-      loadingResolved = true;
-      if (loadingTimeoutRef.current) {
-        clearTimeout(loadingTimeoutRef.current);
-        loadingTimeoutRef.current = undefined;
+    try {
+      const res = await fetch(`/api/iptv/live?id=${liveId}`);
+      const data = await res.json();
+      if (data.success && data.embedUrl) {
+        setEmbedUrl(data.embedUrl);
+      } else {
+        setError(data.error || '该频道暂未开通或正在维护中');
       }
-      setIsLoading(false);
-    };
-    const markError = (msg: string) => {
-      if (loadingResolved) return;
-      loadingResolved = true;
-      if (loadingTimeoutRef.current) {
-        clearTimeout(loadingTimeoutRef.current);
-        loadingTimeoutRef.current = undefined;
-      }
-
-      // 如果还有备用线路，自动平滑切换至下一条线路
-      if (currentRouteIndex < routes.length - 1) {
-        console.log(`[IPTV] 线路 ${currentRouteIndex + 1} 不可用，自动切换至线路 ${currentRouteIndex + 2}...`);
-        setCurrentRouteIndex(prev => prev + 1);
-        return;
-      }
-
-      setIsLoading(false);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : '网络请求失败';
       setError(msg);
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    loadingTimeoutRef.current = setTimeout(() => {
-      markError('加载超时，请尝试其他线路或频道');
-    }, 15000); // 15 秒超时自动触发切线或报错
+  useEffect(() => {
+    if (channel?.liveId) {
+      fetchLiveStream(channel.liveId);
+    }
+  }, [channel?.id, channel?.liveId]);
 
-    if (Hls.isSupported()) {
-      const hls = new Hls(HLS_LIVE_CONFIG);
-      hlsRef.current = hls;
-
-      let triedDirect = false;
-      let triedProxy = false;
-
-      const tryDirectVideo = (directUrl: string) => {
-        if (triedDirect) {
-          markError('播放错误，请尝试其他线路或频道');
-          return;
-        }
-        triedDirect = true;
-        const vid = videoRef.current;
-        if (!vid) return;
-        vid.src = directUrl;
-        vid.addEventListener('canplay', () => {
-          markLoaded();
-          vid.play().catch(() => { });
-        }, { once: true });
-        vid.addEventListener('error', () => {
-          markError('播放错误，请尝试其他线路或频道');
-        }, { once: true });
-      };
-
-      const tryDirect = () => {
-        if (triedDirect) {
-          tryDirectVideo(url);
-          return;
-        }
-        triedDirect = true;
-        hls.destroy();
-        const hlsDirect = new Hls(HLS_LIVE_CONFIG);
-        hlsRef.current = hlsDirect;
-        hlsDirect.loadSource(url);
-        hlsDirect.attachMedia(video);
-        hlsDirect.on(Hls.Events.MANIFEST_PARSED, () => {
-          markLoaded();
-          video.play().catch(() => { });
-        });
-        hlsDirect.on(Hls.Events.ERROR, (_, data) => {
-          if (data.fatal) {
-            if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-              hlsDirect.recoverMediaError();
-            } else {
-              hlsDirect.destroy();
-              hlsRef.current = null;
-              tryDirectVideo(url);
-            }
-          }
-        });
-      };
-
-      // 优先通过代理加载（海外用户直连国内源会超时）
-      hls.loadSource(proxiedUrl);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        markLoaded();
-        video.play().catch(() => { });
-      });
-      hls.on(Hls.Events.ERROR, (_, data) => {
-        if (data.fatal) {
-          if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-            hls.recoverMediaError();
-          } else {
-            // 代理失败时回退到直连
-            tryDirect();
-          }
-        }
-      });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      // Native HLS (Safari/iOS) - 优先代理
-      video.src = proxiedUrl;
-      video.addEventListener('canplay', () => {
-        markLoaded();
-        video.play().catch(() => { });
-      }, { once: true });
-      video.addEventListener('error', () => {
-        video.src = url;
-        video.addEventListener('canplay', () => {
-          markLoaded();
-          video.play().catch(() => { });
-        }, { once: true });
-        video.addEventListener('error', () => {
-          markError('播放错误');
-        }, { once: true });
-      }, { once: true });
+  // 全屏控制
+  const toggleFullscreen = () => {
+    if (!containerRef.current) return;
+    if (!document.fullscreenElement) {
+      containerRef.current.requestFullscreen().catch(() => {});
+      setIsFullscreen(true);
     } else {
-      // Direct video fallback - 优先代理
-      video.src = proxiedUrl;
-      video.addEventListener('canplay', () => {
-        markLoaded();
-        video.play().catch(() => { });
-      }, { once: true });
-      video.addEventListener('error', () => {
-        video.src = url;
-        video.addEventListener('canplay', () => {
-          markLoaded();
-          video.play().catch(() => { });
-        }, { once: true });
-        video.addEventListener('error', () => {
-          markError('播放错误，请尝试其他频道');
-        }, { once: true });
-      }, { once: true });
+      document.exitFullscreen().catch(() => {});
+      setIsFullscreen(false);
     }
-  }, [channel.httpUserAgent, channel.httpReferrer]);
+  };
 
-  // Load on channel/route change
   useEffect(() => {
-    loadChannel(currentUrl);
-    return () => {
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
-      if (loadingTimeoutRef.current) {
-        clearTimeout(loadingTimeoutRef.current);
-        loadingTimeoutRef.current = undefined;
-      }
+    const handleFsChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
     };
-  }, [currentUrl, loadChannel]);
-
-  // Reset route index when channel changes
-  useEffect(() => {
-    setCurrentRouteIndex(0);
-    setShowAllRoutes(false);
-  }, [channel.name, channel.url]);
-
-  // Playback controls
-  const togglePlay = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    if (video.paused) video.play().catch(() => { });
-    else video.pause();
-  };
-
-  const toggleMute = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.muted = !video.muted;
-  };
-
-  const handleVolumeChange = (value: number) => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.volume = value;
-    if (value > 0 && video.muted) video.muted = false;
-  };
-
-  const progressRef = useRef<HTMLDivElement>(null);
-
-  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isLive) return;
-    const video = videoRef.current;
-    const bar = progressRef.current;
-    if (!video || !duration || !bar) return;
-    const rect = bar.getBoundingClientRect();
-    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    video.currentTime = ratio * duration;
-  };
-
-  const toggleFullscreen = async () => {
-    const video = videoRef.current;
-    const container = containerRef.current;
-    const fsElement = document.fullscreenElement || (document as any).webkitFullscreenElement;
-
-    if (fsElement) {
-      // 退出全屏
-      if (document.exitFullscreen) {
-        await document.exitFullscreen();
-      } else if ((document as any).webkitExitFullscreen) {
-        (document as any).webkitExitFullscreen();
-      }
-      return;
-    }
-
-    // 优先尝试容器全屏（桌面端）
-    if (container) {
-      if (container.requestFullscreen) {
-        try {
-          await container.requestFullscreen();
-          return;
-        } catch { /* iOS Safari 对 div 不支持，走下面 video 全屏 */ }
-      }
-      if ((container as any).webkitRequestFullscreen) {
-        try {
-          (container as any).webkitRequestFullscreen();
-          return;
-        } catch { /* fallback */ }
-      }
-    }
-
-    // iOS Safari 回退：使用 video 元素的 webkitEnterFullscreen
-    if (video && (video as any).webkitEnterFullscreen) {
-      (video as any).webkitEnterFullscreen();
-    }
-  };
-
-  // Keyboard shortcuts (matching main video player)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-
-      resetControlsTimeout();
-      const video = videoRef.current;
-      if (!video) return;
-
-      switch (e.key.toLowerCase()) {
-        case ' ':
-        case 'k':
-          e.preventDefault();
-          togglePlay();
-          break;
-        case 'f':
-          e.preventDefault();
-          toggleFullscreen();
-          break;
-        case 'm':
-          e.preventDefault();
-          toggleMute();
-          break;
-        case 'escape':
-          e.preventDefault();
-          onClose();
-          break;
-        case 'arrowright':
-        case 'l':
-          e.preventDefault();
-          if (!isLive && isFinite(video.duration)) {
-            video.currentTime = Math.min(video.duration, video.currentTime + 10);
-          }
-          break;
-        case 'arrowleft':
-        case 'j':
-          e.preventDefault();
-          if (!isLive && isFinite(video.duration)) {
-            video.currentTime = Math.max(0, video.currentTime - 10);
-          }
-          break;
-        case 'arrowup':
-          e.preventDefault();
-          video.volume = Math.min(1, video.volume + 0.1);
-          if (video.muted) video.muted = false;
-          break;
-        case 'arrowdown':
-          e.preventDefault();
-          video.volume = Math.max(0, video.volume - 0.1);
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  });
-
-  const VolumeIcon = isMuted || volume === 0 ? Icons.VolumeX : volume < 0.5 ? Icons.Volume1 : Icons.Volume2;
-
-  // Debounce search with useTransition for non-blocking rendering
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const q = sidebarSearch.toLowerCase().trim();
-      if (!q) {
-        setFilteredResults([]);
-        setSidebarVisibleCount(50);
-        return;
-      }
-      startSearchTransition(() => {
-        const results = channels.filter(ch => ch.name.toLowerCase().includes(q));
-        setFilteredResults(results);
-        setSidebarVisibleCount(50);
-      });
-    }, 200);
-    return () => clearTimeout(timer);
-  }, [sidebarSearch, channels]);
-
-  const isSearchMode = sidebarSearch.trim().length > 0;
-
-  // Toggle source expansion
-  const toggleSource = (sourceId: string) => {
-    setExpandedSources(prev => {
-      const next = new Set(prev);
-      if (next.has(sourceId)) next.delete(sourceId);
-      else next.add(sourceId);
-      return next;
-    });
-  };
-
-  // Toggle group expansion
-  const toggleGroup = (key: string) => {
-    setExpandedGroups(prev => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  };
-
-  // Render a channel button
-  const renderChannelButton = (ch: M3UChannel, i: number) => {
-    const isActive = ch.name === channel.name && ch.url === channel.url;
-    return (
-      <button
-        key={`${ch.sourceId || ''}-${ch.name}-${i}`}
-        ref={isActive ? activeChannelRef : undefined}
-        onClick={(e) => {
-          e.stopPropagation();
-          onChannelChange(ch);
-        }}
-        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer ${isActive
-          ? 'bg-[var(--accent-color)] text-white'
-          : 'text-white/70 hover:bg-white/10 hover:text-white'
-          }`}
-      >
-        <div className="flex items-center gap-2">
-          {isActive && (
-            <span className="w-1.5 h-1.5 rounded-full bg-white flex-shrink-0 animate-pulse" />
-          )}
-          <span className="truncate flex-1">{ch.name}</span>
-          {ch.routes && ch.routes.length > 1 && (
-            <span className={`text-[10px] px-1.5 py-0.5 rounded flex-shrink-0 ${isActive ? 'bg-white/20' : 'bg-white/5 text-white/40'
-              }`}>
-              {ch.routes.length}线路
-            </span>
-          )}
-        </div>
-      </button>
-    );
-  };
-
-  // Render multi-level sidebar content
-  const renderMultiLevelSidebar = () => {
-    if (!channelsBySource || !sources) return null;
-
-    return (
-      <div className="p-1">
-        {sources.map(source => {
-          const sourceData = channelsBySource[source.id];
-          if (!sourceData || sourceData.channels.length === 0) return null;
-
-          const isExpanded = expandedSources.has(source.id);
-
-          return (
-            <div key={source.id} className="mb-1">
-              {/* Source Header */}
-              <button
-                onClick={(e) => { e.stopPropagation(); toggleSource(source.id); }}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-white/90 hover:bg-white/10 transition-colors cursor-pointer"
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <Icons.TV size={14} className="flex-shrink-0 text-[var(--accent-color)]" />
-                  <span className="truncate">{source.name}</span>
-                  <span className="text-[10px] text-white/40 flex-shrink-0">{sourceData.channels.length}</span>
-                </div>
-                <Icons.ChevronDown
-                  size={14}
-                  className={`flex-shrink-0 text-white/40 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
-                />
-              </button>
-
-              {/* Source Content */}
-              {isExpanded && (
-                <div className="ml-2 border-l border-white/10 pl-1">
-                  {sourceData.groups.length > 0 ? (
-                    // Has groups — show group-level
-                    sourceData.groups.map(group => {
-                      const groupKey = `${source.id}::${group}`;
-                      const groupExpanded = expandedGroups.has(groupKey);
-                      const groupChannels = sourceData.channels.filter(ch => ch.group === group);
-
-                      return (
-                        <div key={groupKey} className="mb-0.5">
-                          <button
-                            onClick={(e) => { e.stopPropagation(); toggleGroup(groupKey); }}
-                            className="w-full flex items-center justify-between px-2 py-1.5 rounded text-xs text-white/60 hover:bg-white/5 transition-colors cursor-pointer"
-                          >
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <Icons.Tag size={12} className="flex-shrink-0" />
-                              <span className="truncate">{group}</span>
-                              <span className="text-[10px] text-white/30 flex-shrink-0">{groupChannels.length}</span>
-                            </div>
-                            <Icons.ChevronDown
-                              size={12}
-                              className={`flex-shrink-0 text-white/30 transition-transform duration-200 ${groupExpanded ? 'rotate-180' : ''}`}
-                            />
-                          </button>
-                          {groupExpanded && (
-                            <div className="ml-2">
-                              {groupChannels.map((ch, i) => renderChannelButton(ch, i))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })
-                  ) : (
-                    // No groups — show channels directly
-                    sourceData.channels.map((ch, i) => renderChannelButton(ch, i))
-                  )}
-
-                  {/* Ungrouped channels */}
-                  {sourceData.groups.length > 0 && (() => {
-                    const ungrouped = sourceData.channels.filter(ch => !ch.group);
-                    if (ungrouped.length === 0) return null;
-                    return (
-                      <div className="mb-0.5">
-                        <div className="px-2 py-1 text-[10px] text-white/30">未分组</div>
-                        {ungrouped.map((ch, i) => renderChannelButton(ch, i))}
-                      </div>
-                    );
-                  })()}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
-
-  // Render flat channel list (search results or single-source fallback)
-  const renderFlatChannelList = (channelList: M3UChannel[]) => {
-    const visible = channelList.slice(0, sidebarVisibleCount);
-    return (
-      <div className="p-1">
-        {visible.map((ch, i) => renderChannelButton(ch, i))}
-        {channelList.length > sidebarVisibleCount && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setSidebarVisibleCount(prev => prev + 50);
-            }}
-            className="w-full py-2 text-xs text-white/50 hover:text-white/80 transition-colors cursor-pointer"
-          >
-            显示更多 ({channelList.length - sidebarVisibleCount} 个频道)
-          </button>
-        )}
-      </div>
-    );
-  };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+  }, []);
 
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-[9999] bg-black flex"
-      onMouseMove={resetControlsTimeout}
-      onClick={(e) => {
-        if ((e.target as HTMLElement).closest('[data-controls]') || (e.target as HTMLElement).closest('[data-sidebar]')) return;
-        togglePlay();
-        resetControlsTimeout();
-      }}
+      className="relative w-full h-full min-h-[360px] sm:min-h-[480px] bg-black flex flex-col justify-center items-center select-none overflow-hidden"
     >
-      {/* Player Area */}
-      <div className="flex-1 relative overflow-hidden">
-        <video
-          ref={videoRef}
-          className="w-full h-full object-contain bg-black"
-          playsInline
-          autoPlay
-        />
-
-        {/* Loading */}
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50 pointer-events-none">
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-10 h-10 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              <p className="text-white/70 text-sm">加载中...</p>
-            </div>
+      {/* 播放器核心加载区 */}
+      {loading && (
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/90 backdrop-blur-md">
+          <div className="relative flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full border-4 border-white/10 border-t-red-500 animate-spin" />
+            <span className="absolute text-xs font-black text-white/80">LIVE</span>
           </div>
-        )}
+          <p className="mt-4 text-sm font-bold text-white/90">正在接入专用流媒体转播节点...</p>
+          <p className="mt-1 text-xs text-white/40">{channel.name} · 海外高速专线</p>
+        </div>
+      )}
 
-        {/* Error */}
-        {error && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/80">
-            <div className="text-center" data-controls>
-              <p className="text-red-400 text-sm mb-3">{error}</p>
-              <div className="flex gap-2 flex-wrap justify-center">
-                <button
-                  onClick={(e) => { e.stopPropagation(); loadChannel(currentUrl); }}
-                  className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-sm transition-colors cursor-pointer"
-                >
-                  重试
-                </button>
-                {routes.length > 1 && currentRouteIndex < routes.length - 1 && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setCurrentRouteIndex(prev => prev + 1); }}
-                    className="px-4 py-2 bg-blue-600/80 hover:bg-blue-600 rounded-lg text-white text-sm transition-colors cursor-pointer"
-                  >
-                    切换线路
-                  </button>
-                )}
-              </div>
-            </div>
+      {/* 错误提示区 */}
+      {error && !loading && (
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center bg-black/95">
+          <div className="p-4 rounded-full bg-red-500/10 text-red-400 mb-3 border border-red-500/20">
+            <AlertCircle size={32} />
           </div>
-        )}
-
-        {/* Top Bar */}
-        <div
-          data-controls
-          className={`absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/70 to-transparent transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {isLive && (
-                <span className="px-2 py-0.5 bg-red-600 text-white text-xs font-bold rounded flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                  LIVE
-                </span>
-              )}
-              <span className="text-white text-sm font-medium drop-shadow-lg">{channel.name}</span>
-              {routes.length > 1 && (
-                <span className="text-white/50 text-xs">线路 {currentRouteIndex + 1}/{routes.length}</span>
-              )}
-            </div>
+          <h3 className="text-base font-bold text-white mb-1">信号源暂时不可用</h3>
+          <p className="text-xs text-white/50 max-w-md mb-5">{error}</p>
+          <div className="flex gap-3">
             <button
-              onClick={(e) => { e.stopPropagation(); onClose(); }}
-              className="w-9 h-9 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/60 text-white transition-colors cursor-pointer"
+              onClick={() => fetchLiveStream(channel.liveId)}
+              className="px-5 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
             >
-              <Icons.X size={18} />
+              <RefreshCw size={13} />
+              重新连接
+            </button>
+            <button
+              onClick={() => {
+                const nextCh = channels.find((c) => c.id !== channel.id);
+                if (nextCh) onChannelChange(nextCh);
+              }}
+              className="px-5 py-2 rounded-full bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all cursor-pointer"
+            >
+              换个频道
             </button>
           </div>
         </div>
+      )}
 
-        {/* Bottom Controls */}
-        <div
-          data-controls
-          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-        >
-          {/* Progress Bar (non-live only) */}
-          {!isLive && duration > 0 && (
-            <div className="px-4 pt-2">
-              <div
-                ref={progressRef}
-                className="group h-1 hover:h-2 bg-white/20 rounded-full cursor-pointer transition-all relative"
-                onClick={(e) => { e.stopPropagation(); handleSeek(e); }}
-              >
-                <div
-                  className="h-full bg-[var(--accent-color)] rounded-full relative pointer-events-none"
-                  style={{ width: `${(currentTime / duration) * 100}%` }}
-                >
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-              </div>
-            </div>
+      {/* 实际播放 iframe 嵌入流 */}
+      {embedUrl && (
+        <iframe
+          key={embedUrl}
+          src={embedUrl}
+          className="w-full h-full border-0 absolute inset-0 z-10"
+          allow="autoplay; fullscreen; picture-in-picture"
+          sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+          title={`${channel.name} 直播`}
+        />
+      )}
+
+      {/* 顶部悬浮控制条 */}
+      <div className="absolute top-0 inset-x-0 z-30 p-3 sm:p-4 bg-linear-to-b from-black/80 via-black/30 to-transparent flex items-center justify-between opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-auto">
+        <div className="flex items-center gap-2.5">
+          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-600 text-white text-[10px] font-black tracking-wider uppercase shadow-lg shadow-red-600/30">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+            LIVE
+          </span>
+          <span className="text-sm sm:text-base font-bold text-white drop-shadow-md">
+            {channel.name}
+          </span>
+          {channel.badge && (
+            <span className="px-2 py-0.5 rounded bg-white/10 text-[10px] text-white/80 border border-white/15">
+              {channel.badge}
+            </span>
           )}
+        </div>
 
-          <div className="flex items-center gap-3 px-4 py-3">
-            {/* Play/Pause */}
-            <button
-              onClick={(e) => { e.stopPropagation(); togglePlay(); }}
-              className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/10 text-white transition-colors cursor-pointer"
-            >
-              {isPlaying ? <Icons.Pause size={20} /> : <Icons.Play size={20} />}
-            </button>
+        <div className="flex items-center gap-2">
+          {/* 切换频道侧边栏 */}
+          <button
+            onClick={() => setShowDrawer(!showDrawer)}
+            className="p-2 rounded-full bg-black/60 hover:bg-white/20 text-white/90 hover:text-white backdrop-blur-md transition-all cursor-pointer"
+            title="查看频道列表"
+          >
+            <List size={16} />
+          </button>
 
-            {/* Time Display */}
-            {!isLive && duration > 0 && (
-              <span className="text-white/70 text-xs tabular-nums">
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </span>
-            )}
+          {/* 刷新当前频道 */}
+          <button
+            onClick={() => fetchLiveStream(channel.liveId)}
+            className="p-2 rounded-full bg-black/60 hover:bg-white/20 text-white/90 hover:text-white backdrop-blur-md transition-all cursor-pointer"
+            title="刷新直播流"
+          >
+            <RefreshCw size={16} />
+          </button>
 
-            <div className="flex-1" />
-
-            {/* Route Selector - collapsed */}
-            {routes.length > 1 && (
-              <div className="flex gap-1 items-center" data-controls>
-                {visibleRoutes.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={(e) => { e.stopPropagation(); setCurrentRouteIndex(i); }}
-                    className={`px-2 py-0.5 text-[10px] rounded transition-colors cursor-pointer ${i === currentRouteIndex
-                      ? 'bg-[var(--accent-color)] text-white'
-                      : 'bg-white/10 text-white/60 hover:bg-white/20'
-                      }`}
-                  >
-                    线路{i + 1}
-                  </button>
-                ))}
-                {hasMoreRoutes && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setShowAllRoutes(!showAllRoutes); }}
-                    className="px-2 py-0.5 text-[10px] rounded bg-white/5 text-white/40 hover:bg-white/10 hover:text-white/60 transition-colors cursor-pointer"
-                  >
-                    {showAllRoutes ? '收起' : `+${routes.length - MAX_VISIBLE_ROUTES}`}
-                  </button>
-                )}
-              </div>
-            )}
-
-            {/* Volume */}
-            <div
-              className="relative flex items-center"
-              onMouseEnter={() => setShowVolumeSlider(true)}
-              onMouseLeave={() => setShowVolumeSlider(false)}
-            >
-              <button
-                onClick={(e) => { e.stopPropagation(); toggleMute(); }}
-                className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/10 text-white transition-colors cursor-pointer"
-              >
-                <VolumeIcon size={18} />
-              </button>
-              {showVolumeSlider && (
-                <div className="ml-1 w-20 flex items-center" data-controls>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.05"
-                    value={isMuted ? 0 : volume}
-                    onChange={(e) => { e.stopPropagation(); handleVolumeChange(parseFloat(e.target.value)); }}
-                    onClick={(e) => e.stopPropagation()}
-                    className="w-full h-1 accent-white cursor-pointer"
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Channel List */}
-            <button
-              onClick={(e) => { e.stopPropagation(); setShowSidebar(!showSidebar); }}
-              className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/10 text-white transition-colors cursor-pointer"
-            >
-              <Icons.List size={18} />
-            </button>
-
-            {/* Fullscreen */}
-            <button
-              onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}
-              className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/10 text-white transition-colors cursor-pointer"
-            >
-              {isFullscreen ? <Icons.Minimize size={18} /> : <Icons.Maximize size={18} />}
-            </button>
-          </div>
+          {/* 全屏按钮 */}
+          <button
+            onClick={toggleFullscreen}
+            className="p-2 rounded-full bg-black/60 hover:bg-white/20 text-white/90 hover:text-white backdrop-blur-md transition-all cursor-pointer"
+            title={isFullscreen ? '退出全屏' : '全屏播放'}
+          >
+            {isFullscreen ? <Minimize size={16} /> : <Maximize size={16} />}
+          </button>
         </div>
       </div>
 
-      {/* Sidebar */}
-      {showSidebar && (
-        <div data-sidebar className="w-72 bg-[#111] border-l border-white/10 overflow-y-auto flex-shrink-0">
-          <div className="sticky top-0 bg-[#111] z-10">
-            <div className="p-3 border-b border-white/10 flex items-center justify-between">
-              <h3 className="text-white text-sm font-medium">频道列表</h3>
-              <button
-                onClick={(e) => { e.stopPropagation(); setShowSidebar(false); }}
-                className="text-white/50 hover:text-white cursor-pointer"
-              >
-                <Icons.X size={16} />
-              </button>
-            </div>
-            <div className="px-3 py-2 border-b border-white/10">
-              <div className="relative">
-                <Icons.Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/30" />
-                <input
-                  type="text"
-                  placeholder="搜索频道..."
-                  value={sidebarSearch}
-                  onChange={(e) => setSidebarSearch(e.target.value)}
-                  onClick={(e) => e.stopPropagation()}
-                  className="w-full pl-7 pr-2 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-white/20"
-                />
-                {isSearching && (
-                  <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
-                    <div className="w-3 h-3 border border-white/30 border-t-white rounded-full animate-spin" />
-                  </div>
-                )}
-              </div>
-            </div>
+      {/* 快捷浮动选台抽屉 */}
+      {showDrawer && (
+        <div className="absolute top-0 right-0 bottom-0 z-40 w-64 bg-black/95 backdrop-blur-xl border-l border-white/10 p-4 flex flex-col animate-fade-in">
+          <div className="flex items-center justify-between pb-3 border-b border-white/10">
+            <span className="text-xs font-bold text-white/70">快速换台</span>
+            <button
+              onClick={() => setShowDrawer(false)}
+              className="p-1 text-white/40 hover:text-white cursor-pointer"
+            >
+              <X size={14} />
+            </button>
           </div>
-
-          {/* Sidebar Content */}
-          {isSearchMode ? (
-            // Search mode — flat list of filtered results
-            renderFlatChannelList(filteredResults)
-          ) : hasMultiSource ? (
-            // Multi-source mode — hierarchical list
-            renderMultiLevelSidebar()
-          ) : (
-            // Single source or fallback — flat list
-            renderFlatChannelList(channels)
-          )}
+          <div className="flex-1 overflow-y-auto py-2 space-y-1 custom-scrollbar">
+            {channels.map((ch) => {
+              const isCurrent = ch.id === channel.id;
+              return (
+                <button
+                  key={ch.id}
+                  onClick={() => {
+                    onChannelChange(ch);
+                    setShowDrawer(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
+                    isCurrent
+                      ? 'bg-red-600 text-white shadow-md'
+                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  <span className="truncate">{ch.name}</span>
+                  {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>
