@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
     if (!res.ok) {
       return NextResponse.json(
-        { success: false, error: `Upstream error: ${res.status}` },
+        { success: false, error: `上游服务响应异常: ${res.status}` },
         { status: 502 }
       );
     }
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
 
     if (!match || !match[1]) {
       return NextResponse.json(
-        { success: false, error: 'Live stream not found or requires authentication' },
+        { success: false, error: '该频道暂未开通或正在维护中' },
         { status: 404 }
       );
     }
@@ -39,7 +39,6 @@ export async function GET(req: NextRequest) {
     let playPath = match[1];
     let embedUrl = playPath.startsWith('/') ? `https://huaren.live${playPath}` : playPath;
 
-    // 返回经过认证可播放的嵌入 URL
     return NextResponse.json(
       {
         success: true,
@@ -49,11 +48,13 @@ export async function GET(req: NextRequest) {
       {
         headers: {
           'Cache-Control': 'no-store, no-cache, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
         },
       }
     );
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Internal Server Error';
+    const message = err instanceof Error ? err.message : '服务器网络波动，请稍后刷新重试';
     return NextResponse.json(
       { success: false, error: message },
       { status: 500 }
