@@ -88,7 +88,7 @@ export function IPTVPlayer({ channel, channels, onChannelChange }: IPTVPlayerPro
         />
       )}
 
-      {/* 2. 纯黑影院级加载遮罩（100% 遮挡初始化阶段的背景图与水印） */}
+      {/* 2. 纯黑影院级加载遮罩 */}
       {isOverlayVisible && !error && (
         <div
           className={`absolute inset-0 z-20 flex flex-col items-center justify-center bg-black transition-opacity duration-500 ${
@@ -104,14 +104,7 @@ export function IPTVPlayer({ channel, channels, onChannelChange }: IPTVPlayerPro
         </div>
       )}
 
-      {/* 3. 右下角专属品牌遮罩层（彻底盖住右下角第三方水印） */}
-      <div className="absolute right-3 bottom-3 z-25 pointer-events-none hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/90 backdrop-blur-md border border-white/10 shadow-2xl">
-        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-        <span className="text-[11px] font-black text-white/90 tracking-wider">iKanPP</span>
-        <span className="text-[10px] text-white/40">4K 直播</span>
-      </div>
-
-      {/* 4. 错误提示区 */}
+      {/* 3. 错误提示区 */}
       {error && !loading && (
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center p-6 text-center bg-black">
           <div className="p-4 rounded-full bg-red-500/10 text-red-400 mb-3 border border-red-500/20">
