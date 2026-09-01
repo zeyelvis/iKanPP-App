@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
         'User-Agent': USER_AGENT,
         'Referer': 'https://huaren.live/',
       },
-      next: { revalidate: 300 }, // 边缘缓存 5 分钟
+      cache: 'no-store',
     });
 
     if (!res.ok) {
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
       },
       {
         headers: {
-          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
         },
       }
     );

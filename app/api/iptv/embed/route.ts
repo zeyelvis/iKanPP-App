@@ -11,12 +11,13 @@ export async function GET(req: NextRequest) {
 
   try {
     const targetUrl = `https://huaren.live/liveplay/${liveId}-1.html`;
+    // 实时秒级抓取最新实时签名（禁止任何陈旧缓存）
     const res = await fetch(targetUrl, {
       headers: {
         'User-Agent': USER_AGENT,
         'Referer': 'https://huaren.live/',
       },
-      next: { revalidate: 300 }, // 边缘缓存 5 分钟
+      cache: 'no-store',
     });
 
     if (!res.ok) {
@@ -34,7 +35,6 @@ export async function GET(req: NextRequest) {
     if (match && match[1]) {
       streamUrl = match[1];
     } else {
-      // 备用正则提取
       const matchFallback = html.match(/https:\/\/live\.[^\/]+\/stream\/[^\s'"]+\.m3u8[^\s'"]*/);
       if (matchFallback) {
         streamUrl = matchFallback[0];
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // 生成 100% 纯净、无任何第三方水印和背景的西瓜流媒体播放器 HTML
+    // 生成工业级无卡顿、大缓冲、纯净无水印的西瓜流媒体播放器
     const playerHtml = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -71,12 +71,12 @@ export async function GET(req: NextRequest) {
             height: 100% !important;
             background: #000000 !important;
         }
-        /* 隐藏西瓜播放器所有自带的海报层背景图 */
+        /* 隐藏西瓜播放器所有自带的海报层背景图与残留 */
         .xgplayer-poster, .xgplayer .xgplayer-poster {
             background-image: none !important;
             background: #000000 !important;
         }
-        /* 纯净加载旋转动画 */
+        /* 纯净加载动画 */
         .ikan-loading {
             position: absolute;
             inset: 0;
@@ -130,16 +130,34 @@ export async function GET(req: NextRequest) {
                 id: 'ikan-live-player',
                 url: streamUrl,
                 playsinline: true,
-                poster: '', // 彻底移除任何第三方背景图
+                poster: '',
                 isLive: true,
                 autoplay: true,
-                autoplayMuted: true, // 确保各大浏览器秒开起播
+                autoplayMuted: true,
                 fluid: true,
                 volume: 1,
                 width: window.innerWidth,
                 height: window.innerHeight,
                 plugins: [HlsPlayer],
-                lang: 'zh-cn'
+                lang: 'zh-cn',
+                // HLS 流媒体低延迟抗卡顿大缓冲池配置
+                hls: {
+                    targetLatency: 4,
+                    maxLiveSyncPlaybackRate: 1.1,
+                    enableWorker: true,
+                    lowLatencyMode: true,
+                    backBufferLength: 30,
+                    maxBufferLength: 30,
+                    maxMaxBufferLength: 60,
+                    maxBufferSize: 60 * 1000 * 1000,
+                    maxBufferHole: 0.5,
+                    highBufferWatchdogPeriod: 2,
+                    nudgeOffset: 0.2,
+                    nudgeMaxRetry: 5,
+                    maxFragLookUpTolerance: 0.25,
+                    liveSyncDurationCount: 3,
+                    liveMaxLatencyDurationCount: 8
+                }
             };
 
             var player = new Player(config);
@@ -159,16 +177,28 @@ export async function GET(req: NextRequest) {
             player.on('canplay', hideLoading);
             player.on('loadeddata', hideLoading);
 
-            // 自动容错重连
-            var retryCount = 0;
+            // 智能自动恢复与平滑重连
+            var reconnectTimer = null;
             player.on('error', function(e) {
-                if (retryCount < 6) {
-                    retryCount++;
-                    setTimeout(function() {
-                        player.src = streamUrl;
-                        player.reload();
-                    }, 3000);
-                }
+                console.warn('Playback network jitter, auto reconnecting...', e);
+                clearTimeout(reconnectTimer);
+                reconnectTimer = setTimeout(function() {
+                    player.src = streamUrl;
+                    player.reload();
+                }, 2000);
+            });
+
+            player.on('waiting', function() {
+                // 如果缓冲停滞超过 5 秒，自动微调推进播放进度
+                clearTimeout(reconnectTimer);
+                reconnectTimer = setTimeout(function() {
+                    if (player.video && !player.video.paused && player.video.buffered.length > 0) {
+                        var end = player.video.buffered.end(player.video.buffered.length - 1);
+                        if (end - player.video.currentTime > 2) {
+                            player.video.currentTime = end - 1;
+                        }
+                    }
+                }, 4000);
             });
         });
     </script>
@@ -178,7 +208,9 @@ export async function GET(req: NextRequest) {
     return new NextResponse(playerHtml, {
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
       },
     });
   } catch (err: unknown) {
