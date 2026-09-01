@@ -25,9 +25,6 @@ import { RelatedKeywords } from '@/components/search/RelatedKeywords';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 import { normalizeVideoType } from '@/lib/utils/taxonomy';
 import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
-import { useUserStore } from '@/lib/store/user-store';
-import { VipPrompt } from '@/components/premium/VipPrompt';
-import { AuthModal } from '@/components/auth/AuthModal';
 import { Crown, Lock, Sparkles } from 'lucide-react';
 
 function PlayerContent() {
@@ -45,12 +42,6 @@ function PlayerContent() {
   // 消歧义参数：从首页传入的内容类型和年份
   const expectedType = searchParams.get('type'); // 'movie' | 'tv' | null
   const expectedYear = searchParams.get('year'); // e.g. '2025' | null
-  // 用户状态与 VIP 权限检查
-  const { user } = useUserStore();
-  const isVip = user?.isVip ?? false;
-  const [showVipModal, setShowVipModal] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-
   // 底部同类推荐片单状态
   const [relatedMovies, setRelatedMovies] = useState<RailMovie[]>([]);
   const [loadingRelated, setLoadingRelated] = useState(true);
@@ -791,29 +782,6 @@ function PlayerContent() {
       {/* Favorites Sidebar - Left */}
       <FavoritesSidebar isPremium={isPremium} />
 
-      {/* VIP 尊享激活弹窗 */}
-      {showVipModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in">
-          <div className="w-full max-w-4xl relative">
-            <VipPrompt
-              asModal={true}
-              onClose={() => setShowVipModal(false)}
-              onOpenLogin={() => {
-                setShowVipModal(false);
-                setShowLoginModal(true);
-              }}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* 登录/注册弹窗 */}
-      {showLoginModal && (
-        <AuthModal
-          isOpen={showLoginModal}
-          onClose={() => setShowLoginModal(false)}
-        />
-      )}
     </div>
   );
 }

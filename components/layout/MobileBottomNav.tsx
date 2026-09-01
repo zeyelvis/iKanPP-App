@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Home, Film, Tv, Flame, Trophy, User } from 'lucide-react';
-import { useUserStore } from '@/lib/store/user-store';
+import { Home, Film, Tv, Flame, Sparkles, Trophy } from 'lucide-react';
 
 interface NavItem {
   id: string;
@@ -18,14 +17,13 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'movie', label: '电影', href: '/movie', icon: Film },
   { id: 'tv', label: '电视剧', href: '/tv', icon: Tv },
   { id: 'guoman', label: '国漫', href: '/guoman', icon: Flame },
+  { id: 'anime', label: '动漫', href: '/anime', icon: Sparkles },
   { id: 'ranking', label: '风云榜', href: '/ranking', icon: Trophy },
-  { id: 'profile', label: '我的', href: '/profile', icon: User },
 ];
 
 export function MobileBottomNav() {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
-  const { user } = useUserStore();
 
   useEffect(() => {
     setMounted(true);
@@ -71,10 +69,6 @@ export function MobileBottomNav() {
                     isActive ? 'scale-110 stroke-[2.5]' : 'stroke-2'
                   }`}
                 />
-                {/* 如果是个人中心且未登录，小红点提示 */}
-                {item.id === 'profile' && user?.isVip && (
-                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-black" />
-                )}
               </div>
 
               {/* 标题 */}

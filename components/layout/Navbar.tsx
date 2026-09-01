@@ -1,20 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { Icons } from '@/components/ui/Icon';
-import { siteConfig } from '@/lib/config/site-config';
 import { LogoIcon } from '@/components/ui/LogoIcon';
-import { getSession, clearSession, hasPermission, type AuthSession } from '@/lib/store/auth-store';
-import { LogOut, User, Crown, Share2, Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { SearchBox } from '@/components/search/SearchBox';
 import { MobileSearchOverlay } from '@/components/search/MobileSearchOverlay';
-import { Button } from '@/components/ui/Button';
-import { AuthModal } from '@/components/auth/AuthModal';
-import { useUserStore } from '@/lib/store/user-store';
-import { useSessionGuard } from '@/lib/hooks/useSessionGuard';
 
 interface NavbarProps {
   variant?: 'home' | 'player';
@@ -41,18 +34,11 @@ export function Navbar({
 }: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const settingsHref = '/profile?tab=player';
   const homeHref = isPremiumMode ? '/premium' : '/';
-  const [session, setSessionState] = useState<AuthSession | null>(null);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [kickedMessage, setKickedMessage] = useState('');
-  const { user: supabaseUser, initialize: initUser, logout: supabaseLogout } = useUserStore();
-
-  useSessionGuard();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -61,36 +47,6 @@ export function Navbar({
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    const handler = (e: Event) => {
-      const detail = (e as CustomEvent).detail;
-      setKickedMessage(detail?.message || '你的账号已在其他设备登录');
-    };
-    window.addEventListener('session-kicked', handler);
-    return () => window.removeEventListener('session-kicked', handler);
-  }, []);
-
-  useEffect(() => {
-    const updateAuthState = () => {
-      setSessionState(getSession());
-      initUser();
-    };
-
-    updateAuthState();
-
-    window.addEventListener('auth-changed', updateAuthState);
-    window.addEventListener('storage', updateAuthState);
-    return () => {
-      window.removeEventListener('auth-changed', updateAuthState);
-      window.removeEventListener('storage', updateAuthState);
-    };
-  }, [initUser]);
-
-  const handleLogout = () => {
-    supabaseLogout();
-    clearSession();
-  };
 
   const handleSearch = (query: string) => {
     onSearch?.(query);
@@ -112,7 +68,7 @@ export function Navbar({
     { id: 'variety', label: '综艺', href: '/variety' },
     { id: 'ranking', label: '风云榜', href: '/ranking' },
     { id: 'iptv', label: '电视直播', href: '/iptv' },
-    { id: 'premium', label: '午夜版', href: '/premium', isVip: true },
+    { id: 'premium', label: '午夜版', href: '/premium' },
   ];
 
   return (
@@ -154,15 +110,15 @@ export function Navbar({
                   iKanPP
                 </span>
                 <span className="text-[9px] text-white/50 tracking-widest font-semibold hidden md:inline -mt-1">
-                  爱看片片 · 流媒体
+                  爱看片片 · 全免流媒体
                 </span>
               </div>
             </Link>
           )}
 
-          {/* 桌面端：流媒体分类导航菜单 */}
+          {/* 桌面端顶级频道横排导航 */}
           {!isPlayer && (
-            <div className="hidden lg:flex items-center gap-1">
+            <div className="hidden lg:flex items-center gap-1 xl:gap-2">
               {navCategories.map(cat => {
                 const isActive = pathname === cat.href || (cat.href === '/' && pathname === '') || activeCategory === cat.id;
 
@@ -170,16 +126,13 @@ export function Navbar({
                   <Link
                     key={cat.id}
                     href={cat.href}
-                    className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center gap-1 ${
-                      cat.isVip
-                        ? 'text-amber-400 bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30'
-                        : isActive
-                        ? 'text-white bg-(--accent-color) font-bold shadow-lg shadow-(--accent-color)/30 scale-105'
+                    className={`px-3.5 py-1.5 rounded-full text-xs xl:text-sm font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                      isActive
+                        ? 'bg-(--accent-color) text-white shadow-lg shadow-(--accent-color)/25 scale-105'
                         : 'text-white/70 hover:text-white hover:bg-white/10'
                     }`}
                   >
-                    {cat.isVip && <Crown size={12} className="text-amber-400" />}
-                    {cat.label}
+                    <span>{cat.label}</span>
                   </Link>
                 );
               })}
@@ -187,85 +140,32 @@ export function Navbar({
           )}
         </div>
 
-        {/* 播放页：返回按钮 */}
-        {isPlayer && (
-          <Button
-            variant="secondary"
-            onClick={() => router.back()}
-            className="flex items-center gap-2 bg-white/10 text-white border-white/15 hover:bg-white/20"
-          >
-            <Icons.ChevronLeft size={20} />
-            <span>返回上一页</span>
-          </Button>
-        )}
+        {/* 右侧：全网搜索框 + 移动端菜单展开 */}
+        <div className="flex items-center gap-3 shrink-0">
+          {/* 桌面端展开式搜索栏 */}
+          {onSearch && !isPlayer && (
+            <div className="hidden sm:block">
+              <SearchBox
+                onSearch={handleSearch}
+                onClear={handleClear}
+                initialQuery={initialQuery}
+                isPremium={isPremiumMode}
+              />
+            </div>
+          )}
 
-        {/* 右侧：搜索展开器 + 用户状态 + 快捷功能 */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* 桌面端极简展开式搜索框 */}
-          {!isPlayer && onSearch && (
-            <div className="relative flex items-center">
-              <div className="hidden sm:block w-64 md:w-80 transition-all duration-300">
-                <SearchBox
-                  onSearch={handleSearch}
-                  onClear={handleClear}
-                  initialQuery={initialQuery}
-                />
-              </div>
-
-              {/* 移动端搜索按钮 */}
+          {/* 移动端搜索放大镜触发按钮 */}
+          {onSearch && !isPlayer && (
+            <div className="sm:hidden">
               <button
                 onClick={() => setMobileSearchOpen(true)}
-                className="flex sm:hidden w-9 h-9 items-center justify-center rounded-full bg-white/10 border border-white/15 text-white hover:bg-white/20 transition-all cursor-pointer shadow-md"
+                className="p-2 rounded-full text-white/80 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
                 aria-label="打开搜索"
               >
-                <Icons.Search size={16} />
+                <Icons.Search size={18} />
               </button>
             </div>
           )}
-
-          {/* 用户与 VIP 入口 */}
-          {!isPlayer && (supabaseUser || session) && (
-            <div className="flex items-center gap-2">
-              <Link
-                href="/profile"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 border border-white/15 rounded-full text-xs hover:bg-white/20 transition-all cursor-pointer"
-                title="个人中心"
-              >
-                <div className="w-5 h-5 rounded-full bg-(--accent-color) flex items-center justify-center text-white font-black text-[10px]">
-                  {(supabaseUser?.email || session?.name || 'U').charAt(0).toUpperCase()}
-                </div>
-                <span className="text-white max-w-24 truncate hidden md:inline font-medium">
-                  {supabaseUser?.email ? supabaseUser.email.split('@')[0] : (session?.name || 'VIP会员')}
-                </span>
-                {(supabaseUser?.isVip || session?.role === 'super_admin' || session?.role === 'admin') && (
-                  <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-amber-500 text-black rounded-full text-[10px] font-black shadow-sm">
-                    <Crown size={10} />
-                    {session?.role === 'super_admin' ? '管理' : 'VIP'}
-                  </span>
-                )}
-              </Link>
-            </div>
-          )}
-
-          {!isPlayer && !supabaseUser && !session && (
-            <button
-              onClick={() => setAuthModalOpen(true)}
-              className="flex items-center gap-1.5 px-4 py-1.5 bg-(--accent-color) text-white rounded-full text-xs sm:text-sm font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer shadow-lg shadow-(--accent-color)/25"
-            >
-              <User size={14} />
-              登录
-            </button>
-          )}
-
-          {/* 设置 */}
-          <Link
-            href="/settings"
-            className="p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors"
-            title="设置"
-            aria-label="设置"
-          >
-            <Icons.Settings size={18} />
-          </Link>
 
           {/* 移动端汉堡菜单按钮 */}
           {!isPlayer && (
@@ -284,8 +184,8 @@ export function Navbar({
       {mobileMenuOpen && !isPlayer && (
         <div className="lg:hidden bg-[#0A0A0F]/98 backdrop-blur-3xl border-b border-white/10 px-4 pt-3 pb-5 animate-fade-in shadow-2xl">
           <div className="flex items-center justify-between mb-3 px-1">
-            <span className="text-xs font-bold text-white/50 tracking-wider">频道与专区直通</span>
-            <span className="text-[10px] text-white/30">点击切换频道</span>
+            <span className="text-xs font-bold text-white/50 tracking-wider">频道直通</span>
+            <span className="text-[10px] text-white/30">100% 永久免费播放</span>
           </div>
           <div className="grid grid-cols-3 gap-2">
             {navCategories.map(cat => {
@@ -299,9 +199,7 @@ export function Navbar({
                     router.push(cat.href);
                   }}
                   className={`py-3 px-2 rounded-2xl text-xs font-bold transition-all cursor-pointer flex flex-col items-center justify-center gap-1 active:scale-95 ${
-                    cat.isVip
-                      ? 'bg-amber-400/10 text-amber-400 border border-amber-400/30'
-                      : isActive
+                    isActive
                       ? 'bg-(--accent-color) text-white shadow-lg shadow-(--accent-color)/30 font-black'
                       : 'bg-white/5 text-white/80 hover:bg-white/10 border border-white/5'
                   }`}
@@ -315,7 +213,7 @@ export function Navbar({
                     {cat.id === 'variety' && '🎤'}
                     {cat.id === 'ranking' && '🏆'}
                     {cat.id === 'iptv' && '📡'}
-                    {cat.id === 'premium' && '👑'}
+                    {cat.id === 'premium' && '🌙'}
                   </span>
                   <span>{cat.label}</span>
                 </button>
@@ -334,8 +232,6 @@ export function Navbar({
           initialQuery={initialQuery}
         />
       )}
-
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </nav>
   );
 }

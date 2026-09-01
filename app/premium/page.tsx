@@ -9,9 +9,6 @@ import { SearchResults } from '@/components/home/SearchResults';
 import { usePremiumHomePage } from '@/lib/hooks/usePremiumHomePage';
 import { PremiumContent } from '@/components/premium/PremiumContent';
 import { FavoritesSidebar } from '@/components/favorites/FavoritesSidebar';
-import { VipPrompt } from '@/components/premium/VipPrompt';
-import { AuthModal } from '@/components/auth/AuthModal';
-import { useUserStore } from '@/lib/store/user-store';
 import { useBossKey } from '@/lib/hooks/useBossKey';
 import { Crown, Sparkles, Zap, ShieldCheck, EyeOff } from 'lucide-react';
 
@@ -29,24 +26,6 @@ function PremiumHomePage() {
         handleSearch,
         handleReset,
     } = usePremiumHomePage();
-
-    const { user, initialize } = useUserStore();
-    const [showVipModal, setShowVipModal] = useState(false);
-    const [showLoginModal, setShowLoginModal] = useState(false);
-
-    // 确保用户状态已初始化
-    useEffect(() => {
-        initialize();
-    }, [initialize]);
-
-    // 监听全局 open-vip-modal 事件（方便子组件任意触发）
-    useEffect(() => {
-        const handleOpenVip = () => setShowVipModal(true);
-        window.addEventListener('open-vip-modal', handleOpenVip);
-        return () => window.removeEventListener('open-vip-modal', handleOpenVip);
-    }, []);
-
-    const isVip = user?.isVip ?? false;
 
     // 当用户点击播放任何视频时的处理（全站全面免费：0ms 直达秒播）
     const handlePlayVideo = (video: any) => {
@@ -126,29 +105,6 @@ function PremiumHomePage() {
                 <kbd className="hidden sm:inline-block px-1.5 py-0.2 rounded bg-white/10 text-[10px] font-mono text-white/60">Esc</kbd>
             </button>
 
-            {/* VIP 尊享激活弹窗 */}
-            {showVipModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in">
-                    <div className="w-full max-w-4xl relative">
-                        <VipPrompt
-                            asModal={true}
-                            onClose={() => setShowVipModal(false)}
-                            onOpenLogin={() => {
-                                setShowVipModal(false);
-                                setShowLoginModal(true);
-                            }}
-                        />
-                    </div>
-                </div>
-            )}
-
-            {/* 登录/注册弹窗 */}
-            {showLoginModal && (
-                <AuthModal
-                    isOpen={showLoginModal}
-                    onClose={() => setShowLoginModal(false)}
-                />
-            )}
         </div>
     );
 }

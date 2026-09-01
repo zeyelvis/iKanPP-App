@@ -13,10 +13,6 @@ import { PlatformFeaturesStrip } from './PlatformFeaturesStrip';
 import { PersonalizedForYouRail } from './PersonalizedForYouRail';
 import { ExploreHubFooterBanner } from './ExploreHubFooterBanner';
 import { useRankingData } from './hooks/useRankingData';
-import { useUserStore } from '@/lib/store/user-store';
-import { VipPrompt } from '@/components/premium/VipPrompt';
-import { AuthModal } from '@/components/auth/AuthModal';
-
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 
 interface PopularFeaturesProps {
@@ -48,9 +44,6 @@ function setLocalShelves(type: 'movie' | 'tv', data: { s1: any[]; s2: any[]; s3:
 
 export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   const router = useRouter();
-  const { user } = useUserStore();
-  const [showVipPrompt, setShowVipPrompt] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
   const [contentType, setContentType] = useState<'movie' | 'tv'>('movie');
 
   // 排行榜数据（用于 TOP 10 Rail）
@@ -248,29 +241,6 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
 
       {/* 13. 🧭 全库多维分类检索大厅导航卡片 */}
       <ExploreHubFooterBanner />
-
-      {/* VIP 弹窗 */}
-      {showVipPrompt && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-9999 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowVipPrompt(false)} />
-          <div className="relative z-10 w-[90vw] max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-fade-in border border-white/10">
-            <VipPrompt
-              asModal
-              onClose={() => setShowVipPrompt(false)}
-              onOpenLogin={() => {
-                setShowVipPrompt(false);
-                setShowLogin(true);
-              }}
-            />
-          </div>
-        </div>,
-        document.body
-      )}
-
-      {/* 登录弹窗 */}
-      {showLogin && (
-        <AuthModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
-      )}
     </div>
   );
 }
