@@ -18,50 +18,75 @@ export function useProgressControls({
     isRotated = false
 }: UseProgressControlsProps) {
     const lastDragTimeRef = useRef<number>(0);
+    const wasPlayingBeforeDragRef = useRef<boolean>(false);
 
     const getEventPos = useCallback((e: any, rect: DOMRect) => {
         // Handle both mouse and touch events
-        const clientX = e.clientX || (e.touches && e.touches[0]?.clientX) || 0;
-        const clientY = e.clientY || (e.touches && e.touches[0]?.clientY) || 0;
+        const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+        const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
 
         if (isRotated) {
-            // When rotated 90deg, visual left->right is physical top->bottom
-            // The bounding rect height is the visual width of the bar
             return Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
         } else {
             return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
         }
     }, [isRotated]);
 
+    // 独立精准跳转（用于纯点击进度条）
     const handleProgressClick = useCallback((e: any) => {
-        if (!videoRef.current || !progressBarRef.current) return;
+        if (!videoRef.current || !progressBarRef.current || !duration) return;
         const rect = progressBarRef.current.getBoundingClientRect();
         const pos = getEventPos(e, rect);
-        const newTime = pos * duration;
-        videoRef.current.currentTime = newTime;
-        lastDragTimeRef.current = newTime; // Update ref to prevent snap-back on mouseup
+        const newTime = Math.max(0, Math.min(pos * duration, duration));
+        
+        try {
+            videoRef.current.currentTime = newTime;
+        } catch (err) {
+            console.warn('[Progress] seek error:', err);
+        }
+        lastDragTimeRef.current = newTime;
         setCurrentTime(newTime);
     }, [videoRef, progressBarRef, duration, setCurrentTime, getEventPos]);
 
+    // PC 鼠标按下
     const handleProgressMouseDown = useCallback((e: any) => {
         e.preventDefault();
         isDraggingProgressRef.current = true;
-        handleProgressClick(e);
-    }, [isDraggingProgressRef, handleProgressClick]);
+        if (videoRef.current) {
+            wasPlayingBeforeDragRef.current = !videoRef.current.paused;
+        }
+        if (progressBarRef.current && duration) {
+            const rect = progressBarRef.current.getBoundingClientRect();
+            const pos = getEventPos(e, rect);
+            const newTime = Math.max(0, Math.min(pos * duration, duration));
+            lastDragTimeRef.current = newTime;
+            setCurrentTime(newTime);
+        }
+    }, [isDraggingProgressRef, progressBarRef, duration, getEventPos, setCurrentTime, videoRef]);
 
+    // 移动端手指触碰：仅更新 UI 视觉指示，绝不过早向底层 video 发起 seek，避免连续两次 seek 击溃解码器
     const handleProgressTouchStart = useCallback((e: any) => {
-        e.preventDefault();
+        if (e.cancelable) e.preventDefault();
         isDraggingProgressRef.current = true;
-        handleProgressClick(e);
-    }, [isDraggingProgressRef, handleProgressClick]);
+        if (videoRef.current) {
+            wasPlayingBeforeDragRef.current = !videoRef.current.paused;
+        }
+        if (progressBarRef.current && duration) {
+            const rect = progressBarRef.current.getBoundingClientRect();
+            const pos = getEventPos(e, rect);
+            const newTime = Math.max(0, Math.min(pos * duration, duration));
+            lastDragTimeRef.current = newTime;
+            setCurrentTime(newTime);
+        }
+    }, [isDraggingProgressRef, progressBarRef, duration, getEventPos, setCurrentTime, videoRef]);
 
     useEffect(() => {
         const handleProgressMouseMove = (e: MouseEvent) => {
-            if (!isDraggingProgressRef.current || !progressBarRef.current || !videoRef.current) return;
+            if (!isDraggingProgressRef.current || !progressBarRef.current || !duration) return;
             e.preventDefault();
             const rect = progressBarRef.current.getBoundingClientRect();
             const pos = getEventPos(e, rect);
-            const newTime = pos * duration;
+            const newTime = Math.max(0, Math.min(pos * duration, duration));
             lastDragTimeRef.current = newTime;
             setCurrentTime(newTime);
         };
@@ -69,19 +94,27 @@ export function useProgressControls({
         const handleMouseUp = () => {
             if (isDraggingProgressRef.current) {
                 isDraggingProgressRef.current = false;
-                if (videoRef.current) {
-                    videoRef.current.currentTime = lastDragTimeRef.current;
+                if (videoRef.current && duration) {
+                    const targetTime = Math.max(0, Math.min(lastDragTimeRef.current, duration));
+                    try {
+                        videoRef.current.currentTime = targetTime;
+                        if (wasPlayingBeforeDragRef.current && videoRef.current.paused) {
+                            videoRef.current.play().catch(() => {});
+                        }
+                    } catch (err) {
+                        console.warn('[Progress] seek on mouseup error:', err);
+                    }
                 }
             }
         };
 
         const handleProgressTouchMove = (e: TouchEvent) => {
-            if (!isDraggingProgressRef.current || !progressBarRef.current || !videoRef.current) return;
+            if (!isDraggingProgressRef.current || !progressBarRef.current || !duration) return;
             if (e.cancelable) e.preventDefault();
 
             const rect = progressBarRef.current.getBoundingClientRect();
             const pos = getEventPos(e, rect);
-            const newTime = pos * duration;
+            const newTime = Math.max(0, Math.min(pos * duration, duration));
             lastDragTimeRef.current = newTime;
             setCurrentTime(newTime);
         };
@@ -89,8 +122,17 @@ export function useProgressControls({
         const handleTouchEnd = () => {
             if (isDraggingProgressRef.current) {
                 isDraggingProgressRef.current = false;
-                if (videoRef.current) {
-                    videoRef.current.currentTime = lastDragTimeRef.current;
+                if (videoRef.current && duration) {
+                    const targetTime = Math.max(0, Math.min(lastDragTimeRef.current, duration));
+                    try {
+                        videoRef.current.currentTime = targetTime;
+                        // 移动端关键恢复：如果之前处于播放状态，seek 完毕后确保唤醒播放
+                        if (wasPlayingBeforeDragRef.current && videoRef.current.paused) {
+                            videoRef.current.play().catch(() => {});
+                        }
+                    } catch (err) {
+                        console.warn('[Progress] seek on touchend error:', err);
+                    }
                 }
             }
         };
@@ -109,28 +151,6 @@ export function useProgressControls({
             document.removeEventListener('touchcancel', handleTouchEnd);
         };
     }, [duration, isDraggingProgressRef, progressBarRef, videoRef, setCurrentTime, getEventPos]);
-
-    // Attach touchstart with passive: false to allow preventDefault (React uses passive by default)
-    useEffect(() => {
-        const progressBar = progressBarRef.current;
-        if (!progressBar) return;
-
-        const handleNativeTouchStart = (e: TouchEvent) => {
-            e.preventDefault();
-            isDraggingProgressRef.current = true;
-            if (!videoRef.current) return;
-            const rect = progressBar.getBoundingClientRect();
-            const pos = getEventPos(e, rect);
-            const newTime = pos * duration;
-            lastDragTimeRef.current = newTime;
-            setCurrentTime(newTime);
-        };
-
-        progressBar.addEventListener('touchstart', handleNativeTouchStart, { passive: false });
-        return () => {
-            progressBar.removeEventListener('touchstart', handleNativeTouchStart);
-        };
-    }, [progressBarRef, videoRef, isDraggingProgressRef, duration, setCurrentTime, getEventPos]);
 
     const progressActions = useMemo(() => ({
         handleProgressClick,

@@ -71,24 +71,31 @@ export function useHlsPlayer({
                 }
             }
 
-            if (!isNativeHlsSupported || isAdFilterEnabled) {
+            if (!isNativeHlsSupported || (isAdFilterEnabled && !isPremium)) {
                 // If ad filtering is on, we force Hls.js even on native-supported desktop browsers
                 // Exceptions might exist for iOS where MSE is strictly not available, check Hls.isSupported() result carefully.
                 // Hls.isSupported() is false on iOS Safari usually, so this block won't run there.
+
+                const isMobileClient = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
                 const config: any = {
                     // Worker & Performance
                     enableWorker: true,
                     lowLatencyMode: false,
 
-                    // Buffer Settings
-                    maxBufferLength: 120,
-                    maxMaxBufferLength: 240,
-                    maxBufferSize: 120 * 1000 * 1000,
+                    // 移动端极速 Seek 与内存防护体系（避免手机浏览器 SourceBuffer 内存溢出卡死）
+                    maxBufferLength: isMobileClient ? 30 : 60,
+                    maxMaxBufferLength: isMobileClient ? 60 : 120,
+                    maxBufferSize: isMobileClient ? 30 * 1000 * 1000 : 60 * 1000 * 1000,
                     maxBufferHole: 0.5,
 
                     // Start with more buffer
                     startFragPrefetch: true,
+
+                    // 针对 Seek 关键帧停滞的智能微调救活机制（原站极其流畅的关键）
+                    nudgeOffset: 0.1,
+                    nudgeMaxRetry: 5,
+                    maxFragLookUpTolerance: 0.25,
 
                     // ABR Settings
                     abrEwmaDefaultEstimate: 500000,
@@ -100,23 +107,23 @@ export function useHlsPlayer({
                     abrBandWidthUpFactor: 0.7,
 
                     // Loading Settings
-                    fragLoadingMaxRetry: 6,
-                    fragLoadingRetryDelay: 1000,
-                    fragLoadingMaxRetryTimeout: 64000,
+                    fragLoadingMaxRetry: 4,
+                    fragLoadingRetryDelay: 800,
+                    fragLoadingMaxRetryTimeout: 32000,
                     manifestLoadingMaxRetry: 4,
-                    manifestLoadingRetryDelay: 1000,
-                    manifestLoadingMaxRetryTimeout: 64000,
+                    manifestLoadingRetryDelay: 800,
+                    manifestLoadingMaxRetryTimeout: 32000,
                     levelLoadingMaxRetry: 4,
-                    levelLoadingRetryDelay: 1000,
-                    levelLoadingMaxRetryTimeout: 64000,
+                    levelLoadingRetryDelay: 800,
+                    levelLoadingMaxRetryTimeout: 32000,
 
-                    // Timeouts
-                    fragLoadingTimeOut: 20000,
-                    manifestLoadingTimeOut: 10000,
-                    levelLoadingTimeOut: 10000,
+                    // Timeouts（从 20s 优化到 10s，拉取失败快速重连不卡死）
+                    fragLoadingTimeOut: 10000,
+                    manifestLoadingTimeOut: 8000,
+                    levelLoadingTimeOut: 8000,
 
-                    // Backbuffer
-                    backBufferLength: 90,
+                    // Backbuffer（移动端只留 10s 后向缓冲，seek 时闪电清理内存，杜绝 QuotaExceededError）
+                    backBufferLength: isMobileClient ? 10 : 30,
                 };
 
                 // Use custom loader if ad filtering is enabled
@@ -220,7 +227,7 @@ export function useHlsPlayer({
             // If the ad discontinuity is in the master playlist (rare for ads, common for periods), it works.
             // If it's in sub-playlists, it might fail unless we parse and blob those too (complex).
 
-            if (isAdFilterEnabled) {
+            if (isAdFilterEnabled && !isPremium) {
                 const fetchWithFallback = async (url: string): Promise<string> => {
                     try {
                         const res = await fetch(url);

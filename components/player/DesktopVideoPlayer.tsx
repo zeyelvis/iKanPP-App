@@ -395,6 +395,13 @@ export function DesktopVideoPlayer({
             onError={handleVideoError}
             onWaiting={() => setIsLoading(true)}
             onCanPlay={() => setIsLoading(false)}
+            onSeeking={() => setIsLoading(true)}
+            onSeeked={() => {
+              setIsLoading(false);
+              if (isPlaying && videoRef.current && videoRef.current.paused) {
+                videoRef.current.play().catch(() => {});
+              }
+            }}
             onClick={!isMobile ? () => {
               togglePlay();
             } : undefined}
