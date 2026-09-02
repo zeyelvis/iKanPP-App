@@ -32,3 +32,8 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy .vercel/output/static --project-name=ikanpp --branch=main
+
+      - name: Auto-submit URLs to Search Engines (IndexNow)
+        run: |
+          echo "🚀 触发全自动搜索引擎即时收录广播..."
+          node scripts/push-indexnow.mjs || true
