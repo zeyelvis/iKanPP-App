@@ -4,6 +4,7 @@ import { useHistory } from '@/lib/store/history-store';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Icons } from '@/components/ui/Icon';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 
 export function ContinueWatchingRail() {
   const router = useRouter();
@@ -44,9 +45,7 @@ export function ContinueWatchingRail() {
             ? Math.min(100, Math.round((item.playbackPosition / item.duration) * 100))
             : 0;
 
-          const proxiedPoster = item.poster?.startsWith('http')
-            ? `/api/img-proxy?url=${encodeURIComponent(item.poster)}`
-            : item.poster || '/placeholder-poster.svg';
+          const proxiedPoster = getOptimizedImageUrl(item.poster);
 
           return (
             <div

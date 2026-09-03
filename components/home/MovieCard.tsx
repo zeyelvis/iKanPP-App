@@ -8,6 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Icons } from '@/components/ui/Icon';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 
 interface DoubanMovie {
   id: string;
@@ -29,10 +30,8 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
   const [fallbackError, setFallbackError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // 外部图片走代理（绕过防盗链 + 长效缓存）
-  const proxiedCover = movie.cover?.startsWith('http')
-    ? `/api/img-proxy?url=${encodeURIComponent(movie.cover)}`
-    : movie.cover;
+  // 智能图片直连加速（TMDB 直接高速直连，豆瓣按需走防盗链代理）
+  const proxiedCover = getOptimizedImageUrl(movie.cover);
 
   return (
     <Link

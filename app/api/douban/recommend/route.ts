@@ -28,7 +28,7 @@ async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number,
         'Referer': 'https://movie.douban.com/',
         'Accept': 'application/json, text/plain, */*',
       },
-      signal: AbortSignal.timeout(2500), // 2.5s 严格超时熔断，坚决杜绝 10s 长时间卡死
+      signal: AbortSignal.timeout(750), // 750ms 闪电熔断，避免海外边缘节点因豆瓣网络延迟阻塞首屏
       next: { revalidate: 86400 }, // 24 小时强效边缘缓存
     });
 

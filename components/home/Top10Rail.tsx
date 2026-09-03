@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Icons } from '@/components/ui/Icon';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 
 interface Top10Movie {
   id: string;
@@ -112,9 +113,7 @@ export function Top10Rail({
           ))
         ) : top10List.length > 0 ? (
           top10List.map((movie, idx) => {
-            const proxiedCover = movie.cover?.startsWith('http')
-              ? `/api/img-proxy?url=${encodeURIComponent(movie.cover)}`
-              : movie.cover;
+            const proxiedCover = getOptimizedImageUrl(movie.cover);
 
             return (
               <div

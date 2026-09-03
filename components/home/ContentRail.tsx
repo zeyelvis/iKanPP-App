@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Icons } from '@/components/ui/Icon';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 
 export interface RailMovie {
   id: string;
@@ -129,9 +130,7 @@ export function ContentRail({
           ))
         ) : movies.length > 0 ? (
           movies.map((movie, idx) => {
-            const proxiedCover = movie.cover?.startsWith('http')
-              ? `/api/img-proxy?url=${encodeURIComponent(movie.cover)}`
-              : movie.cover;
+            const proxiedCover = getOptimizedImageUrl(movie.cover);
 
             return (
               <div

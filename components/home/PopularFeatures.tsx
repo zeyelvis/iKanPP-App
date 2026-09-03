@@ -75,10 +75,9 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       setShelf2Movies(cache.s2);
       setShelf3Movies(cache.s3);
       setShelf4Movies(cache.s4);
-      setLoadingShelves(false);
-    } else {
-      setLoadingShelves(true);
     }
+    // 始终保持 false，首屏直接基于预烘焙数据秒开，后台异步静默更新
+    setLoadingShelves(false);
 
     const fetchShelves = async () => {
       try {

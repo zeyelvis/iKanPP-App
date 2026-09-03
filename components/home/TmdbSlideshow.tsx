@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useRankingData } from './hooks/useRankingData';
 import { Icons } from '@/components/ui/Icon';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 
 interface PosterImageProps {
   src: string;
@@ -26,9 +27,7 @@ function PosterImage({ src, alt, className = '', style, sizes = '100vw', priorit
     setLoaded(false);
   }, [src]);
 
-  const proxiedSrc = src?.startsWith('http')
-    ? `/api/img-proxy?url=${encodeURIComponent(src)}`
-    : src;
+  const proxiedSrc = getOptimizedImageUrl(src);
 
   if (error && fallbackError) {
     return (

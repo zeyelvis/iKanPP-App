@@ -90,8 +90,8 @@ export function useRankingData({ limit = 10 }: UseRankingDataOptions = {}) {
     const [error, setError] = useState<string | null>(null);
     const movieFetchedRef = useRef(false);
     const tvFetchedRef = useRef(false);
-    // 用 ref 独立追踪加载状态，避免闭包捕获陈旧值
-    const loadingRef = useRef(true);
+    // 始终默认为 false，因为已有预置高品质数据首屏直出
+    const loadingRef = useRef(false);
     // 缓存已加载的详情，避免重复请求
     const detailCacheRef = useRef<Map<string, Partial<RankingMovie>>>(new Map());
     const updateTrending = useTrendingStore(s => s.updateFromRanking);
@@ -126,10 +126,7 @@ export function useRankingData({ limit = 10 }: UseRankingDataOptions = {}) {
         if (fetchedRef.current) return;
         fetchedRef.current = true;
 
-        // 用 ref 判断是否需要设置全局 loading，避免闭包陈旧问题
-        const shouldShowLoading = loadingRef.current;
-
-        // ── 先尝试 localStorage 缓存 ──────────────────
+        // 先尝试 localStorage 缓存
         const cached = getRankingCache(type);
         if (cached && cached.length > 0) {
             if (type === 'movie') {
@@ -139,22 +136,9 @@ export function useRankingData({ limit = 10 }: UseRankingDataOptions = {}) {
                 setTvRanking(cached);
                 updateTrending([], cached);
             }
-            // 有缓存 → 立即结束 loading，后台静默刷新
-            if (shouldShowLoading) {
-                setLoading(false);
-                loadingRef.current = false;
-            }
-            // 后台刷新（不影响 UI）
-            fetchFromNetwork(type, false);
-            return;
         }
-
-        // 无缓存 → 显示 loading
-        if (shouldShowLoading) {
-            setLoading(true);
-            setError(null);
-        }
-        await fetchFromNetwork(type, shouldShowLoading);
+        // 后台静默刷新，不阻塞首屏 0ms 秒开呈现
+        fetchFromNetwork(type, false);
     }, [limit]);
 
     // 实际网络请求（可静默执行）
