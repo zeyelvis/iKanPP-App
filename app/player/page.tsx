@@ -522,9 +522,37 @@ function PlayerContent() {
     return [mediaLd, breadcrumbLd];
   }, [currentTitle, mediaType, isMovieType, videoData]);
 
+  // 核心返回路由处理器（午夜版绝对定向到 /premium，普通版安全后退或回总首页）
+  const handleBack = useCallback(() => {
+    if (isPremium) {
+      router.push('/premium');
+      return;
+    }
+    if (typeof window !== 'undefined' && window.history.length > 1 && document.referrer.includes(window.location.host)) {
+      router.back();
+    } else {
+      router.push('/');
+    }
+  }, [isPremium, router]);
+
+  // 手机浏览器手势滑动与系统物理返回键定向守卫
+  useEffect(() => {
+    if (!isPremium) return;
+
+    const handlePopState = () => {
+      // 当午夜版播放中后退如果穿透回根主页，强制无感定向到 /premium
+      if (window.location.pathname === '/' || window.location.pathname === '') {
+        window.location.replace('/premium');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isPremium]);
+
   // Redirect if no params at all
   if (isTitleOnlyMode && !titleSearching && !titleSearchError && !title) {
-    router.push('/');
+    router.push(isPremium ? '/premium' : '/');
     return null;
   }
 
@@ -546,7 +574,7 @@ function PlayerContent() {
         ) : isTitleOnlyMode && titleSearchError ? (
           <PlayerError
             error={titleSearchError}
-            onBack={() => router.back()}
+            onBack={handleBack}
             onRetry={() => {
               setTitleSearchError('');
               setTitleSearching(true);
@@ -561,7 +589,7 @@ function PlayerContent() {
         ) : videoError && !videoData ? (
           <PlayerError
             error={videoError}
-            onBack={() => router.back()}
+            onBack={handleBack}
             onRetry={fetchVideoDetails}
           />
         ) : (
@@ -572,7 +600,7 @@ function PlayerContent() {
                 playUrl={playUrl}
                 videoId={videoId || undefined}
                 currentEpisode={currentEpisode}
-                onBack={() => router.back()}
+                onBack={handleBack}
                 totalEpisodes={videoData?.episodes?.length || 0}
                 onNextEpisode={handleNextEpisode}
                 isReversed={isReversed}
@@ -706,7 +734,7 @@ function PlayerContent() {
                 <RelatedKeywords
                   query={videoData?.vod_name || title || ''}
                   onKeywordClick={(keyword) => {
-                    router.push(`/?q=${encodeURIComponent(keyword)}`);
+                    router.push(isPremium ? `/premium?q=${encodeURIComponent(keyword)}` : `/?q=${encodeURIComponent(keyword)}`);
                   }}
                 />
               )}
@@ -787,6 +815,7 @@ function PlayerContent() {
             onMovieClick={(movie) => {
               const params = new URLSearchParams();
               params.set('title', movie.title);
+              if (isPremium) params.set('premium', '1');
               router.push(`/player?${params.toString()}`);
             }}
           />

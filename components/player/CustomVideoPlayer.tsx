@@ -19,6 +19,7 @@ interface CustomVideoPlayerProps {
   videoTitle?: string;
   episodeName?: string;
   isPremium?: boolean;
+  onBack?: () => void;
   // Resolution callback
   onResolutionDetected?: (info: import('./hooks/useVideoResolution').VideoResolutionInfo) => void;
 }

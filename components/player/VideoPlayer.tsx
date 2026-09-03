@@ -224,6 +224,7 @@ export function VideoPlayer({
           videoTitle={videoTitle}
           episodeName={episodeName}
           isPremium={isPremium}
+          onBack={onBack}
           onResolutionDetected={onResolutionDetected}
         />
       )}

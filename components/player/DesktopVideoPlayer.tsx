@@ -18,7 +18,7 @@ import { useDoubleTap } from '@/lib/hooks/mobile/useDoubleTap';
 import { settingsStore, DEFAULT_SEEK_STEP_SECONDS } from '@/lib/store/settings-store';
 import { premiumModeSettingsStore } from '@/lib/store/premium-mode-settings';
 import { shouldHidePlayerCursor } from '@/lib/player/cursor-visibility';
-import { Lock, Unlock } from 'lucide-react';
+import { Lock, Unlock, ChevronLeft } from 'lucide-react';
 import './web-fullscreen.css';
 
 type WebFullscreenSize = 'full' | 'large' | 'focused';
@@ -72,6 +72,7 @@ interface DesktopVideoPlayerProps {
   videoTitle?: string;
   episodeName?: string;
   isPremium?: boolean;
+  onBack?: () => void;
   // Resolution callback
   onResolutionDetected?: (info: import('./hooks/useVideoResolution').VideoResolutionInfo) => void;
 }
@@ -90,6 +91,7 @@ export function DesktopVideoPlayer({
   videoTitle = '',
   episodeName = '',
   isPremium = false,
+  onBack,
   onResolutionDetected,
 }: DesktopVideoPlayerProps) {
   const { refs, data, actions } = useDesktopPlayerState();
@@ -475,6 +477,23 @@ export function DesktopVideoPlayer({
                 <span className="font-normal opacity-80">{videoResolution.width}x{videoResolution.height}</span>
               </span>
             </div>
+          )}
+
+          {/* 播放器左上角独立快捷返回胶囊（全屏与移动端首选返回入口） */}
+          {onBack && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onBack();
+              }}
+              className={`absolute top-4 left-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/75 hover:bg-black/95 backdrop-blur-xl border border-white/20 text-white/90 hover:text-white transition-all cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.6)] hover:scale-105 active:scale-95 text-xs font-bold ${
+                data.showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              }`}
+              title={isPremium ? '返回午夜版' : '返回'}
+            >
+              <ChevronLeft size={16} />
+              <span>{isPremium ? '午夜版' : '返回'}</span>
+            </button>
           )}
 
           <DesktopOverlayWrapper

@@ -83,14 +83,24 @@ export function Navbar({
         {/* 左侧：Logo + 品牌标识 + 核心分类导航 */}
         <div className="flex items-center gap-6 lg:gap-8">
           {isPlayer ? (
-            <button
-              onClick={() => router.push(homeHref)}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0 cursor-pointer"
-              title={isPremiumMode ? '返回高级主页' : '返回首页'}
-            >
-              <LogoIcon size={34} />
-              <span className="font-black text-xl tracking-tight text-white hidden sm:inline">iKanPP</span>
-            </button>
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={() => router.push(homeHref)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 text-white/90 hover:text-white border border-white/10 text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                title={isPremiumMode ? '返回午夜版首页' : '返回首页'}
+              >
+                <Icons.ChevronLeft size={16} />
+                <span>{isPremiumMode ? '返回午夜版' : '返回'}</span>
+              </button>
+              <button
+                onClick={() => router.push(homeHref)}
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0 cursor-pointer"
+                title={isPremiumMode ? '返回午夜版首页' : '返回首页'}
+              >
+                <LogoIcon size={32} />
+                <span className="font-black text-xl tracking-tight text-white hidden sm:inline">iKanPP</span>
+              </button>
+            </div>
           ) : (
             <Link
               href={homeHref}

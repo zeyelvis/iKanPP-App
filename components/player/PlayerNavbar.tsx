@@ -32,11 +32,11 @@ export function PlayerNavbar({ isPremium }: { isPremium?: boolean }) {
                         </button>
                         <Button
                             variant="secondary"
-                            onClick={() => router.back()}
+                            onClick={() => isPremium ? router.push('/premium') : router.back()}
                             className="flex items-center gap-2"
                         >
                             <Icons.ChevronLeft size={20} />
-                            <span className="hidden sm:inline">返回</span>
+                            <span className="hidden sm:inline">{isPremium ? '返回午夜版' : '返回'}</span>
                         </Button>
                     </div>
                     <div className="flex items-center gap-3">
