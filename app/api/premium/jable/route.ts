@@ -89,20 +89,33 @@ export async function GET(request: NextRequest) {
             }
         }
 
+        if (videos.length === 0) {
+            // 极速预烘焙数据终极兜底
+            const { PREBAKED_PREMIUM_DATA } = await import('@/lib/data/premium-prebaked');
+            videos = PREBAKED_PREMIUM_DATA as any;
+        }
+
         return NextResponse.json(
             { videos, mode, page, total: videos.length },
             {
                 headers: {
-                    'Cache-Control': 'public, s-maxage=1200, stale-while-revalidate=86400',
-                    'CDN-Cache-Control': 'public, s-maxage=1200',
+                    'Cache-Control': 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400',
+                    'CDN-Cache-Control': 'public, s-maxage=3600',
+                    'Cloudflare-CDN-Cache-Control': 'public, s-maxage=3600',
                 },
             }
         );
     } catch (error: any) {
         console.error('[JableAPI] Route error:', error);
+        const { PREBAKED_PREMIUM_DATA } = await import('@/lib/data/premium-prebaked');
         return NextResponse.json(
-            { videos: [], error: 'Failed to fetch jable content' },
-            { status: 500 }
+            { videos: PREBAKED_PREMIUM_DATA, error: 'Fallback to prebaked' },
+            {
+                status: 200,
+                headers: {
+                    'Cache-Control': 'public, max-age=300, s-maxage=600',
+                },
+            }
         );
     }
 }

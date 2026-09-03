@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useInfiniteScroll } from '@/lib/hooks/useInfiniteScroll';
+import { PREBAKED_PREMIUM_DATA } from '@/lib/data/premium-prebaked';
 
 export interface PremiumVideo {
     vod_id: string | number;
@@ -16,9 +17,30 @@ export interface PremiumVideo {
 }
 
 const PAGE_LIMIT = 20;
+const STORAGE_PREFIX = 'kvideo-premium-cache-v2-';
 
-// 客户端全局 SWR 缓存池
+// 客户端全局 SWR 内存与持久化缓存池
 const clientMemoryCache = new Map<string, PremiumVideo[]>();
+
+function getStorageCache(key: string): PremiumVideo[] | null {
+    if (typeof window === 'undefined') return null;
+    try {
+        const raw = localStorage.getItem(STORAGE_PREFIX + key);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+        }
+    } catch {}
+    return null;
+}
+
+function setStorageCache(key: string, data: PremiumVideo[]) {
+    if (typeof window === 'undefined') return;
+    try {
+        localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(data.slice(0, 40)));
+    } catch {}
+}
 
 export function usePremiumContent(
     categoryValue: string = '',
@@ -27,14 +49,21 @@ export function usePremiumContent(
     // 缓存 key 组合 category 和 rankingMode
     const cacheKey = categoryValue ? `cat:${categoryValue}` : `mode:${rankingMode}`;
 
+    // 0ms 瞬间秒开初始状态：内存 -> localStorage -> 预烘焙精选库
     const [videos, setVideos] = useState<PremiumVideo[]>(() => {
-        return clientMemoryCache.get(cacheKey) || [];
+        const mem = clientMemoryCache.get(cacheKey);
+        if (mem && mem.length > 0) return mem;
+        const local = getStorageCache(cacheKey);
+        if (local && local.length > 0) {
+            clientMemoryCache.set(cacheKey, local);
+            return local;
+        }
+        // 首次打开午夜版，直接使用高质量预置种子库，完全 0ms 秒开呈现
+        return PREBAKED_PREMIUM_DATA;
     });
 
-    const [loading, setLoading] = useState<boolean>(() => {
-        return !clientMemoryCache.has(cacheKey);
-    });
-
+    // 保持 false，彻底杜绝骨架屏卡滞，后台永远静默同步
+    const [loading, setLoading] = useState<boolean>(false);
     const [hasMore, setHasMore] = useState(true);
     const [page, setPage] = useState(1);
 
@@ -46,17 +75,13 @@ export function usePremiumContent(
 
     const loadVideos = useCallback(async (pageNum: number, append = false) => {
         if (loadingRef.current) return;
-
         loadingRef.current = true;
+
         const currentKey = categoryRef.current ? `cat:${categoryRef.current}` : `mode:${modeRef.current}`;
-        
-        if (!append && !clientMemoryCache.has(currentKey)) {
-            setLoading(true);
-        }
 
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4000);
+            const timeoutId = setTimeout(() => controller.abort(), 3500);
 
             let apiUrl = `/api/premium/jable?page=${pageNum}`;
             if (categoryRef.current) {
@@ -83,6 +108,7 @@ export function usePremiumContent(
                     const merged = append ? [...prev, ...newVideos] : newVideos;
                     if (pageNum === 1) {
                         clientMemoryCache.set(currentKey, newVideos);
+                        setStorageCache(currentKey, newVideos);
                     }
                     return merged;
                 });
@@ -101,16 +127,18 @@ export function usePremiumContent(
     // 监听分类或榜单 Tab 变化，0ms 优先展示缓存并触发后台 SWR
     useEffect(() => {
         const key = categoryValue ? `cat:${categoryValue}` : `mode:${rankingMode}`;
-        const cached = clientMemoryCache.get(key);
+        const mem = clientMemoryCache.get(key);
+        const local = !mem ? getStorageCache(key) : null;
+        const cached = mem || local;
 
         setPage(1);
         if (cached && cached.length > 0) {
             setVideos(cached);
-            setLoading(false);
-        } else {
-            setVideos([]);
-            setLoading(true);
+        } else if (!categoryValue && rankingMode === 'today') {
+            setVideos(PREBAKED_PREMIUM_DATA);
         }
+        // 绝不强行将 videos 设为空数组，避免用户等待大白板
+        setLoading(false);
         setHasMore(true);
 
         loadVideos(1, false);
