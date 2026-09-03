@@ -27,7 +27,7 @@ interface HistoryActions {
     duration: number,
     poster?: string,
     episodes?: Episode[],
-    metadata?: { vod_actor?: string; type_name?: string; vod_area?: string }
+    metadata?: { vod_actor?: string; type_name?: string; vod_area?: string; isPremium?: boolean }
   ) => void;
 
   removeFromHistory: (showIdentifier: string) => void;
@@ -142,6 +142,7 @@ const createHistoryStore = (name: string) =>
                 vod_actor: metadata?.vod_actor ?? existing.vod_actor,
                 type_name: metadata?.type_name ?? existing.type_name,
                 vod_area: metadata?.vod_area ?? existing.vod_area,
+                isPremium: metadata?.isPremium ?? existing.isPremium,
               };
 
               newHistory = [
@@ -166,6 +167,7 @@ const createHistoryStore = (name: string) =>
                 vod_actor: metadata?.vod_actor,
                 type_name: metadata?.type_name,
                 vod_area: metadata?.vod_area,
+                isPremium: metadata?.isPremium,
               };
 
               newHistory = [newItem, ...state.viewingHistory];

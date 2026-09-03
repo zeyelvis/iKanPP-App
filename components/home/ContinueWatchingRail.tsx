@@ -20,6 +20,7 @@ export function ContinueWatchingRail() {
     params.set('title', item.title);
     if (item.source) params.set('source', item.source);
     if (item.episodeIndex !== undefined) params.set('ep', String(item.episodeIndex));
+    if (item.isPremium) params.set('premium', '1');
     router.push(`/player?${params.toString()}`);
   };
 

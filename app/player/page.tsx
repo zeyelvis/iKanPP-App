@@ -440,10 +440,10 @@ function PlayerContent() {
         0, // Will be updated by VideoPlayer
         videoData.vod_pic,
         mappedEpisodes,
-        { vod_actor: videoData.vod_actor, type_name: videoData.type_name, vod_area: videoData.vod_area }
+        { vod_actor: videoData.vod_actor, type_name: videoData.type_name, vod_area: videoData.vod_area, isPremium }
       );
     }
-  }, [videoData, playUrl, videoId, currentEpisode, source, title, addToHistory]);
+  }, [videoData, playUrl, videoId, currentEpisode, source, title, isPremium, addToHistory]);
 
   const handleEpisodeClick = useCallback((episode: any, index: number) => {
     setCurrentEpisode(index);
@@ -522,10 +522,15 @@ function PlayerContent() {
     return [mediaLd, breadcrumbLd];
   }, [currentTitle, mediaType, isMovieType, videoData]);
 
-  // 核心返回路由处理器（午夜版绝对定向到 /premium，普通版安全后退或回总首页）
+  // 核心返回路由处理器（午夜版绝对定向到 /premium，频道专属来源绝对返回该频道大厅，普通版安全后退）
   const handleBack = useCallback(() => {
     if (isPremium) {
       router.push('/premium');
+      return;
+    }
+    const fromChannel = searchParams.get('from');
+    if (fromChannel) {
+      router.push(`/${fromChannel}`);
       return;
     }
     if (typeof window !== 'undefined' && window.history.length > 1 && document.referrer.includes(window.location.host)) {
@@ -533,7 +538,7 @@ function PlayerContent() {
     } else {
       router.push('/');
     }
-  }, [isPremium, router]);
+  }, [isPremium, searchParams, router]);
 
   // 手机浏览器手势滑动与系统物理返回键定向守卫
   useEffect(() => {
@@ -552,7 +557,8 @@ function PlayerContent() {
 
   // Redirect if no params at all
   if (isTitleOnlyMode && !titleSearching && !titleSearchError && !title) {
-    router.push(isPremium ? '/premium' : '/');
+    const fromChannel = searchParams.get('from');
+    router.push(isPremium ? '/premium' : (fromChannel ? `/${fromChannel}` : '/'));
     return null;
   }
 

@@ -101,6 +101,7 @@ export default function RankingClient() {
     const params = new URLSearchParams();
     params.set('title', item.title);
     params.set('type', activeTab.type);
+    params.set('from', 'ranking');
     router.push(`/player?${params.toString()}`);
   };
 

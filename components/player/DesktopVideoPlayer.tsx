@@ -492,7 +492,13 @@ export function DesktopVideoPlayer({
               title={isPremium ? '返回午夜版' : '返回'}
             >
               <ChevronLeft size={16} />
-              <span>{isPremium ? '午夜版' : '返回'}</span>
+              <span>
+                {isPremium
+                  ? '午夜版'
+                  : (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('from')
+                      ? ({ movie: '电影', tv: '剧集', guoman: '国漫', anime: '动漫', variety: '综艺', ranking: '榜单', iptv: '直播' } as Record<string, string>)[new URLSearchParams(window.location.search).get('from')!] || '返回'
+                      : '返回')}
+              </span>
             </button>
           )}
 

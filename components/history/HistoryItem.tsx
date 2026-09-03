@@ -34,7 +34,7 @@ export function HistoryItem({ item, onRemove, isPremium = false }: HistoryItemPr
       }));
       params.set('groupedSources', JSON.stringify(groupData));
     }
-    if (isPremium) {
+    if (isPremium || item.isPremium) {
       params.set('premium', '1');
     }
     return `/player?${params.toString()}`;

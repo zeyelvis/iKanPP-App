@@ -106,6 +106,7 @@ export interface VideoHistoryItem {
   vod_actor?: string;
   type_name?: string;
   vod_area?: string;
+  isPremium?: boolean;
 }
 
 // Favorite Entry

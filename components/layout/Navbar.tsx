@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Icons } from '@/components/ui/Icon';
 import { LogoIcon } from '@/components/ui/LogoIcon';
 import { Menu, X } from 'lucide-react';
@@ -34,7 +34,27 @@ export function Navbar({
 }: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const homeHref = isPremiumMode ? '/premium' : '/';
+  const searchParams = useSearchParams();
+
+  // 智能推导精准返回通道
+  const fromChannel = searchParams?.get('from') || '';
+  const channelMap: Record<string, { label: string; href: string }> = {
+    movie: { label: '返回电影', href: '/movie' },
+    tv: { label: '返回剧集', href: '/tv' },
+    guoman: { label: '返回国漫', href: '/guoman' },
+    anime: { label: '返回动漫', href: '/anime' },
+    variety: { label: '返回综艺', href: '/variety' },
+    ranking: { label: '返回榜单', href: '/ranking' },
+    iptv: { label: '返回直播', href: '/iptv' },
+  };
+
+  const homeHref = isPremiumMode
+    ? '/premium'
+    : (fromChannel && channelMap[fromChannel] ? channelMap[fromChannel].href : '/');
+
+  const returnLabel = isPremiumMode
+    ? '返回午夜版'
+    : (fromChannel && channelMap[fromChannel] ? channelMap[fromChannel].label : '返回');
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -87,15 +107,15 @@ export function Navbar({
               <button
                 onClick={() => router.push(homeHref)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 text-white/90 hover:text-white border border-white/10 text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
-                title={isPremiumMode ? '返回午夜版首页' : '返回首页'}
+                title={returnLabel}
               >
                 <Icons.ChevronLeft size={16} />
-                <span>{isPremiumMode ? '返回午夜版' : '返回'}</span>
+                <span>{returnLabel}</span>
               </button>
               <button
                 onClick={() => router.push(homeHref)}
                 className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0 cursor-pointer"
-                title={isPremiumMode ? '返回午夜版首页' : '返回首页'}
+                title={returnLabel}
               >
                 <LogoIcon size={32} />
                 <span className="font-black text-xl tracking-tight text-white hidden sm:inline">iKanPP</span>

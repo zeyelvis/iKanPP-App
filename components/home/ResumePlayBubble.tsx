@@ -62,6 +62,9 @@ export function ResumePlayBubble() {
       source: latestItem.source,
       episode: String(latestItem.episodeIndex ?? 0),
     });
+    if (latestItem.isPremium) {
+      query.set('premium', '1');
+    }
     router.push(`/player?${query.toString()}`);
   };
 

@@ -72,8 +72,12 @@ export const VideoGroupCard = memo<VideoGroupCardProps>(({
             params.set('groupedSources', JSON.stringify(groupData));
         }
 
+        if (isPremium) {
+            params.set('premium', '1');
+        }
+
         return `/player?${params.toString()}`;
-    }, [representative, videos]);
+    }, [representative, videos, isPremium]);
 
     return (
         <div

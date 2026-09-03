@@ -17,9 +17,10 @@ interface ShareButtonProps {
   episodeName?: string;
   year?: string;
   type?: string;
+  isPremium?: boolean;
 }
 
-export function ShareButton({ title, size = 20, poster, episodeName, year, type }: ShareButtonProps) {
+export function ShareButton({ title, size = 20, poster, episodeName, year, type, isPremium }: ShareButtonProps) {
   const [showPanel, setShowPanel] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
   const [copied, setCopied] = useState<'link' | 'text' | null>(null);
@@ -27,7 +28,7 @@ export function ShareButton({ title, size = 20, poster, episodeName, year, type 
 
   // 构建分享链接：/player?title=xxx  — 直接打开搜索
   const shareUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/player?title=${encodeURIComponent(title)}`
+    ? `${window.location.origin}/player?title=${encodeURIComponent(title)}${isPremium || window.location.search.includes('premium=1') ? '&premium=1' : ''}`
     : '';
 
   const shareText = `我在 ${siteConfig.name} 免费看《${title}》，无广告高清播放 →`;
