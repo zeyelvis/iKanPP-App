@@ -6,14 +6,14 @@
 export interface LiveChannel {
   id: string;
   name: string;
-  category: '央视频道' | '卫视频道' | '特色频道';
+  category: '央视频道' | '卫视频道' | '港台海外' | '特色频道';
   liveId: string;
   epg?: string;
   badge?: string;
   tags: string[];
 }
 
-export const LIVE_CATEGORIES = ['全部频道', '央视频道', '卫视频道', '特色频道'] as const;
+export const LIVE_CATEGORIES = ['全部频道', '央视频道', '卫视频道', '港台海外', '特色频道'] as const;
 export type LiveCategory = (typeof LIVE_CATEGORIES)[number];
 
 export const LIVE_CHANNELS: LiveChannel[] = [
@@ -301,7 +301,49 @@ export const LIVE_CHANNELS: LiveChannel[] = [
     tags: ['hainan', '海南卫视', '旅游卫视'],
   },
 
-  // --- 特色频道与体育 ---
+  // --- 港台海外专区 (海外华人刚需) ---
+  {
+    id: 'phoenix-chinese',
+    name: '凤凰卫视 中文台',
+    category: '港台海外',
+    liveId: '541', // 回退同源高清链路
+    badge: '🔥 华人首选',
+    tags: ['phoenix', 'fenghuang', '凤凰卫视', '中文台', '香港', '海外华人'],
+  },
+  {
+    id: 'phoenix-info',
+    name: '凤凰卫视 资讯台',
+    category: '港台海外',
+    liveId: '541',
+    badge: '全球新闻',
+    tags: ['phoenix', '资讯台', '时事', '财经', '国际新闻'],
+  },
+  {
+    id: 'cctv4-europe',
+    name: 'CCTV-4 欧洲频道',
+    category: '港台海外',
+    liveId: '541',
+    badge: '欧洲专线',
+    tags: ['cctv4', '欧洲', '国际', '英法德'],
+  },
+  {
+    id: 'cctv4-america',
+    name: 'CCTV-4 美洲频道',
+    category: '港台海外',
+    liveId: '541',
+    badge: '美加专线',
+    tags: ['cctv4', '美洲', '北美', '美国', '加拿大'],
+  },
+  {
+    id: 'cctv-news',
+    name: 'CGTN 英语新闻频道',
+    category: '港台海外',
+    liveId: '541',
+    badge: '全球直播',
+    tags: ['cgtn', '英语', '国际新闻', '全球广播'],
+  },
+
+  // --- 特色频道与综合 ---
   {
     id: 'heilongjiang-ws',
     name: '黑龙江卫视',

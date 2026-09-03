@@ -18,6 +18,7 @@ import { useDoubleTap } from '@/lib/hooks/mobile/useDoubleTap';
 import { settingsStore, DEFAULT_SEEK_STEP_SECONDS } from '@/lib/store/settings-store';
 import { premiumModeSettingsStore } from '@/lib/store/premium-mode-settings';
 import { shouldHidePlayerCursor } from '@/lib/player/cursor-visibility';
+import { Lock, Unlock } from 'lucide-react';
 import './web-fullscreen.css';
 
 type WebFullscreenSize = 'full' | 'large' | 'focused';
@@ -233,6 +234,25 @@ export function DesktopVideoPlayer({
     setBufferedTime,
     setIsLoading,
   } = actions;
+
+  // 移动端/全屏屏幕防误触锁定机制
+  const [isScreenLocked, setIsScreenLocked] = React.useState(false);
+  const [showLockToast, setShowLockToast] = React.useState<string | null>(null);
+
+  // 退出全屏时自动解除屏幕锁定
+  React.useEffect(() => {
+    if (!data.isFullscreen && isScreenLocked) {
+      setIsScreenLocked(false);
+    }
+  }, [data.isFullscreen, isScreenLocked]);
+
+  const handleToggleScreenLock = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const nextLocked = !isScreenLocked;
+    setIsScreenLocked(nextLocked);
+    setShowLockToast(nextLocked ? '屏幕已锁定，防误触开启' : '屏幕已解锁');
+    setTimeout(() => setShowLockToast(null), 2000);
+  };
 
   // Reset loading state and show spinner when source changes
   React.useEffect(() => {
@@ -503,12 +523,41 @@ export function DesktopVideoPlayer({
             containerRef={containerRef}
           />
 
+          {/* 全屏屏幕防误触锁定悬浮按钮 */}
+          {data.isFullscreen && (
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 z-40">
+              <button
+                onClick={handleToggleScreenLock}
+                className={`p-3 rounded-full backdrop-blur-xl border transition-all cursor-pointer shadow-2xl flex items-center justify-center ${
+                  isScreenLocked
+                    ? 'bg-red-600/80 border-red-500 text-white animate-pulse'
+                    : 'bg-black/40 hover:bg-black/70 border-white/20 text-white/70 hover:text-white'
+                }`}
+                title={isScreenLocked ? '点击解锁屏幕' : '点击锁定屏幕(防误触)'}
+              >
+                {isScreenLocked ? <Lock size={20} /> : <Unlock size={20} />}
+              </button>
+            </div>
+          )}
+
+          {/* 屏幕锁定状态轻提示 (Toast) */}
+          {showLockToast && (
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none animate-fade-in">
+              <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-black/80 backdrop-blur-xl border border-white/20 text-white text-sm font-semibold shadow-2xl">
+                {isScreenLocked ? <Lock size={16} className="text-red-400" /> : <Unlock size={16} className="text-emerald-400" />}
+                <span>{showLockToast}</span>
+              </div>
+            </div>
+          )}
+
+          {!isScreenLocked && (
             <DesktopControlsWrapper
               src={src}
               data={data}
               logic={logic}
               refs={refs}
             />
+          )}
           </div>
         </div>
       </div>

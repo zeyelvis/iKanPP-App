@@ -148,6 +148,10 @@ export function IPTVPlayer({ channel, channels, onChannelChange }: IPTVPlayerPro
               {channel.badge}
             </span>
           )}
+          <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-semibold">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            海外专线
+          </span>
         </div>
 
         <div className="flex items-center gap-2">

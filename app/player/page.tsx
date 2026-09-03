@@ -643,7 +643,14 @@ function PlayerContent() {
                         <span className="text-xs">收藏</span>
                       </div>
                     )}
-                    <ShareButton title={videoData?.vod_name || title || ''} size={18} />
+                    <ShareButton
+                      title={videoData?.vod_name || title || ''}
+                      poster={videoData?.vod_pic}
+                      episodeName={videoData?.episodes?.[currentEpisode]?.name}
+                      year={videoData?.vod_year}
+                      type={videoData?.type_name}
+                      size={18}
+                    />
                   </div>
 
                   {/* 当前线路胶囊提示 */}
@@ -682,7 +689,14 @@ function PlayerContent() {
                     收藏这个视频
                   </span>
                   <div className="ml-auto">
-                    <ShareButton title={videoData.vod_name || title || ''} size={20} />
+                    <ShareButton
+                      title={videoData.vod_name || title || ''}
+                      poster={videoData.vod_pic}
+                      episodeName={videoData.episodes?.[currentEpisode]?.name}
+                      year={videoData.vod_year}
+                      type={videoData.type_name}
+                      size={20}
+                    />
                   </div>
                 </div>
               )}

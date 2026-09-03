@@ -6,16 +6,22 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
-import { Share2, Copy, Check, X, Link2, MessageCircle, QrCode } from 'lucide-react';
+import { Share2, Copy, Check, X, Link2, MessageCircle, QrCode, Sparkles } from 'lucide-react';
 import { siteConfig } from '@/lib/config/site-config';
+import { ShareCardModal } from './ShareCardModal';
 
 interface ShareButtonProps {
   title: string;
   size?: number;
+  poster?: string;
+  episodeName?: string;
+  year?: string;
+  type?: string;
 }
 
-export function ShareButton({ title, size = 20 }: ShareButtonProps) {
+export function ShareButton({ title, size = 20, poster, episodeName, year, type }: ShareButtonProps) {
   const [showPanel, setShowPanel] = useState(false);
+  const [showCardModal, setShowCardModal] = useState(false);
   const [copied, setCopied] = useState<'link' | 'text' | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -229,9 +235,32 @@ export function ShareButton({ title, size = 20 }: ShareButtonProps) {
                 </button>
               </div>
             </div>
+
+            {/* 生成海报卡片推荐 */}
+            <button
+              onClick={() => {
+                setShowPanel(false);
+                setShowCardModal(true);
+              }}
+              className="w-full mt-3 py-2.5 px-3 rounded-xl bg-gradient-to-r from-red-600/20 to-indigo-600/20 hover:from-red-600/30 hover:to-indigo-600/30 border border-white/15 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
+            >
+              <Sparkles size={14} className="text-red-400" />
+              生成高颜值影评分享卡片
+            </button>
           </div>
         </>
       )}
+
+      {/* 专属影评裂变分享弹窗 */}
+      <ShareCardModal
+        isOpen={showCardModal}
+        onClose={() => setShowCardModal(false)}
+        title={title}
+        poster={poster}
+        episodeName={episodeName}
+        year={year}
+        type={type}
+      />
     </div>
   );
 }
