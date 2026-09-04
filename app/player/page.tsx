@@ -102,6 +102,14 @@ function PlayerContent() {
         let buffer = '';
         const foundSources: SourceInfo[] = [];
 
+        // 目标基准元数据
+        const pureTargetTitle = title.replace(/[《》【】\[\]（）()·\s]/g, '').toLowerCase();
+        const targetYear = expectedYear ? parseInt(expectedYear, 10) : null;
+
+        // 备选最佳匹配（用于在未遇到秒跳完美年份源时的次优候选）
+        let pendingBestCandidate: { video: any; score: number } | null = null;
+        let yearMismatchedCount = 0;
+
         while (true) {
           const { done, value } = await reader.read();
           if (done || cancelled) break;
@@ -114,70 +122,156 @@ function PlayerContent() {
             try {
               const data = JSON.parse(line.slice(6));
               if (data.type === 'videos' && Array.isArray(data.videos) && data.videos.length > 0) {
-                // 0. 过滤掉解说类或短视频
-                const isCommentary = (v: any) => {
-                  const name = (v.vod_name || '').toLowerCase();
+                for (const v of data.videos) {
+                  const rawName = (v.vod_name || '').trim();
                   const typeName = (v.type_name || '').toLowerCase();
-                  return name.includes('解说') || typeName.includes('解说') || name.includes('预告');
-                };
-                const validVideos = data.videos.filter((v: any) => !isCommentary(v));
-                const videoPool = validVideos.length > 0 ? validVideos : data.videos;
+                  const remarks = (v.vod_remarks || '').toLowerCase();
 
-                // 1. 精确匹配（支持番号匹配）
-                const exactMatches = videoPool.filter((v: any) => {
-                  const vName = (v.vod_name || '').toLowerCase().trim();
-                  if (videoCode && vName.toUpperCase().includes(videoCode)) return true;
-                  return vName === normalizedTitle || vName === title.toLowerCase().trim();
-                });
+                  // 1. 过滤明显解说或预告
+                  const isTrailer = remarks.includes('预告') || rawName.includes('预告') || remarks.includes('片花') || rawName.includes('片花');
+                  const isCommentary = typeName.includes('解说') || rawName.includes('解说');
 
-                // 2. 核心词双向包含匹配
-                const partialMatches = exactMatches.length === 0
-                  ? videoPool.filter((v: any) => {
-                    const vName = (v.vod_name || '').toLowerCase().trim();
-                    if (videoCode && vName.toUpperCase().includes(videoCode)) return true;
-                    return vName.includes(normalizedTitle) || normalizedTitle.includes(vName);
-                  })
-                  : [];
+                  // 2. 提取候选年份
+                  let candYear: number | null = null;
+                  if (v.vod_year) {
+                    const yMatch = String(v.vod_year).match(/\b(19\d\d|20\d\d)\b/);
+                    if (yMatch) candYear = parseInt(yMatch[1], 10);
+                  }
+                  if (!candYear) {
+                    const nameYearMatch = rawName.match(/[\(（]?(19\d\d|20\d\d)[\)）]?/);
+                    if (nameYearMatch) candYear = parseInt(nameYearMatch[1], 10);
+                  }
 
-                // 3. 最佳匹配候选
-                const candidates = exactMatches.length > 0 ? exactMatches : (partialMatches.length > 0 ? partialMatches : videoPool);
-                const match = candidates[0];
+                  // 3. 片名深度清洗（去除年份后缀如 2026 / (2026) 以及纯符号）
+                  const nameWithoutYear = rawName.replace(/[\(（]?(19\d\d|20\d\d)[\)）]?/g, '');
+                  const pureCandName = nameWithoutYear.replace(/[《》【】\[\]（）()·\s]/g, '').toLowerCase();
 
-                if (match && !cancelled) {
-                  anyFound = true;
-                  foundSources.push({
-                    id: match.vod_id,
-                    source: match.source,
-                    sourceName: match.sourceDisplayName || getSourceName(match.source),
-                    latency: match.latency,
-                    pic: match.vod_pic,
-                    typeName: match.type_name,
-                  });
+                  // 4. 年份冲突与亲和力判定
+                  let yearScore = 0;
+                  let isYearMismatched = false; // 是否为严重冲突老片（相差 >= 3 年）
+                  let isExactYearMatch = false;
 
-                  // 只要搜到第一个可用匹配，立即执行快速播放跳转
-                  if (!redirected) {
-                    redirected = true;
-                    const params = new URLSearchParams();
-                    params.set('id', String(match.vod_id));
-                    params.set('source', match.source);
-                    params.set('title', title);
-                    if (expectedType) params.set('type', expectedType);
-                    if (isPremium) params.set('premium', '1');
-                    if (foundSources.length > 0) {
-                      params.set('groupedSources', JSON.stringify(foundSources));
+                  if (targetYear) {
+                    if (candYear) {
+                      const diff = Math.abs(candYear - targetYear);
+                      if (diff === 0) {
+                        yearScore = 150; // 年份完全精准吻合！
+                        isExactYearMatch = true;
+                      } else if (diff === 1) {
+                        yearScore = 80; // 跨年上映误差
+                      } else if (diff === 2) {
+                        yearScore = 10;
+                      } else {
+                        // 差距 >= 3 年：100% 为同名异片（如 2016 年法国老片 vs 2026 诺兰新片）
+                        isYearMismatched = true;
+                        yearScore = -1000;
+                        yearMismatchedCount++;
+                      }
+                    } else {
+                      // 候选未标明年份（很多新上线采集站未填 vod_year）
+                      yearScore = 20;
                     }
-                    router.replace(`/player?${params.toString()}`, { scroll: false });
+                  }
+
+                  // 5. 片名匹配得分
+                  let nameScore = 0;
+                  let isExactName = false;
+                  if (videoCode && rawName.toUpperCase().includes(videoCode)) {
+                    nameScore = 200;
+                    isExactName = true;
+                  } else if (pureCandName === pureTargetTitle) {
+                    nameScore = 120; // 即使叫 奥德赛2026，清洗后完全命中
+                    isExactName = true;
+                  } else if (pureCandName.includes(pureTargetTitle) || pureTargetTitle.includes(pureCandName)) {
+                    nameScore = 50;
+                  } else {
+                    nameScore = -200;
+                  }
+
+                  // 6. 质量与类型加减分
+                  let qualityScore = 0;
+                  if (remarks.includes('4k') || remarks.includes('2160')) qualityScore += 30;
+                  if (remarks.includes('1080') || remarks.includes('hd') || remarks.includes('正片')) qualityScore += 20;
+                  if (remarks.includes('tc') || remarks.includes('抢先')) qualityScore += 10;
+                  if (isTrailer || isCommentary) qualityScore -= 500;
+
+                  // 总得分
+                  const totalScore = nameScore + yearScore + qualityScore;
+
+                  // 记录为可用来源供清晰度切换
+                  if (!isTrailer && !isCommentary && !isYearMismatched && (isExactName || totalScore > 0)) {
+                    anyFound = true;
+                    if (!foundSources.some(s => s.id === v.vod_id && s.source === v.source)) {
+                      foundSources.push({
+                        id: v.vod_id,
+                        source: v.source,
+                        sourceName: v.sourceDisplayName || getSourceName(v.source),
+                        latency: v.latency,
+                        pic: v.vod_pic,
+                        typeName: v.type_name,
+                      });
+                    }
+                  }
+
+                  // 7. 自动播放重定向决策（Auto-Redirect Decision）
+                  // 严格红线：非预告片、非解说、严禁严重年代冲突老片、片名必须高度吻合
+                  const isQualified = !isTrailer && !isCommentary && !isYearMismatched && isExactName && totalScore >= 80;
+
+                  if (isQualified && !redirected && !cancelled) {
+                    // A. 若年份完全精准吻合（或原本就未指定目标年份），立即执行毫秒级跳转！
+                    if (isExactYearMatch || !targetYear || (videoCode && rawName.toUpperCase().includes(videoCode))) {
+                      redirected = true;
+                      const params = new URLSearchParams();
+                      params.set('id', String(v.vod_id));
+                      params.set('source', v.source);
+                      params.set('title', title);
+                      if (expectedType) params.set('type', expectedType);
+                      if (expectedYear) params.set('year', expectedYear);
+                      if (isPremium) params.set('premium', '1');
+                      if (foundSources.length > 0) {
+                        params.set('groupedSources', JSON.stringify(foundSources));
+                      }
+                      router.replace(`/player?${params.toString()}`, { scroll: false });
+                      break;
+                    }
+
+                    // B. 若年份未注明但片名完全一致，暂存为最优候选
+                    if (!pendingBestCandidate || totalScore > pendingBestCandidate.score) {
+                      pendingBestCandidate = { video: v, score: totalScore };
+                    }
                   }
                 }
               }
             } catch { /* ignore parse errors */ }
           }
+          if (redirected) break;
         }
 
-        // 流结束后的兜底检查
-        if (!redirected && !anyFound && !cancelled) {
-          setTitleSearchError('全网 108 条数据源未检索到该片，请检查片名或在首页重新搜索');
-          setTitleSearching(false);
+        // 流结束后的兜底检查与候选决议
+        if (!redirected && !cancelled) {
+          if (pendingBestCandidate) {
+            // 没有收到明确标有年份的源，但收到了无年份冲突的纯同名正片源，执行跳转
+            redirected = true;
+            const bestVideo = pendingBestCandidate.video;
+            const params = new URLSearchParams();
+            params.set('id', String(bestVideo.vod_id));
+            params.set('source', bestVideo.source);
+            params.set('title', title);
+            if (expectedType) params.set('type', expectedType);
+            if (expectedYear) params.set('year', expectedYear);
+            if (isPremium) params.set('premium', '1');
+            if (foundSources.length > 0) {
+              params.set('groupedSources', JSON.stringify(foundSources));
+            }
+            router.replace(`/player?${params.toString()}`, { scroll: false });
+          } else if (yearMismatchedCount > 0) {
+            // 全网只有相差 3 年以上的同名老片，绝不误播张冠李戴
+            setTitleSearchError(`全网暂未检索到 ${targetYear ? targetYear + ' 年' : ''}《${title}》正片数字资源。系统已为您自动拦截早期同名老片，避免误播。`);
+            setTitleSearching(false);
+          } else {
+            setTitleSearchError('全网 108 条数据源未检索到该片，请检查片名或在首页重新搜索');
+            setTitleSearching(false);
+          }
         }
       } catch (err: any) {
         if (!cancelled && !redirected && err?.name !== 'AbortError') {

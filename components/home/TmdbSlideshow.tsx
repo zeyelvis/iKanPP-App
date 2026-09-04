@@ -148,6 +148,7 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
     const params = new URLSearchParams();
     params.set('title', movie.title);
     params.set('type', contentType);
+    if (movie.year) params.set('year', String(movie.year));
     router.push(`/player?${params.toString()}`);
   };
 

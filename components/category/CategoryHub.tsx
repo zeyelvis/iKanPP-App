@@ -253,6 +253,7 @@ function setLocalCatHub(key: string, data: Record<string, RailMovie[]>) {
     const params = new URLSearchParams();
     params.set('title', movie.title);
     params.set('type', doubanType);
+    if (movie.year) params.set('year', String(movie.year));
     if (activeNav) params.set('from', activeNav);
     router.push(`/player?${params.toString()}`);
   };

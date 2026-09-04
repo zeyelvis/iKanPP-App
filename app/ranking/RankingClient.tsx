@@ -117,6 +117,7 @@ export default function RankingClient() {
     params.set('title', item.title);
     params.set('type', activeTab.type);
     params.set('from', 'ranking');
+    if (item.year) params.set('year', String(item.year));
     router.push(`/player?${params.toString()}`);
   };
 
