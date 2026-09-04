@@ -27,6 +27,13 @@ function PremiumHomePage() {
         handleReset,
     } = usePremiumHomePage();
 
+    // 记录午夜版为当前活跃大厅
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem('ikanpp_last_hub', '/premium');
+        }
+    }, []);
+
     // 当用户点击播放任何视频时的处理（全站全面免费：0ms 直达秒播）
     const handlePlayVideo = (video: any) => {
         const title = video?.vod_name || video?.title;
@@ -34,7 +41,11 @@ function PremiumHomePage() {
             const videoId = video?.vod_id ? String(video.vod_id) : '';
             const source = video?.source || '';
             
-            let playUrl = `/player?title=${encodeURIComponent(title)}&type=tv&premium=1`;
+            if (typeof window !== 'undefined') {
+                sessionStorage.setItem('ikanpp_playing_from_hub', '/premium');
+            }
+
+            let playUrl = `/player?title=${encodeURIComponent(title)}&type=tv&premium=1&from=premium`;
             if (videoId && source) {
                 playUrl += `&id=${encodeURIComponent(videoId)}&source=${encodeURIComponent(source)}`;
             }

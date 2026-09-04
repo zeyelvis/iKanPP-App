@@ -524,13 +524,21 @@ function PlayerContent() {
 
   // 核心返回路由处理器（午夜版绝对定向到 /premium，频道专属来源绝对返回该频道大厅，普通版安全后退）
   const handleBack = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('ikanpp_playing_from_hub');
+    }
     if (isPremium) {
       router.push('/premium');
       return;
     }
     const fromChannel = searchParams.get('from');
     if (fromChannel) {
-      router.push(`/${fromChannel}`);
+      router.push(fromChannel.startsWith('/') ? fromChannel : `/${fromChannel}`);
+      return;
+    }
+    const lastHub = typeof window !== 'undefined' ? sessionStorage.getItem('ikanpp_last_hub') : null;
+    if (lastHub && lastHub !== '/') {
+      router.push(lastHub);
       return;
     }
     if (typeof window !== 'undefined' && window.history.length > 1 && document.referrer.includes(window.location.host)) {
@@ -540,20 +548,18 @@ function PlayerContent() {
     }
   }, [isPremium, searchParams, router]);
 
-  // 手机浏览器手势滑动与系统物理返回键定向守卫
+  // 记录当前播放来源频道，并为手机浏览器手势滑动返回建立守卫锚点
   useEffect(() => {
-    if (!isPremium) return;
-
-    const handlePopState = () => {
-      // 当午夜版播放中后退如果穿透回根主页，强制无感定向到 /premium
-      if (window.location.pathname === '/' || window.location.pathname === '') {
-        window.location.replace('/premium');
+    if (typeof window === 'undefined') return;
+    if (isPremium) {
+      sessionStorage.setItem('ikanpp_playing_from_hub', '/premium');
+    } else {
+      const from = searchParams.get('from');
+      if (from) {
+        sessionStorage.setItem('ikanpp_playing_from_hub', from.startsWith('/') ? from : `/${from}`);
       }
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [isPremium]);
+    }
+  }, [isPremium, searchParams]);
 
   // Redirect if no params at all
   if (isTitleOnlyMode && !titleSearching && !titleSearchError && !title) {

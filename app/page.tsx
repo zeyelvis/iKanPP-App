@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useMemo } from 'react';
+import { Suspense, useMemo, useEffect } from 'react';
 import { SearchLoadingAnimation } from '@/components/SearchLoadingAnimation';
 import { NoResults } from '@/components/search/NoResults';
 import { PopularFeatures } from '@/components/home/PopularFeatures';
@@ -13,6 +13,16 @@ import { useLatencyPing } from '@/lib/hooks/useLatencyPing';
 import { ResumePlayBubble } from '@/components/home/ResumePlayBubble';
 
 function HomePage() {
+  // 频道大厅与午夜版返回穿透保护守卫：若用户刚刚在播放器退出且来自子大厅/午夜版，确保永不误落回总首页
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const playingFromHub = sessionStorage.getItem('ikanpp_playing_from_hub');
+    if (playingFromHub && playingFromHub !== '/') {
+      sessionStorage.removeItem('ikanpp_playing_from_hub');
+      window.location.replace(playingFromHub);
+    }
+  }, []);
+
   const {
     query,
     hasSearched,

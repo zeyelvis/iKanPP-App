@@ -81,11 +81,13 @@ function HeroCardItem({ video, idx, onPlayVideo }: HeroCardItemProps) {
                         src={rawPic}
                         alt={title}
                         fill
+                        unoptimized
+                        referrerPolicy="no-referrer"
                         sizes="(max-width: 640px) 180px, (max-width: 1024px) 220px, 250px"
                         className={`object-cover scale-100 group-hover:scale-108 transition-all duration-700 ease-out ${
                             showVideo ? 'opacity-0' : 'opacity-100'
                         }`}
-                        priority={idx < 5}
+                        priority={idx < 4}
                     />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-br from-purple-950/40 to-black flex items-center justify-center text-white/30 text-xs font-mono">

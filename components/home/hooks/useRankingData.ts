@@ -49,8 +49,8 @@ function setRankingCache(type: string, data: RankingMovie[]) {
     } catch { /* 静默忽略 */ }
 }
 
-// 带超时的 fetch
-function fetchWithTimeout(url: string, timeoutMs: number = 12000): Promise<Response> {
+// 带超时的 fetch（极速熔断，绝不长时间挂起 HTTP 连接池）
+function fetchWithTimeout(url: string, timeoutMs: number = 2500): Promise<Response> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timer));

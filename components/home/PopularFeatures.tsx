@@ -80,36 +80,58 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
     setLoadingShelves(false);
 
     const fetchShelves = async () => {
+      const fetchWithTimeout = async (url: string, timeoutMs = 2000) => {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+          const res = await fetch(url, { signal: controller.signal });
+          if (!res.ok) return { subjects: [] };
+          return await res.json();
+        } catch {
+          return { subjects: [] };
+        } finally {
+          clearTimeout(timer);
+        }
+      };
+
       try {
-        const [res1, res2, res3, res4] = await Promise.allSettled([
-          fetch(`/api/douban/recommend?tag=${encodeURIComponent(tag1)}&type=${contentType}&page_limit=14&page_start=0`).then(r => r.json()),
-          fetch(`/api/douban/recommend?tag=${encodeURIComponent(tag2)}&type=${contentType}&page_limit=14&page_start=0`).then(r => r.json()),
-          fetch(`/api/douban/recommend?tag=${encodeURIComponent(tag3)}&type=${contentType}&page_limit=14&page_start=0`).then(r => r.json()),
-          fetch(`/api/douban/recommend?tag=${encodeURIComponent(tag4)}&type=${contentType}&page_limit=14&page_start=0`).then(r => r.json()),
+        // 第一阶段：优先极速拉取前 2 个首屏高光货架
+        const [res1, res2] = await Promise.allSettled([
+          fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(tag1)}&type=${contentType}&page_limit=14&page_start=0`),
+          fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(tag2)}&type=${contentType}&page_limit=14&page_start=0`),
         ]);
 
         if (isMounted) {
           const s1 = res1.status === 'fulfilled' && res1.value?.subjects?.length ? res1.value.subjects : [];
           const s2 = res2.status === 'fulfilled' && res2.value?.subjects?.length ? res2.value.subjects : [];
-          const s3 = res3.status === 'fulfilled' && res3.value?.subjects?.length ? res3.value.subjects : [];
-          const s4 = res4.status === 'fulfilled' && res4.value?.subjects?.length ? res4.value.subjects : [];
-
           if (s1.length) setShelf1Movies(s1);
           if (s2.length) setShelf2Movies(s2);
+        }
+
+        // 第二阶段：轻量延迟 1 秒后拉取后 2 个货架，彻底释放网络并发通道
+        await new Promise(r => setTimeout(r, 1000));
+        if (!isMounted) return;
+
+        const [res3, res4] = await Promise.allSettled([
+          fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(tag3)}&type=${contentType}&page_limit=14&page_start=0`),
+          fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(tag4)}&type=${contentType}&page_limit=14&page_start=0`),
+        ]);
+
+        if (isMounted) {
+          const s3 = res3.status === 'fulfilled' && res3.value?.subjects?.length ? res3.value.subjects : [];
+          const s4 = res4.status === 'fulfilled' && res4.value?.subjects?.length ? res4.value.subjects : [];
           if (s3.length) setShelf3Movies(s3);
           if (s4.length) setShelf4Movies(s4);
 
-          if (s1.length || s2.length) {
-            setLocalShelves(contentType, {
-              s1: s1.length ? s1 : (cache?.s1 || []),
-              s2: s2.length ? s2 : (cache?.s2 || []),
-              s3: s3.length ? s3 : (cache?.s3 || []),
-              s4: s4.length ? s4 : (cache?.s4 || []),
-            });
-          }
+          setLocalShelves(contentType, {
+            s1: (shelf1Movies.length ? shelf1Movies : cache?.s1) || [],
+            s2: (shelf2Movies.length ? shelf2Movies : cache?.s2) || [],
+            s3: (s3.length ? s3 : (cache?.s3 || [])),
+            s4: (s4.length ? s4 : (cache?.s4 || [])),
+          });
         }
       } catch (err) {
-        console.error('Fetch shelves error:', err);
+        // 静默降级至预烘焙种子数据
       } finally {
         if (isMounted) setLoadingShelves(false);
       }

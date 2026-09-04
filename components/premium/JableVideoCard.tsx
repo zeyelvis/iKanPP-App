@@ -150,12 +150,14 @@ export function JableVideoCard({
                         src={rawPic}
                         alt={title}
                         fill
+                        unoptimized
+                        referrerPolicy="no-referrer"
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         className={`object-cover transition-all duration-700 ease-out ${
                             isHovered ? 'scale-110 translate-x-0.5 -translate-y-0.5' : 'scale-100'
                         } ${showVideo ? 'opacity-0' : 'opacity-100'}`}
                         onError={() => setImgError(true)}
-                        loading={index < 8 ? 'eager' : 'lazy'}
+                        loading={index < 4 ? 'eager' : 'lazy'}
                     />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-br from-purple-950/40 via-slate-900 to-black flex items-center justify-center text-white/30 text-xs font-mono">
