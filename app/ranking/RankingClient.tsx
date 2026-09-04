@@ -7,6 +7,8 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Icons } from '@/components/ui/Icon';
 import { FavoritesSidebar } from '@/components/favorites/FavoritesSidebar';
 import { WatchHistorySidebar } from '@/components/history/WatchHistorySidebar';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { PREBAKED_CATEGORY_ITEMS } from '@/lib/data/category-prebaked';
 
 interface RankingItem {
   id: string;
@@ -54,18 +56,27 @@ function setLocalRank(id: string, items: RankingItem[]) {
 export default function RankingClient() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(RANK_CATEGORIES[0]);
-  const initialCache = typeof window !== 'undefined' ? getLocalRank(RANK_CATEGORIES[0].id) : null;
-  const [items, setItems] = useState<RankingItem[]>(() => initialCache || []);
-  const [loading, setLoading] = useState(!initialCache || initialCache.length === 0);
+  
+  const [items, setItems] = useState<RankingItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      const cached = getLocalRank(RANK_CATEGORIES[0].id);
+      if (cached && cached.length > 0) return cached;
+    }
+    return (PREBAKED_CATEGORY_ITEMS.movie as any[]) || [];
+  });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
     const cached = getLocalRank(activeTab.id);
     if (cached && cached.length > 0) {
       setItems(cached);
-      setLoading(false);
     } else {
-      setLoading(true);
+      // 若切换到未缓存的 tab，优先显示对应的预置数据兜底
+      const tabKey = activeTab.id.startsWith('tv') ? 'tv' : (activeTab.id.startsWith('guoman') ? 'guoman' : (activeTab.id.startsWith('anime') ? 'anime' : (activeTab.id.startsWith('variety') ? 'variety' : 'movie')));
+      if (PREBAKED_CATEGORY_ITEMS[tabKey]) {
+        setItems(PREBAKED_CATEGORY_ITEMS[tabKey] as any[]);
+      }
     }
 
     const fetchRankData = async () => {
@@ -78,7 +89,11 @@ export default function RankingClient() {
         params.set('page_limit', '50');
         params.set('page_start', '0');
 
-        const res = await fetch(`/api/douban/recommend?${params.toString()}`);
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 1800);
+        const res = await fetch(`/api/douban/recommend?${params.toString()}`, { signal: controller.signal });
+        clearTimeout(timer);
+        if (!res.ok) return;
         const data = await res.json();
         if (isMounted && data.subjects?.length) {
           setItems(data.subjects);
@@ -163,9 +178,7 @@ export default function RankingClient() {
               const rank = idx + 1;
               const isTop3 = rank <= 3;
               const rawCover = item.cover || '';
-              const proxiedCover = rawCover.startsWith('http') && rawCover.includes('doubanio')
-                ? `/api/img-proxy?url=${encodeURIComponent(rawCover)}`
-                : rawCover;
+              const proxiedCover = getOptimizedImageUrl(rawCover);
 
               return (
                 <div

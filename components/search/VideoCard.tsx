@@ -11,6 +11,7 @@ import { FavoriteButton } from '@/components/favorites/FavoriteButton';
 import { Video } from '@/lib/types';
 import { parseVideoTitle } from '@/lib/utils/video';
 import { normalizeVideoType } from '@/lib/utils/taxonomy';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 
 interface VideoCardProps {
   video: Video;
@@ -32,9 +33,7 @@ export const VideoCard = memo<VideoCardProps>(({
   latencies = {},
 }) => {
   const displayLatency = latencies[video.source] ?? video.latency;
-  const proxiedPic = video.vod_pic?.startsWith('http')
-    ? `/api/img-proxy?url=${encodeURIComponent(video.vod_pic)}`
-    : video.vod_pic;
+  const proxiedPic = getOptimizedImageUrl(video.vod_pic);
 
   return (
     <div

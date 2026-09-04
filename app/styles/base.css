@@ -266,11 +266,7 @@ img {
     transform: translateZ(0);
 }
 
-/* 滚动防抖：仅限制可交互元素，减少重绘范围 */
-body.scrolling button,
-body.scrolling a {
-    pointer-events: none !important;
-}
+
 
 .group:hover img,
 .glass-card,

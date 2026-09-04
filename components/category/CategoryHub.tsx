@@ -9,6 +9,8 @@ import { MovieGrid } from '@/components/home/MovieGrid';
 import { Icons } from '@/components/ui/Icon';
 import { FavoritesSidebar } from '@/components/favorites/FavoritesSidebar';
 import { WatchHistorySidebar } from '@/components/history/WatchHistorySidebar';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { getPrebakedCategoryShelves } from '@/lib/data/category-prebaked';
 
 export interface FilterOption {
   label: string;
@@ -91,10 +93,19 @@ function setLocalCatHub(key: string, data: Record<string, RailMovie[]>) {
   } catch {}
 }
 
-  // 货架数据状态（SWR: 优先从本地秒级展示）
-  const initialCache = typeof window !== 'undefined' ? getLocalCatHub(activeNav || doubanType) : null;
-  const [shelfData, setShelfData] = useState<Record<string, RailMovie[]>>(() => initialCache || {});
-  const [loadingShelves, setLoadingShelves] = useState<boolean>(() => !initialCache || Object.keys(initialCache).length === 0);
+  // 货架数据状态（SWR: 优先从本地/预烘焙数据集瞬间 0ms 展示，永不阻塞白屏）
+  const initialPrebaked = useMemo(() => {
+    return getPrebakedCategoryShelves(doubanType, activeNav, shelves);
+  }, [doubanType, activeNav, shelves]);
+
+  const [shelfData, setShelfData] = useState<Record<string, RailMovie[]>>(() => {
+    if (typeof window !== 'undefined') {
+      const cached = getLocalCatHub(activeNav || doubanType);
+      if (cached && Object.keys(cached).length > 0) return cached;
+    }
+    return initialPrebaked;
+  });
+  const [loadingShelves, setLoadingShelves] = useState<boolean>(false);
 
   // 全库网格数据（每页展示 36 部，完美填满 6/4/3/2 列排版）
   const [gridMovies, setGridMovies] = useState<any[]>([]);
@@ -110,48 +121,79 @@ function setLocalCatHub(key: string, data: Record<string, RailMovie[]>) {
     return firstList && firstList.length > 0 ? firstList[0] : null;
   }, [shelves, shelfData]);
 
-  // 获取多个专属货架片单（每个横向货架扩容至 20 部）
+  // 获取多个专属货架片单（分两批低压力拉取，带 1800ms 快速超时熔断，绝不卡死连接池）
   useEffect(() => {
     let isMounted = true;
     const cacheKey = activeNav || doubanType;
-    const cached = getLocalCatHub(cacheKey);
-    if (cached && Object.keys(cached).length > 0) {
-      setShelfData(cached);
-      setLoadingShelves(false);
-    } else {
-      setLoadingShelves(true);
-    }
 
     const fetchShelvesData = async () => {
       try {
-        const results = await Promise.allSettled(
-          shelves.map((shelf) =>
-            fetch(
+        // 第一批：优先请求首屏可见的前 2 个核心货架
+        const primaryShelves = shelves.slice(0, 2);
+        const remainingShelves = shelves.slice(2);
+
+        const fetchShelf = async (shelf: { tag: string }) => {
+          try {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 1800);
+            const res = await fetch(
               `/api/douban/recommend?tag=${encodeURIComponent(
                 shelf.tag
-              )}&type=${doubanType}&page_limit=20&page_start=0`
-            )
-              .then((r) => r.json())
-              .then((data) => ({ tag: shelf.tag, subjects: data.subjects || [] }))
-          )
-        );
+              )}&type=${doubanType}&page_limit=20&page_start=0`,
+              { signal: controller.signal }
+            );
+            clearTimeout(timer);
+            if (!res.ok) return null;
+            const data = await res.json();
+            return { tag: shelf.tag, subjects: data.subjects || [] };
+          } catch {
+            return null;
+          }
+        };
 
-        if (isMounted) {
-          const map: Record<string, RailMovie[]> = {};
-          results.forEach((res) => {
+        // 1. 优先拉取前两个
+        const primaryResults = await Promise.allSettled(primaryShelves.map(fetchShelf));
+        if (!isMounted) return;
+
+        const updateMap: Record<string, RailMovie[]> = {};
+        primaryResults.forEach((res) => {
+          if (res.status === 'fulfilled' && res.value?.tag && res.value.subjects?.length) {
+            updateMap[res.value.tag] = res.value.subjects;
+          }
+        });
+
+        if (Object.keys(updateMap).length > 0) {
+          setShelfData((prev) => {
+            const next = { ...prev, ...updateMap };
+            setLocalCatHub(cacheKey, next);
+            return next;
+          });
+        }
+
+        // 2. 延迟 1 秒再拉取剩余货架，彻底平滑流量峰值
+        if (remainingShelves.length > 0) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          if (!isMounted) return;
+
+          const remainingResults = await Promise.allSettled(remainingShelves.map(fetchShelf));
+          if (!isMounted) return;
+
+          remainingResults.forEach((res) => {
             if (res.status === 'fulfilled' && res.value?.tag && res.value.subjects?.length) {
-              map[res.value.tag] = res.value.subjects;
+              updateMap[res.value.tag] = res.value.subjects;
             }
           });
-          if (Object.keys(map).length > 0) {
-            setShelfData(prev => ({ ...prev, ...map }));
-            setLocalCatHub(cacheKey, map);
+
+          if (Object.keys(updateMap).length > 0) {
+            setShelfData((prev) => {
+              const next = { ...prev, ...updateMap };
+              setLocalCatHub(cacheKey, next);
+              return next;
+            });
           }
         }
       } catch (err) {
         console.error('Fetch category shelves error:', err);
-      } finally {
-        if (isMounted) setLoadingShelves(false);
       }
     };
 
@@ -234,11 +276,7 @@ function setLocalCatHub(key: string, data: Record<string, RailMovie[]>) {
             {/* 背景大图 */}
             <div className="absolute inset-0">
               <img
-                src={
-                  heroMovie.cover?.startsWith('http')
-                    ? `/api/img-proxy?url=${encodeURIComponent(heroMovie.cover)}`
-                    : heroMovie.cover || '/placeholder-poster.svg'
-                }
+                src={getOptimizedImageUrl(heroMovie.cover)}
                 alt={heroMovie.title}
                 className="w-full h-full object-cover scale-105 transition-transform duration-1000 group-hover:scale-108"
                 style={{ objectPosition: 'center 25%' }}

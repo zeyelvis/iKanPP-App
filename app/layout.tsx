@@ -241,39 +241,9 @@ export default function RootLayout({
           className="sr-only"
         />
 
-        {/* Google Cast SDK */}
-        <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1" async />
 
-        {/* Scroll Performance Optimization Script */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                let scrollTimer;
-                const body = document.body;
-                
-                function handleScroll() {
-                  body.classList.add('scrolling');
-                  clearTimeout(scrollTimer);
-                  scrollTimer = setTimeout(function() {
-                    body.classList.remove('scrolling');
-                  }, 300);
-                }
-                
-                let ticking = false;
-                window.addEventListener('scroll', function() {
-                  if (!ticking) {
-                    window.requestAnimationFrame(function() {
-                      handleScroll();
-                      ticking = false;
-                    });
-                    ticking = true;
-                  }
-                }, { passive: true });
-              })();
-            `,
-          }}
-        />
+
+
       </body>
     </html>
   );

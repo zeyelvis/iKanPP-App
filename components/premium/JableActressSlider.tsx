@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { JABLE_POPULAR_ACTRESSES, type JableActress } from '@/lib/constants/jable-categories';
 import { Sparkles, ChevronRight, Crown } from 'lucide-react';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 
 interface JableActressSliderProps {
     onSelectActress: (actress: JableActress) => void;
@@ -29,9 +30,7 @@ export function JableActressSlider({ onSelectActress }: JableActressSliderProps)
             {/* 女优列表横向滑动 */}
             <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pb-2 scroll-smooth">
                 {JABLE_POPULAR_ACTRESSES.map((actress) => {
-                    const proxiedAvatar = actress.avatar?.startsWith('http')
-                        ? `/api/img-proxy?url=${encodeURIComponent(actress.avatar)}`
-                        : actress.avatar;
+                    const proxiedAvatar = getOptimizedImageUrl(actress.avatar);
 
                     return (
                     <button
