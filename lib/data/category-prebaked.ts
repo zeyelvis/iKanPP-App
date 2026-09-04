@@ -60,7 +60,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_m6',
       title: '流浪地球2',
       rate: '8.3',
-      cover: 'https://image.tmdb.org/t/p/w500/d74WpIsHhxP1z91Lg8kHq9hV9j0.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/cAS2e9hUwu6Ydsx7byXj16H00Ai.jpg',
       year: '2023',
       types: ['科幻', '冒险']
     },
@@ -68,7 +68,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_m7',
       title: '周处除三害',
       rate: '8.1',
-      cover: 'https://image.tmdb.org/t/p/w500/iLg9iKskR0Zq8tZ6e8qG3yN2v6w.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/b5P8eg7u4XgDSYNF6da17CcZy2d.jpg',
       year: '2024',
       types: ['犯罪', '动作']
     },
@@ -76,7 +76,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_m8',
       title: '盗梦空间',
       rate: '9.4',
-      cover: 'https://image.tmdb.org/t/p/w500/8IB2e4r4oVhHnANbnm7O3qj6E5P.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/89W962aAnPS3N3BdKgy2BvUhnCh.jpg',
       year: '2010',
       types: ['科幻', '悬疑', '冒险']
     },
@@ -92,7 +92,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_m10',
       title: '九龙城寨之围城',
       rate: '7.2',
-      cover: 'https://image.tmdb.org/t/p/w500/yApyj4Y0V7hQk1hX6tV3w1m6gL8.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/dS8C60iEHnuZEFgKFjRx0GCLVRf.jpg',
       year: '2024',
       types: ['动作', '犯罪']
     }
@@ -104,7 +104,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_t1',
       title: '繁花',
       rate: '8.7',
-      cover: 'https://image.tmdb.org/t/p/w500/a3Xp9C0qLqV9j4X6bL4Z1w2kY8a.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/rV1owsdKtXytJ5eFMOOVTze3mrk.jpg',
       year: '2023',
       types: ['剧情', '爱情']
     },
@@ -112,7 +112,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_t2',
       title: '庆余年 第二季',
       rate: '7.3',
-      cover: 'https://image.tmdb.org/t/p/w500/b1kL0x1vN6tQ8z3p2X1wY7aK9c8.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/wHJvPo9CLpXwX1ncDg6uD0QJIZo.jpg',
       year: '2024',
       types: ['古装', '权谋', '喜剧']
     },
@@ -120,7 +120,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_t3',
       title: '三体',
       rate: '8.7',
-      cover: 'https://image.tmdb.org/t/p/w500/h6R1x5fF2h8t9y3b7g8w9e0r1t2.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/q2sNliRi4j0ncXKUO1x0MldR20A.jpg',
       year: '2023',
       types: ['科幻', '悬疑']
     },
@@ -128,7 +128,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_t4',
       title: '狂飙',
       rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/7aZ8g9y0x1b2c3d4e5f6g7h8i9j.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/6F2UcY1p2YCz3xgLz6NfDh81QC3.jpg',
       year: '2023',
       types: ['剧情', '犯罪']
     },
@@ -136,7 +136,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_t5',
       title: '漫长的季节',
       rate: '9.4',
-      cover: 'https://image.tmdb.org/t/p/w500/c7a8b9y0x1b2c3d4e5f6g7h8i9j.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/xErvw04IuhNx5OyESipIGbiDvdX.jpg',
       year: '2023',
       types: ['生活', '悬疑', '犯罪']
     },
@@ -144,7 +144,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_t6',
       title: '唐朝诡事录之西行',
       rate: '8.6',
-      cover: 'https://image.tmdb.org/t/p/w500/d8a9b0y1x2b3c4d5e6f7g8h9i0j.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/mXb1lfYoh3IYbiCRRH8C5rDZ9XQ.jpg',
       year: '2024',
       types: ['古装', '悬疑', '志怪']
     },
@@ -172,7 +172,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_g1',
       title: '凡人修仙传',
       rate: '9.1',
-      cover: 'https://image.tmdb.org/t/p/w500/8g9a0y1b2c3d4e5f6g7h8i9j0k1.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/u1VRjvvCIVwb1MUhoxSAUimhoKZ.jpg',
       year: '2024',
       types: ['国漫', '玄幻', '仙侠']
     },
@@ -180,7 +180,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_g2',
       title: '完美世界',
       rate: '8.8',
-      cover: 'https://image.tmdb.org/t/p/w500/7f8e9d0c1b2a3b4c5d6e7f8a9b0.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/mNJPCv2dLADVVSgLlzsMJoXdTmb.jpg',
       year: '2024',
       types: ['玄幻', '动作']
     },
@@ -188,7 +188,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_g3',
       title: '遮天',
       rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/6e7d8c9b0a1b2c3d4e5f6g7h8i9.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/z9JNGlJ8eGy6S6SOlBhpmxjjXGT.jpg',
       year: '2024',
       types: ['玄幻', '仙侠']
     },
@@ -196,7 +196,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_g4',
       title: '斗破苍穹 年番',
       rate: '8.6',
-      cover: 'https://image.tmdb.org/t/p/w500/5d6c7b8a9b0c1d2e3f4g5h6i7j8.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/oyoahIcdamTXwjIaL3CqZ1v5CLl.jpg',
       year: '2024',
       types: ['玄幻', '热血']
     },
@@ -204,7 +204,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_g5',
       title: '吞噬星空',
       rate: '8.7',
-      cover: 'https://image.tmdb.org/t/p/w500/4c5b6a7b8c9d0e1f2g3h4i5j6k7.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/dShQsQFLSivwCIRjC7crsnznPXY.jpg',
       year: '2024',
       types: ['科幻', '玄幻']
     },
@@ -212,7 +212,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_g6',
       title: '仙逆',
       rate: '8.9',
-      cover: 'https://image.tmdb.org/t/p/w500/3b4a5b6c7d8e9f0a1b2c3d4e5f6.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/mCt5qgkOYEvuHSiSwNByMv6LMoB.jpg',
       year: '2024',
       types: ['仙侠', '杀伐果断']
     }
@@ -224,7 +224,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_a1',
       title: '葬送的芙莉莲',
       rate: '9.5',
-      cover: 'https://image.tmdb.org/t/p/w500/kYgQzzqN3gW9NlX3e1k7v2m0y5R.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/1TtrtRIwXz5BB0gXEl8zgBypl9c.jpg',
       year: '2023',
       types: ['奇幻', '治愈', '冒险']
     },
@@ -232,7 +232,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_a2',
       title: '鬼灭之刃 柱训练篇',
       rate: '8.9',
-      cover: 'https://image.tmdb.org/t/p/w500/h8g9y0x1b2c3d4e5f6g7h8i9j0k.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/sSE8DZr44URZccaKtdU8BZyEU6Q.jpg',
       year: '2024',
       types: ['热血', '奇幻', '战斗']
     },
@@ -240,7 +240,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_a3',
       title: '咒术回战 第二季',
       rate: '9.2',
-      cover: 'https://image.tmdb.org/t/p/w500/7a8b9c0d1e2f3g4h5i6j7k8l9m0.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/kdE1ALF5G6DFMyDU67AyyUklEtn.jpg',
       year: '2023',
       types: ['热血', '战斗', '超自然']
     },
@@ -248,7 +248,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_a4',
       title: '进击的巨人 最终季',
       rate: '9.6',
-      cover: 'https://image.tmdb.org/t/p/w500/8b9c0d1e2f3g4h5i6j7k8l9m0n1.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/5gaf9yFJHJTkg6KtLc7enqBY6UK.jpg',
       year: '2023',
       types: ['热血', '动作', '末日']
     }
@@ -260,7 +260,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_v1',
       title: '歌手2024',
       rate: '8.0',
-      cover: 'https://image.tmdb.org/t/p/w500/9c0d1e2f3g4h5i6j7k8l9m0n1o2.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/gZxoF6ks9mMufSbcey3hC4XsYgy.jpg',
       year: '2024',
       types: ['音乐', '真人秀']
     },
@@ -268,7 +268,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_v2',
       title: '种地吧 第二季',
       rate: '9.0',
-      cover: 'https://image.tmdb.org/t/p/w500/0d1e2f3g4h5i6j7k8l9m0n1o2p3.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/vl5WKVXgL1tQs9D9wGE2ido6dwW.jpg',
       year: '2024',
       types: ['真人秀', '生活']
     },
@@ -276,7 +276,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_v3',
       title: '奔跑吧 第十二季',
       rate: '7.2',
-      cover: 'https://image.tmdb.org/t/p/w500/1e2f3g4h5i6j7k8l9m0n1o2p3q4.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/jOl12DTFiMcp9ga2KaEKwt5H8oo.jpg',
       year: '2024',
       types: ['游戏', '竞技']
     },
@@ -284,7 +284,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       id: 'pb_cat_v4',
       title: '极限挑战 第十季',
       rate: '7.1',
-      cover: 'https://image.tmdb.org/t/p/w500/2f3g4h5i6j7k8l9m0n1o2p3q4r5.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/nYsiHMplUCBFazdAOVr1gQaGy34.jpg',
       year: '2024',
       types: ['竞技', '真人秀']
     }
