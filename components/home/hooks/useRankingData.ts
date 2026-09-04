@@ -61,7 +61,7 @@ function fetchWithTimeout(url: string, timeoutMs: number = 2500): Promise<Respon
  */
 function getPrebakedRanking(type: 'movie' | 'tv'): RankingMovie[] {
     const prebaked = PREBAKED_HOME_DATA[type];
-    const list = [...prebaked.s1, ...prebaked.s2, ...prebaked.s3, ...prebaked.s4];
+    const list = prebaked.top10 && prebaked.top10.length > 0 ? prebaked.top10 : prebaked.s1;
     return list.map(item => ({
         id: item.id,
         title: item.title,
@@ -70,6 +70,7 @@ function getPrebakedRanking(type: 'movie' | 'tv'): RankingMovie[] {
         url: `/player?title=${encodeURIComponent(item.title)}`,
         year: item.year,
         types: item.types,
+        description: item.description,
     }));
 }
 

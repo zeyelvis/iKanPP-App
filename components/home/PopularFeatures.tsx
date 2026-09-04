@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { createPortal } from 'react-dom';
 import { HeroSlideshow } from './TmdbSlideshow';
@@ -143,6 +143,94 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
     };
   }, [contentType, tag1, tag2, tag3, tag4]);
 
+  // ── 全局流媒体防重管道（Deduplication Funnel） ──────────────────
+  // 按照页面视觉从上至下的动线流动，严格依次排除上游模块已展示过的影片：
+  // 1. Hero 巨幕专属大片 -> 标记已看
+  // 2. Top 10 实时榜单 -> 剔除 Hero 重复项，标记已看
+  // 3. 货架 1（院线/新剧） -> 剔除前面所有重复项，用预置池补足
+  // 4. 货架 2（高分/美剧） -> 剔除前面所有重复项，用预置池补足
+  // 5. 货架 3（华语/韩剧） -> 剔除前面所有重复项，用预置池补足
+  // 6. 货架 4（科幻/动漫） -> 剔除前面所有重复项，用预置池补足
+  const deduplicatedContent = useMemo(() => {
+    const seen = new Set<string>();
+
+    // 辅助归一化标题函数（去除季数、括号等轻微差异，防止重复）
+    const normalize = (t: string) =>
+      (t || '')
+        .replace(/\s*第[一二三四五六七八九十\d]+季/, '')
+        .replace(/\s*年番/, '')
+        .replace(/\s*[（(][^)）]*[)）]/g, '')
+        .trim()
+        .toLowerCase();
+
+    // 1. Hero 巨幕：专属大片
+    const heroPool = prebaked.hero || [];
+    const heroList: any[] = [];
+    for (const item of heroPool) {
+      const key = normalize(item.title);
+      if (key && !seen.has(key)) {
+        seen.add(key);
+        heroList.push(item);
+      }
+    }
+
+    // 2. Top 10 实时大榜：从实际榜单数据中选出 10 部未在 Hero 出现的真实影片
+    const top10Source = (top10Data && top10Data.length > 0) ? top10Data : (prebaked.top10 || []);
+    const top10List: any[] = [];
+    for (const item of top10Source) {
+      if (top10List.length >= 10) break;
+      const key = normalize(item.title);
+      if (key && !seen.has(key)) {
+        seen.add(key);
+        top10List.push(item);
+      }
+    }
+    // 若因过滤不足 10 部，从 prebaked.top10 补足
+    if (top10List.length < 10 && prebaked.top10) {
+      for (const item of prebaked.top10) {
+        if (top10List.length >= 10) break;
+        const key = normalize(item.title);
+        if (key && !seen.has(key)) {
+          seen.add(key);
+          top10List.push(item);
+        }
+      }
+    }
+
+    // 3. 通用货架过滤填充器
+    const filterAndFill = (current: any[], fallback: any[], minCount = 10) => {
+      const result: any[] = [];
+      // 优先装载网络或缓存的最新数据
+      for (const m of (current || [])) {
+        if (!m || !m.title) continue;
+        const key = normalize(m.title);
+        if (key && !seen.has(key)) {
+          seen.add(key);
+          result.push(m);
+        }
+      }
+      // 不足时，用该专区的高清预置精选池补足
+      if (result.length < minCount) {
+        for (const m of (fallback || [])) {
+          if (!m || !m.title) continue;
+          const key = normalize(m.title);
+          if (key && !seen.has(key)) {
+            seen.add(key);
+            result.push(m);
+          }
+        }
+      }
+      return result;
+    };
+
+    const s1 = filterAndFill(shelf1Movies, prebaked.s1);
+    const s2 = filterAndFill(shelf2Movies, prebaked.s2);
+    const s3 = filterAndFill(shelf3Movies, prebaked.s3);
+    const s4 = filterAndFill(shelf4Movies, prebaked.s4);
+
+    return { heroList, top10List, s1, s2, s3, s4, seenSnapshot: new Set(seen) };
+  }, [contentType, prebaked, top10Data, shelf1Movies, shelf2Movies, shelf3Movies, shelf4Movies]);
+
   const handleMovieClick = (movie: any) => {
     const params = new URLSearchParams();
     params.set('title', movie.title);
@@ -152,8 +240,8 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
 
   return (
     <div className="animate-fade-in pb-28 sm:pb-16">
-      {/* 1. 🏆 影院级全景沉浸式巨幕 Billboard */}
-      <HeroSlideshow contentType={contentType} onSearch={onSearch} />
+      {/* 1. 🏆 影院级全景沉浸式巨幕 Billboard（专属 5 大视效巨制，横版剧照 + 深度看点） */}
+      <HeroSlideshow contentType={contentType} onSearch={onSearch} customHeroMovies={deduplicatedContent.heroList} />
 
       {/* 2. 🎬 断点续播 / 最近观看记录横轨 */}
       <ContinueWatchingRail />
@@ -193,42 +281,43 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         </div>
 
         <span className="text-xs text-white/40 font-medium hidden md:inline">
-          全球多源秒播 · 4K 超清聚合
+          全球多源秒播 · 4K 超清聚合 · 零重复策划
         </span>
       </div>
 
-      {/* 5. 🎯 猜你喜欢 · 智能定制推荐 */}
-      <PersonalizedForYouRail
-        onMovieClick={handleMovieClick}
-        contentType={contentType}
-      />
-
-      {/* 6. 🥇 Netflix 风格今日 TOP 10 实时排行榜 */}
+      {/* 5. 🥇 Netflix 风格今日 TOP 10 实时大榜（严格排除 Hero 影片，高大整齐齐平） */}
       <Top10Rail
-        movies={top10Data}
+        movies={deduplicatedContent.top10List}
         loading={rankingLoading}
         onMovieClick={handleMovieClick}
         contentType={contentType}
       />
 
-      {/* 7. 货架 1：最新上映 或 国产新剧 */}
+      {/* 6. 🎯 猜你喜欢 · 智能定制推荐（排除已展示影片，挖掘真正冷门黑马） */}
+      <PersonalizedForYouRail
+        onMovieClick={handleMovieClick}
+        contentType={contentType}
+        excludeTitles={deduplicatedContent.seenSnapshot}
+      />
+
+      {/* 7. 货架 1：院线首播 & 同步爆款 / 华语热播连续剧 */}
       <ContentRail
-        title={isMovie ? '✨ 院线首播 & 最新上映' : '🔥 2026 华语热播连续剧'}
+        title={isMovie ? '✨ 院线首播 & 2024-2026 同步爆款' : '🔥 2026 华语爆款热播连续剧'}
         icon={isMovie ? '✨' : '🔥'}
-        badge="NEW"
-        movies={shelf1Movies}
+        badge="NEW RELEASE"
+        movies={deduplicatedContent.s1}
         loading={loadingShelves}
         isPriority={true}
         onMovieClick={handleMovieClick}
         onViewAll={() => router.push(isMovie ? '/movie?genre=最新' : '/tv?region=国产剧')}
       />
 
-      {/* 8. 货架 2：豆瓣高分 或 顶级美剧 */}
+      {/* 8. 货架 2：豆瓣 8.5+ 影史高分神作 / 顶级欧美神剧专区 */}
       <ContentRail
-        title={isMovie ? '⭐ 豆瓣 8.5+ 影史高分神作' : '🌟 顶级欧美神剧专区'}
+        title={isMovie ? '⭐ 豆瓣 8.5+ 影史殿堂神作' : '🌟 顶级欧美神剧 & 艾美奖力作'}
         icon={isMovie ? '⭐' : '🌟'}
-        badge={isMovie ? 'HIGH RATED' : 'TOP US'}
-        movies={shelf2Movies}
+        badge={isMovie ? '豆瓣 9.0+' : 'TOP HBO/NETFLIX'}
+        movies={deduplicatedContent.s2}
         loading={loadingShelves}
         onMovieClick={handleMovieClick}
         onViewAll={() => router.push(isMovie ? '/movie?genre=豆瓣高分' : '/tv?region=美剧')}
@@ -237,21 +326,23 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       {/* 9. 📡 电视直播精选频道 */}
       <LiveChannelsPreview />
 
-      {/* 10. 货架 3：华语经典 或 人气日韩剧 */}
+      {/* 10. 货架 3：华语经典口碑大片 / 人气韩剧 & 经典日剧 */}
       <ContentRail
-        title={isMovie ? '🏮 华语经典口碑大片' : '🍿 人气韩剧 & 日剧精选'}
+        title={isMovie ? '🏮 华语经典 & 港影黄金时代' : '🍿 人气韩剧 & 现象级爆款'}
         icon={isMovie ? '🏮' : '🍿'}
-        movies={shelf3Movies}
+        badge="CLASSIC"
+        movies={deduplicatedContent.s3}
         loading={loadingShelves}
         onMovieClick={handleMovieClick}
         onViewAll={() => router.push(isMovie ? '/movie?region=华语' : '/tv?region=韩剧')}
       />
 
-      {/* 11. 货架 4：好莱坞大片 或 动漫新番 */}
+      {/* 11. 货架 4：好莱坞震撼视效 / 国漫巅峰 & 热血动漫新番 */}
       <ContentRail
-        title={isMovie ? '🚀 好莱坞 & 欧美科幻大片' : '⚡ 热血动漫 & 新番连载'}
+        title={isMovie ? '🚀 好莱坞震撼视效 & 科幻动作巅峰' : '⚡ 国漫巅峰 & 连载动漫新番'}
         icon={isMovie ? '🚀' : '⚡'}
-        movies={shelf4Movies}
+        badge="SUPER HIT"
+        movies={deduplicatedContent.s4}
         loading={loadingShelves}
         onMovieClick={handleMovieClick}
         onViewAll={() => router.push(isMovie ? '/movie?region=欧美' : '/anime')}

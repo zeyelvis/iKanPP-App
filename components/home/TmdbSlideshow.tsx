@@ -3,9 +3,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useRankingData } from './hooks/useRankingData';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { PREBAKED_HOME_DATA, type PrebakedSubject } from '@/lib/data/home-prebaked';
 
 interface PosterImageProps {
   src: string;
@@ -75,25 +75,28 @@ function PosterImage({ src, alt, className = '', style, sizes = '100vw', priorit
 interface HeroSlideshowProps {
   contentType: 'movie' | 'tv';
   onSearch?: (query: string) => void;
+  customHeroMovies?: PrebakedSubject[];
 }
 
-export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
+export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroSlideshowProps) {
   const router = useRouter();
-  const { movieRanking, tvRanking, loading, fetchType } = useRankingData({ limit: 10 });
   const [activeIndex, setActiveIndex] = useState(0);
   const [backdrops, setBackdrops] = useState<Record<string, string | null>>({});
   const [isPaused, setIsPaused] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const fetchedRef = useRef<string>('');
 
-  const currentData = contentType === 'movie' ? movieRanking : tvRanking;
+  // 专属巨幕数据池：优先使用定制 Hero 影视（包含 4K 横版剧照与精美简介）
+  const heroList = customHeroMovies && customHeroMovies.length > 0
+    ? customHeroMovies
+    : (PREBAKED_HOME_DATA[contentType]?.hero || []);
+  const currentData = heroList;
 
   useEffect(() => {
     setActiveIndex(0);
-    fetchType(contentType);
-  }, [contentType, fetchType]);
+  }, [contentType]);
 
-  // 获取 TMDB Backdrops
+  // 异步补充可能缺失的 Backdrop
   useEffect(() => {
     if (currentData.length === 0) return;
     const key = contentType + currentData.map(m => m.id).join(',');
@@ -102,7 +105,10 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
 
     const fetchBackdrops = async () => {
       try {
-        const items = currentData.map(m => ({ title: m.title, year: m.year }));
+        const needFetch = currentData.filter(m => !m.backdrop);
+        if (needFetch.length === 0) return;
+
+        const items = needFetch.map(m => ({ title: m.title, year: m.year }));
         const res = await fetch('/api/tmdb/trending', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -145,14 +151,14 @@ export function HeroSlideshow({ contentType, onSearch }: HeroSlideshowProps) {
     router.push(`/player?${params.toString()}`);
   };
 
-  if (loading || currentData.length === 0) {
+  if (currentData.length === 0) {
     return (
       <div className="relative w-full h-[52vh] sm:h-[62vh] lg:h-[70vh] max-h-180 rounded-3xl overflow-hidden bg-white/5 animate-pulse mb-8 border border-white/5" />
     );
   }
 
   const active = currentData[activeIndex] || currentData[0];
-  const activeBackdrop = backdrops[active.title] || active.cover;
+  const activeBackdrop = active.backdrop || backdrops[active.title] || active.cover;
   const displayItems = currentData.slice(0, 6);
 
   const handleTouchStart = (e: React.TouchEvent) => {
