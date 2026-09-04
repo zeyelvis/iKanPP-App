@@ -301,10 +301,6 @@ function PlayerContent() {
     setIsReversed(modeStore.getSettings().episodeReverseOrder);
   }, []);
 
-  // Handle auto-fallback when current source is unavailable (defined later, uses ref)
-  const sourceUnavailableRef = useRef<(() => void) | undefined>(undefined);
-  const pendingFallbackRef = useRef(false);
-
   // useVideoPlayer must be called unconditionally (React hooks rules)
   // When videoId/source are null (title-only mode), pass empty strings - the hook will just be idle
   const {
@@ -317,9 +313,7 @@ function PlayerContent() {
     setPlayUrl,
     setVideoError,
     fetchVideoDetails,
-  } = useVideoPlayer(videoId || '', source || '', episodeParam, isReversed, useCallback(() => {
-    sourceUnavailableRef.current?.();
-  }, []));
+  } = useVideoPlayer(videoId || '', source || '', episodeParam, isReversed);
 
   // Parse grouped sources if available
   const [discoveredSources, setDiscoveredSources] = useState<SourceInfo[]>([]);
@@ -391,51 +385,16 @@ function PlayerContent() {
     };
   }, [videoData?.type_name, expectedType]);
 
-  // Wire up the source unavailable handler now that groupedSources is defined
-  sourceUnavailableRef.current = () => {
-    const alternatives = groupedSources.filter(s => s.source !== source);
-    if (alternatives.length === 0) {
-      // No alternatives yet — mark pending so we retry when discovered sources arrive
-      pendingFallbackRef.current = true;
-      return;
-    }
-
-    pendingFallbackRef.current = false;
-    const best = [...alternatives].sort((a, b) => {
-      const latA = a.latency ?? Infinity;
-      const latB = b.latency ?? Infinity;
-      return latA - latB;
-    })[0];
-
-    const params = new URLSearchParams();
-    params.set('id', String(best.id));
-    params.set('source', best.source);
-    params.set('title', title || '');
-    if (episodeParam) params.set('episode', episodeParam);
-    if (groupedSourcesParam) params.set('groupedSources', groupedSourcesParam);
-    if (isPremium) params.set('premium', '1');
-    router.replace(`/player?${params.toString()}`, { scroll: false });
-  };
-
-  // Retry pending fallback when discovered sources arrive
-  useEffect(() => {
-    if (pendingFallbackRef.current && discoveredSources.length > 0) {
-      sourceUnavailableRef.current?.();
-    }
-  }, [discoveredSources]);
-
   // Background fetch alternative sources when none provided or when existing ones lack full info
   useEffect(() => {
     if (!title || isTitleOnlyMode) return;
 
-    // Check if existing grouped sources already have full info (pic + latency)
+    // Check if existing grouped sources already have full info
     let existingSources: SourceInfo[] = [];
     if (groupedSourcesParam) {
       try { existingSources = JSON.parse(groupedSourcesParam); } catch { }
     }
-    // Always fetch alternatives if there's a pending fallback (source unavailable)
-    const hasFullInfo = !pendingFallbackRef.current && existingSources.length > 1 &&
-      existingSources.every(s => s.pic || s.latency !== undefined);
+    const hasFullInfo = existingSources.length > 1 && existingSources.every(s => s.pic);
     if (hasFullInfo) return;
 
     let cancelled = false;

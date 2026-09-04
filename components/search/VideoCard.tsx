@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Icons } from '@/components/ui/Icon';
-import { LatencyBadge } from '@/components/ui/LatencyBadge';
 import { FavoriteButton } from '@/components/favorites/FavoriteButton';
 import { Video } from '@/lib/types';
 import { parseVideoTitle } from '@/lib/utils/video';
@@ -153,8 +152,10 @@ export const VideoCard = memo<VideoCardProps>(({
 
             <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5 text-[11px] text-white/40">
               <span className="truncate">{video.vod_year || video.vod_area || '全网片源'}</span>
-              {displayLatency !== undefined && (
-                <LatencyBadge latency={displayLatency} />
+              {video.type_name && (
+                <span className="text-white/40 text-[10px] px-1.5 py-0.5 rounded bg-white/5 border border-white/5 truncate max-w-[80px]">
+                  {video.type_name}
+                </span>
               )}
             </div>
           </div>

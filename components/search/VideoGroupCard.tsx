@@ -11,7 +11,6 @@ import Image from 'next/image';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Icons } from '@/components/ui/Icon';
-import { LatencyBadge } from '@/components/ui/LatencyBadge';
 import { FavoriteButton } from '@/components/favorites/FavoriteButton';
 import { Video } from '@/lib/types';
 import { parseVideoTitle } from '@/lib/utils/video';
@@ -142,10 +141,6 @@ export const VideoGroupCard = memo<VideoGroupCardProps>(({
                                 <Icons.Layers size={12} className="mr-1" />
                                 {videos.length} 源
                             </Badge>
-
-                            {bestLatency !== undefined && (
-                                <LatencyBadge latency={bestLatency} className="flex-shrink-0" />
-                            )}
                         </div>
 
                         {/* Favorite Button - Top Right */}

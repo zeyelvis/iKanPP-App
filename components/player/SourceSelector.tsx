@@ -11,7 +11,6 @@ import Image from 'next/image';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Icons } from '@/components/ui/Icon';
-import { LatencyBadge } from '@/components/ui/LatencyBadge';
 import { Button } from '@/components/ui/Button';
 
 export interface SourceInfo {
@@ -197,22 +196,19 @@ export function SourceSelector({
                                         </span>
                                     )}
 
-                                    {/* 极速秒播标识 */}
-                                    {latency !== undefined && latency < 200 && (
+                                    {/* 推荐首选标识 */}
+                                    {index === 0 && (
                                         <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 font-bold text-[10px] rounded-md shrink-0">
-                                            🚀 秒播
+                                            🚀 推荐首选
                                         </span>
                                     )}
                                 </div>
 
-                                {latency !== undefined && (
-                                    <div className="mt-1 flex items-center gap-2">
-                                        <LatencyBadge latency={latency} />
-                                        <span className="text-[11px] opacity-60">
-                                            {is4K ? '原生 4K UHD 极清画质流' : isBluRay ? '1080P 蓝光高码率' : '高速稳定 CDN 直连'}
-                                        </span>
-                                    </div>
-                                )}
+                                <div className="mt-1 flex items-center gap-2">
+                                    <span className="text-[11px] opacity-60">
+                                        {is4K ? '原生 4K UHD 极清画质流' : isBluRay ? '1080P 蓝光高码率' : '高速稳定 CDN 直连'}
+                                    </span>
+                                </div>
                             </div>
 
                             {/* 当前播放指示器 */}

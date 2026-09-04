@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Icons } from '@/components/ui/Icon';
-import { LatencyBadge } from '@/components/ui/LatencyBadge';
 import { Button } from '@/components/ui/Button';
 import { useKeyboardNavigation } from '@/lib/hooks/useKeyboardNavigation';
 import { settingsStore } from '@/lib/store/settings-store';
@@ -515,9 +514,9 @@ export function EpisodeList({
                                           💎 1080P 蓝光
                                         </span>
                                       )}
-                                      {latency !== undefined && latency < 200 && (
+                                      {globalIndex === 0 && (
                                         <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 font-bold text-[10px] rounded-md shrink-0">
-                                          🚀 秒播
+                                          🚀 推荐首选
                                         </span>
                                       )}
                                       {badge ? (
@@ -528,11 +527,6 @@ export function EpisodeList({
                                     </div>
                                     {source.remarks && !badge && (
                                       <div className="text-[10px] text-[var(--text-color-secondary)] truncate mt-0.5">{source.remarks}</div>
-                                    )}
-                                    {latency !== undefined && (
-                                      <div className="mt-0.5">
-                                        <LatencyBadge latency={latency} />
-                                      </div>
                                     )}
                                   </div>
                                   {isCurrent && (
@@ -610,9 +604,9 @@ export function EpisodeList({
                                       💎 1080P 蓝光
                                     </span>
                                   )}
-                                  {latency !== undefined && latency < 200 && (
+                                  {index === 0 && (
                                     <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 font-bold text-[10px] rounded-md shrink-0">
-                                      🚀 秒播
+                                      🚀 推荐首选
                                     </span>
                                   )}
                                   {badge ? (
@@ -623,11 +617,6 @@ export function EpisodeList({
                                 </div>
                                 {source.remarks && !badge && (
                                   <div className="text-[10px] text-[var(--text-color-secondary)] truncate mt-0.5">{source.remarks}</div>
-                                )}
-                                {latency !== undefined && (
-                                  <div className="mt-0.5">
-                                    <LatencyBadge latency={latency} />
-                                  </div>
                                 )}
                               </div>
                               {isCurrent && (
