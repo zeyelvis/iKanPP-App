@@ -198,8 +198,11 @@ function PlayerContent() {
                   // 总得分
                   const totalScore = nameScore + yearScore + qualityScore;
 
-                  // 记录为可用来源供清晰度切换
-                  if (!isTrailer && !isCommentary && !isYearMismatched && (isExactName || totalScore > 0)) {
+                  // 记录为可用来源供清晰度切换（必须严格精确吻合片名与年代，绝不收录无关视频或早期老片）
+                  const isStrictCandidate = !isTrailer && !isCommentary && !isYearMismatched && isExactName && 
+                    (!targetYear || !candYear || Math.abs(candYear - targetYear) <= 1);
+
+                  if (isStrictCandidate) {
                     anyFound = true;
                     if (!foundSources.some(s => s.id === v.vod_id && s.source === v.source)) {
                       foundSources.push({
@@ -446,10 +449,17 @@ function PlayerContent() {
 
     (async () => {
       try {
+        const cleanTitle = (title || '').replace(/[《》【】\[\]（）()]/g, ' ').replace(/\s+/g, ' ').trim();
+        const pureTargetTitle = cleanTitle.replace(/[·\s]/g, '').toLowerCase();
+        const codeMatch = (title || '').match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
+        const videoCode = codeMatch ? codeMatch[0].toUpperCase() : null;
+        const targetYear = expectedYear ? parseInt(expectedYear, 10) : null;
+        const searchQuery = isPremium && videoCode ? videoCode : cleanTitle;
+
         const response = await fetch('/api/search-parallel', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: title, sources: otherSources, page: 1 }),
+          body: JSON.stringify({ query: searchQuery, sources: otherSources, page: 1 }),
         });
         if (cancelled || !response.ok || !response.body) return;
 
@@ -457,7 +467,6 @@ function PlayerContent() {
         const decoder = new TextDecoder();
         let buffer = '';
         const found: SourceInfo[] = [];
-        const normalizedTitle = title.toLowerCase().trim();
 
         while (true) {
           const { done, value } = await reader.read();
@@ -470,33 +479,59 @@ function PlayerContent() {
             if (!line.startsWith('data: ')) continue;
             try {
               const data = JSON.parse(line.slice(6));
-              if (data.type === 'videos' && data.videos && data.videos.length > 0) {
-                // 过滤解说类视频
-                const pool = data.videos.filter((v: any) => {
-                  const name = (v.vod_name || '').toLowerCase();
-                  const tn = (v.type_name || '').toLowerCase();
-                  return !name.includes('解说') && !tn.includes('解说');
-                });
-                const videoPool = pool.length > 0 ? pool : data.videos;
+              if (data.type === 'videos' && Array.isArray(data.videos) && data.videos.length > 0) {
+                for (const v of data.videos) {
+                  const rawName = (v.vod_name || '').trim();
+                  const typeName = (v.type_name || '').toLowerCase();
+                  const remarks = (v.vod_remarks || '').toLowerCase();
 
-                const match = videoPool.find((v: any) =>
-                  v.vod_name?.toLowerCase().trim() === normalizedTitle
-                ) || videoPool.find((v: any) =>
-                  v.vod_name?.toLowerCase().trim().includes(normalizedTitle) ||
-                  normalizedTitle.includes(v.vod_name?.toLowerCase().trim())
-                ) || videoPool[0];
+                  // 1. 严格过滤解说、预告、片花
+                  if (remarks.includes('预告') || rawName.includes('预告') || remarks.includes('片花') || rawName.includes('片花')) {
+                    continue;
+                  }
+                  if (typeName.includes('解说') || rawName.includes('解说')) {
+                    continue;
+                  }
 
-                if (match && !cancelled) {
-                  found.push({
-                    id: match.vod_id,
-                    source: match.source,
-                    sourceName: match.sourceDisplayName || getSourceName(match.source),
-                    latency: match.latency,
-                    pic: match.vod_pic,
-                    typeName: match.type_name,
-                  });
-                  // Update state incrementally
-                  setDiscoveredSources([...found]);
+                  // 2. 提取候选年份
+                  let candYear: number | null = null;
+                  if (v.vod_year) {
+                    const yMatch = String(v.vod_year).match(/\b(19\d\d|20\d\d)\b/);
+                    if (yMatch) candYear = parseInt(yMatch[1], 10);
+                  }
+                  if (!candYear) {
+                    const nameYearMatch = rawName.match(/[\(（]?(19\d\d|20\d\d)[\)）]?/);
+                    if (nameYearMatch) candYear = parseInt(nameYearMatch[1], 10);
+                  }
+
+                  // 3. 严格年代校验：若指定目标年份，相差 > 1 年绝对一票否决
+                  if (targetYear && candYear && Math.abs(candYear - targetYear) > 1) {
+                    continue;
+                  }
+
+                  // 4. 清洗片名并严格精确比对
+                  const nameWithoutYear = rawName.replace(/[\(（]?(19\d\d|20\d\d)[\)）]?/g, '');
+                  const pureCandName = nameWithoutYear.replace(/[《》【】\[\]（）()·\s]/g, '').toLowerCase();
+
+                  const isCodeMatch = videoCode && rawName.toUpperCase().includes(videoCode);
+                  const isExactName = pureCandName === pureTargetTitle;
+
+                  // 必须是严格精确匹配片名或番号
+                  if (!isCodeMatch && !isExactName) {
+                    continue;
+                  }
+
+                  if (!cancelled && !found.some(s => s.id === v.vod_id && s.source === v.source)) {
+                    found.push({
+                      id: v.vod_id,
+                      source: v.source,
+                      sourceName: v.sourceDisplayName || getSourceName(v.source),
+                      latency: v.latency,
+                      pic: v.vod_pic,
+                      typeName: v.type_name,
+                    });
+                    setDiscoveredSources([...found]);
+                  }
                 }
               }
             } catch { /* ignore parse errors */ }
@@ -508,7 +543,7 @@ function PlayerContent() {
     })();
 
     return () => { cancelled = true; };
-  }, [title, source, groupedSourcesParam, isPremium, isTitleOnlyMode, expectedType]);
+  }, [title, source, groupedSourcesParam, isPremium, isTitleOnlyMode, expectedType, expectedYear]);
 
   // Track current source for switching
   const [currentSourceId, setCurrentSourceId] = useState(source);
@@ -884,6 +919,8 @@ function PlayerContent() {
                       params.set('id', String(newSource.id));
                       params.set('source', newSource.source);
                       params.set('title', title || '');
+                      if (expectedType) params.set('type', expectedType);
+                      if (expectedYear) params.set('year', expectedYear);
                       // Preserve current episode index
                       params.set('episode', currentEpisode.toString());
                       // Preserve playback position for seamless source switch
