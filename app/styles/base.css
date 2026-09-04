@@ -27,6 +27,10 @@
     transition: all 0.3s ease;
 }
 
+.top10-rank-number.is-double-digit {
+    letter-spacing: -0.16em;
+}
+
 .group:hover .top10-rank-number {
     -webkit-text-stroke: 3px var(--accent-color);
     filter: drop-shadow(0 0 16px rgba(229, 9, 20, 0.6));

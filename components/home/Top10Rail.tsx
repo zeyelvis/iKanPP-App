@@ -34,20 +34,27 @@ function Top10Item({
 }) {
   const [imageError, setImageError] = useState(false);
   const proxiedCover = getOptimizedImageUrl(movie.cover);
+  const isDoubleDigit = idx + 1 >= 10;
 
   return (
     <div
       onClick={() => onMovieClick(movie)}
-      className="shrink-0 flex items-center cursor-pointer group select-none relative"
-      style={{ width: 'clamp(155px, 42vw, 240px)' }}
+      className="shrink-0 flex items-center cursor-pointer group select-none relative pr-2 sm:pr-4"
     >
       {/* Netflix 风格超大立体镂空描边排名数字 */}
-      <div className="top10-rank-number shrink-0 translate-x-3 sm:translate-x-4 z-10 select-none">
+      <div
+        className={`top10-rank-number shrink-0 translate-x-3 sm:translate-x-5 z-10 select-none ${
+          isDoubleDigit ? 'is-double-digit tracking-[-0.15em]' : ''
+        }`}
+      >
         {idx + 1}
       </div>
 
-      {/* 紧随的海报卡片 */}
-      <div className="relative flex-1 aspect-2/3 rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-2xl transition-all duration-300 group-hover:scale-105 group-hover:border-(--accent-color)/60">
+      {/* 紧随的海报卡片：严格固定海报宽度与 2:3 纵横比，绝不被两位数字挤压变形 */}
+      <div
+        className="relative shrink-0 aspect-2/3 rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-2xl transition-all duration-300 group-hover:scale-105 group-hover:border-(--accent-color)/60"
+        style={{ width: 'clamp(120px, 32vw, 185px)' }}
+      >
         {!imageError && proxiedCover ? (
           <Image
             src={proxiedCover}
@@ -210,7 +217,8 @@ export function Top10Rail({
           Array.from({ length: 5 }).map((_, idx) => (
             <div
               key={idx}
-              className="shrink-0 w-44 sm:w-60 aspect-16/10 rounded-2xl shimmer-card border border-white/5"
+              className="shrink-0 aspect-2/3 rounded-2xl shimmer-card border border-white/5 ml-6 sm:ml-8"
+              style={{ width: 'clamp(120px, 32vw, 185px)' }}
             />
           ))
         ) : top10List.length > 0 ? (
