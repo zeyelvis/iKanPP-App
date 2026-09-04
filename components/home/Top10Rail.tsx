@@ -17,6 +17,7 @@ interface Top10Movie {
 
 interface Top10RailProps {
   title?: string;
+  badge?: string;
   movies: Top10Movie[];
   loading?: boolean;
   onMovieClick: (movie: Top10Movie) => void;
@@ -134,6 +135,7 @@ function Top10Item({
 
 export function Top10Rail({
   title,
+  badge,
   movies,
   loading = false,
   onMovieClick,
@@ -179,9 +181,10 @@ export function Top10Rail({
         <div className="flex items-center gap-2.5">
           <span className="text-2xl">🏆</span>
           <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
-            {title || `今日 TOP 10 · ${contentType === 'movie' ? '热门电影' : '热播剧集'}`}
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-linear-to-r from-amber-500 to-red-600 text-white shadow-md">
-              实时榜单
+            {title || (contentType === 'movie' ? '豆瓣一周电影口碑榜 TOP 10' : '豆瓣一周华语口碑剧集 TOP 10')}
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-linear-to-r from-emerald-600 via-teal-600 to-amber-600 text-white shadow-md flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
+              {badge || '豆瓣权威榜 · 每日自动更新'}
             </span>
           </h2>
         </div>

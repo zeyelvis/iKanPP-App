@@ -12,14 +12,13 @@ import { LiveChannelsPreview } from './LiveChannelsPreview';
 import { PlatformFeaturesStrip } from './PlatformFeaturesStrip';
 import { PersonalizedForYouRail } from './PersonalizedForYouRail';
 import { ExploreHubFooterBanner } from './ExploreHubFooterBanner';
-import { useRankingData } from './hooks/useRankingData';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 
 interface PopularFeaturesProps {
   onSearch?: (query: string) => void;
 }
 
-// ── SWR 本地瞬间缓存 ──────────────────────────
+// ── SWR 货架本地瞬间缓存 ──────────────────────────
 const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v5-';
 
 function getLocalShelves(type: 'movie' | 'tv') {
@@ -42,17 +41,41 @@ function setLocalShelves(type: 'movie' | 'tv', data: { s1: any[]; s2: any[]; s3:
   } catch {}
 }
 
+// ── 豆瓣一周口碑榜 SWR 本地秒开缓存 ──────────────────────────
+const WEEKLY_CHART_CACHE_KEY = 'kvideo-weekly-douban-chart-v2-';
+
+function getLocalWeeklyChart(type: 'movie' | 'tv') {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(WEEKLY_CHART_CACHE_KEY + type);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed;
+    }
+  } catch {}
+  return null;
+}
+
+function setLocalWeeklyChart(type: 'movie' | 'tv', data: any[]) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(WEEKLY_CHART_CACHE_KEY + type, JSON.stringify(data));
+  } catch {}
+}
+
 export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   const router = useRouter();
   const [contentType, setContentType] = useState<'movie' | 'tv'>('movie');
 
-  // 排行榜数据（用于 TOP 10 Rail）
-  const { movieRanking, tvRanking, loading: rankingLoading } = useRankingData({ limit: 10 });
-  const top10Data = contentType === 'movie' ? movieRanking : tvRanking;
-
   // 主题货架分片数据获取（SWR: 优先使用本地缓存，新用户首次访问直接秒级呈现预烘焙高清精选数据，0ms 瞬间秒开）
   const initialCache = typeof window !== 'undefined' ? getLocalShelves(contentType) : null;
   const prebaked = PREBAKED_HOME_DATA[contentType];
+
+  // 豆瓣一周口碑榜 TOP 10（首屏 0ms 瞬间秒出，后台静默自动每日同步）
+  const initialWeeklyCache = typeof window !== 'undefined' ? getLocalWeeklyChart(contentType) : null;
+  const [weeklyMovies, setWeeklyMovies] = useState<any[]>(() => initialWeeklyCache || prebaked.top10);
+  const [weeklyLoading, setWeeklyLoading] = useState<boolean>(false);
 
   const [shelf1Movies, setShelf1Movies] = useState<any[]>(() => initialCache?.s1 || prebaked.s1);
   const [shelf2Movies, setShelf2Movies] = useState<any[]>(() => initialCache?.s2 || prebaked.s2);
@@ -143,10 +166,44 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
     };
   }, [contentType, tag1, tag2, tag3, tag4]);
 
+  // ── 豆瓣一周口碑榜：后台静默每日自动更新 ──────────────────
+  useEffect(() => {
+    let isMounted = true;
+    const cache = getLocalWeeklyChart(contentType);
+    if (cache && cache.length > 0) {
+      setWeeklyMovies(cache);
+    } else if (PREBAKED_HOME_DATA[contentType]?.top10) {
+      setWeeklyMovies(PREBAKED_HOME_DATA[contentType].top10);
+    }
+
+    const fetchWeekly = async () => {
+      try {
+        const res = await fetch(`/api/douban/weekly-chart?type=${contentType}`, {
+          signal: AbortSignal.timeout(4000),
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (isMounted && data.subjects && Array.isArray(data.subjects) && data.subjects.length > 0) {
+          setWeeklyMovies(data.subjects);
+          setLocalWeeklyChart(contentType, data.subjects);
+        }
+      } catch {
+        // 网络超时或失败时平滑兜底当前缓存或预烘焙口碑榜
+      } finally {
+        if (isMounted) setWeeklyLoading(false);
+      }
+    };
+
+    fetchWeekly();
+    return () => {
+      isMounted = false;
+    };
+  }, [contentType]);
+
   // ── 全局流媒体防重管道（Deduplication Funnel） ──────────────────
   // 按照页面视觉从上至下的动线流动，严格依次排除上游模块已展示过的影片：
   // 1. Hero 巨幕专属大片 -> 标记已看
-  // 2. Top 10 实时榜单 -> 剔除 Hero 重复项，标记已看
+  // 2. 豆瓣一周口碑榜 TOP 10 -> 剔除 Hero 重复项，标记已看
   // 3. 货架 1（院线/新剧） -> 剔除前面所有重复项，用预置池补足
   // 4. 货架 2（高分/美剧） -> 剔除前面所有重复项，用预置池补足
   // 5. 货架 3（华语/韩剧） -> 剔除前面所有重复项，用预置池补足
@@ -174,8 +231,8 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       }
     }
 
-    // 2. Top 10 实时大榜：从实际榜单数据中选出 10 部未在 Hero 出现的真实影片
-    const top10Source = (top10Data && top10Data.length > 0) ? top10Data : (prebaked.top10 || []);
+    // 2. 豆瓣一周口碑榜 TOP 10：从实际口碑榜中选出 10 部作品（排查 Hero 零重复）
+    const top10Source = (weeklyMovies && weeklyMovies.length > 0) ? weeklyMovies : (prebaked.top10 || []);
     const top10List: any[] = [];
     for (const item of top10Source) {
       if (top10List.length >= 10) break;
@@ -229,7 +286,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
     const s4 = filterAndFill(shelf4Movies, prebaked.s4);
 
     return { heroList, top10List, s1, s2, s3, s4, seenSnapshot: new Set(seen) };
-  }, [contentType, prebaked, top10Data, shelf1Movies, shelf2Movies, shelf3Movies, shelf4Movies]);
+  }, [contentType, prebaked, weeklyMovies, shelf1Movies, shelf2Movies, shelf3Movies, shelf4Movies]);
 
   const handleMovieClick = (movie: any) => {
     const params = new URLSearchParams();
@@ -285,10 +342,12 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         </span>
       </div>
 
-      {/* 5. 🥇 Netflix 风格今日 TOP 10 实时大榜（严格排除 Hero 影片，高大整齐齐平） */}
+      {/* 5. 🥇 豆瓣一周口碑榜 TOP 10（每日定时自动更新） */}
       <Top10Rail
+        title={contentType === 'movie' ? '豆瓣一周电影口碑榜 TOP 10' : '豆瓣一周华语口碑剧集 TOP 10'}
+        badge="豆瓣权威榜 · 每日自动更新"
         movies={deduplicatedContent.top10List}
-        loading={rankingLoading}
+        loading={weeklyLoading && deduplicatedContent.top10List.length === 0}
         onMovieClick={handleMovieClick}
         contentType={contentType}
       />
