@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Card } from '@/components/ui/Card';
@@ -32,6 +32,7 @@ export const VideoCard = memo<VideoCardProps>(({
   isPremium = false,
   latencies = {},
 }) => {
+  const [imgError, setImgError] = useState(false);
   const displayLatency = latencies[video.source] ?? video.latency;
   const proxiedPic = getOptimizedImageUrl(video.vod_pic);
 
@@ -57,7 +58,7 @@ export const VideoCard = memo<VideoCardProps>(({
         >
           {/* 海报区域 */}
           <div className="relative aspect-2/3 bg-white/5 overflow-hidden">
-            {proxiedPic ? (
+            {!imgError && proxiedPic ? (
               <Image
                 src={proxiedPic}
                 alt={video.vod_name}
@@ -67,14 +68,28 @@ export const VideoCard = memo<VideoCardProps>(({
                 loading="lazy"
                 unoptimized
                 referrerPolicy="no-referrer"
-                onError={(e) => {
-                  const target = e.currentTarget as HTMLImageElement;
-                  target.style.opacity = '0';
-                }}
+                onError={() => setImgError(true)}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <Icons.Film size={48} className="text-white/20" />
+              /* 影视原画级艺术封套兜底：拒绝黑洞与碎图 */
+              <div className="w-full h-full p-3 flex flex-col justify-between items-center text-center bg-gradient-to-br from-[#1b1c2b] via-[#0f1018] to-[#07070b] select-none relative overflow-hidden">
+                <div className="absolute -top-8 -right-8 w-20 h-20 bg-red-600/10 rounded-full blur-lg pointer-events-none" />
+                <div className="w-full flex items-center justify-between z-10">
+                  <span className="text-[9px] font-black tracking-widest text-white/30 uppercase">
+                    iKanPP
+                  </span>
+                </div>
+                <div className="flex flex-col items-center gap-1.5 my-auto z-10 px-1">
+                  <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-400/80 shadow-inner group-hover:scale-110 transition-transform">
+                    <Icons.Film size={18} />
+                  </div>
+                  <h4 className="text-xs font-bold text-white/90 line-clamp-3 leading-snug drop-shadow-md">
+                    {video.vod_name}
+                  </h4>
+                </div>
+                <div className="z-10 text-[9px] text-white/40 font-mono">
+                  {video.vod_year || '高清原画'}
+                </div>
               </div>
             )}
 

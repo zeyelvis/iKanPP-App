@@ -54,7 +54,7 @@ export function PersonalizedForYouRail({ onMovieClick, contentType }: Personaliz
 
   return (
     <ContentRail
-      title="🎯 猜你喜欢 · 个性化精选"
+      title="猜你喜欢 · 个性化精选"
       icon="🎯"
       badge={personalizedMovies.length > 0 ? "FOR YOU" : "TAILORED"}
       movies={displayMovies}

@@ -3,6 +3,7 @@
 // failed request can retry the same path through known reachable mirrors.
 const DOUBAN_IMAGE_HOSTS = [
   'img9.doubanio.com',
+  'img1.doubanio.com',
   'img3.doubanio.com',
   'img2.doubanio.com',
 ];
