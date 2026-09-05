@@ -949,12 +949,28 @@ function PlayerContent() {
                     />
                   </div>
 
-                  {/* 当前线路胶囊提示 */}
+                  {/* 当前线路胶囊与快捷切线 */}
                   {source && (
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] text-white/70">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveTab('episodes');
+                        const el = document.getElementById('source-selector-section');
+                        if (el) {
+                          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/15 border border-purple-500/30 text-[11px] text-purple-200 hover:bg-purple-500/25 transition-all cursor-pointer font-medium"
+                      title="点击查看/切换备用专线"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                       <span>{getSourceName(source)}</span>
-                    </div>
+                      {groupedSources.length > 1 && (
+                        <span className="text-[10px] text-purple-300 font-bold ml-0.5">
+                          ({groupedSources.length}线) ⇄
+                        </span>
+                      )}
+                    </button>
                   )}
                 </div>
               </div>
@@ -968,7 +984,7 @@ function PlayerContent() {
                 />
               </div>
 
-              {/* 桌面端收藏与分享按钮 */}
+              {/* 桌面端收藏、线路快捷指示与分享按钮 */}
               {videoData && videoId && (
                 <div className="hidden lg:flex items-center gap-3 mt-4">
                   <FavoriteButton
@@ -984,7 +1000,28 @@ function PlayerContent() {
                   <span className="text-sm text-(--text-color-secondary)">
                     收藏这个视频
                   </span>
-                  <div className="ml-auto">
+                  <div className="ml-auto flex items-center gap-3">
+                    {source && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const el = document.getElementById('source-selector-section');
+                          if (el) {
+                            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          }
+                        }}
+                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-xs text-purple-200 hover:text-white transition-all cursor-pointer font-medium"
+                        title="点击平滑定位至右侧多线路面板"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>正在播放：{getSourceName(source)}</span>
+                        {groupedSources.length > 1 && (
+                          <span className="text-purple-300/80 text-[11px] font-bold">
+                            ({groupedSources.length} 条专线可用 ⇄)
+                          </span>
+                        )}
+                      </button>
+                    )}
                     <ShareButton
                       title={videoData.vod_name || title || ''}
                       poster={videoData.vod_pic}

@@ -3,11 +3,14 @@
 /**
  * SourceSelector - Component for selecting video source in player
  * Following Liquid Glass design system
- * Enhanced with 4K (2160P) UHD & 1080P Blu-ray Badges
+ * Features:
+ * 1. Compact Capsule Chips Grid (2~3 columns, saves 85% space)
+ * 2. 4K (2160P) UHD & 1080P Blu-ray Badges
+ * 3. Segmented view: Default top 6 Golden Lines + Smooth Expand/Collapse for all 35 lines
+ * 4. Active playing state with glowing pulse
  */
 
-import { useMemo } from 'react';
-import Image from 'next/image';
+import { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Icons } from '@/components/ui/Icon';
@@ -19,6 +22,7 @@ export interface SourceInfo {
     latency?: number;
     pic?: string;
     typeName?: string;
+    remarks?: string;
 }
 
 interface SourceSelectorProps {
@@ -26,11 +30,12 @@ interface SourceSelectorProps {
     currentSource: string;
     onSourceChange: (source: SourceInfo) => void;
     className?: string;
+    embedded?: boolean; // When true, renders without outer Card wrapper for seamless embedding
 }
 
 // 4K (2160P) UHD 极致原画专线字典
 const FOUR_K_SOURCES = new Set([
-    'hongniu', 'baofeng', 'json1080', 'suoni', 'haohua_4k', 'blue_4k'
+    'hongniu', 'baofeng', 'json1080', 'suoni', 'haohua_4k', 'blue_4k', 'laosiji_4k'
 ]);
 
 // 1080P 蓝光秒播高码率专线字典
@@ -96,7 +101,7 @@ const FLAG_TO_SOURCE_KEY: Record<string, string> = {
     'snm3u8': 'suoni',
 };
 
-function getCleanSourceKey(source: string): string {
+export function getCleanSourceKey(source: string): string {
     if (source.startsWith('ikanbot_')) {
         const flag = source.slice('ikanbot_'.length);
         return FLAG_TO_SOURCE_KEY[flag] || flag;
@@ -109,8 +114,11 @@ export function SourceSelector({
     currentSource,
     onSourceChange,
     className = '',
+    embedded = false,
 }: SourceSelectorProps) {
-    // 智能排序：优先将 4K (2160P) 专线排在前面，其余严格按照 ikanbot 黄金骨干顺位排列，避免网络 Ping 抖动打乱黄金源
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    // 智能排序：优先将 4K (2160P) 专线排在前面，其余严格按照 ikanbot 黄金骨干顺位排列
     const sortedSources = useMemo(() => {
         return [...sources].sort((a, b) => {
             const cleanA = getCleanSourceKey(a.source);
@@ -131,25 +139,61 @@ export function SourceSelector({
         });
     }, [sources]);
 
+    // 当前选中的线路索引
+    const currentIndex = sortedSources.findIndex(s => s.source === currentSource);
+
+    // 默认展示数量（前 6 条黄金线路）
+    const DEFAULT_VISIBLE_COUNT = 6;
+    const shouldShowExpandButton = sortedSources.length > DEFAULT_VISIBLE_COUNT;
+
+    // 当前可见线路：若已展开，或当前选中线路在第 6 条之后，自动展开以防当前播放项失焦
+    const visibleSources = useMemo(() => {
+        if (isExpanded || !shouldShowExpandButton) {
+            return sortedSources;
+        }
+        // 如果当前播放线路在 6 条之外，默认至少展示到包含当前线路
+        if (currentIndex >= DEFAULT_VISIBLE_COUNT) {
+            return sortedSources;
+        }
+        return sortedSources.slice(0, DEFAULT_VISIBLE_COUNT);
+    }, [sortedSources, isExpanded, shouldShowExpandButton, currentIndex]);
+
     if (sources.length <= 1) {
         return null;
     }
 
-    return (
-        <Card hover={false} className={`mt-6 ${className}`}>
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg sm:text-xl font-bold text-(--text-color) flex items-center gap-2">
-                    <Icons.Layers size={20} className="sm:w-6 sm:h-6 text-purple-400" />
-                    <span>多线路选择 · 黄金骨干专线</span>
-                    <Badge variant="primary">{sources.length} 条可用</Badge>
-                </h3>
-                <span className="text-xs text-white/50 hidden sm:inline-block">
-                    首选线路 1，遇卡顿可直接切换其他备用线路
-                </span>
+    const content = (
+        <div className="space-y-3">
+            {/* 顶栏：标题、可用线路数与快捷展开 */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Icons.Layers size={17} className="text-purple-400" />
+                    <span className="text-sm sm:text-base font-bold text-(--text-color) tracking-tight">
+                        播放线路
+                    </span>
+                    <Badge variant="primary" className="text-[10px] px-1.5 py-0.5 font-bold">
+                        {sources.length} 条可用
+                    </Badge>
+                </div>
+
+                {shouldShowExpandButton && (
+                    <button
+                        type="button"
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="text-xs text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 font-medium cursor-pointer py-1 px-2 rounded-lg hover:bg-white/5"
+                    >
+                        <span>{isExpanded ? '收起备用' : `全部线路 (${sources.length})`}</span>
+                        <Icons.ChevronDown
+                            size={14}
+                            className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                        />
+                    </button>
+                )}
             </div>
 
-            <div className="space-y-2 max-h-85 overflow-y-auto pr-1">
-                {sortedSources.map((source, index) => {
+            {/* 紧凑胶囊网格：PC 3 列，移动端 2~3 列 */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {visibleSources.map((source, index) => {
                     const isCurrent = source.source === currentSource;
                     const cleanKey = getCleanSourceKey(source.source);
                     const is4K = FOUR_K_SOURCES.has(cleanKey) ||
@@ -158,108 +202,84 @@ export function SourceSelector({
                                  source.sourceName?.includes('红牛') ||
                                  source.sourceName?.includes('暴风');
                     const isBluRay = !is4K && (HD_BLURAY_SOURCES.has(cleanKey) || source.sourceName?.includes('蓝光'));
+                    const isTopRecommended = index === 0;
 
                     return (
                         <button
                             key={`${source.source}-${index}`}
+                            type="button"
                             onClick={() => !isCurrent && onSourceChange(source)}
                             className={`
-                                w-full p-3 rounded-2xl text-left transition-all duration-200
-                                flex items-center gap-3 cursor-pointer
+                                relative group flex items-center justify-between px-2.5 py-2 rounded-xl text-left
+                                transition-all duration-200 cursor-pointer text-xs font-medium border select-none
                                 ${isCurrent
-                                    ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-600/30 scale-[1.01]'
-                                    : 'bg-(--glass-bg) hover:bg-(--glass-hover) text-(--text-color) border border-(--glass-border) hover:border-purple-500/30'
+                                    ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white border-purple-400/60 shadow-md shadow-purple-600/30 scale-[1.02] z-10'
+                                    : 'bg-(--glass-bg) hover:bg-(--glass-hover) text-(--text-color) border-(--glass-border) hover:border-purple-500/40'
                                 }
                             `}
-                            aria-current={isCurrent ? 'true' : undefined}
+                            title={source.sourceName || source.source}
                         >
-                            {/* 缩略图 */}
-                            {source.pic && (
-                                <div className="w-12 h-16 rounded-xl overflow-hidden shrink-0 bg-black/20 border border-white/10">
-                                    <Image
-                                        src={source.pic}
-                                        alt=""
-                                        width={48}
-                                        height={64}
-                                        className="w-full h-full object-cover"
-                                        unoptimized
-                                        referrerPolicy="no-referrer"
-                                        onError={(e) => {
-                                            (e.currentTarget as HTMLImageElement).style.display = 'none';
-                                        }}
-                                    />
-                                </div>
-                            )}
-
-                            {/* 线路名称与 4K / 蓝光画质角标 */}
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-1.5 font-medium text-sm sm:text-base truncate">
-                                    <span className="font-bold truncate">
-                                        线路 {index + 1} · {source.sourceName || source.source}
+                            {/* 左侧：序号与线路名称 */}
+                            <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                                {isCurrent ? (
+                                    <span className="relative flex h-2 w-2 shrink-0">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-80"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
                                     </span>
-
-                                    {/* 4K 2160P 黄金徽标 */}
-                                    {is4K && (
-                                        <span className="inline-flex items-center gap-0.5 px-2 py-0.5 bg-amber-400 text-black font-black text-[10px] rounded-md shadow-md shadow-amber-500/40 border border-amber-300 shrink-0">
-                                            ⚡ 4K VIP (2160P)
-                                        </span>
-                                    )}
-
-                                    {/* 1080P 蓝光原画徽标 */}
-                                    {isBluRay && (
-                                        <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-sky-500/20 text-sky-300 border border-sky-400/50 font-bold text-[10px] rounded-md shrink-0">
-                                            💎 1080P 蓝光
-                                        </span>
-                                    )}
-
-                                    {/* 推荐首选标识 */}
-                                    {index === 0 && (
-                                        <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 font-bold text-[10px] rounded-md shrink-0">
-                                            🚀 推荐首选
-                                        </span>
-                                    )}
-                                </div>
-
-                                <div className="mt-1 flex items-center gap-2">
-                                    <span className="text-[11px] opacity-60">
-                                        {is4K
-                                            ? '原生 4K UHD 极清画质流'
-                                            : isBluRay
-                                            ? '1080P 蓝光高码率 · 稳定直连'
-                                            : index < 3
-                                            ? '极速 CDN 直连 · 秒开'
-                                            : '高速稳定备用骨干线路'}
+                                ) : (
+                                    <span className="text-[10px] text-white/40 font-mono shrink-0">
+                                        {index + 1}.
                                     </span>
-                                </div>
+                                )}
+                                <span className="truncate font-semibold text-[11px] sm:text-xs">
+                                    {source.sourceName || source.source}
+                                </span>
                             </div>
 
-                            {/* 当前播放指示器 */}
-                            {isCurrent && (
-                                <div className="flex items-center gap-1 text-xs font-bold bg-white/20 px-2.5 py-1 rounded-full shrink-0">
-                                    <Icons.Play size={13} className="fill-white" />
-                                    <span>播放中</span>
-                                </div>
-                            )}
-
-                            {/* 排行标 */}
-                            {!isCurrent && index < 3 && (
-                                <Badge
-                                    variant="secondary"
-                                    className={`shrink-0 ${
-                                        index === 0
-                                            ? 'bg-amber-500/20 text-amber-400 border-amber-500/40 font-black'
-                                            : index === 1
-                                            ? 'bg-sky-500/20 text-sky-400 border-sky-500/40 font-bold'
-                                            : 'bg-purple-500/20 text-purple-400 border-purple-500/40'
-                                    }`}
-                                >
-                                    #{index + 1}
-                                </Badge>
-                            )}
+                            {/* 右侧徽章（4K / 蓝光 / 首选） */}
+                            <div className="flex items-center gap-1 shrink-0 ml-1">
+                                {is4K ? (
+                                    <span className="text-[9px] font-black px-1.5 py-0.2 bg-amber-400 text-black rounded shadow-xs">
+                                        4K
+                                    </span>
+                                ) : isBluRay ? (
+                                    <span className="text-[9px] font-bold px-1.5 py-0.2 bg-sky-500/20 text-sky-300 border border-sky-400/40 rounded">
+                                        蓝光
+                                    </span>
+                                ) : isTopRecommended && !isCurrent ? (
+                                    <span className="text-[9px] font-bold px-1 py-0.2 bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded">
+                                        首选
+                                    </span>
+                                ) : null}
+                            </div>
                         </button>
                     );
                 })}
             </div>
-        </Card>
+
+            {/* 底部折叠切换提示栏（当线路较多且未展开时展示） */}
+            {shouldShowExpandButton && !isExpanded && (
+                <button
+                    type="button"
+                    onClick={() => setIsExpanded(true)}
+                    className="w-full py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/50 hover:text-white/80 text-[11px] font-medium transition-all duration-200 flex items-center justify-center gap-1 border border-white/5 cursor-pointer"
+                >
+                    <span>查看更多备用专线 (还有 {sortedSources.length - DEFAULT_VISIBLE_COUNT} 条)</span>
+                    <Icons.ChevronDown size={13} />
+                </button>
+            )}
+        </div>
+    );
+
+    if (embedded) {
+        return <div id="source-selector-section" className={className}>{content}</div>;
+    }
+
+    return (
+        <div id="source-selector-section" className={`mt-4 ${className}`}>
+            <Card hover={false}>
+                {content}
+            </Card>
+        </div>
     );
 }
