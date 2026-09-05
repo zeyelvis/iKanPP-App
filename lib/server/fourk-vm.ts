@@ -464,8 +464,8 @@ export async function get4kvmStreamUrl(detail: FourkMovieDetail, episodeIndex: n
           return m3u8Url;
         }
       }
-      return null;
-    } catch (e) {
+    } catch (e: any) {
+      (detail as any).debugError = `[resolveStream Error]: ${e?.message || String(e)} | Stack: ${e?.stack || ''}`;
       return null;
     }
   };
@@ -498,8 +498,13 @@ export async function get4kvmStreamUrl(detail: FourkMovieDetail, episodeIndex: n
       return streamUrl;
     }
 
+    if (!streamUrl && !(detail as any).debugError) {
+      (detail as any).debugError = 'Stream url resolution returned null without thrown error';
+    }
+
     return null;
-  } catch (err) {
+  } catch (err: any) {
+    (detail as any).debugError = `[Outer Error]: ${err?.message || String(err)} | Stack: ${err?.stack || ''}`;
     console.error('[4kvm] Stream resolve error:', err);
     return null;
   }

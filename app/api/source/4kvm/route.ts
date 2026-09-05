@@ -26,10 +26,28 @@ export async function GET(request: NextRequest) {
     }
 
     // 获取当前请求集数的真实播放流
-    const streamUrl = await get4kvmStreamUrl(detail, episodeIndex);
+    let debugError = '';
+    let streamUrl: string | null = null;
+    try {
+      streamUrl = await get4kvmStreamUrl(detail, episodeIndex);
+    } catch (e: any) {
+      debugError = e?.stack || e?.message || String(e);
+    }
+
     if (!streamUrl) {
       return NextResponse.json(
-        { success: false, error: 'Target episode stream not available or requires VIP' },
+        {
+          success: false,
+          error: 'Target episode stream not available or requires VIP',
+          detail: {
+            id: detail.id,
+            title: detail.title,
+            episodesCount: detail.episodes.length,
+            nbSt: detail.nbSt,
+            userlink: detail.userlink,
+            debugError,
+          }
+        },
         { status: 404 }
       );
     }
