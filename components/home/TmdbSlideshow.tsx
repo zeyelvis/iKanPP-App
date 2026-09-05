@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { PREBAKED_HOME_DATA, type PrebakedSubject } from '@/lib/data/home-prebaked';
 
@@ -240,50 +239,21 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
           </div>
 
           {/* 巨幕超大片名 */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-2xl mb-3 line-clamp-2">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-2xl mb-4 sm:mb-6 line-clamp-2">
             {active.title}
           </h1>
-
-          {/* 剧情简介 */}
-          {active.description && (
-            <p className="text-white/70 text-xs sm:text-sm lg:text-base leading-relaxed line-clamp-2 sm:line-clamp-3 mb-6 max-w-2xl text-shadow">
-              {active.description}
-            </p>
-          )}
-
-          {/* 主创阵容 */}
-          {(active.directors?.length || active.actors?.length) ? (
-            <div className="hidden sm:flex items-center gap-4 text-xs text-white/50 mb-6 truncate">
-              {active.directors?.length ? (
-                <span>导演：<strong className="text-white/80 font-medium">{active.directors.join(' / ')}</strong></span>
-              ) : null}
-              {active.actors?.length ? (
-                <span className="truncate">主演：<strong className="text-white/80 font-medium">{active.actors.slice(0, 3).join(' / ')}</strong></span>
-              ) : null}
-            </div>
-          ) : null}
 
           {/* 操作按钮组 */}
           <div className="flex items-center gap-2.5 sm:gap-3.5 w-full sm:w-auto">
             <button
               onClick={() => handleMovieClick(active)}
-              className="flex-1 sm:flex-none justify-center px-5 sm:px-8 py-3 sm:py-3.5 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-2xl text-xs sm:text-base font-bold flex items-center gap-2 shadow-2xl transition-all cursor-pointer hover:shadow-[0_0_25px_rgba(229,9,20,0.6)]"
+              className="flex-1 sm:flex-none justify-center px-6 sm:px-8 py-3 sm:py-3.5 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-2xl text-sm sm:text-base font-bold flex items-center gap-2 shadow-2xl transition-all cursor-pointer hover:shadow-[0_0_25px_rgba(229,9,20,0.6)]"
             >
               <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z" />
               </svg>
               立即播放
             </button>
-
-            {onSearch && (
-              <button
-                onClick={() => onSearch(active.title)}
-                className="flex-1 sm:flex-none justify-center px-4 sm:px-6 py-3 sm:py-3.5 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-xl text-white rounded-2xl text-xs sm:text-base font-semibold flex items-center gap-1.5 sm:gap-2 border border-white/20 transition-all cursor-pointer"
-              >
-                <Icons.Search size={16} />
-                全网搜源
-              </button>
-            )}
           </div>
         </div>
       </div>
