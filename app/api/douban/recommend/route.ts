@@ -28,7 +28,7 @@ async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number,
         'Referer': 'https://movie.douban.com/',
         'Accept': 'application/json, text/plain, */*',
       },
-      signal: AbortSignal.timeout(750), // 750ms 闪电熔断，避免海外边缘节点因豆瓣网络延迟阻塞首屏
+      signal: AbortSignal.timeout(2500), // 2500ms 快速超时熔断，防止海外边缘节点跨国请求卡死
       next: { revalidate: 86400 }, // 24 小时强效边缘缓存
     });
 
@@ -43,10 +43,13 @@ async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number,
     return [];
   } catch (err) {
     console.warn(`[Douban-API] Timeout or error for tag "${tag}", triggering instant prebaked fallback:`, (err as any)?.message || err);
-    // 触发即时预置数据熔断兜底
+    // 触发即时预置数据熔断兜底，并确保预置数据封面全部经过代理保护
     const prebaked = type === 'tv' ? PREBAKED_HOME_DATA.tv : PREBAKED_HOME_DATA.movie;
     const fallbackList = [...prebaked.s1, ...prebaked.s2, ...prebaked.s3, ...prebaked.s4];
-    return fallbackList.slice(0, pageLimit);
+    return fallbackList.slice(0, pageLimit).map((item: any) => ({
+      ...item,
+      cover: item.cover?.startsWith('http') ? `/api/img-proxy?url=${encodeURIComponent(item.cover)}` : item.cover,
+    }));
   }
 }
 
@@ -140,12 +143,19 @@ export async function GET(request: Request) {
   } else {
     // 电视剧 / 动漫 / 国漫 / 综艺
     const tvRegionMap: Record<string, string> = {
-      '国产剧': '国产剧', '美剧': '美剧', '韩剧': '韩剧', '日剧': '日剧',
+      '国产剧': '国产剧', '美剧': '美剧', '欧美剧': '美剧', '欧美': '美剧', '海外剧': '美剧',
+      '韩剧': '韩剧', '日剧': '日剧',
       '港剧': '港剧', '香港': '港剧', '英剧': '英剧', '英国': '英剧',
       '台剧': '国产剧', '台湾': '国产剧', '泰剧': '热门',
       '日本动画': '日本动画', '国产动画': '国产动画', '国创': '国产动画', '国漫': '国产动画', '动漫': '日本动画',
       '综艺': '综艺', '纪录片': '纪录片',
     };
+
+    const mappedRawTag = (rawTag === '欧美剧' || rawTag === '欧美' || rawTag === '海外剧')
+      ? '美剧'
+      : (rawTag === '华语剧' || rawTag === '华语')
+      ? '国产剧'
+      : rawTag;
 
     if (region && tvRegionMap[region]) {
       doubanTags.push(tvRegionMap[region]);
@@ -157,10 +167,10 @@ export async function GET(request: Request) {
       doubanTags.push('综艺');
     } else if (genre === '纪录片') {
       doubanTags.push('纪录片');
-    } else if (rawTag && VALID_TV_TAGS.has(rawTag)) {
-      doubanTags.push(rawTag);
+    } else if (mappedRawTag && VALID_TV_TAGS.has(mappedRawTag)) {
+      doubanTags.push(mappedRawTag);
     } else {
-      doubanTags.push('国产剧');
+      doubanTags.push('热门');
     }
   }
 

@@ -78,11 +78,22 @@ export function generateRecommendations(
   for (const [genre, count] of sortedGenres) {
     if (count >= 1) {
       const type = genre.includes('剧') || genre.includes('电视') ? 'tv' : 'movie';
+      // 智能规范化标签，与豆瓣分类核心库精准对接
+      let normalizedTag = genre;
+      if (type === 'tv') {
+        if (genre.includes('美') || genre.includes('欧美') || genre.includes('海外')) normalizedTag = '美剧';
+        else if (genre.includes('韩')) normalizedTag = '韩剧';
+        else if (genre.includes('日') && !genre.includes('动画') && !genre.includes('漫')) normalizedTag = '日剧';
+        else if (genre.includes('华') || genre.includes('国') || genre.includes('陆')) normalizedTag = '国产剧';
+        else if (genre.includes('港')) normalizedTag = '港剧';
+        else if (genre.includes('英')) normalizedTag = '英剧';
+        else if (genre.includes('漫') || genre.includes('动画')) normalizedTag = '日本动画';
+      }
       queries.push({
-        label: `${genre}推荐`,
-        tag: genre,
+        label: `${normalizedTag}推荐`,
+        tag: normalizedTag,
         type,
-        pageStart: Math.floor(Math.random() * 40),
+        pageStart: Math.floor(Math.random() * 20),
       });
     }
   }

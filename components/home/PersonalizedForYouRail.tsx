@@ -45,6 +45,7 @@ export function PersonalizedForYouRail({ onMovieClick, contentType, excludeTitle
         title: m.title,
         cover: m.cover,
         rate: m.rate,
+        year: (m as any).year,
         url: m.url,
       }))
     : fallbackMovies;

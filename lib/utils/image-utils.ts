@@ -9,13 +9,13 @@ export function getOptimizedImageUrl(url?: string | null): string {
   if (!url) return '/placeholder-poster.svg';
   if (!url.startsWith('http')) return url;
 
-  // TMDB 全球 CDN 直链（海外毫秒级直达，无需代理）
-  if (url.includes('image.tmdb.org') || url.includes('tmdb.org')) {
-    return url;
-  }
-
-  // 只有真正受防盗链限制的豆瓣图片才走后端反代
-  if (url.includes('doubanio.com') || url.includes('douban.com')) {
+  // TMDB 与豆瓣等外链图片统一通过高速边缘代理镜像输出，解决国内部分网络无法直连 image.tmdb.org 及豆瓣防盗链问题
+  if (
+    url.includes('image.tmdb.org') ||
+    url.includes('tmdb.org') ||
+    url.includes('doubanio.com') ||
+    url.includes('douban.com')
+  ) {
     return `/api/img-proxy?url=${encodeURIComponent(url)}`;
   }
 
