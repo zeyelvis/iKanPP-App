@@ -154,41 +154,56 @@ function PlayerContent() {
         const targetAnalysis = analyzeTitle(title);
         const targetYear = expectedYear ? parseInt(expectedYear, 10) : null;
 
-        // 优先并发请求 ikanbot 实时逆向清洗引擎（秒级直出 20~30 条黄金线路）
-        if (!isPremium) {
-          const seasonParam = targetAnalysis.seasonNumber ?? '';
-          fetch(`/api/ikanbot?title=${encodeURIComponent(cleanTitle)}&year=${expectedYear || ''}&season=${seasonParam}`)
-            .then(res => res.ok ? res.json() : null)
-            .then(data => {
-              if (cancelled || redirected || !data?.success || !data?.data?.lines?.length) return;
-              const { data: ikanData } = data;
-              const isSeriesItem = targetAnalysis.seasonNumber !== null || expectedType === 'tv' || ikanData.lines[0]?.episodes?.length > 1;
-              const ikanSources: SourceInfo[] = ikanData.lines.map((l: any) => ({
-                id: ikanData.vod_id,
-                source: l.sourceId,
-                sourceName: l.sourceName,
-                pic: ikanData.vod_pic,
-                typeName: isSeriesItem ? '连续剧' : '电影',
-              }));
+        // 第一梯队顶级秒播大源白名单（具有超高优先级起播权）
+        const TOP_TIER_SOURCES = new Set(['guangsu', 'jisu', 'xinlang', 'baofeng', 'wujin']);
 
-              const firstLine = ikanData.lines[0];
-              if (firstLine && !redirected && !cancelled) {
-                redirected = true;
-                const params = new URLSearchParams();
-                params.set('id', String(ikanData.vod_id));
-                params.set('source', firstLine.sourceId);
-                params.set('title', title);
-                const resolvedType = expectedType || (isSeriesItem ? 'tv' : 'movie');
-                params.set('type', resolvedType);
-                if (expectedYear || ikanData.vod_year) {
-                  params.set('year', expectedYear || ikanData.vod_year);
+        let ikanbotDone = false;
+        let ikanbotFound = false;
+
+        // 优先并发请求 ikanbot 实时逆向清洗引擎（秒级直出 20~30 条黄金线路，第 1 条 100% 锁定为光速资源）
+        const ikanbotFetchPromise = (!isPremium) ? (async () => {
+          try {
+            const seasonParam = targetAnalysis.seasonNumber ?? '';
+            const res = await fetch(`/api/ikanbot?title=${encodeURIComponent(cleanTitle)}&year=${expectedYear || ''}&season=${seasonParam}`);
+            if (res.ok) {
+              const data = await res.json();
+              if (!cancelled && !redirected && data?.success && data?.data?.lines?.length > 0) {
+                const { data: ikanData } = data;
+                const isSeriesItem = targetAnalysis.seasonNumber !== null || expectedType === 'tv' || ikanData.lines[0]?.episodes?.length > 1;
+                const ikanSources: SourceInfo[] = ikanData.lines.map((l: any) => ({
+                  id: ikanData.vod_id,
+                  source: l.sourceId,
+                  sourceName: l.sourceName,
+                  pic: ikanData.vod_pic,
+                  typeName: isSeriesItem ? '连续剧' : '电影',
+                }));
+
+                const firstLine = ikanData.lines[0];
+                if (firstLine && !redirected && !cancelled) {
+                  redirected = true;
+                  ikanbotFound = true;
+                  ikanbotDone = true;
+                  const params = new URLSearchParams();
+                  params.set('id', String(ikanData.vod_id));
+                  params.set('source', firstLine.sourceId); // 锁定首选第一梯队：光速资源
+                  params.set('title', title);
+                  const resolvedType = expectedType || (isSeriesItem ? 'tv' : 'movie');
+                  params.set('type', resolvedType);
+                  if (expectedYear || ikanData.vod_year) {
+                    params.set('year', expectedYear || ikanData.vod_year);
+                  }
+                  params.set('groupedSources', JSON.stringify(ikanSources));
+                  router.replace(`/player?${params.toString()}`, { scroll: false });
+                  return true;
                 }
-                params.set('groupedSources', JSON.stringify(ikanSources));
-                router.replace(`/player?${params.toString()}`, { scroll: false });
               }
-            })
-            .catch(() => {});
-        }
+            }
+          } catch {
+            // ikanbot 解析失败或超时，放行采集站流式兜底
+          }
+          ikanbotDone = true;
+          return false;
+        })() : Promise.resolve(false);
 
         // 备选最佳匹配（用于在未遇到秒跳完美年份源时的次优候选）
         let pendingBestCandidate: { video: any; score: number; isSeries: boolean } | null = null;
@@ -345,7 +360,11 @@ function PlayerContent() {
                       (isSeriesItem && (targetAnalysis.seasonNumber !== null ? candAnalysis.seasonNumber === targetAnalysis.seasonNumber : (candAnalysis.seasonNumber === 1 || candAnalysis.seasonNumber === null))) ||
                       (!isSeriesItem && (isExactYearMatch || !targetYear));
 
-                    if (isTopTarget) {
+                    const isTopTier = TOP_TIER_SOURCES.has(v.source) || isPremium;
+
+                    // 核心逻辑：在普通影视模式下，严禁非第一梯队（如海豚资源 haitun、虎牙等）抢先抢跑！
+                    // 只有是第一梯队秒播源（如光速、极速、新浪），或者 ikanbot 已经明确完成且未收录时，才直接触发采集源跳转
+                    if (isTopTarget && (isTopTier || ikanbotDone)) {
                       redirected = true;
                       const params = new URLSearchParams();
                       params.set('id', String(v.vod_id));
@@ -363,7 +382,7 @@ function PlayerContent() {
                       break;
                     }
 
-                    // 暂存为最优候选（以防未遇到第1季时，也可以播第2季等次优候选）
+                    // 暂存为最优候选（以防未遇到第一梯队时，流结束后兜底播放）
                     if (!pendingBestCandidate || totalScore > pendingBestCandidate.score) {
                       pendingBestCandidate = { video: v, score: totalScore, isSeries: isSeriesItem };
                     }
@@ -377,29 +396,40 @@ function PlayerContent() {
 
         // 流结束后的兜底检查与候选决议
         if (!redirected && !cancelled) {
-          if (pendingBestCandidate) {
-            // 没有收到最高优先级源，但收到了合格合法正片源，执行跳转
-            redirected = true;
-            const bestVideo = pendingBestCandidate.video;
-            const params = new URLSearchParams();
-            params.set('id', String(bestVideo.vod_id));
-            params.set('source', bestVideo.source);
-            params.set('title', title);
-            const resolvedType = pendingBestCandidate.isSeries ? 'tv' : (expectedType || 'movie');
-            params.set('type', resolvedType);
-            if (expectedYear) params.set('year', expectedYear);
-            if (isPremium) params.set('premium', '1');
-            if (foundSources.length > 0) {
-              params.set('groupedSources', JSON.stringify(foundSources));
+          // 如果流结束了，但 ikanbot 仍在请求中，再给予最后 1.5 秒等待 ikanbot 直出第一梯队光速资源
+          if (!ikanbotDone && !isPremium) {
+            await Promise.race([
+              ikanbotFetchPromise,
+              new Promise(r => setTimeout(r, 1500))
+            ]);
+          }
+
+          // 若 ikanbot 仍未命中，且有合格的兜底采集候选（如海豚资源），则降级启用候选源
+          if (!redirected && !cancelled) {
+            if (pendingBestCandidate) {
+              // 启用合格合法正片源进行兜底跳转
+              redirected = true;
+              const bestVideo = pendingBestCandidate.video;
+              const params = new URLSearchParams();
+              params.set('id', String(bestVideo.vod_id));
+              params.set('source', bestVideo.source);
+              params.set('title', title);
+              const resolvedType = pendingBestCandidate.isSeries ? 'tv' : (expectedType || 'movie');
+              params.set('type', resolvedType);
+              if (expectedYear) params.set('year', expectedYear);
+              if (isPremium) params.set('premium', '1');
+              if (foundSources.length > 0) {
+                params.set('groupedSources', JSON.stringify(foundSources));
+              }
+              router.replace(`/player?${params.toString()}`, { scroll: false });
+            } else if (yearMismatchedCount > 0) {
+              // 全网只有相差 3 年以上的同名老片，绝不误播张冠李戴
+              setTitleSearchError(`全网暂未检索到 ${targetYear ? targetYear + ' 年' : ''}《${title}》正片数字资源。系统已为您自动拦截早期同名老片，避免误播。`);
+              setTitleSearching(false);
+            } else {
+              setTitleSearchError('全网 108 条数据源未检索到该片，请检查片名或在首页重新搜索');
+              setTitleSearching(false);
             }
-            router.replace(`/player?${params.toString()}`, { scroll: false });
-          } else if (yearMismatchedCount > 0) {
-            // 全网只有相差 3 年以上的同名老片，绝不误播张冠李戴
-            setTitleSearchError(`全网暂未检索到 ${targetYear ? targetYear + ' 年' : ''}《${title}》正片数字资源。系统已为您自动拦截早期同名老片，避免误播。`);
-            setTitleSearching(false);
-          } else {
-            setTitleSearchError('全网 108 条数据源未检索到该片，请检查片名或在首页重新搜索');
-            setTitleSearching(false);
           }
         }
       } catch (err: any) {
