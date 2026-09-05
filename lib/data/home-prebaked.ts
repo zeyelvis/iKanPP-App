@@ -15,6 +15,7 @@ export interface PrebakedSubject {
   is_new?: boolean;
   playable?: boolean;
   episodes_info?: string;
+  type?: string;
   types?: string[];
   directors?: string[];
   actors?: string[];
@@ -50,6 +51,7 @@ export const PREBAKED_HOME_DATA: {
                         "电影"
                 ],
                 "episodes_info": "电影·剧情",
+                "type": "movie",
                 "is_new": true,
                 "playable": true
         },
@@ -67,6 +69,7 @@ export const PREBAKED_HOME_DATA: {
                         "电影"
                 ],
                 "episodes_info": "电影·剧情",
+                "type": "movie",
                 "is_new": true,
                 "playable": true
         },
@@ -84,6 +87,7 @@ export const PREBAKED_HOME_DATA: {
                         "电影"
                 ],
                 "episodes_info": "电影·动画",
+                "type": "movie",
                 "is_new": true,
                 "playable": true
         },
@@ -101,6 +105,76 @@ export const PREBAKED_HOME_DATA: {
                         "电影"
                 ],
                 "episodes_info": "电影·剧情",
+                "type": "movie",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_5",
+                "title": "生逢其时",
+                "rate": "9.0",
+                "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/7HXIhc3aRr1v7KmOrCulszXf3YP.jpg",
+                "description": "八十年代初，青梧小镇住着家庭模式完全不同的齐家和曹家。某天两家同时诞下齐时、曹信。身患白化病的齐时，自小就意识到了自己的“与众不同”，于是她喝酱油、戴假发，试图通过这样的方式，成为和普通人一样的存在。另一边的曹信，一路走来都是家长口中“别人家的孩子”，然而光环之下却始终伴随着父亲的严苛要求。当特立独行、勇敢倔强的少女齐时，遇上乖巧听话、优秀自律的少年曹信，两个家庭也在邻里间日积月累的相处中，也因荒唐“换子”碰撞出了眼泪的故事和“新生”的契机。孩子们经历着关于亲情、友情、爱情的考验，大人们也在面对关于事业、婚姻、家庭的难题。在时代洪流中，纵使生活跌跌撞撞，他们亦携手缝缝补补修炼人生，共同找寻属于自己的人生和幸福。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至06集 | 共26集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_6",
+                "title": "重案六组:消失的警号",
+                "rate": "8.0",
+                "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/oF1HUvtlr1o8ndAj2cZBIKAn3gg.jpg",
+                "description": "剧情核心围绕“消失的警号”展开，通过“老警号传承”设计致敬原版角色，并融入科技办案、新老刑侦理念碰撞等创新元素。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至20集 | 共26集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_7",
+                "title": "早春晴朗",
+                "rate": "7.6",
+                "cover": "https://image.tmdb.org/t/p/w500/nLWFbYv1r99Yy7dWvjoxMRegoe0.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/oUFUvEMCBP80e4eYsfVfxC8n7ih.jpg",
+                "description": "这是一段十年交锋，敬于才华，合于性格、久于平等的禁忌之恋。北漂伊始的尚之桃与极具天赋的“鬼才”栾念狭路相逢。热烈勇敢的尚之桃亦步亦趋地蜕变成长，撬碎了栾念世故坚硬的心防，互相吸引的二人在都市丛林中极限拉扯、分分合合。爱情，就是用光所有勇气，再无遗憾。爱，则是互相修复，共同成长。但情和爱之间，她选择生存。当她独当一面，他收敛锋芒，势均力敌的他们将会为彼此写下了新的结局……",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至17集 | 共24集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_8",
+                "title": "穿普拉达的女王2",
+                "rate": "7.0",
+                "cover": "https://image.tmdb.org/t/p/w500/zGQyw7v2dvb2FNDdVUJFcaPrD5y.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/Af907x5h9W1wVis8XrSd7ynTWuy.jpg",
+                "description": "　　随着传统出版业的式微，时尚女王米兰达在职业生涯中迎来新挑战。她不得不与手握广告预算的曾经的助理，如今已是奢侈品牌集团高管的艾米莉正面交锋。两人在行业变局中展开了一场关乎权力与生存的较量。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "type": "movie",
                 "is_new": true,
                 "playable": true
         }
@@ -883,6 +957,7 @@ export const PREBAKED_HOME_DATA: {
                         "电影"
                 ],
                 "episodes_info": "电影·剧情",
+                "type": "movie",
                 "is_new": true,
                 "playable": true
         },
@@ -900,6 +975,7 @@ export const PREBAKED_HOME_DATA: {
                         "电影"
                 ],
                 "episodes_info": "电影·剧情",
+                "type": "movie",
                 "is_new": true,
                 "playable": true
         },
@@ -917,6 +993,7 @@ export const PREBAKED_HOME_DATA: {
                         "电影"
                 ],
                 "episodes_info": "电影·动画",
+                "type": "movie",
                 "is_new": true,
                 "playable": true
         },
@@ -934,6 +1011,7 @@ export const PREBAKED_HOME_DATA: {
                         "电影"
                 ],
                 "episodes_info": "电影·剧情",
+                "type": "movie",
                 "is_new": true,
                 "playable": true
         },
@@ -950,6 +1028,7 @@ export const PREBAKED_HOME_DATA: {
                         "连续剧"
                 ],
                 "episodes_info": "更新至06集 | 共26集",
+                "type": "tv",
                 "is_new": true,
                 "playable": true
         },
@@ -966,6 +1045,7 @@ export const PREBAKED_HOME_DATA: {
                         "连续剧"
                 ],
                 "episodes_info": "更新至20集 | 共26集",
+                "type": "tv",
                 "is_new": true,
                 "playable": true
         },
@@ -982,6 +1062,25 @@ export const PREBAKED_HOME_DATA: {
                         "连续剧"
                 ],
                 "episodes_info": "更新至17集 | 共24集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_8",
+                "title": "穿普拉达的女王2",
+                "rate": "7.0",
+                "cover": "https://image.tmdb.org/t/p/w500/zGQyw7v2dvb2FNDdVUJFcaPrD5y.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/Af907x5h9W1wVis8XrSd7ynTWuy.jpg",
+                "description": "　　随着传统出版业的式微，时尚女王米兰达在职业生涯中迎来新挑战。她不得不与手握广告预算的曾经的助理，如今已是奢侈品牌集团高管的艾米莉正面交锋。两人在行业变局中展开了一场关乎权力与生存的较量。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "type": "movie",
                 "is_new": true,
                 "playable": true
         }

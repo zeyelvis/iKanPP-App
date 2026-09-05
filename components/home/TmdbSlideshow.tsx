@@ -147,7 +147,8 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
   const handleMovieClick = (movie: any) => {
     const params = new URLSearchParams();
     params.set('title', movie.title);
-    params.set('type', contentType);
+    const resolvedType = movie.type || (movie.isSeries || (movie.types && movie.types.includes('连续剧')) || movie.episodes_info ? 'tv' : contentType);
+    params.set('type', resolvedType);
     if (movie.year) params.set('year', String(movie.year));
     router.push(`/player?${params.toString()}`);
   };

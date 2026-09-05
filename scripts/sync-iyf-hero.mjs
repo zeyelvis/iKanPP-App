@@ -5,10 +5,10 @@ import path from 'path';
  * 每日全自动同步爱壹帆 (iyf.tv) 首页顶级轮播图
  * 
  * 机制：
- * 1. 抓取 iyf.tv 官方实时 8 席轮播巨幕
- * 2. 智能剔除商业广告位与外链导流
- * 3. 并发通过 TMDB / 豆瓣 / 官方宣发源补齐 4K 横版剧照 (backdrop)、高清海报、剧情简介与评分
- * 4. 自动更新到 lib/data/home-prebaked.ts 首页预热数据库
+ * 1. 抓取 iyf.tv 官方实时轮播巨幕并过滤广告
+ * 2. 若有效影视不满 8 席，自动从爱壹帆电影专区轮播无缝补全至满员 8 席
+ * 3. 并发通过 TMDB / 豆瓣 / 官方宣发源补齐 4K 横版剧照 (backdrop)、高清海报、剧情简介与真实评分
+ * 4. 自动更新写入 lib/data/home-prebaked.ts 首页预热数据库（8 席满员）
  */
 
 const TMDB_API_KEY = '82eaf0e14803590730e45c2123c90957';
@@ -72,13 +72,45 @@ async function fetchIyfHeroSlides() {
   // 严格过滤广告、外链与无意义推广
   const validMovies = rawSlides.filter(s => {
     if (!s || !s.title) return false;
-    // 排除外链广告或特定推广
     if (s.external || s.url?.includes('ppt.iyf.tv') || s.isTop) return false;
     if (s.title.includes('爽剧') || s.title.includes('短剧开启') || s.title.includes('广告')) return false;
     return true;
   });
 
-  console.log(`[iyf-sync] 过滤广告后保留 ${validMovies.length} 个正片项:`, validMovies.map(m => m.title));
+  console.log(`[iyf-sync] 首页过滤广告后保留 ${validMovies.length} 个正片项:`, validMovies.map(m => m.title));
+
+  // 若因广告剔除不足 8 席，从爱壹帆电影专区轮播补齐
+  if (validMovies.length < 8) {
+    try {
+      console.log(`[iyf-sync] 当前有效项为 ${validMovies.length}，正在向电影专区拉取候补影片补齐至 8 席...`);
+      const movieRes = await fetch('https://www.iyf.tv/list/movie', {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+          'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8'
+        }
+      });
+      if (movieRes.ok) {
+        const movieHtml = await movieRes.text();
+        const movieMatch = movieHtml.match(/var\s+injectJson\s*=\s*(\{[\s\S]*?\});/);
+        if (movieMatch) {
+          const movieData = JSON.parse(movieMatch[1]);
+          const movieSlideKey = Object.keys(movieData).find(k => k.startsWith('slide-list'));
+          const movieSlides = (movieData[movieSlideKey] || []).filter(s => s && s.title && !s.external && !s.isTop);
+          for (const m of movieSlides) {
+            if (validMovies.length >= 8) break;
+            if (!validMovies.some(v => v.title === m.title)) {
+              console.log(`[iyf-sync] 成功从电影专区补齐候补大片: ${m.title}`);
+              validMovies.push(m);
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[iyf-sync] 从电影专区补齐异常:', err);
+    }
+  }
+
+  console.log(`[iyf-sync] 最终整理出完整 ${validMovies.length} 席轮播影视:`, validMovies.map(m => m.title));
   return validMovies;
 }
 
@@ -95,7 +127,7 @@ async function enrichMovieData(slideItem, index) {
   // 1. 尝试从 TMDB 获取官方大剧照与详情
   const tmdbData = await fetchTMDB(title, contentType);
 
-  // 2. 确定最佳图片（优先 TMDB 4K 宽屏 backdrop，若无则使用 iyf 官方设计师定制海报）
+  // 2. 确定最佳图片（优先 TMDB 4K 宽屏 backdrop，若无则使用 iyf 官方宣发横图）
   const backdrop = tmdbData?.backdrop || slideItem.image || '';
   const cover = tmdbData?.poster || slideItem.verticalImg || slideItem.image || '';
   const rate = tmdbData?.rate || '8.8';
@@ -113,20 +145,18 @@ async function enrichMovieData(slideItem, index) {
   else types.push('电影');
 
   return {
-    item: {
-      id: `iyf_hero_${contentType}_${index + 1}`,
-      title,
-      rate,
-      cover,
-      backdrop,
-      description,
-      year,
-      types: Array.from(new Set(types)),
-      episodes_info: subTitle || undefined,
-      is_new: true,
-      playable: true
-    },
-    isSeries
+    id: `iyf_hero_${contentType}_${index + 1}`,
+    title,
+    rate,
+    cover,
+    backdrop,
+    description,
+    year,
+    types: Array.from(new Set(types)),
+    episodes_info: subTitle || undefined,
+    type: contentType,
+    is_new: true,
+    playable: true
   };
 }
 
@@ -138,30 +168,21 @@ async function main() {
       return;
     }
 
-    const movieHeros = [];
-    const tvHeros = [];
-
+    const allHeroItems = [];
     for (let i = 0; i < slides.length; i++) {
-      const { item, isSeries } = await enrichMovieData(slides[i], i);
-      if (isSeries) {
-        tvHeros.push(item);
-      } else {
-        movieHeros.push(item);
-      }
+      const item = await enrichMovieData(slides[i], i);
+      allHeroItems.push(item);
     }
 
-    console.log(`[iyf-sync] 成功整理出电影 Hero ${movieHeros.length} 部，电视剧 Hero ${tvHeros.length} 部`);
+    console.log(`[iyf-sync] 成功补全 ${allHeroItems.length} 席 Hero 大片`);
+
+    // 截取前 8 席作为首页顶级轮播
+    const finalHeros = allHeroItems.slice(0, 8);
 
     // 读取现有 home-prebaked.ts
     const filePath = path.resolve(process.cwd(), 'lib/data/home-prebaked.ts');
     let fileContent = fs.readFileSync(filePath, 'utf-8');
 
-    // 如果电影或电视剧单项不足 4 部，用混合列表补齐，保证各频道都有 6~8 部精美轮播
-    const allHeros = [...movieHeros, ...tvHeros];
-    const finalMovieHeros = movieHeros.length >= 4 ? movieHeros : allHeros.slice(0, 8);
-    const finalTvHeros = tvHeros.length >= 4 ? tvHeros : allHeros.slice(0, 8);
-
-    // 提取出整个 PREBAKED_HOME_DATA 赋值并在内存中替换 hero 字段
     // 采用正则精准替换 "hero": [ ... ]
     const replaceHeroSection = (sourceCode, categoryKey, newHeros) => {
       const categoryRegex = new RegExp(`("${categoryKey}":\\s*\\{[\\s\\S]*?"hero":\\s*\\[)[\\s\\S]*?(\\]\\s*,\\s*"top10")`);
@@ -172,12 +193,13 @@ async function main() {
       return sourceCode.replace(categoryRegex, `$1\n        ${formattedJson}\n      $2`);
     };
 
-    let updatedContent = replaceHeroSection(fileContent, 'movie', finalMovieHeros);
-    updatedContent = replaceHeroSection(updatedContent, 'tv', finalTvHeros);
+    // 首页巨幕轮播为全站核心高光区，保证 movie 与 tv 专区均呈现完整的 8 席精选大片
+    let updatedContent = replaceHeroSection(fileContent, 'movie', finalHeros);
+    updatedContent = replaceHeroSection(updatedContent, 'tv', finalHeros);
 
     if (updatedContent !== fileContent) {
       fs.writeFileSync(filePath, updatedContent, 'utf-8');
-      console.log('✅ [iyf-sync] 成功将爱壹帆最新轮播巨幕更新至 lib/data/home-prebaked.ts！');
+      console.log('✅ [iyf-sync] 成功将爱壹帆满员 8 席最新轮播巨幕更新至 lib/data/home-prebaked.ts！');
     } else {
       console.log('[iyf-sync] 轮播内容未变动或匹配区已是最优');
     }
