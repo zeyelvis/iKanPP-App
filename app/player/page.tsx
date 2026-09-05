@@ -19,12 +19,11 @@ import { settingsStore } from '@/lib/store/settings-store';
 import { premiumModeSettingsStore } from '@/lib/store/premium-mode-settings';
 import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
 import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
-import { htmlToText } from '@/lib/utils/html';
 import { getSourceName } from '@/lib/utils/source-names';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 import { normalizeVideoType } from '@/lib/utils/taxonomy';
 import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
-import { Crown, Lock, Sparkles, ChevronDown } from 'lucide-react';
+import { Crown, Lock, Sparkles } from 'lucide-react';
 
 interface TitleAnalysis {
   rawTitle: string;
@@ -457,8 +456,7 @@ function PlayerContent() {
     typeof window !== 'undefined' ? modeStore.getSettings().episodeReverseOrder : false
   );
 
-  // 移动端剧情简介轻量折叠展开状态（默认折叠，零遮挡）
-  const [mobileInfoExpanded, setMobileInfoExpanded] = useState(false);
+
 
   // Sync with store changes
   useEffect(() => {
@@ -928,132 +926,6 @@ function PlayerContent() {
                 externalTimeRef={playerTimeRef}
                 nextEpisodeUrl={nextEpisodeUrl}
               />
-
-              {/* 移动端专属：位于播放器正下方的紧凑流光信息卡片 */}
-              <div className="lg:hidden bg-linear-to-b from-white/8 to-white/3 backdrop-blur-2xl rounded-2xl border border-white/10 p-3.5 space-y-3 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-                {/* 标签栏 */}
-                <div className="flex items-center gap-1.5 flex-wrap text-[11px]">
-                  {videoData?.type_name && (
-                    <span className="px-2.5 py-0.5 rounded-full font-bold bg-(--accent-color) text-white shadow-sm shadow-(--accent-color)/30">
-                      {normalizeVideoType(videoData.type_name, videoData.vod_name || title || '').standardType}
-                    </span>
-                  )}
-                  {videoData?.vod_year && (
-                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-white/90 font-medium">
-                      {videoData.vod_year}
-                    </span>
-                  )}
-                  {videoData?.vod_area && (
-                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-white/80">
-                      {videoData.vod_area}
-                    </span>
-                  )}
-                  {videoData?.vod_remarks && (
-                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-white/80">
-                      {videoData.vod_remarks}
-                    </span>
-                  )}
-                </div>
-
-                {/* 片名与当前播放指示 */}
-                <div className="space-y-1">
-                  <h1 className="text-lg font-black text-white leading-tight tracking-tight">
-                    {videoData?.vod_name || title}
-                  </h1>
-                  {videoData?.episodes?.[currentEpisode]?.name && (
-                    <div className="text-xs text-(--accent-color) font-semibold flex items-center gap-1.5 pt-0.5">
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-(--accent-color) opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-(--accent-color)"></span>
-                      </span>
-                      <span>正在播放：{videoData.episodes[currentEpisode].name}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* 移动端快捷操作栏（收藏、分享、简介折叠与线路直达） */}
-                <div className="flex items-center justify-between pt-2.5 border-t border-white/10 text-xs">
-                  <div className="flex items-center gap-3">
-                    {videoData && videoId && (
-                      <div className="flex items-center gap-1.5 text-white/80 hover:text-white transition-colors cursor-pointer">
-                        <FavoriteButton
-                          videoId={videoId}
-                          source={source || ''}
-                          title={videoData.vod_name || title || '未知视频'}
-                          poster={videoData.vod_pic}
-                          type={videoData.type_name}
-                          year={videoData.vod_year}
-                          size={18}
-                          isPremium={isPremium}
-                        />
-                        <span className="text-xs">收藏</span>
-                      </div>
-                    )}
-                    <ShareButton
-                      title={videoData?.vod_name || title || ''}
-                      poster={videoData?.vod_pic}
-                      episodeName={videoData?.episodes?.[currentEpisode]?.name}
-                      year={videoData?.vod_year}
-                      type={videoData?.type_name}
-                      size={18}
-                    />
-                    {/* 剧情简介折叠开关 */}
-                    {videoData?.vod_content && (
-                      <button
-                        type="button"
-                        onClick={() => setMobileInfoExpanded(!mobileInfoExpanded)}
-                        className="flex items-center gap-1 text-white/60 hover:text-white transition-colors cursor-pointer text-xs ml-1"
-                      >
-                        <span>简介</span>
-                        <ChevronDown
-                          size={13}
-                          className={`transition-transform duration-200 ${mobileInfoExpanded ? 'rotate-180' : ''}`}
-                        />
-                      </button>
-                    )}
-                  </div>
-
-                  {/* 当前线路胶囊与快捷切线 */}
-                  {source && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const el = document.getElementById('source-selector-section');
-                        if (el) {
-                          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }
-                      }}
-                      className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/15 border border-purple-500/30 text-[11px] text-purple-200 hover:bg-purple-500/25 transition-all cursor-pointer font-medium"
-                      title="点击查看/切换备用专线"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                      <span>{getSourceName(source)}</span>
-                      {groupedSources.length > 1 && (
-                        <span className="text-[10px] text-purple-300 font-bold ml-0.5">
-                          ({groupedSources.length}线) ⇄
-                        </span>
-                      )}
-                    </button>
-                  )}
-                </div>
-
-                {/* 移动端折叠展开的剧情简介与主创详情 */}
-                {mobileInfoExpanded && videoData && (
-                  <div className="pt-2.5 border-t border-white/10 space-y-1.5 text-xs text-white/70 animate-fade-in">
-                    {videoData.vod_director && (
-                      <p><span className="text-white/40 font-medium">导演：</span>{videoData.vod_director}</p>
-                    )}
-                    {videoData.vod_actor && (
-                      <p className="line-clamp-2"><span className="text-white/40 font-medium">主演：</span>{videoData.vod_actor}</p>
-                    )}
-                    {videoData.vod_content && (
-                      <p className="text-white/60 leading-relaxed max-h-36 overflow-y-auto">
-                        <span className="text-white/40 font-medium">简介：</span>{htmlToText(videoData.vod_content)}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
 
               {/* 桌面端完整详情 */}
               <div className="hidden lg:block">
