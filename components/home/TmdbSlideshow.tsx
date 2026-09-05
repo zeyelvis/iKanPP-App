@@ -244,10 +244,10 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
           </h1>
 
           {/* 操作按钮组 */}
-          <div className="flex items-center gap-2.5 sm:gap-3.5 w-full sm:w-auto">
+          <div className="flex items-center">
             <button
               onClick={() => handleMovieClick(active)}
-              className="flex-1 sm:flex-none justify-center px-6 sm:px-8 py-3 sm:py-3.5 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-2xl text-sm sm:text-base font-bold flex items-center gap-2 shadow-2xl transition-all cursor-pointer hover:shadow-[0_0_25px_rgba(229,9,20,0.6)]"
+              className="inline-flex items-center justify-center gap-2.5 px-7 py-3 sm:py-3.5 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-full text-sm sm:text-base font-bold shadow-xl transition-all cursor-pointer hover:shadow-[0_0_25px_rgba(229,9,20,0.6)]"
             >
               <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z" />
