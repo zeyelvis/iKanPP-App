@@ -100,7 +100,19 @@ export async function GET(request: NextRequest) {
         }
     }
 
-    // 若所有外部镜像均失败，绝不返回会引发客户端破损图标的 502/418 报错文本，而是返回合法的电影胶片质感 SVG
+    // 若所有外部镜像均失败
+    // 若客户端指定了 nofallback 或明确要求错误感知，返回 502 便于客户端启动多级降级容灾
+    if (request.nextUrl.searchParams.get('nofallback') === '1') {
+        return new NextResponse('Proxy upstream error', {
+            status: 502,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Cache-Control': 'no-store, no-cache, must-revalidate',
+            },
+        });
+    }
+
+    // 默认兜底：返回电影胶片质感 SVG
     const fallbackSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 450" fill="none"><defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#161622"/><stop offset="100%" stop-color="#0A0A0F"/></linearGradient></defs><rect width="300" height="450" fill="url(#bg)" rx="20"/><rect width="298" height="448" x="1" y="1" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" rx="19"/><g transform="translate(150,210)"><rect x="-50" y="-60" width="100" height="120" rx="12" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/><circle cx="0" cy="0" r="24" fill="#E50914"/><path d="M-5,-8 L-5,8 L9,0 Z" fill="#FFF"/></g><text x="150" y="320" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-size="13" font-weight="700" fill="rgba(255,255,255,0.4)" text-anchor="middle">iKanPP · 影视精选</text><text x="150" y="342" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-size="10" font-weight="500" fill="rgba(255,255,255,0.2)" text-anchor="middle">高清原画直达</text></svg>`;
 
     return new NextResponse(fallbackSvg, {

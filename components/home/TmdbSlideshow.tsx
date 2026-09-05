@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
@@ -15,39 +15,37 @@ interface PosterImageProps {
   priority?: boolean;
 }
 
+/**
+ * 缩略图海报组件（支持代理与直连双通道容灾）
+ */
 function PosterImage({ src, alt, className = '', style, sizes = '100vw', priority = false }: PosterImageProps) {
+  const [useDirect, setUseDirect] = useState(false);
   const [error, setError] = useState(false);
-  const [fallbackError, setFallbackError] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    setUseDirect(false);
     setError(false);
-    setFallbackError(false);
     setLoaded(false);
   }, [src]);
 
-  const proxiedSrc = getOptimizedImageUrl(src);
+  const proxiedSrc = getOptimizedImageUrl(src, { noFallback: true });
+  const activeSrc = useDirect ? src : proxiedSrc;
 
-  if (error && fallbackError) {
-    return (
-      <div className={`w-full h-full flex items-center justify-center bg-white/5 ${className}`} style={style}>
-        <span className="text-xs text-white/30">暂无海报</span>
-      </div>
-    );
-  }
+  const handleImgError = () => {
+    if (!useDirect && src && src.startsWith('http') && src !== proxiedSrc) {
+      // 代理节点故障或超时，自动无缝重试原链接直连
+      setUseDirect(true);
+    } else {
+      setError(true);
+    }
+  };
 
   if (error) {
     return (
-      <Image
-        src="/placeholder-poster.svg"
-        alt={alt}
-        fill
-        className={`object-cover ${className}`}
-        style={style}
-        sizes={sizes}
-        unoptimized
-        onError={() => setFallbackError(true)}
-      />
+      <div className={`w-full h-full flex items-center justify-center bg-white/5 ${className}`} style={style}>
+        <span className="text-[10px] text-white/30">暂无海报</span>
+      </div>
     );
   }
 
@@ -55,19 +53,123 @@ function PosterImage({ src, alt, className = '', style, sizes = '100vw', priorit
     <>
       {!loaded && <div className="absolute inset-0 bg-white/5 animate-pulse" />}
       <Image
-        src={proxiedSrc || '/placeholder-poster.svg'}
+        key={activeSrc}
+        src={activeSrc || '/placeholder-poster.svg'}
         alt={alt}
         fill
         priority={priority}
-        className={`${className} ${loaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-700`}
+        className={`${className} ${loaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
         style={style}
         sizes={sizes}
         unoptimized
         referrerPolicy="no-referrer"
         onLoad={() => setLoaded(true)}
-        onError={() => setError(true)}
+        onError={handleImgError}
       />
     </>
+  );
+}
+
+/**
+ * 电影巨幕专属背景组件（双图层架构 + 多级容灾回退 + 即时氛围光晕，彻底根除偶发黑屏）
+ */
+function HeroBackdrop({
+  backdrop,
+  cover,
+  title,
+}: {
+  backdrop?: string | null;
+  cover?: string | null;
+  title: string;
+}) {
+  // 构建候选重试容灾链：
+  // 1. 代理优化版 Backdrop（高清横图）
+  // 2. 原生 Backdrop 直连（避免边缘代理抖动）
+  // 3. 代理优化版 Cover（海报大图降级）
+  // 4. 原生 Cover 直连
+  const candidates = useMemo(() => {
+    const list: string[] = [];
+    if (backdrop) {
+      const optBackdrop = getOptimizedImageUrl(backdrop, { noFallback: true });
+      list.push(optBackdrop);
+      if (backdrop !== optBackdrop && backdrop.startsWith('http')) {
+        list.push(backdrop);
+      }
+    }
+    if (cover) {
+      const optCover = getOptimizedImageUrl(cover, { noFallback: true });
+      if (!list.includes(optCover)) list.push(optCover);
+      if (cover !== optCover && cover.startsWith('http') && !list.includes(cover)) {
+        list.push(cover);
+      }
+    }
+    return list;
+  }, [backdrop, cover]);
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+
+  // 影片切换时，从首选源开始尝试，重置淡入状态
+  useEffect(() => {
+    setCurrentIndex(0);
+    setLoaded(false);
+  }, [backdrop, cover]);
+
+  const currentSrc = candidates[currentIndex] || '';
+
+  const handleBackdropError = () => {
+    // 当前源失败，无缝激活下一级容灾候选源（如：Backdrop -> Cover 海报）
+    if (currentIndex + 1 < candidates.length) {
+      setCurrentIndex(prev => prev + 1);
+    }
+  };
+
+  // 底层即时氛围图（用封面海报高斯模糊铺底，0秒呈现，彻底杜绝任何黑屏）
+  const ambientSrc = cover ? getOptimizedImageUrl(cover) : (backdrop ? getOptimizedImageUrl(backdrop) : '');
+
+  return (
+    <div className="absolute inset-0 bg-[#0A0A0F] ambient-mesh-glow overflow-hidden select-none">
+      {/* 1. 底层：即时电影色彩氛围层（极小体积海报 + 高斯模糊，0 秒呈现，彻底告别黑屏） */}
+      {ambientSrc && (
+        <div className="absolute inset-0 -m-8 pointer-events-none">
+          <Image
+            src={ambientSrc}
+            alt=""
+            fill
+            sizes="100vw"
+            unoptimized
+            priority
+            referrerPolicy="no-referrer"
+            className="object-cover blur-3xl opacity-40 scale-125 saturate-150 transition-opacity duration-1000"
+          />
+        </div>
+      )}
+
+      {/* 2. 顶层：巨幕横版高清剧照（支持多源自动容灾 + 丝滑淡入） */}
+      {currentSrc && (
+        <Image
+          key={currentSrc}
+          src={currentSrc}
+          alt={title}
+          fill
+          priority
+          sizes="100vw"
+          unoptimized
+          referrerPolicy="no-referrer"
+          onLoad={() => setLoaded(true)}
+          onError={handleBackdropError}
+          className={`object-cover scale-105 transition-all duration-1000 ease-out ${
+            loaded ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{ objectPosition: 'center 20%' }}
+        />
+      )}
+
+      {/* 3. 电影级三重暗黑渐变叠层（保障文字与控制按钮完美清晰） */}
+      <div className="absolute inset-0 bg-linear-to-t from-[#0A0A0F] via-[#0A0A0F]/60 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-r from-[#0A0A0F]/95 via-[#0A0A0F]/50 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-black/60 via-transparent to-transparent pointer-events-none" />
+    </div>
   );
 }
 
@@ -200,6 +302,29 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
     }
   };
 
+  // 智能预加载上一部与下一部大片的巨幕背景与海报，实现切换瞬间 0 延迟秒开
+  useEffect(() => {
+    if (typeof window === 'undefined' || currentData.length <= 1) return;
+    const nextIdx = (activeIndex + 1) % currentData.length;
+    const prevIdx = (activeIndex - 1 + currentData.length) % currentData.length;
+
+    [nextIdx, prevIdx].forEach(idx => {
+      const item = currentData[idx];
+      if (!item) return;
+      const targetBackdrop = item.backdrop || backdrops[item.title] || item.cover;
+      if (targetBackdrop) {
+        const img = new window.Image();
+        img.referrerPolicy = 'no-referrer';
+        img.src = getOptimizedImageUrl(targetBackdrop, { noFallback: true });
+      }
+      if (item.cover) {
+        const coverImg = new window.Image();
+        coverImg.referrerPolicy = 'no-referrer';
+        coverImg.src = getOptimizedImageUrl(item.cover, { noFallback: true });
+      }
+    });
+  }, [activeIndex, currentData, backdrops]);
+
   return (
     <div
       className="relative w-full h-[58vh] min-h-97.5 sm:h-[64vh] lg:h-[72vh] max-h-187.5 rounded-3xl overflow-hidden mb-10 group select-none shadow-2xl border border-white/10"
@@ -208,24 +333,12 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* 1. 全景大图背景 */}
-      <div className="absolute inset-0 bg-[#0A0A0F] ambient-mesh-glow transition-all duration-1000 ease-out">
-        <PosterImage
-          src={activeBackdrop}
-          alt={active.title}
-          className="object-cover scale-105 transition-all duration-1000"
-          style={{ objectPosition: 'center 20%' }}
-          priority
-        />
-
-        {/* 2. 电影级三重暗黑渐变叠层 */}
-        {/* 底部向上渐变（文字区与内容区无缝融合） */}
-        <div className="absolute inset-0 bg-linear-to-t from-[#0A0A0F] via-[#0A0A0F]/60 to-transparent" />
-        {/* 左侧向右渐变（突出左下大字标题） */}
-        <div className="absolute inset-0 bg-linear-to-r from-[#0A0A0F]/95 via-[#0A0A0F]/50 to-transparent" />
-        {/* 顶部微暗渐变（保障 Navbar 识别度） */}
-        <div className="absolute inset-0 bg-linear-to-b from-black/60 via-transparent to-transparent" />
-      </div>
+      {/* 1. 全景大图背景与自适应光晕（双图层 + 多级容灾回退 + 氛围光垫底，彻底根治偶发黑屏） */}
+      <HeroBackdrop
+        backdrop={active.backdrop || backdrops[active.title] || active.cover}
+        cover={active.cover}
+        title={active.title}
+      />
 
       {/* 3. 巨幕内容排版 */}
       <div className="relative z-20 h-full fluid-container flex flex-col justify-end pb-8 sm:pb-12 pt-16">

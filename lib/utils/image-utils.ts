@@ -5,7 +5,7 @@
  * 2. 仅针对 doubanio.com 等具备严格反盗链限制的源使用 /api/img-proxy 镜像容灾通道；
  * 3. 相对路径或本地资源直接透传。
  */
-export function getOptimizedImageUrl(url?: string | null): string {
+export function getOptimizedImageUrl(url?: string | null, options?: { noFallback?: boolean }): string {
   if (!url) return '/placeholder-poster.svg';
   if (!url.startsWith('http')) return url;
 
@@ -16,7 +16,8 @@ export function getOptimizedImageUrl(url?: string | null): string {
     url.includes('doubanio.com') ||
     url.includes('douban.com')
   ) {
-    return `/api/img-proxy?url=${encodeURIComponent(url)}`;
+    const noFallbackQuery = options?.noFallback ? '&nofallback=1' : '';
+    return `/api/img-proxy?url=${encodeURIComponent(url)}${noFallbackQuery}`;
   }
 
   return url;
