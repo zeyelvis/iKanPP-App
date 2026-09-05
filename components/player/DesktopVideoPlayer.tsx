@@ -117,6 +117,13 @@ export function DesktopVideoPlayer({
     }
   }, [videoResolution, onResolutionDetected]);
 
+  // 确保视频标签具备 no-referrer 局部隔离策略，允许跨源企业 CDN 切片安全加载
+  React.useEffect(() => {
+    if (refs.videoRef.current) {
+      refs.videoRef.current.setAttribute('referrerpolicy', 'no-referrer');
+    }
+  }, [refs.videoRef]);
+
   // Danmaku
   const { danmakuEnabled, comments: danmakuComments } = useDanmaku({
     videoTitle,

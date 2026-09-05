@@ -10,7 +10,6 @@ import { isSafeExternalUrl } from '@/lib/utils/security';
 import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
 import { fetchJableVideoDetail } from '@/lib/server/jable-scraper';
 import { fetchIkanbotDetail } from '@/lib/server/ikanbot';
-import { get4kvmMovieDetail, get4kvmStreamUrl } from '@/lib/server/fourk-vm';
 
 export const runtime = 'edge';
 
@@ -148,31 +147,24 @@ async function handleDetailRequest(id: string | null, source: string | null, met
     try {
       const searchTitle = request ? (request.nextUrl.searchParams.get('title') || id) : id;
       const cleanTitle = (searchTitle || '').replace(/^4kvm_/i, '').trim();
-      const detail = await get4kvmMovieDetail(cleanTitle);
-      if (detail && detail.episodes.length > 0) {
-        // 预解析第一集的超清直链
-        let firstStream: string | null = null;
-        try {
-          firstStream = await get4kvmStreamUrl(detail, 1);
-        } catch {
-          // 降级为 302 重定向
+      const origin = request ? request.nextUrl.origin : 'http://localhost:3000';
+      const res = await fetch(`${origin}/api/source/4kvm?title=${encodeURIComponent(cleanTitle)}&format=json`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          return NextResponse.json({
+            success: true,
+            data: {
+              vod_id: json.data.vod_id,
+              vod_name: json.data.vod_name,
+              vod_pic: json.data.vod_pic,
+              vod_year: '',
+              vod_content: '🔥 4K 蓝光极清原画专线，支持 8 Mbps 超高码率与杜比画质体验。',
+              type_name: '4K 蓝光',
+              episodes: json.data.episodes,
+            }
+          });
         }
-
-        return NextResponse.json({
-          success: true,
-          data: {
-            vod_id: `4kvm_${detail.id}`,
-            vod_name: detail.title,
-            vod_pic: detail.cover,
-            vod_year: detail.year || '',
-            vod_content: '🔥 4K 蓝光极清原画专线，支持 8 Mbps 超高码率与杜比画质体验。',
-            type_name: '4K 蓝光',
-            episodes: detail.episodes.map(ep => ({
-              name: ep.name,
-              url: (ep.index === 1 && firstStream) ? firstStream : `/api/source/4kvm?title=${encodeURIComponent(detail.title)}&episode=${ep.index}&redirect=1`,
-            })),
-          }
-        });
       }
     } catch (e) {
       console.error('[DetailAPI] 4kvm resolve error:', e);

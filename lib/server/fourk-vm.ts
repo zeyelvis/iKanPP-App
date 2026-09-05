@@ -38,6 +38,22 @@ const HEADERS = {
   'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
 };
 
+/**
+ * 带严格超时的外部请求封装，防止外部目标站响应慢挂起服务端事件循环
+ */
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 2500): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function base64ToUint8Array(base64: string): Uint8Array {
   if (typeof Buffer !== 'undefined') {
     return new Uint8Array(Buffer.from(base64, 'base64'));
@@ -209,10 +225,9 @@ export async function search4kvm(title: string): Promise<{ title: string; playUr
   const searchUrl = `https://www.4kvm.net/search?k=${encodeURIComponent(cleanTitle)}`;
 
   try {
-    const res = await fetch(searchUrl, {
+    const res = await fetchWithTimeout(searchUrl, {
       headers: HEADERS,
-      next: { revalidate: 3600 },
-    });
+    }, 2500);
     if (!res.ok) return null;
     const html = await res.text();
 
@@ -276,12 +291,12 @@ export async function get4kvmMovieDetail(titleOrId: string): Promise<FourkMovieD
 
   try {
     const playPageUrl = `https://www.4kvm.net${playPath}`;
-    const res = await fetch(playPageUrl, {
+    const res = await fetchWithTimeout(playPageUrl, {
       headers: {
         ...HEADERS,
         Referer: 'https://www.4kvm.net/',
       },
-    });
+    }, 2500);
     if (!res.ok) return null;
     const html = await res.text();
 
@@ -388,13 +403,13 @@ export async function get4kvmStreamUrl(detail: FourkMovieDetail, episodeIndex: n
     const signedPath = await signPlayUrl(targetEp.dataId, targetEp.secretKey, '1080', detail.userlink);
     const apiUrl = `https://www.4kvm.net${signedPath}`;
 
-    const res = await fetch(apiUrl, {
+    const res = await fetchWithTimeout(apiUrl, {
       headers: {
         ...HEADERS,
         Referer: `https://www.4kvm.net/play/${targetEp.secretKey}`,
         Accept: 'application/json, text/plain, */*',
       },
-    });
+    }, 2500);
 
     if (!res.ok) return null;
     const json = await res.json();
