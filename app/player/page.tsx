@@ -158,7 +158,23 @@ function PlayerContent() {
         let ikanbotDone = false;
         let ikanbotFound = false;
 
-        // 优先并发请求 ikanbot 实时逆向清洗引擎（秒级直出 20~30 条黄金线路，第 1 条 100% 锁定为光速资源）
+        // 并发探测 4kvm 8 Mbps 蓝光极清专线
+        const fourkFetchPromise = (!isPremium) ? (async () => {
+          try {
+            const res = await fetch(`/api/source/4kvm?title=${encodeURIComponent(cleanTitle)}&episode=1&format=json`);
+            if (res.ok) {
+              const resData = await res.json();
+              if (resData?.success && resData?.data?.stream_url) {
+                return resData.data;
+              }
+            }
+          } catch {
+            // ignore
+          }
+          return null;
+        })() : Promise.resolve(null);
+
+        // 优先并发请求 ikanbot 实时逆向清洗引擎（秒级直出 20~30 条黄金线路）
         const ikanbotFetchPromise = (!isPremium) ? (async () => {
           try {
             const seasonParam = targetAnalysis.seasonNumber ?? '';
@@ -176,14 +192,35 @@ function PlayerContent() {
                   typeName: isSeriesItem ? '连续剧' : '电影',
                 }));
 
-                const firstLine = ikanData.lines[0];
-                if (firstLine && !redirected && !cancelled) {
+                // 探测 4K 蓝光极清专线（最多等待 500ms）
+                const fourkData = await Promise.race([
+                  fourkFetchPromise,
+                  new Promise(r => setTimeout(r, 500))
+                ]);
+                let playSourceId = ikanData.lines[0]?.sourceId;
+                let playVodId = String(ikanData.vod_id);
+
+                if (fourkData && (fourkData as any)?.stream_url) {
+                  const fourkSource: SourceInfo = {
+                    id: (fourkData as any).vod_id,
+                    source: '4kvm',
+                    sourceName: '🔥 4K蓝光专线',
+                    pic: (fourkData as any).vod_pic,
+                    typeName: isSeriesItem ? '连续剧' : '电影',
+                  };
+                  ikanSources.unshift(fourkSource);
+                  // 默认优先以 4K 极清专线起播
+                  playSourceId = '4kvm';
+                  playVodId = String((fourkData as any).vod_id);
+                }
+
+                if (playSourceId && !redirected && !cancelled) {
                   redirected = true;
                   ikanbotFound = true;
                   ikanbotDone = true;
                   const params = new URLSearchParams();
-                  params.set('id', String(ikanData.vod_id));
-                  params.set('source', firstLine.sourceId); // 锁定首选第一梯队：光速资源
+                  params.set('id', playVodId);
+                  params.set('source', playSourceId);
                   params.set('title', title);
                   const resolvedType = expectedType || (isSeriesItem ? 'tv' : 'movie');
                   params.set('type', resolvedType);
@@ -582,6 +619,28 @@ function PlayerContent() {
         const currentNameAnalysis = analyzeTitle(videoData?.vod_name || '');
         const effectiveSeason = targetAnalysis.seasonNumber ?? currentNameAnalysis.seasonNumber;
 
+        // 优先并发探测 4kvm「🔥 4K蓝光专线」
+        if (!isPremium && source !== '4kvm') {
+          fetch(`/api/source/4kvm?title=${encodeURIComponent(cleanTitle)}&episode=1&format=json`)
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+              if (cancelled || !data?.success || !data?.data?.stream_url) return;
+              const isSeriesItem = effectiveSeason !== null || expectedType === 'tv' || (videoData?.type_name || '').includes('剧') || data.data.episodes?.length > 1;
+              const fourkItem: SourceInfo = {
+                id: data.data.vod_id,
+                source: '4kvm',
+                sourceName: '🔥 4K蓝光专线',
+                pic: data.data.vod_pic,
+                typeName: isSeriesItem ? '连续剧' : '电影',
+              };
+              setDiscoveredSources(prev => {
+                const filtered = prev.filter(s => s.source !== '4kvm');
+                return [fourkItem, ...filtered];
+              });
+            })
+            .catch(() => {});
+        }
+
         // 优先并发从 ikanbot 注入丰富线路
         if (needsIkanbot) {
           const seasonParam = effectiveSeason ?? '';
@@ -723,6 +782,25 @@ function PlayerContent() {
   // Track current source for switching
   const [currentSourceId, setCurrentSourceId] = useState(source);
   const playerTimeRef = useRef(0);
+
+  // 4kvm 智能无感容灾降级：若 4kvm 专线报错且存在其他可用线路，500ms 内自动平滑切回备用线路
+  useEffect(() => {
+    if (source === '4kvm' && (videoError || !playUrl) && !loading) {
+      const fallbackSource = groupedSources.find(s => s.source !== '4kvm');
+      if (fallbackSource) {
+        console.warn('[Failover] 4kvm line failed or unplayable, auto switching to fallback:', fallbackSource.source);
+        const timer = setTimeout(() => {
+          const params = new URLSearchParams(searchParams.toString());
+          params.set('source', fallbackSource.source);
+          params.set('id', String(fallbackSource.id));
+          setCurrentSourceId(fallbackSource.source);
+          setVideoError('');
+          router.replace(`/player?${params.toString()}`, { scroll: false });
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [source, videoError, playUrl, loading, groupedSources, searchParams, router, setVideoError]);
 
   // Add initial history entry when video data is loaded
   useEffect(() => {

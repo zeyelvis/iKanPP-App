@@ -10,6 +10,7 @@ import { isSafeExternalUrl } from '@/lib/utils/security';
 import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
 import { fetchJableVideoDetail } from '@/lib/server/jable-scraper';
 import { fetchIkanbotDetail } from '@/lib/server/ikanbot';
+import { get4kvmMovieDetail, get4kvmStreamUrl } from '@/lib/server/fourk-vm';
 
 export const runtime = 'edge';
 
@@ -139,6 +140,42 @@ async function handleDetailRequest(id: string | null, source: string | null, met
       }
     } catch (e) {
       console.error('[DetailAPI] ikanbot resolve error:', e);
+    }
+  }
+
+  // 2.5 专属支持 4kvm 4K 蓝光极清专线直解
+  if (source === '4kvm') {
+    try {
+      const searchTitle = request ? (request.nextUrl.searchParams.get('title') || id) : id;
+      const cleanTitle = (searchTitle || '').replace(/^4kvm_/i, '').trim();
+      const detail = await get4kvmMovieDetail(cleanTitle);
+      if (detail && detail.episodes.length > 0) {
+        // 预解析第一集的超清直链
+        let firstStream: string | null = null;
+        try {
+          firstStream = await get4kvmStreamUrl(detail, 1);
+        } catch {
+          // 降级为 302 重定向
+        }
+
+        return NextResponse.json({
+          success: true,
+          data: {
+            vod_id: `4kvm_${detail.id}`,
+            vod_name: detail.title,
+            vod_pic: detail.cover,
+            vod_year: detail.year || '',
+            vod_content: '🔥 4K 蓝光极清原画专线，支持 8 Mbps 超高码率与杜比画质体验。',
+            type_name: '4K 蓝光',
+            episodes: detail.episodes.map(ep => ({
+              name: ep.name,
+              url: (ep.index === 1 && firstStream) ? firstStream : `/api/source/4kvm?title=${encodeURIComponent(detail.title)}&episode=${ep.index}&redirect=1`,
+            })),
+          }
+        });
+      }
+    } catch (e) {
+      console.error('[DetailAPI] 4kvm resolve error:', e);
     }
   }
 
