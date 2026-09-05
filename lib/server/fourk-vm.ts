@@ -468,6 +468,7 @@ export async function get4kvmStreamUrl(detail: FourkMovieDetail, episodeIndex: n
       (detail as any).debugError = `[resolveStream Error]: ${e?.message || String(e)} | Stack: ${e?.stack || ''}`;
       return null;
     }
+    return null;
   };
 
   try {
