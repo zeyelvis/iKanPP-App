@@ -1,0 +1,41 @@
+name: Daily Sync ikanbot Sources
+
+on:
+  schedule:
+    # 每天 UTC 03:00 (北京时间 11:00) 自动执行同步
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+# 赋予工作流代码提交与写入权限
+permissions:
+  contents: write
+
+jobs:
+  sync-sources:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run ikanbot Sources Sync
+        run: |
+          node scripts/sync-ikanbot-sources.mjs
+
+      - name: Commit and push if sources changed
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          if [[ -n $(git status --porcelain lib/api/default-sources.ts) ]]; then
+            echo "Detected updated sources. Committing changes..."
+            git add lib/api/default-sources.ts
+            git commit -m "chore(sources): auto-sync aligned with ikanbot.com [skip ci]"
+            git push
+          else
+            echo "No changes in sources. Everything is already up to date."
+          fi
