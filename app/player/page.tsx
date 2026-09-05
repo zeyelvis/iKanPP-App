@@ -158,21 +158,7 @@ function PlayerContent() {
         let ikanbotDone = false;
         let ikanbotFound = false;
 
-        // 并发探测 4kvm 8 Mbps 蓝光极清专线（零延迟非阻塞嗅探）
-        let fourkReadyData: any = null;
-        const fourkFetchPromise = (!isPremium) ? (async () => {
-          try {
-            const res = await fetch(`/api/source/4kvm?title=${encodeURIComponent(cleanTitle)}&episode=1&format=json`);
-            if (res.ok) {
-              const resData = await res.json();
-              if (resData?.success && resData?.data?.stream_url) {
-                fourkReadyData = resData.data;
-                return resData.data;
-              }
-            }
-          } catch {}
-          return null;
-        })() : Promise.resolve(null);
+
 
         // 优先并发请求 ikanbot 实时逆向清洗引擎（秒级直出 20~30 条黄金线路，第 1 条 100% 锁定为光速资源）
         const ikanbotFetchPromise = (!isPremium) ? (async () => {
@@ -192,28 +178,8 @@ function PlayerContent() {
                   typeName: isSeriesItem ? '连续剧' : '电影',
                 }));
 
-                // 微任务检测 4kvm 是否已就绪（零毫秒等待，已好就直接置顶）
-                const fourkData = fourkReadyData || await Promise.race([
-                  fourkFetchPromise,
-                  Promise.resolve(null)
-                ]);
-
                 let playSourceId = ikanData.lines[0]?.sourceId;
                 let playVodId = String(ikanData.vod_id);
-
-                if (fourkData && fourkData.stream_url) {
-                  const fourkSource: SourceInfo = {
-                    id: fourkData.vod_id,
-                    source: '4kvm',
-                    sourceName: '🔥 4K蓝光专线',
-                    pic: fourkData.vod_pic,
-                    typeName: isSeriesItem ? '连续剧' : '电影',
-                  };
-                  ikanSources.unshift(fourkSource);
-                  // 默认优先以 4K 极清专线起播
-                  playSourceId = '4kvm';
-                  playVodId = String(fourkData.vod_id);
-                }
 
                 const firstLine = ikanData.lines[0];
                 if (playSourceId && !redirected && !cancelled) {
@@ -518,7 +484,7 @@ function PlayerContent() {
 
   // Parse grouped sources if available
   const [discoveredSources, setDiscoveredSources] = useState<SourceInfo[]>([]);
-  const probedFourkTitleRef = useRef<string>('');
+
 
   // Title-only mode guard: redirect if no title, id, or source
   const isTitleOnlyMode = !videoId || !source;
@@ -564,12 +530,7 @@ function PlayerContent() {
       sources = sources.map(s => s.pic ? s : { ...s, pic: fallbackPic });
     }
 
-    // 🌟 强力置顶：只要存在「🔥 4K蓝光专线」，无条件排在第 1 位（顶头）！
-    const fourkIndex = sources.findIndex(s => s.source === '4kvm');
-    if (fourkIndex > 0) {
-      const [fourkSource] = sources.splice(fourkIndex, 1);
-      sources.unshift(fourkSource);
-    }
+
 
     return sources;
   }, [groupedSourcesParam, source, videoId, videoData?.vod_pic, discoveredSources]);
@@ -600,40 +561,7 @@ function PlayerContent() {
     };
   }, [videoData?.type_name, expectedType]);
 
-  // 🌟 独立后台嗅探 4kvm「🔥 4K蓝光专线」：优先极速探测，绝不受 hasFullInfo 干扰
-  useEffect(() => {
-    if (!title || isTitleOnlyMode || isPremium) return;
-    const cleanTitle = (title || '').replace(/[《》【】\[\]（）()]/g, ' ').replace(/\s+/g, ' ').trim();
-    if (!cleanTitle) return;
 
-    let existingSources: SourceInfo[] = [];
-    if (groupedSourcesParam) {
-      try { existingSources = JSON.parse(groupedSourcesParam); } catch { }
-    }
-    const alreadyHas = source === '4kvm' || existingSources.some(s => s.source === '4kvm') || discoveredSources.some(s => s.source === '4kvm');
-    if (alreadyHas || probedFourkTitleRef.current === cleanTitle) return;
-
-    probedFourkTitleRef.current = cleanTitle;
-
-    fetch(`/api/source/4kvm?title=${encodeURIComponent(cleanTitle)}&episode=1&format=json`)
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        if (!data?.success || !data?.data?.stream_url) return;
-        const isSeriesItem = expectedType === 'tv' || (videoData?.type_name || '').includes('剧') || data.data.episodes?.length > 1;
-        const fourkItem: SourceInfo = {
-          id: data.data.vod_id,
-          source: '4kvm',
-          sourceName: '🔥 4K蓝光专线',
-          pic: data.data.vod_pic,
-          typeName: isSeriesItem ? '连续剧' : '电影',
-        };
-        setDiscoveredSources(prev => {
-          const filtered = prev.filter(s => s.source !== '4kvm');
-          return [fourkItem, ...filtered];
-        });
-      })
-      .catch(() => {});
-  }, [title, isTitleOnlyMode, isPremium, source, groupedSourcesParam, discoveredSources, expectedType, videoData?.type_name]);
 
   // Background fetch alternative sources when none provided or when existing ones lack full info
   useEffect(() => {
@@ -806,27 +734,7 @@ function PlayerContent() {
   const [currentSourceId, setCurrentSourceId] = useState(source);
   const playerTimeRef = useRef(0);
 
-  // 4kvm 智能容灾降级：仅当 4kvm 专线明确报错且存在备用线路时，自动平滑切回备用线路
-  const hasFailedOverRef = useRef(false);
-  useEffect(() => {
-    if (source !== '4kvm') {
-      hasFailedOverRef.current = false;
-      return;
-    }
-    if (source === '4kvm' && videoError && !loading && !hasFailedOverRef.current) {
-      const fallbackSource = groupedSources.find(s => s.source !== '4kvm');
-      if (fallbackSource) {
-        hasFailedOverRef.current = true;
-        console.warn('[Failover] 4kvm error, auto switching to fallback:', fallbackSource.source);
-        const params = new URLSearchParams(searchParams.toString());
-        params.set('source', fallbackSource.source);
-        params.set('id', String(fallbackSource.id));
-        setCurrentSourceId(fallbackSource.source);
-        setVideoError('');
-        router.replace(`/player?${params.toString()}`, { scroll: false });
-      }
-    }
-  }, [source, videoError, loading, groupedSources, searchParams, router, setVideoError]);
+
 
   // Add initial history entry when video data is loaded
   useEffect(() => {

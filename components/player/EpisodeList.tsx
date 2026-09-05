@@ -15,7 +15,7 @@ import { getSourceResolutionBadge, shouldExpandForCurrentSource } from '@/lib/pl
 import { SourceSelector } from './SourceSelector';
 // 4K (2160P) 原画专线字典
 const FOUR_K_SOURCES = new Set([
-  '4kvm', 'hongniu', 'hongniu3', 'haohua_4k', 'blue_4k', 'suoni', 'suoni_sd',
+  'hongniu', 'hongniu3', 'haohua_4k', 'blue_4k', 'suoni', 'suoni_sd',
   'baofeng', 'baofeng_app', 'json1080', 'laosiji_4k', 'midnight_4k', 'yutu', 'hsck', 'jingpin'
 ]);
 
