@@ -139,7 +139,7 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
   useEffect(() => {
     if (isPaused || currentData.length <= 1) return;
     const timer = setInterval(() => {
-      setActiveIndex(prev => (prev + 1) % Math.min(currentData.length, 8));
+      setActiveIndex(prev => (prev + 1) % currentData.length);
     }, 7000);
     return () => clearInterval(timer);
   }, [isPaused, currentData.length]);

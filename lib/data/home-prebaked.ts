@@ -159,24 +159,6 @@ export const PREBAKED_HOME_DATA: {
                 "type": "tv",
                 "is_new": true,
                 "playable": true
-        },
-        {
-                "id": "iyf_hero_movie_8",
-                "title": "穿普拉达的女王2",
-                "rate": "7.0",
-                "cover": "https://image.tmdb.org/t/p/w500/zGQyw7v2dvb2FNDdVUJFcaPrD5y.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/Af907x5h9W1wVis8XrSd7ynTWuy.jpg",
-                "description": "　　随着传统出版业的式微，时尚女王米兰达在职业生涯中迎来新挑战。她不得不与手握广告预算的曾经的助理，如今已是奢侈品牌集团高管的艾米莉正面交锋。两人在行业变局中展开了一场关乎权力与生存的较量。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "剧情",
-                        "电影"
-                ],
-                "episodes_info": "电影·剧情",
-                "type": "movie",
-                "is_new": true,
-                "playable": true
         }
       ],
     "top10": [
@@ -1063,24 +1045,6 @@ export const PREBAKED_HOME_DATA: {
                 ],
                 "episodes_info": "更新至17集 | 共24集",
                 "type": "tv",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_movie_8",
-                "title": "穿普拉达的女王2",
-                "rate": "7.0",
-                "cover": "https://image.tmdb.org/t/p/w500/zGQyw7v2dvb2FNDdVUJFcaPrD5y.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/Af907x5h9W1wVis8XrSd7ynTWuy.jpg",
-                "description": "　　随着传统出版业的式微，时尚女王米兰达在职业生涯中迎来新挑战。她不得不与手握广告预算的曾经的助理，如今已是奢侈品牌集团高管的艾米莉正面交锋。两人在行业变局中展开了一场关乎权力与生存的较量。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "剧情",
-                        "电影"
-                ],
-                "episodes_info": "电影·剧情",
-                "type": "movie",
                 "is_new": true,
                 "playable": true
         }
