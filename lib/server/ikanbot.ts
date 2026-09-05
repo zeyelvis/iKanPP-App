@@ -63,6 +63,50 @@ const FLAG_NAME_MAP: Record<string, string> = {
   tpm3u8: '淘片专线',
 };
 
+// 梯队权威权重字典（数值越小，稳定性与秒播速度越高）
+export const TIER_PRIORITY_MAP: Record<string, number> = {
+  // === 第一梯队：超一线商业骨干秒播大源（秒开率 98%+） ===
+  gsm3u8: 1,      // 光速资源
+  jsm3u8: 2,      // 极速资源
+  xlm3u8: 3,      // 新浪资源
+  bfzym3u8: 4,    // 暴风资源 (4K/蓝光)
+  wjm3u8: 5,      // 无尽资源
+
+  // === 第二梯队：优质中型主流高码率专线 ===
+  lzm3u8: 10,     // 量子资源
+  dyttm3u8: 11,   // 电影天堂
+  '1080zyk': 12,  // 1080JSON
+  hongniu: 13,    // 红牛资源 (4K)
+  snm3u8: 14,     // 索尼专线 (4K)
+  hym3u8: 15,     // 虎牙资源
+  hhm3u8: 16,     // 海豚资源
+  ffm3u8: 17,     // 非凡资源
+  rym3u8: 18,     // 如意资源
+  zuidam3u8: 19,  // 最大资源
+  subm3u8: 20,    // 速博资源
+  jinyingm3u8: 21,// 金鹰点播
+  ukm3u8: 22,     // 优酷资源
+  ikm3u8: 23,     // iKun资源
+  iqym3u8: 24,    // 乐子资源
+
+  // === 第三梯队：备用专线与尾部小源（容易偶发拥堵或失效，沉底排列） ===
+  '360zy': 30,    // 360资源
+  dbm3u8: 31,     // 豆瓣专线
+  kcm3u8: 32,     // 快车专线
+  sdm3u8: 33,     // 闪电专线
+  tpm3u8: 34,     // 淘片专线
+  tym3u8: 35,     // 天涯专线
+  yhm3u8: 36,     // 樱花专线
+  modu: 37,       // 魔都资源
+  jingyu: 38,     // 鲸鱼资源
+  moduys: 39,     // 魔都影视
+  modu_dm: 40,    // 魔都动漫
+};
+
+export function getTierPriority(flag: string): number {
+  return TIER_PRIORITY_MAP[flag] ?? 999;
+}
+
 const HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 };
@@ -246,6 +290,7 @@ export async function fetchIkanbotDetail(videoId: string): Promise<IkanbotDetail
     if (!data || !data.data || !Array.isArray(data.data.list)) return null;
 
     const lines: IkanbotLine[] = [];
+    const flagCounts = new Map<string, number>();
 
     for (const item of data.data.list) {
       try {
@@ -260,11 +305,17 @@ export async function fetchIkanbotDetail(videoId: string): Promise<IkanbotDetail
               const episodes = parseEpisodes(sub.url);
               if (episodes.length > 0) {
                 const flag = sub.flag;
-                const sourceName = FLAG_NAME_MAP[flag] || `专线 (${flag})`;
+                const count = (flagCounts.get(flag) || 0) + 1;
+                flagCounts.set(flag, count);
+
+                const baseName = FLAG_NAME_MAP[flag] || `专线 (${flag})`;
+                const sourceName = count === 1 ? baseName : `${baseName} (备用${count - 1})`;
+                const sourceId = count === 1 ? `ikanbot_${flag}` : `ikanbot_${flag}_${count}`;
+
                 lines.push({
                   siteId: item.siteId,
                   flag,
-                  sourceId: `ikanbot_${flag}`,
+                  sourceId,
                   sourceName,
                   episodes,
                 });
@@ -274,6 +325,14 @@ export async function fetchIkanbotDetail(videoId: string): Promise<IkanbotDetail
         }
       } catch {}
     }
+
+    // 核心：严格按照第一梯队（顶级骨干秒播大源）> 第二梯队（优质中型专线）> 第三梯队（备用小源）排序
+    lines.sort((a, b) => {
+      const pA = getTierPriority(a.flag);
+      const pB = getTierPriority(b.flag);
+      if (pA !== pB) return pA - pB;
+      return b.episodes.length - a.episodes.length;
+    });
 
     const result: IkanbotDetailResult = {
       vod_id: videoId,

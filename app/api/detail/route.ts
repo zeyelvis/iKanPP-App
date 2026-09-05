@@ -120,7 +120,9 @@ async function handleDetailRequest(id: string | null, source: string | null, met
         : '';
       const detail = await fetchIkanbotDetail(id);
       if (detail && detail.lines.length > 0) {
-        const matchedLine = detail.lines.find(l => l.flag === lineFlag) || detail.lines[0];
+        const matchedLine = detail.lines.find(l => l.sourceId === source)
+          || detail.lines.find(l => l.flag === lineFlag)
+          || detail.lines[0];
         if (matchedLine) {
           return NextResponse.json({
             success: true,

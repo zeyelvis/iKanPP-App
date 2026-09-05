@@ -44,32 +44,42 @@ const HD_BLURAY_SOURCES = new Set([
     'feifan', 'huya', 'haitun', 'ruyi', 'zuida', 'subo', 'youku'
 ]);
 
-// 黄金线路优先级权重（完全对齐 ikanbot 首选顺位）
+// 黄金线路优先级权重（严格按金字塔梯队分级）
 const GOLDEN_PRIORITY_MAP: Record<string, number> = {
-    'jisu': 1,      // 极速资源
-    'guangsu': 2,   // 光速资源
+    // === 第一梯队：超一线商业骨干秒播大源（秒开率 98%+，永远排在最前） ===
+    'guangsu': 1,   // 光速资源
+    'jisu': 2,      // 极速资源
     'xinlang': 3,   // 新浪资源
-    'wujin': 4,     // 无尽资源
-    'baofeng': 5,   // 暴风资源
-    'liangzi': 6,   // 量子资源
-    'dytt': 7,      // 电影天堂
-    'json1080': 8,  // 1080JSON
-    'huya': 9,      // 虎牙资源
-    'haitun': 10,   // 海豚资源
-    'feifan': 11,   // 非凡资源
-    'hongniu': 12,  // 红牛资源
-    'ruyi': 13,     // 如意资源
-    'zuida': 14,    // 最大资源
-    'subo': 15,     // 速博资源
-    'jinying': 16,  // 金鹰点播
-    'youku': 17,    // 优酷资源
-    'ikun': 18,     // iKun资源
-    'lezi': 19,     // 乐子资源
-    'zy360': 20,    // 360资源
-    'modu': 21,     // 魔都资源
-    'jingyu': 22,   // 鲸鱼资源
-    'moduys': 23,   // 魔都影视
-    'modu_dm': 24,  // 魔都动漫
+    'baofeng': 4,   // 暴风资源 (4K/蓝光)
+    'wujin': 5,     // 无尽资源
+
+    // === 第二梯队：优质中型主流高码率专线 ===
+    'liangzi': 10,  // 量子资源
+    'dytt': 11,     // 电影天堂
+    'json1080': 12, // 1080JSON
+    'hongniu': 13,  // 红牛资源 (4K)
+    'suoni': 14,    // 索尼专线 (4K)
+    'huya': 15,     // 虎牙资源
+    'haitun': 16,   // 海豚资源
+    'feifan': 17,   // 非凡资源
+    'ruyi': 18,     // 如意资源
+    'zuida': 19,    // 最大资源
+    'subo': 20,     // 速博资源
+    'jinying': 21,  // 金鹰点播
+    'youku': 22,    // 优酷资源
+    'ikun': 23,     // iKun资源
+    'lezi': 24,     // 乐子资源
+
+    // === 第三梯队：备用专线与尾部小源（容易偶发拥堵或失效，沉底排列） ===
+    'zy360': 30,    // 360资源
+    'dbm3u8': 31,   // 豆瓣专线
+    'kcm3u8': 32,   // 快车专线
+    'sdm3u8': 33,   // 闪电专线
+    'tpm3u8': 34,   // 淘片专线
+    'modu': 35,     // 魔都资源
+    'jingyu': 36,   // 鲸鱼资源
+    'moduys': 37,   // 魔都影视
+    'modu_dm': 38,  // 魔都动漫
 };
 
 // ikanbot 线路标识映射
@@ -103,7 +113,14 @@ const FLAG_TO_SOURCE_KEY: Record<string, string> = {
 
 export function getCleanSourceKey(source: string): string {
     if (source.startsWith('ikanbot_')) {
-        const flag = source.slice('ikanbot_'.length);
+        let flag = source.slice('ikanbot_'.length);
+        const underscoreIdx = flag.lastIndexOf('_');
+        if (underscoreIdx !== -1) {
+            const potentialNum = flag.slice(underscoreIdx + 1);
+            if (!isNaN(Number(potentialNum))) {
+                flag = flag.slice(0, underscoreIdx);
+            }
+        }
         return FLAG_TO_SOURCE_KEY[flag] || flag;
     }
     return source;
@@ -118,19 +135,15 @@ export function SourceSelector({
 }: SourceSelectorProps) {
     const [isExpanded, setIsExpanded] = useState(false);
 
-    // 智能排序：优先将 4K (2160P) 专线排在前面，其余严格按照 ikanbot 黄金骨干顺位排列
+    // 智能排序：第一梯队（光速/极速/新浪/暴风/无尽）永远锁定在 1~5 位，后续依次按梯队排列
     const sortedSources = useMemo(() => {
         return [...sources].sort((a, b) => {
             const cleanA = getCleanSourceKey(a.source);
             const cleanB = getCleanSourceKey(b.source);
-            const isA4K = FOUR_K_SOURCES.has(cleanA) || a.sourceName?.includes('4K') || a.sourceName?.includes('2160');
-            const isB4K = FOUR_K_SOURCES.has(cleanB) || b.sourceName?.includes('4K') || b.sourceName?.includes('2160');
-
-            if (isA4K && !isB4K) return -1;
-            if (!isA4K && isB4K) return 1;
 
             const priorityA = a.source === 'ikanbot' ? 0.5 : (GOLDEN_PRIORITY_MAP[cleanA] ?? 999);
             const priorityB = b.source === 'ikanbot' ? 0.5 : (GOLDEN_PRIORITY_MAP[cleanB] ?? 999);
+
             if (priorityA !== priorityB) {
                 return priorityA - priorityB;
             }

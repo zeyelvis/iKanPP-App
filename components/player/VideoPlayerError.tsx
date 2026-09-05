@@ -51,15 +51,27 @@ export function VideoPlayerError({
                 <div className="flex gap-3 justify-center flex-wrap">
                     <button
                         onClick={onBack}
-                        className="btn-glass px-4 py-2 flex items-center gap-2"
+                        className="btn-glass px-4 py-2 flex items-center gap-2 cursor-pointer"
                     >
                         <Icons.ChevronLeft size={18} />
                         <span>返回</span>
                     </button>
+                    <button
+                        onClick={() => {
+                            const el = document.getElementById('source-selector-section');
+                            if (el) {
+                                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }}
+                        className="btn-glass px-4 py-2 flex items-center gap-2 !bg-purple-600/90 hover:!bg-purple-600 text-white shadow-lg shadow-purple-600/30 cursor-pointer"
+                    >
+                        <Icons.Layers size={18} />
+                        <span>切换备用专线</span>
+                    </button>
                     {retryCount < maxRetries && (
                         <button
                             onClick={onRetry}
-                            className="btn-glass px-4 py-2 flex items-center gap-2 !bg-[var(--accent-color)]/80 hover:!bg-[var(--accent-color)]"
+                            className="btn-glass px-4 py-2 flex items-center gap-2 !bg-[var(--accent-color)]/80 hover:!bg-[var(--accent-color)] cursor-pointer"
                         >
                             <Icons.RefreshCw size={18} />
                             <span>重试 ({retryCount}/{maxRetries})</span>
