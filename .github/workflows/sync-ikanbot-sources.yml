@@ -1,4 +1,4 @@
-name: Daily Sync ikanbot Sources
+name: Daily Sync Sources & Hero Slides
 
 on:
   schedule:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  sync-sources:
+  sync-data:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -26,16 +26,20 @@ jobs:
         run: |
           node scripts/sync-ikanbot-sources.mjs
 
-      - name: Commit and push if sources changed
+      - name: Run iyf.tv Hero Slides Sync
+        run: |
+          node scripts/sync-iyf-hero.mjs
+
+      - name: Commit and push if data changed
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
-          if [[ -n $(git status --porcelain lib/api/default-sources.ts) ]]; then
-            echo "Detected updated sources. Committing changes..."
-            git add lib/api/default-sources.ts
-            git commit -m "chore(sources): auto-sync aligned with ikanbot.com [skip ci]"
+          if [[ -n $(git status --porcelain lib/api/default-sources.ts lib/data/home-prebaked.ts) ]]; then
+            echo "Detected updated sources or hero slides. Committing changes..."
+            git add lib/api/default-sources.ts lib/data/home-prebaked.ts
+            git commit -m "chore(sync): daily auto-sync sources and iyf.tv hero slides [skip ci]"
             git push
           else
-            echo "No changes in sources. Everything is already up to date."
+            echo "No changes in sources or hero slides. Everything is up to date."
           fi

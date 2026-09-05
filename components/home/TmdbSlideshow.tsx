@@ -139,7 +139,7 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
   useEffect(() => {
     if (isPaused || currentData.length <= 1) return;
     const timer = setInterval(() => {
-      setActiveIndex(prev => (prev + 1) % Math.min(currentData.length, 6));
+      setActiveIndex(prev => (prev + 1) % Math.min(currentData.length, 8));
     }, 7000);
     return () => clearInterval(timer);
   }, [isPaused, currentData.length]);
@@ -160,7 +160,7 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
 
   const active = currentData[activeIndex] || currentData[0];
   const activeBackdrop = active.backdrop || backdrops[active.title] || active.cover;
-  const displayItems = currentData.slice(0, 6);
+  const displayItems = currentData.slice(0, 8);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);
@@ -172,10 +172,10 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
     const diff = touchStart - touchEnd;
     if (diff > 45) {
       // 向左滑 -> 下一张
-      setActiveIndex(prev => (prev + 1) % Math.min(currentData.length, 6));
+      setActiveIndex(prev => (prev + 1) % Math.min(currentData.length, 8));
     } else if (diff < -45) {
       // 向右滑 -> 上一张
-      setActiveIndex(prev => (prev - 1 + Math.min(currentData.length, 6)) % Math.min(currentData.length, 6));
+      setActiveIndex(prev => (prev - 1 + Math.min(currentData.length, 8)) % Math.min(currentData.length, 8));
     }
     setTouchStart(null);
   };

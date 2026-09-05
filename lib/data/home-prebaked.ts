@@ -36,87 +36,75 @@ export const PREBAKED_HOME_DATA: {
 } = {
   "movie": {
     "hero": [
-      {
-        "id": "pb_m_hero_1",
-        "title": "异形：夺命舰",
-        "rate": "7.2",
-        "cover": "https://image.tmdb.org/t/p/w500/cDJwZ4lSZiUnHtixdyhaPPwsjyo.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/iYqSQaWDttQIQzsxg9xHyg0bttG.jpg",
-        "description": "影片时间线设定在1979年第一部《异形》与1986年的续集《异形2》之间，围绕一群年轻而勇敢的太空殖民者展开。讲述他们为逃离外星采矿殖民地的沉闷生活，在冒险探索一座废弃的太空站时，意外遭遇了宇宙中最可怕的生命体——异形。 狭窄幽暗、危机四伏的空间站中，大逃杀的序幕已经被无情拉开，人类再次成为异形生物捕猎的目标。在无尽的...",
-        "year": "2024",
-        "types": [
-          "科幻",
-          "惊悚",
-          "太空"
-        ],
-        "is_new": true,
-        "playable": true
-      },
-      {
-        "id": "pb_m_hero_2",
-        "title": "死侍与金刚狼",
-        "rate": "7.6",
-        "cover": "https://image.tmdb.org/t/p/w500/nSpk8U35rPVlMMfZ1uxHnbC14Nd.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/by8z9Fe8y7p4jo2YlW2SZDnptyT.jpg",
-        "description": "经历一连串人生挫折后，韦德·威尔逊已经放下双刀，不再以死侍的身份行动，试图过上属于普通人的生活。然而生日当天，神秘的时间变异管理局突然将他带走，并告诉他所在的时间线正面临逐渐消亡的危机。得知自己珍视的朋友和整个世界都可能因此消失，韦德不得不再次穿上战衣。为了寻找拯救时间线的方法，他穿梭于不同的世界，并找到了另一个饱受过...",
-        "year": "2024",
-        "types": [
-          "动作",
-          "喜剧",
-          "漫威"
-        ],
-        "is_new": true,
-        "playable": true
-      },
-      {
-        "id": "pb_m_hero_3",
-        "title": "沙丘2",
-        "rate": "8.1",
-        "cover": "https://image.tmdb.org/t/p/w500/9uaCR4HEZqxUqgORq0uZqTNm43G.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/eZ239CUp1d6OryZEBPnO2n87gMG.jpg",
-        "description": "《沙丘2》承接第一部剧情，讲述保罗·厄崔迪（提莫西·查拉梅 Timothée Chalamet 饰）被帕迪沙皇帝和哈克南人联手灭族后，在厄拉科斯星球遇到弗雷曼女战士契妮（赞达亚 Zendaya 饰）以及加入弗雷曼人后展开的传奇旅程。保罗与让他家破人亡的阴谋家们开战，同时面临着一生所爱与已知宇宙命运的两难选择。...",
-        "year": "2024",
-        "types": [
-          "科幻",
-          "史诗",
-          "冒险"
-        ],
-        "is_new": true,
-        "playable": true
-      },
-      {
-        "id": "pb_m_hero_4",
-        "title": "流浪地球2",
-        "rate": "7.3",
-        "cover": "https://image.tmdb.org/t/p/w500/cAS2e9hUwu6Ydsx7byXj16H00Ai.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/94cS0mzODEoNIXFT7nhPcI8V4IJ.jpg",
-        "description": "在并不遥远的未来，太阳急速衰老与膨胀，再过几百年整个太阳系将被它吞噬毁灭。为了应对这场史无前例的危机，地球各国放下芥蒂，成立联合政府，试图寻找人类存续的出路。通过摸索与考量，最终推着地球逃出太阳系的“移山计划”获得压倒性胜利。人们着手建造上万台巨大的行星发动机，带着地球踏上漫漫征程。满腔赤诚的刘培强和韩朵朵历经层层考验...",
-        "year": "2023",
-        "types": [
-          "科幻",
-          "冒险",
-          "硬核"
-        ],
-        "is_new": true,
-        "playable": true
-      },
-      {
-        "id": "pb_m_hero_5",
-        "title": "荒野机器人",
-        "rate": "8.3",
-        "cover": "https://image.tmdb.org/t/p/w500/9ZPXoAwkxDECWFBlxxyf6hzCylm.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/1pmXyN3sKeYoUhu5VBZiDU4BX21.jpg",
-        "description": "梦工厂动画全新改编文学畅销作品——彼得·布朗荣获大奖、备受喜爱的《纽约时报》榜首畅销书《荒野机器人》。这段史诗冒险讲述机器人“ROZZUM单元7134”（简称“罗兹”）的旅程：她因船只失事流落荒岛，必须学会适应严酷环境，逐渐与岛上动物建立联系，并成为一只孤儿小鹅的养母。[梦工厂影业]...",
-        "year": "2024",
-        "types": [
-          "动画",
-          "科幻",
-          "治愈"
-        ],
-        "is_new": true,
-        "playable": true
-      }
-    ],
+        {
+                "id": "iyf_hero_movie_1",
+                "title": "特立独行",
+                "rate": "5.7",
+                "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
+                "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_2",
+                "title": "给阿嬷的情书",
+                "rate": "8.8",
+                "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/AwmlL79nKTcX5tzAhyoV298xXlz.jpg",
+                "description": "潮汕阿嬷叶淑柔一直守着平淡的日子，安享晚年。孙子晓伟因债务缠身，瞒着家人远赴泰国，寻找传闻中已成亿万富豪的阿公郑木生。然而，一个令人意外的消息打破了整个家庭的平静：多年来一直通过跨国信件与阿嬷“谈情说爱”诉说思念的人，竟然并非阿嬷的丈夫郑木生。随着晓伟的调查，一个感人的真相被缓缓揭开。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_3",
+                "title": "玩具总动员5",
+                "rate": "8.3",
+                "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/8sSKdEmlmqF4kJUd28SqthXC4yZ.jpg",
+                "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "动画",
+                        "电影"
+                ],
+                "episodes_info": "电影·动画",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_4",
+                "title": "寒战1994",
+                "rate": "6.5",
+                "cover": "https://image.tmdb.org/t/p/w500/9C3ZxhGJvdpxmNC5PhkBMwzTMRT.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/92W00NvclecWWsXDjCwr5f23KSk.jpg",
+                "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "is_new": true,
+                "playable": true
+        }
+      ],
     "top10": [
       {
         "id": "pb_m_top10_1",
@@ -881,87 +869,123 @@ export const PREBAKED_HOME_DATA: {
   },
   "tv": {
     "hero": [
-      {
-        "id": "pb_t_hero_1",
-        "title": "权力的游戏",
-        "rate": "8.5",
-        "cover": "https://image.tmdb.org/t/p/w500/6fJ7Gql9rD4C3X1uW2zinlkNwvw.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/2OMB0ynKlyIenMJWI2Dy9IWT4c.jpg",
-        "description": "维斯特洛大陆边境处发现传说中早已灭绝的生物，危险也渐渐靠近这里。危情一触即发，整个王国看似平和的表面下却是波涛暗涌。位高权重的拜拉席恩家族、勇敢善良的史塔克家族、企图夺回王位的坦格利安家族、有着不可告人秘密的兰尼斯特家族。这些家族各怀鬼胎，这个国家将会陷入一场混战........",
-        "year": "2011",
-        "types": [
-          "史诗",
-          "奇幻",
-          "权力"
-        ],
-        "is_new": true,
-        "playable": true
-      },
-      {
-        "id": "pb_t_hero_2",
-        "title": "黑袍纠察队",
-        "rate": "8.4",
-        "cover": "https://image.tmdb.org/t/p/w500/f3okM5FrqlvBB4dOLSO1rRC32qJ.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/n6vVs6z8obNbExdD3QHTr4Utu1Z.jpg",
-        "description": "这是一个超能力者和普通人共存的世界，祖国人、火车头、深海、梅芙女王、透明人和玄色隶属于全球最大的超级英雄公司沃特集团，在帮助政府惩奸除恶维护世界和平的同时，他们也以偶像的身份帮助公司赚取了难以计数的利润。休伊是一个平凡的男孩，她的女友死于一场意外，而这场意外的制造者正是火车头。休伊不愿意接受沃特公司潦草的致歉和赔偿，决...",
-        "year": "2019",
-        "types": [
-          "反英雄",
-          "科幻",
-          "高能"
-        ],
-        "is_new": true,
-        "playable": true
-      },
-      {
-        "id": "pb_t_hero_3",
-        "title": "最后生还者",
-        "rate": "8.4",
-        "cover": "https://image.tmdb.org/t/p/w500/ydyTjqxZsPlcFSTBNY2INYrmEvk.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/lY2DhbA7Hy44fAKddr06UrXWWaQ.jpg",
-        "description": "在现代文明被摧毁的二十年后，人类因现代传染病而面临绝种危机，幸存的人类为了生存自相残杀。中年男性走私犯乔尔（佩德罗·帕斯卡饰）为了完成“火萤”组织首领玛琳（梅尔·丹德里奇饰）的托付，带着14岁少女艾莉（贝拉·拉姆齐饰）一同踏出由军队保护的疫情隔离区，穿越化为废墟丛林的大都会。面对病毒感染变种人类与其他幸存者集团威胁，展...",
-        "year": "2023",
-        "types": [
-          "末日",
-          "冒险",
-          "剧情"
-        ],
-        "is_new": true,
-        "playable": true
-      },
-      {
-        "id": "pb_t_hero_4",
-        "title": "繁花",
-        "rate": "8.6",
-        "cover": "https://image.tmdb.org/t/p/w500/rV1owsdKtXytJ5eFMOOVTze3mrk.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/3J8HmgR16MKX2iT71mB4EIDdV2x.jpg",
-        "description": "九十年代的上海处处是机遇与希望。青年阿宝凭借改革开放的春风和自己的打拼跻身成为商界后起之秀，黄河路上无人不晓。平凡阿宝蜕变为宝总，离不开高人爷叔与夜东京老板玲子、外贸大楼汪小姐的鼎力协助。随着神秘女子李李空降黄河路，一家时髦饭店即将搅动整条街，也令宝总原本决胜千里的事业变得动荡惊心，他与身边人的关系也经受着前所未有的考...",
-        "year": "2023",
-        "types": [
-          "年代",
-          "商战",
-          "王家卫"
-        ],
-        "is_new": true,
-        "playable": true
-      },
-      {
-        "id": "pb_t_hero_5",
-        "title": "三体",
-        "rate": "7.8",
-        "cover": "https://image.tmdb.org/t/p/w500/q2sNliRi4j0ncXKUO1x0MldR20A.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/zxfBtHz5UmSTfIEC4O4GngyjHwa.jpg",
-        "description": "　　2007年，地球基础科学出现了异常的扰动，一时间科学界风雨飘飘，人心惶惶。离奇自杀的科学家，近乎神迹的倒计时，行事隐秘的科学边界，神秘莫测的《三体》游戏。纳米科学家汪淼被警官史强带到联合作战中心，并潜入名为“科学边界”的组织协助调查。迷雾之中，汪淼接触到一个名为ETO的组织，发现其幕后统帅竟是自杀身亡的科学家杨冬的...",
-        "year": "2023",
-        "types": [
-          "科幻",
-          "悬疑",
-          "硬核"
-        ],
-        "is_new": true,
-        "playable": true
-      }
-    ],
+        {
+                "id": "iyf_hero_movie_1",
+                "title": "特立独行",
+                "rate": "5.7",
+                "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
+                "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_2",
+                "title": "给阿嬷的情书",
+                "rate": "8.8",
+                "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/AwmlL79nKTcX5tzAhyoV298xXlz.jpg",
+                "description": "潮汕阿嬷叶淑柔一直守着平淡的日子，安享晚年。孙子晓伟因债务缠身，瞒着家人远赴泰国，寻找传闻中已成亿万富豪的阿公郑木生。然而，一个令人意外的消息打破了整个家庭的平静：多年来一直通过跨国信件与阿嬷“谈情说爱”诉说思念的人，竟然并非阿嬷的丈夫郑木生。随着晓伟的调查，一个感人的真相被缓缓揭开。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_3",
+                "title": "玩具总动员5",
+                "rate": "8.3",
+                "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/8sSKdEmlmqF4kJUd28SqthXC4yZ.jpg",
+                "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "动画",
+                        "电影"
+                ],
+                "episodes_info": "电影·动画",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_4",
+                "title": "寒战1994",
+                "rate": "6.5",
+                "cover": "https://image.tmdb.org/t/p/w500/9C3ZxhGJvdpxmNC5PhkBMwzTMRT.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/92W00NvclecWWsXDjCwr5f23KSk.jpg",
+                "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_5",
+                "title": "生逢其时",
+                "rate": "9.0",
+                "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/7HXIhc3aRr1v7KmOrCulszXf3YP.jpg",
+                "description": "八十年代初，青梧小镇住着家庭模式完全不同的齐家和曹家。某天两家同时诞下齐时、曹信。身患白化病的齐时，自小就意识到了自己的“与众不同”，于是她喝酱油、戴假发，试图通过这样的方式，成为和普通人一样的存在。另一边的曹信，一路走来都是家长口中“别人家的孩子”，然而光环之下却始终伴随着父亲的严苛要求。当特立独行、勇敢倔强的少女齐时，遇上乖巧听话、优秀自律的少年曹信，两个家庭也在邻里间日积月累的相处中，也因荒唐“换子”碰撞出了眼泪的故事和“新生”的契机。孩子们经历着关于亲情、友情、爱情的考验，大人们也在面对关于事业、婚姻、家庭的难题。在时代洪流中，纵使生活跌跌撞撞，他们亦携手缝缝补补修炼人生，共同找寻属于自己的人生和幸福。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至06集 | 共26集",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_6",
+                "title": "重案六组:消失的警号",
+                "rate": "8.0",
+                "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/oF1HUvtlr1o8ndAj2cZBIKAn3gg.jpg",
+                "description": "剧情核心围绕“消失的警号”展开，通过“老警号传承”设计致敬原版角色，并融入科技办案、新老刑侦理念碰撞等创新元素。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至20集 | 共26集",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_7",
+                "title": "早春晴朗",
+                "rate": "7.6",
+                "cover": "https://image.tmdb.org/t/p/w500/nLWFbYv1r99Yy7dWvjoxMRegoe0.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/oUFUvEMCBP80e4eYsfVfxC8n7ih.jpg",
+                "description": "这是一段十年交锋，敬于才华，合于性格、久于平等的禁忌之恋。北漂伊始的尚之桃与极具天赋的“鬼才”栾念狭路相逢。热烈勇敢的尚之桃亦步亦趋地蜕变成长，撬碎了栾念世故坚硬的心防，互相吸引的二人在都市丛林中极限拉扯、分分合合。爱情，就是用光所有勇气，再无遗憾。爱，则是互相修复，共同成长。但情和爱之间，她选择生存。当她独当一面，他收敛锋芒，势均力敌的他们将会为彼此写下了新的结局……",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至17集 | 共24集",
+                "is_new": true,
+                "playable": true
+        }
+      ],
     "top10": [
       {
         "id": "pb_t_top10_1",
