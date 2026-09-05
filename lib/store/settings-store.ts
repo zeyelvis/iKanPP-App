@@ -216,17 +216,31 @@ export const settingsStore = {
         }
       });
 
-      // Filter out invalid sources and auto-merge new default sources (Auto-sync to 108 top sources)
+      // 自动同步并对齐黄金骨干源库（严格保持黄金优先级，过滤废弃源）
       const defaultSrcs = getDefaultSources();
       const localSources: VideoSource[] = Array.isArray(parsed.sources) ? parsed.sources : defaultSrcs;
-      const validSourcesMap = new Map<string, VideoSource>(localSources.filter((s: any) => s && s.id && s.name && s.baseUrl).map((s: any) => [s.id, s]));
-      // Auto-append any newly added top sources from DEFAULT_SOURCES
+      const localMap = new Map<string, VideoSource>(localSources.filter((s: any) => s && s.id).map((s: any) => [s.id, s]));
+      
+      const validSources: VideoSource[] = [];
+      const visited = new Set<string>();
+
+      // 1. 优先按照黄金优先级加入最新的默认顶级源，并继承用户的开关状态
       defaultSrcs.forEach(ds => {
-        if (!validSourcesMap.has(ds.id)) {
-          validSourcesMap.set(ds.id, ds);
+        const local = localMap.get(ds.id);
+        validSources.push({
+          ...ds,
+          enabled: local?.enabled !== undefined ? local.enabled : ds.enabled,
+        });
+        visited.add(ds.id);
+      });
+
+      // 2. 保留用户自定义新增的源（标记为 custom 的非默认源）
+      localSources.forEach(ls => {
+        if (ls && ls.id && !visited.has(ls.id) && (ls as any).custom) {
+          validSources.push(ls);
+          visited.add(ls.id);
         }
       });
-      const validSources = Array.from(validSourcesMap.values());
 
       const defaultPremSrcs = getDefaultPremiumSources();
       const localPremSources: VideoSource[] = Array.isArray(parsed.premiumSources) ? parsed.premiumSources : defaultPremSrcs;
