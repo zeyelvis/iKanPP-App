@@ -27,6 +27,54 @@ import { normalizeVideoType } from '@/lib/utils/taxonomy';
 import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { Crown, Lock, Sparkles } from 'lucide-react';
 
+interface TitleAnalysis {
+  rawTitle: string;
+  pureTitle: string;           // 剥除所有季数、年份、版本、标点后的核心剧名
+  seasonNumber: number | null; // 提取出来的季数（如 第一季 -> 1，S4 -> 4）
+}
+
+function analyzeTitle(titleStr: string): TitleAnalysis {
+  const raw = (titleStr || '').trim();
+
+  // 提取季数
+  let seasonNumber: number | null = null;
+  const sMatch = raw.match(/第([一二三四五六七八九十\d]+)[季部期]/i) || 
+                 raw.match(/\bseason\s*(\d+)\b/i) || 
+                 raw.match(/\bS(\d{1,2})\b/i);
+  if (sMatch) {
+    const sStr = sMatch[1];
+    const cnMap: Record<string, number> = { '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10 };
+    seasonNumber = cnMap[sStr] ?? (parseInt(sStr, 10) || null);
+  }
+
+  // 剥除年份、季数、篇章词、版本词、符号
+  const pure = raw
+    .replace(/[\(（]?(19\d\d|20\d\d)[\)）]?/g, '')
+    .replace(/第[一二三四五六七八九十\d]+[季部期]/gi, '')
+    .replace(/season\s*\d+/gi, '')
+    .replace(/\bS\d{1,2}\b/gi, '')
+    .replace(/(前篇|后篇|最终季|终章|完结篇|序章|特别篇|剧场版)/gi, '')
+    .replace(/(国语版|粤语版|双语版|原声版|中字版|纯享版|未删减版|加长版)/gi, '')
+    .replace(/[《》【】\[\]（）()·\s:：\-]/g, '')
+    .toLowerCase()
+    .trim();
+
+  return { rawTitle: raw, pureTitle: pure, seasonNumber };
+}
+
+function isSeriesTypeName(typeName: string): boolean {
+  if (!typeName) return false;
+  const tn = typeName.toLowerCase();
+  if (tn.endsWith('片') && !tn.includes('纪录片')) return false;
+  return (
+    tn.includes('连续剧') ||
+    tn.includes('电视剧') ||
+    tn.includes('动漫') ||
+    tn.includes('动画') ||
+    (tn.includes('剧') && !tn.includes('剧情') && !tn.includes('喜剧'))
+  );
+}
+
 function PlayerContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -103,11 +151,11 @@ function PlayerContent() {
         const foundSources: SourceInfo[] = [];
 
         // 目标基准元数据
-        const pureTargetTitle = title.replace(/[《》【】\[\]（）()·\s]/g, '').toLowerCase();
+        const targetAnalysis = analyzeTitle(title);
         const targetYear = expectedYear ? parseInt(expectedYear, 10) : null;
 
         // 备选最佳匹配（用于在未遇到秒跳完美年份源时的次优候选）
-        let pendingBestCandidate: { video: any; score: number } | null = null;
+        let pendingBestCandidate: { video: any; score: number; isSeries: boolean } | null = null;
         let yearMismatchedCount = 0;
 
         while (true) {
@@ -131,7 +179,15 @@ function PlayerContent() {
                   const isTrailer = remarks.includes('预告') || rawName.includes('预告') || remarks.includes('片花') || rawName.includes('片花');
                   const isCommentary = typeName.includes('解说') || rawName.includes('解说');
 
-                  // 2. 提取候选年份
+                  // 2. 季数与片名深度解析
+                  const candAnalysis = analyzeTitle(rawName);
+                  const isSeriesItem = candAnalysis.seasonNumber !== null ||
+                    remarks.includes('集') ||
+                    remarks.includes('季') ||
+                    isSeriesTypeName(typeName) ||
+                    expectedType === 'tv';
+
+                  // 3. 提取候选年份
                   let candYear: number | null = null;
                   if (v.vod_year) {
                     const yMatch = String(v.vod_year).match(/\b(19\d\d|20\d\d)\b/);
@@ -142,48 +198,73 @@ function PlayerContent() {
                     if (nameYearMatch) candYear = parseInt(nameYearMatch[1], 10);
                   }
 
-                  // 3. 片名深度清洗（去除年份后缀如 2026 / (2026) 以及纯符号）
-                  const nameWithoutYear = rawName.replace(/[\(（]?(19\d\d|20\d\d)[\)）]?/g, '');
-                  const pureCandName = nameWithoutYear.replace(/[《》【】\[\]（）()·\s]/g, '').toLowerCase();
-
                   // 4. 年份冲突与亲和力判定
                   let yearScore = 0;
                   let isYearMismatched = false; // 是否为严重冲突老片（相差 >= 3 年）
                   let isExactYearMatch = false;
 
-                  if (targetYear) {
-                    if (candYear) {
-                      const diff = Math.abs(candYear - targetYear);
-                      if (diff === 0) {
-                        yearScore = 150; // 年份完全精准吻合！
-                        isExactYearMatch = true;
-                      } else if (diff === 1) {
-                        yearScore = 80; // 跨年上映误差
-                      } else if (diff === 2) {
-                        yearScore = 10;
+                  if (isSeriesItem) {
+                    // 连续剧/电视剧跨越多年播出（如怪奇物语从2016跨到2025），绝不实行年代一票否决！
+                    if (targetYear && candYear && candYear === targetYear) {
+                      yearScore = 30;
+                    }
+                  } else {
+                    // 电影单片严格实行年份防撞车（如诺兰《奥德赛2026》vs 法国《奥德赛2016》）
+                    if (targetYear) {
+                      if (candYear) {
+                        const diff = Math.abs(candYear - targetYear);
+                        if (diff === 0) {
+                          yearScore = 150; // 年份完全精准吻合！
+                          isExactYearMatch = true;
+                        } else if (diff === 1) {
+                          yearScore = 80; // 跨年上映误差
+                        } else if (diff === 2) {
+                          yearScore = 10;
+                        } else {
+                          // 差距 >= 3 年：100% 为同名异片
+                          isYearMismatched = true;
+                          yearScore = -1000;
+                          yearMismatchedCount++;
+                        }
                       } else {
-                        // 差距 >= 3 年：100% 为同名异片（如 2016 年法国老片 vs 2026 诺兰新片）
-                        isYearMismatched = true;
-                        yearScore = -1000;
-                        yearMismatchedCount++;
+                        // 候选未标明年份（很多新上线采集站未填 vod_year）
+                        yearScore = 20;
                       }
-                    } else {
-                      // 候选未标明年份（很多新上线采集站未填 vod_year）
-                      yearScore = 20;
                     }
                   }
 
-                  // 5. 片名匹配得分
+                  // 5. 片名与季数匹配得分
                   let nameScore = 0;
                   let isExactName = false;
                   if (videoCode && rawName.toUpperCase().includes(videoCode)) {
                     nameScore = 200;
                     isExactName = true;
-                  } else if (pureCandName === pureTargetTitle) {
-                    nameScore = 120; // 即使叫 奥德赛2026，清洗后完全命中
+                  } else if (candAnalysis.pureTitle === targetAnalysis.pureTitle) {
                     isExactName = true;
-                  } else if (pureCandName.includes(pureTargetTitle) || pureTargetTitle.includes(pureCandName)) {
-                    nameScore = 50;
+                    if (isSeriesItem) {
+                      // 连续剧季数优选逻辑
+                      if (targetAnalysis.seasonNumber !== null) {
+                        if (candAnalysis.seasonNumber === targetAnalysis.seasonNumber) {
+                          nameScore = 180; // 目标指定季完全吻合（如明确搜第4季）
+                        } else {
+                          nameScore = 60; // 其它季作为合法备用源
+                        }
+                      } else {
+                        // 用户未指定季数（如首页点击《怪奇物语》），优先推首季
+                        if (candAnalysis.seasonNumber === 1 || candAnalysis.seasonNumber === null) {
+                          nameScore = 160; // 首季秒播
+                        } else {
+                          nameScore = 100; // 后续季（2~5季）同样作为优质源入库备选
+                        }
+                      }
+                    } else {
+                      nameScore = 120; // 单片电影核心名完全命中
+                    }
+                  } else if (
+                    (candAnalysis.pureTitle.length >= 2 && targetAnalysis.pureTitle.includes(candAnalysis.pureTitle)) ||
+                    (targetAnalysis.pureTitle.length >= 2 && candAnalysis.pureTitle.includes(targetAnalysis.pureTitle))
+                  ) {
+                    nameScore = 30;
                   } else {
                     nameScore = -200;
                   }
@@ -198,9 +279,9 @@ function PlayerContent() {
                   // 总得分
                   const totalScore = nameScore + yearScore + qualityScore;
 
-                  // 记录为可用来源供清晰度切换（必须严格精确吻合片名与年代，绝不收录无关视频或早期老片）
+                  // 记录为可用来源供清晰度切换（必须严格精确吻合核心片名，严禁预告/解说/严重年代冲突老片）
                   const isStrictCandidate = !isTrailer && !isCommentary && !isYearMismatched && isExactName && 
-                    (!targetYear || !candYear || Math.abs(candYear - targetYear) <= 1);
+                    (isSeriesItem || !targetYear || !candYear || Math.abs(candYear - targetYear) <= 1);
 
                   if (isStrictCandidate) {
                     anyFound = true;
@@ -217,18 +298,26 @@ function PlayerContent() {
                   }
 
                   // 7. 自动播放重定向决策（Auto-Redirect Decision）
-                  // 严格红线：非预告片、非解说、严禁严重年代冲突老片、片名必须高度吻合
                   const isQualified = !isTrailer && !isCommentary && !isYearMismatched && isExactName && totalScore >= 80;
 
                   if (isQualified && !redirected && !cancelled) {
-                    // A. 若年份完全精准吻合（或原本就未指定目标年份），立即执行毫秒级跳转！
-                    if (isExactYearMatch || !targetYear || (videoCode && rawName.toUpperCase().includes(videoCode))) {
+                    // 判断是否具备立即秒播资格：
+                    // - 番号精确匹配；
+                    // - 或者剧集命中第 1 季（或指定目标季）；
+                    // - 或者电影年份精准吻合（或无指定年份）
+                    const isTopTarget = (videoCode && rawName.toUpperCase().includes(videoCode)) ||
+                      (isSeriesItem && (targetAnalysis.seasonNumber !== null ? candAnalysis.seasonNumber === targetAnalysis.seasonNumber : (candAnalysis.seasonNumber === 1 || candAnalysis.seasonNumber === null))) ||
+                      (!isSeriesItem && (isExactYearMatch || !targetYear));
+
+                    if (isTopTarget) {
                       redirected = true;
                       const params = new URLSearchParams();
                       params.set('id', String(v.vod_id));
                       params.set('source', v.source);
                       params.set('title', title);
-                      if (expectedType) params.set('type', expectedType);
+                      // 智能类型纠偏：如果是剧集则打上 tv，避免首页标签误打成 movie 导致选集列表渲染问题
+                      const resolvedType = isSeriesItem ? 'tv' : (expectedType || 'movie');
+                      params.set('type', resolvedType);
                       if (expectedYear) params.set('year', expectedYear);
                       if (isPremium) params.set('premium', '1');
                       if (foundSources.length > 0) {
@@ -238,9 +327,9 @@ function PlayerContent() {
                       break;
                     }
 
-                    // B. 若年份未注明但片名完全一致，暂存为最优候选
+                    // 暂存为最优候选（以防未遇到第1季时，也可以播第2季等次优候选）
                     if (!pendingBestCandidate || totalScore > pendingBestCandidate.score) {
-                      pendingBestCandidate = { video: v, score: totalScore };
+                      pendingBestCandidate = { video: v, score: totalScore, isSeries: isSeriesItem };
                     }
                   }
                 }
@@ -253,14 +342,15 @@ function PlayerContent() {
         // 流结束后的兜底检查与候选决议
         if (!redirected && !cancelled) {
           if (pendingBestCandidate) {
-            // 没有收到明确标有年份的源，但收到了无年份冲突的纯同名正片源，执行跳转
+            // 没有收到最高优先级源，但收到了合格合法正片源，执行跳转
             redirected = true;
             const bestVideo = pendingBestCandidate.video;
             const params = new URLSearchParams();
             params.set('id', String(bestVideo.vod_id));
             params.set('source', bestVideo.source);
             params.set('title', title);
-            if (expectedType) params.set('type', expectedType);
+            const resolvedType = pendingBestCandidate.isSeries ? 'tv' : (expectedType || 'movie');
+            params.set('type', resolvedType);
             if (expectedYear) params.set('year', expectedYear);
             if (isPremium) params.set('premium', '1');
             if (foundSources.length > 0) {
@@ -409,7 +499,10 @@ function PlayerContent() {
     (async () => {
       try {
         const cleanTitle = (title || '').replace(/[《》【】\[\]（）()]/g, ' ').replace(/\s+/g, ' ').trim();
-        const pureTargetTitle = cleanTitle.replace(/[·\s]/g, '').toLowerCase();
+        const targetAnalysis = analyzeTitle(cleanTitle);
+        const currentNameAnalysis = analyzeTitle(videoData?.vod_name || '');
+        const effectiveSeason = targetAnalysis.seasonNumber ?? currentNameAnalysis.seasonNumber;
+
         const codeMatch = (title || '').match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
         const videoCode = codeMatch ? codeMatch[0].toUpperCase() : null;
         const targetYear = expectedYear ? parseInt(expectedYear, 10) : null;
@@ -452,7 +545,15 @@ function PlayerContent() {
                     continue;
                   }
 
-                  // 2. 提取候选年份
+                  // 2. 提取候选季数与片名
+                  const candAnalysis = analyzeTitle(rawName);
+                  const isSeriesItem = candAnalysis.seasonNumber !== null ||
+                    remarks.includes('集') ||
+                    remarks.includes('季') ||
+                    isSeriesTypeName(typeName) ||
+                    expectedType === 'tv';
+
+                  // 3. 提取候选年份
                   let candYear: number | null = null;
                   if (v.vod_year) {
                     const yMatch = String(v.vod_year).match(/\b(19\d\d|20\d\d)\b/);
@@ -463,19 +564,21 @@ function PlayerContent() {
                     if (nameYearMatch) candYear = parseInt(nameYearMatch[1], 10);
                   }
 
-                  // 3. 严格年代校验：若指定目标年份，相差 > 1 年绝对一票否决
-                  if (targetYear && candYear && Math.abs(candYear - targetYear) > 1) {
+                  // 4. 年代校验：单片电影相差 > 1 年绝对一票否决；连续剧跨年播出放行
+                  if (!isSeriesItem && targetYear && candYear && Math.abs(candYear - targetYear) > 1) {
                     continue;
                   }
 
-                  // 4. 清洗片名并严格精确比对
-                  const nameWithoutYear = rawName.replace(/[\(（]?(19\d\d|20\d\d)[\)）]?/g, '');
-                  const pureCandName = nameWithoutYear.replace(/[《》【】\[\]（）()·\s]/g, '').toLowerCase();
+                  // 5. 季数对齐校验：若当前正在播特定季，候选也标明了季数，两季必须相同
+                  if (effectiveSeason !== null && candAnalysis.seasonNumber !== null && candAnalysis.seasonNumber !== effectiveSeason) {
+                    continue;
+                  }
 
+                  // 6. 清洗片名并严格精确比对核心名称
                   const isCodeMatch = videoCode && rawName.toUpperCase().includes(videoCode);
-                  const isExactName = pureCandName === pureTargetTitle;
+                  const isExactName = candAnalysis.pureTitle === targetAnalysis.pureTitle;
 
-                  // 必须是严格精确匹配片名或番号
+                  // 必须是严格精确匹配核心片名或番号
                   if (!isCodeMatch && !isExactName) {
                     continue;
                   }
@@ -502,7 +605,7 @@ function PlayerContent() {
     })();
 
     return () => { cancelled = true; };
-  }, [title, source, groupedSourcesParam, isPremium, isTitleOnlyMode, expectedType, expectedYear]);
+  }, [title, source, groupedSourcesParam, isPremium, isTitleOnlyMode, expectedType, expectedYear, videoData?.vod_name]);
 
   // Track current source for switching
   const [currentSourceId, setCurrentSourceId] = useState(source);
