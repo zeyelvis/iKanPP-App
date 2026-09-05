@@ -82,7 +82,6 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
   const [activeIndex, setActiveIndex] = useState(0);
   const [backdrops, setBackdrops] = useState<Record<string, string | null>>({});
   const [isPaused, setIsPaused] = useState(false);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
   const fetchedRef = useRef<string>('');
 
   // 专属巨幕数据池：优先使用定制 Hero 影视（包含 4K 横版剧照与精美简介）
@@ -134,14 +133,25 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
     fetchBackdrops();
   }, [currentData, contentType]);
 
-  // 自动轮播（每 7 秒切换一次，悬浮时暂停）
+  // 切换辅助函数（支持循环与重置）
+  const goToNext = useCallback(() => {
+    if (currentData.length <= 1) return;
+    setActiveIndex(prev => (prev + 1) % currentData.length);
+  }, [currentData.length]);
+
+  const goToPrev = useCallback(() => {
+    if (currentData.length <= 1) return;
+    setActiveIndex(prev => (prev - 1 + currentData.length) % currentData.length);
+  }, [currentData.length]);
+
+  // 自动轮播（每 7 秒切换一次，用户手动滑动或点击后智能重置完整 7 秒，悬停时暂停）
   useEffect(() => {
     if (isPaused || currentData.length <= 1) return;
     const timer = setInterval(() => {
       setActiveIndex(prev => (prev + 1) % currentData.length);
     }, 7000);
     return () => clearInterval(timer);
-  }, [isPaused, currentData.length]);
+  }, [isPaused, currentData.length, activeIndex]);
 
   const handleMovieClick = (movie: any) => {
     const params = new URLSearchParams();
@@ -162,22 +172,32 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
   const activeBackdrop = active.backdrop || backdrops[active.title] || active.cover;
   const displayItems = currentData.slice(0, 8);
 
+  // 优化移动端触控滑动：记录 X/Y 坐标，防止页面垂直滚动时误切，提升滑动灵敏度（门槛 30px）
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+
   const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX);
+    touchStartRef.current = {
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY,
+    };
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStart === null) return;
-    const touchEnd = e.changedTouches[0].clientX;
-    const diff = touchStart - touchEnd;
-    if (diff > 45) {
-      // 向左滑 -> 下一张
-      setActiveIndex(prev => (prev + 1) % Math.min(currentData.length, 8));
-    } else if (diff < -45) {
-      // 向右滑 -> 上一张
-      setActiveIndex(prev => (prev - 1 + Math.min(currentData.length, 8)) % Math.min(currentData.length, 8));
+    if (!touchStartRef.current) return;
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+    const diffX = touchStartRef.current.x - endX;
+    const diffY = touchStartRef.current.y - endY;
+    touchStartRef.current = null;
+
+    // 只有当横向滑动幅度明显大于垂直滑动幅度时，才触发切屏，体验如丝般顺滑
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30) {
+      if (diffX > 0) {
+        goToNext();
+      } else {
+        goToPrev();
+      }
     }
-    setTouchStart(null);
   };
 
   return (
@@ -258,7 +278,40 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
         </div>
       </div>
 
-      {/* 4. 右下角快速切换指示器（缩略卡片 + 进度圆点） */}
+      {/* 4. 左右微光翻页按键（单手随时秒切上一部/下一部，无需干等自动轮播） */}
+      {currentData.length > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              goToPrev();
+            }}
+            aria-label="切换到上一部大片"
+            className="absolute left-2.5 sm:left-5 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-black/70 active:scale-90 text-white/80 hover:text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all cursor-pointer shadow-xl hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+          >
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              goToNext();
+            }}
+            aria-label="切换到下一部大片"
+            className="absolute right-2.5 sm:right-5 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-black/70 active:scale-90 text-white/80 hover:text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all cursor-pointer shadow-xl hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+          >
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+            </svg>
+          </button>
+        </>
+      )}
+
+      {/* 5. 桌面端右下角快速切换指示器（缩略卡片 + 进度指示） */}
       <div className="absolute right-4 sm:right-8 bottom-6 z-20 hidden md:flex items-center gap-2 bg-black/40 backdrop-blur-xl p-2 rounded-2xl border border-white/10">
         {displayItems.map((item, idx) => (
           <button
@@ -275,18 +328,31 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
         ))}
       </div>
 
-      {/* 移动端轮播指示点 */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex md:hidden items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full">
+      {/* 6. 移动端大热区指示栏（支持手指精准点按，带 2/7 页码状态指示） */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex md:hidden items-center gap-0.5 bg-black/60 backdrop-blur-xl px-2 py-0.5 rounded-full border border-white/15 shadow-2xl">
         {displayItems.map((_, idx) => (
           <button
             key={idx}
-            onClick={() => setActiveIndex(idx)}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              idx === activeIndex ? 'w-5 bg-(--accent-color)' : 'w-1.5 bg-white/30'
-            }`}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveIndex(idx);
+            }}
+            className="p-1.5 flex items-center justify-center cursor-pointer active:scale-95 transition-transform"
             aria-label={`切换到第 ${idx + 1} 张`}
-          />
+          >
+            <span
+              className={`block h-1.5 rounded-full transition-all duration-300 ${
+                idx === activeIndex
+                  ? 'w-5 bg-(--accent-color) shadow-[0_0_8px_rgba(229,9,20,0.9)]'
+                  : 'w-1.5 bg-white/35 hover:bg-white/70'
+              }`}
+            />
+          </button>
         ))}
+        <span className="text-[10px] font-bold text-white/50 pl-1 pr-1 select-none font-mono">
+          {activeIndex + 1}/{displayItems.length}
+        </span>
       </div>
     </div>
   );
