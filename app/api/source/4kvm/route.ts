@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { get4kvmMovieDetail, get4kvmStreamUrl } from '@/lib/server/fourk-vm';
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);

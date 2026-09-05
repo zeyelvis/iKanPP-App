@@ -12,7 +12,7 @@ import { fetchJableVideoDetail } from '@/lib/server/jable-scraper';
 import { fetchIkanbotDetail } from '@/lib/server/ikanbot';
 import { get4kvmMovieDetail } from '@/lib/server/fourk-vm';
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
 /**
  * Shared handler for fetching video details
