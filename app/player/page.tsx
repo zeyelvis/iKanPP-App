@@ -21,7 +21,6 @@ import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
 import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { getSourceName } from '@/lib/utils/source-names';
-import { RelatedKeywords } from '@/components/search/RelatedKeywords';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 import { normalizeVideoType } from '@/lib/utils/taxonomy';
 import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
@@ -1085,15 +1084,7 @@ function PlayerContent() {
                 </div>
               )}
 
-              {/* 智能相关影视与长尾词推荐 */}
-              {(videoData?.vod_name || title) && (
-                <RelatedKeywords
-                  query={videoData?.vod_name || title || ''}
-                  onKeywordClick={(keyword) => {
-                    router.push(isPremium ? `/premium?q=${encodeURIComponent(keyword)}` : `/?q=${encodeURIComponent(keyword)}`);
-                  }}
-                />
-              )}
+
             </div>
 
             {/* Sidebar with sticky wrapper */}
