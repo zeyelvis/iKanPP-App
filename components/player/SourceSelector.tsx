@@ -135,9 +135,20 @@ export function SourceSelector({
 }: SourceSelectorProps) {
     const [isExpanded, setIsExpanded] = useState(false);
 
-    // 智能排序：第一梯队（光速/极速/新浪/暴风/无尽）永远锁定在 1~5 位，后续依次按梯队排列
+    // 智能排序与强力去重：同一个 source 仅保留 1 个权威项，且第一梯队（光速/极速/新浪/暴风/无尽）永远锁定在 1~5 位
     const sortedSources = useMemo(() => {
-        return [...sources].sort((a, b) => {
+        // 第一道核心防线：对传入数据进行去重，杜绝同一个 source 出现多次（如多个重复的海豚资源）
+        const seen = new Set<string>();
+        const uniqueList: SourceInfo[] = [];
+        for (const s of sources) {
+            if (!s || !s.source) continue;
+            if (!seen.has(s.source)) {
+                seen.add(s.source);
+                uniqueList.push(s);
+            }
+        }
+
+        return uniqueList.sort((a, b) => {
             const cleanA = getCleanSourceKey(a.source);
             const cleanB = getCleanSourceKey(b.source);
 
@@ -171,7 +182,7 @@ export function SourceSelector({
         return sortedSources.slice(0, DEFAULT_VISIBLE_COUNT);
     }, [sortedSources, isExpanded, shouldShowExpandButton, currentIndex]);
 
-    if (sources.length <= 1) {
+    if (sortedSources.length <= 1) {
         return null;
     }
 
@@ -185,7 +196,7 @@ export function SourceSelector({
                         播放线路
                     </span>
                     <Badge variant="primary" className="text-[10px] px-1.5 py-0.5 font-bold">
-                        {sources.length} 条可用
+                        {sortedSources.length} 条可用
                     </Badge>
                 </div>
 
@@ -195,7 +206,7 @@ export function SourceSelector({
                         onClick={() => setIsExpanded(!isExpanded)}
                         className="text-xs text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 font-medium cursor-pointer py-1 px-2 rounded-lg hover:bg-white/5"
                     >
-                        <span>{isExpanded ? '收起备用' : `全部线路 (${sources.length})`}</span>
+                        <span>{isExpanded ? '收起备用' : `全部线路 (${sortedSources.length})`}</span>
                         <Icons.ChevronDown
                             size={14}
                             className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}

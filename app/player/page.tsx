@@ -336,15 +336,24 @@ function PlayerContent() {
 
                   if (isStrictCandidate) {
                     anyFound = true;
-                    if (!foundSources.some(s => s.id === v.vod_id && s.source === v.source)) {
-                      foundSources.push({
-                        id: v.vod_id,
-                        source: v.source,
-                        sourceName: v.sourceDisplayName || getSourceName(v.source),
-                        latency: v.latency,
-                        pic: v.vod_pic,
-                        typeName: v.type_name,
-                      });
+                    // 同一个采集站只能保留 1 个最佳线路，杜绝同一个 source 重复出现（例如 11 个海豚资源）
+                    const existingIdx = foundSources.findIndex(s => s.source === v.source);
+                    const newSourceItem: SourceInfo & { _score?: number } = {
+                      id: v.vod_id,
+                      source: v.source,
+                      sourceName: v.sourceDisplayName || getSourceName(v.source),
+                      latency: v.latency,
+                      pic: v.vod_pic,
+                      typeName: v.type_name,
+                      _score: totalScore,
+                    };
+                    if (existingIdx === -1) {
+                      foundSources.push(newSourceItem);
+                    } else {
+                      const oldItem = foundSources[existingIdx] as any;
+                      if ((oldItem._score ?? 0) < totalScore) {
+                        foundSources[existingIdx] = newSourceItem;
+                      }
                     }
                   }
 
@@ -478,33 +487,39 @@ function PlayerContent() {
   const isTitleOnlyMode = !videoId || !source;
 
   const groupedSources = useMemo<SourceInfo[]>(() => {
-    let sources: SourceInfo[] = [];
+    let rawList: SourceInfo[] = [];
     if (groupedSourcesParam) {
       try {
-        sources = JSON.parse(groupedSourcesParam);
+        rawList = JSON.parse(groupedSourcesParam);
       } catch {
-        sources = [];
+        rawList = [];
       }
     }
 
     // Merge in discovered sources (from background search)
     if (discoveredSources.length > 0) {
-      for (const ds of discoveredSources) {
-        if (!sources.find(s => s.source === ds.source)) {
-          sources.push(ds);
-        }
-      }
+      rawList.push(...discoveredSources);
     }
 
     // Always ensure the current source is in the list
-    if (source && !sources.find(s => s.source === source)) {
-      sources.unshift({
+    if (source) {
+      rawList.unshift({
         id: videoId || '',
         source: source,
         sourceName: getSourceName(source),
         pic: videoData?.vod_pic
       });
     }
+
+    // 核心防线：对同一 source 严格唯一去重，绝不允许任何同源重复项
+    const sourceMap = new Map<string, SourceInfo>();
+    for (const s of rawList) {
+      if (s && s.source && !sourceMap.has(s.source)) {
+        sourceMap.set(s.source, s);
+      }
+    }
+
+    let sources = Array.from(sourceMap.values());
 
     // Use current video's poster as fallback pic for sources that don't have one
     const fallbackPic = videoData?.vod_pic;
@@ -550,7 +565,9 @@ function PlayerContent() {
     if (groupedSourcesParam) {
       try { existingSources = JSON.parse(groupedSourcesParam); } catch { }
     }
-    const hasFullInfo = existingSources.length >= 10 && existingSources.every(s => s.pic);
+    const hasIkanbotLines = existingSources.some(s => s.source.startsWith('ikanbot_'));
+    const needsIkanbot = !isPremium && !hasIkanbotLines;
+    const hasFullInfo = existingSources.length >= 10 && existingSources.every(s => s.pic) && (isPremium || hasIkanbotLines);
     if (hasFullInfo) return;
 
     let cancelled = false;
@@ -569,7 +586,7 @@ function PlayerContent() {
         const effectiveSeason = targetAnalysis.seasonNumber ?? currentNameAnalysis.seasonNumber;
 
         // 优先并发从 ikanbot 注入丰富线路
-        if (!isPremium && existingSources.length < 10) {
+        if (needsIkanbot) {
           const seasonParam = effectiveSeason ?? '';
           fetch(`/api/ikanbot?title=${encodeURIComponent(cleanTitle)}&year=${expectedYear || ''}&season=${seasonParam}`)
             .then(res => res.ok ? res.json() : null)
@@ -678,16 +695,20 @@ function PlayerContent() {
                     continue;
                   }
 
-                  if (!cancelled && !found.some(s => s.id === v.vod_id && s.source === v.source)) {
-                    found.push({
+                  if (!cancelled) {
+                    const existingIdx = found.findIndex(s => s.source === v.source);
+                    const newItem: SourceInfo = {
                       id: v.vod_id,
                       source: v.source,
                       sourceName: v.sourceDisplayName || getSourceName(v.source),
                       latency: v.latency,
                       pic: v.vod_pic,
                       typeName: v.type_name,
-                    });
-                    setDiscoveredSources([...found]);
+                    };
+                    if (existingIdx === -1) {
+                      found.push(newItem);
+                      setDiscoveredSources([...found]);
+                    }
                   }
                 }
               }

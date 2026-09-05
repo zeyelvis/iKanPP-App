@@ -156,7 +156,13 @@ export async function searchIkanbot(
   options?: { year?: number; season?: number }
 ): Promise<{ id: string; title: string; year?: number; pic?: string } | null> {
   try {
-    const cleanTitle = query.replace(/[《》【】\[\]（）()]/g, ' ').replace(/\s+/g, ' ').trim();
+    // 连续剧季数规范化（例如将 "第1季" 规范化为 ikanbot 站通用的 "第一季"）
+    let cleanTitle = query.replace(/[《》【】\[\]（）()]/g, ' ').replace(/\s+/g, ' ').trim();
+    cleanTitle = cleanTitle.replace(/第(\d+)[季部期]/g, (_, num) => {
+      const cn = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'][parseInt(num, 10)];
+      return cn ? `第${cn}季` : `第${num}季`;
+    });
+
     const searchUrl = `https://www.ikanbot.com/search?q=${encodeURIComponent(cleanTitle)}`;
     const res = await fetchWithTimeout(searchUrl, { headers: HEADERS }, 4000);
     if (!res.ok) return null;
