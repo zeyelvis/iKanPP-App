@@ -6,7 +6,6 @@ import { createPortal } from 'react-dom';
 import { HeroSlideshow } from './TmdbSlideshow';
 import { Top10Rail } from './Top10Rail';
 import { ContentRail } from './ContentRail';
-import { CategoryBrandBar } from './CategoryBrandBar';
 import { ContinueWatchingRail } from './ContinueWatchingRail';
 import { LiveChannelsPreview } from './LiveChannelsPreview';
 import { PlatformFeaturesStrip } from './PlatformFeaturesStrip';
@@ -309,10 +308,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       {/* 2. 🎬 断点续播 / 最近观看记录横轨 */}
       <ContinueWatchingRail />
 
-      {/* 3. ✨ 流媒体核心频道与品牌直通入口 (Brands Bar) */}
-      <CategoryBrandBar />
-
-      {/* 4. 🌟 流媒体核心分类快速切换（电影 / 电视剧 / 动漫 / 综艺） */}
+      {/* 3. 🌟 流媒体核心分类快速切换（电影 / 电视剧 / 动漫 / 综艺） */}
       <div className="flex items-center justify-between gap-4 mb-6 border-b border-white/10 pb-4">
         <div className="flex items-center gap-2">
           <button
