@@ -67,6 +67,43 @@ const GOLDEN_PRIORITY_MAP: Record<string, number> = {
     'modu_dm': 24,  // 魔都动漫
 };
 
+// ikanbot 线路标识映射
+const FLAG_TO_SOURCE_KEY: Record<string, string> = {
+    'jsm3u8': 'jisu',
+    'gsm3u8': 'guangsu',
+    'xlm3u8': 'xinlang',
+    'wjm3u8': 'wujin',
+    'bfzym3u8': 'baofeng',
+    'lzm3u8': 'liangzi',
+    'dyttm3u8': 'dytt',
+    '1080zyk': 'json1080',
+    'hym3u8': 'huya',
+    'hhm3u8': 'haitun',
+    'ffm3u8': 'feifan',
+    'hongniu': 'hongniu',
+    'rym3u8': 'ruyi',
+    'zuidam3u8': 'zuida',
+    'subm3u8': 'subo',
+    'jinyingm3u8': 'jinying',
+    'ukm3u8': 'youku',
+    'ikm3u8': 'ikun',
+    'iqym3u8': 'lezi',
+    '360zy': 'zy360',
+    'modu': 'modu',
+    'jingyu': 'jingyu',
+    'moduys': 'moduys',
+    'modu_dm': 'modu_dm',
+    'snm3u8': 'suoni',
+};
+
+function getCleanSourceKey(source: string): string {
+    if (source.startsWith('ikanbot_')) {
+        const flag = source.slice('ikanbot_'.length);
+        return FLAG_TO_SOURCE_KEY[flag] || flag;
+    }
+    return source;
+}
+
 export function SourceSelector({
     sources,
     currentSource,
@@ -76,14 +113,16 @@ export function SourceSelector({
     // 智能排序：优先将 4K (2160P) 专线排在前面，其余严格按照 ikanbot 黄金骨干顺位排列，避免网络 Ping 抖动打乱黄金源
     const sortedSources = useMemo(() => {
         return [...sources].sort((a, b) => {
-            const isA4K = FOUR_K_SOURCES.has(a.source) || a.sourceName?.includes('4K') || a.sourceName?.includes('2160');
-            const isB4K = FOUR_K_SOURCES.has(b.source) || b.sourceName?.includes('4K') || b.sourceName?.includes('2160');
+            const cleanA = getCleanSourceKey(a.source);
+            const cleanB = getCleanSourceKey(b.source);
+            const isA4K = FOUR_K_SOURCES.has(cleanA) || a.sourceName?.includes('4K') || a.sourceName?.includes('2160');
+            const isB4K = FOUR_K_SOURCES.has(cleanB) || b.sourceName?.includes('4K') || b.sourceName?.includes('2160');
 
             if (isA4K && !isB4K) return -1;
             if (!isA4K && isB4K) return 1;
 
-            const priorityA = GOLDEN_PRIORITY_MAP[a.source] ?? 999;
-            const priorityB = GOLDEN_PRIORITY_MAP[b.source] ?? 999;
+            const priorityA = a.source === 'ikanbot' ? 0.5 : (GOLDEN_PRIORITY_MAP[cleanA] ?? 999);
+            const priorityB = b.source === 'ikanbot' ? 0.5 : (GOLDEN_PRIORITY_MAP[cleanB] ?? 999);
             if (priorityA !== priorityB) {
                 return priorityA - priorityB;
             }
@@ -112,12 +151,13 @@ export function SourceSelector({
             <div className="space-y-2 max-h-85 overflow-y-auto pr-1">
                 {sortedSources.map((source, index) => {
                     const isCurrent = source.source === currentSource;
-                    const is4K = FOUR_K_SOURCES.has(source.source) ||
+                    const cleanKey = getCleanSourceKey(source.source);
+                    const is4K = FOUR_K_SOURCES.has(cleanKey) ||
                                  source.sourceName?.includes('4K') ||
                                  source.sourceName?.includes('2160') ||
                                  source.sourceName?.includes('红牛') ||
                                  source.sourceName?.includes('暴风');
-                    const isBluRay = !is4K && (HD_BLURAY_SOURCES.has(source.source) || source.sourceName?.includes('蓝光'));
+                    const isBluRay = !is4K && (HD_BLURAY_SOURCES.has(cleanKey) || source.sourceName?.includes('蓝光'));
 
                     return (
                         <button

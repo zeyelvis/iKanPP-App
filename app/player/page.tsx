@@ -154,13 +154,49 @@ function PlayerContent() {
         const targetAnalysis = analyzeTitle(title);
         const targetYear = expectedYear ? parseInt(expectedYear, 10) : null;
 
+        // 优先并发请求 ikanbot 实时逆向清洗引擎（秒级直出 20~30 条黄金线路）
+        if (!isPremium) {
+          const seasonParam = targetAnalysis.seasonNumber ?? '';
+          fetch(`/api/ikanbot?title=${encodeURIComponent(cleanTitle)}&year=${expectedYear || ''}&season=${seasonParam}`)
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+              if (cancelled || redirected || !data?.success || !data?.data?.lines?.length) return;
+              const { data: ikanData } = data;
+              const isSeriesItem = targetAnalysis.seasonNumber !== null || expectedType === 'tv' || ikanData.lines[0]?.episodes?.length > 1;
+              const ikanSources: SourceInfo[] = ikanData.lines.map((l: any) => ({
+                id: ikanData.vod_id,
+                source: l.sourceId,
+                sourceName: l.sourceName,
+                pic: ikanData.vod_pic,
+                typeName: isSeriesItem ? '连续剧' : '电影',
+              }));
+
+              const firstLine = ikanData.lines[0];
+              if (firstLine && !redirected && !cancelled) {
+                redirected = true;
+                const params = new URLSearchParams();
+                params.set('id', String(ikanData.vod_id));
+                params.set('source', firstLine.sourceId);
+                params.set('title', title);
+                const resolvedType = expectedType || (isSeriesItem ? 'tv' : 'movie');
+                params.set('type', resolvedType);
+                if (expectedYear || ikanData.vod_year) {
+                  params.set('year', expectedYear || ikanData.vod_year);
+                }
+                params.set('groupedSources', JSON.stringify(ikanSources));
+                router.replace(`/player?${params.toString()}`, { scroll: false });
+              }
+            })
+            .catch(() => {});
+        }
+
         // 备选最佳匹配（用于在未遇到秒跳完美年份源时的次优候选）
         let pendingBestCandidate: { video: any; score: number; isSeries: boolean } | null = null;
         let yearMismatchedCount = 0;
 
         while (true) {
           const { done, value } = await reader.read();
-          if (done || cancelled) break;
+          if (done || cancelled || redirected) break;
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split('\n');
           buffer = lines.pop() || '';
@@ -484,7 +520,7 @@ function PlayerContent() {
     if (groupedSourcesParam) {
       try { existingSources = JSON.parse(groupedSourcesParam); } catch { }
     }
-    const hasFullInfo = existingSources.length > 1 && existingSources.every(s => s.pic);
+    const hasFullInfo = existingSources.length >= 10 && existingSources.every(s => s.pic);
     if (hasFullInfo) return;
 
     let cancelled = false;
@@ -494,7 +530,6 @@ function PlayerContent() {
     const allSources = sourcesForMode?.filter((s: VideoSource) => s.enabled !== false) || [];
     // Only search other sources (not the current one)
     const otherSources = allSources.filter((s: VideoSource) => s.id !== source);
-    if (otherSources.length === 0) return;
 
     (async () => {
       try {
@@ -502,6 +537,36 @@ function PlayerContent() {
         const targetAnalysis = analyzeTitle(cleanTitle);
         const currentNameAnalysis = analyzeTitle(videoData?.vod_name || '');
         const effectiveSeason = targetAnalysis.seasonNumber ?? currentNameAnalysis.seasonNumber;
+
+        // 优先并发从 ikanbot 注入丰富线路
+        if (!isPremium && existingSources.length < 10) {
+          const seasonParam = effectiveSeason ?? '';
+          fetch(`/api/ikanbot?title=${encodeURIComponent(cleanTitle)}&year=${expectedYear || ''}&season=${seasonParam}`)
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+              if (cancelled || !data?.success || !data?.data?.lines?.length) return;
+              const { data: ikanData } = data;
+              const isSeriesItem = effectiveSeason !== null || expectedType === 'tv' || (videoData?.type_name || '').includes('剧') || ikanData.lines[0]?.episodes?.length > 1;
+              const ikanSources: SourceInfo[] = ikanData.lines.map((l: any) => ({
+                id: ikanData.vod_id,
+                source: l.sourceId,
+                sourceName: l.sourceName,
+                pic: ikanData.vod_pic,
+                typeName: isSeriesItem ? '连续剧' : '电影',
+              }));
+              setDiscoveredSources(prev => {
+                const map = new Map<string, SourceInfo>();
+                for (const s of prev) map.set(s.source, s);
+                for (const s of ikanSources) {
+                  if (!map.has(s.source)) map.set(s.source, s);
+                }
+                return Array.from(map.values());
+              });
+            })
+            .catch(() => {});
+        }
+
+        if (otherSources.length === 0) return;
 
         const codeMatch = (title || '').match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
         const videoCode = codeMatch ? codeMatch[0].toUpperCase() : null;

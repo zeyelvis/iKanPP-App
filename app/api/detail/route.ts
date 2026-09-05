@@ -9,6 +9,7 @@ import { getSourceById } from '@/lib/api/video-sources';
 import { isSafeExternalUrl } from '@/lib/utils/security';
 import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
 import { fetchJableVideoDetail } from '@/lib/server/jable-scraper';
+import { fetchIkanbotDetail } from '@/lib/server/ikanbot';
 
 export const runtime = 'edge';
 
@@ -111,7 +112,35 @@ async function handleDetailRequest(id: string | null, source: string | null, met
     });
   }
 
-  // 2. 传统采集源查询
+  // 2. 专属支持 ikanbot 聚合专线直解
+  if (source === 'ikanbot' || (typeof source === 'string' && source.startsWith('ikanbot_'))) {
+    try {
+      const lineFlag = typeof source === 'string' && source.startsWith('ikanbot_')
+        ? source.replace('ikanbot_', '')
+        : '';
+      const detail = await fetchIkanbotDetail(id);
+      if (detail && detail.lines.length > 0) {
+        const matchedLine = detail.lines.find(l => l.flag === lineFlag) || detail.lines[0];
+        if (matchedLine) {
+          return NextResponse.json({
+            success: true,
+            data: {
+              vod_id: id,
+              vod_name: detail.vod_name,
+              vod_pic: detail.vod_pic,
+              vod_year: detail.vod_year,
+              vod_content: detail.vod_content,
+              episodes: matchedLine.episodes,
+            }
+          });
+        }
+      }
+    } catch (e) {
+      console.error('[DetailAPI] ikanbot resolve error:', e);
+    }
+  }
+
+  // 3. 传统采集源查询
   let sourceConfig;
   if (typeof source === 'object') {
     sourceConfig = source;
