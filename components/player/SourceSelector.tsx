@@ -166,20 +166,21 @@ export function SourceSelector({
     // 当前选中的线路索引
     const currentIndex = sortedSources.findIndex(s => s.source === currentSource);
 
-    // 默认展示数量（前 6 条黄金线路）
-    const DEFAULT_VISIBLE_COUNT = 6;
+    // 默认展示数量（精选前 2 条黄金线路，刚好排满 1 行极度省空间）
+    const DEFAULT_VISIBLE_COUNT = 2;
     const shouldShowExpandButton = sortedSources.length > DEFAULT_VISIBLE_COUNT;
 
-    // 当前可见线路：若已展开，或当前选中线路在第 6 条之后，自动展开以防当前播放项失焦
+    // 当前可见线路：若已展开显示全部；未展开时严格保持 2 条精选线路
     const visibleSources = useMemo(() => {
         if (isExpanded || !shouldShowExpandButton) {
             return sortedSources;
         }
-        // 如果当前播放线路在 6 条之外，默认至少展示到包含当前线路
-        if (currentIndex >= DEFAULT_VISIBLE_COUNT) {
-            return sortedSources;
+        // 若当前播放的线路在前 2 条内，直接展示前 2 条
+        // 若当前播放的线路在第 2 条之后，展示 [第1梯队首选源, 当前播放线路]，确保当前项不失焦且绝对保持 2 条
+        if (currentIndex < DEFAULT_VISIBLE_COUNT || currentIndex === -1) {
+            return sortedSources.slice(0, DEFAULT_VISIBLE_COUNT);
         }
-        return sortedSources.slice(0, DEFAULT_VISIBLE_COUNT);
+        return [sortedSources[0], sortedSources[currentIndex]];
     }, [sortedSources, isExpanded, shouldShowExpandButton, currentIndex]);
 
     if (sortedSources.length <= 1) {
@@ -280,18 +281,6 @@ export function SourceSelector({
                     );
                 })}
             </div>
-
-            {/* 底部折叠切换提示栏（当线路较多且未展开时展示） */}
-            {shouldShowExpandButton && !isExpanded && (
-                <button
-                    type="button"
-                    onClick={() => setIsExpanded(true)}
-                    className="w-full py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/50 hover:text-white/80 text-[11px] font-medium transition-all duration-200 flex items-center justify-center gap-1 border border-white/5 cursor-pointer"
-                >
-                    <span>查看更多备用专线 (还有 {sortedSources.length - DEFAULT_VISIBLE_COUNT} 条)</span>
-                    <Icons.ChevronDown size={13} />
-                </button>
-            )}
         </div>
     );
 

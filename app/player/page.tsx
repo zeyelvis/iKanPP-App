@@ -19,12 +19,12 @@ import { settingsStore } from '@/lib/store/settings-store';
 import { premiumModeSettingsStore } from '@/lib/store/premium-mode-settings';
 import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
 import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
-import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import { htmlToText } from '@/lib/utils/html';
 import { getSourceName } from '@/lib/utils/source-names';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 import { normalizeVideoType } from '@/lib/utils/taxonomy';
 import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
-import { Crown, Lock, Sparkles } from 'lucide-react';
+import { Crown, Lock, Sparkles, ChevronDown } from 'lucide-react';
 
 interface TitleAnalysis {
   rawTitle: string;
@@ -457,8 +457,8 @@ function PlayerContent() {
     typeof window !== 'undefined' ? modeStore.getSettings().episodeReverseOrder : false
   );
 
-  // Mobile tab state
-  const [activeTab, setActiveTab] = useState<'episodes' | 'info'>('episodes');
+  // 移动端剧情简介轻量折叠展开状态（默认折叠，零遮挡）
+  const [mobileInfoExpanded, setMobileInfoExpanded] = useState(false);
 
   // Sync with store changes
   useEffect(() => {
@@ -971,7 +971,7 @@ function PlayerContent() {
                   )}
                 </div>
 
-                {/* 移动端快捷操作栏（收藏、分享与当前线路信息） */}
+                {/* 移动端快捷操作栏（收藏、分享、简介折叠与线路直达） */}
                 <div className="flex items-center justify-between pt-2.5 border-t border-white/10 text-xs">
                   <div className="flex items-center gap-3">
                     {videoData && videoId && (
@@ -997,6 +997,20 @@ function PlayerContent() {
                       type={videoData?.type_name}
                       size={18}
                     />
+                    {/* 剧情简介折叠开关 */}
+                    {videoData?.vod_content && (
+                      <button
+                        type="button"
+                        onClick={() => setMobileInfoExpanded(!mobileInfoExpanded)}
+                        className="flex items-center gap-1 text-white/60 hover:text-white transition-colors cursor-pointer text-xs ml-1"
+                      >
+                        <span>简介</span>
+                        <ChevronDown
+                          size={13}
+                          className={`transition-transform duration-200 ${mobileInfoExpanded ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                    )}
                   </div>
 
                   {/* 当前线路胶囊与快捷切线 */}
@@ -1004,7 +1018,6 @@ function PlayerContent() {
                     <button
                       type="button"
                       onClick={() => {
-                        setActiveTab('episodes');
                         const el = document.getElementById('source-selector-section');
                         if (el) {
                           el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1023,6 +1036,23 @@ function PlayerContent() {
                     </button>
                   )}
                 </div>
+
+                {/* 移动端折叠展开的剧情简介与主创详情 */}
+                {mobileInfoExpanded && videoData && (
+                  <div className="pt-2.5 border-t border-white/10 space-y-1.5 text-xs text-white/70 animate-fade-in">
+                    {videoData.vod_director && (
+                      <p><span className="text-white/40 font-medium">导演：</span>{videoData.vod_director}</p>
+                    )}
+                    {videoData.vod_actor && (
+                      <p className="line-clamp-2"><span className="text-white/40 font-medium">主演：</span>{videoData.vod_actor}</p>
+                    )}
+                    {videoData.vod_content && (
+                      <p className="text-white/60 leading-relaxed max-h-36 overflow-y-auto">
+                        <span className="text-white/40 font-medium">简介：</span>{htmlToText(videoData.vod_content)}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* 桌面端完整详情 */}
@@ -1090,37 +1120,16 @@ function PlayerContent() {
             {/* Sidebar with sticky wrapper */}
             <div className="lg:col-span-1">
               <div className="lg:sticky lg:top-28 space-y-4 sm:space-y-6">
-                {/* Mobile Tabs */}
-                <SegmentedControl
-                  options={[
-                    { label: `选集 (${videoData?.episodes?.length || 1})`, value: 'episodes' },
-                    { label: '剧情简介', value: 'info' },
-                  ]}
-                  value={activeTab}
-                  onChange={setActiveTab}
-                  className="lg:hidden"
-                />
-
-                {/* Info Tab Content - Mobile Only */}
-                <div className={activeTab !== 'info' ? 'hidden' : 'block lg:hidden'}>
-                  <VideoMetadata
-                    videoData={videoData}
-                    source={source}
-                    title={title}
-                  />
-                </div>
-
-                {/* Episode List with integrated source selector - Visible if desktop OR active mobile tab */}
-                <div className={activeTab !== 'episodes' ? 'hidden lg:block' : 'block'}>
-                  <EpisodeList
-                    episodes={videoData?.episodes || null}
-                    currentEpisode={currentEpisode}
-                    isReversed={isReversed}
-                    onEpisodeClick={handleEpisodeClick}
-                    onToggleReverse={handleToggleReverse}
-                    sources={groupedSources.length > 0 ? groupedSources : undefined}
-                    currentSource={currentSourceId || source || ''}
-                    onSourceChange={(newSource) => {
+                {/* 线路选择与选集面板（移动端在播放器下方无缝直接展现，无需多余 Tab） */}
+                <EpisodeList
+                  episodes={videoData?.episodes || null}
+                  currentEpisode={currentEpisode}
+                  isReversed={isReversed}
+                  onEpisodeClick={handleEpisodeClick}
+                  onToggleReverse={handleToggleReverse}
+                  sources={groupedSources.length > 0 ? groupedSources : undefined}
+                  currentSource={currentSourceId || source || ''}
+                  onSourceChange={(newSource) => {
                       const params = new URLSearchParams();
                       params.set('id', String(newSource.id));
                       params.set('source', newSource.source);
@@ -1147,7 +1156,6 @@ function PlayerContent() {
                       router.replace(`/player?${params.toString()}`, { scroll: false });
                     }}
                   />
-                </div>
               </div>
             </div>
           </div>
