@@ -64,20 +64,6 @@ export function useSearchAction({ state, onCacheUpdate, onUrlUpdate }: UseSearch
         onUrlUpdate(searchQuery);
 
         try {
-            // 并发启动 gz360 搜索（非标准源，独立请求）
-            const gz360Promise = fetch(`/api/gz360?q=${encodeURIComponent(searchQuery.trim())}&page=1`, {
-                signal: abortControllerRef.current.signal,
-            }).then(async (res) => {
-                if (!res.ok) return [];
-                const data = await res.json();
-                if (!data?.success || !data?.data?.list?.length) return [];
-                return data.data.list.map((item: any) => ({
-                    ...item,
-                    source: 'gz360',
-                    sourceDisplayName: '瓜子影视',
-                }));
-            }).catch(() => [] as any[]);
-
             const response = await fetch('/api/search-parallel', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -95,7 +81,7 @@ export function useSearchAction({ state, onCacheUpdate, onUrlUpdate }: UseSearch
             await processSearchStream({
                 reader,
                 currentQuery: searchQuery.trim(),
-                onStart: (total) => setTotalSources(total + 1), // +1 for gz360
+                onStart: (total) => setTotalSources(total),
                 onVideos: (newVideos, sourceId) => {
                     // 过滤掉解说类视频（电影解说、影视解说等不是正片）
                     const filtered = newVideos.filter((v: any) => {
@@ -126,23 +112,7 @@ export function useSearchAction({ state, onCacheUpdate, onUrlUpdate }: UseSearch
                 onPageInfo: (pageCount) => {
                     setMaxPageCount((prev) => Math.max(prev, pageCount));
                 },
-                onComplete: async () => {
-                    // 等待 gz360 结果注入
-                    try {
-                        const gz360Videos = await gz360Promise;
-                        if (gz360Videos.length > 0) {
-                            const filtered = gz360Videos.filter((v: any) => {
-                                const name = (v.vod_name || '').toLowerCase();
-                                const typeName = (v.type_name || '').toLowerCase();
-                                return !name.includes('解说') && !typeName.includes('解说');
-                            });
-                            if (filtered.length > 0) {
-                                setResults((prev) => binaryInsertVideos(prev, filtered));
-                                sourcesMap.set('gz360', { count: filtered.length, name: '瓜子影视' });
-                            }
-                        }
-                    } catch {}
-
+                onComplete: () => {
                     setLoading(false);
 
                     // Update available sources with correct property names

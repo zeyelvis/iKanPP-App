@@ -620,38 +620,6 @@ function PlayerContent() {
             .catch(() => {});
         }
 
-        // 并发从 gz360 (瓜子影视) 注入高清线路
-        if (!isPremium) {
-          fetch(`/api/gz360?q=${encodeURIComponent(cleanTitle)}&page=1`)
-            .then(res => res.ok ? res.json() : null)
-            .then(data => {
-              if (cancelled || !data?.success || !data?.data?.list?.length) return;
-              // 从搜索结果中找到最匹配的影片
-              const normalizedTitle = cleanTitle.toLowerCase().replace(/\s+/g, '');
-              const matched = data.data.list.find((item: any) => {
-                const itemName = (item.vod_name || '').toLowerCase().replace(/\s+/g, '');
-                return itemName === normalizedTitle || itemName.includes(normalizedTitle) || normalizedTitle.includes(itemName);
-              }) || data.data.list[0]; // 没有精确匹配时取第一个
-
-              if (matched) {
-                const gz360Source: SourceInfo = {
-                  id: String(matched.vod_id),
-                  source: 'gz360',
-                  sourceName: '瓜子影视',
-                  pic: matched.vod_pic || '',
-                  typeName: matched.type_name || '',
-                };
-                setDiscoveredSources(prev => {
-                  const map = new Map<string, SourceInfo>();
-                  for (const s of prev) map.set(s.source, s);
-                  if (!map.has('gz360')) map.set('gz360', gz360Source);
-                  return Array.from(map.values());
-                });
-              }
-            })
-            .catch(() => {});
-        }
-
         if (otherSources.length === 0) return;
 
         const codeMatch = (title || '').match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
