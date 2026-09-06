@@ -58,7 +58,7 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_movie_2",
                 "title": "给阿嬷的情书",
-                "rate": "8.8",
+                "rate": "8.9",
                 "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/AwmlL79nKTcX5tzAhyoV298xXlz.jpg",
                 "description": "潮汕阿嬷叶淑柔一直守着平淡的日子，安享晚年。孙子晓伟因债务缠身，瞒着家人远赴泰国，寻找传闻中已成亿万富豪的阿公郑木生。然而，一个令人意外的消息打破了整个家庭的平静：多年来一直通过跨国信件与阿嬷“谈情说爱”诉说思念的人，竟然并非阿嬷的丈夫郑木生。随着晓伟的调查，一个感人的真相被缓缓揭开。",
@@ -155,7 +155,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至17集 | 共24集",
+                "episodes_info": "更新至18集 | 共24集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -946,7 +946,7 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_movie_2",
                 "title": "给阿嬷的情书",
-                "rate": "8.8",
+                "rate": "8.9",
                 "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/AwmlL79nKTcX5tzAhyoV298xXlz.jpg",
                 "description": "潮汕阿嬷叶淑柔一直守着平淡的日子，安享晚年。孙子晓伟因债务缠身，瞒着家人远赴泰国，寻找传闻中已成亿万富豪的阿公郑木生。然而，一个令人意外的消息打破了整个家庭的平静：多年来一直通过跨国信件与阿嬷“谈情说爱”诉说思念的人，竟然并非阿嬷的丈夫郑木生。随着晓伟的调查，一个感人的真相被缓缓揭开。",
@@ -1043,7 +1043,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至17集 | 共24集",
+                "episodes_info": "更新至18集 | 共24集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
