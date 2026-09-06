@@ -36,7 +36,6 @@ export function getSourceName(sourceId: string): string {
     'shandian': '闪电资源',
     'kuaiche': '快车资源',
     'leba': '乐播资源',
-    'gz360': '瓜子影视',
   };
   return sourceNames[sourceId] || sourceId;
 }
