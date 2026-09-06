@@ -16,7 +16,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'home', label: '首页', href: '/', icon: Home },
   { id: 'movie', label: '电影', href: '/movie', icon: Film },
   { id: 'tv', label: '电视剧', href: '/tv', icon: Tv },
-  { id: 'guoman', label: '国漫', href: '/guoman', icon: Flame },
+
   { id: 'anime', label: '动漫', href: '/anime', icon: Sparkles },
   { id: 'ranking', label: '风云榜', href: '/ranking', icon: Trophy },
 ];

@@ -10,7 +10,7 @@ const STATIC_ROUTES = [
     { path: '', priority: '1.0', changefreq: 'daily' },
     { path: '/movie', priority: '0.95', changefreq: 'daily' },
     { path: '/tv', priority: '0.95', changefreq: 'daily' },
-    { path: '/guoman', priority: '0.95', changefreq: 'daily' },
+
     { path: '/anime', priority: '0.95', changefreq: 'daily' },
     { path: '/variety', priority: '0.95', changefreq: 'daily' },
     { path: '/ranking', priority: '0.95', changefreq: 'daily' },

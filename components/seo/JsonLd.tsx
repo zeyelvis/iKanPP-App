@@ -27,7 +27,7 @@ export function generateWebSiteJsonLd(siteUrl: string = 'https://www.ikanpp.com'
     name: 'iKanPP — 爱看片片',
     alternateName: ['iKanPP', '爱看片片', '爱看影视', 'iKanPP App'],
     url: siteUrl,
-    description: '全球海外华人影视聚合搜索与极速播放平台，免翻墙直连全网最新电影、热播国产剧、美剧、韩剧、日漫新番与国漫。',
+    description: '全球海外华人影视聚合搜索与极速播放平台，免翻墙直连全网最新电影、热播国产剧、美剧、韩剧、日漫新番与国创动漫。',
     inLanguage: ['zh-CN', 'zh-TW', 'zh-HK', 'en'],
     potentialAction: {
       '@type': 'SearchAction',

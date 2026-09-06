@@ -166,7 +166,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     }
   ],
 
-  // ── 国漫大厅精选 ──────────────────────────────────────────
+  // ── 国创动漫精选（已合并至 anime 大厅）──────────────────────────────────────────
   guoman: [
     {
       id: 'pb_cat_g1',

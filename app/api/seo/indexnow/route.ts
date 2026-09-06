@@ -43,7 +43,7 @@ async function handleIndexNowPush(req: NextRequest) {
         `${BASE_URL}/`,
         `${BASE_URL}/movie`,
         `${BASE_URL}/tv`,
-        `${BASE_URL}/guoman`,
+
         `${BASE_URL}/anime`,
         `${BASE_URL}/variety`,
         `${BASE_URL}/ranking`,

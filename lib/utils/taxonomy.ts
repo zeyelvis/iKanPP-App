@@ -6,7 +6,7 @@
 
 export interface NormalizedTypeInfo {
   // 一级主分类
-  category: 'movie' | 'tv' | 'guoman' | 'anime' | 'variety' | 'documentary' | 'short';
+  category: 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | 'short';
   // 标准二级类型名称（如：国产剧、美剧、国漫、动作片、科幻片）
   standardType: string;
   // 前端角标展示文本（最精炼、美观的 2~4 字标签）
@@ -57,14 +57,14 @@ const TYPE_ALIAS_MAP: Record<string, { category: NormalizedTypeInfo['category'];
   '泰剧': { category: 'tv', standardType: '泰剧', badge: '泰剧' },
   '泰国剧': { category: 'tv', standardType: '泰剧', badge: '泰剧' },
 
-  // ── 动漫大类 (细分为 国漫 / 日漫) ──
-  '国创': { category: 'guoman', standardType: '国创动漫', badge: '国漫' },
-  '国漫': { category: 'guoman', standardType: '国创动漫', badge: '国漫' },
-  '国产动漫': { category: 'guoman', standardType: '国创动漫', badge: '国漫' },
-  '国产动画': { category: 'guoman', standardType: '国创动漫', badge: '国漫' },
-  '大陆动漫': { category: 'guoman', standardType: '国创动漫', badge: '国漫' },
-  '国漫年番': { category: 'guoman', standardType: '国创动漫', badge: '国漫' },
-  '修仙': { category: 'guoman', standardType: '国创动漫', badge: '国漫' },
+  // ── 动漫大类 (国漫 + 日漫 统一归入 anime) ──
+  '国创': { category: 'anime', standardType: '国创动漫', badge: '国漫' },
+  '国漫': { category: 'anime', standardType: '国创动漫', badge: '国漫' },
+  '国产动漫': { category: 'anime', standardType: '国创动漫', badge: '国漫' },
+  '国产动画': { category: 'anime', standardType: '国创动漫', badge: '国漫' },
+  '大陆动漫': { category: 'anime', standardType: '国创动漫', badge: '国漫' },
+  '国漫年番': { category: 'anime', standardType: '国创动漫', badge: '国漫' },
+  '修仙': { category: 'anime', standardType: '国创动漫', badge: '国漫' },
 
   '日漫': { category: 'anime', standardType: '日本动漫', badge: '新番' },
   '日本动漫': { category: 'anime', standardType: '日本动漫', badge: '新番' },
@@ -172,7 +172,7 @@ export function normalizeVideoType(rawType?: string, vodName: string = ''): Norm
 
   // 模糊匹配逻辑（按优先级由高到低）
   if (cleanRaw.includes('国漫') || cleanRaw.includes('国创') || cleanRaw.includes('修仙')) {
-    return { category: 'guoman', standardType: '国创动漫', badge: '国漫' };
+    return { category: 'anime', standardType: '国创动漫', badge: '国漫' };
   }
   if (cleanRaw.includes('新番') || cleanRaw.includes('日漫') || cleanRaw.includes('日本动漫')) {
     return { category: 'anime', standardType: '日本动漫', badge: '新番' };

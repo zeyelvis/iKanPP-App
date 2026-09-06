@@ -41,7 +41,7 @@ export function Navbar({
   const channelMap: Record<string, { label: string; href: string }> = {
     movie: { label: '返回电影', href: '/movie' },
     tv: { label: '返回剧集', href: '/tv' },
-    guoman: { label: '返回国漫', href: '/guoman' },
+
     anime: { label: '返回动漫', href: '/anime' },
     variety: { label: '返回综艺', href: '/variety' },
     ranking: { label: '返回榜单', href: '/ranking' },
@@ -83,7 +83,7 @@ export function Navbar({
     { id: 'home', label: '首页', href: '/' },
     { id: 'movie', label: '电影', href: '/movie' },
     { id: 'tv', label: '电视剧', href: '/tv' },
-    { id: 'guoman', label: '国漫', href: '/guoman' },
+
     { id: 'anime', label: '动漫', href: '/anime' },
     { id: 'variety', label: '综艺', href: '/variety' },
     { id: 'ranking', label: '风云榜', href: '/ranking' },
@@ -238,7 +238,7 @@ export function Navbar({
                     {cat.id === 'home' && '🏠'}
                     {cat.id === 'movie' && '🎬'}
                     {cat.id === 'tv' && '📺'}
-                    {cat.id === 'guoman' && '🏮'}
+
                     {cat.id === 'anime' && '⚡'}
                     {cat.id === 'variety' && '🎤'}
                     {cat.id === 'ranking' && '🏆'}

@@ -398,9 +398,9 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         onViewAll={() => router.push(isMovie ? '/movie?region=华语' : '/tv?region=韩剧')}
       />
 
-      {/* 11. 货架 4：好莱坞震撼视效 / 国漫巅峰 & 热血动漫新番 */}
+      {/* 11. 货架 4：好莱坞震撼视效 / 热血动漫新番 */}
       <ContentRail
-        title={isMovie ? '🚀 好莱坞震撼视效 & 科幻动作巅峰' : '⚡ 国漫巅峰 & 连载动漫新番'}
+        title={isMovie ? '🚀 好莱坞震撼视效 & 科幻动作巅峰' : '⚡ 热血动漫 & 连载新番巅峰'}
         icon={isMovie ? '🚀' : '⚡'}
         badge="SUPER HIT"
         movies={deduplicatedContent.s4}

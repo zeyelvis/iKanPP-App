@@ -1,7 +1,7 @@
 {
     "name": "iKanPP — 爱看片片 | 海外华人影视聚合搜索与极速播放平台",
     "short_name": "iKanPP",
-    "description": "全球海外华人影视聚合搜索引擎，支持电影大厅、电视剧、国漫专区、日本新番、综艺娱乐、影视风云榜与 IPTV 电视直播，海外免翻墙极速畅看。",
+    "description": "全球海外华人影视聚合搜索引擎，支持电影大厅、电视剧、动漫专区、日本新番、综艺娱乐、影视风云榜与 IPTV 电视直播，海外免翻墙极速畅看。",
     "start_url": "/",
     "display": "standalone",
     "display_override": ["standalone", "minimal-ui"],

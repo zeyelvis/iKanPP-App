@@ -26,7 +26,7 @@ interface RankingItem {
 const RANK_CATEGORIES = [
   { id: 'movie_hot', label: '🎬 电影热度榜', type: 'movie', tag: '热门', genre: '', region: '' },
   { id: 'tv_hot', label: '📺 电视剧热播榜', type: 'tv', tag: '热门', genre: '', region: '' },
-  { id: 'guoman_hot', label: '🏮 国漫风云榜', type: 'tv', tag: '国产动画', genre: '国漫', region: '国产动画' },
+  { id: 'guoman_hot', label: '🏮 国创动漫榜', type: 'tv', tag: '国产动画', genre: '国漫', region: '国产动画' },
   { id: 'anime_hot', label: '⚡ 日本新番榜', type: 'tv', tag: '日本动画', genre: '动漫', region: '日本动画' },
   { id: 'movie_high', label: '⭐ 豆瓣高分神作', type: 'movie', tag: '豆瓣高分', genre: '', region: '' },
   { id: 'variety_hot', label: '🎤 热门综艺榜', type: 'tv', tag: '综艺', genre: '', region: '' },
@@ -73,7 +73,7 @@ export default function RankingClient() {
       setItems(cached);
     } else {
       // 若切换到未缓存的 tab，优先显示对应的预置数据兜底
-      const tabKey = activeTab.id.startsWith('tv') ? 'tv' : (activeTab.id.startsWith('guoman') ? 'guoman' : (activeTab.id.startsWith('anime') ? 'anime' : (activeTab.id.startsWith('variety') ? 'variety' : 'movie')));
+      const tabKey = activeTab.id.startsWith('tv') ? 'tv' : (activeTab.id.startsWith('guoman') ? 'anime' : (activeTab.id.startsWith('anime') ? 'anime' : (activeTab.id.startsWith('variety') ? 'variety' : 'movie')));
       if (PREBAKED_CATEGORY_ITEMS[tabKey]) {
         setItems(PREBAKED_CATEGORY_ITEMS[tabKey] as any[]);
       }
