@@ -10,6 +10,7 @@ import { isSafeExternalUrl } from '@/lib/utils/security';
 import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
 import { fetchJableVideoDetail } from '@/lib/server/jable-scraper';
 import { fetchIkanbotDetail } from '@/lib/server/ikanbot';
+import { getGz360Detail } from '@/lib/server/gz360';
 
 
 export const runtime = 'edge';
@@ -143,8 +144,40 @@ async function handleDetailRequest(id: string | null, source: string | null, met
     }
   }
 
+  // 3. 专属支持瓜子影视 (gz360) 高清直链解析
+  if (source === 'gz360') {
+    try {
+      const detail = await getGz360Detail(id);
+      if (detail && detail.episodes.length > 0) {
+        return NextResponse.json({
+          success: true,
+          data: {
+            vod_id: detail.vod_id,
+            vod_name: detail.vod_name,
+            vod_pic: detail.vod_pic,
+            vod_year: detail.vod_year,
+            vod_area: detail.vod_area,
+            vod_actor: detail.vod_actor,
+            vod_director: detail.vod_director,
+            vod_content: detail.vod_content,
+            type_name: detail.type_name,
+            episodes: detail.episodes,
+            source: 'gz360',
+            source_code: 'gz360_hls',
+          }
+        });
+      }
+    } catch (e) {
+      console.error('[DetailAPI] gz360 resolve error:', e);
+    }
 
-  // 3. 传统采集源查询
+    return NextResponse.json({
+      success: false,
+      error: '瓜子影视暂无可用播放流',
+    });
+  }
+
+  // 4. 传统采集源查询
   let sourceConfig;
   if (typeof source === 'object') {
     sourceConfig = source;
