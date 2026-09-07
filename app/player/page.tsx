@@ -852,10 +852,10 @@ function PlayerContent() {
       (s) => s.source && s.source !== currentActiveSource && !failedSourcesRef.current.has(s.source)
     );
     const candidate = validCandidates.sort((a, b) => {
-      const topSet = new Set(['wujin', 'zuida', 'guangsu', 'modu', 'zy360']);
-      const aTop = topSet.has(a.source);
-      const bTop = topSet.has(b.source);
-      if (aTop !== bTop) return aTop ? -1 : 1;
+      const TOP_ORDER: Record<string, number> = { wujin: 1, zuida: 2, guangsu: 3, modu: 4, zy360: 5 };
+      const aOrder = TOP_ORDER[a.source] ?? 99;
+      const bOrder = TOP_ORDER[b.source] ?? 99;
+      if (aOrder !== bOrder) return aOrder - bOrder;
       const badSet = new Set(['baofeng', 'jisu', 'xinlang', 'subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
       const aBad = badSet.has(a.source);
       const bBad = badSet.has(b.source);

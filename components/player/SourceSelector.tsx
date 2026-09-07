@@ -44,50 +44,39 @@ const HD_BLURAY_SOURCES = new Set([
     'feifan', 'huya', 'haitun', 'ruyi', 'zuida', 'subo', 'youku'
 ]);
 
-// 黄金线路优先级权重（严格按金字塔梯队分级）
+// 黄金线路优先级权重（严格按金字塔梯队分级，对齐全站最新健康骨干源标准）
 const GOLDEN_PRIORITY_MAP: Record<string, number> = {
-    // === 第一梯队：超一线商业骨干秒播大源（秒开率 98%+，永远排在最前） ===
-    'guangsu': 1,   // 光速资源
-    'jisu': 2,      // 极速资源
-    'xinlang': 3,   // 新浪资源
-    'baofeng': 4,   // 暴风资源 (4K/蓝光)
-    'wujin': 5,     // 无尽资源
+    // === 第一梯队：全量 443 端口纯净切片与数百万海量热播大源 ===
+    'wujin': 1,     // 无尽资源 (443纯净源，老片/动画秒播首选)
+    'zuida': 2,     // 最大资源 (443纯净源，经典/新剧兼备)
+    'guangsu': 3,   // 光速资源 (数百万海量新热影视第一大站)
+    'modu': 4,      // 魔都资源 (热播大站)
+    'zy360': 5,     // 360资源 (独播大站)
 
-    // === 第二梯队：优质中型主流高码率专线 ===
+    // === 第二梯队：优质主流高码率专线 ===
+    'json1080': 6,  // 1080JSON
+    'feifan': 7,    // 非凡资源
+    'baofeng': 8,   // 暴风资源 (4K/蓝光)
+    'lezi': 9,      // 乐子资源
     'liangzi': 10,  // 量子资源
-    'dytt': 11,     // 电影天堂
-    'json1080': 12, // 1080JSON
-    'hongniu': 13,  // 红牛资源 (4K)
-    'suoni': 14,    // 索尼专线 (4K)
-    'huya': 15,     // 虎牙资源
-    'haitun': 16,   // 海豚资源
-    'feifan': 17,   // 非凡资源
-    'ruyi': 18,     // 如意资源
-    'zuida': 19,    // 最大资源
-    'subo': 20,     // 速博资源
-    'jinying': 21,  // 金鹰点播
-    'youku': 22,    // 优酷资源
-    'ikun': 23,     // iKun资源
-    'lezi': 24,     // 乐子资源
+    'ruyi': 11,     // 如意资源
+    'modu_dm': 12,  // 魔都动漫
+    'moduys': 13,   // 魔都影视
 
-    // === 第三梯队：备用专线与尾部小源（容易偶发拥堵或失效，沉底排列） ===
-    'zy360': 30,    // 360资源
-    'dbm3u8': 31,   // 豆瓣专线
-    'kcm3u8': 32,   // 快车专线
-    'sdm3u8': 33,   // 闪电专线
-    'tpm3u8': 34,   // 淘片专线
-    'modu': 35,     // 魔都资源
-    'jingyu': 36,   // 鲸鱼资源
-    'moduys': 37,   // 魔都影视
-    'modu_dm': 38,  // 魔都动漫
+    // === 第三梯队：备用线路（部分切片挂在非标端口或开启防盗链，顺延保底） ===
+    'xinlang': 20,  // 新浪资源
+    'subo': 21,     // 速博资源
+    'jisu': 22,     // 极速资源
+    'ikun': 23,     // iKun资源
 };
 
 // ikanbot 线路标识映射
 const FLAG_TO_SOURCE_KEY: Record<string, string> = {
-    'jsm3u8': 'jisu',
-    'gsm3u8': 'guangsu',
-    'xlm3u8': 'xinlang',
     'wjm3u8': 'wujin',
+    'zuidam3u8': 'zuida',
+    'gsm3u8': 'guangsu',
+    'jsm3u8': 'jisu',
+    'xlm3u8': 'xinlang',
     'bfzym3u8': 'baofeng',
     'lzm3u8': 'liangzi',
     'dyttm3u8': 'dytt',
@@ -97,7 +86,6 @@ const FLAG_TO_SOURCE_KEY: Record<string, string> = {
     'ffm3u8': 'feifan',
     'hongniu': 'hongniu',
     'rym3u8': 'ruyi',
-    'zuidam3u8': 'zuida',
     'subm3u8': 'subo',
     'jinyingm3u8': 'jinying',
     'ukm3u8': 'youku',
@@ -135,7 +123,7 @@ export function SourceSelector({
 }: SourceSelectorProps) {
     const [isExpanded, setIsExpanded] = useState(false);
 
-    // 智能排序与强力去重：同一个 source 仅保留 1 个权威项，且第一梯队（光速/极速/新浪/暴风/无尽）永远锁定在 1~5 位
+    // 智能排序与强力去重：同一个 source 仅保留 1 个权威项，且第一梯队（无尽/最大/光速/魔都/360）永远锁定在 1~5 位
     const sortedSources = useMemo(() => {
         // 第一道核心防线：对传入数据进行去重，杜绝同一个 source 出现多次（如多个重复的海豚资源）
         const seen = new Set<string>();
@@ -163,25 +151,20 @@ export function SourceSelector({
         });
     }, [sources]);
 
-    // 当前选中的线路索引
-    const currentIndex = sortedSources.findIndex(s => s.source === currentSource);
-
     // 默认展示数量（精选前 2 条黄金线路，刚好排满 1 行极度省空间）
     const DEFAULT_VISIBLE_COUNT = 2;
     const shouldShowExpandButton = sortedSources.length > DEFAULT_VISIBLE_COUNT;
 
-    // 当前可见线路：若已展开显示全部；未展开时严格保持 2 条精选线路
+    // 当前可见线路：若已展开显示全部；未展开时严格保持 2 条精选线路（第 1 位永远是当前正在播放的线路，第 2 位是推荐备选线路）
     const visibleSources = useMemo(() => {
         if (isExpanded || !shouldShowExpandButton) {
             return sortedSources;
         }
-        // 若当前播放的线路在前 2 条内，直接展示前 2 条
-        // 若当前播放的线路在第 2 条之后，展示 [第1梯队首选源, 当前播放线路]，确保当前项不失焦且绝对保持 2 条
-        if (currentIndex < DEFAULT_VISIBLE_COUNT || currentIndex === -1) {
-            return sortedSources.slice(0, DEFAULT_VISIBLE_COUNT);
-        }
-        return [sortedSources[0], sortedSources[currentIndex]];
-    }, [sortedSources, isExpanded, shouldShowExpandButton, currentIndex]);
+        const currentItem = sortedSources.find(s => s.source === currentSource) || sortedSources[0];
+        const alternateItem = sortedSources.find(s => s.source !== currentItem.source) || sortedSources[1];
+        
+        return [currentItem, alternateItem].filter(Boolean);
+    }, [sortedSources, isExpanded, shouldShowExpandButton, currentSource]);
 
     if (sortedSources.length <= 1) {
         return null;
@@ -227,7 +210,8 @@ export function SourceSelector({
                                  source.sourceName?.includes('红牛') ||
                                  source.sourceName?.includes('暴风');
                     const isBluRay = !is4K && (HD_BLURAY_SOURCES.has(cleanKey) || source.sourceName?.includes('蓝光'));
-                    const isTopRecommended = index === 0;
+                    const originalIndex = sortedSources.findIndex(s => s.source === source.source);
+                    const rankNumber = originalIndex !== -1 ? originalIndex + 1 : index + 1;
 
                     return (
                         <button
@@ -244,7 +228,7 @@ export function SourceSelector({
                             `}
                             title={source.sourceName || source.source}
                         >
-                            {/* 左侧：序号与线路名称 */}
+                            {/* 左侧：状态圆点/序号与线路名称 */}
                             <div className="flex items-center gap-1.5 min-w-0 flex-1">
                                 {isCurrent ? (
                                     <span className="relative flex h-2 w-2 shrink-0">
@@ -253,7 +237,7 @@ export function SourceSelector({
                                     </span>
                                 ) : (
                                     <span className="text-[10px] text-white/40 font-mono shrink-0">
-                                        {index + 1}.
+                                        {rankNumber}.
                                     </span>
                                 )}
                                 <span className="truncate font-semibold text-[11px] sm:text-xs">
@@ -261,7 +245,7 @@ export function SourceSelector({
                                 </span>
                             </div>
 
-                            {/* 右侧徽章（4K / 蓝光 / 首选） */}
+                            {/* 右侧徽章（4K / 蓝光 / 备用 / 首选） */}
                             <div className="flex items-center gap-1 shrink-0 ml-1">
                                 {is4K ? (
                                     <span className="text-[9px] font-black px-1.5 py-0.2 bg-amber-400 text-black rounded shadow-xs">
@@ -271,7 +255,11 @@ export function SourceSelector({
                                     <span className="text-[9px] font-bold px-1.5 py-0.2 bg-sky-500/20 text-sky-300 border border-sky-400/40 rounded">
                                         蓝光
                                     </span>
-                                ) : isTopRecommended && !isCurrent ? (
+                                ) : !isExpanded && index === 1 ? (
+                                    <span className="text-[9px] font-bold px-1 py-0.2 bg-purple-500/20 text-purple-300 border border-purple-400/40 rounded">
+                                        备用
+                                    </span>
+                                ) : originalIndex === 0 && !isCurrent ? (
                                     <span className="text-[9px] font-bold px-1 py-0.2 bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded">
                                         首选
                                     </span>

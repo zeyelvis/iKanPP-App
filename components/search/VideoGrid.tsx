@@ -150,12 +150,18 @@ export const VideoGrid = memo(function VideoGrid({
           return aIsDeriv ? 1 : -1;
         }
 
-        // 黄金健康骨干源优先（片库庞大且 443 端口稳定：wujin, zuida, guangsu, modu, zy360 优先作为代表源）
-        const HEALTHY_SOURCES = new Set(['wujin', 'zuida', 'guangsu', 'modu', 'zy360']);
-        const aIsHealthy = HEALTHY_SOURCES.has(a.source);
-        const bIsHealthy = HEALTHY_SOURCES.has(b.source);
-        if (aIsHealthy !== bIsHealthy) {
-          return aIsHealthy ? -1 : 1;
+        // 黄金健康骨干源梯队优先（无尽1 > 最大2 > 光速3 > 魔都4 > 360 5）
+        const SOURCE_PRIORITY_ORDER: Record<string, number> = {
+          wujin: 1,
+          zuida: 2,
+          guangsu: 3,
+          modu: 4,
+          zy360: 5,
+        };
+        const pA = SOURCE_PRIORITY_ORDER[a.source] ?? 99;
+        const pB = SOURCE_PRIORITY_ORDER[b.source] ?? 99;
+        if (pA !== pB) {
+          return pA - pB;
         }
 
         // 存在非标端口切片或旧域名 404 风险的源尽量不作为首选代表源
