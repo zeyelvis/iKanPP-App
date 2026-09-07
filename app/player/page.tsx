@@ -161,8 +161,8 @@ function PlayerContent() {
         const targetAnalysis = analyzeTitle(title);
         const targetYear = expectedYear ? parseInt(expectedYear, 10) : null;
 
-        // 第一梯队顶级秒播大源白名单（具有超高优先级起播权，全量 443 端口健康源）
-        const TOP_TIER_SOURCES = new Set(['guangsu', 'baofeng', 'xinlang', 'wujin', 'subo']);
+        // 第一梯队顶级秒播大源白名单（具有超高优先级起播权，实测全量 443 端口稳定健康源）
+        const TOP_TIER_SOURCES = new Set(['wujin', 'zuida', 'baofeng', 'guangsu']);
 
         let ikanbotDone = false;
         let ikanbotFound = false;
@@ -360,8 +360,14 @@ function PlayerContent() {
                   if (typeName.includes('动画') || typeName.includes('动漫')) {
                     qualityScore += 60;
                   }
-                  // 极速资源切片普遍部署在非标 :999 端口且缺少 OPTIONS 预检支持，适度降权以优先保障 443 健康源秒播
-                  if (v.source === 'jisu') qualityScore -= 60;
+                  // 对全量标准 443 端口切片且极高存活率的无尽资源 (wujin) 与最大资源 (zuida) 给予黄金秒播加分
+                  if (v.source === 'wujin' || v.source === 'zuida') qualityScore += 80;
+
+                  // 对切片经常部署在非标端口（如 :999, :9999, :65, :18443）的源适度降权，避免抢跑故障
+                  const NON_STANDARD_PORT_SOURCES = new Set(['jisu', 'xinlang', 'subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
+                  if (NON_STANDARD_PORT_SOURCES.has(v.source)) {
+                    qualityScore -= 60;
+                  }
 
                   // 总得分
                   const totalScore = nameScore + yearScore + qualityScore;
@@ -520,10 +526,21 @@ function PlayerContent() {
     if (currentActiveSource) {
       failedSourcesRef.current.add(currentActiveSource);
     }
-    // 1. 尝试在已知备选线路中寻找未失败的健康源
-    const candidate = knownSources.find(
+    // 1. 尝试在已知备选线路中寻找未失败的健康源（优先选择 443 纯净健康源）
+    const validCandidates = knownSources.filter(
       s => s.source && s.source !== currentActiveSource && !failedSourcesRef.current.has(s.source)
     );
+    const candidate = validCandidates.sort((a, b) => {
+      const topSet = new Set(['wujin', 'zuida']);
+      const aTop = topSet.has(a.source);
+      const bTop = topSet.has(b.source);
+      if (aTop !== bTop) return aTop ? -1 : 1;
+      const badSet = new Set(['jisu', 'xinlang', 'subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
+      const aBad = badSet.has(a.source);
+      const bBad = badSet.has(b.source);
+      if (aBad !== bBad) return aBad ? 1 : -1;
+      return 0;
+    })[0];
     if (candidate) {
       console.info(`[Auto-Fallback] 当前线路(${currentActiveSource})不可用，自动切换至备选线路: ${candidate.sourceName}`);
       const params = new URLSearchParams();
@@ -825,10 +842,21 @@ function PlayerContent() {
       failedSourcesRef.current.add(currentActiveSource);
     }
 
-    // 在已发现的可用源中寻找尚未失败的其他健康线路
-    const candidate = groupedSources.find(
+    // 在已发现的可用源中寻找尚未失败的其他健康线路（优先选择 443 纯净健康源）
+    const validCandidates = groupedSources.filter(
       (s) => s.source && s.source !== currentActiveSource && !failedSourcesRef.current.has(s.source)
     );
+    const candidate = validCandidates.sort((a, b) => {
+      const topSet = new Set(['wujin', 'zuida']);
+      const aTop = topSet.has(a.source);
+      const bTop = topSet.has(b.source);
+      if (aTop !== bTop) return aTop ? -1 : 1;
+      const badSet = new Set(['jisu', 'xinlang', 'subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
+      const aBad = badSet.has(a.source);
+      const bBad = badSet.has(b.source);
+      if (aBad !== bBad) return aBad ? 1 : -1;
+      return 0;
+    })[0];
 
     if (candidate) {
       console.info(`[Auto-Fallback] 线路 ${currentActiveSource} 异常，正在自动无缝切换至健康线路: ${candidate.sourceName} (${candidate.source})`);
