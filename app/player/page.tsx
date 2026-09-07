@@ -161,8 +161,8 @@ function PlayerContent() {
         const targetAnalysis = analyzeTitle(title);
         const targetYear = expectedYear ? parseInt(expectedYear, 10) : null;
 
-        // 第一梯队顶级秒播大源白名单（具有超高优先级起播权，实测全量 443 端口稳定健康源）
-        const TOP_TIER_SOURCES = new Set(['wujin', 'zuida', 'baofeng', 'guangsu']);
+        // 第一梯队顶级秒播大源白名单（片库庞大且 443 端口稳定存活的大型骨干源）
+        const TOP_TIER_SOURCES = new Set(['wujin', 'zuida', 'guangsu', 'modu', 'zy360']);
 
         let ikanbotDone = false;
         let ikanbotFound = false;
@@ -257,6 +257,11 @@ function PlayerContent() {
                     remarks.includes('舞台剧') ||
                     typeName.includes('舞台剧')
                   );
+
+                  // 1.2 过滤已知彻底废弃注销的死链切片域名（如暴风早期已报废的 bvvvvvvvvv1f.com，100% 404）
+                  const playUrl = v.vod_play_url || '';
+                  const isDeadUrl = playUrl.includes('bvvvvvvvvv1f.com');
+                  if (isDeadUrl) continue;
 
                   // 2. 季数与片名深度解析
                   const candAnalysis = analyzeTitle(rawName);
@@ -531,11 +536,11 @@ function PlayerContent() {
       s => s.source && s.source !== currentActiveSource && !failedSourcesRef.current.has(s.source)
     );
     const candidate = validCandidates.sort((a, b) => {
-      const topSet = new Set(['wujin', 'zuida']);
+      const topSet = new Set(['wujin', 'zuida', 'guangsu', 'modu', 'zy360']);
       const aTop = topSet.has(a.source);
       const bTop = topSet.has(b.source);
       if (aTop !== bTop) return aTop ? -1 : 1;
-      const badSet = new Set(['jisu', 'xinlang', 'subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
+      const badSet = new Set(['baofeng', 'jisu', 'xinlang', 'subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
       const aBad = badSet.has(a.source);
       const bBad = badSet.has(b.source);
       if (aBad !== bBad) return aBad ? 1 : -1;
@@ -847,11 +852,11 @@ function PlayerContent() {
       (s) => s.source && s.source !== currentActiveSource && !failedSourcesRef.current.has(s.source)
     );
     const candidate = validCandidates.sort((a, b) => {
-      const topSet = new Set(['wujin', 'zuida']);
+      const topSet = new Set(['wujin', 'zuida', 'guangsu', 'modu', 'zy360']);
       const aTop = topSet.has(a.source);
       const bTop = topSet.has(b.source);
       if (aTop !== bTop) return aTop ? -1 : 1;
-      const badSet = new Set(['jisu', 'xinlang', 'subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
+      const badSet = new Set(['baofeng', 'jisu', 'xinlang', 'subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
       const aBad = badSet.has(a.source);
       const bBad = badSet.has(b.source);
       if (aBad !== bBad) return aBad ? 1 : -1;
@@ -881,24 +886,9 @@ function PlayerContent() {
       return true; // 成功接管自愈
     }
 
-    // 兜底自愈：若无已缓存备用线路，但有片名 title，自动剥离失效 ID 启动全网并发搜索自愈！
-    if (title && (videoId || source)) {
-      console.info(`[Auto-Fallback] 线路 ${currentActiveSource} 播放失败且无备选源，自动剥离失效 ID 启动全网重搜自愈: 《${title}》`);
-      const params = new URLSearchParams();
-      params.set('title', title);
-      if (expectedType) params.set('type', expectedType);
-      if (expectedYear) params.set('year', expectedYear);
-      params.set('episode', currentEpisode.toString());
-      if (playerTimeRef.current > 1) {
-        params.set('t', Math.floor(playerTimeRef.current).toString());
-      }
-      if (isPremium) params.set('premium', '1');
-      router.replace(`/player?${params.toString()}`, { scroll: false });
-      return true;
-    }
-
-    return false; // 无其他可用备用源，交给错误提示组件
-  }, [currentSourceId, source, groupedSources, title, expectedType, expectedYear, currentEpisode, isPremium, router, videoId]);
+    // 若无其他已发现的备用线路，返回 false 让 VideoPlayer 自动尝试智能代理 (proxyMode: retry) 救活非标端口切片或跨域被拦截的片源
+    return false;
+  }, [currentSourceId, source, groupedSources, title, expectedType, expectedYear, currentEpisode, isPremium, router]);
 
 
 

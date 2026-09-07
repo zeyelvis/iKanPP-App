@@ -150,16 +150,16 @@ export const VideoGrid = memo(function VideoGrid({
           return aIsDeriv ? 1 : -1;
         }
 
-        // 黄金健康源优先（443 端口纯净切片源：wujin, zuida 优先作为首选代表源）
-        const HEALTHY_SOURCES = new Set(['wujin', 'zuida']);
+        // 黄金健康骨干源优先（片库庞大且 443 端口稳定：wujin, zuida, guangsu, modu, zy360 优先作为代表源）
+        const HEALTHY_SOURCES = new Set(['wujin', 'zuida', 'guangsu', 'modu', 'zy360']);
         const aIsHealthy = HEALTHY_SOURCES.has(a.source);
         const bIsHealthy = HEALTHY_SOURCES.has(b.source);
         if (aIsHealthy !== bIsHealthy) {
           return aIsHealthy ? -1 : 1;
         }
 
-        // 存在非标端口切片风险的源尽量不作为首选代表源
-        const RISKY_SOURCES = new Set(['jisu', 'xinlang', 'subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
+        // 存在非标端口切片或旧域名 404 风险的源尽量不作为首选代表源
+        const RISKY_SOURCES = new Set(['baofeng', 'jisu', 'xinlang', 'subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
         const aIsRisky = RISKY_SOURCES.has(a.source);
         const bIsRisky = RISKY_SOURCES.has(b.source);
         if (aIsRisky !== bIsRisky) {
