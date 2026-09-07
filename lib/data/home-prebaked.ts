@@ -40,7 +40,7 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_movie_1",
                 "title": "特立独行",
-                "rate": "5.7",
+                "rate": "5.8",
                 "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
                 "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
@@ -78,7 +78,7 @@ export const PREBAKED_HOME_DATA: {
                 "title": "玩具总动员5",
                 "rate": "8.3",
                 "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/8sSKdEmlmqF4kJUd28SqthXC4yZ.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
                 "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
                 "year": "2026",
                 "types": [
@@ -96,7 +96,7 @@ export const PREBAKED_HOME_DATA: {
                 "title": "寒战1994",
                 "rate": "6.5",
                 "cover": "https://image.tmdb.org/t/p/w500/9C3ZxhGJvdpxmNC5PhkBMwzTMRT.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/92W00NvclecWWsXDjCwr5f23KSk.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/q2ErBUKeS85UXM32nzvW44E8sG4.jpg",
                 "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
                 "year": "2026",
                 "types": [
@@ -111,6 +111,23 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "id": "iyf_hero_tv_5",
+                "title": "交锋",
+                "rate": "7.7",
+                "cover": "https://image.tmdb.org/t/p/w500/ztbX4emuGwNnyJjLBMHqrGBS48B.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/pxnJeLSBdUikUOrWdNgrK1HQy2u.jpg",
+                "description": "洛杉矶警局一名坚韧不拔的警探执着地追捕犯下多起嚣张劫案的神偷 — 双方只有一人能够胜出。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至04集 | 共40集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_6",
                 "title": "生逢其时",
                 "rate": "9.0",
                 "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
@@ -121,17 +138,17 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至06集 | 共26集",
+                "episodes_info": "更新至07集 | 共26集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_6",
+                "id": "iyf_hero_tv_7",
                 "title": "重案六组:消失的警号",
                 "rate": "8.0",
                 "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/oF1HUvtlr1o8ndAj2cZBIKAn3gg.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/nr1uqvJs4kqtGcBTwIAew5OiSXI.jpg",
                 "description": "剧情核心围绕“消失的警号”展开，通过“老警号传承”设计致敬原版角色，并融入科技办案、新老刑侦理念碰撞等创新元素。",
                 "year": "2026",
                 "types": [
@@ -139,23 +156,6 @@ export const PREBAKED_HOME_DATA: {
                         "连续剧"
                 ],
                 "episodes_info": "更新至20集 | 共26集",
-                "type": "tv",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_tv_7",
-                "title": "早春晴朗",
-                "rate": "7.6",
-                "cover": "https://image.tmdb.org/t/p/w500/nLWFbYv1r99Yy7dWvjoxMRegoe0.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/oUFUvEMCBP80e4eYsfVfxC8n7ih.jpg",
-                "description": "这是一段十年交锋，敬于才华，合于性格、久于平等的禁忌之恋。北漂伊始的尚之桃与极具天赋的“鬼才”栾念狭路相逢。热烈勇敢的尚之桃亦步亦趋地蜕变成长，撬碎了栾念世故坚硬的心防，互相吸引的二人在都市丛林中极限拉扯、分分合合。爱情，就是用光所有勇气，再无遗憾。爱，则是互相修复，共同成长。但情和爱之间，她选择生存。当她独当一面，他收敛锋芒，势均力敌的他们将会为彼此写下了新的结局……",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "连续剧"
-                ],
-                "episodes_info": "更新至18集 | 共24集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -928,7 +928,7 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_movie_1",
                 "title": "特立独行",
-                "rate": "5.7",
+                "rate": "5.8",
                 "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
                 "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
@@ -966,7 +966,7 @@ export const PREBAKED_HOME_DATA: {
                 "title": "玩具总动员5",
                 "rate": "8.3",
                 "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/8sSKdEmlmqF4kJUd28SqthXC4yZ.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
                 "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
                 "year": "2026",
                 "types": [
@@ -984,7 +984,7 @@ export const PREBAKED_HOME_DATA: {
                 "title": "寒战1994",
                 "rate": "6.5",
                 "cover": "https://image.tmdb.org/t/p/w500/9C3ZxhGJvdpxmNC5PhkBMwzTMRT.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/92W00NvclecWWsXDjCwr5f23KSk.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/q2ErBUKeS85UXM32nzvW44E8sG4.jpg",
                 "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
                 "year": "2026",
                 "types": [
@@ -999,6 +999,23 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "id": "iyf_hero_tv_5",
+                "title": "交锋",
+                "rate": "7.7",
+                "cover": "https://image.tmdb.org/t/p/w500/ztbX4emuGwNnyJjLBMHqrGBS48B.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/pxnJeLSBdUikUOrWdNgrK1HQy2u.jpg",
+                "description": "洛杉矶警局一名坚韧不拔的警探执着地追捕犯下多起嚣张劫案的神偷 — 双方只有一人能够胜出。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至04集 | 共40集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_6",
                 "title": "生逢其时",
                 "rate": "9.0",
                 "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
@@ -1009,17 +1026,17 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至06集 | 共26集",
+                "episodes_info": "更新至07集 | 共26集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_6",
+                "id": "iyf_hero_tv_7",
                 "title": "重案六组:消失的警号",
                 "rate": "8.0",
                 "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/oF1HUvtlr1o8ndAj2cZBIKAn3gg.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/nr1uqvJs4kqtGcBTwIAew5OiSXI.jpg",
                 "description": "剧情核心围绕“消失的警号”展开，通过“老警号传承”设计致敬原版角色，并融入科技办案、新老刑侦理念碰撞等创新元素。",
                 "year": "2026",
                 "types": [
@@ -1027,23 +1044,6 @@ export const PREBAKED_HOME_DATA: {
                         "连续剧"
                 ],
                 "episodes_info": "更新至20集 | 共26集",
-                "type": "tv",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_tv_7",
-                "title": "早春晴朗",
-                "rate": "7.6",
-                "cover": "https://image.tmdb.org/t/p/w500/nLWFbYv1r99Yy7dWvjoxMRegoe0.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/oUFUvEMCBP80e4eYsfVfxC8n7ih.jpg",
-                "description": "这是一段十年交锋，敬于才华，合于性格、久于平等的禁忌之恋。北漂伊始的尚之桃与极具天赋的“鬼才”栾念狭路相逢。热烈勇敢的尚之桃亦步亦趋地蜕变成长，撬碎了栾念世故坚硬的心防，互相吸引的二人在都市丛林中极限拉扯、分分合合。爱情，就是用光所有勇气，再无遗憾。爱，则是互相修复，共同成长。但情和爱之间，她选择生存。当她独当一面，他收敛锋芒，势均力敌的他们将会为彼此写下了新的结局……",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "连续剧"
-                ],
-                "episodes_info": "更新至18集 | 共24集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
