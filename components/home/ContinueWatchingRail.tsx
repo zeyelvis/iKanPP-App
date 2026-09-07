@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { getSourceName } from '@/lib/utils/source-names';
 
 export function ContinueWatchingRail() {
   const router = useRouter();
@@ -17,9 +18,30 @@ export function ContinueWatchingRail() {
 
   const handleResumePlay = (item: any) => {
     const params = new URLSearchParams();
+    if (item.videoId !== undefined && item.videoId !== null && item.videoId !== '') {
+      params.set('id', String(item.videoId));
+    }
     params.set('title', item.title);
     if (item.source) params.set('source', item.source);
-    if (item.episodeIndex !== undefined) params.set('ep', String(item.episodeIndex));
+    if (item.episodeIndex !== undefined && item.episodeIndex !== null) {
+      params.set('episode', String(item.episodeIndex));
+    }
+    if (item.playbackPosition && item.playbackPosition > 1) {
+      params.set('t', Math.floor(item.playbackPosition).toString());
+    }
+    // 携带多线路切源数据
+    if (item.sourceMap && Object.keys(item.sourceMap).length > 1) {
+      const groupData = Object.entries(item.sourceMap).map(([sourceName, vid]) => ({
+        id: vid as string,
+        source: sourceName,
+        sourceName: getSourceName(sourceName),
+      }));
+      params.set('groupedSources', JSON.stringify(groupData));
+    }
+    if (item.type_name) {
+      const isTv = item.type_name.includes('剧') || item.type_name.includes('动漫') || (item.episodeIndex && item.episodeIndex > 0);
+      params.set('type', isTv ? 'tv' : 'movie');
+    }
     if (item.isPremium) params.set('premium', '1');
     router.push(`/player?${params.toString()}`);
   };

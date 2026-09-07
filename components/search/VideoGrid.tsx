@@ -140,8 +140,15 @@ export const VideoGrid = memo(function VideoGrid({
     });
 
     const groupList = Array.from(groups.entries()).map(([, groupVideos]) => {
-      // Sort by latency (lowest first) 
+      // 优先选取正片作为卡片代表源（严禁衍生音乐剧、舞台剧、解说抢占代表位），其次按延迟最优排序
       const sorted = [...groupVideos].sort((a, b) => {
+        const aSub = ((a as any).vod_sub || '').toLowerCase();
+        const bSub = ((b as any).vod_sub || '').toLowerCase();
+        const aIsDeriv = aSub.includes('musical') || aSub.includes('broadway') || a.vod_name.includes('音乐剧') || a.vod_name.includes('舞台剧') || a.type_name?.includes('解说');
+        const bIsDeriv = bSub.includes('musical') || bSub.includes('broadway') || b.vod_name.includes('音乐剧') || b.vod_name.includes('舞台剧') || b.type_name?.includes('解说');
+        if (aIsDeriv !== bIsDeriv) {
+          return aIsDeriv ? 1 : -1;
+        }
         if (a.latency === undefined) return 1;
         if (b.latency === undefined) return -1;
         return a.latency - b.latency;

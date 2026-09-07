@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Play, X, Clock, Sparkles } from 'lucide-react';
 import { useHistoryStore } from '@/lib/store/history-store';
 import type { VideoHistoryItem } from '@/lib/types';
+import { getSourceName } from '@/lib/utils/source-names';
 
 export function ResumePlayBubble() {
   const router = useRouter();
@@ -62,6 +63,22 @@ export function ResumePlayBubble() {
       source: latestItem.source,
       episode: String(latestItem.episodeIndex ?? 0),
     });
+    if (latestItem.playbackPosition && latestItem.playbackPosition > 1) {
+      query.set('t', Math.floor(latestItem.playbackPosition).toString());
+    }
+    // 携带多线路切源数据
+    if (latestItem.sourceMap && Object.keys(latestItem.sourceMap).length > 1) {
+      const groupData = Object.entries(latestItem.sourceMap).map(([sourceName, vid]) => ({
+        id: vid as string,
+        source: sourceName,
+        sourceName: getSourceName(sourceName),
+      }));
+      query.set('groupedSources', JSON.stringify(groupData));
+    }
+    if (latestItem.type_name) {
+      const isTv = latestItem.type_name.includes('剧') || latestItem.type_name.includes('动漫') || (latestItem.episodeIndex !== undefined && latestItem.episodeIndex > 0);
+      query.set('type', isTv ? 'tv' : 'movie');
+    }
     if (latestItem.isPremium) {
       query.set('premium', '1');
     }

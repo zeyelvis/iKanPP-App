@@ -27,6 +27,8 @@ interface VideoPlayerProps {
   nextEpisodeUrl?: string | null;
   // Resolution callback
   onResolutionDetected?: (info: import('./hooks/useVideoResolution').VideoResolutionInfo) => void;
+  // 零成本播放失败自动切源回调
+  onPlaybackError?: (error: string) => boolean | void;
 }
 
 export function VideoPlayer({
@@ -43,6 +45,7 @@ export function VideoPlayer({
   externalTimeRef,
   nextEpisodeUrl,
   onResolutionDetected,
+  onPlaybackError,
 }: VideoPlayerProps) {
   const [videoError, setVideoError] = useState<string>('');
   const [useProxy, setUseProxy] = useState(false);
@@ -139,6 +142,12 @@ export function VideoPlayer({
   const handleVideoError = (error: string) => {
     console.error('Video playback error:', error);
 
+    // 优先尝试纯前端零成本自动切换到其他可用线路（自愈机制，0 服务器成本）
+    if (onPlaybackError && onPlaybackError(error)) {
+      setVideoError('');
+      return;
+    }
+
     // Auto-retry with proxy if:
     // 1. Not already using proxy
     // 2. Proxy mode is NOT 'none' (so 'retry' or potentially 'always' if it somehow failed locally)
@@ -179,7 +188,7 @@ export function VideoPlayer({
     : playUrl;
 
   if (!playUrl) {
-    return <VideoPlayerEmpty />;
+    return <VideoPlayerEmpty videoTitle={videoTitle} isPremium={isPremium} />;
   }
 
   return (

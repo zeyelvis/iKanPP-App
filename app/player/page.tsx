@@ -82,7 +82,7 @@ function PlayerContent() {
   const videoId = searchParams.get('id');
   const source = searchParams.get('source');
   const title = searchParams.get('title');
-  const episodeParam = searchParams.get('episode');
+  const episodeParam = searchParams.get('episode') || searchParams.get('ep');
   const epCountParam = searchParams.get('epCount');
   const groupedSourcesParam = searchParams.get('groupedSources');
   // 消歧义参数：从首页传入的内容类型和年份
@@ -93,13 +93,14 @@ function PlayerContent() {
   const [loadingRelated, setLoadingRelated] = useState(true);
 
   // === Title-only mode: auto-search all sources and redirect to best match ===
-  // Initial state: if we have title but no id/source, we're already in search mode
-  const [titleSearching, setTitleSearching] = useState(() => !videoId && !source && !!title);
+  // 核心自愈防线：只要有 title 且缺少 videoId，无论是否附带 source，都必须启动自动匹配寻找有效 videoId
+  const needsTitleSearch = !videoId && !!title;
+  const [titleSearching, setTitleSearching] = useState(() => needsTitleSearch);
   const [titleSearchError, setTitleSearchError] = useState('');
 
   useEffect(() => {
-    // Only trigger when we have a title but no video ID/source
-    if (videoId || source || !title) return;
+    // 只有当 videoId 存在（能直接按 ID 拉取详情），或者连 title 都没有时，才跳过搜索
+    if (videoId || !title) return;
 
     let cancelled = false;
     setTitleSearching(true);
@@ -110,6 +111,14 @@ function PlayerContent() {
     let allSources = sourcesForMode?.filter((s: VideoSource) => s.enabled !== false) || [];
     if (allSources.length === 0) {
       allSources = isPremium ? (PREMIUM_SOURCES as VideoSource[]) : (DEFAULT_SOURCES as VideoSource[]);
+    }
+
+    // 若 URL 附带了 source，优先提升该源为第一检索目标以实现精准续播
+    if (source) {
+      const preferredSource = allSources.find(s => s.id === source);
+      if (preferredSource) {
+        allSources = [preferredSource, ...allSources.filter(s => s.id !== source)];
+      }
     }
 
     // 清洗片名（去除书名号、括号说明、第X季等干扰词）
@@ -152,8 +161,8 @@ function PlayerContent() {
         const targetAnalysis = analyzeTitle(title);
         const targetYear = expectedYear ? parseInt(expectedYear, 10) : null;
 
-        // 第一梯队顶级秒播大源白名单（具有超高优先级起播权）
-        const TOP_TIER_SOURCES = new Set(['guangsu', 'jisu', 'xinlang', 'baofeng', 'wujin']);
+        // 第一梯队顶级秒播大源白名单（具有超高优先级起播权，全量 443 端口健康源）
+        const TOP_TIER_SOURCES = new Set(['guangsu', 'baofeng', 'xinlang', 'wujin', 'subo']);
 
         let ikanbotDone = false;
         let ikanbotFound = false;
@@ -190,6 +199,9 @@ function PlayerContent() {
                   params.set('id', playVodId);
                   params.set('source', playSourceId);
                   params.set('title', title);
+                  if (episodeParam) {
+                    params.set('episode', episodeParam);
+                  }
                   const resolvedType = expectedType || (isSeriesItem ? 'tv' : 'movie');
                   params.set('type', resolvedType);
                   if (expectedYear || ikanData.vod_year) {
@@ -232,6 +244,19 @@ function PlayerContent() {
                   // 1. 过滤明显解说或预告
                   const isTrailer = remarks.includes('预告') || rawName.includes('预告') || remarks.includes('片花') || rawName.includes('片花');
                   const isCommentary = typeName.includes('解说') || rawName.includes('解说');
+
+                  // 1.1 过滤未指定时的衍生音乐剧/舞台剧/百老汇演出（如将 2025 音乐剧误当 2013 动画片）
+                  const subTitle = (v.vod_sub || '').toLowerCase();
+                  const targetSpecifiedMusical = title.includes('音乐剧') || title.includes('舞台剧') || title.toLowerCase().includes('musical');
+                  const isMusical = !targetSpecifiedMusical && (
+                    subTitle.includes('musical') ||
+                    subTitle.includes('broadway') ||
+                    rawName.includes('音乐剧') ||
+                    rawName.includes('舞台剧') ||
+                    remarks.includes('音乐剧') ||
+                    remarks.includes('舞台剧') ||
+                    typeName.includes('舞台剧')
+                  );
 
                   // 2. 季数与片名深度解析
                   const candAnalysis = analyzeTitle(rawName);
@@ -329,12 +354,20 @@ function PlayerContent() {
                   if (remarks.includes('1080') || remarks.includes('hd') || remarks.includes('正片')) qualityScore += 20;
                   if (remarks.includes('tc') || remarks.includes('抢先')) qualityScore += 10;
                   if (isTrailer || isCommentary) qualityScore -= 500;
+                  // 严禁未指定时的音乐剧/舞台剧截胡正规电影/动画正片（如将 2025 音乐剧当成 2013 动画长片）
+                  if (isMusical) qualityScore -= 400;
+                  // 针对动画片/动漫电影给予正向优先加分，满足主流动画观众诉求
+                  if (typeName.includes('动画') || typeName.includes('动漫')) {
+                    qualityScore += 60;
+                  }
+                  // 极速资源切片普遍部署在非标 :999 端口且缺少 OPTIONS 预检支持，适度降权以优先保障 443 健康源秒播
+                  if (v.source === 'jisu') qualityScore -= 60;
 
                   // 总得分
                   const totalScore = nameScore + yearScore + qualityScore;
 
-                  // 记录为可用来源供清晰度切换（必须严格精确吻合核心片名，严禁预告/解说/严重年代冲突老片）
-                  const isStrictCandidate = !isTrailer && !isCommentary && !isYearMismatched && isExactName && 
+                  // 记录为可用来源供清晰度切换（必须严格精确吻合核心片名，严禁预告/解说/非目标音乐剧/严重年代冲突老片）
+                  const isStrictCandidate = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isExactName && 
                     (isSeriesItem || !targetYear || !candYear || Math.abs(candYear - targetYear) <= 1);
 
                   if (isStrictCandidate) {
@@ -361,7 +394,7 @@ function PlayerContent() {
                   }
 
                   // 7. 自动播放重定向决策（Auto-Redirect Decision）
-                  const isQualified = !isTrailer && !isCommentary && !isYearMismatched && isExactName && totalScore >= 80;
+                  const isQualified = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isExactName && totalScore >= 80;
 
                   if (isQualified && !redirected && !cancelled) {
                     // 判断是否具备立即秒播资格：
@@ -382,6 +415,9 @@ function PlayerContent() {
                       params.set('id', String(v.vod_id));
                       params.set('source', v.source);
                       params.set('title', title);
+                      if (episodeParam) {
+                        params.set('episode', episodeParam);
+                      }
                       // 智能类型纠偏：如果是剧集则打上 tv，避免首页标签误打成 movie 导致选集列表渲染问题
                       const resolvedType = isSeriesItem ? 'tv' : (expectedType || 'movie');
                       params.set('type', resolvedType);
@@ -426,6 +462,9 @@ function PlayerContent() {
               params.set('id', String(bestVideo.vod_id));
               params.set('source', bestVideo.source);
               params.set('title', title);
+              if (episodeParam) {
+                params.set('episode', episodeParam);
+              }
               const resolvedType = pendingBestCandidate.isSeries ? 'tv' : (expectedType || 'movie');
               params.set('type', resolvedType);
               if (expectedYear) params.set('year', expectedYear);
@@ -453,7 +492,7 @@ function PlayerContent() {
     })();
 
     return () => { cancelled = true; };
-  }, [videoId, source, title, isPremium, router, expectedType, expectedYear]);
+  }, [videoId, source, title, isPremium, router, expectedType, expectedYear, episodeParam]);
 
   // Track settings - use mode-specific store
   const modeStore = isPremium ? premiumModeSettingsStore : settingsStore;
@@ -468,6 +507,51 @@ function PlayerContent() {
     setIsReversed(modeStore.getSettings().episodeReverseOrder);
   }, []);
 
+  // 零成本播放失败与不可用自愈：记录当前播放会话中失败的线路
+  const failedSourcesRef = useRef<Set<string>>(new Set());
+
+  // 当指定线路或指定 videoId 失效/下架/404/无剧集时的全自动自愈处理
+  const handleSourceUnavailable = useCallback(() => {
+    let knownSources: SourceInfo[] = [];
+    if (groupedSourcesParam) {
+      try { knownSources = JSON.parse(groupedSourcesParam); } catch {}
+    }
+    const currentActiveSource = source || '';
+    if (currentActiveSource) {
+      failedSourcesRef.current.add(currentActiveSource);
+    }
+    // 1. 尝试在已知备选线路中寻找未失败的健康源
+    const candidate = knownSources.find(
+      s => s.source && s.source !== currentActiveSource && !failedSourcesRef.current.has(s.source)
+    );
+    if (candidate) {
+      console.info(`[Auto-Fallback] 当前线路(${currentActiveSource})不可用，自动切换至备选线路: ${candidate.sourceName}`);
+      const params = new URLSearchParams();
+      params.set('id', String(candidate.id));
+      params.set('source', candidate.source);
+      params.set('title', title || '');
+      if (expectedType) params.set('type', expectedType);
+      if (expectedYear) params.set('year', expectedYear);
+      if (episodeParam) params.set('episode', episodeParam);
+      if (knownSources.length > 0) params.set('groupedSources', JSON.stringify(knownSources));
+      if (isPremium) params.set('premium', '1');
+      router.replace(`/player?${params.toString()}`, { scroll: false });
+      return;
+    }
+
+    // 2. 无可用备选源，但有 title：说明当前 URL 中的 id 已失效，自动剥离 id 启动全网并发搜索自愈！
+    if (title && (videoId || source)) {
+      console.info(`[Auto-Fallback] 当前影片 ID (${videoId}) 已失效，自动启动全网按片名《${title}》并发重搜自愈！`);
+      const params = new URLSearchParams();
+      params.set('title', title);
+      if (expectedType) params.set('type', expectedType);
+      if (expectedYear) params.set('year', expectedYear);
+      if (episodeParam) params.set('episode', episodeParam);
+      if (isPremium) params.set('premium', '1');
+      router.replace(`/player?${params.toString()}`, { scroll: false });
+    }
+  }, [groupedSourcesParam, source, title, expectedType, expectedYear, episodeParam, isPremium, router, videoId]);
+
   // useVideoPlayer must be called unconditionally (React hooks rules)
   // When videoId/source are null (title-only mode), pass empty strings - the hook will just be idle
   const {
@@ -480,7 +564,7 @@ function PlayerContent() {
     setPlayUrl,
     setVideoError,
     fetchVideoDetails,
-  } = useVideoPlayer(videoId || '', source || '', episodeParam, isReversed);
+  } = useVideoPlayer(videoId || '', source || '', episodeParam, isReversed, handleSourceUnavailable);
 
   // Parse grouped sources if available
   const [discoveredSources, setDiscoveredSources] = useState<SourceInfo[]>([]);
@@ -735,6 +819,60 @@ function PlayerContent() {
   const playerTimeRef = useRef(0);
 
 
+  const handlePlaybackError = useCallback((_error: string) => {
+    const currentActiveSource = currentSourceId || source || '';
+    if (currentActiveSource) {
+      failedSourcesRef.current.add(currentActiveSource);
+    }
+
+    // 在已发现的可用源中寻找尚未失败的其他健康线路
+    const candidate = groupedSources.find(
+      (s) => s.source && s.source !== currentActiveSource && !failedSourcesRef.current.has(s.source)
+    );
+
+    if (candidate) {
+      console.info(`[Auto-Fallback] 线路 ${currentActiveSource} 异常，正在自动无缝切换至健康线路: ${candidate.sourceName} (${candidate.source})`);
+      const params = new URLSearchParams();
+      params.set('id', String(candidate.id));
+      params.set('source', candidate.source);
+      params.set('title', title || '');
+      if (expectedType) params.set('type', expectedType);
+      if (expectedYear) params.set('year', expectedYear);
+      params.set('episode', currentEpisode.toString());
+      if (playerTimeRef.current > 1) {
+        params.set('t', Math.floor(playerTimeRef.current).toString());
+      }
+      if (groupedSources.length > 0) {
+        params.set('groupedSources', JSON.stringify(groupedSources));
+      }
+      if (isPremium) {
+        params.set('premium', '1');
+      }
+      setCurrentSourceId(candidate.source);
+      router.replace(`/player?${params.toString()}`, { scroll: false });
+      return true; // 成功接管自愈
+    }
+
+    // 兜底自愈：若无已缓存备用线路，但有片名 title，自动剥离失效 ID 启动全网并发搜索自愈！
+    if (title && (videoId || source)) {
+      console.info(`[Auto-Fallback] 线路 ${currentActiveSource} 播放失败且无备选源，自动剥离失效 ID 启动全网重搜自愈: 《${title}》`);
+      const params = new URLSearchParams();
+      params.set('title', title);
+      if (expectedType) params.set('type', expectedType);
+      if (expectedYear) params.set('year', expectedYear);
+      params.set('episode', currentEpisode.toString());
+      if (playerTimeRef.current > 1) {
+        params.set('t', Math.floor(playerTimeRef.current).toString());
+      }
+      if (isPremium) params.set('premium', '1');
+      router.replace(`/player?${params.toString()}`, { scroll: false });
+      return true;
+    }
+
+    return false; // 无其他可用备用源，交给错误提示组件
+  }, [currentSourceId, source, groupedSources, title, expectedType, expectedYear, currentEpisode, isPremium, router, videoId]);
+
+
 
   // Add initial history entry when video data is loaded
   useEffect(() => {
@@ -937,6 +1075,7 @@ function PlayerContent() {
                 episodeName={videoData?.episodes?.[currentEpisode]?.name || ''}
                 externalTimeRef={playerTimeRef}
                 nextEpisodeUrl={nextEpisodeUrl}
+                onPlaybackError={handlePlaybackError}
               />
 
               {/* 桌面端完整详情 */}

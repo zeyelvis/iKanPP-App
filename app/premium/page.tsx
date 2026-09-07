@@ -38,18 +38,37 @@ function PremiumHomePage() {
     const handlePlayVideo = (video: any) => {
         const title = video?.vod_name || video?.title;
         if (title) {
-            const videoId = video?.vod_id ? String(video.vod_id) : '';
+            const rawId = video?.videoId ?? video?.vod_id;
+            const videoId = rawId !== undefined && rawId !== null ? String(rawId) : '';
             const source = video?.source || '';
             
             if (typeof window !== 'undefined') {
                 sessionStorage.setItem('ikanpp_playing_from_hub', '/premium');
             }
 
-            let playUrl = `/player?title=${encodeURIComponent(title)}&type=tv&premium=1&from=premium`;
+            const params = new URLSearchParams();
+            params.set('title', title);
+            params.set('type', 'tv');
+            params.set('premium', '1');
+            params.set('from', 'premium');
+
             if (videoId && source) {
-                playUrl += `&id=${encodeURIComponent(videoId)}&source=${encodeURIComponent(source)}`;
+                params.set('id', videoId);
+                params.set('source', source);
             }
-            router.push(playUrl);
+            if (video?.episodeIndex !== undefined && video?.episodeIndex !== null) {
+                params.set('episode', String(video.episodeIndex));
+            }
+            if (video?.sourceMap && Object.keys(video.sourceMap).length > 1) {
+                const groupData = Object.entries(video.sourceMap).map(([sName, vid]) => ({
+                    id: String(vid),
+                    source: sName,
+                    sourceName: sName,
+                }));
+                params.set('groupedSources', JSON.stringify(groupData));
+            }
+
+            router.push(`/player?${params.toString()}`);
         }
     };
 

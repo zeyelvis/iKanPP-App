@@ -98,20 +98,16 @@ export function useVideoPlayer(
       const data = await response.json();
 
       if (!response.ok) {
-        if (response.status === 404) {
-          setVideoError(data.error || '该视频源不可用。请返回并尝试其他来源。');
-          setLoading(false);
-          onSourceUnavailableRef.current?.();
-          return;
-        }
-        throw new Error(data.error || `HTTP ${response.status}: ${response.statusText}`);
+        setVideoError(data.error || '该视频源不可用。请返回并尝试其他来源。');
+        setLoading(false);
+        onSourceUnavailableRef.current?.();
+        return;
       }
 
       if (data.success && data.data) {
-        setVideoData(data.data);
-        setLoading(false);
-
         if (data.data.episodes && data.data.episodes.length > 0) {
+          setVideoData(data.data);
+          setLoading(false);
           // 智能选集：优先 HD/高清，避免 TC/抢先版
           const episodes = data.data.episodes;
           const latestIsReversed = isReversedRef.current;
@@ -166,6 +162,7 @@ export function useVideoPlayer(
       console.error('Failed to fetch video details:', error);
       setVideoError(error instanceof Error ? error.message : '加载视频详情失败。');
       setLoading(false);
+      onSourceUnavailableRef.current?.();
     }
   }, [videoId, source]);
 
@@ -216,6 +213,13 @@ export function useVideoPlayer(
       setCurrentEpisode(0);
       setPlayUrl('');
       fetchVideoDetails();
+    } else {
+      // 当没有 videoId 或 source（如进入按片名全网重搜自愈模式），彻底重置播放器状态
+      setVideoData(null);
+      setPlayUrl('');
+      setCurrentEpisode(0);
+      setVideoError('');
+      setLoading(false);
     }
   }, [videoId, source, fetchVideoDetails]);
 
