@@ -53,6 +53,18 @@ function setLocalRank(id: string, items: RankingItem[]) {
   } catch {}
 }
 
+function isSameList(a: any[], b: any[]): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    const tA = a[i]?.title;
+    const tB = b[i]?.title;
+    if (tA && tB && tA !== tB) return false;
+  }
+  return true;
+}
+
 export default function RankingClient() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(RANK_CATEGORIES[0]);
@@ -96,7 +108,10 @@ export default function RankingClient() {
         if (!res.ok) return;
         const data = await res.json();
         if (isMounted && data.subjects?.length) {
-          setItems(data.subjects);
+          setItems((prev) => {
+            if (isSameList(prev, data.subjects)) return prev;
+            return data.subjects;
+          });
           setLocalRank(activeTab.id, data.subjects);
         }
       } catch (err) {
@@ -183,7 +198,7 @@ export default function RankingClient() {
 
               return (
                 <div
-                  key={item.id || idx}
+                  key={item.title ? `rank-${item.title}` : (item.id || idx)}
                   className={`
                     group p-3 sm:p-4 rounded-2xl sm:rounded-3xl transition-all duration-300 flex items-center gap-3 sm:gap-5 border select-none
                     ${

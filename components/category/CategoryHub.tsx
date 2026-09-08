@@ -93,6 +93,18 @@ function setLocalCatHub(key: string, data: Record<string, RailMovie[]>) {
   } catch {}
 }
 
+function isSameList(a: any[], b: any[]): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    const tA = a[i]?.title;
+    const tB = b[i]?.title;
+    if (tA && tB && tA !== tB) return false;
+  }
+  return true;
+}
+
   // 货架数据状态（SWR: 优先从本地/预烘焙数据集瞬间 0ms 展示，永不阻塞白屏）
   const initialPrebaked = useMemo(() => {
     return getPrebakedCategoryShelves(doubanType, activeNav, shelves);
@@ -164,6 +176,15 @@ function setLocalCatHub(key: string, data: Record<string, RailMovie[]>) {
 
         if (Object.keys(updateMap).length > 0) {
           setShelfData((prev) => {
+            let hasChanges = false;
+            for (const [tag, list] of Object.entries(updateMap)) {
+              const current = prev[tag] || [];
+              if (!isSameList(current, list)) {
+                hasChanges = true;
+                break;
+              }
+            }
+            if (!hasChanges) return prev;
             const next = { ...prev, ...updateMap };
             setLocalCatHub(cacheKey, next);
             return next;
@@ -186,6 +207,15 @@ function setLocalCatHub(key: string, data: Record<string, RailMovie[]>) {
 
           if (Object.keys(updateMap).length > 0) {
             setShelfData((prev) => {
+              let hasChanges = false;
+              for (const [tag, list] of Object.entries(updateMap)) {
+                const current = prev[tag] || [];
+                if (!isSameList(current, list)) {
+                  hasChanges = true;
+                  break;
+                }
+              }
+              if (!hasChanges) return prev;
               const next = { ...prev, ...updateMap };
               setLocalCatHub(cacheKey, next);
               return next;

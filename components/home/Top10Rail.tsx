@@ -227,7 +227,7 @@ export function Top10Rail({
         ) : top10List.length > 0 ? (
           top10List.map((movie, idx) => (
             <Top10Item
-              key={movie.id || idx}
+              key={movie.title || movie.id || idx}
               movie={movie}
               idx={idx}
               onMovieClick={onMovieClick}

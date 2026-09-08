@@ -428,7 +428,7 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
       <div className="absolute right-4 sm:right-8 bottom-6 z-20 hidden md:flex items-center gap-2 bg-black/40 backdrop-blur-xl p-2 rounded-2xl border border-white/10">
         {displayItems.map((item, idx) => (
           <button
-            key={item.id || idx}
+            key={item.title ? `hero-thumb-${item.title}` : (item.id || idx)}
             onClick={() => setActiveIndex(idx)}
             className={`relative w-12 h-16 rounded-xl overflow-hidden border-2 transition-all duration-300 cursor-pointer ${
               idx === activeIndex

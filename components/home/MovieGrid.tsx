@@ -48,7 +48,7 @@ export function MovieGrid({
         <div className="movie-fluid-grid">
           {movies.map((movie, index) => (
             <MovieCard
-              key={movie.id}
+              key={movie.title ? `grid-${movie.title}` : (movie.id || index)}
               movie={movie}
               onMovieClick={onMovieClick}
               index={index}

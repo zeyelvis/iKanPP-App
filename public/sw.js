@@ -11,7 +11,7 @@
 const VIDEO_CACHE = 'video-cache-v3';
 const IMG_CACHE = 'img-cache-v1';
 const API_CACHE = 'api-cache-v1';
-const PAGE_CACHE = 'page-cache-v1';
+const PAGE_CACHE = 'page-cache-v2';
 
 const ALL_CACHES = [VIDEO_CACHE, IMG_CACHE, API_CACHE, PAGE_CACHE];
 

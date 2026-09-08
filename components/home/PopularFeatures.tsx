@@ -18,7 +18,7 @@ interface PopularFeaturesProps {
 }
 
 // ── SWR 货架本地瞬间缓存 ──────────────────────────
-const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v6-';
+const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v7-';
 
 function getLocalShelves(type: 'movie' | 'tv') {
   if (typeof window === 'undefined') return null;
@@ -101,8 +101,14 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
     // 始终保持 false，首屏直接基于预烘焙数据秒开，后台异步静默更新
     setLoadingShelves(false);
 
+    // 智能比对两个影片序列是否相同（按 title 比对），杜绝相同列表触发无谓的重新渲染和 DOM 抖动
+    const isSameList = (a: any[], b: any[]) => {
+      if (!a || !b || a.length !== b.length) return false;
+      return a.every((item, i) => (item?.title || item?.id) === (b[i]?.title || b[i]?.id));
+    };
+
     const fetchShelves = async () => {
-      const fetchWithTimeout = async (url: string, timeoutMs = 2000) => {
+      const fetchWithTimeout = async (url: string, timeoutMs = 2500) => {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), timeoutMs);
         try {
@@ -117,6 +123,11 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       };
 
       try {
+        let latestS1: any[] = cache?.s1 || prebaked.s1 || [];
+        let latestS2: any[] = cache?.s2 || prebaked.s2 || [];
+        let latestS3: any[] = cache?.s3 || prebaked.s3 || [];
+        let latestS4: any[] = cache?.s4 || prebaked.s4 || [];
+
         // 第一阶段：优先极速拉取前 2 个首屏高光货架
         const [res1, res2] = await Promise.allSettled([
           fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(tag1)}&type=${contentType}&page_limit=14&page_start=0`),
@@ -126,8 +137,23 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         if (isMounted) {
           const s1 = res1.status === 'fulfilled' && res1.value?.subjects?.length ? res1.value.subjects : [];
           const s2 = res2.status === 'fulfilled' && res2.value?.subjects?.length ? res2.value.subjects : [];
-          if (s1.length) setShelf1Movies(s1);
-          if (s2.length) setShelf2Movies(s2);
+          if (s1.length) {
+            latestS1 = s1;
+            setShelf1Movies(prev => isSameList(prev, s1) ? prev : s1);
+          }
+          if (s2.length) {
+            latestS2 = s2;
+            setShelf2Movies(prev => isSameList(prev, s2) ? prev : s2);
+          }
+
+          if (s1.length || s2.length) {
+            setLocalShelves(contentType, {
+              s1: latestS1,
+              s2: latestS2,
+              s3: latestS3,
+              s4: latestS4,
+            });
+          }
         }
 
         // 第二阶段：轻量延迟 1 秒后拉取后 2 个货架，彻底释放网络并发通道
@@ -142,14 +168,20 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         if (isMounted) {
           const s3 = res3.status === 'fulfilled' && res3.value?.subjects?.length ? res3.value.subjects : [];
           const s4 = res4.status === 'fulfilled' && res4.value?.subjects?.length ? res4.value.subjects : [];
-          if (s3.length) setShelf3Movies(s3);
-          if (s4.length) setShelf4Movies(s4);
+          if (s3.length) {
+            latestS3 = s3;
+            setShelf3Movies(prev => isSameList(prev, s3) ? prev : s3);
+          }
+          if (s4.length) {
+            latestS4 = s4;
+            setShelf4Movies(prev => isSameList(prev, s4) ? prev : s4);
+          }
 
           setLocalShelves(contentType, {
-            s1: (shelf1Movies.length ? shelf1Movies : cache?.s1) || [],
-            s2: (shelf2Movies.length ? shelf2Movies : cache?.s2) || [],
-            s3: (s3.length ? s3 : (cache?.s3 || [])),
-            s4: (s4.length ? s4 : (cache?.s4 || [])),
+            s1: latestS1,
+            s2: latestS2,
+            s3: latestS3,
+            s4: latestS4,
           });
         }
       } catch (err) {
@@ -183,7 +215,10 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         if (!res.ok) return;
         const data = await res.json();
         if (isMounted && data.subjects && Array.isArray(data.subjects) && data.subjects.length > 0) {
-          setWeeklyMovies(data.subjects);
+          setWeeklyMovies(prev => {
+            const isSame = prev.length === data.subjects.length && prev.every((m, i) => (m?.title || m?.id) === (data.subjects[i]?.title || data.subjects[i]?.id));
+            return isSame ? prev : data.subjects;
+          });
           setLocalWeeklyChart(contentType, data.subjects);
         }
       } catch {

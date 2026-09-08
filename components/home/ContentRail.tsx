@@ -236,7 +236,7 @@ export function ContentRail({
         ) : movies.length > 0 ? (
           movies.map((movie, idx) => (
             <RailPosterItem
-              key={movie.id || idx}
+              key={movie.title || movie.id || idx}
               movie={movie}
               idx={idx}
               isPriority={isPriority}
