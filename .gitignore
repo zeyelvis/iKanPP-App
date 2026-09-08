@@ -54,3 +54,5 @@ original_kvideo/
 /ios/KVideo/KVideo.xcodeproj
 /macos/KVideo/build
 /macos/KVideo/KVideo.xcodeproj
+.wrangler/
+

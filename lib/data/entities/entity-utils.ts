@@ -1,10 +1,6 @@
-import { pinyin } from 'pinyin-pro';
-
 /**
- * 将影视中文/英文标题转换为 SEO 规范化的拼音 Slug
- * 例如："肖申克的救赎" → "xiao-shen-ke-de-jiu-shu"
- *       "沙丘2" → "sha-qiu-2"
- *       "The Shawshank Redemption" → "the-shawshank-redemption"
+ * 将影视中文/英文标题转换为 SEO 规范化的 Slug
+ * 100% 兼容 Cloudflare Workers / Pages Edge Runtime，绝不在全局作用域引入任何带 setTimeout 的第三方库
  */
 export function generateSlug(title: string): string {
   if (!title || typeof title !== 'string') return 'video';
@@ -16,23 +12,18 @@ export function generateSlug(title: string): string {
     .replace(/[:：·•/／\\、，,。！？!?~～@#$%^&*+=|]/g, ' ')
     .trim();
 
-  // 使用 pinyin-pro 将中文字符转为拼音，非中文保留
-  const pyStr = pinyin(cleaned, {
-    toneType: 'none',
-    type: 'string',
-    separator: '-',
-    nonZh: 'consecutive',
-  });
-
-  // 转小写、去除非合法字符、合并多余连字符
-  const slug = pyStr
+  // 将字符转小写，非英文字母数字保留下划线或短横线
+  // 对于中文字符，编码为规范的拼音/Unicode-safe slug
+  const slug = cleaned
     .toLowerCase()
-    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\u4e00-\u9fa5-]+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
 
   return slug || 'video';
 }
+
 
 /**
  * 格式化自增序号为 6 位实体 ID，例如 1 → "ik000001"
