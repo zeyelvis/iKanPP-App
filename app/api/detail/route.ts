@@ -17,7 +17,7 @@ export const runtime = 'edge';
 /**
  * Shared handler for fetching video details
  */
-async function handleDetailRequest(id: string | null, source: string | null, method: string, request?: NextRequest) {
+async function handleDetailRequest(id: string | null, source: string | null, method: string, request?: NextRequest, titleParam?: string | null) {
   if (!id) {
     return NextResponse.json(
       { success: false, error: 'Missing video ID parameter' },
@@ -43,7 +43,7 @@ async function handleDetailRequest(id: string | null, source: string | null, met
           success: true,
           data: {
             vod_id: id,
-            vod_name: detail.title || id,
+            vod_name: detail.title || titleParam || id,
             vod_pic: detail.cover,
             vod_actor: detail.actors?.join(', ') || '',
             type_name: detail.tags?.join(', ') || '午夜大片',
@@ -57,22 +57,36 @@ async function handleDetailRequest(id: string | null, source: string | null, met
         });
       }
 
-      // 若 Jable 直解未果，向 36 大专线发起番号搜索热备
+      // 若 Jable 直解未果，向 36 大专线发起番号与片名双轨热备
       const origin = request ? request.nextUrl.origin : 'http://localhost:3000';
-      const fallbackRes = await fetch(`${origin}/api/premium/category`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sources: PREMIUM_SOURCES,
-          category: videoCode,
-          page: '1',
-          limit: '5'
-        })
-      });
+      const searchQueries = [
+        videoCode,
+        videoCode ? videoCode.replace(/[-_]/g, '') : '', // 如 JUR-837 -> JUR837
+        titleParam ? titleParam.replace(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8})/gi, '').replace(/[《》【】\[\]（）()·\s:：\-]/g, ' ').trim().slice(0, 15) : ''
+      ].filter(Boolean);
 
-      if (fallbackRes.ok) {
-        const fallbackData = await fallbackRes.json();
-        const matchedVideos: any[] = fallbackData.videos || [];
+      let matchedVideos: any[] = [];
+
+      for (const query of searchQueries) {
+        const fallbackRes = await fetch(`${origin}/api/premium/category`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sources: PREMIUM_SOURCES,
+            category: query,
+            page: '1',
+            limit: '5'
+          })
+        });
+
+        if (fallbackRes.ok) {
+          const fallbackData = await fallbackRes.json();
+          if (fallbackData.videos && fallbackData.videos.length > 0) {
+            matchedVideos = fallbackData.videos;
+            break;
+          }
+        }
+      }
 
         for (const matched of matchedVideos.slice(0, 3)) {
           // 1. 如果已有完整的 vod_play_url，直接提取
@@ -134,7 +148,6 @@ async function handleDetailRequest(id: string | null, source: string | null, met
             } catch (detailErr) {
               console.warn(`[DetailAPI] Fallback source ${matched.source} detail fetch failed:`, detailErr);
             }
-          }
         }
       }
     } catch (e) {
@@ -223,8 +236,9 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const id = searchParams.get('id');
     const source = searchParams.get('source');
+    const title = searchParams.get('title');
 
-    return await handleDetailRequest(id, source, 'GET', request);
+    return await handleDetailRequest(id, source, 'GET', request, title);
   } catch (error) {
     console.error('Detail API error:', error);
 
@@ -241,9 +255,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, source } = body;
+    const { id, source, title } = body;
 
-    return await handleDetailRequest(id, source, 'POST', request);
+    return await handleDetailRequest(id, source, 'POST', request, title);
   } catch (error) {
     console.error('Detail API error:', error);
 

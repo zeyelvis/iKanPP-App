@@ -35,7 +35,8 @@ export function useVideoPlayer(
   source: string | null,
   episodeParam: string | null,
   isReversed: boolean = false,
-  onSourceUnavailable?: () => void
+  onSourceUnavailable?: () => void,
+  title?: string | null
 ): UseVideoPlayerReturn {
   const [videoData, setVideoData] = useState<VideoData | null>(null);
   // Initialize loading to true if we have the necessary params to start fetching
@@ -49,6 +50,7 @@ export function useVideoPlayer(
   const episodeParamRef = useRef(episodeParam);
   const isReversedRef = useRef(isReversed);
   const onSourceUnavailableRef = useRef(onSourceUnavailable);
+  const titleRef = useRef(title);
 
   useEffect(() => {
     episodeParamRef.current = episodeParam;
@@ -62,7 +64,9 @@ export function useVideoPlayer(
     onSourceUnavailableRef.current = onSourceUnavailable;
   }, [onSourceUnavailable]);
 
-
+  useEffect(() => {
+    titleRef.current = title;
+  }, [title]);
 
   const fetchVideoDetails = useCallback(async () => {
     if (!videoId || !source) return;
@@ -83,16 +87,18 @@ export function useVideoPlayer(
       ];
 
       const sourceConfig = allSources.find(s => s.id === source);
+      const currentTitle = titleRef.current || '';
       let response;
 
       if (sourceConfig) {
         response = await fetch('/api/detail', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: videoId, source: sourceConfig })
+          body: JSON.stringify({ id: videoId, source: sourceConfig, title: currentTitle })
         });
       } else {
-        response = await fetch(`/api/detail?id=${videoId}&source=${source}`);
+        const titleQuery = currentTitle ? `&title=${encodeURIComponent(currentTitle)}` : '';
+        response = await fetch(`/api/detail?id=${videoId}&source=${source}${titleQuery}`);
       }
 
       const data = await response.json();
