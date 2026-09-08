@@ -71,10 +71,9 @@ export function useHlsPlayer({
                 }
             }
 
-            if (!isNativeHlsSupported || (isAdFilterEnabled && !isPremium)) {
-                // If ad filtering is on, we force Hls.js even on native-supported desktop browsers
-                // Exceptions might exist for iOS where MSE is strictly not available, check Hls.isSupported() result carefully.
-                // Hls.isSupported() is false on iOS Safari usually, so this block won't run there.
+            if (!isNativeHlsSupported || isAdFilterEnabled || isPremium) {
+                // 优先使用功能完备的 Hls.js 处理切片、重试与代理，避免原生 Safari video 标签因防盗链阻断崩溃
+                // 在 iOS 上因不支持 MSE (Hls.isSupported() 为 false)，会自动安全降级到下面的原生 HLS 块
 
                 const isMobileClient = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 

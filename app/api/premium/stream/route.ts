@@ -64,19 +64,36 @@ export async function GET(request: NextRequest) {
 
             if (fallbackRes.ok) {
                 const fallbackData = await fallbackRes.json();
-                const matchedVideo = fallbackData.videos?.[0];
+                const matchedVideos: any[] = fallbackData.videos || [];
 
-                if (matchedVideo && matchedVideo.vod_play_url) {
-                    // 解析播放列表格式 (url#url 或 name$url)
-                    const playList = matchedVideo.vod_play_url.split('#');
-                    const firstEp = playList[0];
-                    const rawUrl = firstEp.includes('$') ? firstEp.split('$')[1] : firstEp;
+                for (const matchedVideo of matchedVideos.slice(0, 3)) {
+                    if (matchedVideo && matchedVideo.vod_play_url) {
+                        const playList = matchedVideo.vod_play_url.split('#');
+                        const firstEp = playList[0];
+                        const rawUrl = firstEp.includes('$') ? firstEp.split('$')[1] : firstEp;
 
-                    if (rawUrl && rawUrl.startsWith('http')) {
-                        streamUrl = rawUrl;
-                        sourceUsed = matchedVideo.source || 'backup_source';
-                        videoTitle = matchedVideo.vod_name || videoTitle;
-                        cover = matchedVideo.vod_pic || cover;
+                        if (rawUrl && rawUrl.startsWith('http')) {
+                            streamUrl = rawUrl;
+                            sourceUsed = matchedVideo.source || 'backup_source';
+                            videoTitle = matchedVideo.vod_name || videoTitle;
+                            cover = matchedVideo.vod_pic || cover;
+                            break;
+                        }
+                    }
+
+                    const matchedSourceConfig = PREMIUM_SOURCES.find(s => s.id === matchedVideo.source);
+                    if (matchedSourceConfig && matchedVideo.vod_id) {
+                        try {
+                            const { getVideoDetail } = await import('@/lib/api/client');
+                            const fullDetail = await getVideoDetail(matchedVideo.vod_id, matchedSourceConfig);
+                            if (fullDetail && fullDetail.episodes && fullDetail.episodes[0]?.url) {
+                                streamUrl = fullDetail.episodes[0].url;
+                                sourceUsed = matchedVideo.source || 'backup_source';
+                                videoTitle = fullDetail.vod_name || videoTitle;
+                                cover = fullDetail.vod_pic || cover;
+                                break;
+                            }
+                        } catch {}
                     }
                 }
             }

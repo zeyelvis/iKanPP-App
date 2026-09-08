@@ -72,34 +72,68 @@ async function handleDetailRequest(id: string | null, source: string | null, met
 
       if (fallbackRes.ok) {
         const fallbackData = await fallbackRes.json();
-        const matched = fallbackData.videos?.[0];
+        const matchedVideos: any[] = fallbackData.videos || [];
 
-        if (matched && matched.vod_play_url) {
-          const playList = matched.vod_play_url.split('#');
-          const firstEp = playList[0];
-          const rawUrl = firstEp.includes('$') ? firstEp.split('$')[1] : firstEp;
+        for (const matched of matchedVideos.slice(0, 3)) {
+          // 1. 如果已有完整的 vod_play_url，直接提取
+          if (matched && matched.vod_play_url) {
+            const playList = matched.vod_play_url.split('#');
+            const firstEp = playList[0];
+            const rawUrl = firstEp.includes('$') ? firstEp.split('$')[1] : firstEp;
 
-          if (rawUrl && rawUrl.startsWith('http')) {
-            const proxiedUrl = rawUrl.includes('.m3u8')
-              ? `/api/proxy?url=${encodeURIComponent(rawUrl)}`
-              : rawUrl;
+            if (rawUrl && rawUrl.startsWith('http')) {
+              const proxiedUrl = rawUrl.includes('.m3u8')
+                ? `/api/proxy?url=${encodeURIComponent(rawUrl)}`
+                : rawUrl;
 
-            return NextResponse.json({
-              success: true,
-              data: {
-                vod_id: String(matched.vod_id),
-                vod_name: matched.vod_name || id,
-                vod_pic: matched.vod_pic,
-                vod_actor: matched.vod_actor || '',
-                type_name: matched.type_name || '4K 蓝光',
-                episodes: [
-                  {
-                    name: '4K 极清',
-                    url: proxiedUrl,
+              return NextResponse.json({
+                success: true,
+                data: {
+                  vod_id: String(matched.vod_id),
+                  vod_name: matched.vod_name || id,
+                  vod_pic: matched.vod_pic,
+                  vod_actor: matched.vod_actor || '',
+                  type_name: matched.type_name || '4K 蓝光',
+                  episodes: [
+                    {
+                      name: '4K 极清',
+                      url: proxiedUrl,
+                    }
+                  ],
+                  source: matched.source,
+                }
+              });
+            }
+          }
+
+          // 2. 搜索列表只有 vod_id 时，调用对应源的 getVideoDetail 拉取真实播放流
+          const matchedSourceConfig = PREMIUM_SOURCES.find(s => s.id === matched.source);
+          if (matchedSourceConfig && matched.vod_id) {
+            try {
+              const fullDetail = await getVideoDetail(matched.vod_id, matchedSourceConfig);
+              if (fullDetail && fullDetail.episodes && fullDetail.episodes.length > 0) {
+                return NextResponse.json({
+                  success: true,
+                  data: {
+                    vod_id: String(matched.vod_id),
+                    vod_name: fullDetail.vod_name || matched.vod_name || id,
+                    vod_pic: fullDetail.vod_pic || matched.vod_pic,
+                    vod_actor: fullDetail.vod_actor || matched.vod_actor || '',
+                    type_name: fullDetail.type_name || '4K 蓝光',
+                    episodes: fullDetail.episodes.map((ep, idx) => ({
+                      name: ep.name || (idx === 0 ? '4K 极清' : `第${idx + 1}集`),
+                      url: ep.url.includes('.m3u8')
+                        ? `/api/proxy?url=${encodeURIComponent(ep.url)}`
+                        : ep.url,
+                    })),
+                    source: matched.source,
+                    source_code: fullDetail.source_code,
                   }
-                ]
+                });
               }
-            });
+            } catch (detailErr) {
+              console.warn(`[DetailAPI] Fallback source ${matched.source} detail fetch failed:`, detailErr);
+            }
           }
         }
       }
@@ -110,7 +144,7 @@ async function handleDetailRequest(id: string | null, source: string | null, met
     return NextResponse.json({
       success: false,
       error: '该影片暂无可用播放流，正在为您调度其他线路...',
-    });
+    }, { status: 404 });
   }
 
   // 2. 专属支持 ikanbot 聚合专线直解

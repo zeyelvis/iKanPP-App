@@ -1,7 +1,7 @@
 /**
  * Extract and proxy URI from HLS tags like EXT-X-KEY, EXT-X-MAP, EXT-X-MEDIA
  */
-function proxyUriInTag(line: string, base: URL, origin: string): string {
+function proxyUriInTag(line: string, base: URL, origin: string, referer?: string): string {
     const uriMatch = line.match(/URI="([^"]+)"/);
     if (uriMatch && uriMatch[1]) {
         const uri = uriMatch[1];
@@ -11,7 +11,8 @@ function proxyUriInTag(line: string, base: URL, origin: string): string {
         }
         try {
             const absoluteUrl = new URL(uri, base).toString();
-            const proxiedUrl = `${origin}/api/proxy?url=${encodeURIComponent(absoluteUrl)}`;
+            const refererQuery = referer ? `&referer=${encodeURIComponent(referer)}` : '';
+            const proxiedUrl = `${origin}/api/proxy?url=${encodeURIComponent(absoluteUrl)}${refererQuery}`;
             return line.replace(/URI="[^"]+"/, `URI="${proxiedUrl}"`);
         } catch {
             return line;
@@ -23,27 +24,40 @@ function proxyUriInTag(line: string, base: URL, origin: string): string {
 export async function processM3u8Content(
     content: string,
     baseUrl: string,
-    origin: string
+    origin: string,
+    referer?: string
 ): Promise<string> {
     const lines = content.split('\n');
     const base = new URL(baseUrl);
+
+    // If referer is not explicitly passed, try to extract it from baseUrl if it's already a proxied URL
+    let effectiveReferer = referer;
+    if (!effectiveReferer && baseUrl.includes('/api/proxy')) {
+        try {
+            const parsedBase = new URL(baseUrl, origin);
+            const refInQuery = parsedBase.searchParams.get('referer');
+            if (refInQuery) effectiveReferer = refInQuery;
+        } catch {}
+    }
+
+    const refererQuery = effectiveReferer ? `&referer=${encodeURIComponent(effectiveReferer)}` : '';
 
     const processedLines = lines.map(line => {
         const trimmed = line.trim();
 
         // Handle EXT-X-KEY (encryption keys)
         if (trimmed.startsWith('#EXT-X-KEY:')) {
-            return proxyUriInTag(trimmed, base, origin);
+            return proxyUriInTag(trimmed, base, origin, effectiveReferer);
         }
 
         // Handle EXT-X-MAP (fMP4 initialization segments)
         if (trimmed.startsWith('#EXT-X-MAP:')) {
-            return proxyUriInTag(trimmed, base, origin);
+            return proxyUriInTag(trimmed, base, origin, effectiveReferer);
         }
 
         // Handle EXT-X-MEDIA (alternative audio/subtitle tracks)
         if (trimmed.startsWith('#EXT-X-MEDIA:')) {
-            return proxyUriInTag(trimmed, base, origin);
+            return proxyUriInTag(trimmed, base, origin, effectiveReferer);
         }
 
         // Handle EXT-X-STREAM-INF (master playlist variants)
@@ -65,7 +79,7 @@ export async function processM3u8Content(
 
         try {
             const absoluteUrl = new URL(trimmed, base).toString();
-            return `${origin}/api/proxy?url=${encodeURIComponent(absoluteUrl)}`;
+            return `${origin}/api/proxy?url=${encodeURIComponent(absoluteUrl)}${refererQuery}`;
         } catch {
             return line;
         }

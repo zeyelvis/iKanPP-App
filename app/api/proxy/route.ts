@@ -31,12 +31,31 @@ export async function GET(request: NextRequest) {
             if (value) requestHeaders[key] = value;
         });
 
-        // Jable.tv 与其他主流流媒体 CDN 防盗链伪装
-        if (url.includes('jable.tv') || url.includes('assets-cdn.jable.tv')) {
-            requestHeaders['Referer'] = 'https://jable.tv/';
-            requestHeaders['Origin'] = 'https://jable.tv';
+        // 优先使用显式传递的 referer 参数
+        const explicitReferer = request.nextUrl.searchParams.get('referer');
+        if (explicitReferer) {
+            requestHeaders['Referer'] = explicitReferer;
+            try {
+                requestHeaders['Origin'] = new URL(explicitReferer).origin;
+            } catch {}
             requestHeaders['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
         }
+
+        // Jable.tv 与其他主流成人流媒体 CDN 防盗链自动伪装 (包含 mushroomtrack, mushroomcdn 等真实分发 CDN)
+        const isJableRelated = url.includes('jable.tv') ||
+            url.includes('assets-cdn.jable.tv') ||
+            url.includes('mushroomtrack') ||
+            url.includes('mushroomcdn') ||
+            url.includes('fs-cdn') ||
+            url.includes('jable');
+
+        if (isJableRelated) {
+            requestHeaders['Referer'] = requestHeaders['Referer'] || 'https://jable.tv/';
+            requestHeaders['Origin'] = requestHeaders['Origin'] || 'https://jable.tv';
+            requestHeaders['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
+        }
+
+        const effectiveReferer = requestHeaders['Referer'] || explicitReferer || (isJableRelated ? 'https://jable.tv/' : undefined);
 
         const response = await fetchWithRetry({ url, request, headers: requestHeaders });
 
@@ -67,7 +86,7 @@ export async function GET(request: NextRequest) {
 
             // Verify it's actually M3U8 content (starts with #EXTM3U or #EXT-X-)
             if (text.trim().startsWith('#EXTM3U') || text.trim().startsWith('#EXT-X-')) {
-                const modifiedText = await processM3u8Content(text, url, request.nextUrl.origin);
+                const modifiedText = await processM3u8Content(text, url, request.nextUrl.origin, effectiveReferer);
 
                 return new NextResponse(modifiedText, {
                     status: response.status,

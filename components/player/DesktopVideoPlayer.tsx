@@ -223,7 +223,8 @@ export function DesktopVideoPlayer({
     videoRef: refs.videoRef,
     src,
     isPremium,
-    autoPlay: shouldAutoPlay
+    autoPlay: shouldAutoPlay,
+    onError,
   });
 
   const {

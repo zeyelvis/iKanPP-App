@@ -97,8 +97,8 @@ export function useVideoPlayer(
 
       const data = await response.json();
 
-      if (!response.ok) {
-        setVideoError(data.error || '该视频源不可用。请返回并尝试其他来源。');
+      if (!response.ok || !data.success || !data.data) {
+        setVideoError(data?.error || '该视频源不可用。请返回并尝试其他来源。');
         setLoading(false);
         onSourceUnavailableRef.current?.();
         return;
