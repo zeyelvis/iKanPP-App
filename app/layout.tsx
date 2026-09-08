@@ -62,7 +62,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 export const metadata: Metadata = {
   title: {
     default: 'iKanPP — 爱看片片 | 海外华人影视聚合搜索与极速播放平台',
-    template: `%s | iKanPP`,
+    template: `%s`,
   },
   description: 'iKanPP（爱看片片）— 专为全球海外华人打造的影视聚合搜索引擎，多源智能聚合，一键直达全网热播国产剧、美剧、韩剧、日剧、港剧、台剧、动漫新番与院线大片。海外免翻墙直连播放，2026 最新热门电影电视剧全集极速看。',
   keywords: [
