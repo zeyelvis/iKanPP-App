@@ -11,6 +11,7 @@ import { SearchResults } from '@/components/home/SearchResults';
 import { useHomePage } from '@/lib/hooks/useHomePage';
 import { useLatencyPing } from '@/lib/hooks/useLatencyPing';
 import { ResumePlayBubble } from '@/components/home/ResumePlayBubble';
+import { MainSiteJsonLd } from '@/components/seo/MainSiteJsonLd';
 
 function HomePage() {
   // 频道大厅与午夜版返回穿透保护守卫：若用户刚刚在播放器退出且来自子大厅/午夜版，确保永不误落回总首页
@@ -48,6 +49,9 @@ function HomePage() {
 
   return (
     <div className="min-h-screen">
+      {/* 仅在主站首页注入官方 Schema 结构化数据，严密隔绝成人站 */}
+      <MainSiteJsonLd />
+
       {/* Glass Navbar with integrated search */}
       <Navbar
         onReset={handleReset}

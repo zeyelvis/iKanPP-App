@@ -75,7 +75,7 @@ export const VideoCard = memo<VideoCardProps>(({
                 <div className="absolute -top-8 -right-8 w-20 h-20 bg-red-600/10 rounded-full blur-lg pointer-events-none" />
                 <div className="w-full flex items-center justify-between z-10">
                   <span className="text-[9px] font-black tracking-widest text-white/30 uppercase">
-                    iKanPP
+                    {isPremium ? 'iKanX' : 'iKanPP'}
                   </span>
                 </div>
                 <div className="flex flex-col items-center gap-1.5 my-auto z-10 px-1">

@@ -174,11 +174,16 @@ export function Navbar({
 
                 if ((cat as any).isExternal) {
                   return (
-                    <a
+                    <button
                       key={cat.id}
-                      href={cat.href}
-                      target={cat.id === 'premium' ? '_blank' : '_self'}
-                      rel="noopener noreferrer nofollow"
+                      type="button"
+                      onClick={() => {
+                        if (cat.id === 'premium') {
+                          window.open(cat.href, '_blank', 'noopener,noreferrer');
+                        } else {
+                          window.location.href = cat.href;
+                        }
+                      }}
                       className={`px-3.5 py-1.5 rounded-full text-xs xl:text-sm font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
                         cat.id === 'premium'
                           ? 'text-pink-400 hover:text-pink-300 hover:bg-pink-500/10 border border-pink-500/20'
@@ -187,7 +192,7 @@ export function Navbar({
                     >
                       {cat.id === 'premium' && <span>🌙</span>}
                       <span>{cat.label}</span>
-                    </a>
+                    </button>
                   );
                 }
 

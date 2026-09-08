@@ -274,13 +274,13 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
             <footer className="pt-10 pb-6 border-t border-white/10 text-center space-y-3">
                 <div className="flex items-center justify-center gap-2 text-xs font-bold text-amber-400/80">
                     <ShieldCheck size={16} />
-                    <span>iKanPP 午夜 VIP 专属加密影院 · 100% 隐私无痕保障</span>
+                    <span>iKanX 专属加密影院 · 100% 隐私无痕保障</span>
                 </div>
                 <p className="text-[11px] text-white/30 max-w-xl mx-auto leading-relaxed">
                     本专区所有资源均通过海外加密专线实时秒播，仅供成年人 (18+) 私人学术交流与影视鉴赏，系统不记录任何用户本地观影私密隐私。
                 </p>
                 <div className="text-[10px] text-white/20 font-mono">
-                    © 2026 iKanPP Midnight Pro. All rights reserved.
+                    © 2026 iKanX. All rights reserved.
                 </div>
             </footer>
 

@@ -18,8 +18,25 @@ export function middleware(request: NextRequest) {
 
     const isIkanX = host.includes('ikanx.com');
 
-    // ── 1. 副站 ikanx.com 专属路由逻辑 ──
+    // ── 1. 副站 ikanx.com 专属路由与绝对反爬/反索引防护 ──
     if (isIkanX) {
+        // 全面封禁所有爬虫与搜索引擎索引 ikanx.com
+        if (pathname === '/robots.txt') {
+            return new NextResponse('User-agent: *\nDisallow: /\n', {
+                status: 200,
+                headers: {
+                    'Content-Type': 'text/plain; charset=utf-8',
+                    'Cache-Control': 'public, max-age=86400',
+                    'X-Robots-Tag': 'noindex, nofollow',
+                },
+            });
+        }
+
+        // ikanx.com 不提供公开 sitemap，避免搜索引擎收录成人页面
+        if (pathname === '/sitemap.xml') {
+            return new NextResponse('Not Found', { status: 404 });
+        }
+
         // www.ikanx.com → ikanx.com 统一 301
         if (host.startsWith('www.')) {
             url.host = 'ikanx.com';
@@ -30,7 +47,9 @@ export function middleware(request: NextRequest) {
         // 访问副站根目录 / 内部重写至 /premium，地址栏保持 https://ikanx.com/
         if (pathname === '/' || pathname === '') {
             url.pathname = '/premium';
-            return NextResponse.rewrite(url);
+            const response = NextResponse.rewrite(url);
+            response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, notranslate, noimageindex');
+            return response;
         }
 
         // 若在副站直接输入了 /premium，规范化 301 重定向到 /
@@ -39,7 +58,17 @@ export function middleware(request: NextRequest) {
             return NextResponse.redirect(url, 301);
         }
 
-        return NextResponse.next();
+        // 若在副站访问普通影视大厅或主站特定页面，301 引导到主站，避免内容重复与权重分散
+        const mainstreamPaths = ['/movie', '/tv', '/anime', '/variety', '/ranking', '/iptv', '/download', '/about', '/faq', '/terms', '/privacy'];
+        if (mainstreamPaths.some(p => pathname === p || pathname.startsWith(p + '/'))) {
+            const targetUrl = new URL(pathname, 'https://www.ikanpp.com');
+            targetUrl.search = url.search;
+            return NextResponse.redirect(targetUrl, 301);
+        }
+
+        const response = NextResponse.next();
+        response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, notranslate, noimageindex');
+        return response;
     }
 
     // ── 2. 主站 www.ikanpp.com 规范化与隔离逻辑 ──
@@ -68,12 +97,18 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(targetUrl, 301);
     }
 
+    // 若在主站访问了带有 premium=1 的播放请求，直接 301 彻底剥离转移至副站 ikanx.com
+    if (url.searchParams.get('premium') === '1') {
+        const targetUrl = new URL(url.pathname + url.search, 'https://ikanx.com');
+        return NextResponse.redirect(targetUrl, 301);
+    }
+
     return NextResponse.next();
 }
 
 // 仅匹配页面路由，排除静态资源和 API
 export const config = {
     matcher: [
-        '/((?!_next/static|_next/image|favicon.ico|icon.png|og-image.png|manifest.json|robots.txt|sitemap.xml|api/).*)',
+        '/((?!_next/static|_next/image|favicon.ico|icon.png|og-image.png|manifest.json|api/).*)',
     ],
 };

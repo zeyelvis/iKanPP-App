@@ -973,6 +973,9 @@ function PlayerContent() {
   const mediaType: 'movie' | 'tv' | 'anime' = isMovieType ? 'movie' : (videoData?.type_name?.includes('动漫') || videoData?.type_name?.includes('动画') ? 'anime' : 'tv');
 
   const jsonLdData = useMemo(() => {
+    // 严密保护主站 SEO 与 GEO：午夜成人播放页 100% 禁止生成 iKanPP 结构化数据与外链
+    if (isPremium) return null;
+
     const mediaLd = generateMediaJsonLd({
       title: currentTitle,
       type: mediaType,
@@ -992,7 +995,7 @@ function PlayerContent() {
     ]);
 
     return [mediaLd, breadcrumbLd];
-  }, [currentTitle, mediaType, isMovieType, videoData]);
+  }, [currentTitle, mediaType, isMovieType, videoData, isPremium]);
 
   // 核心返回路由处理器（午夜版绝对定向到 /premium，频道专属来源绝对返回该频道大厅，普通版安全后退）
   const handleBack = useCallback(() => {
@@ -1000,7 +1003,7 @@ function PlayerContent() {
       sessionStorage.removeItem('ikanpp_playing_from_hub');
     }
     if (isPremium) {
-      router.push('/premium');
+      router.push('/');
       return;
     }
     const fromChannel = searchParams.get('from');
@@ -1024,7 +1027,7 @@ function PlayerContent() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (isPremium) {
-      sessionStorage.setItem('ikanpp_playing_from_hub', '/premium');
+      sessionStorage.setItem('ikanpp_playing_from_hub', '/');
     } else {
       const from = searchParams.get('from');
       if (from) {
@@ -1036,14 +1039,14 @@ function PlayerContent() {
   // Redirect if no params at all
   if (isTitleOnlyMode && !titleSearching && !titleSearchError && !title) {
     const fromChannel = searchParams.get('from');
-    router.push(isPremium ? '/premium' : (fromChannel ? `/${fromChannel}` : '/'));
+    router.push(isPremium ? '/' : (fromChannel ? `/${fromChannel}` : '/'));
     return null;
   }
 
   return (
     <div className="min-h-screen bg-(--bg-color)">
       {/* Google 富媒体 SEO JSON-LD */}
-      <JsonLd data={jsonLdData} />
+      {jsonLdData && <JsonLd data={jsonLdData} />}
 
       {/* Glass Navbar */}
       <Navbar variant="player" isPremiumMode={isPremium} />

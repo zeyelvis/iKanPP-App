@@ -26,10 +26,14 @@ export function ShareCardModal({
 
   if (!isOpen) return null;
 
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : 'https://www.ikanpp.com';
-  const shareText = `🎬 发现了一部超赞的${type || '影视'}《${title}》${
+  const isPremium = typeof window !== 'undefined' && (window.location.hostname.includes('ikanx.com') || window.location.search.includes('premium=1'));
+  const brandName = isPremium ? 'iKanX' : 'iKanPP 爱看片片';
+  const brandTag = isPremium ? 'iKanX' : 'iKanPP';
+  const defaultFallbackUrl = isPremium ? 'https://ikanx.com' : 'https://www.ikanpp.com';
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : defaultFallbackUrl;
+  const shareText = `🎬 发现了一部超赞的${type || '精选作品'}《${title}》${
     episodeName ? `(${episodeName})` : ''
-  }！海外免翻墙超清极速看，推荐给你直接戳链接：${currentUrl} （iKanPP 爱看片片）`;
+  }！4K极速秒播，推荐给你直接戳链接：${currentUrl} （${brandName}）`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareText).then(() => {
@@ -40,7 +44,7 @@ export function ShareCardModal({
 
   const handleShareTelegram = () => {
     const url = `https://t.me/share/url?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(
-      `🎬 正在 iKanPP 看《${title}》，海外免翻墙极速直连播放！`
+      `🎬 正在 ${brandTag} 看《${title}》，4K极速直连播放！`
     )}`;
     window.open(url, '_blank', 'noopener,noreferrer');
   };
@@ -52,7 +56,7 @@ export function ShareCardModal({
 
   const handleShareTwitter = () => {
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      `正在看《${title}》，海外追剧免翻神器 #iKanPP`
+      `正在看《${title}》，4K秒播专区 #${brandTag}`
     )}&url=${encodeURIComponent(currentUrl)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
   };

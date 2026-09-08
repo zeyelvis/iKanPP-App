@@ -17,9 +17,9 @@ export function PlayerNavbar({ isPremium }: { isPremium?: boolean }) {
                 <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                         <button
-                            onClick={() => router.push(isPremium ? '/premium' : '/')}
+                            onClick={() => router.push(isPremium ? '/' : '/')}
                             className="flex items-center justify-center hover:opacity-80 transition-opacity flex-shrink-0 cursor-pointer"
-                            title={isPremium ? "返回高级主页" : "返回首页"}
+                            title={isPremium ? "返回 iKanX 首页" : "返回首页"}
                         >
                             <Image
                                 src={siteIconSrc}
@@ -32,11 +32,11 @@ export function PlayerNavbar({ isPremium }: { isPremium?: boolean }) {
                         </button>
                         <Button
                             variant="secondary"
-                            onClick={() => isPremium ? router.push('/premium') : router.back()}
+                            onClick={() => isPremium ? router.push('/') : router.back()}
                             className="flex items-center gap-2"
                         >
                             <Icons.ChevronLeft size={20} />
-                            <span className="hidden sm:inline">{isPremium ? '返回午夜版' : '返回'}</span>
+                            <span className="hidden sm:inline">{isPremium ? '返回午夜大厅' : '返回'}</span>
                         </Button>
                     </div>
                     <div className="flex items-center gap-3">

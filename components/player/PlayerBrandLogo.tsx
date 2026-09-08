@@ -149,7 +149,7 @@ export function PlayerBrandLogo({
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5 leading-none">
             <span className="text-[13px] font-black tracking-wider text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] font-sans">
-              iKanPP
+              {isPremium ? 'iKanX' : 'iKanPP'}
             </span>
             <span className="px-1.5 py-0.2 rounded-full text-[8px] font-black bg-amber-400/25 text-amber-300 border border-amber-300/40 uppercase tracking-tighter drop-shadow-md">
               4K MAX

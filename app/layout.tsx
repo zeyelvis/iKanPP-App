@@ -165,51 +165,6 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
         {/* Mobile viewport */}
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        {/* JSON-LD 结构化数据 — 包含海外华人受众与多地域 Coverage */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify([
-              {
-                '@context': 'https://schema.org',
-                '@type': 'WebSite',
-                name: 'iKanPP',
-                alternateName: ['爱看片片', 'iKanPP 海外华人影视', 'iKanPP Movie'],
-                url: 'https://www.ikanpp.com',
-                description: '全球海外华人影视聚合搜索引擎 — 多播放源智能聚合，搜遍全网热播电视剧、电影、综艺、动漫',
-                inLanguage: ['zh-CN', 'zh-TW', 'zh-HK', 'zh-SG', 'zh-MY', 'en'],
-                audience: {
-                  '@type': 'Audience',
-                  audienceType: 'Global Chinese Diaspora (海外华人及全球中文用户)',
-                  geographicArea: ['US', 'CA', 'AU', 'NZ', 'SG', 'MY', 'GB', 'DE', 'FR', 'JP', 'KR', 'HK', 'TW'],
-                },
-                potentialAction: {
-                  '@type': 'SearchAction',
-                  target: {
-                    '@type': 'EntryPoint',
-                    urlTemplate: 'https://www.ikanpp.com/?q={search_term_string}',
-                  },
-                  'query-input': 'required name=search_term_string',
-                },
-              },
-              {
-                '@context': 'https://schema.org',
-                '@type': 'Organization',
-                name: 'iKanPP',
-                alternateName: '爱看片片',
-                url: 'https://www.ikanpp.com',
-                logo: 'https://www.ikanpp.com/icon.png',
-                sameAs: [],
-                contactPoint: {
-                  '@type': 'ContactPoint',
-                  email: 'zeyelvis@icloud.com',
-                  contactType: 'customer service',
-                  availableLanguage: ['Chinese', 'English'],
-                },
-              },
-            ]),
-          }}
-        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased dark bg-[#0A0A0F] text-white`}

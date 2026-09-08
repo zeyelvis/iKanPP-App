@@ -53,17 +53,17 @@ export default function PremiumSettingsPage() {
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <Link
-                                href="/premium"
+                                href="/"
                                 className="w-10 h-10 flex items-center justify-center rounded-[var(--radius-full)] bg-[var(--glass-bg)] border border-[var(--glass-border)] text-[var(--text-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)] transition-all duration-200 cursor-pointer"
-                                aria-label="返回"
+                                aria-label="返回 iKanX 首页"
                             >
                                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                                 </svg>
                             </Link>
                             <div>
-                                <h1 className="text-2xl font-bold text-[var(--text-color)]">高级模式设置</h1>
-                                <p className="text-sm text-[var(--text-color-secondary)]">管理高级模式的内容源和偏好设置</p>
+                                <h1 className="text-2xl font-bold text-[var(--text-color)]">iKanX 专属偏好设置</h1>
+                                <p className="text-sm text-[var(--text-color-secondary)]">管理 iKanX 独立站点的解析源和播放偏好</p>
                             </div>
                         </div>
                     </div>

@@ -14,7 +14,7 @@ import { Crown, Sparkles, Zap, ShieldCheck, EyeOff } from 'lucide-react';
 
 function PremiumHomePage() {
     const router = useRouter();
-    const { triggerBossKey } = useBossKey({ redirectUrl: '/movie' });
+    const { triggerBossKey } = useBossKey({ redirectUrl: 'https://www.ikanpp.com/movie' });
     const {
         query,
         hasSearched,
@@ -30,7 +30,7 @@ function PremiumHomePage() {
     // 记录午夜版为当前活跃大厅
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            sessionStorage.setItem('ikanpp_last_hub', '/premium');
+            sessionStorage.setItem('ikanx_last_hub', '/');
         }
     }, []);
 
@@ -43,7 +43,7 @@ function PremiumHomePage() {
             const source = video?.source || '';
             
             if (typeof window !== 'undefined') {
-                sessionStorage.setItem('ikanpp_playing_from_hub', '/premium');
+                sessionStorage.setItem('ikanx_playing_from_hub', '/');
             }
 
             const params = new URLSearchParams();
