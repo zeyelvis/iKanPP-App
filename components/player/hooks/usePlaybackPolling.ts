@@ -26,12 +26,8 @@ export function usePlaybackPolling({
 
         const interval = setInterval(() => {
             if (videoRef.current) {
-                // Sync play/pause state (crucial for AirPlay where events might be missed)
+                // 仅用于进度补偿，绝不通过定时器暴力翻转 isPlaying，杜绝中央播放按钮与状态微抖动
                 const isVideoPaused = videoRef.current.paused;
-                if (isVideoPaused === isPlaying && !isDraggingProgressRef.current) {
-                    // State mismatch detected (e.g. AirPlay paused but app thinks playing)
-                    setIsPlaying(!isVideoPaused);
-                }
 
                 if (!isDraggingProgressRef.current && !isVideoPaused) {
                     const current = videoRef.current.currentTime;

@@ -73,9 +73,9 @@ export function useStallDetection({
                     lastTimeRef.current = currentTime;
                     lastUpdateTimeRef.current = now;
                 } else {
-                    // 时间停滞，判断停滞时长（科学阈值 1200ms）
+                    // 时间停滞，判断停滞时长（科学平滑阈值 2200ms，常规切片下载不误判）
                     const stallDuration = now - lastUpdateTimeRef.current;
-                    if (stallDuration > 1200) {
+                    if (stallDuration > 2200) {
                         setIsLoading(true);
                         isStalledByMeRef.current = true;
 

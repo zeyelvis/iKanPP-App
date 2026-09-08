@@ -264,10 +264,43 @@ export function DesktopVideoPlayer({
     setTimeout(() => setShowLockToast(null), 2000);
   };
 
+  // 工业级 Loading 防抖机制：
+  // 避免 HLS 切片交替（Frag Transition）时的微等待（50~200ms）误报触发转圈
+  // 只有当持续网络卡顿超过 400ms 时，才呈现悬浮加载指示器
+  const loadingTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const clearDebouncedLoading = React.useCallback(() => {
+    if (loadingTimerRef.current) {
+      clearTimeout(loadingTimerRef.current);
+      loadingTimerRef.current = null;
+    }
+    setIsLoading(false);
+  }, [setIsLoading]);
+
+  const startDebouncedLoading = React.useCallback((immediate = false) => {
+    if (loadingTimerRef.current) {
+      clearTimeout(loadingTimerRef.current);
+      loadingTimerRef.current = null;
+    }
+    if (immediate) {
+      setIsLoading(true);
+      return;
+    }
+    loadingTimerRef.current = setTimeout(() => {
+      setIsLoading(true);
+      loadingTimerRef.current = null;
+    }, 400);
+  }, [setIsLoading]);
+
   // Reset loading state and show spinner when source changes
   React.useEffect(() => {
     setIsLoading(true);
     setBufferedTime(0);
+    return () => {
+      if (loadingTimerRef.current) {
+        clearTimeout(loadingTimerRef.current);
+      }
+    };
   }, [src, setBufferedTime, setIsLoading]);
 
   const logic = useDesktopPlayerLogic({
@@ -416,18 +449,26 @@ export function DesktopVideoPlayer({
             poster={poster}
             x-webkit-airplay="allow"
             playsInline={true} // Crucial for iOS custom fullscreen to work without native player taking over
-            controls={false} // Explicitly disable native controls
-            onPlay={handlePlay}
+            onPlay={() => {
+              clearDebouncedLoading();
+              handlePlay();
+            }}
             onPause={handlePause}
-            onTimeUpdate={handleTimeUpdateEvent}
+            onTimeUpdate={() => {
+              if (loadingTimerRef.current) {
+                clearDebouncedLoading();
+              }
+              handleTimeUpdateEvent();
+            }}
             onLoadedMetadata={handleLoadedMetadata}
             onProgress={handleProgressEvent}
             onError={handleVideoError}
-            onWaiting={() => setIsLoading(true)}
-            onCanPlay={() => setIsLoading(false)}
-            onSeeking={() => setIsLoading(true)}
+            onWaiting={() => startDebouncedLoading(false)}
+            onCanPlay={clearDebouncedLoading}
+            onPlaying={clearDebouncedLoading}
+            onSeeking={() => startDebouncedLoading(true)}
             onSeeked={() => {
-              setIsLoading(false);
+              clearDebouncedLoading();
               if (isPlaying && videoRef.current && videoRef.current.paused) {
                 videoRef.current.play().catch(() => {});
               }

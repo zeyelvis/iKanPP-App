@@ -86,15 +86,15 @@ export function useHlsPlayer({
                     maxBufferLength: isMobileClient ? 30 : 60,
                     maxMaxBufferLength: isMobileClient ? 60 : 120,
                     maxBufferSize: isMobileClient ? 30 * 1000 * 1000 : 60 * 1000 * 1000,
-                    maxBufferHole: 0.5,
+                    maxBufferHole: 0.8,
 
                     // Start with more buffer
                     startFragPrefetch: true,
 
-                    // 针对 Seek 关键帧停滞的智能微调救活机制（原站极其流畅的关键）
-                    nudgeOffset: 0.1,
+                    // 针对 Seek 关键帧停滞的智能微调救活机制（平滑微调 0.05s，无感过渡杜绝黑闪）
+                    nudgeOffset: 0.05,
                     nudgeMaxRetry: 5,
-                    maxFragLookUpTolerance: 0.25,
+                    maxFragLookUpTolerance: 0.3,
 
                     // ABR Settings
                     abrEwmaDefaultEstimate: 500000,

@@ -138,12 +138,21 @@ export function VideoPlayer({
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [saveProgress]);
 
+  const lastAutoSwitchTimeRef = useRef(0);
+
   // Handle video errors
   const handleVideoError = (error: string) => {
     console.error('Video playback error:', error);
+    const now = Date.now();
+
+    // 防抖与熔断保护：2.5秒内禁止重复切线自愈，杜绝高频刷新与黑屏闪烁
+    if (now - lastAutoSwitchTimeRef.current < 2500) {
+      return;
+    }
 
     // 优先尝试纯前端零成本自动切换到其他可用线路（自愈机制，0 服务器成本）
     if (onPlaybackError && onPlaybackError(error)) {
+      lastAutoSwitchTimeRef.current = now;
       setVideoError('');
       return;
     }
@@ -152,9 +161,8 @@ export function VideoPlayer({
     // 1. Not already using proxy
     // 2. Proxy mode is NOT 'none' (so 'retry' or potentially 'always' if it somehow failed locally)
     // 3. Proxy mode is 'retry' (specifically for the auto-switch logic)
-    // Note: If mode is 'always', we are already using proxy. If it fails, we show error.
-
     if (!effectiveUseProxy && proxyMode === 'retry') {
+      lastAutoSwitchTimeRef.current = now;
       setUseProxy(true);
       setShouldAutoPlay(true); // Force autoplay after proxy retry
       setVideoError('');

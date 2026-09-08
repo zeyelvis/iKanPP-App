@@ -178,31 +178,34 @@
     background: rgba(255, 255, 255, 0.15);
 }
 
-/* Loading Overlay with Glass Effect */
+/* Loading Overlay with Non-intrusive Floating Spinner (零闪屏通透设计) */
 .loading-overlay-glass {
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     z-index: 20;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.25s ease;
     pointer-events: none;
     /* Allow interaction with controls during loading */
 }
 
-/* Spinner with Glass Background */
+/* Spinner with Floating Dark Capsule Background */
 .spinner-glass {
-    width: clamp(40px, 8vw, 56px);
-    height: clamp(40px, 8vw, 56px);
-    border: 4px solid rgba(255, 255, 255, 0.15);
+    width: clamp(44px, 8vw, 60px);
+    height: clamp(44px, 8vw, 60px);
+    border: 4px solid rgba(255, 255, 255, 0.2);
     border-top-color: var(--accent-color);
     border-radius: var(--radius-full);
-    animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    box-shadow: 0 0 20px rgba(0, 122, 255, 0.3);
+    animation: spin 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 122, 255, 0.25);
 }
 
 /* Next Episode Loading Indicator */
