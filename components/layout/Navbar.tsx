@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Icons } from '@/components/ui/Icon';
@@ -21,7 +21,7 @@ interface NavbarProps {
   onSelectCategory?: (category: string) => void;
 }
 
-export function Navbar({
+function NavbarInner({
   variant = 'home',
   onReset,
   isPremiumMode = false,
@@ -315,5 +315,13 @@ export function Navbar({
         />
       )}
     </nav>
+  );
+}
+
+export function Navbar(props: NavbarProps) {
+  return (
+    <Suspense fallback={<nav className="sticky top-0 z-40 w-full h-16 bg-[#0A0A0F]/80 backdrop-blur-md" />}>
+      <NavbarInner {...props} />
+    </Suspense>
   );
 }
