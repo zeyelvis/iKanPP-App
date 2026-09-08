@@ -74,13 +74,51 @@ function seedPrebakedData() {
 
     // 索引分类
     for (const g of entity.genres) {
-      const gKey = `genre:${g}`;
+      const gKey = `genre:${g.trim()}`;
       const existing = memoryStore.get(gKey);
       const list = existing ? JSON.parse(existing) : [];
-      list.push(entityId);
-      memoryStore.set(gKey, JSON.stringify(list));
+      if (!list.includes(entityId)) {
+        list.push(entityId);
+        memoryStore.set(gKey, JSON.stringify(list));
+      }
+    }
+
+    // 索引导演
+    for (const d of entity.directors || []) {
+      if (!d || d === '知名导演') continue;
+      const dClean = d.trim();
+      const dKey = `director:${dClean}`;
+      const existing = memoryStore.get(dKey);
+      const list = existing ? JSON.parse(existing) : [];
+      if (!list.includes(entityId)) {
+        list.push(entityId);
+        memoryStore.set(dKey, JSON.stringify(list));
+      }
+    }
+
+    // 索引演员
+    for (const a of entity.actors || []) {
+      if (!a || a === '实力主演') continue;
+      const aClean = a.trim();
+      const aKey = `actor:${aClean}`;
+      const existing = memoryStore.get(aKey);
+      const list = existing ? JSON.parse(existing) : [];
+      if (!list.includes(entityId)) {
+        list.push(entityId);
+        memoryStore.set(aKey, JSON.stringify(list));
+      }
     }
   }
+
+  // 收集并持久化全部已知导演与演员集合
+  const allDirs = new Set<string>();
+  const allActs = new Set<string>();
+  for (const [key] of memoryStore.entries()) {
+    if (key.startsWith('director:')) allDirs.add(key.replace('director:', ''));
+    if (key.startsWith('actor:')) allActs.add(key.replace('actor:', ''));
+  }
+  memoryStore.set('people:directors', JSON.stringify(Array.from(allDirs)));
+  memoryStore.set('people:actors', JSON.stringify(Array.from(allActs)));
 
   // 全量实体索引
   const allIds = Array.from(seenTitles).map((_, i) => formatEntityId(i + 1));
@@ -295,11 +333,17 @@ export async function getEntitiesByGenre(genre: string, limit = 12): Promise<Tit
 }
 
 /**
- * 获取同导演作品（用于详情页内链）
+ * 获取同导演作品（用于详情页内链与导演作品专栏）
  */
-export async function getEntitiesByDirector(director: string, limit = 6): Promise<TitleEntity[]> {
+export async function getEntitiesByDirector(director: string, limit = 12): Promise<TitleEntity[]> {
   if (!director) return [];
-  const raw = await kvGet(`director:${director.trim()}`);
+  let name = director.trim();
+  try {
+    name = decodeURIComponent(name).trim();
+  } catch {
+    // 忽略异常
+  }
+  const raw = await kvGet(`director:${name}`);
   if (!raw) return [];
   try {
     const ids: string[] = JSON.parse(raw);
@@ -312,11 +356,17 @@ export async function getEntitiesByDirector(director: string, limit = 6): Promis
 }
 
 /**
- * 获取同主演作品（用于详情页内链）
+ * 获取同主演作品（用于详情页内链与演员作品专栏）
  */
-export async function getEntitiesByActor(actor: string, limit = 6): Promise<TitleEntity[]> {
+export async function getEntitiesByActor(actor: string, limit = 12): Promise<TitleEntity[]> {
   if (!actor) return [];
-  const raw = await kvGet(`actor:${actor.trim()}`);
+  let name = actor.trim();
+  try {
+    name = decodeURIComponent(name).trim();
+  } catch {
+    // 忽略异常
+  }
+  const raw = await kvGet(`actor:${name}`);
   if (!raw) return [];
   try {
     const ids: string[] = JSON.parse(raw);
@@ -350,3 +400,24 @@ export async function getNextEntitySeq(): Promise<number> {
   await kvPut('counter:next_id', String(current + 1));
   return current;
 }
+
+/**
+ * 获取已知全部导演与演员名单（用于人物 Sitemap 生成）
+ */
+export async function getKnownPeople(): Promise<{ directors: string[]; actors: string[] }> {
+  const rawDirs = await kvGet('people:directors');
+  const rawActs = await kvGet('people:actors');
+  let directors: string[] = [];
+  let actors: string[] = [];
+
+  try {
+    if (rawDirs) directors = JSON.parse(rawDirs);
+  } catch {}
+
+  try {
+    if (rawActs) actors = JSON.parse(rawActs);
+  } catch {}
+
+  return { directors, actors };
+}
+

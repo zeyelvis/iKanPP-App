@@ -20,6 +20,18 @@
   CDN-Cache-Control: public, s-maxage=604800
   Cloudflare-CDN-Cache-Control: public, s-maxage=604800
 
+# 导演与演员专栏聚合页
+/director/*
+  Cache-Control: public, max-age=3600, s-maxage=604800, stale-while-revalidate=86400
+  CDN-Cache-Control: public, s-maxage=604800
+  Cloudflare-CDN-Cache-Control: public, s-maxage=604800
+
+/actor/*
+  Cache-Control: public, max-age=3600, s-maxage=604800, stale-while-revalidate=86400
+  CDN-Cache-Control: public, s-maxage=604800
+  Cloudflare-CDN-Cache-Control: public, s-maxage=604800
+
 # Sitemap 与 RSS 规范化
 /*.xml
   Cache-Control: public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400
+

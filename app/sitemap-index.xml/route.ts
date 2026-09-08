@@ -19,6 +19,7 @@ export async function GET() {
   const subSitemaps = [
     `${BASE_URL}/sitemap.xml`,
     `${BASE_URL}/sitemap-genres.xml`,
+    `${BASE_URL}/sitemap-people.xml`,
     `${BASE_URL}/sitemap-titles-1.xml`,
   ];
 

@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, Clock, Calendar, Film, ArrowLeft } from 'lucide-react';
-import { getEntityBySlug, getEntitiesByGenre, getEntitiesByDirector } from '@/lib/services/entity-kv';
+import { getEntityBySlug, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor } from '@/lib/services/entity-kv';
+import { getGenreBySlug } from '@/lib/data/genres';
 import { searchAndEnrichFromTMDB } from '@/lib/services/entity-enrichment';
 import { TitleJsonLd } from '@/components/seo/TitleJsonLd';
 import { PlayButton } from '@/components/title/PlayButton';
@@ -101,18 +102,31 @@ export default async function TitlePage({ params }: Props) {
     notFound();
   }
 
-  // 获取同题材与同导演相关推荐影片（构建站内强内链拓扑）
+  // 获取同题材、同导演与同主演相关推荐影片（构建站内强内链拓扑）
   const primaryGenre = entity.genres?.[0] || (entity.type === 'tv' ? '电视剧' : '电影');
   const primaryDirector = entity.directors?.[0];
+  const primaryActor = entity.actors?.[0];
 
-  const [genreRelated, directorRelated] = await Promise.all([
+  const [genreRelated, directorRelated, actorRelated] = await Promise.all([
     getEntitiesByGenre(primaryGenre, 8),
-    primaryDirector ? getEntitiesByDirector(primaryDirector, 4) : Promise.resolve([]),
+    primaryDirector ? getEntitiesByDirector(primaryDirector, 6) : Promise.resolve([]),
+    primaryActor ? getEntitiesByActor(primaryActor, 6) : Promise.resolve([]),
   ]);
 
   // 过滤自身
   const filteredGenreRelated = genreRelated.filter(e => e.entityId !== entity.entityId).slice(0, 6);
-  const filteredDirectorRelated = directorRelated.filter(e => e.entityId !== entity.entityId).slice(0, 4);
+  const filteredDirectorRelated = directorRelated.filter(e => e.entityId !== entity.entityId).slice(0, 6);
+  const filteredActorRelated = actorRelated.filter(e => e.entityId !== entity.entityId).slice(0, 6);
+
+  // 去重合并推荐列表
+  const combinedRelated: typeof filteredGenreRelated = [];
+  const seenIds = new Set<string>();
+  for (const item of [...filteredDirectorRelated, ...filteredActorRelated, ...filteredGenreRelated]) {
+    if (!seenIds.has(item.entityId)) {
+      seenIds.add(item.entityId);
+      combinedRelated.push(item);
+    }
+  }
 
   const isTv = entity.type === 'tv';
   const channelPath = isTv ? '/tv' : '/movie';
@@ -229,14 +243,19 @@ export default async function TitlePage({ params }: Props) {
 
               {/* 题材标签 */}
               <div className="flex flex-wrap gap-2 mb-8">
-                {entity.genres?.map(genre => (
-                  <span
-                    key={genre}
-                    className="px-3 py-1 text-xs font-semibold rounded-full bg-white/10 hover:bg-white/20 text-white/80 transition-colors"
-                  >
-                    {genre}
-                  </span>
-                ))}
+                {entity.genres?.map(genre => {
+                  const gInfo = getGenreBySlug(genre);
+                  const href = gInfo ? `/genre/${gInfo.slug}` : `/genre/${encodeURIComponent(genre)}`;
+                  return (
+                    <Link
+                      key={genre}
+                      href={href}
+                      className="px-3 py-1 text-xs font-semibold rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors border border-white/5"
+                    >
+                      {genre}
+                    </Link>
+                  );
+                })}
               </div>
 
               {/* AEO 回答胶囊 (Answer Capsule)：针对 AI 搜索引擎（Google AI Overview、Perplexity 等）深度优化 */}
@@ -249,18 +268,46 @@ export default async function TitlePage({ params }: Props) {
                 </p>
               </div>
 
-              {/* 演职员表 */}
+              {/* 演职员表（深度内链直达导演/演员作品专栏） */}
               <div className="space-y-3 mb-8 text-sm sm:text-base">
                 {entity.directors && entity.directors.length > 0 && (
                   <div className="flex flex-wrap items-baseline gap-2">
                     <span className="text-white/40 font-medium">导演：</span>
-                    <span className="text-white/90">{entity.directors.join('、')}</span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {entity.directors.map((d, idx) => (
+                        <span key={d} className="inline-flex items-center">
+                          <Link
+                            href={`/director/${encodeURIComponent(d)}`}
+                            className="text-white/90 hover:text-red-400 hover:underline transition-colors"
+                          >
+                            {d}
+                          </Link>
+                          {idx < entity.directors.length - 1 && (
+                            <span className="text-white/30 ml-1.5">/</span>
+                          )}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 )}
                 {entity.actors && entity.actors.length > 0 && (
                   <div className="flex flex-wrap items-baseline gap-2">
                     <span className="text-white/40 font-medium">主演：</span>
-                    <span className="text-white/90">{entity.actors.join('、')}</span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {entity.actors.map((a, idx) => (
+                        <span key={a} className="inline-flex items-center">
+                          <Link
+                            href={`/actor/${encodeURIComponent(a)}`}
+                            className="text-white/90 hover:text-red-400 hover:underline transition-colors"
+                          >
+                            {a}
+                          </Link>
+                          {idx < entity.actors.length - 1 && (
+                            <span className="text-white/30 ml-1.5">/</span>
+                          )}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -288,16 +335,16 @@ export default async function TitlePage({ params }: Props) {
           </div>
         </article>
 
-        {/* 相关影片推荐内链网络 (同导演与同题材) */}
-        {(filteredDirectorRelated.length > 0 || filteredGenreRelated.length > 0) && (
+        {/* 相关影片推荐内链网络 (同导演、同主演与同题材) */}
+        {combinedRelated.length > 0 && (
           <section className="mt-16 pt-12 border-t border-white/10">
             <h2 className="text-xl sm:text-2xl font-bold text-white mb-6 flex items-center gap-2">
               <span>🍿</span>
-              <span>更多{primaryGenre}精选推荐</span>
+              <span>更多{primaryGenre}与演职员精选推荐</span>
             </h2>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
-              {[...filteredDirectorRelated, ...filteredGenreRelated].slice(0, 6).map(rel => (
+              {combinedRelated.slice(0, 12).map(rel => (
                 <Link
                   key={rel.entityId}
                   href={`/title/${rel.entityId}-${rel.slug}`}

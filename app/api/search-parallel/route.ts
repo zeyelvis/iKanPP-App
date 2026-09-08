@@ -9,6 +9,7 @@ import { searchVideos } from '@/lib/api/client';
 import { getSourceById } from '@/lib/api/video-sources';
 import { getSourceName } from '@/lib/utils/source-names';
 import { isSafeExternalUrl } from '@/lib/utils/security';
+import { searchAndEnrichFromTMDB } from '@/lib/services/entity-enrichment';
 
 export const runtime = 'edge';
 
@@ -149,7 +150,15 @@ export async function POST(request: NextRequest) {
         // Wait for all sources to complete
         await Promise.all(searchPromises);
 
-
+        // 长尾片库自扩充钩子 (On-Demand Entity Enrichment)
+        // 若搜索到有效视频线路且片名有效，后台非阻塞触发 TMDB 补全与实体沉淀
+        if (totalVideosFound > 0 && query.trim().length >= 1 && query.trim().length <= 40) {
+          try {
+            searchAndEnrichFromTMDB(query.trim()).catch(() => {});
+          } catch {
+            // 忽略异步异常，保证核心搜索流毫秒响应
+          }
+        }
 
         // Send completion signal
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({
