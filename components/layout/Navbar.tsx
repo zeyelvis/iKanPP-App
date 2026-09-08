@@ -48,11 +48,23 @@ export function Navbar({
     iptv: { label: '返回直播', href: '/iptv' },
   };
 
-  const homeHref = isPremiumMode
+  const [isIkanX, setIsIkanX] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsIkanX(window.location.hostname.includes('ikanx.com'));
+    }
+  }, []);
+
+  const homeHref = isIkanX
+    ? '/'
+    : isPremiumMode
     ? '/premium'
     : (fromChannel && channelMap[fromChannel] ? channelMap[fromChannel].href : '/');
 
-  const returnLabel = isPremiumMode
+  const returnLabel = isIkanX
+    ? '返回午夜专区'
+    : isPremiumMode
     ? '返回午夜版'
     : (fromChannel && channelMap[fromChannel] ? channelMap[fromChannel].label : '返回');
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
@@ -79,17 +91,21 @@ export function Navbar({
 
   const isPlayer = variant === 'player';
 
-  const navCategories = [
-    { id: 'home', label: '首页', href: '/' },
-    { id: 'movie', label: '电影', href: '/movie' },
-    { id: 'tv', label: '电视剧', href: '/tv' },
-
-    { id: 'anime', label: '动漫', href: '/anime' },
-    { id: 'variety', label: '综艺', href: '/variety' },
-    { id: 'ranking', label: '风云榜', href: '/ranking' },
-    { id: 'iptv', label: '电视直播', href: '/iptv' },
-    { id: 'premium', label: '午夜版', href: '/premium' },
-  ];
+  const navCategories = isIkanX
+    ? [
+        { id: 'premium', label: '午夜大厅', href: '/', isExternal: false },
+        { id: 'return_main', label: '返回主站 (大众影视)', href: 'https://www.ikanpp.com', isExternal: true },
+      ]
+    : [
+        { id: 'home', label: '首页', href: '/', isExternal: false },
+        { id: 'movie', label: '电影', href: '/movie', isExternal: false },
+        { id: 'tv', label: '电视剧', href: '/tv', isExternal: false },
+        { id: 'anime', label: '动漫', href: '/anime', isExternal: false },
+        { id: 'variety', label: '综艺', href: '/variety', isExternal: false },
+        { id: 'ranking', label: '风云榜', href: '/ranking', isExternal: false },
+        { id: 'iptv', label: '电视直播', href: '/iptv', isExternal: false },
+        { id: 'premium', label: '午夜版', href: 'https://ikanx.com', isExternal: true },
+      ];
 
   return (
     <nav
@@ -118,7 +134,9 @@ export function Navbar({
                 title={returnLabel}
               >
                 <LogoIcon size={32} />
-                <span className="font-black text-xl tracking-tight text-white hidden sm:inline">iKanPP</span>
+                <span className="font-black text-xl tracking-tight text-white hidden sm:inline">
+                  {isIkanX ? 'iKanX' : 'iKanPP'}
+                </span>
               </button>
             </div>
           ) : (
@@ -132,15 +150,17 @@ export function Navbar({
                 <span
                   className="text-xl font-black tracking-tight"
                   style={{
-                    background: 'linear-gradient(135deg, #FF4D4D 0%, #F59E0B 50%, #FFD700 100%)',
+                    background: isIkanX
+                      ? 'linear-gradient(135deg, #EC4899 0%, #A855F7 50%, #6366F1 100%)'
+                      : 'linear-gradient(135deg, #FF4D4D 0%, #F59E0B 50%, #FFD700 100%)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                   }}
                 >
-                  iKanPP
+                  {isIkanX ? 'iKanX' : 'iKanPP'}
                 </span>
                 <span className="text-[9px] text-white/50 tracking-widest font-semibold hidden md:inline -mt-1">
-                  爱看片片 · 全免流媒体
+                  {isIkanX ? '午夜专区 · 4K 极速秒播' : '爱看片片 · 全免流媒体'}
                 </span>
               </div>
             </Link>
@@ -150,7 +170,26 @@ export function Navbar({
           {!isPlayer && (
             <div className="hidden lg:flex items-center gap-1 xl:gap-2">
               {navCategories.map(cat => {
-                const isActive = pathname === cat.href || (cat.href === '/' && pathname === '') || activeCategory === cat.id;
+                const isActive = (cat.href === '/' && pathname === '') || pathname === cat.href || activeCategory === cat.id;
+
+                if ((cat as any).isExternal) {
+                  return (
+                    <a
+                      key={cat.id}
+                      href={cat.href}
+                      target={cat.id === 'premium' ? '_blank' : '_self'}
+                      rel="noopener noreferrer nofollow"
+                      className={`px-3.5 py-1.5 rounded-full text-xs xl:text-sm font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                        cat.id === 'premium'
+                          ? 'text-pink-400 hover:text-pink-300 hover:bg-pink-500/10 border border-pink-500/20'
+                          : 'text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 border border-amber-500/20'
+                      }`}
+                    >
+                      {cat.id === 'premium' && <span>🌙</span>}
+                      <span>{cat.label}</span>
+                    </a>
+                  );
+                }
 
                 return (
                   <Link
@@ -226,7 +265,15 @@ export function Navbar({
                   key={cat.id}
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    router.push(cat.href);
+                    if ((cat as any).isExternal) {
+                      if (cat.id === 'premium') {
+                        window.open(cat.href, '_blank', 'noopener,noreferrer');
+                      } else {
+                        window.location.href = cat.href;
+                      }
+                    } else {
+                      router.push(cat.href);
+                    }
                   }}
                   className={`py-3 px-2 rounded-2xl text-xs font-bold transition-all cursor-pointer flex flex-col items-center justify-center gap-1 active:scale-95 ${
                     isActive
@@ -238,12 +285,12 @@ export function Navbar({
                     {cat.id === 'home' && '🏠'}
                     {cat.id === 'movie' && '🎬'}
                     {cat.id === 'tv' && '📺'}
-
                     {cat.id === 'anime' && '⚡'}
                     {cat.id === 'variety' && '🎤'}
                     {cat.id === 'ranking' && '🏆'}
                     {cat.id === 'iptv' && '📡'}
                     {cat.id === 'premium' && '🌙'}
+                    {cat.id === 'return_main' && '🌐'}
                   </span>
                   <span>{cat.label}</span>
                 </button>

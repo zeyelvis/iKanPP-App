@@ -8,13 +8,13 @@ export default function robots(): MetadataRoute.Robots {
             {
                 userAgent: '*',
                 allow: '/',
-                disallow: ['/api/', '/settings', '/profile'],
+                disallow: ['/api/', '/settings', '/profile', '/premium'],
             },
             // 支持各大主流 AI 搜索引擎 (ChatGPT, Claude, Perplexity, Gemini, Applebot)
             {
                 userAgent: ['GPTBot', 'ChatGPT-User', 'ClaudeBot', 'PerplexityBot', 'Google-Extended', 'cohere-ai', 'CCBot', 'Applebot'],
                 allow: '/',
-                disallow: ['/api/', '/profile', '/settings'],
+                disallow: ['/api/', '/profile', '/settings', '/premium'],
             },
         ],
         sitemap: `${BASE_URL}/sitemap.xml`,
