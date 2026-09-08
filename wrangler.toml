@@ -8,3 +8,11 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 # Environment variables can be set here or in Cloudflare Dashboard
+
+# Cloudflare KV Namespace for SEO Entities
+# 在 Cloudflare Dashboard -> Workers & Pages -> KV 创建命名空间 "kvideo-seo-entities"
+# 并将 binding 设为 KVIDEO_KV
+# [[kv_namespaces]]
+# binding = "KVIDEO_KV"
+# id = "<YOUR_KV_NAMESPACE_ID>"
+
