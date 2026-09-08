@@ -46,7 +46,7 @@ function getPlayerSettingsSnapshot(isPremium: boolean, mediaProxyEnabled: boolea
         adFilterMode: modeSettings.adFilterMode,
         adKeywords: globalSettings.adKeywords,
         fullscreenType: modeSettings.fullscreenType,
-        proxyMode: mediaProxyEnabled ? modeSettings.proxyMode : 'none',
+        proxyMode: (isPremium && mediaProxyEnabled) ? modeSettings.proxyMode : 'none',
         danmakuEnabled: modeSettings.danmakuEnabled,
         danmakuApiUrl: modeSettings.danmakuApiUrl,
         danmakuOpacity: modeSettings.danmakuOpacity,

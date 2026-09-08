@@ -141,7 +141,7 @@ function getDefaultAppSettings(): AppSettings {
     searchDisplayMode: 'normal',
     episodeReverseOrder: false,
     fullscreenType: 'auto',
-    proxyMode: 'retry',
+    proxyMode: 'none',
     rememberScrollPosition: true,
     personalizedRecommendations: true,
     videoTogetherEnabled: false,

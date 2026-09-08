@@ -73,22 +73,11 @@ export function useStallDetection({
                     lastTimeRef.current = currentTime;
                     lastUpdateTimeRef.current = now;
                 } else {
-                    // 时间停滞，判断停滞时长（科学平滑阈值 2200ms，常规切片下载不误判）
+                    // 时间停滞，判断停滞时长（科学平滑阈值 2200ms，常规等待切片网络缓冲，仅标记加载动画，绝不主动跳帧破坏底层 HLS 缓冲区）
                     const stallDuration = now - lastUpdateTimeRef.current;
                     if (stallDuration > 2200) {
                         setIsLoading(true);
                         isStalledByMeRef.current = true;
-
-                        // 极端停滞保护：若卡死超过 3.5 秒且非用户暂停，轻微微调 0.1 秒跳过坏帧自愈
-                        if (stallDuration > 3500 && stallDuration < 4000) {
-                            try {
-                                console.info('[StallDetection] Auto nudging video forward 0.1s to recover playback');
-                                videoRef.current.currentTime += 0.1;
-                                lastUpdateTimeRef.current = now;
-                            } catch (e) {
-                                console.warn('[StallDetection] Nudge failed:', e);
-                            }
-                        }
                     }
                 }
             } else {

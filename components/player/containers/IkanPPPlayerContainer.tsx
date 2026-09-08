@@ -645,7 +645,7 @@ export function IkanPPPlayerContainer() {
         </div>
         <h2 className="text-xl font-bold text-white mb-2 tracking-wide">正在极速检索全网片源...</h2>
         <p className="text-sm text-white/50 max-w-sm text-center">
-          正在为您秒级穿透全网主流骨干云源，并智能比对最优画质与切片专线
+          正在为您秒级穿透全网主流骨干云源，并智能比对最优画质与极速播放专线
         </p>
       </div>
     );

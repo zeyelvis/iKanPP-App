@@ -58,7 +58,10 @@ export function VideoPlayer({
   const SAVE_INTERVAL = 5000; // 5 seconds throttle
 
   const { showModeIndicator, proxyMode } = usePlayerSettings(isPremium);
-  const effectiveUseProxy = proxyMode === 'always' ? true : proxyMode === 'none' ? false : useProxy;
+  // 普通模式 (iKanPP) 100% 纯前端直连各大主流 CDN，绝不代理也不重写切片；仅 iKanX (isPremium) 允许代理
+  const effectiveUseProxy = isPremium
+    ? (proxyMode === 'always' ? true : proxyMode === 'none' ? false : useProxy)
+    : false;
 
   // 使用 Selector 单独订阅 addToHistory 动作，彻底切断每 5 秒保存进度导致的播放器子树无端重渲染与卡顿！
   const addToHistory = isPremium
@@ -156,11 +159,11 @@ export function VideoPlayer({
       return;
     }
 
-    // Auto-retry with proxy if:
-    // 1. Not already using proxy
-    // 2. Proxy mode is NOT 'none' (so 'retry' or potentially 'always' if it somehow failed locally)
-    // 3. Proxy mode is 'retry' (specifically for the auto-switch logic)
-    if (!effectiveUseProxy && proxyMode === 'retry') {
+    // Auto-retry with proxy ONLY for iKanX (premium mode):
+    // 1. isPremium is true
+    // 2. Not already using proxy
+    // 3. Proxy mode is 'retry'
+    if (isPremium && !effectiveUseProxy && proxyMode === 'retry') {
       lastAutoSwitchTimeRef.current = now;
       setUseProxy(true);
       setShouldAutoPlay(true); // Force autoplay after proxy retry
@@ -169,7 +172,7 @@ export function VideoPlayer({
     }
 
     setVideoError(error);
-  }, [effectiveUseProxy, proxyMode, onPlaybackError]);
+  }, [isPremium, effectiveUseProxy, proxyMode, onPlaybackError]);
 
   const handleRetry = () => {
     if (retryCount >= MAX_MANUAL_RETRIES) return;
@@ -177,17 +180,8 @@ export function VideoPlayer({
     setRetryCount(prev => prev + 1);
     setVideoError('');
     setShouldAutoPlay(true);
-    // Toggle proxy to try different path, but since we are already in error state which likely means proxy failed (or direct failed),
-    // we can try toggling or just force re-render.
-    // Requirement says: "try without proxy and proxy and same as before"
-    // We will just toggle useProxy state to force a refresh with/without proxy.
-    // However, if we want to cycle, we can just toggle.
-    // But the requirement says "proxy attempt count to 20".
-    // So we just increment count and maybe toggle proxy or keep it.
-    // Let's toggle it to give best chance.
-    // Actually requirement says "try no proxy and proxy and same as before".
-    // So simple toggle is fine.
-    setUseProxy(prev => proxyMode === 'none' ? false : !prev);
+    // 普通主站永远直连重试，仅 iKanX 允许在直连和代理之间切换
+    setUseProxy(prev => (!isPremium || proxyMode === 'none') ? false : !prev);
   };
 
   const finalPlayUrl = effectiveUseProxy
