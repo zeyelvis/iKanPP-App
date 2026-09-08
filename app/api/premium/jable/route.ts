@@ -99,9 +99,9 @@ export async function GET(request: NextRequest) {
             { videos, mode, page, total: videos.length },
             {
                 headers: {
-                    'Cache-Control': 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400',
-                    'CDN-Cache-Control': 'public, s-maxage=3600',
-                    'Cloudflare-CDN-Cache-Control': 'public, s-maxage=3600',
+                    'Cache-Control': 'public, max-age=43200, s-maxage=86400, stale-while-revalidate=86400',
+                    'CDN-Cache-Control': 'public, s-maxage=86400',
+                    'Cloudflare-CDN-Cache-Control': 'public, s-maxage=86400',
                 },
             }
         );

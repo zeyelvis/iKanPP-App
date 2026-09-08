@@ -18,18 +18,23 @@ export interface PremiumVideo {
 
 const PAGE_LIMIT = 20;
 const STORAGE_PREFIX = 'kvideo-premium-cache-v2-';
+const ONE_DAY_MS = 24 * 60 * 60 * 1000; // 24 小时每日对齐
 
 // 客户端全局 SWR 内存与持久化缓存池
-const clientMemoryCache = new Map<string, PremiumVideo[]>();
+const clientMemoryCache = new Map<string, { data: PremiumVideo[]; timestamp: number }>();
 
-function getStorageCache(key: string): PremiumVideo[] | null {
+function getStorageCache(key: string): { data: PremiumVideo[]; isFresh: boolean } | null {
     if (typeof window === 'undefined') return null;
     try {
         const raw = localStorage.getItem(STORAGE_PREFIX + key);
         if (!raw) return null;
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed;
+            return { data: parsed, isFresh: false };
+        }
+        if (parsed && Array.isArray(parsed.data) && parsed.data.length > 0) {
+            const isFresh = Boolean(parsed.timestamp && (Date.now() - parsed.timestamp < ONE_DAY_MS));
+            return { data: parsed.data, isFresh };
         }
     } catch {}
     return null;
@@ -38,7 +43,11 @@ function getStorageCache(key: string): PremiumVideo[] | null {
 function setStorageCache(key: string, data: PremiumVideo[]) {
     if (typeof window === 'undefined') return;
     try {
-        localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(data.slice(0, 40)));
+        const payload = {
+            data: data.slice(0, 40),
+            timestamp: Date.now()
+        };
+        localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(payload));
     } catch {}
 }
 
@@ -52,11 +61,11 @@ export function usePremiumContent(
     // 0ms 瞬间秒开初始状态：内存 -> localStorage -> 预烘焙精选库
     const [videos, setVideos] = useState<PremiumVideo[]>(() => {
         const mem = clientMemoryCache.get(cacheKey);
-        if (mem && mem.length > 0) return mem;
+        if (mem && mem.data.length > 0) return mem.data;
         const local = getStorageCache(cacheKey);
-        if (local && local.length > 0) {
-            clientMemoryCache.set(cacheKey, local);
-            return local;
+        if (local && local.data.length > 0) {
+            clientMemoryCache.set(cacheKey, { data: local.data, timestamp: Date.now() });
+            return local.data;
         }
         // 首次打开午夜版，直接使用高质量预置种子库，完全 0ms 秒开呈现
         return PREBAKED_PREMIUM_DATA;
@@ -107,7 +116,7 @@ export function usePremiumContent(
                 setVideos(prev => {
                     const merged = append ? [...prev, ...newVideos] : newVideos;
                     if (pageNum === 1) {
-                        clientMemoryCache.set(currentKey, newVideos);
+                        clientMemoryCache.set(currentKey, { data: newVideos, timestamp: Date.now() });
                         setStorageCache(currentKey, newVideos);
                     }
                     return merged;
@@ -124,16 +133,17 @@ export function usePremiumContent(
         }
     }, []);
 
-    // 监听分类或榜单 Tab 变化，0ms 优先展示缓存并触发后台 SWR
+    // 监听分类或榜单 Tab 变化，0ms 优先展示缓存并触发每日后台对齐
     useEffect(() => {
         const key = categoryValue ? `cat:${categoryValue}` : `mode:${rankingMode}`;
         const mem = clientMemoryCache.get(key);
         const local = !mem ? getStorageCache(key) : null;
-        const cached = mem || local;
+        const cachedData = mem ? mem.data : local?.data;
+        const isFresh = mem ? (Date.now() - mem.timestamp < ONE_DAY_MS) : Boolean(local?.isFresh);
 
         setPage(1);
-        if (cached && cached.length > 0) {
-            setVideos(cached);
+        if (cachedData && cachedData.length > 0) {
+            setVideos(cachedData);
         } else if (!categoryValue && rankingMode === 'today') {
             setVideos(PREBAKED_PREMIUM_DATA);
         }
@@ -141,7 +151,10 @@ export function usePremiumContent(
         setLoading(false);
         setHasMore(true);
 
-        loadVideos(1, false);
+        // 若当前处于 24 小时新鲜期内，跳过重复网络回源，实现真正的每日对齐一次
+        if (!isFresh || !cachedData || cachedData.length === 0) {
+            loadVideos(1, false);
+        }
     }, [categoryValue, rankingMode, loadVideos]);
 
     const { prefetchRef, loadMoreRef } = useInfiniteScroll({

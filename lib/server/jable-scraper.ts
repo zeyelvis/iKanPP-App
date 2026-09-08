@@ -25,8 +25,8 @@ export interface JableVideoItem {
     source: 'jable';
 }
 
-// 边缘内存缓存
-const CACHE_TTL = 20 * 60 * 1000; // 20 分钟缓存
+// 边缘内存缓存（每日定时对齐：24 小时 TTL，极速防封）
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 小时每日定时对齐
 const jableMemoryCache = new Map<string, { data: JableVideoItem[]; timestamp: number }>();
 
 function getJableCached(key: string): JableVideoItem[] | null {
@@ -169,7 +169,7 @@ export async function fetchJableList(
                 'Referer': 'https://jable.tv/',
             },
             signal: controller.signal,
-            next: { revalidate: 1800 },
+            next: { revalidate: 86400 },
         });
 
         clearTimeout(timeoutId);
