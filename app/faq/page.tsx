@@ -4,8 +4,8 @@ import { Navbar } from '@/components/layout/Navbar';
 export const metadata: Metadata = {
   title: '常见问题与帮助中心 (FAQ) - 海外华人追剧免翻墙答疑 | iKanPP 爱看片片',
   description: 'iKanPP 帮助中心汇集海外华人常见问题：如何免翻墙看国内剧、播放源切换、设备多端同步、4K 画质优化与网络故障排除指南。',
-  keywords: ['iKanPP帮助', 'iKanPP常见问题', '海外看剧免翻墙', '海外追剧FAQ', '爱看片片帮助', 'iKanPP'],
   openGraph: {
+
     title: '常见问题与帮助中心 (FAQ) | iKanPP 爱看片片',
     description: '海外华人追剧常见问题与解答 · 免翻墙直连 · 多源播放说明。',
     type: 'website',

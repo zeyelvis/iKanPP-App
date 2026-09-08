@@ -264,6 +264,14 @@ export default async function TitlePage({ params }: Props) {
                   </div>
                 )}
               </div>
+
+              {/* E-E-A-T 影视资料背书 */}
+              <div className="flex items-center gap-2 text-xs text-white/35 mb-6">
+                <span>🛡️</span>
+                <span>影视资料由 iKanPP 影视库团队整理校对</span>
+                <span>·</span>
+                <span>最新核验于 {entity.year} 年</span>
+              </div>
             </div>
 
             {/* 播放触发操作区 */}
