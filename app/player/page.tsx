@@ -92,6 +92,14 @@ function PlayerContent() {
   const [relatedMovies, setRelatedMovies] = useState<RailMovie[]>([]);
   const [loadingRelated, setLoadingRelated] = useState(true);
 
+  // 初始化时第一时间强制隔离浏览器标签页 Title，杜绝根布局 iKanPP 品牌残留
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (isPremium) {
+      document.title = title ? `${title} - iKanX 4K极速秒播` : 'iKanX 4K极速秒播 | 顶级影音';
+    }
+  }, [isPremium, title]);
+
   // === Title-only mode: auto-search all sources and redirect to best match ===
   // 核心自愈防线：只要有 title 且缺少 videoId，无论是否附带 source，都必须启动自动匹配寻找有效 videoId
   const needsTitleSearch = !videoId && !!title;
@@ -106,9 +114,9 @@ function PlayerContent() {
     setTitleSearching(true);
     setTitleSearchError('');
 
-    const settings = settingsStore.getSettings();
-    const sourcesForMode = isPremium ? settings.premiumSources : settings.sources;
-    let allSources = sourcesForMode?.filter((s: VideoSource) => s.enabled !== false) || [];
+    const appSettings = settingsStore.getSettings();
+    const configuredSources = isPremium ? appSettings.premiumSources : appSettings.sources;
+    let allSources = configuredSources?.filter((s: VideoSource) => s.enabled !== false) || [];
     if (allSources.length === 0) {
       allSources = isPremium ? (PREMIUM_SOURCES as VideoSource[]) : (DEFAULT_SOURCES as VideoSource[]);
     }
@@ -489,7 +497,11 @@ function PlayerContent() {
               setTitleSearchError(`全网暂未检索到 ${targetYear ? targetYear + ' 年' : ''}《${title}》正片数字资源。系统已为您自动拦截早期同名老片，避免误播。`);
               setTitleSearching(false);
             } else {
-              setTitleSearchError('全网 108 条数据源未检索到该片，请检查片名或在首页重新搜索');
+              setTitleSearchError(
+                isPremium
+                  ? '午夜专属专线暂未检索到该番号或影片，请检查番号后在首页重新检索'
+                  : '全网数据源未检索到该片，请检查片名或在首页重新搜索'
+              );
               setTitleSearching(false);
             }
           }
@@ -641,8 +653,14 @@ function PlayerContent() {
     return sources;
   }, [groupedSourcesParam, source, videoId, videoData?.vod_pic, discoveredSources]);
 
-  // 拉取同类高分影视推荐
+  // 拉取同类高分影视推荐（午夜模式绝对屏蔽豆瓣推荐，杜绝非相关影片泄露）
   useEffect(() => {
+    if (isPremium) {
+      setLoadingRelated(false);
+      setRelatedMovies([]);
+      return;
+    }
+
     let isMounted = true;
     const fetchRelated = async () => {
       setLoadingRelated(true);
@@ -665,7 +683,7 @@ function PlayerContent() {
     return () => {
       isMounted = false;
     };
-  }, [videoData?.type_name, expectedType]);
+  }, [videoData?.type_name, expectedType, isPremium]);
 
 
 
@@ -1215,22 +1233,23 @@ function PlayerContent() {
           </div>
         )}
 
-        {/* 底部：同类口碑影视精选推荐 */}
-        <div className="mt-12 pt-8 border-t border-white/10">
-          <ContentRail
-            title="🍿 喜欢这部影视的观众还在看"
-            icon="✨"
-            badge="RECOMMENDED"
-            movies={relatedMovies}
-            loading={loadingRelated}
-            onMovieClick={(movie) => {
-              const params = new URLSearchParams();
-              params.set('title', movie.title);
-              if (isPremium) params.set('premium', '1');
-              router.push(`/player?${params.toString()}`);
-            }}
-          />
-        </div>
+        {/* 底部：同类口碑影视精选推荐（仅普通影视模式展示） */}
+        {!isPremium && (
+          <div className="mt-12 pt-8 border-t border-white/10">
+            <ContentRail
+              title="🍿 喜欢这部影视的观众还在看"
+              icon="✨"
+              badge="RECOMMENDED"
+              movies={relatedMovies}
+              loading={loadingRelated}
+              onMovieClick={(movie) => {
+                const params = new URLSearchParams();
+                params.set('title', movie.title);
+                router.push(`/player?${params.toString()}`);
+              }}
+            />
+          </div>
+        )}
       </main>
 
       {/* Favorites Sidebar - Left */}

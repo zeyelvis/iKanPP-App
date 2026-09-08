@@ -17,7 +17,7 @@ export const runtime = 'edge';
 /**
  * Shared handler for fetching video details
  */
-async function handleDetailRequest(id: string | null, source: string | null, method: string, request?: NextRequest, titleParam?: string | null) {
+async function handleDetailRequest(id: string | null, source: any, method: string, request?: NextRequest, titleParam?: string | null) {
   if (!id) {
     return NextResponse.json(
       { success: false, error: 'Missing video ID parameter' },
@@ -25,8 +25,10 @@ async function handleDetailRequest(id: string | null, source: string | null, met
     );
   }
 
+  const sourceId = typeof source === 'object' && source !== null ? source.id : source;
+
   // 1. 专属支持 Jable 原生视频流直解与智能热备
-  if (source === 'jable' || !source) {
+  if (sourceId === 'jable' || !sourceId) {
     try {
       // 提取番号
       const codeMatch = id.match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
@@ -161,14 +163,14 @@ async function handleDetailRequest(id: string | null, source: string | null, met
   }
 
   // 2. 专属支持 ikanbot 聚合专线直解
-  if (source === 'ikanbot' || (typeof source === 'string' && source.startsWith('ikanbot_'))) {
+  if (sourceId === 'ikanbot' || (typeof sourceId === 'string' && sourceId.startsWith('ikanbot_'))) {
     try {
-      const lineFlag = typeof source === 'string' && source.startsWith('ikanbot_')
-        ? source.replace('ikanbot_', '')
+      const lineFlag = typeof sourceId === 'string' && sourceId.startsWith('ikanbot_')
+        ? sourceId.replace('ikanbot_', '')
         : '';
       const detail = await fetchIkanbotDetail(id);
       if (detail && detail.lines.length > 0) {
-        const matchedLine = detail.lines.find(l => l.sourceId === source)
+        const matchedLine = detail.lines.find(l => l.sourceId === sourceId)
           || detail.lines.find(l => l.flag === lineFlag)
           || detail.lines[0];
         if (matchedLine) {
