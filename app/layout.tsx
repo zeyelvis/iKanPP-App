@@ -10,7 +10,6 @@ import { TVProvider } from "@/lib/contexts/TVContext";
 import { TVNavigationInitializer } from "@/components/TVNavigationInitializer";
 
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
-import { PasswordGate } from "@/components/PasswordGate";
 
 import { AdKeywordsInjector } from "@/components/AdKeywordsInjector";
 import { BackToTop } from "@/components/ui/BackToTop";
@@ -171,15 +170,13 @@ export default function RootLayout({
         <ThemeProvider>
           <TVProvider>
             <TVNavigationInitializer />
-            <PasswordGate hasAuth={false}>
-              <AdKeywordsWrapper />
-              <Suspense><ReferralCapture /></Suspense>
-              {children}
-              <Footer />
-              <BackToTop />
-              <ScrollPositionManager />
-              <MobileBottomNav />
-            </PasswordGate>
+            <AdKeywordsWrapper />
+            <Suspense><ReferralCapture /></Suspense>
+            {children}
+            <Footer />
+            <BackToTop />
+            <ScrollPositionManager />
+            <MobileBottomNav />
           </TVProvider>
 
           <ServiceWorkerRegister />
