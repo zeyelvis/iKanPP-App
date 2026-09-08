@@ -83,6 +83,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'iKanPP' }],
   creator: 'iKanPP',
+  manifest: '/manifest.json',
   icons: {
     icon: '/icon.png',
     apple: '/icon.png',
@@ -154,8 +155,6 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://img2.doubanio.com" />
         <link rel="dns-prefetch" href="https://img9.doubanio.com" />
         <link rel="dns-prefetch" href="https://api.themoviedb.org" />
-        {/* PWA Manifest */}
-        <link rel="manifest" href="/manifest.json" />
         {/* Apple PWA Support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

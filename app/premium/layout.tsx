@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   keywords: ['iKanX', '午夜影视', '4K秒播', '专属加密影院', '私人影院'],
   authors: [{ name: 'iKanX' }],
   creator: 'iKanX',
+  manifest: null,
   alternates: {
     canonical: 'https://ikanx.com',
   },
