@@ -141,7 +141,7 @@ export function VideoPlayer({
   const lastAutoSwitchTimeRef = useRef(0);
 
   // Handle video errors
-  const handleVideoError = (error: string) => {
+  const handleVideoError = useCallback((error: string) => {
     console.error('Video playback error:', error);
     const now = Date.now();
 
@@ -170,7 +170,7 @@ export function VideoPlayer({
     }
 
     setVideoError(error);
-  };
+  }, [effectiveUseProxy, proxyMode, onPlaybackError]);
 
   const handleRetry = () => {
     if (retryCount >= MAX_MANUAL_RETRIES) return;

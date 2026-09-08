@@ -105,11 +105,9 @@ export function usePlaybackControls({
         // We wait for onCanPlay to set isLoading to false.
 
         // Fix for stuck at 00:00:00:
-        // Only seek if we are at the very start (to avoid overwriting a previous seek)
-        if (videoRef.current.currentTime < 0.5) {
-            // If initialTime is 0, we seek to a tiny offset to help the browser/HLS buffer start.
-            const startPosition = initialTime > 0 ? initialTime : 0.1;
-            videoRef.current.currentTime = startPosition;
+        // Only seek if initialTime is explicitly specified (> 0) to avoid interrupting instant start
+        if (initialTime > 0 && videoRef.current.currentTime < 0.5) {
+            videoRef.current.currentTime = initialTime;
         }
 
         // Apply saved playback rate when new source loads (for episode changes)

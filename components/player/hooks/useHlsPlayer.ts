@@ -26,6 +26,20 @@ export function useHlsPlayer({
     const { mediaProxyEnabled } = useRuntimeFeatures();
     const isAdFilterEnabled = adFilterMode !== 'off';
 
+    // 核心保护：使用 Ref 牢牢锁定回调与动态配置，彻底切断因父组件重渲染导致的 HLS 实例误销毁重建！
+    const onErrorRef = useRef(onError);
+    onErrorRef.current = onError;
+    const onAutoPlayPreventedRef = useRef(onAutoPlayPrevented);
+    onAutoPlayPreventedRef.current = onAutoPlayPrevented;
+    const adFilterModeRef = useRef(adFilterMode);
+    adFilterModeRef.current = adFilterMode;
+    const adKeywordsRef = useRef(adKeywords);
+    adKeywordsRef.current = adKeywords;
+    const isAdFilterEnabledRef = useRef(isAdFilterEnabled);
+    isAdFilterEnabledRef.current = isAdFilterEnabled;
+    const mediaProxyEnabledRef = useRef(mediaProxyEnabled);
+    mediaProxyEnabledRef.current = mediaProxyEnabled;
+
     useEffect(() => {
         const video = videoRef.current;
         if (!video || !src) return;
@@ -53,13 +67,13 @@ export function useHlsPlayer({
 
             class AdFilterLoader extends DefaultLoader {
                 load(context: any, config: any, callbacks: any) {
-                    if (isAdFilterEnabled && (context.type === 'manifest' || context.type === 'level')) {
+                    if (isAdFilterEnabledRef.current && (context.type === 'manifest' || context.type === 'level')) {
                         const originalOnSuccess = callbacks.onSuccess;
                         callbacks.onSuccess = (response: any, stats: any, context: any, networkDetails: any) => {
                             if (typeof response.data === 'string') {
                                 try {
-                                    // Filter the content
-                                    response.data = filterM3u8Ad(response.data, context.url, adFilterMode, adKeywords);
+                                    // Filter the content using latest ref values
+                                    response.data = filterM3u8Ad(response.data, context.url, adFilterModeRef.current, adKeywordsRef.current);
                                 } catch (e) {
                                     console.warn('[HLS] Ad filter error:', e);
                                 }
@@ -82,14 +96,15 @@ export function useHlsPlayer({
                     enableWorker: true,
                     lowLatencyMode: false,
 
-                    // 移动端极速 Seek 与内存防护体系（避免手机浏览器 SourceBuffer 内存溢出卡死）
-                    maxBufferLength: isMobileClient ? 30 : 60,
-                    maxMaxBufferLength: isMobileClient ? 60 : 120,
-                    maxBufferSize: isMobileClient ? 30 * 1000 * 1000 : 60 * 1000 * 1000,
+                    // 高性能自适应缓冲水位体系：彻底杜绝 Buffer Starvation（看 1 秒卡 1 秒）
+                    maxBufferLength: isMobileClient ? 60 : 120,
+                    maxMaxBufferLength: isMobileClient ? 120 : 240,
+                    maxBufferSize: isMobileClient ? 60 * 1000 * 1000 : 120 * 1000 * 1000,
                     maxBufferHole: 0.8,
 
-                    // Start with more buffer
+                    // 启动阶段激进预拉取，保障秒播与连续播放丝滑
                     startFragPrefetch: true,
+                    maxStarvationDelay: 4,
 
                     // 针对 Seek 关键帧停滞的智能微调救活机制（平滑微调 0.05s，无感过渡杜绝黑闪）
                     nudgeOffset: 0.05,
@@ -97,32 +112,32 @@ export function useHlsPlayer({
                     maxFragLookUpTolerance: 0.3,
 
                     // ABR Settings
-                    abrEwmaDefaultEstimate: 500000,
+                    abrEwmaDefaultEstimate: 1000000,
                     abrEwmaFastLive: 3,
                     abrEwmaSlowLive: 9,
                     abrEwmaFastVoD: 3,
                     abrEwmaSlowVoD: 9,
-                    abrBandWidthFactor: 0.8,
+                    abrBandWidthFactor: 0.85,
                     abrBandWidthUpFactor: 0.7,
 
-                    // Loading Settings
-                    fragLoadingMaxRetry: 4,
-                    fragLoadingRetryDelay: 800,
-                    fragLoadingMaxRetryTimeout: 32000,
-                    manifestLoadingMaxRetry: 4,
-                    manifestLoadingRetryDelay: 800,
-                    manifestLoadingMaxRetryTimeout: 32000,
-                    levelLoadingMaxRetry: 4,
-                    levelLoadingRetryDelay: 800,
-                    levelLoadingMaxRetryTimeout: 32000,
+                    // Loading Settings: 增强切片重试和容错
+                    fragLoadingMaxRetry: 6,
+                    fragLoadingRetryDelay: 500,
+                    fragLoadingMaxRetryTimeout: 30000,
+                    manifestLoadingMaxRetry: 5,
+                    manifestLoadingRetryDelay: 600,
+                    manifestLoadingMaxRetryTimeout: 30000,
+                    levelLoadingMaxRetry: 5,
+                    levelLoadingRetryDelay: 600,
+                    levelLoadingMaxRetryTimeout: 30000,
 
-                    // Timeouts（从 20s 优化到 10s，拉取失败快速重连不卡死）
-                    fragLoadingTimeOut: 10000,
+                    // Timeouts
+                    fragLoadingTimeOut: 12000,
                     manifestLoadingTimeOut: 8000,
                     levelLoadingTimeOut: 8000,
 
-                    // Backbuffer（移动端只留 10s 后向缓冲，seek 时闪电清理内存，杜绝 QuotaExceededError）
-                    backBufferLength: isMobileClient ? 10 : 30,
+                    // Backbuffer
+                    backBufferLength: isMobileClient ? 15 : 45,
                 };
 
                 // Use custom loader if ad filtering is enabled
@@ -167,7 +182,7 @@ export function useHlsPlayer({
                                 } else {
                                     // All levels are HEVC — warn user
                                     console.warn('[HLS] ⚠️ All levels are HEVC, browser may not support');
-                                    onError?.('检测到 HEVC/H.265 编码，当前浏览器可能不支持');
+                                    onErrorRef.current?.('检测到 HEVC/H.265 编码，当前浏览器可能不支持');
                                 }
                             }
                         }
@@ -176,7 +191,7 @@ export function useHlsPlayer({
                     if (autoPlay) {
                         video.play().catch((err) => {
                             // console.warn('[HLS] Autoplay prevented:', err);
-                            onAutoPlayPrevented?.(err);
+                            onAutoPlayPreventedRef.current?.(err);
                         });
                     }
                 });
@@ -194,7 +209,7 @@ export function useHlsPlayer({
                                 if (networkErrorRetries <= MAX_RETRIES) {
                                     hls?.startLoad();
                                 } else {
-                                    onError?.('网络错误：无法加载视频流');
+                                    onErrorRef.current?.('网络错误：无法加载视频流');
                                     hls?.destroy();
                                 }
                                 break;
@@ -203,13 +218,13 @@ export function useHlsPlayer({
                                 if (mediaErrorRetries <= MAX_RETRIES) {
                                     hls?.recoverMediaError();
                                 } else {
-                                    onError?.('媒体错误：视频格式不支持或已损坏');
+                                    onErrorRef.current?.('媒体错误：视频格式不支持或已损坏');
                                     hls?.destroy();
                                 }
                                 break;
                             default:
                                 console.error('[HLS] Fatal error, cannot recover:', data);
-                                onError?.(`致命错误：${data.details || '未知错误'}`);
+                                onErrorRef.current?.(`致命错误：${data.details || '未知错误'}`);
                                 hls?.destroy();
                                 break;
                         }
@@ -261,7 +276,7 @@ export function useHlsPlayer({
 
                         // If it's a simple playlist (no variants), just filter and play
                         if (!masterContent.includes('#EXT-X-STREAM-INF')) {
-                            const filtered = filterM3u8Ad(masterContent, absoluteMasterSrc, adFilterMode, adKeywords);
+                            const filtered = filterM3u8Ad(masterContent, absoluteMasterSrc, adFilterModeRef.current, adKeywordsRef.current);
                             const blob = new Blob([filtered], { type: 'application/vnd.apple.mpegurl' });
                             const blobUrl = URL.createObjectURL(blob);
                             createdBlobs.push(blobUrl);
@@ -289,7 +304,7 @@ export function useHlsPlayer({
                                         try {
                                             const absoluteUrl = isRelative ? new URL(uri, absoluteMasterSrc).toString() : uri;
                                             const subContent = await fetchWithFallback(absoluteUrl);
-                                            const filteredSub = filterM3u8Ad(subContent, absoluteUrl, adFilterMode, adKeywords);
+                                            const filteredSub = filterM3u8Ad(subContent, absoluteUrl, adFilterModeRef.current, adKeywordsRef.current);
                                             const subBlob = new Blob([filteredSub], { type: 'application/vnd.apple.mpegurl' });
                                             const subBlobUrl = URL.createObjectURL(subBlob);
                                             createdBlobs.push(subBlobUrl);
@@ -312,7 +327,7 @@ export function useHlsPlayer({
                                     try {
                                         const absoluteUrl = isRelative ? new URL(trimmedLine, absoluteMasterSrc).toString() : trimmedLine;
                                         const subContent = await fetchWithFallback(absoluteUrl);
-                                        const filteredSub = filterM3u8Ad(subContent, absoluteUrl, adFilterMode, adKeywords);
+                                        const filteredSub = filterM3u8Ad(subContent, absoluteUrl, adFilterModeRef.current, adKeywordsRef.current);
                                         const subBlob = new Blob([filteredSub], { type: 'application/vnd.apple.mpegurl' });
                                         const subBlobUrl = URL.createObjectURL(subBlob);
                                         createdBlobs.push(subBlobUrl);
@@ -362,7 +377,7 @@ export function useHlsPlayer({
                         blobPlaybackFailed = true;
                         console.warn('[HLS Native] Blob URL playback failed, falling back to original source.');
                         video.removeEventListener('error', onBlobError);
-                        onError?.('当前浏览器不支持广告过滤，已回退到原始视频流');
+                        onErrorRef.current?.('当前浏览器不支持广告过滤，已回退到原始视频流');
                         // Revoke blob URLs immediately
                         extraBlobs.forEach(url => URL.revokeObjectURL(url));
                         extraBlobs = [];
@@ -388,7 +403,7 @@ export function useHlsPlayer({
                     video.addEventListener('loadeddata', onLoadedData);
                 }).catch((e) => {
                     console.warn('[HLS Native] Ad filtering failed, falling back to original source.', e);
-                    onError?.('广告过滤失败，已回退到原始视频流');
+                    onErrorRef.current?.('广告过滤失败，已回退到原始视频流');
                     video.src = src;
                 });
 
@@ -408,15 +423,15 @@ export function useHlsPlayer({
             const handleError = () => {
                 if (directFailed) return;
                 directFailed = true;
-                if (!mediaProxyEnabled) {
-                    onError?.('当前浏览器不支持 HLS 视频播放。建议使用 Chrome、Edge 或 Safari 浏览器。');
+                if (!mediaProxyEnabledRef.current) {
+                    onErrorRef.current?.('当前浏览器不支持 HLS 视频播放。建议使用 Chrome、Edge 或 Safari 浏览器。');
                     return;
                 }
                 // Try proxied URL as final attempt
                 const proxiedUrl = `/api/proxy?url=${encodeURIComponent(src)}`;
                 video.src = proxiedUrl;
                 video.addEventListener('error', () => {
-                    onError?.('当前浏览器不支持 HLS 视频播放。建议使用 Chrome、Edge 或 Safari 浏览器。');
+                    onErrorRef.current?.('当前浏览器不支持 HLS 视频播放。建议使用 Chrome、Edge 或 Safari 浏览器。');
                 }, { once: true });
             };
 
@@ -430,5 +445,5 @@ export function useHlsPlayer({
             }
             extraBlobs.forEach(url => URL.revokeObjectURL(url));
         };
-    }, [src, videoRef, autoPlay, onAutoPlayPrevented, onError, isAdFilterEnabled, adFilterMode, adKeywords, mediaProxyEnabled]);
+    }, [src, autoPlay, isPremium]);
 }
