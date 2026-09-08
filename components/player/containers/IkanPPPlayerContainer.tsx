@@ -636,51 +636,48 @@ export function IkanPPPlayerContainer() {
     return [mediaLd, breadcrumbLd];
   }, [currentTitle, mediaType, videoData, expectedYear]);
 
-  if (needsTitleSearch && titleSearching) {
-    return (
-      <div className="min-h-screen bg-(--bg-color) flex flex-col items-center justify-center p-4">
-        <div className="w-16 h-16 relative flex items-center justify-center mb-6">
-          <div className="w-16 h-16 rounded-full border-4 border-white/10 border-t-(--accent-color) animate-spin" />
-          <span className="absolute text-xl">⚡</span>
-        </div>
-        <h2 className="text-xl font-bold text-white mb-2 tracking-wide">正在极速检索全网片源...</h2>
-        <p className="text-sm text-white/50 max-w-sm text-center">
-          正在为您秒级穿透全网主流骨干云源，并智能比对最优画质与极速播放专线
-        </p>
-      </div>
-    );
-  }
+  // 计算平滑内嵌在播放器内的连接态文案（彻底取代全屏跳变）
+  const isSearchingTitle = needsTitleSearch && titleSearching;
+  const isConnecting = isSearchingTitle || loading || (!playUrl && !videoError && !titleSearchError);
+  const connectingMessage = isSearchingTitle
+    ? '正在智能匹配全网最优片源...'
+    : loading
+    ? '正在连接极速播放专线...'
+    : !playUrl
+    ? '正在加载流媒体...'
+    : undefined;
 
   if (needsTitleSearch && titleSearchError) {
     return (
-      <PlayerError
-        error={titleSearchError}
-        onBack={handleBack}
-        onRetry={() => {
-          setTitleSearchError('');
-          setTitleSearching(true);
-          window.location.reload();
-        }}
-      />
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-(--bg-color)">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-(--accent-color) border-t-transparent mb-4" />
-        <p className="text-(--text-color-secondary)">正在加载视频详情...</p>
+      <div className="min-h-screen bg-(--bg-color)">
+        <Navbar variant="player" isPremiumMode={false} />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+          <PlayerError
+            error={titleSearchError}
+            onBack={handleBack}
+            onRetry={() => {
+              setTitleSearchError('');
+              setTitleSearching(true);
+              window.location.reload();
+            }}
+          />
+        </main>
       </div>
     );
   }
 
-  if (videoError && !videoData) {
+  if (videoError && !videoData && !isSearchingTitle) {
     return (
-      <PlayerError
-        error={videoError}
-        onBack={handleBack}
-        onRetry={fetchVideoDetails}
-      />
+      <div className="min-h-screen bg-(--bg-color)">
+        <Navbar variant="player" isPremiumMode={false} />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+          <PlayerError
+            error={videoError}
+            onBack={handleBack}
+            onRetry={fetchVideoDetails}
+          />
+        </main>
+      </div>
     );
   }
 
@@ -706,6 +703,8 @@ export function IkanPPPlayerContainer() {
               externalTimeRef={playerTimeRef}
               nextEpisodeUrl={nextEpisodeUrl}
               onPlaybackError={handlePlaybackError}
+              connectingMessage={connectingMessage}
+              isLoadingSource={isConnecting}
             />
 
             <div className="hidden lg:block">

@@ -29,6 +29,9 @@ interface VideoPlayerProps {
   onResolutionDetected?: (info: import('./hooks/useVideoResolution').VideoResolutionInfo) => void;
   // 零成本播放失败自动切源回调
   onPlaybackError?: (error: string) => boolean | void;
+  // 片源连接与检索状态文本（收拢全屏 Loading 至播放器视窗内）
+  connectingMessage?: string;
+  isLoadingSource?: boolean;
 }
 
 export function VideoPlayer({
@@ -46,6 +49,8 @@ export function VideoPlayer({
   nextEpisodeUrl,
   onResolutionDetected,
   onPlaybackError,
+  connectingMessage,
+  isLoadingSource,
 }: VideoPlayerProps) {
   const [videoError, setVideoError] = useState<string>('');
   const [useProxy, setUseProxy] = useState(false);
@@ -189,6 +194,37 @@ export function VideoPlayer({
     : playUrl;
 
   if (!playUrl) {
+    if (connectingMessage || isLoadingSource) {
+      return (
+        <div data-no-spatial className="relative group">
+          {/* 影院级环境光晕特效 (Ambient Lighting) */}
+          <div 
+            className="absolute -inset-3 sm:-inset-6 bg-gradient-to-r from-amber-500/20 via-orange-600/15 to-purple-600/20 rounded-3xl blur-2xl sm:blur-3xl opacity-50 transition-opacity duration-1000 -z-10 pointer-events-none"
+            aria-hidden="true" 
+          />
+          <div className="aspect-video w-full rounded-2xl sm:rounded-3xl bg-black/85 backdrop-blur-2xl border border-white/10 flex flex-col items-center justify-center p-6 text-center relative overflow-hidden shadow-2xl">
+            {/* 顶层柔和背景光纹 */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
+            
+            {/* 优雅呼吸微光转圈 */}
+            <div className="relative flex items-center justify-center mb-4">
+              <div className="w-12 h-12 rounded-full border-3 border-white/10 border-t-(--accent-color) animate-spin" />
+              <div className="absolute w-6 h-6 rounded-full bg-(--accent-color)/20 blur-md animate-pulse" />
+            </div>
+
+            <p className="text-sm sm:text-base font-medium text-white tracking-wide animate-pulse">
+              {connectingMessage || '正在智能连接片源...'}
+            </p>
+            {videoTitle && (
+              <p className="text-xs text-white/40 mt-2 max-w-sm truncate">
+                《{videoTitle}》
+              </p>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     return <VideoPlayerEmpty videoTitle={videoTitle} isPremium={isPremium} />;
   }
 

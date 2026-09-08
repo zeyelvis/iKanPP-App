@@ -344,6 +344,28 @@ export function EpisodeList({
   const showReverseToggle = episodes && episodes.length > 1;
   const currentEpisodeLabel = episodes?.[currentEpisode]?.name || `第${currentEpisode + 1}集`;
 
+  if (!episodes) {
+    return (
+      <Card hover={false}>
+        {showSourceSelector && (
+          <div className="mb-4 pb-4 border-b border-white/10">
+            <div className="h-9 w-full rounded-xl bg-white/5 animate-pulse" />
+          </div>
+        )}
+        <div className="text-lg sm:text-xl font-bold text-[var(--text-color)] mb-4 flex items-center gap-2">
+          <Icons.List size={20} className="sm:w-6 sm:h-6 opacity-60" />
+          <span>选集</span>
+          <div className="w-8 h-5 rounded-md bg-white/10 animate-pulse" />
+        </div>
+        <div className="grid grid-cols-4 sm:grid-cols-4 gap-2.5">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="h-10 rounded-xl bg-white/5 border border-white/5 animate-pulse" />
+          ))}
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card hover={false}>
       {showSourceSelector && (
