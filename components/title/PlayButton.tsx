@@ -32,7 +32,7 @@ export function PlayButton({ entityId, title, type, episode = 1 }: PlayButtonPro
     <button
       onClick={handlePlay}
       disabled={isPending}
-      className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold text-lg shadow-lg shadow-red-500/25 hover:shadow-red-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer disabled:opacity-75 disabled:cursor-wait"
+      className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-linear-to-r from-red-600 to-rose-600 text-white font-bold text-lg shadow-lg shadow-red-500/25 hover:shadow-red-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer disabled:opacity-75 disabled:cursor-wait"
       id="btn-play-now"
     >
       {isPending ? (

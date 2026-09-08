@@ -150,7 +150,7 @@ export default async function GenrePage({ params }: Props) {
                 href={`/title/${item.entityId}-${item.slug}`}
                 className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-200 hover:-translate-y-1"
               >
-                <div className="relative aspect-[2/3] w-full bg-black/40 overflow-hidden">
+                <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
                   {item.cover ? (
                     <Image
                       src={item.cover}

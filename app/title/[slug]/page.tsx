@@ -166,7 +166,7 @@ export default async function TitlePage({ params }: Props) {
         <article className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 mb-16">
           {/* 左侧：主海报 (2:3 黄金比例，LCP 优化) */}
           <div className="md:col-span-4 lg:col-span-3">
-            <div className="relative aspect-[2/3] w-full max-w-[320px] mx-auto rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-white/5">
+            <div className="relative aspect-2/3 w-full max-w-[320px] mx-auto rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-white/5">
               {entity.cover ? (
                 <Image
                   src={entity.cover}
@@ -240,7 +240,7 @@ export default async function TitlePage({ params }: Props) {
               </div>
 
               {/* AEO 回答胶囊 (Answer Capsule)：针对 AI 搜索引擎（Google AI Overview、Perplexity 等）深度优化 */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.04] border border-white/10 mb-8 backdrop-blur-sm">
+              <div className="p-4 sm:p-5 rounded-2xl bg-white/4 border border-white/10 mb-8 backdrop-blur-sm">
                 <h2 className="text-xs uppercase tracking-wider font-bold text-white/40 mb-2">
                   影片概览 (Storyline)
                 </h2>
@@ -295,7 +295,7 @@ export default async function TitlePage({ params }: Props) {
                   href={`/title/${rel.entityId}-${rel.slug}`}
                   className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-200 hover:-translate-y-1"
                 >
-                  <div className="relative aspect-[2/3] w-full bg-black/40 overflow-hidden">
+                  <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
                     {rel.cover ? (
                       <Image
                         src={rel.cover}
