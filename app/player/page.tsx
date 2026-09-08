@@ -969,6 +969,16 @@ function PlayerContent() {
 
   // 构建 Google 富媒体 Schema.org 结构化数据 (JSON-LD)
   const currentTitle = videoData?.vod_name || title || '热门影视';
+
+  // 动态同步浏览器标签页 Title，彻底隔离 iKanX 与 iKanPP 品牌
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (isPremium) {
+      document.title = `${currentTitle} - iKanX 4K极速秒播`;
+    } else {
+      document.title = `${currentTitle} - 4K超清免翻极速播放 | iKanPP 爱看片片`;
+    }
+  }, [currentTitle, isPremium]);
   const isMovieType = expectedType === 'movie' || (!expectedType && (videoData?.type_name?.includes('电影') || videoData?.episodes?.length === 1));
   const mediaType: 'movie' | 'tv' | 'anime' = isMovieType ? 'movie' : (videoData?.type_name?.includes('动漫') || videoData?.type_name?.includes('动画') ? 'anime' : 'tv');
 
