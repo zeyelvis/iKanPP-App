@@ -18,7 +18,7 @@ interface PopularFeaturesProps {
 }
 
 // ── SWR 货架本地瞬间缓存 ──────────────────────────
-const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v5-';
+const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v6-';
 
 function getLocalShelves(type: 'movie' | 'tv') {
   if (typeof window === 'undefined') return null;
@@ -84,7 +84,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
 
   // 根据 contentType 动态确定 4 个货架的标签
   const isMovie = contentType === 'movie';
-  const tag1 = isMovie ? '最新' : '国产剧';
+  const tag1 = isMovie ? '院线热播' : '国产剧';
   const tag2 = isMovie ? '豆瓣高分' : '美剧';
   const tag3 = isMovie ? '华语' : '韩剧';
   const tag4 = isMovie ? '欧美' : '日本动画';
@@ -361,11 +361,11 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         excludeTitles={deduplicatedContent.seenSnapshot}
       />
 
-      {/* 7. 货架 1：院线首播 & 同步爆款 / 华语热播连续剧 */}
+      {/* 7. 货架 1：最新热院线热播 / 华语热播连续剧 */}
       <ContentRail
-        title={isMovie ? '✨ 院线首播 & 2024-2026 同步爆款' : '🔥 2026 华语爆款热播连续剧'}
-        icon={isMovie ? '✨' : '🔥'}
-        badge="NEW RELEASE"
+        title={isMovie ? '🔥 最新热院线热播' : '🔥 2026 华语爆款热播连续剧'}
+        icon="🔥"
+        badge={isMovie ? 'NOW PLAYING' : 'HOT SERIES'}
         movies={deduplicatedContent.s1}
         loading={loadingShelves}
         isPriority={true}

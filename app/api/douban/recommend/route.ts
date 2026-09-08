@@ -53,6 +53,74 @@ async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number,
   }
 }
 
+/**
+ * 抓取豆瓣官方全国院线正在热映列表（实时跟进院线排片与最新爆款大片）
+ */
+async function fetchDoubanNowPlaying(pageLimit: number, pageStart: number): Promise<any[]> {
+  try {
+    const url = 'https://movie.douban.com/cinema/nowplaying/beijing/';
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+        'Referer': 'https://movie.douban.com/',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      },
+      signal: AbortSignal.timeout(3000),
+      next: { revalidate: 43200 }, // 12 小时边缘缓存，每日自动保持最新院线数据
+    });
+
+    if (!response.ok) return [];
+    const html = await response.text();
+
+    const liRegex = /<li\s+id="(\d+)"[\s\S]*?class="list-item[^"]*"[\s\S]*?data-title="([^"]+)"[\s\S]*?data-score="([^"]*)"[\s\S]*?data-release="([^"]*)"[\s\S]*?data-region="([^"]*)"[\s\S]*?data-director="([^"]*)"[\s\S]*?data-actors="([^"]*)"[\s\S]*?data-category="nowplaying"[\s\S]*?data-votecount="(\d*)"[\s\S]*?<img\s+src="([^"]+)"/g;
+
+    let match;
+    const allSubjects: any[] = [];
+    const seenTitles = new Set<string>();
+
+    while ((match = liRegex.exec(html)) !== null) {
+      const title = match[2]?.trim();
+      if (!title || seenTitles.has(title)) continue;
+      seenTitles.add(title);
+
+      const rawCover = match[9];
+      const cover = rawCover ? `/api/douban/image?url=${encodeURIComponent(rawCover)}` : '';
+      const year = match[4] || '2026';
+      const votecount = parseInt(match[8] || '0', 10);
+
+      allSubjects.push({
+        id: match[1],
+        title,
+        rate: match[3] || '7.5',
+        cover,
+        year,
+        region: match[5] || '',
+        director: match[6] || '',
+        actors: match[7] || '',
+        votecount,
+        playable: true,
+        is_new: true,
+      });
+    }
+
+    if (allSubjects.length === 0) return [];
+
+    // 智能筛选与热度加权：
+    // 优先 2025-2026 最新院线大片（含功夫女足、怒之杀、欢迎来龙餐馆、奥德赛等），按观众热度降序
+    const recentReleases = allSubjects.filter(item => parseInt(item.year, 10) >= 2025);
+    const olderReleases = allSubjects.filter(item => parseInt(item.year, 10) < 2025);
+
+    recentReleases.sort((a, b) => b.votecount - a.votecount);
+    olderReleases.sort((a, b) => b.votecount - a.votecount);
+
+    const merged = [...recentReleases, ...olderReleases];
+    return merged.slice(pageStart, pageStart + pageLimit);
+  } catch (err) {
+    console.warn('[Douban-NowPlaying] Error fetching now playing, falling back:', err);
+    return [];
+  }
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const genre = (searchParams.get('genre') || '').trim();
@@ -68,7 +136,47 @@ export async function GET(request: Request) {
   const pageLimit = Math.min(Math.max(parseInt(searchParams.get('page_limit') || '36', 10) || 36, 1), 60);
   const pageStart = Math.max(parseInt(searchParams.get('page_start') || '0', 10) || 0, 0);
 
-  // 0. 特殊处理：国漫 / 国产动画（豆瓣官方 API 无此标签，必须走专属精选库）
+  // 0. 特殊处理：院线热映 / 院线热播 / 最新电影（直通豆瓣全国院线正在热映官方榜）
+  const isNowPlayingMovie = type === 'movie' && (
+    rawTag === '最新' ||
+    rawTag === '院线' ||
+    rawTag === '院线热播' ||
+    rawTag === '热映' ||
+    genre === '最新' ||
+    genre === '院线热播'
+  );
+
+  if (isNowPlayingMovie) {
+    const nowPlayingList = await fetchDoubanNowPlaying(pageLimit, pageStart);
+    if (nowPlayingList && nowPlayingList.length > 0) {
+      return NextResponse.json({
+        subjects: nowPlayingList,
+        tag: '院线热播',
+        genre,
+        region,
+        year,
+        total: nowPlayingList.length,
+      }, {
+        headers: {
+          'Cache-Control': 'public, max-age=43200, s-maxage=43200, stale-while-revalidate=86400',
+          'CDN-Cache-Control': 'public, s-maxage=43200',
+          'Cloudflare-CDN-Cache-Control': 'public, s-maxage=43200',
+        },
+      });
+    }
+    // 若抓取偶发为空，自动降级至预烘焙种子数据
+    const prebaked = PREBAKED_HOME_DATA.movie.s1;
+    return NextResponse.json({
+      subjects: prebaked.slice(pageStart, pageStart + pageLimit),
+      tag: '院线热播',
+      genre,
+      region,
+      year,
+      total: prebaked.length,
+    });
+  }
+
+  // 0.1 特殊处理：国漫 / 国产动画（豆瓣官方 API 无此标签，必须走专属精选库）
   const isGuoman =
     rawTag === '国产动画' ||
     rawTag === '国漫' ||
