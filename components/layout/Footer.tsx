@@ -6,9 +6,26 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export function Footer() {
+  const pathname = usePathname();
   const currentYear = new Date().getFullYear();
+
+  // 严密隔离：凡是午夜专区 (ikanx.com 域名、/premium 路径或带有 premium=1 的播放页)，100% 严禁渲染主站页脚
+  if (typeof window !== 'undefined') {
+    const isIkanXHost = window.location.hostname.includes('ikanx.com');
+    const isPremiumSearch = window.location.search.includes('premium=1');
+    const isPremiumPath = window.location.pathname.startsWith('/premium');
+    if (isIkanXHost || isPremiumSearch || isPremiumPath) {
+      return null;
+    }
+  }
+
+  // 服务端预渲染 (SSR) 阶段识别 /premium 路由
+  if (pathname?.startsWith('/premium')) {
+    return null;
+  }
 
   return (
     <footer className="relative mt-20 border-t border-white/10 bg-[#0A0A0F]/95 text-white/70 overflow-hidden">
