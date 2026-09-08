@@ -46,4 +46,11 @@
 
 ---
 
+## 5. 重大架构演进与文档同步铁律 (Architecture Spec Sync)
+
+- **同步更新义务**：凡涉及播放器核心调度、切源自愈机制、代理路由策略、CDN 规则或双轨边界的重大架构调整或新增功能，**必须在提交代码的同时一并更新 [dual-track-streaming-spec.md](docs/architecture/dual-track-streaming-spec.md)**。
+- **文档即基线**：代码实现与架构文档必须保持 100% 严格一致，严禁“只改代码、放任文档过期”。任何有悖于该架构文档的设计或代码改动均被视为违规。
+
+---
+
 详细技术规范与数据链路请参考：[dual-track-streaming-spec.md](file:///Users/zeyelvis/KVideo/docs/architecture/dual-track-streaming-spec.md)。
