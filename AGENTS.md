@@ -1,0 +1,49 @@
+# iKanPP (KVideo) 工程与架构准则
+
+本文档是本仓库的核心工程规范。所有参与本项目的开发者、维护者及 AI 编程助手必须严格遵守以下准则。
+
+---
+
+## 1. 核心架构：iKanPP 与 iKanX 双轨绝对隔离 (Dual-Track Streaming)
+
+本项目严格划分为两条业务与网络架构截然不同的轨道，**绝不可混为一谈**：
+
+### 轨道 A：iKanPP 主站普通影视 (`/player`, `isPremium: false`)
+- **定位**：全网主流公网影视采集库（光速源、无尽源、最大源、极速源、新浪源等）。
+- **网络模型**：**100% 浏览器纯直连第三方源站 CDN (Direct Play)**。
+- **架构铁律**：
+  1. **禁止任何代理**：`proxyMode` 必须恒为 `'none'`，`effectiveUseProxy` 必须恒为 `false`。
+  2. **禁止任何切片重写**：严禁调用 `processM3u8Content` 改写 m3u8 内部的 `.ts` 切片地址。
+  3. **容灾唯有纯前端切源**：当某个源在特定地区超时或死链时，唯一的自愈策略是前端自动切换到下一条可用源（如光速 ➔ 无尽 ➔ 最大），**绝对不允许通过 `/api/proxy` 尝试抢救死链**。
+
+### 轨道 B：iKanX 午夜专区 / 绅士特区 (`/premium/player`, `isPremium: true`)
+- **定位**：具有严格防盗链限制的特区站点（如 Jable 等校验 `Referer: https://jable.tv/` 的源）。
+- **网络模型**：通过 Cloudflare Edge Worker (`/api/proxy`) 进行请求头伪装与中转。
+- **架构机制**：必须使用 `processM3u8Content` 将其内部切片重写为带代理标记的 URL，以防客户端直连触发 403 阻断。
+
+---
+
+## 2. 播放器卡顿与自愈红线 (No Aggressive Nudge)
+
+- **绝对禁忌**：**严禁在任何卡顿检测逻辑中执行 `videoRef.current.currentTime += 0.1` 或任何强行拨快时间轴的操作！**
+- **底层原理**：HLS 协议依赖浏览器的 SourceBuffer 自然流水线。修改 `currentTime` 会强制清空浏览器已下载的所有切片缓冲并重新发起握手请求。在弱网或高延迟地区，这将导致严重的“缓冲 ➔ 被拨快 ➔ 清空缓冲 ➔ 重新握手 ➔ 再次超时”无限死循环。
+- **正规做法**：检测到缓冲等待时，仅通过 `setIsLoading(true)` 显示加载圈，给予底层的 Hls.js 充足的网络缓冲时间。
+
+---
+
+## 3. 切片概念与术语规范
+
+- **我们绝不切片**：本项目所有服务都不转码、不存储、不对视频进行任何切片操作。
+- **切片的真实含义**：HLS 流媒体协议中，第三方源站分发的 `.m3u8` 本身由一个个 2~10 秒的 `.ts` 视频小片段构成（技术规范称之为 segment / 切片）。浏览器加载这些片段是正常的 HLS 原理，切勿误导为“我们平台正在切片”。
+
+---
+
+## 4. 存储与状态物理隔离
+
+- 主站普通影视使用 `useHistoryStore` 和 `settingsStore`。
+- 午夜特区使用 `usePremiumHistoryStore` 和 `premiumModeSettingsStore`。
+- 二者在 localStorage 中严格分库分表，绝不共用同一状态池，防止数据交叉污染与隐私泄露。
+
+---
+
+详细技术规范与数据链路请参考：[dual-track-streaming-spec.md](file:///Users/zeyelvis/KVideo/docs/architecture/dual-track-streaming-spec.md)。

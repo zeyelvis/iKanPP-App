@@ -21,6 +21,22 @@ export async function GET(request: NextRequest) {
         return new NextResponse('URL not allowed', { status: 403 });
     }
 
+    // 双轨架构安全铁律：iKanPP 普通开放采集源必须 100% 浏览器直连，绝不允许通过代理中转消耗边缘算力及触发切片重写
+    const OPEN_CMS_DOMAINS = [
+        'gsuus.com', 'xluuss.com', 'bfzycdn.com', 'ffzyread.com',
+        'lz-cdn', 'modujx.com', 'xinlang', '1080zyk', 'zuidazy'
+    ];
+    const isDirectPlayDomain = OPEN_CMS_DOMAINS.some(d => url.toLowerCase().includes(d));
+    if (isDirectPlayDomain) {
+        return new NextResponse(
+            JSON.stringify({
+                error: 'DirectPlayRequired',
+                message: 'iKanPP open CMS sources must use direct play. Proxying is prohibited to prevent segment rewriting and bandwidth throttling.'
+            }),
+            { status: 403, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } }
+        );
+    }
+
     try {
         // Extract headers to forward (only essential ones)
         const requestHeaders: Record<string, string> = {};
