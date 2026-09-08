@@ -37,6 +37,11 @@ export function middleware(request: NextRequest) {
             return new NextResponse('Not Found', { status: 404 });
         }
 
+        // ikanx.com 不暴露主站 manifest.json
+        if (pathname === '/manifest.json') {
+            return new NextResponse('Not Found', { status: 404 });
+        }
+
         // www.ikanx.com → ikanx.com 统一 301
         if (host.startsWith('www.')) {
             url.host = 'ikanx.com';
@@ -109,6 +114,6 @@ export function middleware(request: NextRequest) {
 // 仅匹配页面路由，排除静态资源和 API
 export const config = {
     matcher: [
-        '/((?!_next/static|_next/image|favicon.ico|icon.png|og-image.png|manifest.json|api/).*)',
+        '/((?!_next/static|_next/image|favicon.ico|icon.png|og-image.png|api/).*)',
     ],
 };
