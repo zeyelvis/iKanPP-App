@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 interface DoubanMovie {
   id: string;
@@ -35,7 +36,7 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
 
   return (
     <Link
-      href={`/?q=${encodeURIComponent(movie.title)}`}
+      href={`/title/${generateSlug(movie.title)}`}
       onClick={(e) => {
         // Allow default behavior for modifier keys (new tab, etc.)
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;

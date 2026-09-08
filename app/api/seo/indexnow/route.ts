@@ -16,24 +16,33 @@ const SEARCH_ENGINES = [
 
 async function handleIndexNowPush(req: NextRequest) {
   try {
-    // 1. 获取网站 sitemap.xml
-    const origin = req.nextUrl.origin || BASE_URL;
-    const sitemapRes = await fetch(`${origin}/sitemap.xml`, {
-      cache: 'no-store',
-    });
-
-    if (!sitemapRes.ok) {
-      throw new Error(`无法获取 sitemap.xml: HTTP ${sitemapRes.status}`);
+    let urls: string[] = [];
+    if (req.method === 'POST') {
+      try {
+        const body = await req.json();
+        if (Array.isArray(body?.urls) && body.urls.length > 0) {
+          urls = body.urls;
+        }
+      } catch { /* ignore empty body */ }
     }
 
-    const xml = await sitemapRes.text();
-    
-    // 提取所有的 <loc>...</loc> URL
-    const urls: string[] = [];
-    const locMatches = xml.matchAll(/<loc>([^<]+)<\/loc>/gi);
-    for (const match of locMatches) {
-      if (match[1]) {
-        urls.push(match[1].trim());
+    // 若无直接传入 URL，从网站 sitemap.xml 动态提取
+    if (urls.length === 0) {
+      const origin = req.nextUrl.origin || BASE_URL;
+      const sitemapRes = await fetch(`${origin}/sitemap.xml`, {
+        cache: 'no-store',
+      });
+
+      if (!sitemapRes.ok) {
+        throw new Error(`无法获取 sitemap.xml: HTTP ${sitemapRes.status}`);
+      }
+
+      const xml = await sitemapRes.text();
+      const locMatches = xml.matchAll(/<loc>([^<]+)<\/loc>/gi);
+      for (const match of locMatches) {
+        if (match[1]) {
+          urls.push(match[1].trim());
+        }
       }
     }
 

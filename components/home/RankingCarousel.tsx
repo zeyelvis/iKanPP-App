@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useRankingData } from './hooks/useRankingData';
+import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 interface RankingCarouselProps {
     /** 当前内容类型，与 PopularFeatures 的三联按钮联动 */
@@ -86,11 +87,7 @@ export function RankingCarousel({ contentType }: RankingCarouselProps) {
     };
 
     const handleMovieClick = (movie: any) => {
-        const params = new URLSearchParams();
-        params.set('title', movie.title);
-        params.set('type', contentType);
-        if (movie.year) params.set('year', movie.year);
-        router.push(`/player?${params.toString()}`);
+        router.push(`/title/${generateSlug(movie.title)}`);
     };
 
     // 骨架屏

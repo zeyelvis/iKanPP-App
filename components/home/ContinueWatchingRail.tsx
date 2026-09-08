@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { getSourceName } from '@/lib/utils/source-names';
+import { storeGroupedSources } from '@/lib/utils/grouped-sources-cache';
 
 export function ContinueWatchingRail() {
   const router = useRouter();
@@ -29,14 +30,17 @@ export function ContinueWatchingRail() {
     if (item.playbackPosition && item.playbackPosition > 1) {
       params.set('t', Math.floor(item.playbackPosition).toString());
     }
-    // 携带多线路切源数据
+    // 携带多线路切源数据 (通过 sessionStorage 缓存短 key 替代 URL 膨胀)
     if (item.sourceMap && Object.keys(item.sourceMap).length > 1) {
       const groupData = Object.entries(item.sourceMap).map(([sourceName, vid]) => ({
         id: vid as string,
         source: sourceName,
         sourceName: getSourceName(sourceName),
       }));
-      params.set('groupedSources', JSON.stringify(groupData));
+      const gsKey = storeGroupedSources(groupData);
+      if (gsKey) {
+        params.set('gsKey', gsKey);
+      }
     }
     if (item.type_name) {
       const isTv = item.type_name.includes('剧') || item.type_name.includes('动漫') || (item.episodeIndex && item.episodeIndex > 0);

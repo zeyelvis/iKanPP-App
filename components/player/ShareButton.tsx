@@ -9,6 +9,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Share2, Copy, Check, X, Link2, MessageCircle, QrCode, Sparkles } from 'lucide-react';
 import { siteConfig } from '@/lib/config/site-config';
 import { ShareCardModal } from './ShareCardModal';
+import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 interface ShareButtonProps {
   title: string;
@@ -26,9 +27,11 @@ export function ShareButton({ title, size = 20, poster, episodeName, year, type,
   const [copied, setCopied] = useState<'link' | 'text' | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // 构建分享链接：/player?title=xxx  — 直接打开搜索
+  // 构建分享链接：普通影视生成权威详情页 /title/ 地址，午夜版保持独立专区
   const shareUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/player?title=${encodeURIComponent(title)}${isPremium || window.location.search.includes('premium=1') ? '&premium=1' : ''}`
+    ? isPremium || window.location.search.includes('premium=1')
+      ? `${window.location.origin}/player?title=${encodeURIComponent(title)}&premium=1`
+      : `${window.location.origin}/title/${generateSlug(title)}`
     : '';
 
   const shareText = `我在 ${siteConfig.name} 免费看《${title}》，无广告高清播放 →`;

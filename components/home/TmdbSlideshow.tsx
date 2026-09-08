@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { PREBAKED_HOME_DATA, type PrebakedSubject } from '@/lib/data/home-prebaked';
+import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 interface PosterImageProps {
   src: string;
@@ -256,12 +257,7 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
   }, [isPaused, currentData.length, activeIndex]);
 
   const handleMovieClick = (movie: any) => {
-    const params = new URLSearchParams();
-    params.set('title', movie.title);
-    const resolvedType = movie.type || (movie.isSeries || (movie.types && movie.types.includes('连续剧')) || movie.episodes_info ? 'tv' : contentType);
-    params.set('type', resolvedType);
-    if (movie.year) params.set('year', String(movie.year));
-    router.push(`/player?${params.toString()}`);
+    router.push(`/title/${generateSlug(movie.title)}`);
   };
 
   if (currentData.length === 0) {
@@ -371,10 +367,10 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
             )}
           </div>
 
-          {/* 巨幕超大片名 */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-2xl mb-4 sm:mb-6 line-clamp-2">
+          {/* 巨幕超大片名 (SEO 语义规范：首页全局唯一 H1 位于服务端外壳，轮播巨幕使用 H2) */}
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-2xl mb-4 sm:mb-6 line-clamp-2">
             {active.title}
-          </h1>
+          </h2>
 
           {/* 操作按钮组 */}
           <div className="flex items-center">

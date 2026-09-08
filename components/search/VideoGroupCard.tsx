@@ -15,6 +15,7 @@ import { FavoriteButton } from '@/components/favorites/FavoriteButton';
 import { Video } from '@/lib/types';
 import { parseVideoTitle } from '@/lib/utils/video';
 import { normalizeVideoType } from '@/lib/utils/taxonomy';
+import { storeGroupedSources } from '@/lib/utils/grouped-sources-cache';
 
 export interface GroupedVideo {
     /** Representative video (lowest latency) */
@@ -58,7 +59,7 @@ export const VideoGroupCard = memo<VideoGroupCardProps>(({
             title: representative.vod_name,
         });
 
-        // Add group data if multiple sources
+        // Add group data if multiple sources via sessionStorage cache
         if (videos.length > 1) {
             const groupData = videos.map(v => ({
                 id: v.vod_id,
@@ -68,7 +69,10 @@ export const VideoGroupCard = memo<VideoGroupCardProps>(({
                 pic: v.vod_pic,
                 typeName: v.type_name,
             }));
-            params.set('groupedSources', JSON.stringify(groupData));
+            const gsKey = storeGroupedSources(groupData);
+            if (gsKey) {
+                params.set('gsKey', gsKey);
+            }
         }
 
         if (isPremium) {

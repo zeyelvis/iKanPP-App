@@ -94,3 +94,20 @@
 3. **直连播放 (Direct Play)**：
    - **定义**：浏览器播放器直接与源站 CDN 通信。
    - **适用**：**iKanPP 的默认且唯一标准播放形态**。
+
+---
+
+## 5. SEO 实体详情页与播放器路由解耦准则 (2026-09 升级)
+
+在 2026 年 SEO 体系化重构中，主站影视实施**双层页面解耦**：
+
+1. **公开实体详情页 (`/title/{entityId}-{slug}`)**：
+   - **职责**：100% 服务端直出 (SSR)、承载 Google Discover 大图、AEO 问答胶囊、Schema.org 结构化数据与站内内链网络；
+   - **自引用 canonical**：唯一自引用 URL，永久稳定；
+   - **边缘强缓存**：Cloudflare CDN 边缘缓存 7 天 (`s-maxage=604800`)，消除 Worker 计算与 KV 成本。
+2. **直连播放器页 (`/player`)**：
+   - **职责**：纯前端直连播放与智能切源调度；
+   - **索引策略**：强制标明 `noindex, nofollow` 并从 robots.txt Disallow，杜绝空壳播放器污染抓取预算；
+   - **路由铁律**：详情页“立即播放”按钮必须携带 `entity` 参数（如 `/player?entity=ik000001&...`），与旧版历史链接 `/player?title=xxx` 的 301 重定向检测严格解耦，绝不触发循环重定向；
+   - **状态轻量化**：多线路数据通过 `sessionStorage` (`gsKey`) 传递，绝不将 `groupedSources` JSON 巨石写入 URL。
+

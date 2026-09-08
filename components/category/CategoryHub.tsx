@@ -11,6 +11,7 @@ import { FavoritesSidebar } from '@/components/favorites/FavoritesSidebar';
 import { WatchHistorySidebar } from '@/components/history/WatchHistorySidebar';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { getPrebakedCategoryShelves } from '@/lib/data/category-prebaked';
+import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 export interface FilterOption {
   label: string;
@@ -280,12 +281,7 @@ function isSameList(a: any[], b: any[]): boolean {
   }, [loadGridPage]);
 
   const handleMovieClick = (movie: any) => {
-    const params = new URLSearchParams();
-    params.set('title', movie.title);
-    params.set('type', doubanType);
-    if (movie.year) params.set('year', String(movie.year));
-    if (activeNav) params.set('from', activeNav);
-    router.push(`/player?${params.toString()}`);
+    router.push(`/title/${generateSlug(movie.title)}`);
   };
 
   const handleSearch = (query: string) => {

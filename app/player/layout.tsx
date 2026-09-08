@@ -10,6 +10,14 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     referrer: 'no-referrer',
+    robots: {
+        index: false,
+        follow: false,
+        googleBot: {
+            index: false,
+            follow: false,
+        },
+    },
 };
 
 export default function PlayerLayout({

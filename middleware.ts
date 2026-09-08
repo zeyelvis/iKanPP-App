@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 /**
  * Middleware — 多域名智能路由 + SEO 域名物理隔离
@@ -106,6 +107,25 @@ export function middleware(request: NextRequest) {
     if (url.searchParams.get('premium') === '1') {
         const targetUrl = new URL(url.pathname + url.search, 'https://ikanx.com');
         return NextResponse.redirect(targetUrl, 301);
+    }
+
+    // 搜索参数（如 /?q=xxx）页面注入 X-Robots-Tag: noindex, follow，防止动态搜索页稀释抓取预算并被判定为薄内容
+    if (url.searchParams.has('q')) {
+        const response = NextResponse.next();
+        response.headers.set('X-Robots-Tag', 'noindex, follow');
+        return response;
+    }
+
+    // 历史播放器旧 URL 规范化 301 重定向至实体详情页：
+    // 仅拦截无 entity 参数的历史 /player?title=xxx 链接；新版带 entity 参数的直接放行，杜绝循环 301
+    if (pathname === '/player' && url.searchParams.has('title') && !url.searchParams.has('entity')) {
+        const rawTitle = url.searchParams.get('title') || '';
+        if (rawTitle.trim()) {
+            const slug = generateSlug(rawTitle);
+            url.pathname = `/title/${slug}`;
+            url.search = '';
+            return NextResponse.redirect(url, 301);
+        }
     }
 
     return NextResponse.next();

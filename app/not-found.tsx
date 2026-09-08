@@ -30,7 +30,7 @@ export default function NotFound() {
       </p>
 
       {/* 快捷导航 */}
-      <div className="flex flex-wrap items-center justify-center gap-3">
+      <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
         <Link
           href="/"
           className="px-7 py-3 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-2xl text-sm font-bold shadow-xl shadow-(--accent-color)/30 transition-all cursor-pointer"
@@ -41,14 +41,34 @@ export default function NotFound() {
           href="/movie"
           className="px-6 py-3 bg-white/10 hover:bg-white/20 active:scale-95 text-white rounded-2xl text-sm font-semibold border border-white/10 transition-all cursor-pointer"
         >
-          逛逛电影大厅
+          电影大厅
+        </Link>
+        <Link
+          href="/tv"
+          className="px-6 py-3 bg-white/10 hover:bg-white/20 active:scale-95 text-white rounded-2xl text-sm font-semibold border border-white/10 transition-all cursor-pointer"
+        >
+          电视剧大厅
         </Link>
         <Link
           href="/ranking"
           className="px-6 py-3 bg-white/10 hover:bg-white/20 active:scale-95 text-white rounded-2xl text-sm font-semibold border border-white/10 transition-all cursor-pointer"
         >
-          查看热门榜单
+          热门榜单
         </Link>
+      </div>
+
+      {/* 热门分类引导 */}
+      <div className="flex flex-wrap items-center justify-center gap-2 max-w-lg text-xs text-white/40">
+        <span>热门分类：</span>
+        <Link href="/genre/action" className="hover:text-white transition-colors">动作片</Link>
+        <span>·</span>
+        <Link href="/genre/comedy" className="hover:text-white transition-colors">喜剧片</Link>
+        <span>·</span>
+        <Link href="/genre/drama" className="hover:text-white transition-colors">剧情片</Link>
+        <span>·</span>
+        <Link href="/genre/scifi" className="hover:text-white transition-colors">科幻片</Link>
+        <span>·</span>
+        <Link href="/genre/animation" className="hover:text-white transition-colors">动漫</Link>
       </div>
     </div>
   );

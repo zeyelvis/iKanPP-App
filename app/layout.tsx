@@ -88,18 +88,7 @@ export const metadata: Metadata = {
     apple: '/icon.png',
   },
   metadataBase: new URL(SITE_URL),
-  alternates: {
-    canonical: '/',
-    languages: {
-      'zh-CN': '/',
-      'zh-TW': '/',
-      'zh-HK': '/',
-      'zh-SG': '/',
-      'zh-MY': '/',
-      'en': '/',
-      'x-default': '/',
-    },
-  },
+
   openGraph: {
     type: 'website',
     locale: 'zh_CN',

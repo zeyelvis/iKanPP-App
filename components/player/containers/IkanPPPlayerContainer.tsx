@@ -16,6 +16,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { settingsStore } from '@/lib/store/settings-store';
 import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
 import { getSourceName } from '@/lib/utils/source-names';
+import { storeGroupedSources, retrieveGroupedSources } from '@/lib/utils/grouped-sources-cache';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
 
@@ -73,9 +74,11 @@ export function IkanPPPlayerContainer() {
   const videoId = searchParams.get('id');
   const source = searchParams.get('source');
   const title = searchParams.get('title');
+  const entityParam = searchParams.get('entity');
   const episodeParam = searchParams.get('episode') || searchParams.get('ep');
   const epCountParam = searchParams.get('epCount');
   const groupedSourcesParam = searchParams.get('groupedSources');
+  const gsKeyParam = searchParams.get('gsKey');
   const expectedType = searchParams.get('type');
   const expectedYear = searchParams.get('year');
 
@@ -268,6 +271,7 @@ export function IkanPPPlayerContainer() {
                       params.set('id', String(v.vod_id));
                       params.set('source', v.source);
                       params.set('title', title);
+                      if (entityParam) params.set('entity', entityParam);
                       if (episodeParam) {
                         params.set('episode', episodeParam);
                       }
@@ -275,7 +279,8 @@ export function IkanPPPlayerContainer() {
                       params.set('type', resolvedType);
                       if (expectedYear) params.set('year', expectedYear);
                       if (foundSources.length > 0) {
-                        params.set('groupedSources', JSON.stringify(foundSources));
+                        const gsKey = storeGroupedSources(foundSources);
+                        if (gsKey) params.set('gsKey', gsKey);
                       }
                       router.replace(`/player?${params.toString()}`, { scroll: false });
                       break;
@@ -300,12 +305,14 @@ export function IkanPPPlayerContainer() {
             params.set('id', String(bestVideo.vod_id));
             params.set('source', bestVideo.source);
             params.set('title', title);
+            if (entityParam) params.set('entity', entityParam);
             if (episodeParam) params.set('episode', episodeParam);
             const resolvedType = pendingBestCandidate.isSeries ? 'tv' : (expectedType || 'movie');
             params.set('type', resolvedType);
             if (expectedYear) params.set('year', expectedYear);
             if (foundSources.length > 0) {
-              params.set('groupedSources', JSON.stringify(foundSources));
+              const gsKey = storeGroupedSources(foundSources);
+              if (gsKey) params.set('gsKey', gsKey);
             }
             router.replace(`/player?${params.toString()}`, { scroll: false });
           } else {
@@ -355,7 +362,13 @@ export function IkanPPPlayerContainer() {
 
   const groupedSources = useMemo<SourceInfo[]>(() => {
     let rawList: SourceInfo[] = [];
-    if (groupedSourcesParam) {
+    if (gsKeyParam) {
+      const cached = retrieveGroupedSources(gsKeyParam);
+      if (cached && Array.isArray(cached)) {
+        rawList = cached;
+      }
+    }
+    if (rawList.length === 0 && groupedSourcesParam) {
       try {
         rawList = JSON.parse(groupedSourcesParam);
       } catch {
@@ -389,14 +402,18 @@ export function IkanPPPlayerContainer() {
       sources = sources.map(s => s.pic ? s : { ...s, pic: fallbackPic });
     }
     return sources;
-  }, [groupedSourcesParam, source, videoId, videoData?.vod_pic, discoveredSources]);
+  }, [groupedSourcesParam, gsKeyParam, source, videoId, videoData?.vod_pic, discoveredSources]);
 
   // 后台补充更多可用源（无感异步）
   useEffect(() => {
     if (!title || needsTitleSearch) return;
 
     let existingSources: SourceInfo[] = [];
-    if (groupedSourcesParam) {
+    if (gsKeyParam) {
+      const cached = retrieveGroupedSources(gsKeyParam);
+      if (cached && Array.isArray(cached)) existingSources = cached;
+    }
+    if (existingSources.length === 0 && groupedSourcesParam) {
       try { existingSources = JSON.parse(groupedSourcesParam); } catch { }
     }
     if (existingSources.length >= 8) return;
@@ -516,6 +533,7 @@ export function IkanPPPlayerContainer() {
       params.set('id', String(candidate.id));
       params.set('source', candidate.source);
       params.set('title', title || '');
+      if (entityParam) params.set('entity', entityParam);
       if (expectedType) params.set('type', expectedType);
       if (expectedYear) params.set('year', expectedYear);
       params.set('episode', currentEpisode.toString());
@@ -523,7 +541,8 @@ export function IkanPPPlayerContainer() {
         params.set('t', Math.floor(playerTimeRef.current).toString());
       }
       if (groupedSources.length > 0) {
-        params.set('groupedSources', JSON.stringify(groupedSources));
+        const gsKey = storeGroupedSources(groupedSources);
+        if (gsKey) params.set('gsKey', gsKey);
       }
       setCurrentSourceId(candidate.source);
       router.replace(`/player?${params.toString()}`, { scroll: false });
@@ -778,6 +797,7 @@ export function IkanPPPlayerContainer() {
                   params.set('id', String(newSource.id));
                   params.set('source', newSource.source);
                   params.set('title', title || '');
+                  if (entityParam) params.set('entity', entityParam);
                   if (expectedType) params.set('type', expectedType);
                   if (expectedYear) params.set('year', expectedYear);
                   params.set('episode', currentEpisode.toString());
@@ -785,7 +805,8 @@ export function IkanPPPlayerContainer() {
                     params.set('t', Math.floor(playerTimeRef.current).toString());
                   }
                   if (groupedSources.length > 1) {
-                    params.set('groupedSources', JSON.stringify(groupedSources));
+                    const gsKey = storeGroupedSources(groupedSources);
+                    if (gsKey) params.set('gsKey', gsKey);
                   }
                   setCurrentSourceId(newSource.source);
                   router.replace(`/player?${params.toString()}`, { scroll: false });

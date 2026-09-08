@@ -12,6 +12,7 @@ import { PlatformFeaturesStrip } from './PlatformFeaturesStrip';
 import { PersonalizedForYouRail } from './PersonalizedForYouRail';
 import { ExploreHubFooterBanner } from './ExploreHubFooterBanner';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 interface PopularFeaturesProps {
   onSearch?: (query: string) => void;
@@ -323,16 +324,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   }, [contentType, prebaked, weeklyMovies, shelf1Movies, shelf2Movies, shelf3Movies, shelf4Movies]);
 
   const handleMovieClick = (movie: any) => {
-    const params = new URLSearchParams();
-    params.set('title', movie.title);
-    // 智能推断真实类型：卡片本身若有 type，或其 ID/标签包含剧集特征，或处于 tv 专区，设为 tv
-    const isTv = movie.type === 'tv' ||
-      (movie.id && String(movie.id).includes('_t_')) ||
-      (movie.types && Array.isArray(movie.types) && movie.types.some((t: string) => ['美剧', '韩剧', '日剧', '华语剧', '电视剧', '连续剧', '动漫', '综艺', '国产剧'].includes(t))) ||
-      contentType === 'tv';
-    params.set('type', isTv ? 'tv' : 'movie');
-    if (movie.year) params.set('year', String(movie.year));
-    router.push(`/player?${params.toString()}`);
+    router.push(`/title/${generateSlug(movie.title)}`);
   };
 
   return (
