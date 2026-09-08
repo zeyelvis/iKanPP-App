@@ -175,7 +175,7 @@ export default function RootLayout({
             {children}
             <Footer />
             <BackToTop />
-            <ScrollPositionManager />
+            <Suspense fallback={null}><ScrollPositionManager /></Suspense>
             <MobileBottomNav />
           </TVProvider>
 

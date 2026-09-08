@@ -1,14 +1,10 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { settingsStore } from '@/lib/store/settings-store';
 
-/**
- * ScrollPositionManager - Maintains scroll position across navigation and refreshes
- * Uses sessionStorage to persist scroll state per URL
- */
-export function ScrollPositionManager() {
+function ScrollPositionManagerInner() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
@@ -86,4 +82,12 @@ export function ScrollPositionManager() {
     }, [getPageKey]);
 
     return null;
+}
+
+export function ScrollPositionManager() {
+    return (
+        <Suspense fallback={null}>
+            <ScrollPositionManagerInner />
+        </Suspense>
+    );
 }
