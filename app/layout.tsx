@@ -171,7 +171,7 @@ export default function RootLayout({
         <ThemeProvider>
           <TVProvider>
             <TVNavigationInitializer />
-            <PasswordGate hasAuth={!!(process.env.ADMIN_PASSWORD || process.env.ACCOUNTS || process.env.ACCESS_PASSWORD)}>
+            <PasswordGate hasAuth={false}>
               <AdKeywordsWrapper />
               <Suspense><ReferralCapture /></Suspense>
               {children}

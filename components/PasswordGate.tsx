@@ -10,11 +10,11 @@ export function PasswordGate({ children, hasAuth: initialHasAuth }: { children: 
     // Enable background subscription syncing globally
     useSubscriptionSync();
 
-    const [isLocked, setIsLocked] = useState(true);
+    const [isLocked, setIsLocked] = useState(false);
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
     const [isClient, setIsClient] = useState(false);
-    const [hasAuth, setHasAuth] = useState(initialHasAuth);
+    const [hasAuth, setHasAuth] = useState(false);
     const [isValidating, setIsValidating] = useState(false);
 
     useEffect(() => {
@@ -39,14 +39,11 @@ export function PasswordGate({ children, hasAuth: initialHasAuth }: { children: 
                 }
             }
 
-            // Initial fast check
-            const localLocked = initialHasAuth && !isAuthenticated;
             if (mounted) {
-                setIsLocked(localLocked);
                 setIsClient(true);
             }
 
-            // Fetch remote config & sync
+            // Fetch remote config & sync: 只有服务端明确返回 hasAuth 为 true 时才判定加锁，彻底杜绝首秒闪烁！
             try {
                 const res = await fetch('/api/auth');
                 if (!res.ok) throw new Error('Failed to fetch auth config');
@@ -62,8 +59,8 @@ export function PasswordGate({ children, hasAuth: initialHasAuth }: { children: 
                         settingsStore.syncEnvSubscriptions(data.subscriptionSources);
                     }
 
-                    // Re-evaluate lock status with confirmed server state
-                    const confirmLocked = data.hasAuth && !isAuthenticated;
+                    // Re-evaluate lock status only after server confirms hasAuth is true
+                    const confirmLocked = Boolean(data.hasAuth && !isAuthenticated);
                     setIsLocked(confirmLocked);
                 }
             } catch (e) {
