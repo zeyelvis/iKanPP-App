@@ -1,0 +1,27 @@
+name: SEO Entity Pipeline & IndexNow Broadcast
+
+on:
+  schedule:
+    # 每天 UTC 19:00 (北京时间凌晨 03:00) 自动定时增量同步并广播
+    - cron: '0 19 * * *'
+    # 每天 UTC 04:00 (北京时间中午 12:00 黄金档期) 自动定时增量同步并广播
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  seo-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger SEO Entity Pipeline & IndexNow Push
+        run: |
+          echo "🚀 触发线上每日增量片库入库与 IndexNow 广播..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X GET "https://www.ikanpp.com/api/seo/entity-pipeline?secret=ikanpp-cron-sync-secret")
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          echo "HTTP 状态码: $HTTP_CODE"
+          echo "返回结果: $BODY"
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "❌ 增量同步请求失败"
+            exit 1
+          fi
+          echo "✅ 增量入库与 IndexNow 广播已触发成功！"
