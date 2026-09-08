@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    default: 'iKanX - 午夜影视专区 · 4K 极速秒播',
+    absolute: 'iKanX - 午夜影视专区 · 4K 极速秒播',
     template: '%s | iKanX',
   },
   description: 'iKanX 专属加密影院，汇集精选影视资源，4K 极速秒播，100% 隐私无痕保障。',
