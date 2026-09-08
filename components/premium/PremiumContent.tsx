@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MidnightHero } from './MidnightHero';
 import { JableHeaderNav } from './JableHeaderNav';
 import { JableVideoCard } from './JableVideoCard';
@@ -11,6 +11,7 @@ import { JableFilterDrawer, type JableFilterState } from './JableFilterDrawer';
 import { ActressDetailModal } from './ActressDetailModal';
 import { MidnightContinueWatching } from './MidnightContinueWatching';
 import { MidnightRecommendedRadar } from './MidnightRecommendedRadar';
+import { JablePagination } from './JablePagination';
 import { usePremiumContent } from '@/lib/hooks/usePremiumContent';
 import {
     JABLE_MAIN_CATEGORIES,
@@ -39,20 +40,22 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
         videos,
         loading,
         hasMore,
-        prefetchRef,
-        loadMoreRef,
+        page,
+        changePage,
     } = usePremiumContent(searchKeyword, rankingTabId);
 
     // 切换主分类
     const handleSelectCategory = (cat: JableCategory) => {
         setActiveCategoryId(cat.id);
         setSearchKeyword(cat.keyword);
+        setSavedTopVideos([]);
     };
 
     // 切换时段排行榜 Tab
     const handleSelectRankingTab = (tabId: string) => {
         setRankingTabId(tabId);
         setSearchKeyword('');
+        setSavedTopVideos([]);
     };
 
     // 选择女优（唤起女神专属独立主页）
@@ -97,9 +100,28 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
         }
     };
 
-    // 榜单前 8 部与后续流
-    const topVideos = videos.slice(0, 8);
-    const remainingVideos = videos.slice(8);
+    // 榜单前 8 部与最新收录流
+    // 为保证翻页时顶部“实时热播排行榜”和 Hero 轮播稳定不晃动，榜单始终固定在第 1 页拉取的 topVideos
+    const [savedTopVideos, setSavedTopVideos] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (videos.length > 0 && (savedTopVideos.length === 0 || page === 1)) {
+            setSavedTopVideos(videos.slice(0, 8));
+        }
+    }, [videos, page, savedTopVideos.length]);
+
+    const topVideos = savedTopVideos.length > 0 ? savedTopVideos : videos.slice(0, 8);
+    // 第 1 页展示 8 之后的 12 部；第 2 页及以后展示整页 20 部全量视频
+    const displayVideos = page === 1 ? videos.slice(8) : videos;
+
+    // 翻页处理：触发数据加载并顺滑回滚至最新列表顶部锚点
+    const handlePageChange = (targetPage: number) => {
+        changePage(targetPage);
+        const anchor = document.getElementById('latest-premium-top');
+        if (anchor) {
+            anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
 
     const currentRankingTab = JABLE_RANKING_TABS.find(t => t.id === rankingTabId) || JABLE_RANKING_TABS[0];
 
@@ -211,12 +233,20 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
 
             {/* 7. ⚡ 最新收录全量流与高级筛选入口 */}
             <section className="space-y-4">
+                {/* 翻页顺滑回滚定位锚点 */}
+                <div id="latest-premium-top" className="scroll-mt-24" />
+
                 <div className="flex items-center justify-between px-1">
                     <div className="flex items-center gap-2">
                         <span className="w-1.5 h-4 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full" />
                         <h3 className="text-base sm:text-lg font-black text-white flex items-center gap-1.5">
                             <Film size={18} className="text-purple-400" />
                             最新收录影片
+                            {page > 1 && (
+                                <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30 ml-1.5">
+                                    第 {page} 页
+                                </span>
+                            )}
                         </h3>
                     </div>
 
@@ -230,7 +260,7 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
                     </button>
                 </div>
 
-                {videos.length === 0 && loading ? (
+                {loading ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                         {Array.from({ length: 8 }).map((_, idx) => (
                             <div key={`skel-rem-${idx}`} className="flex flex-col rounded-2xl bg-[#0E0F17] border border-white/5 overflow-hidden animate-pulse">
@@ -245,29 +275,32 @@ export function PremiumContent({ onSearch, onPlayVideo }: PremiumContentProps) {
                             </div>
                         ))}
                     </div>
-                ) : (
+                ) : displayVideos.length > 0 ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                        {remainingVideos.map((video, idx) => (
+                        {displayVideos.map((video, idx) => (
                             <JableVideoCard
                                 key={`rem-${video.vod_id}-${idx}`}
                                 video={video}
                                 onClick={() => handleVideoClick(video)}
-                                index={idx + 8}
+                                index={page === 1 ? idx + 8 : idx}
                             />
                         ))}
                     </div>
-                )}
-
-                {/* 滚动加载指示器（仅在已有内容追加时呈现底部转圈） */}
-                {loading && videos.length > 0 && (
-                    <div className="flex items-center justify-center py-8">
-                        <div className="w-7 h-7 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                    <div className="py-16 text-center text-white/40 text-sm">
+                        暂未收录更多该分类影片
                     </div>
                 )}
 
-                {/* 无限滚动触发锚点 */}
-                <div ref={prefetchRef} className="h-10" />
-                <div ref={loadMoreRef} className="h-10" />
+                {/* 专属暗黑霓虹数字分页器 */}
+                {videos.length > 0 && (
+                    <JablePagination
+                        currentPage={page}
+                        hasMore={hasMore}
+                        loading={loading}
+                        onPageChange={handlePageChange}
+                    />
+                )}
             </section>
 
             {/* 8. 专属暗黑免责与隐私说明 Footer */}

@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useInfiniteScroll } from '@/lib/hooks/useInfiniteScroll';
 import { PREBAKED_PREMIUM_DATA } from '@/lib/data/premium-prebaked';
 
 export interface PremiumVideo {
@@ -56,22 +55,21 @@ export function usePremiumContent(
     rankingMode: string = 'today'
 ) {
     // 缓存 key 组合 category 和 rankingMode
-    const cacheKey = categoryValue ? `cat:${categoryValue}` : `mode:${rankingMode}`;
+    const baseCacheKey = categoryValue ? `cat:${categoryValue}` : `mode:${rankingMode}`;
 
     // 0ms 瞬间秒开初始状态：内存 -> localStorage -> 预烘焙精选库
     const [videos, setVideos] = useState<PremiumVideo[]>(() => {
-        const mem = clientMemoryCache.get(cacheKey);
+        const mem = clientMemoryCache.get(baseCacheKey);
         if (mem && mem.data.length > 0) return mem.data;
-        const local = getStorageCache(cacheKey);
+        const local = getStorageCache(baseCacheKey);
         if (local && local.data.length > 0) {
-            clientMemoryCache.set(cacheKey, { data: local.data, timestamp: Date.now() });
+            clientMemoryCache.set(baseCacheKey, { data: local.data, timestamp: Date.now() });
             return local.data;
         }
         // 首次打开午夜版，直接使用高质量预置种子库，完全 0ms 秒开呈现
         return PREBAKED_PREMIUM_DATA;
     });
 
-    // 保持 false，彻底杜绝骨架屏卡滞，后台永远静默同步
     const [loading, setLoading] = useState<boolean>(false);
     const [hasMore, setHasMore] = useState(true);
     const [page, setPage] = useState(1);
@@ -85,12 +83,26 @@ export function usePremiumContent(
     const loadVideos = useCallback(async (pageNum: number, append = false) => {
         if (loadingRef.current) return;
         loadingRef.current = true;
+        setLoading(true);
 
-        const currentKey = categoryRef.current ? `cat:${categoryRef.current}` : `mode:${modeRef.current}`;
+        const currentBaseKey = categoryRef.current ? `cat:${categoryRef.current}` : `mode:${modeRef.current}`;
+        const pageKey = pageNum === 1 ? currentBaseKey : `${currentBaseKey}:page:${pageNum}`;
+
+        // 优先检查内存缓存（翻页秒切）
+        if (!append) {
+            const mem = clientMemoryCache.get(pageKey);
+            if (mem && mem.data.length > 0 && Date.now() - mem.timestamp < ONE_DAY_MS) {
+                setVideos(mem.data);
+                setHasMore(mem.data.length >= PAGE_LIMIT);
+                loadingRef.current = false;
+                setLoading(false);
+                return;
+            }
+        }
 
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3500);
+            const timeoutId = setTimeout(() => controller.abort(), 4000);
 
             let apiUrl = `/api/premium/jable?page=${pageNum}`;
             if (categoryRef.current) {
@@ -115,9 +127,9 @@ export function usePremiumContent(
             if (newVideos.length > 0) {
                 setVideos(prev => {
                     const merged = append ? [...prev, ...newVideos] : newVideos;
-                    if (pageNum === 1) {
-                        clientMemoryCache.set(currentKey, { data: newVideos, timestamp: Date.now() });
-                        setStorageCache(currentKey, newVideos);
+                    clientMemoryCache.set(pageKey, { data: newVideos, timestamp: Date.now() });
+                    if (pageNum === 1 && !append) {
+                        setStorageCache(currentBaseKey, newVideos);
                     }
                     return merged;
                 });
@@ -126,14 +138,24 @@ export function usePremiumContent(
             setHasMore(newVideos.length >= PAGE_LIMIT);
         } catch (error) {
             console.warn('[usePremiumContent] Fetch error, keeping cached data:', error);
-            setHasMore(false);
+            // 若第 1 页拉取失败，保持现有或预置数据；若第 2 页失败，则提示暂无更多
+            if (pageNum > 1) {
+                setHasMore(false);
+            }
         } finally {
             loadingRef.current = false;
             setLoading(false);
         }
     }, []);
 
-    // 监听分类或榜单 Tab 变化，0ms 优先展示缓存并触发每日后台对齐
+    // 显式数字翻页切换方法
+    const changePage = useCallback((targetPage: number) => {
+        if (targetPage < 1 || loadingRef.current) return;
+        setPage(targetPage);
+        loadVideos(targetPage, false);
+    }, [loadVideos]);
+
+    // 监听分类或榜单 Tab 变化，重置回第 1 页并 0ms 展示缓存
     useEffect(() => {
         const key = categoryValue ? `cat:${categoryValue}` : `mode:${rankingMode}`;
         const mem = clientMemoryCache.get(key);
@@ -147,7 +169,7 @@ export function usePremiumContent(
         } else if (!categoryValue && rankingMode === 'today') {
             setVideos(PREBAKED_PREMIUM_DATA);
         }
-        // 绝不强行将 videos 设为空数组，避免用户等待大白板
+
         setLoading(false);
         setHasMore(true);
 
@@ -157,21 +179,17 @@ export function usePremiumContent(
         }
     }, [categoryValue, rankingMode, loadVideos]);
 
-    const { prefetchRef, loadMoreRef } = useInfiniteScroll({
-        hasMore,
-        loading,
-        page,
-        onLoadMore: (nextPage) => {
-            setPage(nextPage);
-            loadVideos(nextPage, true);
-        },
-    });
+    const dummyRef = useRef<HTMLDivElement>(null);
 
     return {
         videos,
         loading,
         hasMore,
-        prefetchRef,
-        loadMoreRef,
+        page,
+        setPage,
+        changePage,
+        prefetchRef: dummyRef,
+        loadMoreRef: dummyRef,
     };
 }
+
