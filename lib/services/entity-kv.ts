@@ -1,6 +1,7 @@
 import { TitleEntity } from '@/lib/types/entity';
 import { generateSlug, formatEntityId, normalizeTitle } from '@/lib/data/entities/entity-utils';
 import { PREBAKED_HOME_DATA, PrebakedSubject } from '@/lib/data/home-prebaked';
+import { POPULAR_DIRECTORS, POPULAR_ACTORS } from '@/lib/data/popular-people';
 
 // 内存预烘焙回退字典（确保本地开发、静态构建与边缘冷启动时 0ms 秒开且具备首批 110+ 核心经典影视）
 const memoryStore = new Map<string, string>();
@@ -407,17 +408,34 @@ export async function getNextEntitySeq(): Promise<number> {
 export async function getKnownPeople(): Promise<{ directors: string[]; actors: string[] }> {
   const rawDirs = await kvGet('people:directors');
   const rawActs = await kvGet('people:actors');
-  let directors: string[] = [];
-  let actors: string[] = [];
+  const dirSet = new Set<string>(POPULAR_DIRECTORS);
+  const actSet = new Set<string>(POPULAR_ACTORS);
 
   try {
-    if (rawDirs) directors = JSON.parse(rawDirs);
+    if (rawDirs) {
+      const parsed = JSON.parse(rawDirs);
+      if (Array.isArray(parsed)) {
+        for (const d of parsed) {
+          if (d && d !== '知名导演') dirSet.add(d);
+        }
+      }
+    }
   } catch {}
 
   try {
-    if (rawActs) actors = JSON.parse(rawActs);
+    if (rawActs) {
+      const parsed = JSON.parse(rawActs);
+      if (Array.isArray(parsed)) {
+        for (const a of parsed) {
+          if (a && a !== '实力主演') actSet.add(a);
+        }
+      }
+    }
   } catch {}
 
-  return { directors, actors };
+  return {
+    directors: Array.from(dirSet),
+    actors: Array.from(actSet),
+  };
 }
 

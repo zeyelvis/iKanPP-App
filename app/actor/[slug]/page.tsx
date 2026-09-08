@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Star, Film, User } from 'lucide-react';
 import { getEntitiesByActor } from '@/lib/services/entity-kv';
+import { searchAndEnrichFromTMDB } from '@/lib/services/entity-enrichment';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { Navbar } from '@/components/layout/Navbar';
 
@@ -60,7 +61,15 @@ export default async function ActorPage({ params }: Props) {
     notFound();
   }
 
-  const entities = await getEntitiesByActor(actorName, 48);
+  let entities = await getEntitiesByActor(actorName, 48);
+
+  // 演员作品自愈与自繁殖扩充
+  if (entities.length === 0) {
+    try {
+      await searchAndEnrichFromTMDB(actorName);
+      entities = await getEntitiesByActor(actorName, 48);
+    } catch {}
+  }
 
   const itemList = entities.map((e, idx) => ({
     position: idx + 1,
