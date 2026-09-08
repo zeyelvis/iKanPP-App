@@ -150,13 +150,15 @@ export const VideoGrid = memo(function VideoGrid({
           return aIsDeriv ? 1 : -1;
         }
 
-        // 黄金健康骨干源梯队优先（无尽1 > 最大2 > 光速3 > 魔都4 > 360 5）
+        // 黄金健康骨干源梯队优先（光速1 > 无尽2 > 最大3 > 极速4 > 新浪5 > 魔都6 > 360 7）
         const SOURCE_PRIORITY_ORDER: Record<string, number> = {
-          wujin: 1,
-          zuida: 2,
-          guangsu: 3,
-          modu: 4,
-          zy360: 5,
+          guangsu: 1,
+          wujin: 2,
+          zuida: 3,
+          jisu: 4,
+          xinlang: 5,
+          modu: 6,
+          zy360: 7,
         };
         const pA = SOURCE_PRIORITY_ORDER[a.source] ?? 99;
         const pB = SOURCE_PRIORITY_ORDER[b.source] ?? 99;
@@ -165,7 +167,7 @@ export const VideoGrid = memo(function VideoGrid({
         }
 
         // 存在非标端口切片或旧域名 404 风险的源尽量不作为首选代表源
-        const RISKY_SOURCES = new Set(['baofeng', 'jisu', 'xinlang', 'subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
+        const RISKY_SOURCES = new Set(['baofeng', 'subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
         const aIsRisky = RISKY_SOURCES.has(a.source);
         const bIsRisky = RISKY_SOURCES.has(b.source);
         if (aIsRisky !== bIsRisky) {

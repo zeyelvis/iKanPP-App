@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useHistory } from '@/lib/store/history-store';
+import { useHistoryStore, usePremiumHistoryStore } from '@/lib/store/history-store';
 import { CustomVideoPlayer } from './CustomVideoPlayer';
 import { VideoPlayerError } from './VideoPlayerError';
 import { VideoPlayerEmpty } from './VideoPlayerEmpty';
@@ -60,19 +60,18 @@ export function VideoPlayer({
   const { showModeIndicator, proxyMode } = usePlayerSettings(isPremium);
   const effectiveUseProxy = proxyMode === 'always' ? true : proxyMode === 'none' ? false : useProxy;
 
-
-  // Use reactive hook to subscribe to history updates
-  // This ensures the component re-renders when history is hydrated from localStorage
-  const { viewingHistory, addToHistory } = useHistory(isPremium);
+  // 使用 Selector 单独订阅 addToHistory 动作，彻底切断每 5 秒保存进度导致的播放器子树无端重渲染与卡顿！
+  const addToHistory = isPremium
+    ? usePremiumHistoryStore((s) => s.addToHistory)
+    : useHistoryStore((s) => s.addToHistory);
   const searchParams = useSearchParams();
 
   // Get video metadata from URL params
   const source = searchParams.get('source') || '';
   const title = searchParams.get('title') || '未知视频';
 
-  // Get saved progress for this video
-  const getSavedProgress = () => {
-    // Check for explicit time parameter (from source switch)
+  // 仅在视频/集数初次挂载或切源切集时获取起播进度，绝不随每次时间存储而反复触发组件重渲染
+  const initialTime = useMemo(() => {
     const timeParam = searchParams.get('t');
     if (timeParam) {
       const t = parseFloat(timeParam);
@@ -81,15 +80,15 @@ export function VideoPlayer({
 
     if (!videoId) return 0;
 
-    // Match by normalized title + episode index (source-agnostic)
+    const history = (isPremium ? usePremiumHistoryStore : useHistoryStore).getState().viewingHistory;
     const normalizedTitle = title.toLowerCase().trim();
-    const historyItem = viewingHistory.find(item =>
+    const historyItem = history.find(item =>
       item.title.toLowerCase().trim() === normalizedTitle &&
       item.episodeIndex === currentEpisode
     );
 
     return historyItem ? historyItem.playbackPosition : 0;
-  };
+  }, [videoId, currentEpisode, searchParams, title, isPremium]);
 
   // Save progress function (used by throttle and beforeunload)
   const saveProgress = useCallback((currentTime: number, duration: number) => {
@@ -232,7 +231,7 @@ export function VideoPlayer({
           src={finalPlayUrl}
           onError={handleVideoError}
           onTimeUpdate={handleTimeUpdate}
-          initialTime={getSavedProgress()}
+          initialTime={initialTime}
           shouldAutoPlay={shouldAutoPlay}
           totalEpisodes={totalEpisodes}
           currentEpisodeIndex={currentEpisode}

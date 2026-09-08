@@ -227,7 +227,7 @@ export function IkanPPPlayerContainer() {
                   if (isTrailer || isCommentary) qualityScore -= 500;
                   if (isMusical) qualityScore -= 400;
                   if (typeName.includes('动画') || typeName.includes('动漫')) qualityScore += 60;
-                  if (v.source === 'wujin' || v.source === 'zuida') qualityScore += 80;
+                  if (v.source === 'guangsu' || v.source === 'wujin' || v.source === 'zuida') qualityScore += 80;
 
                   const totalScore = nameScore + yearScore + qualityScore;
 
@@ -504,7 +504,7 @@ export function IkanPPPlayerContainer() {
       (s) => s.source && s.source !== currentActiveSource && !failedSourcesRef.current.has(s.source)
     );
     const candidate = validCandidates.sort((a, b) => {
-      const TOP_ORDER: Record<string, number> = { wujin: 1, zuida: 2, guangsu: 3, modu: 4, zy360: 5 };
+      const TOP_ORDER: Record<string, number> = { guangsu: 1, wujin: 2, zuida: 3, jisu: 4, xinlang: 5, modu: 6, zy360: 7 };
       const aOrder = TOP_ORDER[a.source] ?? 99;
       const bOrder = TOP_ORDER[b.source] ?? 99;
       if (aOrder !== bOrder) return aOrder - bOrder;

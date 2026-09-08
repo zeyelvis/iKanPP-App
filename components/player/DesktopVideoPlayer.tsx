@@ -447,6 +447,7 @@ export function DesktopVideoPlayer({
             ref={videoRef}
             className="w-full h-full object-contain"
             poster={poster}
+            preload="auto"
             x-webkit-airplay="allow"
             playsInline={true} // Crucial for iOS custom fullscreen to work without native player taking over
             onPlay={() => {
