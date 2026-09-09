@@ -113,16 +113,16 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
   };
 
   return (
-    <div className="relative flex flex-col gap-3 sm:gap-4 items-start w-full" id="main-play-cta">
-      {/* 1. 移动端专属布局 (仅在小于 md 视口渲染)：Netflix 级紧凑播放按钮 + 轻盈通透垂直图标列 */}
+    <div className="relative flex flex-col gap-3 sm:gap-4 w-full md:items-start" id="main-play-cta">
+      {/* 1. 移动端专属布局 (仅在小于 md 视口渲染)：Netflix 级 100% 全宽播放条 + 横向均分轻盈操作列 */}
       <div className="w-full md:hidden">
         <div className="flex flex-col gap-2.5 w-full">
-          {/* 主播放按钮：利落高精细小圆角、黑底白字 Netflix 质感 */}
+          {/* 主播放按钮：100% 满宽横跨、高亮利落小圆角、黑底白字 Netflix 质感 */}
           <button
             onClick={() => handlePlay(lastEpisode)}
             disabled={isPending}
             id="btn-netflix-play"
-            className="group relative w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-white hover:bg-white/95 text-black font-extrabold text-base shadow-lg shadow-white/10 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-75"
+            className="group relative w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-white hover:bg-white/95 text-black font-extrabold text-base shadow-lg shadow-white/10 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-75"
           >
             {isPending ? (
               <>
@@ -141,7 +141,7 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
             )}
 
             {hasHistory && historyPercent > 0 && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-lg overflow-hidden">
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-xl overflow-hidden">
                 <div
                   className="h-full bg-red-600 transition-all duration-300"
                   style={{ width: `${historyPercent}%` }}
@@ -150,11 +150,11 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
             )}
           </button>
 
-          {/* Netflix 标配轻盈无框垂直图标列 (上图标 + 下微文字)，彻底告别粗笨大色块 */}
-          <div className="flex items-center justify-around w-full py-1 px-2 border-b border-white/5 pb-2">
+          {/* Netflix 标配轻盈无框垂直图标列 (上图标 + 下微文字)，全宽横向平分舒展 */}
+          <div className="flex items-center justify-around w-full py-1.5 px-2 border-b border-white/5 pb-2.5">
             <button
               onClick={handleToggleFavorite}
-              className="flex flex-col items-center gap-1 text-white/80 hover:text-white active:scale-95 transition-all cursor-pointer py-1 px-3"
+              className="flex-1 flex flex-col items-center justify-center gap-1 text-white/80 hover:text-white active:scale-95 transition-all cursor-pointer py-1"
             >
               {isFav ? (
                 <Check className="w-5 h-5 text-red-500" />
@@ -168,7 +168,7 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
 
             <button
               onClick={handleShare}
-              className="flex flex-col items-center gap-1 text-white/80 hover:text-white active:scale-95 transition-all cursor-pointer py-1 px-3"
+              className="flex-1 flex flex-col items-center justify-center gap-1 text-white/80 hover:text-white active:scale-95 transition-all cursor-pointer py-1"
             >
               <Share2 className="w-5 h-5 text-white/90" />
               <span className="text-[11px] font-medium text-white/65">分享好友</span>
@@ -176,7 +176,7 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
 
             <button
               onClick={handleLike}
-              className="flex flex-col items-center gap-1 text-white/80 hover:text-white active:scale-95 transition-all cursor-pointer py-1 px-3"
+              className="flex-1 flex flex-col items-center justify-center gap-1 text-white/80 hover:text-white active:scale-95 transition-all cursor-pointer py-1"
             >
               <ThumbsUp
                 className={`w-5 h-5 transition-colors ${

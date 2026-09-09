@@ -343,8 +343,8 @@ export default async function TitlePage({ params }: Props) {
               </div>
             </div>
 
-            {/* 右侧：电影巨幕主标题、规格徽章与行动栏 (严格靠左对齐 items-start) */}
-            <div className="md:col-span-8 lg:col-span-9 flex flex-col justify-end items-start text-left">
+            {/* 右侧：电影巨幕主标题、规格徽章与行动栏 (移动端全宽自适应，桌面端网格靠左) */}
+            <div className="w-full md:col-span-8 lg:col-span-9 flex flex-col justify-end items-start text-left">
               {/* 唯一语义主标题 H1 */}
               <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight mb-1.5 sm:mb-3 drop-shadow-md text-left">
                 {entity.title}
@@ -419,7 +419,7 @@ export default async function TitlePage({ params }: Props) {
               </div>
 
               {/* Netflix 主控行动区 (立即播放 / 追剧清单 / 分享 / 推荐) */}
-              <div className="mb-2 sm:mb-6">
+              <div className="w-full mb-2 sm:mb-6">
                 <TitleActionsBar entity={entity} />
               </div>
             </div>
