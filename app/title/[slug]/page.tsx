@@ -2,14 +2,16 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, Clock, Calendar, Film, ArrowLeft } from 'lucide-react';
+import { Star, Clock, Calendar, Film, ArrowLeft, Clapperboard, User, Sparkles, CheckCircle2, Play } from 'lucide-react';
 import { getEntityBySlug, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity } from '@/lib/services/entity-kv';
 import { getGenreBySlug } from '@/lib/data/genres';
 import { parseEntitySlug } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, fetchTMDBDetails } from '@/lib/services/entity-enrichment';
 import { TitleEntity } from '@/lib/types/entity';
 import { TitleJsonLd } from '@/components/seo/TitleJsonLd';
-import { PlayButton } from '@/components/title/PlayButton';
+import { TitleActionsBar } from '@/components/title/TitleActionsBar';
+import { EpisodesSelector } from '@/components/title/EpisodesSelector';
+import { StickyBottomPlayCTA } from '@/components/title/StickyBottomPlayCTA';
 import { Navbar } from '@/components/layout/Navbar';
 
 export const runtime = 'edge';
@@ -203,9 +205,10 @@ export default async function TitlePage({ params }: Props) {
   const isTv = entity.type === 'tv';
   const channelPath = isTv ? '/tv' : '/movie';
   const channelName = isTv ? '电视剧' : '电影';
+  const heroBackdrop = entity.backdrop || entity.cover;
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white">
+    <div className="min-h-screen bg-[#0A0A0F] text-white selection:bg-red-600 selection:text-white relative">
       {/* 结构化数据注入 */}
       <TitleJsonLd entity={entity} siteUrl={BASE_URL} />
 
@@ -234,87 +237,128 @@ export default async function TitlePage({ params }: Props) {
       {/* 顶部导航 */}
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-24">
-        {/* 面包屑导航 (Breadcrumbs) */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-white/50 mb-8 overflow-x-auto whitespace-nowrap">
-          <Link href="/" className="hover:text-white transition-colors">
-            首页
-          </Link>
-          <span>/</span>
-          <Link href={channelPath} className="hover:text-white transition-colors">
-            {channelName}
-          </Link>
-          <span>/</span>
-          <span className="text-white/80 font-medium truncate max-w-xs">{entity.title}</span>
-        </nav>
-
-        {/* 核心详情区 (Article) */}
-        <article className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 mb-16">
-          {/* 左侧：主海报 (2:3 黄金比例，LCP 优化) */}
-          <div className="md:col-span-4 lg:col-span-3">
-            <div className="relative aspect-2/3 w-full max-w-[320px] mx-auto rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-white/5">
-              {entity.cover ? (
-                <Image
-                  src={entity.cover}
-                  alt={`${entity.title} 封面海报`}
-                  fill
-                  sizes="(max-width: 768px) 320px, (max-width: 1200px) 25vw, 320px"
-                  priority
-                  className="object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-white/30">
-                  <Film className="w-12 h-12" />
-                </div>
-              )}
-              {entity.rate && (
-                <div className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-black/70 backdrop-blur-md border border-amber-500/30 flex items-center gap-1.5 shadow-lg">
-                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                  <span className="font-black text-amber-400 text-sm">{entity.rate}</span>
-                </div>
-              )}
-            </div>
+      {/* Netflix 级沉浸式全屏背景大画幅 (Hero Billboard Backdrop) */}
+      <div className="relative w-full overflow-hidden">
+        {heroBackdrop && (
+          <div className="absolute inset-0 h-[60vh] sm:h-[75vh] lg:h-[82vh] w-full select-none pointer-events-none z-0">
+            <Image
+              src={heroBackdrop}
+              alt={`${entity.title} 剧照大图`}
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-top opacity-35 sm:opacity-45 filter brightness-90 saturate-[1.15]"
+            />
+            {/* 多重电影级渐变融合：底边向上淡入深黑，侧边向右压暗文字背景 */}
+            <div className="absolute inset-0 bg-linear-to-t from-[#0A0A0F] via-[#0A0A0F]/70 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-r from-[#0A0A0F] via-[#0A0A0F]/85 to-transparent sm:max-w-4xl" />
           </div>
+        )}
 
-          {/* 右侧：影片信息与长尾描述 */}
-          <div className="md:col-span-8 lg:col-span-9 flex flex-col justify-between">
-            <div>
-              {/* 唯一语义 H1 */}
-              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight mb-3">
+        {/* 核心视觉区 */}
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8 z-10">
+          {/* 面包屑导航 (Breadcrumbs) */}
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs sm:text-sm text-white/50 mb-6 sm:mb-8 overflow-x-auto whitespace-nowrap">
+            <Link href="/" className="hover:text-white transition-colors">
+              首页
+            </Link>
+            <span>/</span>
+            <Link href={channelPath} className="hover:text-white transition-colors">
+              {channelName}
+            </Link>
+            <span>/</span>
+            <span className="text-white/80 font-medium truncate max-w-xs">{entity.title}</span>
+          </nav>
+
+          {/* 影视主体大横幅 (Hero Article) */}
+          <article className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 pb-12 sm:pb-16 items-end">
+            {/* 左侧：2:3 黄金比例悬浮立体海报 */}
+            <div className="md:col-span-4 lg:col-span-3">
+              <div className="relative aspect-2/3 w-full max-w-[280px] sm:max-w-[320px] mx-auto rounded-2xl overflow-hidden shadow-2xl shadow-black/80 border border-white/15 bg-black/40 group">
+                {entity.cover ? (
+                  <Image
+                    src={entity.cover}
+                    alt={`${entity.title} 封面海报`}
+                    fill
+                    sizes="(max-width: 768px) 280px, (max-width: 1200px) 25vw, 320px"
+                    priority
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-white/30">
+                    <Film className="w-12 h-12" />
+                  </div>
+                )}
+                {/* 海报右上角悬浮评分 */}
+                {entity.rate && (
+                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-xl bg-black/75 backdrop-blur-md border border-amber-500/30 flex items-center gap-1 shadow-lg">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span className="font-black text-amber-400 text-xs sm:text-sm">{entity.rate}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 右侧：电影巨幕主标题、规格徽章与行动栏 */}
+            <div className="md:col-span-8 lg:col-span-9 flex flex-col justify-end">
+              {/* 唯一语义主标题 H1 */}
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight mb-3 drop-shadow-md">
                 {entity.title}
                 {entity.originalTitle && entity.originalTitle !== entity.title && (
-                  <span className="block text-lg sm:text-2xl font-normal text-white/50 mt-1">
+                  <span className="block text-base sm:text-2xl font-light text-white/50 mt-1 tracking-normal font-sans">
                     {entity.originalTitle}
                   </span>
                 )}
               </h1>
 
-              {/* 基础标签栏 */}
-              <div className="flex flex-wrap items-center gap-3 text-sm text-white/60 mb-6">
-                <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10">
-                  <Calendar className="w-3.5 h-3.5" />
-                  {entity.year || '2024'}
-                </span>
-                {entity.region && (
-                  <span className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10">
-                    {entity.region}
+              {/* Netflix 风格视听规格徽章行 */}
+              <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 text-xs sm:text-sm text-white/80 mb-6">
+                {/* 评分胶囊 */}
+                {entity.rate && (
+                  <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold">
+                    ★ {entity.rate} 分
                   </span>
                 )}
-                {entity.runtime && (
-                  <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10">
+
+                {/* 年份 */}
+                <span className="px-2.5 py-1 rounded-lg bg-white/10 border border-white/10 font-semibold">
+                  {entity.year || '2024'}
+                </span>
+
+                {/* 画质规格徽章 */}
+                <span className="px-2 py-0.5 rounded text-[11px] font-black bg-red-600/90 text-white tracking-wider border border-red-500/40">
+                  4K ULTRA HD
+                </span>
+                <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-white/10 text-white/90 border border-white/15">
+                  HDR10
+                </span>
+                <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-white/10 text-white/90 border border-white/15">
+                  DOLBY ATMOS
+                </span>
+
+                {/* 时长 / 集数 */}
+                {entity.runtime ? (
+                  <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-white/60">
                     <Clock className="w-3.5 h-3.5" />
                     {entity.runtime} 分钟
                   </span>
+                ) : null}
+
+                {isTv && (
+                  <span className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-white/70">
+                    {entity.numberOfEpisodes ? `全 ${entity.numberOfEpisodes} 集` : '连载中'}
+                  </span>
                 )}
-                {isTv && entity.numberOfEpisodes && (
-                  <span className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10">
-                    共 {entity.numberOfEpisodes} 集
+
+                {entity.region && (
+                  <span className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-white/60">
+                    {entity.region}
                   </span>
                 )}
               </div>
 
-              {/* 题材标签 */}
-              <div className="flex flex-wrap gap-2 mb-8">
+              {/* 题材分类标签 */}
+              <div className="flex flex-wrap gap-2 mb-6">
                 {entity.genres?.map(genre => {
                   const gInfo = getGenreBySlug(genre);
                   const href = gInfo ? `/genre/${gInfo.slug}` : `/genre/${encodeURIComponent(genre)}`;
@@ -322,7 +366,7 @@ export default async function TitlePage({ params }: Props) {
                     <Link
                       key={genre}
                       href={href}
-                      className="px-3 py-1 text-xs font-semibold rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors border border-white/5"
+                      className="px-3 py-1 text-xs font-semibold rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors border border-white/10"
                     >
                       {genre}
                     </Link>
@@ -330,91 +374,104 @@ export default async function TitlePage({ params }: Props) {
                 })}
               </div>
 
-              {/* AEO 回答胶囊 (Answer Capsule)：针对 AI 搜索引擎（Google AI Overview、Perplexity 等）深度优化 */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-white/4 border border-white/10 mb-8 backdrop-blur-sm">
-                <h2 className="text-xs uppercase tracking-wider font-bold text-white/40 mb-2">
-                  影片概览 (Storyline)
-                </h2>
-                <p className="text-white/85 text-sm sm:text-base leading-relaxed">
-                  {entity.description}
-                </p>
-              </div>
-
-              {/* 演职员表（深度内链直达导演/演员作品专栏） */}
-              {(validDirectors.length > 0 || validActors.length > 0) && (
-                <div className="space-y-3 mb-8 text-sm sm:text-base">
-                  {validDirectors.length > 0 && (
-                    <div className="flex flex-wrap items-baseline gap-2">
-                      <span className="text-white/40 font-medium">导演：</span>
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        {validDirectors.map((d, idx) => (
-                          <span key={d} className="inline-flex items-center">
-                            <Link
-                              href={`/director/${encodeURIComponent(d)}`}
-                              className="text-white/90 hover:text-red-400 hover:underline transition-colors font-medium"
-                            >
-                              {d}
-                            </Link>
-                            {idx < validDirectors.length - 1 && (
-                              <span className="text-white/30 ml-1.5">/</span>
-                            )}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {validActors.length > 0 && (
-                    <div className="flex flex-wrap items-baseline gap-2">
-                      <span className="text-white/40 font-medium">主演：</span>
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        {validActors.map((a, idx) => (
-                          <span key={a} className="inline-flex items-center">
-                            <Link
-                              href={`/actor/${encodeURIComponent(a)}`}
-                              className="text-white/90 hover:text-red-400 hover:underline transition-colors"
-                            >
-                              {a}
-                            </Link>
-                            {idx < validActors.length - 1 && (
-                              <span className="text-white/30 ml-1.5">/</span>
-                            )}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* E-E-A-T 影视资料背书 */}
-              <div className="flex items-center gap-2 text-xs text-white/35 mb-6">
-                <span>🛡️</span>
-                <span>影视资料由 iKanPP 影视库团队整理校对</span>
-                <span>·</span>
-                <span>最新核验于 {entity.year} 年</span>
+              {/* Netflix 主控行动区 (立即播放 / 追剧清单 / 分享 / 推荐) */}
+              <div className="mb-6">
+                <TitleActionsBar entity={entity} />
               </div>
             </div>
+          </article>
+        </div>
+      </div>
 
-            {/* 播放触发操作区 */}
-            <div className="pt-6 border-t border-white/10 flex flex-wrap items-center gap-4">
-              <PlayButton
-                entityId={entity.entityId}
-                title={entity.title}
-                type={entity.type}
-              />
-              <span className="text-xs text-white/40">
-                ⚡ 浏览器纯直连第三方 CDN · 零等待秒播
-              </span>
-            </div>
+      {/* 主体内容布局区 */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-28">
+        {/* AEO 剧情梗概 (Storyline / Answer Capsule) */}
+        <section className="p-5 sm:p-7 rounded-2xl bg-white/4 border border-white/10 backdrop-blur-md mb-10 shadow-xl">
+          <h2 className="text-xs uppercase tracking-wider font-bold text-white/40 mb-3 flex items-center gap-2">
+            <span>📖</span>
+            <span>剧情梗概 (STORYLINE)</span>
+          </h2>
+          <p className="text-white/85 text-sm sm:text-base leading-relaxed">
+            {entity.description}
+          </p>
+
+          {/* E-E-A-T 影视背书 */}
+          <div className="flex items-center gap-2 text-xs text-white/35 mt-5 pt-4 border-t border-white/5">
+            <span>🛡️</span>
+            <span>影视资料由 iKanPP 影视库团队整理校对</span>
+            <span>·</span>
+            <span>最新核验于 {entity.year || '2024'} 年</span>
           </div>
-        </article>
+        </section>
 
-        {/* 相关影片推荐内链网络 (同导演、同主演与同题材) */}
+        {/* 电视剧/动漫专用选集控制台 (Episodes Selector) */}
+        {isTv && (
+          <section className="mb-14 p-5 sm:p-7 rounded-2xl bg-white/4 border border-white/10 backdrop-blur-md shadow-xl">
+            <EpisodesSelector
+              entityId={entity.entityId}
+              title={entity.title}
+              type={entity.type}
+              totalEpisodes={entity.numberOfEpisodes || 24}
+            />
+          </section>
+        )}
+
+        {/* 演职员圆形名牌滑轨 (Cast & Crew Rail) */}
+        {(validDirectors.length > 0 || validActors.length > 0) && (
+          <section className="mb-14">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-5 flex items-center gap-2">
+              <Clapperboard className="w-5 h-5 text-red-500" />
+              <span>演职员专栏</span>
+            </h2>
+
+            <div className="flex items-center gap-3.5 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+              {/* 导演卡片 */}
+              {validDirectors.map(d => (
+                <Link
+                  key={d}
+                  href={`/director/${encodeURIComponent(d)}`}
+                  className="group shrink-0 flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-red-500/30 transition-all duration-200 hover:-translate-y-0.5"
+                >
+                  <div className="w-11 h-11 rounded-full bg-red-600/10 border border-red-500/20 text-red-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                    <Clapperboard className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-sm text-white group-hover:text-red-400 transition-colors">
+                      {d}
+                    </div>
+                    <div className="text-[11px] text-white/40 mt-0.5">导演</div>
+                  </div>
+                </Link>
+              ))}
+
+              {/* 演员卡片 */}
+              {validActors.map(a => (
+                <Link
+                  key={a}
+                  href={`/actor/${encodeURIComponent(a)}`}
+                  className="group shrink-0 flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-500/30 transition-all duration-200 hover:-translate-y-0.5"
+                >
+                  <div className="w-11 h-11 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                    <User className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-sm text-white group-hover:text-amber-400 transition-colors">
+                      {a}
+                    </div>
+                    <div className="text-[11px] text-white/40 mt-0.5">实力主演</div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Netflix 标志性“更多类似推荐”（More Like This） */}
         {combinedRelated.length > 0 && (
-          <section className="mt-16 pt-12 border-t border-white/10">
+          <section className="mt-8">
             <h2 className="text-xl sm:text-2xl font-bold text-white mb-6 flex items-center gap-2">
               <span>🍿</span>
-              <span>更多{primaryGenre}与演职员精选推荐</span>
+              <span>更多{primaryGenre}精选推荐</span>
             </h2>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
@@ -422,7 +479,7 @@ export default async function TitlePage({ params }: Props) {
                 <Link
                   key={rel.entityId}
                   href={`/title/${rel.entityId}-${rel.slug}`}
-                  className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-200 hover:-translate-y-1"
+                  className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-black"
                 >
                   <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
                     {rel.cover ? (
@@ -439,12 +496,20 @@ export default async function TitlePage({ params }: Props) {
                         <Film className="w-8 h-8" />
                       </div>
                     )}
+                    {/* 评分 */}
                     {rel.rate && (
-                      <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-black/70 text-amber-400 text-xs font-bold flex items-center gap-0.5">
+                      <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-black/75 text-amber-400 text-xs font-bold flex items-center gap-0.5 backdrop-blur-sm">
                         <Star className="w-3 h-3 fill-amber-400" />
                         {rel.rate}
                       </div>
                     )}
+
+                    {/* Netflix 风格悬停播放图标 */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
+                        <Play className="w-5 h-5 fill-white ml-0.5" />
+                      </div>
+                    </div>
                   </div>
                   <div className="p-2.5">
                     <h3 className="font-semibold text-sm text-white/90 truncate group-hover:text-red-400 transition-colors">
@@ -460,6 +525,9 @@ export default async function TitlePage({ params }: Props) {
           </section>
         )}
       </main>
+
+      {/* 移动端专属常驻吸底快捷播放栏 */}
+      <StickyBottomPlayCTA entity={entity} />
     </div>
   );
 }
