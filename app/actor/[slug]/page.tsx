@@ -64,18 +64,24 @@ export default async function ActorPage({ params }: Props) {
 
   let entities = await getEntitiesByActor(actorName, 48);
 
-  // 1. 如果作品过少（低于 6 部，说明尚未深度抓取或历史脏数据已被过滤），强制触发高质量 TMDB 代表作自愈与覆写
-  if (entities.length < 6) {
+  // 1. 严格剔除脱口秀、真人秀等非影视正片
+  const cleanEntities = entities.filter(e => !isInvalidDramaOrMovie(e));
+
+  // 2. 如果作品为空（0部），或者原本包含脱口秀脏数据，主动触发高质量 TMDB 代表作自愈与覆写
+  if (cleanEntities.length === 0 || cleanEntities.length < entities.length) {
     try {
       const enriched = await searchAndEnrichPersonCredits(actorName, 'actor', 36);
       if (enriched.length > 0) {
         entities = enriched;
+      } else {
+        entities = cleanEntities;
       }
-    } catch {}
+    } catch {
+      entities = cleanEntities;
+    }
+  } else {
+    entities = cleanEntities;
   }
-
-  // 2. 严格剔除脱口秀、真人秀等非影视正片
-  entities = entities.filter(e => !isInvalidDramaOrMovie(e));
 
   // 3. 权威口碑评分排序（让真正的传世高分神作稳居前排）
   entities.sort((a, b) => {

@@ -2,7 +2,7 @@ import { TitleEntity } from '@/lib/types/entity';
 import { generateSlug, formatEntityId, normalizeTitle } from '@/lib/data/entities/entity-utils';
 import { getEntityByTitle, getEntityByTmdb, getNextEntitySeq, saveEntity, setPersonEntitiesIndex } from '@/lib/services/entity-kv';
 
-const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
+const TMDB_API_KEY = process.env.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 
 interface TMDBDetailResponse {
@@ -200,7 +200,35 @@ export async function searchAndEnrichPersonCredits(
     if (!sRes.ok) return [];
 
     const sData = await sRes.json();
-    const person = sData.results?.[0];
+    const candidatesPeople = Array.isArray(sData.results) ? sData.results : [];
+    if (candidatesPeople.length === 0) return [];
+
+    // 从候选列表中选拔最具代表作积累的权威影人（坚决避免盲目取第0项命中无头像的幽灵/同名条目）
+    const pickBestPerson = (people: any[]) => {
+      if (people.length === 1) return people[0];
+
+      const scorePerson = (p: any) => {
+        let score = (p.popularity || 0) * 10;
+        // 有官方肖像大幅加分（知名影人99%有肖像照，同名幽灵或空条目通常为 null）
+        if (p.profile_path) score += 80;
+        // 职业契合度加分
+        if (role === 'director' && (p.known_for_department === 'Directing' || p.known_for_department === 'Writing')) {
+          score += 40;
+        } else if (role === 'actor' && p.known_for_department === 'Acting') {
+          score += 40;
+        }
+        // 代表作总评价人数加分
+        const knownFor = Array.isArray(p.known_for) ? p.known_for : [];
+        for (const k of knownFor) {
+          score += Math.min(k.vote_count || 0, 500);
+        }
+        return score;
+      };
+
+      return [...people].sort((a, b) => scorePerson(b) - scorePerson(a))[0];
+    };
+
+    const person = pickBestPerson(candidatesPeople);
     if (!person || !person.id) return [];
 
     // 2. 获取作品履历 (combined_credits)
@@ -231,12 +259,14 @@ export async function searchAndEnrichPersonCredits(
 
       if (role === 'actor') {
         const char = (item.character || '').trim();
-        if (!char) return true; // 没有具体剧本角色的通常是通告或群演
-        if (/^(self|herself|himself|host|guest|judge|panelist|interviewee)(\b|\s|-|\/)/i.test(char) ||
-            /\b(self|herself|himself|guest host)\b/i.test(char) ||
-            /uncredited|extra|background/i.test(char) ||
-            char.includes('自己') || char.includes('本人') || char.includes('嘉宾')) {
-          return true;
+        // 注意：绝不能因为没有填写 character 就判定为脱口秀！很多华语/老港经典正片未填 character 英文名字
+        if (char) {
+          if (/^(self|herself|himself|host|guest|judge|panelist|interviewee)(\b|\s|-|\/)/i.test(char) ||
+              /\b(self|herself|himself|guest host)\b/i.test(char) ||
+              /uncredited|extra|background/i.test(char) ||
+              char.includes('自己') || char.includes('本人') || char.includes('嘉宾') || char.includes('评委')) {
+            return true;
+          }
         }
       }
       return false;
