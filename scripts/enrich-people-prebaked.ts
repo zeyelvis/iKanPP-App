@@ -37,11 +37,10 @@ async function main() {
 
   for (let i = 0; i < entities.length; i++) {
     const item = entities[i];
-    const hasFakeDir = (item.directors || []).includes('知名导演');
-    const hasFakeAct = (item.actors || []).includes('实力主演');
+    const needsEnrich = (!item.directors || item.directors.length === 0 || !item.actors || item.actors.length === 0);
 
-    if (hasFakeDir || hasFakeAct) {
-      console.log(`[${i + 1}/${entities.length}] 正在补全/清洗: 《${item.title}》 (TMDB: ${item.tmdbType}/${item.tmdbId})`);
+    if (needsEnrich) {
+      console.log(`[${i + 1}/${entities.length}] 正在为代表作补全演职员: 《${item.title}》 (TMDB: ${item.tmdbType}/${item.tmdbId})`);
       
       // 先过滤掉假数据
       item.directors = (item.directors || []).filter((d: string) => d && d !== '知名导演');

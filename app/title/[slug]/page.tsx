@@ -3,9 +3,11 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, Clock, Calendar, Film, ArrowLeft } from 'lucide-react';
-import { getEntityBySlug, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity } from '@/lib/services/entity-kv';
+import { getEntityBySlug, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity } from '@/lib/services/entity-kv';
 import { getGenreBySlug } from '@/lib/data/genres';
+import { parseEntitySlug } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, fetchTMDBDetails } from '@/lib/services/entity-enrichment';
+import { TitleEntity } from '@/lib/types/entity';
 import { TitleJsonLd } from '@/components/seo/TitleJsonLd';
 import { PlayButton } from '@/components/title/PlayButton';
 import { Navbar } from '@/components/layout/Navbar';
@@ -20,16 +22,54 @@ interface Props {
 }
 
 /**
+ * 高容错实体解析引擎：支持各种形态的 Slug（如 ik000013-女仆日记, ik002015-法律与秩序, 法律与秩序, ik000013 等）
+ * 彻底避免因为带 ID 前缀调用 TMDB 接口导致的 404
+ */
+async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> {
+  if (!rawSlugParam) return null;
+
+  let decodedSlug = rawSlugParam.trim();
+  try {
+    decodedSlug = decodeURIComponent(decodedSlug).trim();
+  } catch {}
+
+  // 1. 尝试直接根据 slug 取实体（支持 ik000001-slug, ik000001 等）
+  let entity = await getEntityBySlug(decodedSlug);
+  if (entity) return entity;
+
+  // 2. 解析 slug，分离 entityId 与 cleanTitle
+  const { entityId, slug: innerSlug } = parseEntitySlug(decodedSlug);
+
+  // 提取纯净标题（剔除 ik00xxxx- 前缀后的纯标题）
+  let cleanTitle = innerSlug || (entityId ? '' : decodedSlug);
+  cleanTitle = cleanTitle.replace(/^[-\s]+|[-\s]+$/g, '');
+
+  // 3. 如果有纯净标题，尝试在本地按标题反向索引查找
+  if (cleanTitle) {
+    entity = await getEntityByTitle(cleanTitle);
+    if (entity) {
+      return entity;
+    }
+  }
+
+  // 4. 若本地/预置库未命中，使用纯净标题到 TMDB 搜索并自愈入库
+  const queryTitle = cleanTitle || decodedSlug;
+  if (queryTitle && !/^ik\d{6}$/i.test(queryTitle)) {
+    entity = await searchAndEnrichFromTMDB(queryTitle);
+    if (entity) {
+      return entity;
+    }
+  }
+
+  return null;
+}
+
+/**
  * 动态 SEO Metadata 生成（含 Google Discover 大图与 AI 摘要授权）
  */
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  let entity = await getEntityBySlug(slug);
-
-  if (!entity) {
-    // 按需 TMDB 补全
-    entity = await searchAndEnrichFromTMDB(slug);
-  }
+  const entity = await resolveEntity(slug);
 
   if (!entity) {
     return {
@@ -98,11 +138,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function TitlePage({ params }: Props) {
   const { slug } = await params;
-  let entity = await getEntityBySlug(slug);
-
-  if (!entity) {
-    entity = await searchAndEnrichFromTMDB(slug);
-  }
+  const entity = await resolveEntity(slug);
 
   if (!entity) {
     notFound();

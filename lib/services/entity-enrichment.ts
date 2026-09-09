@@ -218,10 +218,43 @@ export async function searchAndEnrichPersonCredits(
       candidates = Array.isArray(cData.cast) ? cData.cast : [];
     }
 
-    // 过滤有海报与中文名、按热度倒序排列
+    // 判断是否为脱口秀、访谈、晚会、真人秀或本人客串
+    const isTalkShowOrSelf = (item: any) => {
+      const genreIds: number[] = Array.isArray(item.genre_ids) ? item.genre_ids : [];
+      // 10767 = Talk (脱口秀/访谈), 10764 = Reality (真人秀), 10763 = News (新闻)
+      if (genreIds.some(id => [10767, 10764, 10763].includes(id))) return true;
+
+      const title = (item.title || item.name || '').trim();
+      if (/秀$|脱口秀|今夜秀|深夜秀|直播秀|金马奖|金像奖|奥斯卡|春晚|春节联欢晚会|颁奖典礼|电影节|首映礼|慢谈|圆桌派|天天向上|快乐大本营|中餐厅|王牌对王牌|奔跑吧|极限挑战|向往的生活|Running Man/i.test(title)) {
+        return true;
+      }
+
+      if (role === 'actor') {
+        const char = (item.character || '').trim();
+        if (!char) return true; // 没有具体剧本角色的通常是通告或群演
+        if (/^(self|herself|himself|host|guest|judge|panelist|interviewee)(\b|\s|-|\/)/i.test(char) ||
+            /\b(self|herself|himself|guest host)\b/i.test(char) ||
+            /uncredited|extra|background/i.test(char) ||
+            char.includes('自己') || char.includes('本人') || char.includes('嘉宾')) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    // 影视代表作权威口碑评分算法 (评价人数与评分复合加权)
+    const calculateScore = (item: any) => {
+      const voteCount = item.vote_count || 0;
+      const voteAverage = item.vote_average || 0;
+      const popularity = item.popularity || 0;
+      const voteWeight = Math.log10(voteCount + 10);
+      return voteWeight * voteAverage * 1.5 + Math.min(popularity, 40) * 0.3;
+    };
+
+    // 过滤出有海报且为真实正片的条目，按权威口碑评分降序排列
     const validCandidates = candidates
-      .filter((c: any) => (c.title || c.name) && c.poster_path)
-      .sort((a: any, b: any) => (b.popularity || 0) - (a.popularity || 0))
+      .filter((c: any) => (c.title || c.name) && c.poster_path && !isTalkShowOrSelf(c))
+      .sort((a: any, b: any) => calculateScore(b) - calculateScore(a))
       .slice(0, limit);
 
     const results: TitleEntity[] = [];

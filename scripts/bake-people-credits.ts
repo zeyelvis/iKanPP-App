@@ -46,10 +46,40 @@ async function fetchPersonCredits(name: string, role: 'director' | 'actor') {
       candidates = Array.isArray(cData.cast) ? cData.cast : [];
     }
 
+    const isTalkShowOrSelf = (item: any) => {
+      const genreIds: number[] = Array.isArray(item.genre_ids) ? item.genre_ids : [];
+      if (genreIds.some(id => [10767, 10764, 10763].includes(id))) return true;
+
+      const title = (item.title || item.name || '').trim();
+      if (/秀$|脱口秀|今夜秀|深夜秀|直播秀|金马奖|金像奖|奥斯卡|春晚|春节联欢晚会|颁奖典礼|电影节|首映礼|慢谈|圆桌派|天天向上|快乐大本营|中餐厅|王牌对王牌|奔跑吧|极限挑战|向往的生活|Running Man/i.test(title)) {
+        return true;
+      }
+
+      if (role === 'actor') {
+        const char = (item.character || '').trim();
+        if (!char) return true;
+        if (/^(self|herself|himself|host|guest|judge|panelist|interviewee)(\b|\s|-|\/)/i.test(char) ||
+            /\b(self|herself|himself|guest host)\b/i.test(char) ||
+            /uncredited|extra|background/i.test(char) ||
+            char.includes('自己') || char.includes('本人') || char.includes('嘉宾')) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    const calculateScore = (item: any) => {
+      const voteCount = item.vote_count || 0;
+      const voteAverage = item.vote_average || 0;
+      const popularity = item.popularity || 0;
+      const voteWeight = Math.log10(voteCount + 10);
+      return voteWeight * voteAverage * 1.5 + Math.min(popularity, 40) * 0.3;
+    };
+
     return candidates
-      .filter((c: any) => (c.title || c.name) && c.poster_path)
-      .sort((a: any, b: any) => (b.popularity || 0) - (a.popularity || 0))
-      .slice(0, 6);
+      .filter((c: any) => (c.title || c.name) && c.poster_path && !isTalkShowOrSelf(c))
+      .sort((a: any, b: any) => calculateScore(b) - calculateScore(a))
+      .slice(0, 8);
   } catch (e) {
     console.warn(`Fetch ${name} error:`, e);
     return [];
