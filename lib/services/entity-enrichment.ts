@@ -69,113 +69,217 @@ export async function fetchTMDBDetails(
 }
 
 /**
- * 根据影片名称在 TMDB 搜索并抓取最匹配条目的完整详情
+ * 根据影片名称在 TMDB 搜索并抓取最匹配、最高质量条目的完整详情
  */
 export async function searchAndEnrichFromTMDB(
   title: string,
-  preferredType: 'movie' | 'tv' = 'movie',
-  year?: string
+  preferredType?: 'movie' | 'tv' | 'anime',
+  year?: string,
+  forceRefresh = false
 ): Promise<TitleEntity | null> {
   if (!title) return null;
 
-  // 1. 先检查本地或 KV 是否已经收录
-  const existing = await getEntityByTitle(title);
-  if (existing) return existing;
+  // 1. 先检查本地或 KV 是否已经收录（且海报数据有效）
+  if (!forceRefresh) {
+    const existing = await getEntityByTitle(title);
+    if (existing && existing.cover && existing.cover.trim() !== '') {
+      return existing;
+    }
+  }
 
   if (!TMDB_API_KEY) return null;
 
   const cleanQuery = sanitizeSearchTitle(title);
-  const searchEndpoints = preferredType === 'tv'
-    ? ['search/tv', 'search/movie']
-    : ['search/movie', 'search/tv'];
+  if (!cleanQuery) return null;
 
-  for (const ep of searchEndpoints) {
-    const actualType: 'movie' | 'tv' = ep.includes('tv') ? 'tv' : 'movie';
-    let searchUrl = `${TMDB_BASE}/${ep}?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(cleanQuery)}`;
-    if (year) {
-      const y = year.match(/\d{4}/)?.[0];
-      if (y) {
-        searchUrl += actualType === 'movie' ? `&year=${y}` : `&first_air_date_year=${y}`;
-      }
-    }
+  try {
+    // 聚合所有候选结果
+    const candidates: any[] = [];
 
+    // 优先调用 TMDB 综合搜索端点 search/multi（自动整合电影与电视剧，按热度综合推荐）
+    const multiUrl = `${TMDB_BASE}/search/multi?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(cleanQuery)}`;
     try {
-      const sRes = await fetch(searchUrl, { headers: { Accept: 'application/json' } });
-      if (!sRes.ok) continue;
-
-      const sData = await sRes.json();
-      const firstHit = sData.results?.[0];
-      if (!firstHit || !firstHit.id) continue;
-
-      // 检查该 TMDB ID 是否已被别的别名收录
-      const existByTmdb = await getEntityByTmdb(actualType, String(firstHit.id));
-      if (existByTmdb) return existByTmdb;
-
-      // 拉取深度元数据
-      const detail = await fetchTMDBDetails(firstHit.id, actualType, TMDB_API_KEY);
-      if (!detail) continue;
-
-      // 生成新实体
-      const nextSeq = await getNextEntitySeq();
-      const entityId = formatEntityId(nextSeq);
-      const mainTitle = detail.title || detail.name || title;
-      const slug = generateSlug(mainTitle);
-
-      const directors: string[] = [];
-      const actors: string[] = [];
-
-      if (detail.credits?.crew) {
-        for (const c of detail.credits.crew) {
-          if (c.job === 'Director' && !directors.includes(c.name)) {
-            directors.push(c.name);
-          }
+      const mRes = await fetch(multiUrl, {
+        headers: { Accept: 'application/json' },
+        next: { revalidate: 86400 * 7 }
+      });
+      if (mRes.ok) {
+        const mData = await mRes.json();
+        if (Array.isArray(mData.results)) {
+          candidates.push(...mData.results);
         }
       }
+    } catch {}
 
-      if (detail.credits?.cast) {
-        for (const c of detail.credits.cast.slice(0, 5)) {
-          if (c.name && !actors.includes(c.name)) {
-            actors.push(c.name);
-          }
+    // 若 multi 结果较少，补充特定端点搜索
+    if (candidates.length < 3) {
+      const fallbackEps = preferredType === 'tv'
+        ? ['search/tv', 'search/movie']
+        : ['search/movie', 'search/tv'];
+      for (const ep of fallbackEps) {
+        let sUrl = `${TMDB_BASE}/${ep}?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(cleanQuery)}`;
+        if (year) {
+          const y = year.match(/\d{4}/)?.[0];
+          if (y) sUrl += ep.includes('tv') ? `&first_air_date_year=${y}` : `&year=${y}`;
         }
+        try {
+          const sRes = await fetch(sUrl, {
+            headers: { Accept: 'application/json' },
+            next: { revalidate: 86400 * 7 }
+          });
+          if (sRes.ok) {
+            const sData = await sRes.json();
+            if (Array.isArray(sData.results)) {
+              for (const r of sData.results) {
+                if (!candidates.some(c => c.id === r.id)) {
+                  candidates.push({ ...r, media_type: ep.includes('tv') ? 'tv' : 'movie' });
+                }
+              }
+            }
+          }
+        } catch {}
       }
-
-      const releaseYear = (detail.release_date || detail.first_air_date || year || '2024').slice(0, 4);
-      const genres = (detail.genres || []).map(g => g.name).filter(Boolean);
-
-      const rawKeywords = detail.keywords?.keywords || detail.keywords?.results || [];
-      const keywords = rawKeywords.map(k => k.name).filter(Boolean).slice(0, 10);
-
-      const entity: TitleEntity = {
-        entityId,
-        slug,
-        tmdbId: String(detail.id),
-        tmdbType: actualType,
-        title: mainTitle,
-        originalTitle: detail.original_title || detail.original_name,
-        type: actualType,
-        year: releaseYear,
-        description: detail.overview || `${mainTitle} 在线观看，支持海外华人免翻墙极速高清播放。`,
-        cover: detail.poster_path ? `https://image.tmdb.org/t/p/w500${detail.poster_path}` : '',
-        backdrop: detail.backdrop_path ? `https://image.tmdb.org/t/p/w1280${detail.backdrop_path}` : '',
-        rate: detail.vote_average ? detail.vote_average.toFixed(1) : '8.5',
-        genres: genres.length > 0 ? genres : [actualType === 'movie' ? '电影' : '电视剧'],
-        directors: directors.filter(d => d && d !== '知名导演'),
-        actors: actors.filter(a => a && a !== '实力主演'),
-        runtime: detail.runtime,
-        numberOfSeasons: detail.number_of_seasons,
-        numberOfEpisodes: detail.number_of_episodes,
-        keywords,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      // 存入 KV 索引系统
-      await saveEntity(entity);
-      return entity;
-    } catch (e) {
-      console.warn(`[Enrich search fail] title=${title}:`, e);
     }
+
+    if (candidates.length === 0) return null;
+
+    // 智能多维打分排序（依据：标题精准度 + 海报剧照完整度 + 热度人气 + 评分人数）
+    const ranked = candidates
+      .filter(r => r && (r.media_type === 'movie' || r.media_type === 'tv' || !r.media_type))
+      .map(hit => {
+        let score = 0;
+        const hitTitle = (hit.title || hit.name || '').trim();
+        const origTitle = (hit.original_title || hit.original_name || '').trim();
+        const cleanQ = cleanQuery.toLowerCase();
+
+        // 1. 标题匹配度 (权重高)
+        if (hitTitle.toLowerCase() === cleanQ) score += 100;
+        else if (origTitle.toLowerCase() === cleanQ) score += 90;
+        else if (hitTitle.toLowerCase().includes(cleanQ)) score += 50;
+
+        // 2. 海报与剧照完整度 (权重极高！坚决淘汰无图空壳条目)
+        if (hit.poster_path) score += 70;
+        if (hit.backdrop_path) score += 30;
+        if (hit.overview && hit.overview.trim().length > 10) score += 20;
+
+        // 3. 热度与人气加分 (依据 popularity，最高 50 分)
+        const pop = Number(hit.popularity) || 0;
+        score += Math.min(pop * 2, 50);
+
+        // 4. 评价人数加分 (过滤无人问津的极冷门条目)
+        const votes = Number(hit.vote_count) || 0;
+        if (votes > 10) score += 10;
+        if (votes > 100) score += 10;
+
+        // 5. 指定年份匹配
+        if (year) {
+          const hitYear = (hit.release_date || hit.first_air_date || '').slice(0, 4);
+          if (hitYear === year.slice(0, 4)) score += 50;
+        }
+
+        // 6. 类型偏好匹配
+        const hitType = hit.media_type || (hit.title ? 'movie' : 'tv');
+        if (preferredType && preferredType === hitType) {
+          score += 25;
+        }
+
+        // 7. 严厉惩罚项：如果完全没有海报封面且热度低于 2.5，扣除 120 分
+        if (!hit.poster_path && pop < 2.5) {
+          score -= 120;
+        }
+
+        return { hit, score, actualType: (hitType === 'tv' ? 'tv' : 'movie') as 'movie' | 'tv' };
+      })
+      .sort((a, b) => b.score - a.score);
+
+    const best = ranked[0];
+    if (!best || !best.hit?.id) return null;
+
+    const firstHit = best.hit;
+    const actualType = best.actualType;
+
+    // 检查该 TMDB ID 是否已被别的别名收录
+    if (!forceRefresh) {
+      const existByTmdb = await getEntityByTmdb(actualType, String(firstHit.id));
+      if (existByTmdb && existByTmdb.cover && existByTmdb.cover.trim() !== '') {
+        return existByTmdb;
+      }
+    }
+
+    // 拉取深度元数据
+    const detail = await fetchTMDBDetails(firstHit.id, actualType, TMDB_API_KEY);
+    if (!detail) return null;
+
+    // 生成新实体或升级现有残缺实体
+    let entityId: string;
+    let existingToUpdate: TitleEntity | null = null;
+    if (forceRefresh) {
+      existingToUpdate = await getEntityByTitle(title);
+    }
+    if (existingToUpdate) {
+      entityId = existingToUpdate.entityId;
+    } else {
+      const nextSeq = await getNextEntitySeq();
+      entityId = formatEntityId(nextSeq);
+    }
+
+    const mainTitle = detail.title || detail.name || title;
+    const slug = generateSlug(mainTitle);
+
+    const directors: string[] = [];
+    const actors: string[] = [];
+
+    if (detail.credits?.crew) {
+      for (const c of detail.credits.crew) {
+        if (c.job === 'Director' && !directors.includes(c.name)) {
+          directors.push(c.name);
+        }
+      }
+    }
+
+    if (detail.credits?.cast) {
+      for (const c of detail.credits.cast.slice(0, 8)) {
+        if (c.name && !actors.includes(c.name)) {
+          actors.push(c.name);
+        }
+      }
+    }
+
+    const releaseYear = (detail.release_date || detail.first_air_date || year || '2024').slice(0, 4);
+    const genres = (detail.genres || []).map(g => g.name).filter(Boolean);
+
+    const rawKeywords = detail.keywords?.keywords || detail.keywords?.results || [];
+    const keywords = rawKeywords.map(k => k.name).filter(Boolean).slice(0, 10);
+
+    const entity: TitleEntity = {
+      entityId,
+      slug,
+      tmdbId: String(detail.id),
+      tmdbType: actualType,
+      title: mainTitle,
+      originalTitle: detail.original_title || detail.original_name,
+      type: actualType,
+      year: releaseYear,
+      description: detail.overview || `${mainTitle} 在线观看，支持海外华人免翻墙极速高清播放。`,
+      cover: detail.poster_path ? `https://image.tmdb.org/t/p/w500${detail.poster_path}` : '',
+      backdrop: detail.backdrop_path ? `https://image.tmdb.org/t/p/w1280${detail.backdrop_path}` : '',
+      rate: detail.vote_average ? detail.vote_average.toFixed(1) : '8.5',
+      genres: genres.length > 0 ? genres : [actualType === 'movie' ? '电影' : '电视剧'],
+      directors: directors.filter(d => d && d !== '知名导演'),
+      actors: actors.filter(a => a && a !== '实力主演'),
+      runtime: detail.runtime,
+      numberOfSeasons: detail.number_of_seasons,
+      numberOfEpisodes: detail.number_of_episodes,
+      keywords,
+      createdAt: existingToUpdate?.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // 存入 KV 索引系统
+    await saveEntity(entity);
+    return entity;
+  } catch (e) {
+    console.warn(`[Enrich search fail] title=${title}:`, e);
   }
 
   return null;

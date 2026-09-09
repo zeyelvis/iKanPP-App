@@ -39,7 +39,13 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
 
   // 1. 尝试直接根据 slug 取实体（支持 ik000001-slug, ik000001 等）
   let entity = await getEntityBySlug(decodedSlug);
-  if (entity) return entity;
+  if (entity) {
+    if (!entity.cover || entity.cover.trim() === '') {
+      const healed = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
+      if (healed && healed.cover) return healed;
+    }
+    return entity;
+  }
 
   // 2. 解析 slug，分离 entityId 与 cleanTitle
   const { entityId, slug: innerSlug } = parseEntitySlug(decodedSlug);
@@ -52,6 +58,10 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
   if (cleanTitle) {
     entity = await getEntityByTitle(cleanTitle);
     if (entity) {
+      if (!entity.cover || entity.cover.trim() === '') {
+        const healed = await searchAndEnrichFromTMDB(cleanTitle, entity.type, entity.year, true);
+        if (healed && healed.cover) return healed;
+      }
       return entity;
     }
   }
@@ -156,10 +166,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function TitlePage({ params }: Props) {
   const { slug } = await params;
-  const entity = await resolveEntity(slug);
+  let entity = await resolveEntity(slug);
 
   if (!entity) {
     notFound();
+  }
+
+  // 质量自愈保障：若当前实体缺少封面海报（如历史残缺数据），强制在线触发重新丰润
+  if (!entity.cover || entity.cover.trim() === '') {
+    const healed = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
+    if (healed && healed.cover) {
+      entity = healed;
+    }
   }
 
   // 严格过滤占位符假数据
