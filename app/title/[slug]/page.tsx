@@ -7,6 +7,7 @@ import { getEntityBySlug, getEntityByTitle, getEntitiesByGenre, getEntitiesByDir
 import { getGenreBySlug } from '@/lib/data/genres';
 import { parseEntitySlug } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, fetchTMDBDetails } from '@/lib/services/entity-enrichment';
+import { getPersonAvatars } from '@/lib/services/person-avatar';
 import { TitleEntity } from '@/lib/types/entity';
 import { TitleJsonLd } from '@/components/seo/TitleJsonLd';
 import { TitleActionsBar } from '@/components/title/TitleActionsBar';
@@ -181,10 +182,12 @@ export default async function TitlePage({ params }: Props) {
   const primaryDirector = validDirectors[0];
   const primaryActor = validActors[0];
 
-  const [genreRelated, directorRelated, actorRelated] = await Promise.all([
+  const allPeopleNames = [...validDirectors, ...validActors];
+  const [genreRelated, directorRelated, actorRelated, peopleAvatars] = await Promise.all([
     getEntitiesByGenre(primaryGenre, 8),
     primaryDirector ? getEntitiesByDirector(primaryDirector, 6) : Promise.resolve([]),
     primaryActor ? getEntitiesByActor(primaryActor, 6) : Promise.resolve([]),
+    getPersonAvatars(allPeopleNames),
   ]);
 
   // 过滤自身
@@ -430,11 +433,23 @@ export default async function TitlePage({ params }: Props) {
                 <Link
                   key={d}
                   href={`/director/${encodeURIComponent(d)}`}
-                  className="group shrink-0 flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-red-500/30 transition-all duration-200 hover:-translate-y-0.5"
+                  className="group shrink-0 flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-red-500/40 transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-lg hover:shadow-red-950/30"
                 >
-                  <div className="w-11 h-11 rounded-full bg-red-600/10 border border-red-500/20 text-red-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                    <Clapperboard className="w-5 h-5" />
-                  </div>
+                  {peopleAvatars[d] ? (
+                    <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-red-500/40 group-hover:border-red-500 shrink-0 shadow-md group-hover:scale-105 transition-all">
+                      <Image
+                        src={peopleAvatars[d]}
+                        alt={d}
+                        fill
+                        sizes="48px"
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-red-600/10 border border-red-500/20 text-red-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform font-bold text-sm">
+                      {d.slice(0, 1)}
+                    </div>
+                  )}
                   <div>
                     <div className="font-bold text-sm text-white group-hover:text-red-400 transition-colors">
                       {d}
@@ -449,11 +464,23 @@ export default async function TitlePage({ params }: Props) {
                 <Link
                   key={a}
                   href={`/actor/${encodeURIComponent(a)}`}
-                  className="group shrink-0 flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-500/30 transition-all duration-200 hover:-translate-y-0.5"
+                  className="group shrink-0 flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-500/40 transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-lg hover:shadow-amber-950/30"
                 >
-                  <div className="w-11 h-11 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                    <User className="w-5 h-5" />
-                  </div>
+                  {peopleAvatars[a] ? (
+                    <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-amber-500/40 group-hover:border-amber-500 shrink-0 shadow-md group-hover:scale-105 transition-all">
+                      <Image
+                        src={peopleAvatars[a]}
+                        alt={a}
+                        fill
+                        sizes="48px"
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform font-bold text-sm">
+                      {a.slice(0, 1)}
+                    </div>
+                  )}
                   <div>
                     <div className="font-bold text-sm text-white group-hover:text-amber-400 transition-colors">
                       {a}

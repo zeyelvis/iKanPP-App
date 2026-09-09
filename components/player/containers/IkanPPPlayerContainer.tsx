@@ -19,8 +19,10 @@ import { getSourceName } from '@/lib/utils/source-names';
 import { storeGroupedSources, retrieveGroupedSources } from '@/lib/utils/grouped-sources-cache';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Tv, Clapperboard, Sparkles, User, Star, Film, MonitorPlay, Layers, CheckCircle2 } from 'lucide-react';
 import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { PREBAKED_AVATARS } from '@/lib/data/prebaked-avatars';
 
 interface TitleAnalysis {
   rawTitle: string;
@@ -758,6 +760,24 @@ export function IkanPPPlayerContainer() {
       .slice(0, 8);
   }, [videoData?.vod_actor]);
 
+  // 演职员真实头像状态（初始值直接读预烘焙字典，0ms 秒开无白屏）
+  const [avatarsMap, setAvatarsMap] = useState<Record<string, string>>(() => PREBAKED_AVATARS);
+
+  useEffect(() => {
+    const allPeople = [...directorsList, ...actorsList].filter(Boolean);
+    const missing = allPeople.filter((name) => !avatarsMap[name]);
+    if (missing.length === 0) return;
+
+    fetch(`/api/person-avatars?names=${encodeURIComponent(missing.join(','))}`)
+      .then((res) => res.json())
+      .then((data: any) => {
+        if (data?.avatars && Object.keys(data.avatars).length > 0) {
+          setAvatarsMap((prev) => ({ ...prev, ...data.avatars }));
+        }
+      })
+      .catch(() => {});
+  }, [directorsList, actorsList]);
+
   return (
     <div className={`min-h-screen ${isCinemaMode ? 'bg-[#050505]' : 'bg-(--bg-color)'}`}>
       <JsonLd data={jsonLdData} />
@@ -999,41 +1019,75 @@ export function IkanPPPlayerContainer() {
               </h3>
 
               <div className="flex items-center gap-4 overflow-x-auto pb-2 scrollbar-none">
-                {directorsList.map((dir) => (
-                  <Link
-                    key={dir}
-                    href={`/director/${encodeURIComponent(dir)}`}
-                    className="group flex flex-col items-center gap-2 shrink-0 p-2 rounded-xl hover:bg-white/5 transition-all text-center"
-                  >
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-purple-600/40 to-red-600/40 border border-white/20 flex items-center justify-center text-white font-bold text-base shadow-lg group-hover:scale-105 group-hover:border-red-500 transition-all">
-                      {dir.slice(0, 1)}
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-white/90 group-hover:text-red-400 transition-colors">
-                        {dir}
-                      </p>
-                      <span className="text-[10px] text-white/40">导演</span>
-                    </div>
-                  </Link>
-                ))}
+                {directorsList.map((dir) => {
+                  const avatarUrl = avatarsMap[dir];
+                  return (
+                    <Link
+                      key={dir}
+                      href={`/director/${encodeURIComponent(dir)}`}
+                      className="group flex flex-col items-center gap-2 shrink-0 p-2 rounded-xl hover:bg-white/5 transition-all text-center"
+                    >
+                      <div className="relative w-14 h-14 rounded-full overflow-hidden p-0.5 bg-gradient-to-tr from-red-600/70 to-purple-600/50 border border-red-500/30 shadow-lg group-hover:scale-105 group-hover:border-red-500 transition-all">
+                        {avatarUrl ? (
+                          <div className="relative w-full h-full rounded-full overflow-hidden">
+                            <Image
+                              src={avatarUrl}
+                              alt={dir}
+                              fill
+                              sizes="56px"
+                              className="object-cover object-top"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-full h-full rounded-full bg-red-600/20 flex items-center justify-center text-white font-bold text-base">
+                            {dir.slice(0, 1)}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-white/90 group-hover:text-red-400 transition-colors">
+                          {dir}
+                        </p>
+                        <span className="text-[10px] text-white/40">导演</span>
+                      </div>
+                    </Link>
+                  );
+                })}
 
-                {actorsList.map((actor) => (
-                  <Link
-                    key={actor}
-                    href={`/actor/${encodeURIComponent(actor)}`}
-                    className="group flex flex-col items-center gap-2 shrink-0 p-2 rounded-xl hover:bg-white/5 transition-all text-center"
-                  >
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-white/10 to-white/20 border border-white/20 flex items-center justify-center text-white font-bold text-base shadow-lg group-hover:scale-105 group-hover:border-red-500 transition-all">
-                      {actor.slice(0, 1)}
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-white/90 group-hover:text-red-400 transition-colors">
-                        {actor}
-                      </p>
-                      <span className="text-[10px] text-white/40">主演</span>
-                    </div>
-                  </Link>
-                ))}
+                {actorsList.map((actor) => {
+                  const avatarUrl = avatarsMap[actor];
+                  return (
+                    <Link
+                      key={actor}
+                      href={`/actor/${encodeURIComponent(actor)}`}
+                      className="group flex flex-col items-center gap-2 shrink-0 p-2 rounded-xl hover:bg-white/5 transition-all text-center"
+                    >
+                      <div className="relative w-14 h-14 rounded-full overflow-hidden p-0.5 bg-gradient-to-tr from-amber-500/60 to-white/10 border border-white/20 shadow-lg group-hover:scale-105 group-hover:border-amber-500 transition-all">
+                        {avatarUrl ? (
+                          <div className="relative w-full h-full rounded-full overflow-hidden">
+                            <Image
+                              src={avatarUrl}
+                              alt={actor}
+                              fill
+                              sizes="56px"
+                              className="object-cover object-top"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-full h-full rounded-full bg-white/10 flex items-center justify-center text-white font-bold text-base">
+                            {actor.slice(0, 1)}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-white/90 group-hover:text-amber-400 transition-colors">
+                          {actor}
+                        </p>
+                        <span className="text-[10px] text-white/40">主演</span>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}
