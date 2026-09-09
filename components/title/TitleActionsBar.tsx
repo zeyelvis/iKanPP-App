@@ -115,13 +115,13 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
   return (
     <div className="relative flex flex-col gap-4">
       {/* 操作按钮栏 */}
-      <div className="flex flex-wrap items-center gap-3 sm:gap-4" id="main-play-cta">
-        {/* 核心主按钮：立即播放 / 继续观看 */}
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2.5 sm:gap-4" id="main-play-cta">
+        {/* 核心主按钮：立即播放 / 继续观看 (移动端 100% 满宽霸气展现) */}
         <button
           onClick={() => handlePlay(lastEpisode)}
           disabled={isPending}
           id="btn-netflix-play"
-          className="group relative flex items-center justify-center gap-3 px-7 sm:px-9 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-white text-black font-extrabold text-base sm:text-lg shadow-2xl hover:bg-white/90 active:scale-[0.98] transition-all duration-200 cursor-pointer disabled:opacity-75 disabled:cursor-wait"
+          className="group relative w-full sm:w-auto flex items-center justify-center gap-3 px-6 sm:px-9 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-white text-black font-black text-base sm:text-lg shadow-xl shadow-white/10 hover:bg-white/90 active:scale-[0.98] transition-all duration-200 cursor-pointer disabled:opacity-75 disabled:cursor-wait shrink-0"
         >
           {isPending ? (
             <>
@@ -141,7 +141,7 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
 
           {/* 历史进度红条 */}
           {hasHistory && historyPercent > 0 && (
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-2xl overflow-hidden">
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-xl sm:rounded-b-2xl overflow-hidden">
               <div
                 className="h-full bg-red-600 transition-all duration-300"
                 style={{ width: `${historyPercent}%` }}
@@ -150,52 +150,57 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
           )}
         </button>
 
-        {/* 追剧清单按钮 */}
-        <button
-          onClick={handleToggleFavorite}
-          className={`flex items-center gap-2 px-4 sm:px-5 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl border font-bold text-sm sm:text-base backdrop-blur-md transition-all duration-200 cursor-pointer ${
-            isFav
-              ? 'bg-red-600/20 border-red-500/50 text-red-400 hover:bg-red-600/30'
-              : 'bg-white/10 hover:bg-white/15 border-white/20 text-white'
-          }`}
-          title={isFav ? '已在追剧清单中' : '加入追剧清单'}
-        >
-          {isFav ? (
-            <>
-              <Check className="w-5 h-5 text-red-400" />
-              <span>已追剧</span>
-            </>
-          ) : (
-            <>
-              <Plus className="w-5 h-5" />
-              <span>追剧清单</span>
-            </>
-          )}
-        </button>
+        {/* 辅助操作栏：在移动端 3 等分平铺，在桌面端紧随其后 */}
+        <div className="grid grid-cols-3 sm:flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+          {/* 追剧清单按钮 */}
+          <button
+            onClick={handleToggleFavorite}
+            className={`flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-4 px-3 sm:px-5 rounded-xl sm:rounded-2xl border font-bold text-xs sm:text-base backdrop-blur-md transition-all duration-200 cursor-pointer ${
+              isFav
+                ? 'bg-red-600/20 border-red-500/50 text-red-400 hover:bg-red-600/30'
+                : 'bg-white/10 hover:bg-white/15 border-white/20 text-white'
+            }`}
+            title={isFav ? '已在追剧清单中' : '加入追剧清单'}
+          >
+            {isFav ? (
+              <>
+                <Check className="w-4 h-4 text-red-400" />
+                <span>已追剧</span>
+              </>
+            ) : (
+              <>
+                <Plus className="w-4 h-4" />
+                <span>追剧</span>
+              </>
+            )}
+          </button>
 
-        {/* 分享按钮 */}
-        <button
-          onClick={handleShare}
-          className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-white backdrop-blur-md transition-all duration-200 cursor-pointer flex items-center justify-center"
-          title="分享此影视"
-          aria-label="分享"
-        >
-          <Share2 className="w-5 h-5" />
-        </button>
+          {/* 分享按钮 */}
+          <button
+            onClick={handleShare}
+            className="flex items-center justify-center gap-1.5 py-2.5 sm:py-4 px-3 sm:px-4 rounded-xl sm:rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-white backdrop-blur-md transition-all duration-200 cursor-pointer text-xs sm:text-base font-bold"
+            title="分享此影视"
+            aria-label="分享"
+          >
+            <Share2 className="w-4 h-4" />
+            <span className="sm:hidden">分享</span>
+          </button>
 
-        {/* 值得看/点赞推荐按钮 */}
-        <button
-          onClick={handleLike}
-          className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border backdrop-blur-md transition-all duration-200 cursor-pointer flex items-center justify-center ${
-            isLiked
-              ? 'bg-amber-500/20 border-amber-500/50 text-amber-400'
-              : 'bg-white/10 hover:bg-white/15 border-white/20 text-white'
-          }`}
-          title="给该片点赞推荐"
-          aria-label="点赞"
-        >
-          <ThumbsUp className="w-5 h-5" />
-        </button>
+          {/* 值得看/点赞推荐按钮 */}
+          <button
+            onClick={handleLike}
+            className={`flex items-center justify-center gap-1.5 py-2.5 sm:py-4 px-3 sm:px-4 rounded-xl sm:rounded-2xl border backdrop-blur-md transition-all duration-200 cursor-pointer text-xs sm:text-base font-bold ${
+              isLiked
+                ? 'bg-amber-500/20 border-amber-500/50 text-amber-400'
+                : 'bg-white/10 hover:bg-white/15 border-white/20 text-white'
+            }`}
+            title="给该片点赞推荐"
+            aria-label="点赞"
+          >
+            <ThumbsUp className={`w-4 h-4 ${isLiked ? 'fill-amber-400' : ''}`} />
+            <span className="sm:hidden">{isLiked ? '已赞' : '推荐'}</span>
+          </button>
+        </div>
       </div>
 
       {/* 极速纯直连提示 */}

@@ -58,7 +58,7 @@ export function StickyBottomPlayCTA({ entity }: StickyBottomPlayCTAProps) {
   return (
     <aside
       aria-label="快捷播放"
-      className={`md:hidden fixed bottom-0 left-0 right-0 z-40 p-3 bg-[#0A0A0F]/90 backdrop-blur-2xl border-t border-white/10 shadow-2xl transition-all duration-300 transform ${
+      className={`md:hidden fixed bottom-[calc(56px+env(safe-area-inset-bottom))] left-0 right-0 z-900 p-2.5 sm:p-3 bg-[#0A0A0F]/95 backdrop-blur-2xl border-t border-white/10 shadow-[0_-8px_30px_rgba(0,0,0,0.8)] transition-all duration-300 transform ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0 pointer-events-none'
       }`}
     >
