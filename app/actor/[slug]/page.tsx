@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const actorName = decodeURIComponent(slug).trim();
 
-  if (!actorName) {
+  if (!actorName || actorName === '实力主演') {
     return {
       title: '演员作品未找到 - iKanPP 爱看片片',
       robots: { index: false, follow: false },
@@ -57,7 +57,7 @@ export default async function ActorPage({ params }: Props) {
   const { slug } = await params;
   const actorName = decodeURIComponent(slug).trim();
 
-  if (!actorName) {
+  if (!actorName || actorName === '实力主演') {
     notFound();
   }
 

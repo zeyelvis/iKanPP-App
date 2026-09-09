@@ -1,7 +1,5 @@
 /**
- * 首页首屏预烘焙精选影视数据集 (Pre-baked Instant Dataset for 0ms Page Load)
- * 全部采用 100% 真实有效官方 TMDB 全球 CDN 高清原画海报与 4K 宽屏剧照直链
- * 全页面 110 部影片 100% 零重复策划！
+ * 首页首屏预烘焙精选影视数据集 (包含 100% 真实有效官方演职人员与 TMDB 原画直链)
  */
 
 export interface PrebakedSubject {
@@ -37,130 +35,180 @@ export const PREBAKED_HOME_DATA: {
 } = {
   "movie": {
     "hero": [
-        {
-                "id": "iyf_hero_movie_1",
-                "title": "特立独行",
-                "rate": "5.8",
-                "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
-                "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "剧情",
-                        "电影"
-                ],
-                "episodes_info": "电影·剧情",
-                "type": "movie",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_movie_2",
-                "title": "给阿嬷的情书",
-                "rate": "8.9",
-                "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/AwmlL79nKTcX5tzAhyoV298xXlz.jpg",
-                "description": "潮汕阿嬷叶淑柔一直守着平淡的日子，安享晚年。孙子晓伟因债务缠身，瞒着家人远赴泰国，寻找传闻中已成亿万富豪的阿公郑木生。然而，一个令人意外的消息打破了整个家庭的平静：多年来一直通过跨国信件与阿嬷“谈情说爱”诉说思念的人，竟然并非阿嬷的丈夫郑木生。随着晓伟的调查，一个感人的真相被缓缓揭开。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "剧情",
-                        "电影"
-                ],
-                "episodes_info": "电影·剧情",
-                "type": "movie",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_movie_3",
-                "title": "玩具总动员5",
-                "rate": "8.4",
-                "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
-                "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "动画",
-                        "电影"
-                ],
-                "episodes_info": "电影·动画",
-                "type": "movie",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_movie_4",
-                "title": "寒战1994",
-                "rate": "6.5",
-                "cover": "https://image.tmdb.org/t/p/w500/9C3ZxhGJvdpxmNC5PhkBMwzTMRT.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/q2ErBUKeS85UXM32nzvW44E8sG4.jpg",
-                "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "剧情",
-                        "电影"
-                ],
-                "episodes_info": "电影·剧情",
-                "type": "movie",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_tv_5",
-                "title": "交锋",
-                "rate": "9.0",
-                "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/lYDwHYOR8PROQfSJGZ8LqvwUVcW.jpg",
-                "description": "一宗世纪之交的泄密大案扣动两岸局势脉搏，同时还掩藏着一场境外势力与我方在隐蔽战线上的针锋较量。二十世纪九十年代末，闽州市国家安全局一对性格迥异的师徒，因机缘巧合的命运安排，为了共同的使命与信仰并肩作战。他们联手挫败了各种阴谋，也与敌手在横跨二十年的命运长河里不断纠缠。当时间流转，新世纪的潮流剧变席卷而来，国家安全局势攻防易势，隐蔽战线上的较量却不止不休。在一次次关乎人性的考验中，这三人的命运关系因不同抉择，在岁月洗礼中悄然改变着。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "连续剧"
-                ],
-                "episodes_info": "更新至06集 | 共40集",
-                "type": "tv",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_tv_6",
-                "title": "生逢其时",
-                "rate": "9.0",
-                "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/7HXIhc3aRr1v7KmOrCulszXf3YP.jpg",
-                "description": "八十年代初，青梧小镇住着家庭模式完全不同的齐家和曹家。某天两家同时诞下齐时、曹信。身患白化病的齐时，自小就意识到了自己的“与众不同”，于是她喝酱油、戴假发，试图通过这样的方式，成为和普通人一样的存在。另一边的曹信，一路走来都是家长口中“别人家的孩子”，然而光环之下却始终伴随着父亲的严苛要求。当特立独行、勇敢倔强的少女齐时，遇上乖巧听话、优秀自律的少年曹信，两个家庭也在邻里间日积月累的相处中，也因荒唐“换子”碰撞出了眼泪的故事和“新生”的契机。孩子们经历着关于亲情、友情、爱情的考验，大人们也在面对关于事业、婚姻、家庭的难题。在时代洪流中，纵使生活跌跌撞撞，他们亦携手缝缝补补修炼人生，共同找寻属于自己的人生和幸福。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "连续剧"
-                ],
-                "episodes_info": "更新至08集 | 共26集",
-                "type": "tv",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_tv_7",
-                "title": "重案六组:消失的警号",
-                "rate": "8.0",
-                "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/nr1uqvJs4kqtGcBTwIAew5OiSXI.jpg",
-                "description": "剧情核心围绕“消失的警号”展开，通过“老警号传承”设计致敬原版角色，并融入科技办案、新老刑侦理念碰撞等创新元素。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "连续剧"
-                ],
-                "episodes_info": "更新至20集 | 共26集",
-                "type": "tv",
-                "is_new": true,
-                "playable": true
-        }
-      ],
+      {
+        "id": "iyf_hero_movie_1",
+        "title": "特立独行",
+        "rate": "5.8",
+        "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
+        "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
+        "year": "2026",
+        "types": [
+          "热门",
+          "剧情",
+          "电影"
+        ],
+        "episodes_info": "电影·剧情",
+        "type": "movie",
+        "is_new": true,
+        "playable": true,
+        "directors": [
+          "邢文雄"
+        ],
+        "actors": [
+          "白敬亭",
+          "魏翔",
+          "张国强",
+          "苏小玎",
+          "黄才伦"
+        ]
+      },
+      {
+        "id": "iyf_hero_movie_2",
+        "title": "给阿嬷的情书",
+        "rate": "8.9",
+        "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/AwmlL79nKTcX5tzAhyoV298xXlz.jpg",
+        "description": "潮汕阿嬷叶淑柔一直守着平淡的日子，安享晚年。孙子晓伟因债务缠身，瞒着家人远赴泰国，寻找传闻中已成亿万富豪的阿公郑木生。然而，一个令人意外的消息打破了整个家庭的平静：多年来一直通过跨国信件与阿嬷“谈情说爱”诉说思念的人，竟然并非阿嬷的丈夫郑木生。随着晓伟的调查，一个感人的真相被缓缓揭开。",
+        "year": "2026",
+        "types": [
+          "热门",
+          "剧情",
+          "电影"
+        ],
+        "episodes_info": "电影·剧情",
+        "type": "movie",
+        "is_new": true,
+        "playable": true,
+        "directors": [
+          "蓝鸿春"
+        ],
+        "actors": [
+          "李思潼",
+          "王彦桐",
+          "吴少卿",
+          "郑润奇",
+          "王晓慧"
+        ]
+      },
+      {
+        "id": "iyf_hero_movie_3",
+        "title": "玩具总动员5",
+        "rate": "8.4",
+        "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
+        "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
+        "year": "2026",
+        "types": [
+          "热门",
+          "动画",
+          "电影"
+        ],
+        "episodes_info": "电影·动画",
+        "type": "movie",
+        "is_new": true,
+        "playable": true,
+        "directors": [
+          "安德鲁·斯坦顿"
+        ],
+        "actors": [
+          "琼·库萨克",
+          "汤姆·汉克斯",
+          "蒂姆·艾伦",
+          "柯南·奥布莱恩",
+          "Scarlett Spears"
+        ]
+      },
+      {
+        "id": "iyf_hero_movie_4",
+        "title": "寒战1994",
+        "rate": "6.5",
+        "cover": "https://image.tmdb.org/t/p/w500/9C3ZxhGJvdpxmNC5PhkBMwzTMRT.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/q2ErBUKeS85UXM32nzvW44E8sG4.jpg",
+        "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
+        "year": "2026",
+        "types": [
+          "热门",
+          "剧情",
+          "电影"
+        ],
+        "episodes_info": "电影·剧情",
+        "type": "movie",
+        "is_new": true,
+        "playable": true,
+        "directors": [
+          "梁乐民"
+        ],
+        "actors": [
+          "吴彦祖",
+          "刘俊谦",
+          "吴慷仁",
+          "谢君豪",
+          "王丹妮"
+        ]
+      },
+      {
+        "id": "iyf_hero_tv_5",
+        "title": "交锋",
+        "rate": "9.0",
+        "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/lYDwHYOR8PROQfSJGZ8LqvwUVcW.jpg",
+        "description": "一宗世纪之交的泄密大案扣动两岸局势脉搏，同时还掩藏着一场境外势力与我方在隐蔽战线上的针锋较量。二十世纪九十年代末，闽州市国家安全局一对性格迥异的师徒，因机缘巧合的命运安排，为了共同的使命与信仰并肩作战。他们联手挫败了各种阴谋，也与敌手在横跨二十年的命运长河里不断纠缠。当时间流转，新世纪的潮流剧变席卷而来，国家安全局势攻防易势，隐蔽战线上的较量却不止不休。在一次次关乎人性的考验中，这三人的命运关系因不同抉择，在岁月洗礼中悄然改变着。",
+        "year": "2026",
+        "types": [
+          "热门",
+          "连续剧"
+        ],
+        "episodes_info": "更新至06集 | 共40集",
+        "type": "tv",
+        "is_new": true,
+        "playable": true,
+        "directors": [
+          "Matt Shapira"
+        ],
+        "actors": [
+          "David A.R. White",
+          "小库珀·古丁",
+          "卡特里娜·鲍登",
+          "杰森·帕特里克",
+          "Scott Baio"
+        ]
+      },
+      {
+        "id": "iyf_hero_tv_6",
+        "title": "生逢其时",
+        "rate": "9.0",
+        "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/7HXIhc3aRr1v7KmOrCulszXf3YP.jpg",
+        "description": "八十年代初，青梧小镇住着家庭模式完全不同的齐家和曹家。某天两家同时诞下齐时、曹信。身患白化病的齐时，自小就意识到了自己的“与众不同”，于是她喝酱油、戴假发，试图通过这样的方式，成为和普通人一样的存在。另一边的曹信，一路走来都是家长口中“别人家的孩子”，然而光环之下却始终伴随着父亲的严苛要求。当特立独行、勇敢倔强的少女齐时，遇上乖巧听话、优秀自律的少年曹信，两个家庭也在邻里间日积月累的相处中，也因荒唐“换子”碰撞出了眼泪的故事和“新生”的契机。孩子们经历着关于亲情、友情、爱情的考验，大人们也在面对关于事业、婚姻、家庭的难题。在时代洪流中，纵使生活跌跌撞撞，他们亦携手缝缝补补修炼人生，共同找寻属于自己的人生和幸福。",
+        "year": "2026",
+        "types": [
+          "热门",
+          "连续剧"
+        ],
+        "episodes_info": "更新至08集 | 共26集",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+      },
+      {
+        "id": "iyf_hero_tv_7",
+        "title": "重案六组:消失的警号",
+        "rate": "8.0",
+        "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/nr1uqvJs4kqtGcBTwIAew5OiSXI.jpg",
+        "description": "剧情核心围绕“消失的警号”展开，通过“老警号传承”设计致敬原版角色，并融入科技办案、新老刑侦理念碰撞等创新元素。",
+        "year": "2026",
+        "types": [
+          "热门",
+          "连续剧"
+        ],
+        "episodes_info": "更新至20集 | 共26集",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+      }
+    ],
     "top10": [
       {
         "id": "pb_m_top10_1",
@@ -176,7 +224,17 @@ export const PREBAKED_HOME_DATA: {
           "史诗"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "克里斯托弗·诺兰"
+        ],
+        "actors": [
+          "马特·达蒙",
+          "汤姆·赫兰德",
+          "安妮·海瑟薇",
+          "罗伯特·帕丁森",
+          "希米什·帕特尔"
+        ]
       },
       {
         "id": "pb_m_top10_2",
@@ -191,7 +249,17 @@ export const PREBAKED_HOME_DATA: {
           "战争"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "文牧野"
+        ],
+        "actors": [
+          "沈腾",
+          "蒋奇明",
+          "奥马尔·谢里夫",
+          "李治廷",
+          "谢里夫·萨比"
+        ]
       },
       {
         "id": "pb_m_top10_3",
@@ -206,7 +274,17 @@ export const PREBAKED_HOME_DATA: {
           "悬疑"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "冯小刚"
+        ],
+        "actors": [
+          "雷佳音",
+          "胡歌",
+          "啜妮",
+          "张瑶",
+          "林晓凡"
+        ]
       },
       {
         "id": "pb_m_top10_4",
@@ -221,7 +299,17 @@ export const PREBAKED_HOME_DATA: {
           "爱情"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "奥利维亚·王尔德"
+        ],
+        "actors": [
+          "塞斯·罗根",
+          "奥利维亚·王尔德",
+          "佩内洛普·克鲁兹",
+          "爱德华·诺顿",
+          "Skip Howland"
+        ]
       },
       {
         "id": "pb_m_top10_5",
@@ -236,7 +324,17 @@ export const PREBAKED_HOME_DATA: {
           "奇幻"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "Oscar Hudson"
+        ],
+        "actors": [
+          "艾略特·提特恩索",
+          "卢克·提特恩索",
+          "尼尔·马斯克尔",
+          "马修·迪伦·罗伯茨",
+          "Camilla Waldman"
+        ]
       },
       {
         "id": "pb_m_top10_6",
@@ -251,7 +349,17 @@ export const PREBAKED_HOME_DATA: {
           "喜剧"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "拉杜·裘德"
+        ],
+        "actors": [
+          "Ana Dumitrașcu",
+          "玛丽·里维埃",
+          "Louen Bouteiller",
+          "Arnaud Baudoin",
+          "梅兰尼·蒂埃里"
+        ]
       },
       {
         "id": "pb_m_top10_7",
@@ -266,7 +374,17 @@ export const PREBAKED_HOME_DATA: {
           "治愈"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "木下麦"
+        ],
+        "actors": [
+          "小林薰",
+          "户冢纯贵",
+          "满岛光",
+          "宫崎美子",
+          "泷正则"
+        ]
       },
       {
         "id": "pb_m_top10_8",
@@ -281,7 +399,17 @@ export const PREBAKED_HOME_DATA: {
           "剧情"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "Jean-Paul Salomé"
+        ],
+        "actors": [
+          "瑞达·凯特布",
+          "Sara Giraudeau",
+          "巴斯蒂安·布永",
+          "康坦·多尔迈尔",
+          "皮埃尔·洛坦"
+        ]
       },
       {
         "id": "pb_m_top10_9",
@@ -296,7 +424,17 @@ export const PREBAKED_HOME_DATA: {
           "历史"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "格扎维埃・吉亚诺利"
+        ],
+        "actors": [
+          "让·杜雅尔丹",
+          "娜斯提亚・戈卢别娃・卡拉克斯",
+          "奥古斯特·迪尔",
+          "奥利维耶・尚特罗",
+          "安娜·普罗奇尼亚克"
+        ]
       },
       {
         "id": "pb_m_top10_10",
@@ -311,7 +449,17 @@ export const PREBAKED_HOME_DATA: {
           "家庭"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "Jérôme Bonnell"
+        ],
+        "actors": [
+          "斯万·阿劳德",
+          "加拉泰亚·贝露琪",
+          "Louise Chevillotte",
+          "Emmanuelle Devos",
+          "Aymeline Alix"
+        ]
       }
     ],
     "s1": [
@@ -323,9 +471,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2935109312.jpg",
         "description": "2026 院线热播巨制。由文牧野执导，沈腾 / 蒋奇明 / 奥马尔·谢里夫联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "文牧野"
+        ],
+        "actors": [
+          "沈腾",
+          "蒋奇明",
+          "奥马尔·谢里夫",
+          "李治廷",
+          "谢里夫·萨比"
+        ]
       },
       {
         "id": "36808876",
@@ -335,9 +497,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933569626.jpg",
         "description": "2026 院线热播巨制。由克里斯托弗·诺兰执导，马特·达蒙 / 汤姆·霍兰德 / 安妮·海瑟薇联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "克里斯托弗·诺兰"
+        ],
+        "actors": [
+          "马特·达蒙",
+          "汤姆·赫兰德",
+          "安妮·海瑟薇",
+          "罗伯特·帕丁森",
+          "希米什·帕特尔"
+        ]
       },
       {
         "id": "36882191",
@@ -347,9 +523,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934074566.jpg",
         "description": "2026 院线热播巨制。由牟正洋执导，陈浩 / 李绍哲 / 立冬联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "牟正洋"
+        ],
+        "actors": [
+          "陈浩",
+          "李绍哲",
+          "立冬",
+          "Huang Guo",
+          "Dong Tianyi"
+        ]
       },
       {
         "id": "36246195",
@@ -359,9 +549,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934276912.jpg",
         "description": "2026 院线热播巨制。由德斯汀·丹尼尔·克雷顿执导，汤姆·霍兰德 / 赞达亚 / 萨迪·辛克联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "德斯汀·丹尼尔·克雷顿"
+        ],
+        "actors": [
+          "汤姆·赫兰德",
+          "赞达亚·科尔曼",
+          "马克·鲁法洛",
+          "乔·博恩瑟",
+          "雅各布·贝塔隆"
+        ]
       },
       {
         "id": "36452545",
@@ -371,9 +575,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933860063.jpg",
         "description": "2026 院线热播巨制。由周星驰执导，张小斐 / 迪丽热巴 / 张艺兴联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "周星驰"
+        ],
+        "actors": [
+          "张小斐",
+          "迪丽热巴",
+          "张艺兴",
+          "刘嘉玲",
+          "佐藤健"
+        ]
       },
       {
         "id": "37450627",
@@ -383,9 +601,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934049524.jpg",
         "description": "2025 院线热播惊悚力作。由库里·巴克执导，迈克尔·约翰斯顿 / 印达·纳瓦雷特联袂呈现。",
         "year": "2025",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "Curry Barker"
+        ],
+        "actors": [
+          "迈克尔·约翰斯顿",
+          "英迪·納瓦瑞特",
+          "Cooper Tomlinson",
+          "Megan Lawless",
+          "安迪·里克特"
+        ]
       },
       {
         "id": "36235977",
@@ -395,9 +627,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933327977.jpg",
         "description": "2026 院线热播科幻巨制。由凯恩·帕森斯执导，切瓦特·埃加福 / 雷娜特·赖因斯夫 / 芬恩·本尼特联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "凯恩·帕森斯"
+        ],
+        "actors": [
+          "切瓦特·埃加福",
+          "雷娜特·赖因斯夫",
+          "芬恩·本尼特",
+          "Lukita Maxwell",
+          "马克·杜普拉斯"
+        ]
       },
       {
         "id": "36238849",
@@ -407,9 +653,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933391462.jpg",
         "description": "2026 迪士尼皮克斯动画巨制。由安德鲁·斯坦顿 麦肯纳·哈里斯执导，汤姆·汉克斯 / 蒂姆·艾伦 / 琼·库萨克联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "安德鲁·斯坦顿"
+        ],
+        "actors": [
+          "琼·库萨克",
+          "汤姆·汉克斯",
+          "蒂姆·艾伦",
+          "柯南·奥布莱恩",
+          "Scarlett Spears"
+        ]
       },
       {
         "id": "36812879",
@@ -419,9 +679,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933198755.jpg",
         "description": "2026 院线热播巨制。由冯小刚执导，雷佳音 / 胡歌 / 啜妮联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "冯小刚"
+        ],
+        "actors": [
+          "雷佳音",
+          "胡歌",
+          "啜妮",
+          "张瑶",
+          "林晓凡"
+        ]
       },
       {
         "id": "37508847",
@@ -431,9 +705,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934946788.jpg",
         "description": "2026 院线热播悬疑巨制。由韩延执导，朱一龙 / 檀健次 / 梁家辉联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "韩延"
+        ],
+        "actors": [
+          "朱一龙",
+          "檀健次",
+          "梁家辉",
+          "卫诗雅",
+          "惠英红"
+        ]
       },
       {
         "id": "36850814",
@@ -443,9 +731,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934583425.jpg",
         "description": "2026 院线爆笑喜剧。由董润年执导，张若昀 / 白客 / 高叶联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "董润年"
+        ],
+        "actors": [
+          "张若昀",
+          "白客",
+          "高叶",
+          "董成鹏",
+          "庄达菲"
+        ]
       },
       {
         "id": "36953973",
@@ -455,9 +757,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933638302.jpg",
         "description": "2026 院线热播巨制。由邢文雄执导，白敬亭 / 魏翔 / 张国强联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "邢文雄"
+        ],
+        "actors": [
+          "白敬亭",
+          "魏翔",
+          "张国强",
+          "苏小玎",
+          "黄才伦"
+        ]
       },
       {
         "id": "36962219",
@@ -467,9 +783,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933539994.jpg",
         "description": "2026 照明娱乐合家欢动画巨制。由皮埃尔·柯芬执导。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "皮埃尔·科芬"
+        ],
+        "actors": [
+          "皮埃尔·科芬",
+          "特雷·帕克",
+          "克里斯托弗·瓦尔兹",
+          "艾莉森·詹尼",
+          "杰西·艾森伯格"
+        ]
       },
       {
         "id": "37191746",
@@ -479,9 +809,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2931635664.jpg",
         "description": "2026 历史战争史诗巨制。由徐展雄执导，刘烨 / 王雷 / 于适联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "徐展雄"
+        ],
+        "actors": [
+          "刘烨",
+          "王雷",
+          "于适",
+          "许魏洲",
+          "王天辰"
+        ]
       },
       {
         "id": "38581618",
@@ -491,9 +835,20 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934945600.jpg",
         "description": "2026 院线温情治愈力作。由信雨萌执导。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "信雨萌"
+        ],
+        "actors": [
+          "信雨萌",
+          "孙丽芳"
+        ]
       },
       {
         "id": "35275131",
@@ -503,9 +858,20 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934742318.jpg",
         "description": "2026 院线治愈系动画电影。由周浩然执导，杨茜云 / 张福正 / 孙婉瑜联袂献声。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "周浩然"
+        ],
+        "actors": [
+          "夏天妹妹",
+          "张福正"
+        ]
       },
       {
         "id": "pb_m_s1_fall2",
@@ -515,9 +881,24 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2935283013.jpg",
         "description": "2026 院线热播惊悚巨制。由迈克尔·斯派瑞 彼得·斯派瑞执导，哈丽特·斯莱特 / 阿塞玛·托马斯 / 汤姆·布里特尼联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "迈克尔·斯派瑞",
+          "彼得·斯派瑞"
+        ],
+        "actors": [
+          "哈里特·斯莱特",
+          "Arsema Thomas",
+          "汤姆·布里特尼",
+          "弗吉尼亚·加德纳",
+          "萨哈贾克·波斯安吉特"
+        ]
       },
       {
         "id": "pb_m_s1_wrath",
@@ -527,9 +908,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2935069903.jpg",
         "description": "2026 院线热播巨制。由让-弗朗索瓦·雷切执导，杰森·斯坦森 / 钱尼尔·库勒 / 拉蒙·蒂卡拉姆联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "让-弗朗索瓦·里歇"
+        ],
+        "actors": [
+          "杰森·斯坦森",
+          "安娜贝拉·沃丽丝",
+          "罗兰·默勒",
+          "拉蒙·提卡蓝",
+          "阿尔纳斯·费达拉维丘斯"
+        ]
       },
       {
         "id": "pb_m_s1_burn",
@@ -539,9 +934,23 @@ export const PREBAKED_HOME_DATA: {
         "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2935535832.jpg",
         "description": "2026 院线热播巨制。由刘潇阳执导，文淇 / 倪虹洁 / 喻恩泰联袂呈现。",
         "year": "2026",
-        "types": ["院线", "热映", "电影"],
+        "types": [
+          "院线",
+          "热映",
+          "电影"
+        ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "刘潇阳"
+        ],
+        "actors": [
+          "文淇",
+          "倪虹洁",
+          "喻恩泰",
+          "郭俊辰",
+          "葛鑫怡"
+        ]
       }
     ],
     "s2": [
@@ -558,7 +967,17 @@ export const PREBAKED_HOME_DATA: {
           "经典"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "弗兰克·德拉邦特"
+        ],
+        "actors": [
+          "蒂姆·罗宾斯",
+          "摩根·弗里曼",
+          "鲍勃·冈顿",
+          "威廉姆·赛德勒",
+          "克兰西·布朗"
+        ]
       },
       {
         "id": "pb_m_s2_2",
@@ -573,7 +992,17 @@ export const PREBAKED_HOME_DATA: {
           "文艺"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "陈凯歌"
+        ],
+        "actors": [
+          "张国荣",
+          "张丰毅",
+          "巩俐",
+          "吕齐",
+          "英达"
+        ]
       },
       {
         "id": "pb_m_s2_3",
@@ -588,7 +1017,17 @@ export const PREBAKED_HOME_DATA: {
           "剧情"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "罗伯特·泽米吉斯"
+        ],
+        "actors": [
+          "汤姆·汉克斯",
+          "罗宾·怀特",
+          "加里·西尼斯",
+          "莎莉·菲尔德",
+          "麦凯尔泰·威廉逊"
+        ]
       },
       {
         "id": "pb_m_s2_4",
@@ -603,7 +1042,17 @@ export const PREBAKED_HOME_DATA: {
           "烧脑"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "克里斯托弗·诺兰"
+        ],
+        "actors": [
+          "马修·麦康纳",
+          "安妮·海瑟薇",
+          "迈克尔·凯恩",
+          "杰西卡·查斯坦",
+          "卡西·阿弗莱克"
+        ]
       },
       {
         "id": "pb_m_s2_5",
@@ -618,7 +1067,17 @@ export const PREBAKED_HOME_DATA: {
           "悬疑"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "克里斯托弗·诺兰"
+        ],
+        "actors": [
+          "莱昂纳多·迪卡普里奥",
+          "约瑟夫·高登-莱维特",
+          "渡边谦",
+          "汤姆·哈迪",
+          "艾利奥特·佩吉"
+        ]
       },
       {
         "id": "pb_m_s2_6",
@@ -633,7 +1092,17 @@ export const PREBAKED_HOME_DATA: {
           "奇幻"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "宫崎骏"
+        ],
+        "actors": [
+          "柊瑠美",
+          "入野自由",
+          "夏木真理",
+          "内藤刚志",
+          "泽口靖子"
+        ]
       },
       {
         "id": "pb_m_s2_7",
@@ -648,7 +1117,17 @@ export const PREBAKED_HOME_DATA: {
           "犯罪"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "吕克·贝松"
+        ],
+        "actors": [
+          "让·雷诺",
+          "娜塔莉·波特曼",
+          "加里·奥德曼",
+          "丹尼尔·艾洛",
+          "彼得·阿佩尔"
+        ]
       },
       {
         "id": "pb_m_s2_8",
@@ -663,7 +1142,17 @@ export const PREBAKED_HOME_DATA: {
           "灾难"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "詹姆斯·卡梅隆"
+        ],
+        "actors": [
+          "莱昂纳多·迪卡普里奥",
+          "凯特·温斯莱特",
+          "比利·赞恩",
+          "凯西·贝茨",
+          "弗兰西丝·费舍"
+        ]
       },
       {
         "id": "pb_m_s2_9",
@@ -678,7 +1167,17 @@ export const PREBAKED_HOME_DATA: {
           "战争"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "罗伯托·贝尼尼"
+        ],
+        "actors": [
+          "罗伯托·贝尼尼",
+          "尼可莱塔·布拉斯基",
+          "乔治·坎塔里尼",
+          "朱斯蒂诺·杜拉诺",
+          "赛尔乔·比尼·布斯特里克"
+        ]
       },
       {
         "id": "pb_m_s2_10",
@@ -693,7 +1192,17 @@ export const PREBAKED_HOME_DATA: {
           "哲学"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "彼得·威尔"
+        ],
+        "actors": [
+          "金·凯瑞",
+          "劳拉·琳妮",
+          "诺亚·艾默里奇",
+          "娜塔莎·麦克艾霍恩",
+          "霍兰德·泰勒"
+        ]
       }
     ],
     "s3": [
@@ -710,7 +1219,17 @@ export const PREBAKED_HOME_DATA: {
           "黑色幽默"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "姜文"
+        ],
+        "actors": [
+          "姜文",
+          "周润发",
+          "葛优",
+          "刘嘉玲",
+          "邵兵"
+        ]
       },
       {
         "id": "pb_m_s3_2",
@@ -725,7 +1244,17 @@ export const PREBAKED_HOME_DATA: {
           "悬疑"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "马丁·斯科塞斯"
+        ],
+        "actors": [
+          "莱昂纳多·迪卡普里奥",
+          "马特·达蒙",
+          "杰克·尼科尔森",
+          "马克·沃尔伯格",
+          "马丁·辛"
+        ]
       },
       {
         "id": "pb_m_s3_3",
@@ -740,7 +1269,17 @@ export const PREBAKED_HOME_DATA: {
           "喜剧"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "刘镇伟"
+        ],
+        "actors": [
+          "周星驰",
+          "吴孟达",
+          "罗家英",
+          "蓝洁瑛",
+          "莫文蔚"
+        ]
       },
       {
         "id": "pb_m_s3_4",
@@ -755,7 +1294,17 @@ export const PREBAKED_HOME_DATA: {
           "兄弟情"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "吴宇森"
+        ],
+        "actors": [
+          "狄龙",
+          "周润发",
+          "张国荣",
+          "朱宝意",
+          "李子雄"
+        ]
       },
       {
         "id": "pb_m_s3_5",
@@ -770,7 +1319,17 @@ export const PREBAKED_HOME_DATA: {
           "经典"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "徐克"
+        ],
+        "actors": [
+          "张曼玉",
+          "王祖贤",
+          "赵文卓",
+          "吴兴国",
+          "马精武"
+        ]
       },
       {
         "id": "pb_m_s3_6",
@@ -785,7 +1344,17 @@ export const PREBAKED_HOME_DATA: {
           "喜剧"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "吴宇森"
+        ],
+        "actors": [
+          "周润发",
+          "张国荣",
+          "钟楚红",
+          "朱江",
+          "曾江"
+        ]
       },
       {
         "id": "pb_m_s3_7",
@@ -800,7 +1369,17 @@ export const PREBAKED_HOME_DATA: {
           "喜剧"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "周星驰"
+        ],
+        "actors": [
+          "周星驰",
+          "元秋",
+          "元华",
+          "林子聪",
+          "梁小龙"
+        ]
       },
       {
         "id": "pb_m_s3_8",
@@ -815,7 +1394,17 @@ export const PREBAKED_HOME_DATA: {
           "动作"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "李安"
+        ],
+        "actors": [
+          "周润发",
+          "杨紫琼",
+          "章子怡",
+          "张震",
+          "郎雄"
+        ]
       },
       {
         "id": "pb_m_s3_9",
@@ -830,7 +1419,17 @@ export const PREBAKED_HOME_DATA: {
           "文艺"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "王家卫"
+        ],
+        "actors": [
+          "王家卫",
+          "张国荣",
+          "林青霞",
+          "梁朝伟",
+          "张学友"
+        ]
       },
       {
         "id": "pb_m_s3_10",
@@ -845,7 +1444,17 @@ export const PREBAKED_HOME_DATA: {
           "都市"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "王家卫"
+        ],
+        "actors": [
+          "林青霞",
+          "金城武",
+          "梁朝伟",
+          "王菲",
+          "周嘉玲"
+        ]
       }
     ],
     "s4": [
@@ -862,7 +1471,18 @@ export const PREBAKED_HOME_DATA: {
           "哲学"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "拉娜·沃卓斯基",
+          "莉莉·沃卓斯基"
+        ],
+        "actors": [
+          "基努·里维斯",
+          "劳伦斯·菲什伯恩",
+          "凯瑞-安·莫斯",
+          "雨果·维文",
+          "格洛丽亚·福斯特"
+        ]
       },
       {
         "id": "pb_m_s4_2",
@@ -877,7 +1497,17 @@ export const PREBAKED_HOME_DATA: {
           "奇幻"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "詹姆斯·卡梅隆"
+        ],
+        "actors": [
+          "萨姆·沃辛顿",
+          "佐伊·索尔达娜",
+          "西格妮·韦弗",
+          "史蒂芬·朗",
+          "凯特·温斯莱特"
+        ]
       },
       {
         "id": "pb_m_s4_3",
@@ -892,7 +1522,18 @@ export const PREBAKED_HOME_DATA: {
           "超级英雄"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "安东尼·罗素",
+          "乔·罗素"
+        ],
+        "actors": [
+          "小罗伯特·唐尼",
+          "克里斯·埃文斯",
+          "马克·鲁法洛",
+          "克里斯·海姆斯沃斯",
+          "斯嘉丽·约翰逊"
+        ]
       },
       {
         "id": "pb_m_s4_4",
@@ -907,7 +1548,17 @@ export const PREBAKED_HOME_DATA: {
           "游戏"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "史蒂文·斯皮尔伯格"
+        ],
+        "actors": [
+          "泰伊·谢里丹",
+          "奥利维亚·库克",
+          "本·门德尔森",
+          "丽娜·维特",
+          "T·J·米勒"
+        ]
       },
       {
         "id": "pb_m_s4_5",
@@ -922,7 +1573,17 @@ export const PREBAKED_HOME_DATA: {
           "赛博朋克"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "丹尼斯·维伦纽瓦"
+        ],
+        "actors": [
+          "瑞恩·高斯林",
+          "哈里森·福特",
+          "安娜·德·阿玛斯",
+          "戴夫·巴蒂斯塔",
+          "罗宾·怀特"
+        ]
       },
       {
         "id": "pb_m_s4_6",
@@ -937,7 +1598,17 @@ export const PREBAKED_HOME_DATA: {
           "犯罪"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "克里斯托弗·诺兰"
+        ],
+        "actors": [
+          "克里斯蒂安·贝尔",
+          "希斯·莱杰",
+          "艾伦·艾克哈特",
+          "迈克尔·凯恩",
+          "玛吉·吉伦哈尔"
+        ]
       },
       {
         "id": "pb_m_s4_7",
@@ -952,7 +1623,17 @@ export const PREBAKED_HOME_DATA: {
           "史诗"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "彼得·杰克逊"
+        ],
+        "actors": [
+          "伊利亚·伍德",
+          "伊恩·麦克莱恩",
+          "维果·莫特森",
+          "西恩·奥斯汀",
+          "安迪·瑟金斯"
+        ]
       },
       {
         "id": "pb_m_s4_8",
@@ -967,7 +1648,17 @@ export const PREBAKED_HOME_DATA: {
           "机甲"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "乔什·库利"
+        ],
+        "actors": [
+          "克里斯·海姆斯沃斯",
+          "布莱恩·泰里·亨利",
+          "斯嘉丽·约翰逊",
+          "科甘-迈克尔·凯",
+          "乔恩·哈姆"
+        ]
       },
       {
         "id": "pb_m_s4_9",
@@ -982,7 +1673,17 @@ export const PREBAKED_HOME_DATA: {
           "机甲"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "吉尔莫·德尔·托罗"
+        ],
+        "actors": [
+          "查理·汉纳姆",
+          "菊地凛子",
+          "伊德瑞斯·艾尔巴",
+          "马克斯·马蒂尼",
+          "小克利夫顿·克林斯"
+        ]
       },
       {
         "id": "pb_m_s4_10",
@@ -997,136 +1698,180 @@ export const PREBAKED_HOME_DATA: {
           "冒险"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "加里斯·爱德华斯"
+        ],
+        "actors": [
+          "斯嘉丽·约翰逊",
+          "马赫沙拉·阿里",
+          "乔纳森·贝利",
+          "鲁珀特·弗兰德",
+          "马奴·贾西亚·鲁尔福"
+        ]
       }
     ]
   },
   "tv": {
     "hero": [
-        {
-                "id": "iyf_hero_movie_1",
-                "title": "特立独行",
-                "rate": "5.8",
-                "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
-                "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "剧情",
-                        "电影"
-                ],
-                "episodes_info": "电影·剧情",
-                "type": "movie",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_movie_2",
-                "title": "给阿嬷的情书",
-                "rate": "8.9",
-                "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/AwmlL79nKTcX5tzAhyoV298xXlz.jpg",
-                "description": "潮汕阿嬷叶淑柔一直守着平淡的日子，安享晚年。孙子晓伟因债务缠身，瞒着家人远赴泰国，寻找传闻中已成亿万富豪的阿公郑木生。然而，一个令人意外的消息打破了整个家庭的平静：多年来一直通过跨国信件与阿嬷“谈情说爱”诉说思念的人，竟然并非阿嬷的丈夫郑木生。随着晓伟的调查，一个感人的真相被缓缓揭开。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "剧情",
-                        "电影"
-                ],
-                "episodes_info": "电影·剧情",
-                "type": "movie",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_movie_3",
-                "title": "玩具总动员5",
-                "rate": "8.4",
-                "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
-                "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "动画",
-                        "电影"
-                ],
-                "episodes_info": "电影·动画",
-                "type": "movie",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_movie_4",
-                "title": "寒战1994",
-                "rate": "6.5",
-                "cover": "https://image.tmdb.org/t/p/w500/9C3ZxhGJvdpxmNC5PhkBMwzTMRT.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/q2ErBUKeS85UXM32nzvW44E8sG4.jpg",
-                "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "剧情",
-                        "电影"
-                ],
-                "episodes_info": "电影·剧情",
-                "type": "movie",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_tv_5",
-                "title": "交锋",
-                "rate": "9.0",
-                "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/lYDwHYOR8PROQfSJGZ8LqvwUVcW.jpg",
-                "description": "一宗世纪之交的泄密大案扣动两岸局势脉搏，同时还掩藏着一场境外势力与我方在隐蔽战线上的针锋较量。二十世纪九十年代末，闽州市国家安全局一对性格迥异的师徒，因机缘巧合的命运安排，为了共同的使命与信仰并肩作战。他们联手挫败了各种阴谋，也与敌手在横跨二十年的命运长河里不断纠缠。当时间流转，新世纪的潮流剧变席卷而来，国家安全局势攻防易势，隐蔽战线上的较量却不止不休。在一次次关乎人性的考验中，这三人的命运关系因不同抉择，在岁月洗礼中悄然改变着。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "连续剧"
-                ],
-                "episodes_info": "更新至06集 | 共40集",
-                "type": "tv",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_tv_6",
-                "title": "生逢其时",
-                "rate": "9.0",
-                "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/7HXIhc3aRr1v7KmOrCulszXf3YP.jpg",
-                "description": "八十年代初，青梧小镇住着家庭模式完全不同的齐家和曹家。某天两家同时诞下齐时、曹信。身患白化病的齐时，自小就意识到了自己的“与众不同”，于是她喝酱油、戴假发，试图通过这样的方式，成为和普通人一样的存在。另一边的曹信，一路走来都是家长口中“别人家的孩子”，然而光环之下却始终伴随着父亲的严苛要求。当特立独行、勇敢倔强的少女齐时，遇上乖巧听话、优秀自律的少年曹信，两个家庭也在邻里间日积月累的相处中，也因荒唐“换子”碰撞出了眼泪的故事和“新生”的契机。孩子们经历着关于亲情、友情、爱情的考验，大人们也在面对关于事业、婚姻、家庭的难题。在时代洪流中，纵使生活跌跌撞撞，他们亦携手缝缝补补修炼人生，共同找寻属于自己的人生和幸福。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "连续剧"
-                ],
-                "episodes_info": "更新至08集 | 共26集",
-                "type": "tv",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_tv_7",
-                "title": "重案六组:消失的警号",
-                "rate": "8.0",
-                "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/nr1uqvJs4kqtGcBTwIAew5OiSXI.jpg",
-                "description": "剧情核心围绕“消失的警号”展开，通过“老警号传承”设计致敬原版角色，并融入科技办案、新老刑侦理念碰撞等创新元素。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "连续剧"
-                ],
-                "episodes_info": "更新至20集 | 共26集",
-                "type": "tv",
-                "is_new": true,
-                "playable": true
-        }
-      ],
+      {
+        "id": "iyf_hero_movie_1",
+        "title": "特立独行",
+        "rate": "5.8",
+        "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
+        "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
+        "year": "2026",
+        "types": [
+          "热门",
+          "剧情",
+          "电影"
+        ],
+        "episodes_info": "电影·剧情",
+        "type": "movie",
+        "is_new": true,
+        "playable": true,
+        "actors": [
+          "李洪绸",
+          "安宁",
+          "赵宁",
+          "杨羽",
+          "黎伟"
+        ]
+      },
+      {
+        "id": "iyf_hero_movie_2",
+        "title": "给阿嬷的情书",
+        "rate": "8.9",
+        "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/AwmlL79nKTcX5tzAhyoV298xXlz.jpg",
+        "description": "潮汕阿嬷叶淑柔一直守着平淡的日子，安享晚年。孙子晓伟因债务缠身，瞒着家人远赴泰国，寻找传闻中已成亿万富豪的阿公郑木生。然而，一个令人意外的消息打破了整个家庭的平静：多年来一直通过跨国信件与阿嬷“谈情说爱”诉说思念的人，竟然并非阿嬷的丈夫郑木生。随着晓伟的调查，一个感人的真相被缓缓揭开。",
+        "year": "2026",
+        "types": [
+          "热门",
+          "剧情",
+          "电影"
+        ],
+        "episodes_info": "电影·剧情",
+        "type": "movie",
+        "is_new": true,
+        "playable": true
+      },
+      {
+        "id": "iyf_hero_movie_3",
+        "title": "玩具总动员5",
+        "rate": "8.4",
+        "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
+        "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
+        "year": "2026",
+        "types": [
+          "热门",
+          "动画",
+          "电影"
+        ],
+        "episodes_info": "电影·动画",
+        "type": "movie",
+        "is_new": true,
+        "playable": true
+      },
+      {
+        "id": "iyf_hero_movie_4",
+        "title": "寒战1994",
+        "rate": "6.5",
+        "cover": "https://image.tmdb.org/t/p/w500/9C3ZxhGJvdpxmNC5PhkBMwzTMRT.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/q2ErBUKeS85UXM32nzvW44E8sG4.jpg",
+        "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
+        "year": "2026",
+        "types": [
+          "热门",
+          "剧情",
+          "电影"
+        ],
+        "episodes_info": "电影·剧情",
+        "type": "movie",
+        "is_new": true,
+        "playable": true
+      },
+      {
+        "id": "iyf_hero_tv_5",
+        "title": "交锋",
+        "rate": "9.0",
+        "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/lYDwHYOR8PROQfSJGZ8LqvwUVcW.jpg",
+        "description": "一宗世纪之交的泄密大案扣动两岸局势脉搏，同时还掩藏着一场境外势力与我方在隐蔽战线上的针锋较量。二十世纪九十年代末，闽州市国家安全局一对性格迥异的师徒，因机缘巧合的命运安排，为了共同的使命与信仰并肩作战。他们联手挫败了各种阴谋，也与敌手在横跨二十年的命运长河里不断纠缠。当时间流转，新世纪的潮流剧变席卷而来，国家安全局势攻防易势，隐蔽战线上的较量却不止不休。在一次次关乎人性的考验中，这三人的命运关系因不同抉择，在岁月洗礼中悄然改变着。",
+        "year": "2026",
+        "types": [
+          "热门",
+          "连续剧"
+        ],
+        "episodes_info": "更新至06集 | 共40集",
+        "type": "tv",
+        "is_new": true,
+        "playable": true,
+        "directors": [
+          "姚晓峰"
+        ],
+        "actors": [
+          "王凯",
+          "彭昱畅",
+          "欧豪",
+          "周依然",
+          "祖峰"
+        ]
+      },
+      {
+        "id": "iyf_hero_tv_6",
+        "title": "生逢其时",
+        "rate": "9.0",
+        "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/7HXIhc3aRr1v7KmOrCulszXf3YP.jpg",
+        "description": "八十年代初，青梧小镇住着家庭模式完全不同的齐家和曹家。某天两家同时诞下齐时、曹信。身患白化病的齐时，自小就意识到了自己的“与众不同”，于是她喝酱油、戴假发，试图通过这样的方式，成为和普通人一样的存在。另一边的曹信，一路走来都是家长口中“别人家的孩子”，然而光环之下却始终伴随着父亲的严苛要求。当特立独行、勇敢倔强的少女齐时，遇上乖巧听话、优秀自律的少年曹信，两个家庭也在邻里间日积月累的相处中，也因荒唐“换子”碰撞出了眼泪的故事和“新生”的契机。孩子们经历着关于亲情、友情、爱情的考验，大人们也在面对关于事业、婚姻、家庭的难题。在时代洪流中，纵使生活跌跌撞撞，他们亦携手缝缝补补修炼人生，共同找寻属于自己的人生和幸福。",
+        "year": "2026",
+        "types": [
+          "热门",
+          "连续剧"
+        ],
+        "episodes_info": "更新至08集 | 共26集",
+        "type": "tv",
+        "is_new": true,
+        "playable": true,
+        "directors": [
+          "林妍"
+        ],
+        "actors": [
+          "关晓彤",
+          "王子奇",
+          "刘琳",
+          "郭涛",
+          "郭晓东"
+        ]
+      },
+      {
+        "id": "iyf_hero_tv_7",
+        "title": "重案六组:消失的警号",
+        "rate": "8.0",
+        "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/nr1uqvJs4kqtGcBTwIAew5OiSXI.jpg",
+        "description": "剧情核心围绕“消失的警号”展开，通过“老警号传承”设计致敬原版角色，并融入科技办案、新老刑侦理念碰撞等创新元素。",
+        "year": "2026",
+        "types": [
+          "热门",
+          "连续剧"
+        ],
+        "episodes_info": "更新至20集 | 共26集",
+        "type": "tv",
+        "is_new": true,
+        "playable": true,
+        "actors": [
+          "张一山",
+          "李沐宸",
+          "郭晓东",
+          "葛铮",
+          "吴昊宸"
+        ]
+      }
+    ],
     "top10": [
       {
         "id": "pb_t_top10_1",
@@ -1156,7 +1901,17 @@ export const PREBAKED_HOME_DATA: {
           "年代"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "沈严"
+        ],
+        "actors": [
+          "黄景瑜",
+          "蒋奇明",
+          "张佳宁",
+          "姜珮瑶",
+          "闫佩伦"
+        ]
       },
       {
         "id": "pb_t_top10_3",
@@ -1171,7 +1926,17 @@ export const PREBAKED_HOME_DATA: {
           "犯罪"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "算"
+        ],
+        "actors": [
+          "岳云鹏",
+          "杨烁",
+          "江奇霖",
+          "郎月婷",
+          "黄觉"
+        ]
       },
       {
         "id": "pb_t_top10_4",
@@ -1186,7 +1951,14 @@ export const PREBAKED_HOME_DATA: {
           "治愈"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "邱士缙",
+          "周家怡",
+          "許軼",
+          "唐诗咏",
+          "潘灿良"
+        ]
       },
       {
         "id": "pb_t_top10_5",
@@ -1201,7 +1973,13 @@ export const PREBAKED_HOME_DATA: {
           "爱情"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "丁禹兮",
+          "邓恩熙",
+          "范诗然",
+          "董子凡"
+        ]
       },
       {
         "id": "pb_t_top10_6",
@@ -1216,7 +1994,17 @@ export const PREBAKED_HOME_DATA: {
           "悬疑"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "邢键钧"
+        ],
+        "actors": [
+          "段奕宏",
+          "余男",
+          "阿如那",
+          "李纯",
+          "万鹏"
+        ]
       },
       {
         "id": "pb_t_top10_7",
@@ -1231,7 +2019,17 @@ export const PREBAKED_HOME_DATA: {
           "生活"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "黎志"
+        ],
+        "actors": [
+          "赵又廷",
+          "毛晓彤",
+          "金世佳",
+          "黄觉",
+          "王川"
+        ]
       },
       {
         "id": "pb_t_top10_8",
@@ -1246,7 +2044,17 @@ export const PREBAKED_HOME_DATA: {
           "传奇"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "高翊浚"
+        ],
+        "actors": [
+          "侯明昊",
+          "艾米",
+          "王以纶",
+          "马秋元",
+          "米热"
+        ]
       },
       {
         "id": "pb_t_top10_9",
@@ -1261,7 +2069,17 @@ export const PREBAKED_HOME_DATA: {
           "悬疑"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "柏杉"
+        ],
+        "actors": [
+          "陈伟霆",
+          "曾舜晞",
+          "陈瑶",
+          "应昊茗",
+          "王奕婷"
+        ]
       },
       {
         "id": "pb_t_top10_10",
@@ -1276,7 +2094,14 @@ export const PREBAKED_HOME_DATA: {
           "罪案"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "王大奇",
+          "孙之鸿",
+          "吴昊宸",
+          "肖涵",
+          "张睿"
+        ]
       }
     ],
     "s1": [
@@ -1293,7 +2118,18 @@ export const PREBAKED_HOME_DATA: {
           "悬疑"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "郭虎",
+          "任海涛"
+        ],
+        "actors": [
+          "成毅",
+          "曾舜晞",
+          "肖顺尧",
+          "陈都灵",
+          "王鹤润"
+        ]
       },
       {
         "id": "pb_t_s1_2",
@@ -1308,7 +2144,18 @@ export const PREBAKED_HOME_DATA: {
           "神话"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "秦榛",
+          "杨欢"
+        ],
+        "actors": [
+          "杨紫",
+          "张晚意",
+          "邓为",
+          "檀健次",
+          "代露娃"
+        ]
       },
       {
         "id": "pb_t_s1_3",
@@ -1323,7 +2170,17 @@ export const PREBAKED_HOME_DATA: {
           "爱情"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "邓科"
+        ],
+        "actors": [
+          "赵丽颖",
+          "林更新",
+          "辛云来",
+          "何与",
+          "李嘉琦"
+        ]
       },
       {
         "id": "pb_t_s1_4",
@@ -1338,7 +2195,17 @@ export const PREBAKED_HOME_DATA: {
           "情感"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "汪俊"
+        ],
+        "actors": [
+          "刘亦菲",
+          "佟大为",
+          "林更新",
+          "万茜",
+          "林一"
+        ]
       },
       {
         "id": "pb_t_s1_5",
@@ -1353,7 +2220,17 @@ export const PREBAKED_HOME_DATA: {
           "热血"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "尹涛"
+        ],
+        "actors": [
+          "李宏毅",
+          "刘学义",
+          "林博洋",
+          "敖瑞鹏",
+          "李欣泽"
+        ]
       },
       {
         "id": "pb_t_s1_6",
@@ -1367,7 +2244,18 @@ export const PREBAKED_HOME_DATA: {
           "武侠"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "Zhou Yuanzhou",
+          "邹曦"
+        ],
+        "actors": [
+          "刘诗诗",
+          "刘宇宁",
+          "方逸伦",
+          "何蓝逗",
+          "陈昊宇"
+        ]
       },
       {
         "id": "pb_t_s1_7",
@@ -1382,7 +2270,18 @@ export const PREBAKED_HOME_DATA: {
           "励志"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "傅东育",
+          "毛溦"
+        ],
+        "actors": [
+          "赵丽颖",
+          "欧豪",
+          "李光洁",
+          "黄澄澄",
+          "刘威"
+        ]
       },
       {
         "id": "pb_t_s1_7",
@@ -1397,7 +2296,19 @@ export const PREBAKED_HOME_DATA: {
           "职场"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "丁黑",
+          "鲍成志",
+          "符策欣"
+        ],
+        "actors": [
+          "张若昀",
+          "白鹿",
+          "王景春",
+          "宁理",
+          "徐开骋"
+        ]
       },
       {
         "id": "pb_t_s1_8",
@@ -1412,7 +2323,19 @@ export const PREBAKED_HOME_DATA: {
           "无限流"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "孙墨龙",
+          "算",
+          "刘洪源"
+        ],
+        "actors": [
+          "赵今麦",
+          "白敬亭",
+          "刘奕君",
+          "刘涛",
+          "黄觉"
+        ]
       },
       {
         "id": "pb_t_s1_9",
@@ -1427,7 +2350,17 @@ export const PREBAKED_HOME_DATA: {
           "女性"
         ],
         "is_new": true,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "杨阳"
+        ],
+        "actors": [
+          "刘亦菲",
+          "陈晓",
+          "柳岩",
+          "林允",
+          "徐海乔"
+        ]
       }
     ],
     "s2": [
@@ -1444,7 +2377,14 @@ export const PREBAKED_HOME_DATA: {
           "剧情"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "布莱恩·克兰斯顿",
+          "亚伦·保尔",
+          "安娜·冈",
+          "RJ·米特",
+          "迪恩·诺里斯"
+        ]
       },
       {
         "id": "pb_t_s2_2",
@@ -1459,7 +2399,14 @@ export const PREBAKED_HOME_DATA: {
           "剧情"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "鲍勃·奥登科克",
+          "乔纳森·班克斯",
+          "蕾亚·塞洪",
+          "托尼·达尔顿",
+          "吉安卡罗·埃斯波西托"
+        ]
       },
       {
         "id": "pb_t_s2_3",
@@ -1474,7 +2421,14 @@ export const PREBAKED_HOME_DATA: {
           "复古"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "薇诺娜·瑞德",
+          "大卫·哈伯",
+          "米莉·波比·布朗",
+          "菲恩·伍法德",
+          "伽塔·马塔拉佐"
+        ]
       },
       {
         "id": "pb_t_s2_4",
@@ -1489,7 +2443,14 @@ export const PREBAKED_HOME_DATA: {
           "创业"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "托马斯·米德尔迪奇",
+          "扎克·伍兹",
+          "库马尔·纳贾尼",
+          "馬丁·斯塔爾",
+          "阿曼达·克鲁"
+        ]
       },
       {
         "id": "pb_t_s2_5",
@@ -1504,7 +2465,14 @@ export const PREBAKED_HOME_DATA: {
           "剧情"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "罗宾·怀特",
+          "迈克尔·凯利",
+          "康斯坦斯·齐默",
+          "帕特里夏·克拉克森",
+          "德里克·塞西尔"
+        ]
       },
       {
         "id": "pb_t_s2_6",
@@ -1519,7 +2487,14 @@ export const PREBAKED_HOME_DATA: {
           "AI"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "埃文·蕾切尔·伍德",
+          "坦迪·牛顿",
+          "杰弗里·怀特",
+          "泰莎·汤普森",
+          "亚伦·保尔"
+        ]
       },
       {
         "id": "pb_t_s2_7",
@@ -1534,7 +2509,14 @@ export const PREBAKED_HOME_DATA: {
           "犯罪"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "朱迪·福斯特",
+          "卡莉·瑞斯",
+          "费奥纳·肖",
+          "芬恩·本尼特",
+          "伊莎贝拉·拉布兰克"
+        ]
       },
       {
         "id": "pb_t_s2_8",
@@ -1549,7 +2531,14 @@ export const PREBAKED_HOME_DATA: {
           "灾难"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "杰瑞德·哈里斯",
+          "斯特兰·斯卡斯加德",
+          "艾米丽·沃森",
+          "保罗·里特",
+          "杰茜·巴克利"
+        ]
       },
       {
         "id": "pb_t_s2_9",
@@ -1564,7 +2553,14 @@ export const PREBAKED_HOME_DATA: {
           "奇幻"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "伊丽莎白·奥尔森",
+          "保罗·贝坦尼",
+          "凯瑟琳·哈恩",
+          "泰柔娜·派丽丝",
+          "兰道尔·朴"
+        ]
       },
       {
         "id": "pb_t_s2_10",
@@ -1579,7 +2575,14 @@ export const PREBAKED_HOME_DATA: {
           "商战"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "杰里米·斯特朗",
+          "基兰·卡尔金",
+          "莎拉·斯努克",
+          "布莱恩·考克斯",
+          "马修·麦克费登"
+        ]
       }
     ],
     "s3": [
@@ -1596,7 +2599,14 @@ export const PREBAKED_HOME_DATA: {
           "治愈"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "曹政奭",
+          "柳演锡",
+          "郑敬淏",
+          "金大明",
+          "田美都"
+        ]
       },
       {
         "id": "pb_t_s3_2",
@@ -1611,7 +2621,17 @@ export const PREBAKED_HOME_DATA: {
           "喜剧"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "金希元"
+        ],
+        "actors": [
+          "玄彬",
+          "孙艺珍",
+          "徐智慧",
+          "金正贤",
+          "杨景元"
+        ]
       },
       {
         "id": "pb_t_s3_3",
@@ -1626,7 +2646,19 @@ export const PREBAKED_HOME_DATA: {
           "爱情"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "李应福",
+          "白尚勋",
+          "刘钟善"
+        ],
+        "actors": [
+          "宋慧乔",
+          "宋仲基",
+          "金智媛",
+          "晋久",
+          "温流"
+        ]
       },
       {
         "id": "pb_t_s3_4",
@@ -1641,7 +2673,14 @@ export const PREBAKED_HOME_DATA: {
           "时空"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "杨超越",
+          "杜海涛",
+          "张纯烨",
+          "代旭",
+          "薛凯琪"
+        ]
       },
       {
         "id": "pb_t_s3_5",
@@ -1656,7 +2695,19 @@ export const PREBAKED_HOME_DATA: {
           "浪漫"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "尹钟镐",
+          "权赫灿",
+          "李应福"
+        ],
+        "actors": [
+          "孔刘",
+          "金高银",
+          "李栋旭",
+          "刘寅娜",
+          "陆星材"
+        ]
       },
       {
         "id": "pb_t_s3_6",
@@ -1671,7 +2722,19 @@ export const PREBAKED_HOME_DATA: {
           "悬疑"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "冢原亚由子",
+          "村尾嘉昭",
+          "竹村谦太郎"
+        ],
+        "actors": [
+          "石原里美",
+          "井浦新",
+          "洼田正孝",
+          "市川实日子",
+          "松重丰"
+        ]
       },
       {
         "id": "pb_t_s3_7",
@@ -1686,7 +2749,14 @@ export const PREBAKED_HOME_DATA: {
           "复仇"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "堺雅人",
+          "上户彩",
+          "及川光博",
+          "贺来贤人",
+          "香川照之"
+        ]
       },
       {
         "id": "pb_t_s3_8",
@@ -1701,7 +2771,16 @@ export const PREBAKED_HOME_DATA: {
           "日常"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "狩山俊辅",
+          "水野格"
+        ],
+        "actors": [
+          "安藤樱",
+          "夏帆",
+          "木南晴夏"
+        ]
       },
       {
         "id": "pb_t_s3_9",
@@ -1716,7 +2795,19 @@ export const PREBAKED_HOME_DATA: {
           "搞笑"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "西坂瑞城",
+          "石川淳一",
+          "城宝秀则"
+        ],
+        "actors": [
+          "堺雅人",
+          "新垣结衣",
+          "冈田将生",
+          "田口淳之介",
+          "小雪"
+        ]
       },
       {
         "id": "pb_t_s3_10",
@@ -1731,7 +2822,14 @@ export const PREBAKED_HOME_DATA: {
           "励志"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "木村拓哉",
+          "铃木京香",
+          "玉森裕太",
+          "泽村一树",
+          "及川光博"
+        ]
       }
     ],
     "s4": [
@@ -1748,7 +2846,14 @@ export const PREBAKED_HOME_DATA: {
           "国漫"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "钱文青",
+          "宋伊人",
+          "李诗萌",
+          "徐佳琦",
+          "杨默"
+        ]
       },
       {
         "id": "pb_t_s4_2",
@@ -1763,7 +2868,17 @@ export const PREBAKED_HOME_DATA: {
           "国漫"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "张帅"
+        ],
+        "actors": [
+          "陈锦闻",
+          "李诗萌",
+          "刘明月",
+          "刘晴",
+          "楚越"
+        ]
       },
       {
         "id": "pb_t_s4_3",
@@ -1778,7 +2893,14 @@ export const PREBAKED_HOME_DATA: {
           "热血"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "赵乾景",
+          "李婵妃",
+          "徐翔",
+          "吴磊",
+          "张若瑜"
+        ]
       },
       {
         "id": "pb_t_s4_4",
@@ -1793,7 +2915,18 @@ export const PREBAKED_HOME_DATA: {
           "燃向"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "顾振华",
+          "陈百俊"
+        ],
+        "actors": [
+          "不一",
+          "刘雨轩",
+          "陈奕雯",
+          "冯骏骅",
+          "文晓依"
+        ]
       },
       {
         "id": "pb_t_s4_5",
@@ -1808,7 +2941,18 @@ export const PREBAKED_HOME_DATA: {
           "国漫"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "邵官华",
+          "沈乐平"
+        ],
+        "actors": [
+          "赵乾景",
+          "谢莹",
+          "张晔",
+          "赵梓涵",
+          "张欣"
+        ]
       },
       {
         "id": "pb_t_s4_6",
@@ -1823,7 +2967,18 @@ export const PREBAKED_HOME_DATA: {
           "杀伐"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "directors": [
+          "石头熊",
+          "冯毅"
+        ],
+        "actors": [
+          "史泽鲲",
+          "张惠霖",
+          "常文涛",
+          "刘思岑",
+          "白雪岑"
+        ]
       },
       {
         "id": "pb_t_s4_7",
@@ -1838,7 +2993,14 @@ export const PREBAKED_HOME_DATA: {
           "治愈"
         ],
         "is_new": false,
-        "playable": true
+        "playable": true,
+        "actors": [
+          "种崎敦美",
+          "市之濑加那",
+          "小林千晃",
+          "冈本信彦",
+          "东地宏树"
+        ]
       },
       {
         "id": "pb_t_s4_8",

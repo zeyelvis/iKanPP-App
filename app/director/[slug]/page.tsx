@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const directorName = decodeURIComponent(slug).trim();
 
-  if (!directorName) {
+  if (!directorName || directorName === '知名导演') {
     return {
       title: '导演作品未找到 - iKanPP 爱看片片',
       robots: { index: false, follow: false },
@@ -57,7 +57,7 @@ export default async function DirectorPage({ params }: Props) {
   const { slug } = await params;
   const directorName = decodeURIComponent(slug).trim();
 
-  if (!directorName) {
+  if (!directorName || directorName === '知名导演') {
     notFound();
   }
 

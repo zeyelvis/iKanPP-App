@@ -25,7 +25,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "克里斯托弗·诺兰"
     ],
     "actors": [
-      "实力主演"
+      "马特·达蒙",
+      "汤姆·赫兰德",
+      "安妮·海瑟薇",
+      "罗伯特·帕丁森",
+      "希米什·帕特尔"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -50,7 +54,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "克里斯托弗·诺兰"
     ],
     "actors": [
-      "实力主演"
+      "马修·麦康纳",
+      "安妮·海瑟薇",
+      "迈克尔·凯恩",
+      "杰西卡·查斯坦",
+      "卡西·阿弗莱克"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -75,7 +83,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "克里斯托弗·诺兰"
     ],
     "actors": [
-      "实力主演"
+      "克里斯蒂安·贝尔",
+      "希斯·莱杰",
+      "艾伦·艾克哈特",
+      "迈克尔·凯恩",
+      "玛吉·吉伦哈尔"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -100,7 +112,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "克里斯托弗·诺兰"
     ],
     "actors": [
-      "实力主演"
+      "莱昂纳多·迪卡普里奥",
+      "约瑟夫·高登-莱维特",
+      "渡边谦",
+      "汤姆·哈迪",
+      "艾利奥特·佩吉"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -125,7 +141,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "克里斯托弗·诺兰"
     ],
     "actors": [
-      "实力主演"
+      "基利安·墨菲",
+      "艾米莉·布朗特",
+      "马特·达蒙",
+      "小罗伯特·唐尼",
+      "弗洛伦丝·皮尤"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -150,7 +170,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "克里斯托弗·诺兰"
     ],
     "actors": [
-      "实力主演"
+      "克里斯蒂安·贝尔",
+      "加里·奥德曼",
+      "汤姆·哈迪",
+      "约瑟夫·高登-莱维特",
+      "安妮·海瑟薇"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -175,7 +199,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "詹姆斯·卡梅隆"
     ],
     "actors": [
-      "实力主演"
+      "萨姆·沃辛顿",
+      "佐伊·索尔达娜",
+      "西格妮·韦弗",
+      "史蒂芬·朗",
+      "奥娜·卡斯蒂利亚"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -200,7 +228,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "詹姆斯·卡梅隆"
     ],
     "actors": [
-      "实力主演"
+      "莱昂纳多·迪卡普里奥",
+      "凯特·温斯莱特",
+      "比利·赞恩",
+      "凯西·贝茨",
+      "弗兰西丝·费舍"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -225,7 +257,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "詹姆斯·卡梅隆"
     ],
     "actors": [
-      "实力主演"
+      "萨姆·沃辛顿",
+      "佐伊·索尔达娜",
+      "西格妮·韦弗",
+      "史蒂芬·朗",
+      "米歇尔·罗德里格兹"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -250,7 +286,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "詹姆斯·卡梅隆"
     ],
     "actors": [
-      "实力主演"
+      "阿诺德·施瓦辛格",
+      "迈克尔·比恩",
+      "琳达·汉密尔顿",
+      "保罗·温菲尔德",
+      "兰斯·亨利克森"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -275,7 +315,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "詹姆斯·卡梅隆"
     ],
     "actors": [
-      "实力主演"
+      "阿诺德·施瓦辛格",
+      "琳达·汉密尔顿",
+      "爱德华·弗朗",
+      "罗伯特·帕特里克",
+      "阿尔·伯恩"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -300,7 +344,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "詹姆斯·卡梅隆"
     ],
     "actors": [
-      "实力主演"
+      "萨姆·沃辛顿",
+      "佐伊·索尔达娜",
+      "西格妮·韦弗",
+      "史蒂芬·朗",
+      "凯特·温斯莱特"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -325,7 +373,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "史蒂文·斯皮尔伯格"
     ],
     "actors": [
-      "实力主演"
+      "彼得·福克"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -350,7 +398,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "史蒂文·斯皮尔伯格"
     ],
     "actors": [
-      "实力主演"
+      "艾米莉·布朗特",
+      "乔希·奥康纳",
+      "科林·费尔斯",
+      "伊芙·休森",
+      "科尔曼·多明戈"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -375,7 +427,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "史蒂文·斯皮尔伯格"
     ],
     "actors": [
-      "实力主演"
+      "连姆·尼森",
+      "本·金斯利",
+      "拉尔夫·费因斯",
+      "卡罗琳·古道尔",
+      "乔纳森·萨加尔"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -400,7 +456,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "史蒂文·斯皮尔伯格"
     ],
     "actors": [
-      "实力主演"
+      "Robert Young",
+      "詹姆斯·布洛林",
+      "帕梅拉·亨斯利",
+      "莎朗·格拉斯",
+      "Elena Verdugo"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -425,7 +485,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "史蒂文·斯皮尔伯格"
     ],
     "actors": [
-      "实力主演"
+      "罗伊·谢德",
+      "罗伯特·阿奇博尔德·肖",
+      "理查德·德莱福斯",
+      "洛林·加里",
+      "默里·汉密尔顿"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -450,7 +514,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "史蒂文·斯皮尔伯格"
     ],
     "actors": [
-      "实力主演"
+      "汤姆·汉克斯",
+      "汤姆·塞兹摩尔",
+      "爱德华·伯恩斯",
+      "巴里·佩珀",
+      "亚当·戈德堡"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -475,7 +543,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "丹尼斯·维伦纽瓦"
     ],
     "actors": [
-      "实力主演"
+      "提莫西·查拉梅",
+      "赞达亚·科尔曼",
+      "丽贝卡·弗格森",
+      "哈维尔·巴登",
+      "乔什·布洛林"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -500,7 +572,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "丹尼斯·维伦纽瓦"
     ],
     "actors": [
-      "实力主演"
+      "提莫西·查拉梅",
+      "丽贝卡·弗格森",
+      "奥斯卡·伊萨克",
+      "杰森·莫玛",
+      "斯特兰·斯卡斯加德"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -525,7 +601,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "丹尼斯·维伦纽瓦"
     ],
     "actors": [
-      "实力主演"
+      "瑞恩·高斯林",
+      "哈里森·福特",
+      "安娜·德·阿玛斯",
+      "戴夫·巴蒂斯塔",
+      "罗宾·怀特"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -550,7 +630,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "丹尼斯·维伦纽瓦"
     ],
     "actors": [
-      "实力主演"
+      "休·杰克曼",
+      "杰克·吉伦哈尔",
+      "维奥拉·戴维斯",
+      "玛丽亚·贝罗",
+      "泰伦斯·霍华德"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -575,7 +659,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "丹尼斯·维伦纽瓦"
     ],
     "actors": [
-      "实力主演"
+      "艾米·亚当斯",
+      "杰瑞米·雷纳",
+      "福里斯特·惠特克",
+      "迈克尔·斯图巴",
+      "马克·奥布莱恩"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -600,7 +688,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "丹尼斯·维伦纽瓦"
     ],
     "actors": [
-      "实力主演"
+      "艾米莉·布朗特",
+      "本尼西奥·德尔·托罗",
+      "乔什·布洛林",
+      "维克多·加博",
+      "乔·博恩瑟"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -625,7 +717,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "昆汀·塔伦蒂诺"
     ],
     "actors": [
-      "实力主演"
+      "泰德·丹森",
+      "乔治·伊兹",
+      "乔雅·福克斯",
+      "Eric Szmanda",
+      "Robert David Hall"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -650,7 +746,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "昆汀·塔伦蒂诺"
     ],
     "actors": [
-      "实力主演"
+      "莫拉·蒂尔尼",
+      "帕敏德·纳格拉",
+      "琳达·卡德里尼",
+      "斯科特·格瑞恩斯",
+      "David Lyons"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -675,7 +775,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "昆汀·塔伦蒂诺"
     ],
     "actors": [
-      "实力主演"
+      "约翰·特拉沃尔塔",
+      "塞缪尔·杰克逊",
+      "乌玛·瑟曼",
+      "布鲁斯·威利斯",
+      "文·瑞姆斯"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -700,7 +804,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "昆汀·塔伦蒂诺"
     ],
     "actors": [
-      "实力主演"
+      "乌玛·瑟曼",
+      "刘玉玲",
+      "薇薇卡·福克斯",
+      "达丽尔·汉纳",
+      "大卫·卡拉丁"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -725,7 +833,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "昆汀·塔伦蒂诺"
     ],
     "actors": [
-      "实力主演"
+      "杰米·福克斯",
+      "克里斯托弗·瓦尔兹",
+      "莱昂纳多·迪卡普里奥",
+      "凯丽·华盛顿",
+      "塞缪尔·杰克逊"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -750,7 +862,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "昆汀·塔伦蒂诺"
     ],
     "actors": [
-      "实力主演"
+      "乌玛·瑟曼",
+      "刘玉玲",
+      "薇薇卡·福克斯",
+      "迈克尔·马德森",
+      "达丽尔·汉纳"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -775,7 +891,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "大卫·芬奇"
     ],
     "actors": [
-      "实力主演"
+      "罗宾·怀特",
+      "迈克尔·凯利",
+      "康斯坦斯·齐默",
+      "帕特里夏·克拉克森",
+      "德里克·塞西尔"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -800,7 +920,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "大卫·芬奇"
     ],
     "actors": [
-      "实力主演"
+      "爱德华·诺顿",
+      "布拉德·皮特",
+      "海伦娜·伯翰·卡特",
+      "密特·劳弗",
+      "杰瑞德·莱托"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -824,9 +948,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "directors": [
       "大卫·芬奇"
     ],
-    "actors": [
-      "实力主演"
-    ],
+    "actors": [],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
   },
@@ -850,7 +972,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "大卫·芬奇"
     ],
     "actors": [
-      "实力主演"
+      "摩根·弗里曼",
+      "布拉德·皮特",
+      "格温妮斯·帕特洛",
+      "约翰·卡西尼",
+      "彼得·克朗比"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -875,7 +1001,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "大卫·芬奇"
     ],
     "actors": [
-      "实力主演"
+      "本·阿弗莱克",
+      "裴淳华",
+      "尼尔·帕特里克·哈里斯",
+      "泰勒·佩里",
+      "凯莉·库恩"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -900,7 +1030,10 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "大卫·芬奇"
     ],
     "actors": [
-      "实力主演"
+      "乔纳森·格罗夫",
+      "霍特·麦克卡兰尼",
+      "安娜·托芙",
+      "Stacey Roca"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -925,7 +1058,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "宫崎骏"
     ],
     "actors": [
-      "实力主演"
+      "柊瑠美",
+      "入野自由",
+      "夏木真理",
+      "内藤刚志",
+      "泽口靖子"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -950,7 +1087,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "宫崎骏"
     ],
     "actors": [
-      "实力主演"
+      "栗田贯一",
+      "大冢明夫",
+      "泽城美雪",
+      "浪川大辅",
+      "山寺宏一"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -975,7 +1116,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "宫崎骏"
     ],
     "actors": [
-      "实力主演"
+      "山田荣子"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1000,7 +1141,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "宫崎骏"
     ],
     "actors": [
-      "实力主演"
+      "倍赏千惠子",
+      "木村拓哉",
+      "美轮明宏",
+      "我修院达也",
+      "神木隆之介"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1025,7 +1170,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "宫崎骏"
     ],
     "actors": [
-      "实力主演"
+      "松田洋治",
+      "石田百合子",
+      "田中裕子",
+      "小林薰",
+      "西村雅彦"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1050,7 +1199,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "新海诚"
     ],
     "actors": [
-      "实力主演"
+      "神木隆之介",
+      "上白石萌音",
+      "成田凌",
+      "悠木碧",
+      "岛崎信长"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1075,7 +1228,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "新海诚"
     ],
     "actors": [
-      "实力主演"
+      "原菜乃华",
+      "松村北斗",
+      "深津绘里",
+      "染谷将太",
+      "伊藤沙莉"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1100,7 +1257,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "新海诚"
     ],
     "actors": [
-      "实力主演"
+      "醍醐虎汰朗",
+      "森七菜",
+      "本田翼",
+      "吉柳咲良",
+      "平泉成"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1125,7 +1286,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "新海诚"
     ],
     "actors": [
-      "实力主演"
+      "水桥研二",
+      "近藤好美",
+      "花村怜美",
+      "水野理纱",
+      "尾上绫华"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1150,7 +1315,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "新海诚"
     ],
     "actors": [
-      "实力主演"
+      "入野自由",
+      "花泽香菜",
+      "平野文",
+      "前田刚",
+      "寺崎裕香"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1175,7 +1344,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "新海诚"
     ],
     "actors": [
-      "实力主演"
+      "金元寿子",
+      "井上和彦",
+      "入野自由",
+      "日高里菜",
+      "折笠富美子"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1200,7 +1373,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "张艺谋"
     ],
     "actors": [
-      "实力主演"
+      "马特·达蒙",
+      "景甜",
+      "威廉·达福",
+      "刘德华",
+      "佩德罗·帕斯卡"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1225,7 +1402,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "张艺谋"
     ],
     "actors": [
-      "实力主演"
+      "李连杰",
+      "梁朝伟",
+      "张曼玉",
+      "甄子丹",
+      "章子怡"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1275,7 +1456,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "张艺谋"
     ],
     "actors": [
-      "实力主演"
+      "金城武",
+      "刘德华",
+      "章子怡",
+      "宋丹丹",
+      "赵鸿飞"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1351,7 +1536,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "周星驰"
     ],
     "actors": [
-      "实力主演"
+      "张小斐",
+      "迪丽热巴",
+      "张艺兴",
+      "刘嘉玲",
+      "佐藤健"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1426,7 +1615,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "周星驰"
     ],
     "actors": [
-      "实力主演"
+      "周星驰",
+      "徐娇",
+      "张雨绮",
+      "林子聪",
+      "李尚正"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1451,7 +1644,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "周星驰"
     ],
     "actors": [
-      "实力主演"
+      "林允",
+      "邓超",
+      "张雨绮",
+      "罗志祥",
+      "徐克"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1502,7 +1699,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "李安"
     ],
     "actors": [
-      "实力主演"
+      "苏拉·沙玛",
+      "伊尔凡·可汗",
+      "阿尤什·坦东",
+      "高塔姆·贝鲁尔",
+      "阿迪尔·胡赛恩"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1527,7 +1728,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "李安"
     ],
     "actors": [
-      "实力主演"
+      "艾瑞克·巴纳",
+      "詹妮弗·康纳利",
+      "山姆·艾里奥特",
+      "乔什·卢卡斯",
+      "尼克·诺尔蒂"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1578,7 +1783,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "李安"
     ],
     "actors": [
-      "实力主演"
+      "希斯·莱杰",
+      "杰克·吉伦哈尔",
+      "米歇尔·威廉姆斯",
+      "安妮·海瑟薇",
+      "兰德尔·奎德"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1603,7 +1812,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "李安"
     ],
     "actors": [
-      "实力主演"
+      "乔·阿尔文",
+      "克里斯汀·斯图尔特",
+      "克里斯·塔克",
+      "加内特·赫德兰",
+      "麦肯兹·利"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1678,7 +1891,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "王家卫"
     ],
     "actors": [
-      "实力主演"
+      "黎明",
+      "李嘉欣",
+      "金城武",
+      "杨采妮",
+      "莫文蔚"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1703,7 +1920,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "王家卫"
     ],
     "actors": [
-      "实力主演"
+      "胡歌",
+      "马伊琍",
+      "唐嫣",
+      "辛芷蕾",
+      "游本昌"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1728,7 +1949,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "王家卫"
     ],
     "actors": [
-      "实力主演"
+      "张国荣",
+      "张曼玉",
+      "刘德华",
+      "刘嘉玲",
+      "张学友"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1753,7 +1978,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "王家卫"
     ],
     "actors": [
-      "实力主演"
+      "梁朝伟",
+      "章子怡",
+      "张震",
+      "赵本山",
+      "小沈阳"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1803,7 +2032,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "杜琪峰"
     ],
     "actors": [
-      "实力主演"
+      "梁朝伟",
+      "黎美娴",
+      "曾华倩",
+      "郑裕玲",
+      "邓萃雯"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1828,7 +2061,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "杜琪峰"
     ],
     "actors": [
-      "实力主演"
+      "刘青云",
+      "刘德华",
+      "蒙嘉慧",
+      "许绍雄",
+      "林雪"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1853,7 +2090,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "杜琪峰"
     ],
     "actors": [
-      "实力主演"
+      "梁朝伟",
+      "刘德华",
+      "刘嘉玲",
+      "毛舜筠",
+      "商天娥"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1878,7 +2119,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "杜琪峰"
     ],
     "actors": [
-      "实力主演"
+      "黄秋生",
+      "吴镇宇",
+      "吕颂贤",
+      "张耀扬",
+      "林雪"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1903,7 +2148,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "杜琪峰"
     ],
     "actors": [
-      "实力主演"
+      "任达华",
+      "梁家辉",
+      "古天乐",
+      "张家辉",
+      "林家栋"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1928,7 +2177,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "徐克"
     ],
     "actors": [
-      "实力主演"
+      "成龙",
+      "泰迪·罗宾",
+      "张曼玉",
+      "利智",
+      "黄霑"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1953,7 +2206,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "徐克"
     ],
     "actors": [
-      "实力主演"
+      "李连杰",
+      "元彪",
+      "张学友",
+      "关之琳",
+      "郑则仕"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -1978,7 +2235,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "徐克"
     ],
     "actors": [
-      "实力主演"
+      "许冠杰",
+      "叶童",
+      "张学友",
+      "张敏",
+      "袁洁莹"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2003,7 +2264,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "徐克"
     ],
     "actors": [
-      "实力主演"
+      "肖战",
+      "庄达菲",
+      "梁家辉",
+      "张文昕",
+      "巴雅尔图"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2028,7 +2293,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "徐克"
     ],
     "actors": [
-      "实力主演"
+      "尚格·云顿",
+      "丹尼斯·罗德曼",
+      "米基·洛克",
+      "保罗·弗里曼",
+      "Natacha Lindinger"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2054,7 +2323,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "陈凯歌"
     ],
     "actors": [
-      "实力主演"
+      "吴京",
+      "易烊千玺",
+      "段奕宏",
+      "朱亚文",
+      "李凯文"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2104,7 +2377,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "陈凯歌"
     ],
     "actors": [
-      "实力主演"
+      "海瑟·格拉汉姆",
+      "约瑟夫·费因斯",
+      "娜塔莎·麦克艾霍恩",
+      "乌尔里希·汤姆森",
+      "伊恩·哈特"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2129,7 +2406,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "陈凯歌"
     ],
     "actors": [
-      "实力主演"
+      "朱一龙",
+      "辛柏青",
+      "张子枫",
+      "朱亚文",
+      "陈飞宇"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2154,7 +2435,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "陈凯歌"
     ],
     "actors": [
-      "实力主演"
+      "张柏芝",
+      "刘烨",
+      "陈红",
+      "程前",
+      "张东健"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2179,7 +2464,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "陈凯歌"
     ],
     "actors": [
-      "实力主演"
+      "王宝强",
+      "李雪健",
+      "范伟",
+      "林志玲",
+      "吴建豪"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2205,7 +2494,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "文牧野"
     ],
     "actors": [
-      "实力主演"
+      "葛优",
+      "黄渤",
+      "张译",
+      "任达华",
+      "宋佳"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2230,7 +2523,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "宁浩"
     ],
     "actors": [
-      "实力主演"
+      "刘德华",
+      "单立文",
+      "里玛·泽丹",
+      "余伟国",
+      "宁浩"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2255,7 +2552,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "宁浩"
     ],
     "actors": [
-      "实力主演"
+      "黄渤",
+      "吕孔维",
+      "戎祥",
+      "高捷",
+      "王双宝"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2280,7 +2581,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "宁浩"
     ],
     "actors": [
-      "实力主演"
+      "黄渤",
+      "徐峥",
+      "周冬雨",
+      "袁泉",
+      "沈腾"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2305,7 +2610,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "宁浩"
     ],
     "actors": [
-      "实力主演"
+      "郭涛",
+      "刘桦",
+      "刘刚",
+      "黄渤",
+      "岳小军"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2330,7 +2639,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "宁浩"
     ],
     "actors": [
-      "实力主演"
+      "葛优",
+      "刘敏涛",
+      "范伟",
+      "黄渤",
+      "张译"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2355,7 +2668,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "文牧野"
     ],
     "actors": [
-      "实力主演"
+      "沈腾",
+      "蒋奇明",
+      "奥马尔·谢里夫",
+      "李治廷",
+      "谢里夫·萨比"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2380,7 +2697,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "文牧野"
     ],
     "actors": [
-      "实力主演"
+      "徐峥",
+      "周一围",
+      "王传君",
+      "谭卓",
+      "章宇"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2405,7 +2726,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "文牧野"
     ],
     "actors": [
-      "实力主演"
+      "易烊千玺",
+      "田雨",
+      "陈哈琳",
+      "齐溪",
+      "公磊"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2430,7 +2755,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "文牧野"
     ],
     "actors": [
-      "实力主演"
+      "白百何",
+      "Kai-Yuan Cheng",
+      "黄轩",
+      "江疏影",
+      "杨幂"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2455,7 +2784,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "文牧野"
     ],
     "actors": [
-      "实力主演"
+      "贾弘逍"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2480,7 +2809,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "郭帆"
     ],
     "actors": [
-      "实力主演"
+      "吴京",
+      "刘德华",
+      "李雪健",
+      "沙溢",
+      "宁理"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2505,7 +2838,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "郭帆"
     ],
     "actors": [
-      "实力主演"
+      "吴京",
+      "屈楚萧",
+      "李光洁",
+      "吴孟达",
+      "赵今麦"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2530,7 +2867,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "郭帆"
     ],
     "actors": [
-      "实力主演"
+      "吴京",
+      "刘德华",
+      "李雪健",
+      "屈楚萧",
+      "李光洁"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2555,7 +2896,10 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "郭帆"
     ],
     "actors": [
-      "实力主演"
+      "周冬雨",
+      "林更新",
+      "隋凯",
+      "张子枫"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2580,7 +2924,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "郭帆"
     ],
     "actors": [
-      "实力主演"
+      "张译",
+      "吴京",
+      "李九霄",
+      "魏晨",
+      "邓超"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2605,7 +2953,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "郭帆"
     ],
     "actors": [
-      "实力主演"
+      "吴京",
+      "屈楚萧",
+      "赵今麦",
+      "李光洁",
+      "吴孟达"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2655,7 +3007,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "陈思诚"
     ],
     "actors": [
-      "实力主演"
+      "陈思诚",
+      "佟丽娅",
+      "张译",
+      "李晨",
+      "杨幂"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2680,7 +3036,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "陈思诚"
     ],
     "actors": [
-      "实力主演"
+      "王宝强",
+      "刘昊然",
+      "妻夫木聪",
+      "托尼·贾",
+      "长泽雅美"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2705,7 +3065,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "陈思诚"
     ],
     "actors": [
-      "实力主演"
+      "王宝强",
+      "刘昊然",
+      "周润发",
+      "白客",
+      "张新成"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2730,7 +3094,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "陈思诚"
     ],
     "actors": [
-      "实力主演"
+      "王宝强",
+      "刘昊然",
+      "佟丽娅",
+      "陈赫",
+      "小沈阳"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2755,7 +3123,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "陈思诚"
     ],
     "actors": [
-      "实力主演"
+      "王宝强",
+      "刘昊然",
+      "肖央",
+      "刘承羽",
+      "尚语贤"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2780,7 +3152,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "贾玲"
     ],
     "actors": [
-      "实力主演"
+      "贾玲",
+      "雷佳音",
+      "张小斐",
+      "杨紫",
+      "沙溢"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2805,7 +3181,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "贾玲"
     ],
     "actors": [
-      "实力主演"
+      "贾玲",
+      "张小斐",
+      "沈腾",
+      "陈赫",
+      "何欢"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2830,7 +3210,10 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "贾玲"
     ],
     "actors": [
-      "实力主演"
+      "贾玲",
+      "张小斐",
+      "杨紫",
+      "王骁"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2855,7 +3238,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "韩寒"
     ],
     "actors": [
-      "实力主演"
+      "沈腾",
+      "范丞丞",
+      "尹正",
+      "张本煜",
+      "孙艺洲"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2880,7 +3267,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "韩寒"
     ],
     "actors": [
-      "实力主演"
+      "沈腾",
+      "黄景瑜",
+      "尹正",
+      "张本煜",
+      "尹昉"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2905,7 +3296,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "韩寒"
     ],
     "actors": [
-      "实力主演"
+      "沈腾",
+      "尹正",
+      "黄景瑜",
+      "张本煜",
+      "魏翔"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2930,7 +3325,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "韩寒"
     ],
     "actors": [
-      "实力主演"
+      "邓超",
+      "彭于晏",
+      "赵丽颖",
+      "董子健",
+      "金士杰"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2955,7 +3354,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "韩寒"
     ],
     "actors": [
-      "实力主演"
+      "冯绍峰",
+      "陈柏霖",
+      "钟汉良",
+      "陈乔恩",
+      "王珞丹"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -2980,7 +3383,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "韩寒"
     ],
     "actors": [
-      "实力主演"
+      "刘昊然",
+      "刘浩存",
+      "沈腾",
+      "尹正",
+      "乔杉"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -3005,7 +3412,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "辛爽"
     ],
     "actors": [
-      "实力主演"
+      "范伟",
+      "秦昊",
+      "陈明昊",
+      "李庚希",
+      "刘奕铁"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -3030,7 +3441,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "辛爽"
     ],
     "actors": [
-      "实力主演"
+      "秦昊",
+      "王景春",
+      "荣梓杉",
+      "史彭元",
+      "王圣迪"
     ],
     "createdAt": "2026-09-01T00:00:00Z",
     "updatedAt": "2026-09-01T00:00:00Z"
@@ -3052,7 +3467,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "瞿绍婷"
     ],
     "actors": [
       "沈腾",
@@ -3077,9 +3492,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "沈腾",
       "黄渤"
@@ -3104,7 +3517,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "陈娟"
     ],
     "actors": [
       "沈腾",
@@ -3134,7 +3547,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "吴彤"
     ],
     "actors": [
       "沈腾",
@@ -3166,9 +3579,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "沈腾",
       "吴京",
@@ -3197,7 +3608,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "王海龙"
     ],
     "actors": [
       "沈腾",
@@ -3222,9 +3633,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "吴京",
       "周润发"
@@ -3249,7 +3658,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "袁和平"
     ],
     "actors": [
       "吴京",
@@ -3275,7 +3684,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "本·维特利"
     ],
     "actors": [
       "吴京"
@@ -3299,9 +3708,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "吴京"
     ],
@@ -3324,9 +3731,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "吴京",
       "易烊千玺",
@@ -3352,7 +3757,8 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "麦兆辉",
+      "刘伟强"
     ],
     "actors": [
       "梁朝伟"
@@ -3377,7 +3783,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "德斯汀·丹尼尔·克雷顿"
     ],
     "actors": [
       "梁朝伟"
@@ -3401,9 +3807,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "梁朝伟"
     ],
@@ -3427,7 +3831,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "林岭东"
     ],
     "actors": [
       "周润发"
@@ -3452,7 +3856,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "戈尔·维宾斯基"
     ],
     "actors": [
       "周润发"
@@ -3476,9 +3880,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "周润发",
       "周迅"
@@ -3502,9 +3904,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "周润发",
       "巩俐"
@@ -3528,9 +3928,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "周星驰",
       "莱昂纳多·迪卡普里奥"
@@ -3555,7 +3953,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "杨晓雨"
     ],
     "actors": [
       "周星驰"
@@ -3580,7 +3978,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "刘镇伟"
     ],
     "actors": [
       "周星驰"
@@ -3604,9 +4002,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "成龙",
       "汤姆·克鲁斯"
@@ -3630,9 +4026,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "成龙",
       "基努·里维斯"
@@ -3656,9 +4050,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "成龙",
       "基努·里维斯"
@@ -3682,9 +4074,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "成龙",
       "莱昂纳多·迪卡普里奥"
@@ -3708,9 +4098,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "成龙",
       "汤姆·克鲁斯"
@@ -3735,7 +4123,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "Ahn Jae Cheol"
     ],
     "actors": [
       "成龙"
@@ -3760,7 +4148,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "徐纪周"
     ],
     "actors": [
       "张译",
@@ -3786,7 +4174,8 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "孔笙",
+      "李雪"
     ],
     "actors": [
       "张译"
@@ -3810,9 +4199,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "张译"
     ],
@@ -3836,7 +4223,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "管虎"
     ],
     "actors": [
       "张译"
@@ -3861,7 +4248,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "姚译添"
     ],
     "actors": [
       "黄渤",
@@ -3889,9 +4276,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "黄渤",
       "杨幂"
@@ -3916,7 +4301,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "李琳"
     ],
     "actors": [
       "黄渤",
@@ -3943,7 +4328,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "杨长岭"
     ],
     "actors": [
       "黄渤"
@@ -3968,7 +4353,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "王海龙"
     ],
     "actors": [
       "雷佳音"
@@ -3993,7 +4378,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "刘俊杰"
     ],
     "actors": [
       "雷佳音"
@@ -4018,7 +4403,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "林添一"
     ],
     "actors": [
       "雷佳音"
@@ -4043,7 +4428,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "曹盾"
     ],
     "actors": [
       "雷佳音",
@@ -4068,9 +4453,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "张颂文"
     ],
@@ -4093,9 +4476,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "张颂文"
     ],
@@ -4119,7 +4500,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "鞠觉亮"
     ],
     "actors": [
       "张颂文"
@@ -4143,9 +4524,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "张颂文"
     ],
@@ -4168,9 +4547,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "张颂文"
     ],
@@ -4194,7 +4571,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "付家鹏"
     ],
     "actors": [
       "胡歌",
@@ -4223,7 +4600,8 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "孔笙",
+      "李雪"
     ],
     "actors": [
       "胡歌"
@@ -4248,7 +4626,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "张黎"
     ],
     "actors": [
       "胡歌"
@@ -4272,9 +4650,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "胡歌"
     ],
@@ -4297,9 +4673,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "胡歌"
     ],
@@ -4322,9 +4696,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "胡歌"
     ],
@@ -4348,7 +4720,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "韩延"
     ],
     "actors": [
       "朱一龙"
@@ -4372,9 +4744,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "朱一龙",
       "易烊千玺",
@@ -4400,7 +4770,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "张开宙"
     ],
     "actors": [
       "朱一龙",
@@ -4426,7 +4796,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "郑晓龙"
     ],
     "actors": [
       "朱一龙"
@@ -4451,7 +4821,9 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "潘安子",
+      "江洪敏",
+      "Liu Feng"
     ],
     "actors": [
       "朱一龙"
@@ -4475,9 +4847,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "易烊千玺",
       "王宝强",
@@ -4503,7 +4873,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "Lu Wei"
     ],
     "actors": [
       "易烊千玺",
@@ -4529,7 +4899,9 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "郑伟文",
+      "Zheng Weiwen",
+      "陈家霖"
     ],
     "actors": [
       "王一博"
@@ -4554,7 +4926,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "傅东育"
     ],
     "actors": [
       "王一博"
@@ -4579,7 +4951,9 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "谭曼",
+      "毛豆豆",
+      "陈静"
     ],
     "actors": [
       "王一博"
@@ -4604,7 +4978,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "莫乃珊"
     ],
     "actors": [
       "肖战",
@@ -4631,9 +5005,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "肖战",
       "杨幂",
@@ -4659,7 +5031,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "孙皓"
     ],
     "actors": [
       "肖战"
@@ -4683,9 +5055,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "赵丽颖",
       "杨紫"
@@ -4710,7 +5080,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "石慧"
     ],
     "actors": [
       "赵丽颖",
@@ -4735,9 +5105,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "杨幂"
     ],
@@ -4761,7 +5129,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "莫乃珊"
     ],
     "actors": [
       "杨幂"
@@ -4785,9 +5153,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "杨紫"
     ],
@@ -4811,7 +5177,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "妮基·卡罗"
     ],
     "actors": [
       "刘亦菲",
@@ -4837,7 +5203,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "罗布·明科夫"
     ],
     "actors": [
       "刘亦菲"
@@ -4862,7 +5228,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "汪俊"
     ],
     "actors": [
       "刘亦菲"
@@ -4886,9 +5252,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "刘亦菲"
     ],
@@ -4912,7 +5276,11 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "张纪中",
+      "于敏",
+      "赵箭",
+      "周晓文",
+      "鞠觉亮"
     ],
     "actors": [
       "刘亦菲"
@@ -4936,9 +5304,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "刘亦菲"
     ],
@@ -4962,7 +5328,9 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "拉娜·沃卓斯基",
+      "莉莉·沃卓斯基",
+      "汤姆·提克威"
     ],
     "actors": [
       "周迅"
@@ -4987,7 +5355,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "汪俊"
     ],
     "actors": [
       "周迅"
@@ -5012,7 +5380,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "窦文涛"
     ],
     "actors": [
       "周迅"
@@ -5037,7 +5405,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "杨晓雨"
     ],
     "actors": [
       "周迅"
@@ -5061,9 +5429,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "章子怡"
     ],
@@ -5087,7 +5453,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "迈克尔·道赫蒂"
     ],
     "actors": [
       "章子怡"
@@ -5111,9 +5477,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "章子怡"
     ],
@@ -5137,7 +5501,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "布雷特·拉特纳"
     ],
     "actors": [
       "章子怡"
@@ -5162,7 +5526,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "张艺谋"
     ],
     "actors": [
       "巩俐"
@@ -5187,7 +5551,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "迈克尔·曼"
     ],
     "actors": [
       "汤唯"
@@ -5212,7 +5576,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "张挺"
     ],
     "actors": [
       "汤唯"
@@ -5237,7 +5601,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "朴赞郁"
     ],
     "actors": [
       "汤唯"
@@ -5262,7 +5626,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "董成鹏"
     ],
     "actors": [
       "汤唯"
@@ -5287,7 +5651,13 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "罗媛元",
+      "童瑶",
+      "许伽",
+      "刘政",
+      "查文洁",
+      "周宗政",
+      "王雪"
     ],
     "actors": [
       "贾玲"
@@ -5312,7 +5682,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "Dave Diomedi"
     ],
     "actors": [
       "基努·里维斯",
@@ -5338,9 +5708,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "基努·里维斯"
     ],
@@ -5364,7 +5732,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电影"
     ],
     "directors": [
-      "知名导演"
+      "安德鲁·斯坦顿"
     ],
     "actors": [
       "基努·里维斯"
@@ -5388,9 +5756,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "汤姆·克鲁斯"
     ],
@@ -5413,9 +5779,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "汤姆·克鲁斯"
     ],
@@ -5439,7 +5803,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
       "电视剧"
     ],
     "directors": [
-      "知名导演"
+      "Michael Athanasiou"
     ],
     "actors": [
       "莱昂纳多·迪卡普里奥"
@@ -5463,9 +5827,7 @@ export const PEOPLE_PREBAKED_ENTITIES: TitleEntity[] = [
     "genres": [
       "电视剧"
     ],
-    "directors": [
-      "知名导演"
-    ],
+    "directors": [],
     "actors": [
       "莱昂纳多·迪卡普里奥"
     ],

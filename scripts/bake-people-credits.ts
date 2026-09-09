@@ -90,7 +90,7 @@ async function main() {
           rate: item.vote_average ? item.vote_average.toFixed(1) : '8.5',
           genres: [type === 'movie' ? '电影' : '电视剧'],
           directors: [dir],
-          actors: ['实力主演'],
+          actors: [],
           createdAt: '2026-09-01T00:00:00Z',
           updatedAt: '2026-09-01T00:00:00Z',
         });
@@ -132,7 +132,7 @@ async function main() {
           backdrop: item.backdrop_path ? `https://image.tmdb.org/t/p/w1280${item.backdrop_path}` : `https://image.tmdb.org/t/p/w500${item.poster_path}`,
           rate: item.vote_average ? item.vote_average.toFixed(1) : '8.5',
           genres: [type === 'movie' ? '电影' : '电视剧'],
-          directors: ['知名导演'],
+          directors: [],
           actors: [act],
           createdAt: '2026-09-01T00:00:00Z',
           updatedAt: '2026-09-01T00:00:00Z',
@@ -141,9 +141,7 @@ async function main() {
         // 追加演员
         const existing = collectedEntities.find(e => e.tmdbId === String(item.id) && e.tmdbType === type);
         if (existing) {
-          if (existing.actors[0] === '实力主演') {
-            existing.actors = [act];
-          } else if (!existing.actors.includes(act)) {
+          if (!existing.actors.includes(act)) {
             existing.actors.push(act);
           }
         }

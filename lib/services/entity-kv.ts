@@ -62,8 +62,8 @@ function seedPrebakedData() {
       backdrop: s.backdrop || s.cover,
       rate: s.rate || '9.0',
       genres: s.types || [item.type === 'movie' ? '电影' : '电视剧'],
-      directors: s.directors || ['知名导演'],
-      actors: s.actors || ['实力主演'],
+      directors: (s.directors || []).filter(d => d && d !== '知名导演'),
+      actors: (s.actors || []).filter(a => a && a !== '实力主演'),
       createdAt: '2026-09-01T00:00:00Z',
       updatedAt: '2026-09-01T00:00:00Z',
     };
@@ -113,7 +113,12 @@ function seedPrebakedData() {
   }
 
   // 注入核心名导与顶级号召力巨星精选代表作库（涵盖 56+ 位核心人物，冷启动秒开且 100% 有作品）
-  for (const entity of PEOPLE_PREBAKED_ENTITIES) {
+  for (const rawEntity of PEOPLE_PREBAKED_ENTITIES) {
+    const entity: TitleEntity = {
+      ...rawEntity,
+      directors: (rawEntity.directors || []).filter(d => d && d !== '知名导演'),
+      actors: (rawEntity.actors || []).filter(a => a && a !== '实力主演'),
+    };
     const norm = normalizeTitle(entity.title);
     if (!seenTitles.has(norm)) {
       seenTitles.add(norm);
@@ -239,7 +244,10 @@ export async function getEntityById(entityId: string): Promise<TitleEntity | nul
   const raw = await kvGet(`entity:${cleanId}`);
   if (raw) {
     try {
-      return JSON.parse(raw) as TitleEntity;
+      const parsed = JSON.parse(raw) as TitleEntity;
+      parsed.directors = (parsed.directors || []).filter(d => d && d !== '知名导演');
+      parsed.actors = (parsed.actors || []).filter(a => a && a !== '实力主演');
+      return parsed;
     } catch {}
   }
   // 兜底从内存预烘焙中查找
@@ -247,7 +255,10 @@ export async function getEntityById(entityId: string): Promise<TitleEntity | nul
   const memRaw = memoryStore.get(`entity:${cleanId}`);
   if (memRaw) {
     try {
-      return JSON.parse(memRaw) as TitleEntity;
+      const parsed = JSON.parse(memRaw) as TitleEntity;
+      parsed.directors = (parsed.directors || []).filter(d => d && d !== '知名导演');
+      parsed.actors = (parsed.actors || []).filter(a => a && a !== '实力主演');
+      return parsed;
     } catch {}
   }
   return null;
@@ -350,7 +361,7 @@ export async function saveEntity(entity: TitleEntity): Promise<void> {
   // 7. 追加到导演索引
   if (Array.isArray(entity.directors)) {
     for (const d of entity.directors) {
-      if (!d) continue;
+      if (!d || d === '知名导演') continue;
       const dKey = `director:${d.trim()}`;
       const rawD = await kvGet(dKey);
       const dList: string[] = rawD ? JSON.parse(rawD) : [];
@@ -364,7 +375,7 @@ export async function saveEntity(entity: TitleEntity): Promise<void> {
   // 8. 追加到演员索引
   if (Array.isArray(entity.actors)) {
     for (const a of entity.actors) {
-      if (!a) continue;
+      if (!a || a === '实力主演') continue;
       const aKey = `actor:${a.trim()}`;
       const rawA = await kvGet(aKey);
       const aList: string[] = rawA ? JSON.parse(rawA) : [];
@@ -397,13 +408,14 @@ export async function getEntitiesByGenre(genre: string, limit = 12): Promise<Tit
  * 获取同导演作品（用于详情页内链与导演作品专栏）
  */
 export async function getEntitiesByDirector(director: string, limit = 48): Promise<TitleEntity[]> {
-  if (!director) return [];
+  if (!director || director === '知名导演') return [];
   let name = director.trim();
   try {
     name = decodeURIComponent(name).trim();
   } catch {
     // 忽略异常
   }
+  if (name === '知名导演') return [];
 
   const raw = await kvGet(`director:${name}`);
   let ids: string[] = [];
@@ -433,13 +445,14 @@ export async function getEntitiesByDirector(director: string, limit = 48): Promi
  * 获取同主演作品（用于详情页内链与演员作品专栏）
  */
 export async function getEntitiesByActor(actor: string, limit = 48): Promise<TitleEntity[]> {
-  if (!actor) return [];
+  if (!actor || actor === '实力主演') return [];
   let name = actor.trim();
   try {
     name = decodeURIComponent(name).trim();
   } catch {
     // 忽略异常
   }
+  if (name === '实力主演') return [];
 
   const raw = await kvGet(`actor:${name}`);
   let ids: string[] = [];

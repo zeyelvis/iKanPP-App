@@ -3,9 +3,9 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, Clock, Calendar, Film, ArrowLeft } from 'lucide-react';
-import { getEntityBySlug, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor } from '@/lib/services/entity-kv';
+import { getEntityBySlug, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity } from '@/lib/services/entity-kv';
 import { getGenreBySlug } from '@/lib/data/genres';
-import { searchAndEnrichFromTMDB } from '@/lib/services/entity-enrichment';
+import { searchAndEnrichFromTMDB, fetchTMDBDetails } from '@/lib/services/entity-enrichment';
 import { TitleJsonLd } from '@/components/seo/TitleJsonLd';
 import { PlayButton } from '@/components/title/PlayButton';
 import { Navbar } from '@/components/layout/Navbar';
@@ -41,8 +41,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const isTv = entity.type === 'tv';
   const typeText = isTv ? '全集' : '免费高清完整版';
   const pageTitle = `${entity.title} (${entity.year}) 在线观看 - ${typeText} | iKanPP 爱看片片`;
-  const cleanDesc = (entity.description || '').replace(/\s+/g, ' ').slice(0, 140);
-  const metaDescription = `在 iKanPP 免费在线观看《${entity.title}》(${entity.year}) ${isTv ? '电视剧全集' : '电影完整版'}。${cleanDesc}... 导演: ${entity.directors?.slice(0, 2).join(' / ')}，主演: ${entity.actors?.slice(0, 3).join(' / ')}。海外华人免翻墙极速超清播放。`;
+  const validDirs = (entity.directors || []).filter(d => d && !['知名导演', '实力主演', '未知', '暂无'].includes(d.trim()));
+  const validActs = (entity.actors || []).filter(a => a && !['知名导演', '实力主演', '未知', '暂无'].includes(a.trim()));
+  let peopleText = '';
+  if (validDirs.length > 0) peopleText += ` 导演: ${validDirs.slice(0, 2).join(' / ')}。`;
+  const rawDesc = entity.description || '';
+  const cleanDesc = rawDesc.replace(/(?:导演|主演)\s*[:：]\s*(?:知名导演|实力主演)[，。、\s]*/g, '').slice(0, 100);
+
+  const metaDescription = `在 iKanPP 免费在线观看《${entity.title}》(${entity.year}) ${isTv ? '电视剧全集' : '电影完整版'}。${cleanDesc ? `${cleanDesc}...` : ''}${peopleText}海外华人免翻墙极速超清播放。`;
   const canonicalUrl = `${BASE_URL}/title/${entity.entityId}-${entity.slug}`;
   const ogImage = entity.backdrop || entity.cover;
 
@@ -102,10 +108,40 @@ export default async function TitlePage({ params }: Props) {
     notFound();
   }
 
+  // 严格过滤占位符假数据
+  const filterFakePeople = (list: string[] = []) =>
+    list.filter(p => p && !['知名导演', '实力主演', '未知', '暂无'].includes(p.trim()));
+
+  let validDirectors = filterFakePeople(entity.directors);
+  let validActors = filterFakePeople(entity.actors);
+
+  // 演职员数据缺失或包含假数据时，若有 TMDB ID，现场异步向 TMDB 自动丰润拉取真实演职员并更新持久化
+  if ((validDirectors.length === 0 || validActors.length === 0) && entity.tmdbId) {
+    try {
+      const tmdbMediaType: 'movie' | 'tv' = entity.type === 'movie' ? 'movie' : 'tv';
+      const detail = await fetchTMDBDetails(entity.tmdbId, tmdbMediaType);
+      if (detail?.credits) {
+        const realDirs = (detail.credits.crew || []).filter(c => c.job === 'Director').map(c => c.name).filter(Boolean);
+        const realActs = (detail.credits.cast || []).slice(0, 5).map(c => c.name).filter(Boolean);
+        if (realDirs.length > 0) {
+          entity.directors = realDirs;
+          validDirectors = realDirs;
+        }
+        if (realActs.length > 0) {
+          entity.actors = realActs;
+          validActors = realActs;
+        }
+        if (realDirs.length > 0 || realActs.length > 0) {
+          await saveEntity(entity);
+        }
+      }
+    } catch {}
+  }
+
   // 获取同题材、同导演与同主演相关推荐影片（构建站内强内链拓扑）
   const primaryGenre = entity.genres?.[0] || (entity.type === 'tv' ? '电视剧' : '电影');
-  const primaryDirector = entity.directors?.[0];
-  const primaryActor = entity.actors?.[0];
+  const primaryDirector = validDirectors[0];
+  const primaryActor = validActors[0];
 
   const [genreRelated, directorRelated, actorRelated] = await Promise.all([
     getEntitiesByGenre(primaryGenre, 8),
@@ -269,48 +305,50 @@ export default async function TitlePage({ params }: Props) {
               </div>
 
               {/* 演职员表（深度内链直达导演/演员作品专栏） */}
-              <div className="space-y-3 mb-8 text-sm sm:text-base">
-                {entity.directors && entity.directors.length > 0 && (
-                  <div className="flex flex-wrap items-baseline gap-2">
-                    <span className="text-white/40 font-medium">导演：</span>
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      {entity.directors.map((d, idx) => (
-                        <span key={d} className="inline-flex items-center">
-                          <Link
-                            href={`/director/${encodeURIComponent(d)}`}
-                            className="text-white/90 hover:text-red-400 hover:underline transition-colors"
-                          >
-                            {d}
-                          </Link>
-                          {idx < entity.directors.length - 1 && (
-                            <span className="text-white/30 ml-1.5">/</span>
-                          )}
-                        </span>
-                      ))}
+              {(validDirectors.length > 0 || validActors.length > 0) && (
+                <div className="space-y-3 mb-8 text-sm sm:text-base">
+                  {validDirectors.length > 0 && (
+                    <div className="flex flex-wrap items-baseline gap-2">
+                      <span className="text-white/40 font-medium">导演：</span>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {validDirectors.map((d, idx) => (
+                          <span key={d} className="inline-flex items-center">
+                            <Link
+                              href={`/director/${encodeURIComponent(d)}`}
+                              className="text-white/90 hover:text-red-400 hover:underline transition-colors font-medium"
+                            >
+                              {d}
+                            </Link>
+                            {idx < validDirectors.length - 1 && (
+                              <span className="text-white/30 ml-1.5">/</span>
+                            )}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-                {entity.actors && entity.actors.length > 0 && (
-                  <div className="flex flex-wrap items-baseline gap-2">
-                    <span className="text-white/40 font-medium">主演：</span>
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      {entity.actors.map((a, idx) => (
-                        <span key={a} className="inline-flex items-center">
-                          <Link
-                            href={`/actor/${encodeURIComponent(a)}`}
-                            className="text-white/90 hover:text-red-400 hover:underline transition-colors"
-                          >
-                            {a}
-                          </Link>
-                          {idx < entity.actors.length - 1 && (
-                            <span className="text-white/30 ml-1.5">/</span>
-                          )}
-                        </span>
-                      ))}
+                  )}
+                  {validActors.length > 0 && (
+                    <div className="flex flex-wrap items-baseline gap-2">
+                      <span className="text-white/40 font-medium">主演：</span>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {validActors.map((a, idx) => (
+                          <span key={a} className="inline-flex items-center">
+                            <Link
+                              href={`/actor/${encodeURIComponent(a)}`}
+                              className="text-white/90 hover:text-red-400 hover:underline transition-colors"
+                            >
+                              {a}
+                            </Link>
+                            {idx < validActors.length - 1 && (
+                              <span className="text-white/30 ml-1.5">/</span>
+                            )}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
 
               {/* E-E-A-T 影视资料背书 */}
               <div className="flex items-center gap-2 text-xs text-white/35 mb-6">
