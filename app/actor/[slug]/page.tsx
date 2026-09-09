@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Star, Film, User } from 'lucide-react';
 import { getEntitiesByActor } from '@/lib/services/entity-kv';
-import { searchAndEnrichFromTMDB } from '@/lib/services/entity-enrichment';
+import { searchAndEnrichPersonCredits } from '@/lib/services/entity-enrichment';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { Navbar } from '@/components/layout/Navbar';
 
@@ -63,11 +63,13 @@ export default async function ActorPage({ params }: Props) {
 
   let entities = await getEntitiesByActor(actorName, 48);
 
-  // 演员作品自愈与自繁殖扩充
+  // 演员作品自愈与自繁殖扩充（通过 TMDB 人物履历抓取其全部主演与参演代表作）
   if (entities.length === 0) {
     try {
-      await searchAndEnrichFromTMDB(actorName);
-      entities = await getEntitiesByActor(actorName, 48);
+      const enriched = await searchAndEnrichPersonCredits(actorName, 'actor', 36);
+      if (enriched.length > 0) {
+        entities = enriched;
+      }
     } catch {}
   }
 

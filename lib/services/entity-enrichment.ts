@@ -180,3 +180,110 @@ export async function searchAndEnrichFromTMDB(
 
   return null;
 }
+
+/**
+ * 根据导演或演员姓名，在 TMDB 抓取该人物的名下代表作品并沉淀入库
+ */
+export async function searchAndEnrichPersonCredits(
+  personName: string,
+  role: 'director' | 'actor',
+  limit = 12
+): Promise<TitleEntity[]> {
+  if (!personName || !TMDB_API_KEY) return [];
+
+  const cleanName = personName.trim();
+
+  try {
+    // 1. 检索人物 ID
+    const searchUrl = `${TMDB_BASE}/search/person?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(cleanName)}`;
+    const sRes = await fetch(searchUrl, { headers: { Accept: 'application/json' } });
+    if (!sRes.ok) return [];
+
+    const sData = await sRes.json();
+    const person = sData.results?.[0];
+    if (!person || !person.id) return [];
+
+    // 2. 获取作品履历 (combined_credits)
+    const creditsUrl = `${TMDB_BASE}/person/${person.id}/combined_credits?api_key=${TMDB_API_KEY}&language=zh-CN`;
+    const cRes = await fetch(creditsUrl, { headers: { Accept: 'application/json' } });
+    if (!cRes.ok) return [];
+
+    const cData = await cRes.json();
+    let candidates: any[] = [];
+
+    if (role === 'director') {
+      const crew = Array.isArray(cData.crew) ? cData.crew : [];
+      candidates = crew.filter((c: any) => c.job === 'Director' || c.department === 'Directing');
+    } else {
+      candidates = Array.isArray(cData.cast) ? cData.cast : [];
+    }
+
+    // 过滤有海报与中文名、按热度倒序排列
+    const validCandidates = candidates
+      .filter((c: any) => (c.title || c.name) && c.poster_path)
+      .sort((a: any, b: any) => (b.popularity || 0) - (a.popularity || 0))
+      .slice(0, limit);
+
+    const results: TitleEntity[] = [];
+
+    for (const item of validCandidates) {
+      const mediaType: 'movie' | 'tv' = item.media_type === 'tv' ? 'tv' : 'movie';
+      const tmdbIdStr = String(item.id);
+
+      // 检查是否已有该条目
+      let entity = await getEntityByTmdb(mediaType, tmdbIdStr);
+      if (!entity) {
+        // 创建新实体
+        const mainTitle = item.title || item.name;
+        const nextSeq = await getNextEntitySeq();
+        const entityId = formatEntityId(nextSeq);
+        const slug = generateSlug(mainTitle);
+        const releaseYear = (item.release_date || item.first_air_date || '2024').slice(0, 4);
+
+        entity = {
+          entityId,
+          slug,
+          tmdbId: tmdbIdStr,
+          tmdbType: mediaType,
+          title: mainTitle,
+          originalTitle: item.original_title || item.original_name,
+          type: mediaType,
+          year: releaseYear,
+          description: item.overview || `${mainTitle} 由 ${cleanName} ${role === 'director' ? '执导' : '主演'}，在 iKanPP 免费在线观看高清完整版。`,
+          cover: `https://image.tmdb.org/t/p/w500${item.poster_path}`,
+          backdrop: item.backdrop_path ? `https://image.tmdb.org/t/p/w1280${item.backdrop_path}` : `https://image.tmdb.org/t/p/w500${item.poster_path}`,
+          rate: item.vote_average ? item.vote_average.toFixed(1) : '8.5',
+          genres: [mediaType === 'movie' ? '电影' : '电视剧'],
+          directors: role === 'director' ? [cleanName] : ['知名导演'],
+          actors: role === 'actor' ? [cleanName] : ['实力主演'],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        await saveEntity(entity);
+      } else {
+        // 如果实体已存在，确保其导演或演员列表中包含该人物，并更新索引
+        let needSave = false;
+        if (role === 'director' && !entity.directors.includes(cleanName)) {
+          entity.directors.push(cleanName);
+          needSave = true;
+        }
+        if (role === 'actor' && !entity.actors.includes(cleanName)) {
+          entity.actors.push(cleanName);
+          needSave = true;
+        }
+        if (needSave) {
+          await saveEntity(entity);
+        }
+      }
+
+      results.push(entity);
+    }
+
+    return results;
+  } catch (err) {
+    console.warn(`[Enrich person fail] name=${personName}:`, err);
+    return [];
+  }
+}
+

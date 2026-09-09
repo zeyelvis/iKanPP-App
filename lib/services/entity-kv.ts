@@ -2,6 +2,7 @@ import { TitleEntity } from '@/lib/types/entity';
 import { generateSlug, formatEntityId, normalizeTitle } from '@/lib/data/entities/entity-utils';
 import { PREBAKED_HOME_DATA, PrebakedSubject } from '@/lib/data/home-prebaked';
 import { POPULAR_DIRECTORS, POPULAR_ACTORS } from '@/lib/data/popular-people';
+import { PEOPLE_PREBAKED_ENTITIES } from '@/lib/data/people-prebaked';
 
 // 内存预烘焙回退字典（确保本地开发、静态构建与边缘冷启动时 0ms 秒开且具备首批 110+ 核心经典影视）
 const memoryStore = new Map<string, string>();
@@ -111,9 +112,59 @@ function seedPrebakedData() {
     }
   }
 
+  // 注入核心名导与顶级号召力巨星精选代表作库（涵盖 56+ 位核心人物，冷启动秒开且 100% 有作品）
+  for (const entity of PEOPLE_PREBAKED_ENTITIES) {
+    const norm = normalizeTitle(entity.title);
+    if (!seenTitles.has(norm)) {
+      seenTitles.add(norm);
+      memoryStore.set(`entity:${entity.entityId}`, JSON.stringify(entity));
+      memoryStore.set(`slug:${entity.entityId}-${entity.slug}`, entity.entityId);
+      memoryStore.set(`slug:${entity.entityId}`, entity.entityId);
+      memoryStore.set(`tmdb:${entity.tmdbType}:${entity.tmdbId}`, entity.entityId);
+      memoryStore.set(`title:${norm}`, entity.entityId);
+    }
+
+    // 索引分类
+    for (const g of entity.genres || []) {
+      const gKey = `genre:${g.trim()}`;
+      const existing = memoryStore.get(gKey);
+      const list = existing ? JSON.parse(existing) : [];
+      if (!list.includes(entity.entityId)) {
+        list.push(entity.entityId);
+        memoryStore.set(gKey, JSON.stringify(list));
+      }
+    }
+
+    // 索引导演
+    for (const d of entity.directors || []) {
+      if (!d || d === '知名导演') continue;
+      const dClean = d.trim();
+      const dKey = `director:${dClean}`;
+      const existing = memoryStore.get(dKey);
+      const list = existing ? JSON.parse(existing) : [];
+      if (!list.includes(entity.entityId)) {
+        list.push(entity.entityId);
+        memoryStore.set(dKey, JSON.stringify(list));
+      }
+    }
+
+    // 索引演员
+    for (const a of entity.actors || []) {
+      if (!a || a === '实力主演') continue;
+      const aClean = a.trim();
+      const aKey = `actor:${aClean}`;
+      const existing = memoryStore.get(aKey);
+      const list = existing ? JSON.parse(existing) : [];
+      if (!list.includes(entity.entityId)) {
+        list.push(entity.entityId);
+        memoryStore.set(aKey, JSON.stringify(list));
+      }
+    }
+  }
+
   // 收集并持久化全部已知导演与演员集合
-  const allDirs = new Set<string>();
-  const allActs = new Set<string>();
+  const allDirs = new Set<string>(POPULAR_DIRECTORS);
+  const allActs = new Set<string>(POPULAR_ACTORS);
   for (const [key] of memoryStore.entries()) {
     if (key.startsWith('director:')) allDirs.add(key.replace('director:', ''));
     if (key.startsWith('actor:')) allActs.add(key.replace('actor:', ''));
@@ -124,7 +175,7 @@ function seedPrebakedData() {
   // 全量实体索引
   const allIds = Array.from(seenTitles).map((_, i) => formatEntityId(i + 1));
   memoryStore.set('index:all', JSON.stringify(allIds));
-  memoryStore.set('counter:next_id', String(seq));
+  memoryStore.set('counter:next_id', String(Math.max(seq, 2000)));
 }
 
 // 获取 Cloudflare KV 实例（如果在 Cloudflare Pages / Worker 环境）
@@ -184,13 +235,22 @@ async function kvPut(key: string, value: string): Promise<void> {
  */
 export async function getEntityById(entityId: string): Promise<TitleEntity | null> {
   if (!entityId) return null;
-  const raw = await kvGet(`entity:${entityId.toLowerCase()}`);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as TitleEntity;
-  } catch {
-    return null;
+  const cleanId = entityId.toLowerCase();
+  const raw = await kvGet(`entity:${cleanId}`);
+  if (raw) {
+    try {
+      return JSON.parse(raw) as TitleEntity;
+    } catch {}
   }
+  // 兜底从内存预烘焙中查找
+  seedPrebakedData();
+  const memRaw = memoryStore.get(`entity:${cleanId}`);
+  if (memRaw) {
+    try {
+      return JSON.parse(memRaw) as TitleEntity;
+    } catch {}
+  }
+  return null;
 }
 
 /**
@@ -336,7 +396,7 @@ export async function getEntitiesByGenre(genre: string, limit = 12): Promise<Tit
 /**
  * 获取同导演作品（用于详情页内链与导演作品专栏）
  */
-export async function getEntitiesByDirector(director: string, limit = 12): Promise<TitleEntity[]> {
+export async function getEntitiesByDirector(director: string, limit = 48): Promise<TitleEntity[]> {
   if (!director) return [];
   let name = director.trim();
   try {
@@ -344,22 +404,35 @@ export async function getEntitiesByDirector(director: string, limit = 12): Promi
   } catch {
     // 忽略异常
   }
+
   const raw = await kvGet(`director:${name}`);
-  if (!raw) return [];
+  let ids: string[] = [];
   try {
-    const ids: string[] = JSON.parse(raw);
-    const selectedIds = ids.slice(0, limit);
-    const results = await Promise.all(selectedIds.map(id => getEntityById(id)));
-    return results.filter((e): e is TitleEntity => e !== null);
-  } catch {
-    return [];
+    if (raw) ids = JSON.parse(raw);
+  } catch {}
+
+  // 若 KV 查询结果为空，自动兜底从内存预烘焙索引中查找
+  if (!ids || ids.length === 0) {
+    seedPrebakedData();
+    const memRaw = memoryStore.get(`director:${name}`);
+    if (memRaw) {
+      try {
+        ids = JSON.parse(memRaw);
+      } catch {}
+    }
   }
+
+  if (!ids || ids.length === 0) return [];
+
+  const selectedIds = ids.slice(0, limit);
+  const results = await Promise.all(selectedIds.map(id => getEntityById(id)));
+  return results.filter((e): e is TitleEntity => e !== null);
 }
 
 /**
  * 获取同主演作品（用于详情页内链与演员作品专栏）
  */
-export async function getEntitiesByActor(actor: string, limit = 12): Promise<TitleEntity[]> {
+export async function getEntitiesByActor(actor: string, limit = 48): Promise<TitleEntity[]> {
   if (!actor) return [];
   let name = actor.trim();
   try {
@@ -367,16 +440,29 @@ export async function getEntitiesByActor(actor: string, limit = 12): Promise<Tit
   } catch {
     // 忽略异常
   }
+
   const raw = await kvGet(`actor:${name}`);
-  if (!raw) return [];
+  let ids: string[] = [];
   try {
-    const ids: string[] = JSON.parse(raw);
-    const selectedIds = ids.slice(0, limit);
-    const results = await Promise.all(selectedIds.map(id => getEntityById(id)));
-    return results.filter((e): e is TitleEntity => e !== null);
-  } catch {
-    return [];
+    if (raw) ids = JSON.parse(raw);
+  } catch {}
+
+  // 若 KV 查询结果为空，自动兜底从内存预烘焙索引中查找
+  if (!ids || ids.length === 0) {
+    seedPrebakedData();
+    const memRaw = memoryStore.get(`actor:${name}`);
+    if (memRaw) {
+      try {
+        ids = JSON.parse(memRaw);
+      } catch {}
+    }
   }
+
+  if (!ids || ids.length === 0) return [];
+
+  const selectedIds = ids.slice(0, limit);
+  const results = await Promise.all(selectedIds.map(id => getEntityById(id)));
+  return results.filter((e): e is TitleEntity => e !== null);
 }
 
 /**

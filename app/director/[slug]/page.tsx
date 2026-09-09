@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Star, Film, Clapperboard } from 'lucide-react';
 import { getEntitiesByDirector } from '@/lib/services/entity-kv';
-import { searchAndEnrichFromTMDB } from '@/lib/services/entity-enrichment';
+import { searchAndEnrichPersonCredits } from '@/lib/services/entity-enrichment';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { Navbar } from '@/components/layout/Navbar';
 
@@ -63,11 +63,13 @@ export default async function DirectorPage({ params }: Props) {
 
   let entities = await getEntitiesByDirector(directorName, 48);
 
-  // 导演作品自愈与自繁殖扩充
+  // 导演作品自愈与自繁殖扩充（通过 TMDB 人物履历抓取其全部执导代表作）
   if (entities.length === 0) {
     try {
-      await searchAndEnrichFromTMDB(directorName);
-      entities = await getEntitiesByDirector(directorName, 48);
+      const enriched = await searchAndEnrichPersonCredits(directorName, 'director', 36);
+      if (enriched.length > 0) {
+        entities = enriched;
+      }
     } catch {}
   }
 
