@@ -414,6 +414,23 @@ export async function setPersonEntitiesIndex(role: 'director' | 'actor', personN
 }
 
 /**
+ * 检查该人物是否已完成过深度全量代表作扩充
+ */
+export async function isPersonEnriched(role: 'director' | 'actor', personName: string): Promise<boolean> {
+  const clean = personName.trim();
+  const val = await kvGet(`person:enriched:${role}:${clean}`);
+  return val === '1';
+}
+
+/**
+ * 标记该人物已完成深度全量代表作扩充
+ */
+export async function markPersonEnriched(role: 'director' | 'actor', personName: string): Promise<void> {
+  const clean = personName.trim();
+  await kvPut(`person:enriched:${role}:${clean}`, '1');
+}
+
+/**
  * 获取同导演作品（用于详情页内链与导演作品专栏，严格剔除脱口秀/综艺通告）
  */
 export async function getEntitiesByDirector(director: string, limit = 48): Promise<TitleEntity[]> {

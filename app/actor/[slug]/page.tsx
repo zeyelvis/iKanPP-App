@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Star, Film, User } from 'lucide-react';
-import { getEntitiesByActor } from '@/lib/services/entity-kv';
+import { getEntitiesByActor, isPersonEnriched, markPersonEnriched } from '@/lib/services/entity-kv';
 import { searchAndEnrichPersonCredits } from '@/lib/services/entity-enrichment';
 import { isInvalidDramaOrMovie } from '@/lib/data/entities/entity-utils';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
@@ -67,14 +67,18 @@ export default async function ActorPage({ params }: Props) {
   // 1. 严格剔除脱口秀、真人秀等非影视正片
   const cleanEntities = entities.filter(e => !isInvalidDramaOrMovie(e));
 
-  // 2. 如果作品为空（0部），或者原本包含脱口秀脏数据，主动触发高质量 TMDB 代表作自愈与覆写
-  if (cleanEntities.length === 0 || cleanEntities.length < entities.length) {
+  // 2. 检查是否已对该影人进行过全量代表作深度扩充
+  const alreadyEnriched = await isPersonEnriched('actor', actorName);
+
+  // 3. 如果作品为空、作品数过少且未深度扩充（< 8部），或包含脏数据，主动触发高质量 TMDB 代表作自愈与覆写
+  if ((!alreadyEnriched && cleanEntities.length < 8) || cleanEntities.length === 0 || cleanEntities.length < entities.length) {
     try {
       const enriched = await searchAndEnrichPersonCredits(actorName, 'actor', 36);
       if (enriched.length > 0) {
         entities = enriched;
       } else {
         entities = cleanEntities;
+        await markPersonEnriched('actor', actorName);
       }
     } catch {
       entities = cleanEntities;

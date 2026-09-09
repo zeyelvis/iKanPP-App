@@ -1,6 +1,6 @@
 import { TitleEntity } from '@/lib/types/entity';
 import { generateSlug, formatEntityId, normalizeTitle } from '@/lib/data/entities/entity-utils';
-import { getEntityByTitle, getEntityByTmdb, getNextEntitySeq, saveEntity, setPersonEntitiesIndex } from '@/lib/services/entity-kv';
+import { getEntityByTitle, getEntityByTmdb, getNextEntitySeq, saveEntity, setPersonEntitiesIndex, markPersonEnriched } from '@/lib/services/entity-kv';
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
@@ -348,6 +348,7 @@ export async function searchAndEnrichPersonCredits(
       try {
         const cleanIds = results.map(r => r.entityId);
         await setPersonEntitiesIndex(role, cleanName, cleanIds);
+        await markPersonEnriched(role, cleanName);
       } catch (e) {
         console.warn(`[Failed to update person index] name=${cleanName}:`, e);
       }
