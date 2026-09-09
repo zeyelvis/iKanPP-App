@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Play, Loader2, Sparkles } from 'lucide-react';
 import { useHistoryStore } from '@/lib/store/history-store';
 import { TitleEntity } from '@/lib/types/entity';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 
 interface StickyBottomPlayCTAProps {
   entity: TitleEntity;
@@ -68,7 +69,7 @@ export function StickyBottomPlayCTA({ entity }: StickyBottomPlayCTAProps) {
           <div className="relative w-10 h-14 rounded-lg overflow-hidden shrink-0 border border-white/10 bg-black/40">
             {entity.cover && (
               <Image
-                src={entity.cover}
+                src={getOptimizedImageUrl(entity.cover)}
                 alt={entity.title}
                 fill
                 sizes="40px"

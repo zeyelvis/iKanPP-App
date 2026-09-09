@@ -8,6 +8,7 @@ import { getGenreBySlug } from '@/lib/data/genres';
 import { parseEntitySlug } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, fetchTMDBDetails } from '@/lib/services/entity-enrichment';
 import { getPersonAvatars } from '@/lib/services/person-avatar';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { TitleEntity } from '@/lib/types/entity';
 import { TitleJsonLd } from '@/components/seo/TitleJsonLd';
 import { TitleActionsBar } from '@/components/title/TitleActionsBar';
@@ -208,7 +209,8 @@ export default async function TitlePage({ params }: Props) {
   const isTv = entity.type === 'tv';
   const channelPath = isTv ? '/tv' : '/movie';
   const channelName = isTv ? '电视剧' : '电影';
-  const heroBackdrop = entity.backdrop || entity.cover;
+  const heroBackdrop = getOptimizedImageUrl(entity.backdrop || entity.cover);
+  const entityCover = getOptimizedImageUrl(entity.cover);
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white selection:bg-red-600 selection:text-white relative">
@@ -319,7 +321,7 @@ export default async function TitlePage({ params }: Props) {
               <div className="hidden md:block relative aspect-2/3 w-full max-w-[260px] lg:max-w-[290px] rounded-2xl overflow-hidden shadow-2xl shadow-black/80 border border-white/15 bg-black/40 group">
                 {entity.cover ? (
                   <Image
-                    src={entity.cover}
+                    src={entityCover}
                     alt={`${entity.title} 封面海报`}
                     fill
                     sizes="(max-width: 768px) 280px, (max-width: 1200px) 25vw, 320px"
@@ -477,7 +479,7 @@ export default async function TitlePage({ params }: Props) {
                   {peopleAvatars[d] ? (
                     <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-red-500/40 group-hover:border-red-500 shrink-0 shadow-md group-hover:scale-105 transition-all">
                       <Image
-                        src={peopleAvatars[d]}
+                        src={getOptimizedImageUrl(peopleAvatars[d])}
                         alt={d}
                         fill
                         sizes="48px"
@@ -508,7 +510,7 @@ export default async function TitlePage({ params }: Props) {
                   {peopleAvatars[a] ? (
                     <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-amber-500/40 group-hover:border-amber-500 shrink-0 shadow-md group-hover:scale-105 transition-all">
                       <Image
-                        src={peopleAvatars[a]}
+                        src={getOptimizedImageUrl(peopleAvatars[a])}
                         alt={a}
                         fill
                         sizes="48px"
@@ -550,7 +552,7 @@ export default async function TitlePage({ params }: Props) {
                   <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
                     {rel.cover ? (
                       <Image
-                        src={rel.cover}
+                        src={getOptimizedImageUrl(rel.cover)}
                         alt={rel.title}
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"

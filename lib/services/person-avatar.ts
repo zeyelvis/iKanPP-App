@@ -1,4 +1,5 @@
 import { PREBAKED_AVATARS } from '@/lib/data/prebaked-avatars';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 
 const avatarMemoryCache = new Map<string, string>();
 const TMDB_BASE = 'https://api.themoviedb.org/3';
@@ -12,9 +13,9 @@ export async function getPersonAvatar(name: string): Promise<string | null> {
   const cleanName = name.trim();
   if (!cleanName || cleanName === '实力主演' || cleanName === '导演') return null;
 
-  // 1. 优先查预置高清人物肖像字典（0ms）
+  // 1. 优先查预置高清人物肖像字典（0ms），全自动边缘代理中转
   if (PREBAKED_AVATARS[cleanName]) {
-    return PREBAKED_AVATARS[cleanName];
+    return getOptimizedImageUrl(PREBAKED_AVATARS[cleanName]);
   }
 
   // 2. 查内存缓存
@@ -42,7 +43,8 @@ export async function getPersonAvatar(name: string): Promise<string | null> {
     // 优选带肖像照的知名影人
     const candidate = results.find((p: any) => Boolean(p.profile_path)) || results[0];
     if (candidate?.profile_path) {
-      const avatarUrl = `https://image.tmdb.org/t/p/w185${candidate.profile_path}`;
+      const rawUrl = `https://image.tmdb.org/t/p/w185${candidate.profile_path}`;
+      const avatarUrl = getOptimizedImageUrl(rawUrl);
       avatarMemoryCache.set(cleanName, avatarUrl);
       return avatarUrl;
     }

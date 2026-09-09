@@ -7,6 +7,7 @@ import { getEntitiesByDirector, isPersonEnriched, markPersonEnriched } from '@/l
 import { searchAndEnrichPersonCredits } from '@/lib/services/entity-enrichment';
 import { isInvalidDramaOrMovie } from '@/lib/data/entities/entity-utils';
 import { getPersonAvatar } from '@/lib/services/person-avatar';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { Navbar } from '@/components/layout/Navbar';
 
@@ -158,7 +159,7 @@ export default async function DirectorPage({ params }: Props) {
                 {avatarUrl ? (
                   <div className="relative w-full h-full rounded-full overflow-hidden">
                     <Image
-                      src={avatarUrl}
+                      src={getOptimizedImageUrl(avatarUrl)}
                       alt={directorName}
                       fill
                       sizes="96px"
@@ -204,7 +205,7 @@ export default async function DirectorPage({ params }: Props) {
                 <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
                   {item.cover ? (
                     <Image
-                      src={item.cover}
+                      src={getOptimizedImageUrl(item.cover)}
                       alt={item.title}
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"

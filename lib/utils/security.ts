@@ -18,6 +18,8 @@ const DOUBAN_IMAGE_WHITELIST = [
     'img.liangzipic.com',
     'tmdb.org',
     'themoviedb.org',
+    'image.tmdb.org',
+    'api.themoviedb.org',
 ];
 
 /** 禁止访问的内网 IP 段与危险主机名 */

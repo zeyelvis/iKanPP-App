@@ -6,6 +6,7 @@ import { Star, Film, User } from 'lucide-react';
 import { getEntitiesByActor, isPersonEnriched, markPersonEnriched } from '@/lib/services/entity-kv';
 import { searchAndEnrichPersonCredits } from '@/lib/services/entity-enrichment';
 import { getPersonAvatar } from '@/lib/services/person-avatar';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { isInvalidDramaOrMovie } from '@/lib/data/entities/entity-utils';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { Navbar } from '@/components/layout/Navbar';
@@ -158,7 +159,7 @@ export default async function ActorPage({ params }: Props) {
                 {avatarUrl ? (
                   <div className="relative w-full h-full rounded-full overflow-hidden">
                     <Image
-                      src={avatarUrl}
+                      src={getOptimizedImageUrl(avatarUrl)}
                       alt={actorName}
                       fill
                       sizes="96px"
@@ -204,7 +205,7 @@ export default async function ActorPage({ params }: Props) {
                 <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
                   {item.cover ? (
                     <Image
-                      src={item.cover}
+                      src={getOptimizedImageUrl(item.cover)}
                       alt={item.title}
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"

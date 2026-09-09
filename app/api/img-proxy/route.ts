@@ -86,10 +86,10 @@ export async function GET(request: NextRequest) {
                 headers: {
                     'Content-Type': contentType,
                     'Access-Control-Allow-Origin': '*',
-                    // 30 天 Cloudflare 边缘强缓存 + 浏览器本地强缓存 + SWR 弹性容灾
-                    'Cache-Control': 'public, max-age=2592000, s-maxage=2592000, stale-while-revalidate=604800',
-                    'CDN-Cache-Control': 'public, max-age=2592000',
-                    'Cloudflare-CDN-Cache-Control': 'public, max-age=2592000',
+                    // 1 年 (365天) Cloudflare 边缘永久强缓存 + 浏览器本地强缓存 + SWR 弹性无感续期
+                    'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, stale-while-revalidate=2592000, immutable',
+                    'CDN-Cache-Control': 'public, max-age=31536000',
+                    'Cloudflare-CDN-Cache-Control': 'public, max-age=31536000',
                     'Vary': 'Origin',
                 },
             });
