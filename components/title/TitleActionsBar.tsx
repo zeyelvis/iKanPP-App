@@ -113,24 +113,23 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
   };
 
   return (
-    <div className="relative flex flex-col gap-4">
-      {/* 操作按钮栏 */}
-      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2.5 sm:gap-4" id="main-play-cta">
-        {/* 核心主按钮：立即播放 / 继续观看 (移动端 100% 满宽霸气展现) */}
+    <div className="relative flex flex-col gap-3 sm:gap-4 items-start w-full" id="main-play-cta">
+      {/* 1. 移动端专属布局 (md:hidden)：满宽主播放按钮 + 3 等分平铺辅助按键 (移动端极致体验) */}
+      <div className="md:hidden flex flex-col gap-2.5 w-full">
         <button
           onClick={() => handlePlay(lastEpisode)}
           disabled={isPending}
           id="btn-netflix-play"
-          className="group relative w-full sm:w-auto flex items-center justify-center gap-3 px-6 sm:px-9 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-white text-black font-black text-base sm:text-lg shadow-xl shadow-white/10 hover:bg-white/90 active:scale-[0.98] transition-all duration-200 cursor-pointer disabled:opacity-75 disabled:cursor-wait shrink-0"
+          className="group relative w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl bg-white text-black font-black text-base shadow-xl shadow-white/10 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-75"
         >
           {isPending ? (
             <>
-              <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-black" />
+              <Loader2 className="w-5 h-5 animate-spin text-black" />
               <span>正在进入影院...</span>
             </>
           ) : (
             <>
-              <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-black text-black group-hover:scale-110 transition-transform" />
+              <Play className="w-5 h-5 fill-black text-black" />
               <span>
                 {hasHistory && entity.type === 'tv'
                   ? `继续观看 第 ${lastEpisode} 集`
@@ -139,9 +138,8 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
             </>
           )}
 
-          {/* 历史进度红条 */}
           {hasHistory && historyPercent > 0 && (
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-xl sm:rounded-b-2xl overflow-hidden">
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-xl overflow-hidden">
               <div
                 className="h-full bg-red-600 transition-all duration-300"
                 style={{ width: `${historyPercent}%` }}
@@ -150,62 +148,126 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
           )}
         </button>
 
-        {/* 辅助操作栏：在移动端 3 等分平铺，在桌面端紧随其后 */}
-        <div className="grid grid-cols-3 sm:flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
-          {/* 追剧清单按钮 */}
+        <div className="grid grid-cols-3 gap-2 w-full">
           <button
             onClick={handleToggleFavorite}
-            className={`flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-4 px-3 sm:px-5 rounded-xl sm:rounded-2xl border font-bold text-xs sm:text-base backdrop-blur-md transition-all duration-200 cursor-pointer ${
+            className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border font-bold text-xs backdrop-blur-md transition-all cursor-pointer ${
               isFav
-                ? 'bg-red-600/20 border-red-500/50 text-red-400 hover:bg-red-600/30'
-                : 'bg-white/10 hover:bg-white/15 border-white/20 text-white'
+                ? 'bg-red-600/20 border-red-500/50 text-red-400'
+                : 'bg-white/10 border-white/20 text-white'
             }`}
-            title={isFav ? '已在追剧清单中' : '加入追剧清单'}
           >
-            {isFav ? (
-              <>
-                <Check className="w-4 h-4 text-red-400" />
-                <span>已追剧</span>
-              </>
-            ) : (
-              <>
-                <Plus className="w-4 h-4" />
-                <span>追剧</span>
-              </>
-            )}
+            {isFav ? <Check className="w-4 h-4 text-red-400" /> : <Plus className="w-4 h-4" />}
+            <span>{isFav ? '已追剧' : '追剧'}</span>
           </button>
 
-          {/* 分享按钮 */}
           <button
             onClick={handleShare}
-            className="flex items-center justify-center gap-1.5 py-2.5 sm:py-4 px-3 sm:px-4 rounded-xl sm:rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-white backdrop-blur-md transition-all duration-200 cursor-pointer text-xs sm:text-base font-bold"
-            title="分享此影视"
-            aria-label="分享"
+            className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white backdrop-blur-md text-xs font-bold cursor-pointer"
           >
             <Share2 className="w-4 h-4" />
-            <span className="sm:hidden">分享</span>
+            <span>分享</span>
           </button>
 
-          {/* 值得看/点赞推荐按钮 */}
           <button
             onClick={handleLike}
-            className={`flex items-center justify-center gap-1.5 py-2.5 sm:py-4 px-3 sm:px-4 rounded-xl sm:rounded-2xl border backdrop-blur-md transition-all duration-200 cursor-pointer text-xs sm:text-base font-bold ${
+            className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border backdrop-blur-md text-xs font-bold cursor-pointer ${
               isLiked
                 ? 'bg-amber-500/20 border-amber-500/50 text-amber-400'
-                : 'bg-white/10 hover:bg-white/15 border-white/20 text-white'
+                : 'bg-white/10 border-white/20 text-white'
             }`}
-            title="给该片点赞推荐"
-            aria-label="点赞"
           >
             <ThumbsUp className={`w-4 h-4 ${isLiked ? 'fill-amber-400' : ''}`} />
-            <span className="sm:hidden">{isLiked ? '已赞' : '推荐'}</span>
+            <span>{isLiked ? '已赞' : '推荐'}</span>
           </button>
         </div>
       </div>
 
-      {/* 极速纯直连提示 */}
-      <div className="flex items-center gap-2 text-xs text-white/40 pl-1">
-        <Sparkles className="w-3.5 h-3.5 text-amber-400/80" />
+      {/* 2. 桌面电脑端专属布局 (hidden md:flex)：严格靠左对齐、单行一字排开的 Netflix 尊享控制台 */}
+      <div className="hidden md:flex items-center gap-3 lg:gap-4 flex-nowrap">
+        {/* 立即播放大按钮 */}
+        <button
+          onClick={() => handlePlay(lastEpisode)}
+          disabled={isPending}
+          id="btn-netflix-play-desktop"
+          className="group relative flex items-center justify-center gap-3 px-8 lg:px-10 py-3.5 lg:py-4 rounded-2xl bg-white hover:bg-white/90 text-black font-black text-base lg:text-lg shadow-2xl shadow-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer disabled:opacity-75 shrink-0"
+        >
+          {isPending ? (
+            <>
+              <Loader2 className="w-5 h-5 lg:w-6 lg:h-6 animate-spin text-black" />
+              <span>正在进入影院...</span>
+            </>
+          ) : (
+            <>
+              <Play className="w-5 h-5 lg:w-6 lg:h-6 fill-black text-black group-hover:scale-110 transition-transform" />
+              <span>
+                {hasHistory && entity.type === 'tv'
+                  ? `继续观看 第 ${lastEpisode} 集`
+                  : '立即播放'}
+              </span>
+            </>
+          )}
+
+          {hasHistory && historyPercent > 0 && (
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-2xl overflow-hidden">
+              <div
+                className="h-full bg-red-600 transition-all duration-300"
+                style={{ width: `${historyPercent}%` }}
+              />
+            </div>
+          )}
+        </button>
+
+        {/* 追剧清单 */}
+        <button
+          onClick={handleToggleFavorite}
+          className={`flex items-center gap-2 px-5 lg:px-6 py-3.5 lg:py-4 rounded-2xl border font-bold text-sm lg:text-base backdrop-blur-md transition-all duration-200 cursor-pointer shrink-0 hover:scale-[1.02] ${
+            isFav
+              ? 'bg-red-600/20 border-red-500/50 text-red-400 hover:bg-red-600/30'
+              : 'bg-white/10 hover:bg-white/15 border-white/20 text-white'
+          }`}
+        >
+          {isFav ? (
+            <>
+              <Check className="w-5 h-5 text-red-400" />
+              <span>已在追剧清单</span>
+            </>
+          ) : (
+            <>
+              <Plus className="w-5 h-5" />
+              <span>追剧清单</span>
+            </>
+          )}
+        </button>
+
+        {/* 分享 */}
+        <button
+          onClick={handleShare}
+          className="p-3.5 lg:p-4 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-white backdrop-blur-md transition-all duration-200 cursor-pointer shrink-0 hover:scale-[1.02]"
+          title="分享此影视"
+          aria-label="分享"
+        >
+          <Share2 className="w-5 h-5" />
+        </button>
+
+        {/* 推荐点赞 */}
+        <button
+          onClick={handleLike}
+          className={`p-3.5 lg:p-4 rounded-2xl border backdrop-blur-md transition-all duration-200 cursor-pointer shrink-0 hover:scale-[1.02] ${
+            isLiked
+              ? 'bg-amber-500/20 border-amber-500/50 text-amber-400'
+              : 'bg-white/10 hover:bg-white/15 border-white/20 text-white'
+          }`}
+          title="给该片点赞推荐"
+          aria-label="点赞"
+        >
+          <ThumbsUp className={`w-5 h-5 ${isLiked ? 'fill-amber-400' : ''}`} />
+        </button>
+      </div>
+
+      {/* 极速纯直连提示 (严格左对齐) */}
+      <div className="flex items-center gap-2 text-xs text-white/40 pl-0.5 text-left">
+        <Sparkles className="w-3.5 h-3.5 text-amber-400/80 shrink-0" />
         <span>浏览器纯直连第三方 CDN · 零等待秒播 · 海外华人免翻墙</span>
       </div>
 

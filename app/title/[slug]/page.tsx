@@ -336,7 +336,7 @@ export default async function TitlePage({ params }: Props) {
               </Link>
 
               {/* 2. 桌面端 2:3 黄金比例悬浮立体海报 (hidden md:block) */}
-              <div className="hidden md:block relative aspect-2/3 w-full max-w-[280px] sm:max-w-[320px] mx-auto rounded-2xl overflow-hidden shadow-2xl shadow-black/80 border border-white/15 bg-black/40 group">
+              <div className="hidden md:block relative aspect-2/3 w-full max-w-[260px] lg:max-w-[290px] rounded-2xl overflow-hidden shadow-2xl shadow-black/80 border border-white/15 bg-black/40 group">
                 {entity.cover ? (
                   <Image
                     src={entity.cover}
@@ -361,10 +361,10 @@ export default async function TitlePage({ params }: Props) {
               </div>
             </div>
 
-            {/* 右侧：电影巨幕主标题、规格徽章与行动栏 */}
-            <div className="md:col-span-8 lg:col-span-9 flex flex-col justify-end">
+            {/* 右侧：电影巨幕主标题、规格徽章与行动栏 (严格靠左对齐 items-start) */}
+            <div className="md:col-span-8 lg:col-span-9 flex flex-col justify-end items-start text-left">
               {/* 唯一语义主标题 H1 */}
-              <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight mb-2 sm:mb-3 drop-shadow-md">
+              <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight mb-2 sm:mb-3 drop-shadow-md text-left">
                 {entity.title}
                 {entity.originalTitle && entity.originalTitle !== entity.title && (
                   <span className="block text-xs sm:text-2xl font-light text-white/50 mt-0.5 sm:mt-1 tracking-normal font-sans">
