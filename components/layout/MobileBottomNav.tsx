@@ -54,8 +54,12 @@ export function MobileBottomNav() {
   }
 
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-1000 bg-[#0A0A0F]/95 backdrop-blur-2xl border-t border-white/10 px-2 pt-2 pb-[max(8px,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_rgba(0,0,0,0.8)]">
-      <div className="grid grid-cols-6 gap-1 items-center max-w-md mx-auto">
+    <div className="lg:hidden fixed bottom-0 inset-x-0 z-1000 bg-[#0A0A0F]/85 backdrop-blur-3xl backdrop-saturate-180 border-t border-white/10 px-2 sm:px-4 pt-1.5 pb-[max(10px,env(safe-area-inset-bottom))] shadow-[0_-10px_35px_rgba(0,0,0,0.85)] select-none">
+      {/* 顶部精密流光高光反光边 (Specular Glow Highlight) */}
+      <div className="absolute inset-x-0 top-0 h-[1px] bg-linear-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+
+      {/* 5 等分标准黄金对称网格 */}
+      <div className="grid grid-cols-5 gap-1 items-center max-w-md mx-auto">
         {NAV_ITEMS.map((item) => {
           const isActive =
             pathname === item.href ||
@@ -69,34 +73,38 @@ export function MobileBottomNav() {
               key={item.id}
               href={item.href}
               prefetch={false}
-              className={`flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 cursor-pointer relative ${
+              className={`group relative flex flex-col items-center justify-center py-1.5 px-0.5 rounded-2xl transition-all duration-300 cursor-pointer select-none active:scale-90 ${
                 isActive
-                  ? 'text-(--accent-color)'
-                  : 'text-white/50 hover:text-white/80 active:scale-95'
+                  ? 'bg-linear-to-b from-red-600/18 via-red-600/8 to-transparent border border-red-500/25 shadow-[0_0_20px_rgba(229,9,20,0.22),inset_0_1px_1px_rgba(255,255,255,0.15)]'
+                  : 'border border-transparent hover:bg-white/5 active:opacity-75'
               }`}
             >
-              {/* 图标与微动画 */}
-              <div className="relative">
+              {/* 图标与微光霓虹 */}
+              <div className="relative flex items-center justify-center">
                 <IconComponent
                   size={20}
-                  className={`transition-transform duration-200 ${
-                    isActive ? 'scale-110 stroke-[2.5]' : 'stroke-2'
+                  className={`transition-all duration-300 ${
+                    isActive
+                      ? 'text-red-500 scale-105 stroke-[2.2] drop-shadow-[0_2px_10px_rgba(239,68,68,0.55)]'
+                      : 'text-white/45 group-hover:text-white/75 stroke-[1.8]'
                   }`}
                 />
               </div>
 
-              {/* 标题 */}
+              {/* 标题文字 */}
               <span
-                className={`text-[10px] tracking-tight mt-1 transition-all ${
-                  isActive ? 'font-bold' : 'font-medium'
+                className={`text-[10px] tracking-tight mt-1 transition-all duration-300 ${
+                  isActive
+                    ? 'text-white font-extrabold drop-shadow-sm'
+                    : 'text-white/45 group-hover:text-white/75 font-medium'
                 }`}
               >
                 {item.label}
               </span>
 
-              {/* 激活底部发光短横条 */}
+              {/* 激活底部发光晶体呼吸胶囊点 */}
               {isActive && (
-                <div className="absolute -bottom-1 w-3 h-0.5 rounded-full bg-(--accent-color) shadow-[0_0_8px_var(--accent-color)]" />
+                <div className="absolute -bottom-0.5 w-3 h-0.5 rounded-full bg-linear-to-r from-red-500 via-rose-400 to-red-500 shadow-[0_0_8px_rgba(239,68,68,0.9)]" />
               )}
             </Link>
           );
