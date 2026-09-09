@@ -114,14 +114,15 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
 
   return (
     <div className="relative flex flex-col gap-3 sm:gap-4 items-start w-full" id="main-play-cta">
-      {/* 1. 移动端专属布局 (仅在小于 md 视口渲染)：满宽主播放按钮 + 3 等分平铺辅助按键 */}
+      {/* 1. 移动端专属布局 (仅在小于 md 视口渲染)：Netflix 级紧凑播放按钮 + 轻盈通透垂直图标列 */}
       <div className="w-full md:hidden">
         <div className="flex flex-col gap-2.5 w-full">
+          {/* 主播放按钮：利落高精细小圆角、黑底白字 Netflix 质感 */}
           <button
             onClick={() => handlePlay(lastEpisode)}
             disabled={isPending}
             id="btn-netflix-play"
-            className="group relative w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl bg-white text-black font-black text-base shadow-xl shadow-white/10 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-75"
+            className="group relative w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-white hover:bg-white/95 text-black font-extrabold text-base shadow-lg shadow-white/10 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-75"
           >
             {isPending ? (
               <>
@@ -134,13 +135,13 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
                 <span>
                   {hasHistory && entity.type === 'tv'
                     ? `继续观看 第 ${lastEpisode} 集`
-                    : '立即播放'}
+                    : '播放'}
                 </span>
               </>
             )}
 
             {hasHistory && historyPercent > 0 && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-xl overflow-hidden">
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-lg overflow-hidden">
                 <div
                   className="h-full bg-red-600 transition-all duration-300"
                   style={{ width: `${historyPercent}%` }}
@@ -149,37 +150,42 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
             )}
           </button>
 
-          <div className="grid grid-cols-3 gap-2 w-full">
+          {/* Netflix 标配轻盈无框垂直图标列 (上图标 + 下微文字)，彻底告别粗笨大色块 */}
+          <div className="flex items-center justify-around w-full py-1 px-2 border-b border-white/5 pb-2">
             <button
               onClick={handleToggleFavorite}
-              className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border font-bold text-xs backdrop-blur-md transition-all cursor-pointer ${
-                isFav
-                  ? 'bg-red-600/20 border-red-500/50 text-red-400'
-                  : 'bg-white/10 border-white/20 text-white'
-              }`}
+              className="flex flex-col items-center gap-1 text-white/80 hover:text-white active:scale-95 transition-all cursor-pointer py-1 px-3"
             >
-              {isFav ? <Check className="w-4 h-4 text-red-400" /> : <Plus className="w-4 h-4" />}
-              <span>{isFav ? '已追剧' : '追剧'}</span>
+              {isFav ? (
+                <Check className="w-5 h-5 text-red-500" />
+              ) : (
+                <Plus className="w-5 h-5 text-white/90" />
+              )}
+              <span className={`text-[11px] font-medium ${isFav ? 'text-red-400' : 'text-white/65'}`}>
+                {isFav ? '已在追剧' : '追剧清单'}
+              </span>
             </button>
 
             <button
               onClick={handleShare}
-              className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white backdrop-blur-md text-xs font-bold cursor-pointer"
+              className="flex flex-col items-center gap-1 text-white/80 hover:text-white active:scale-95 transition-all cursor-pointer py-1 px-3"
             >
-              <Share2 className="w-4 h-4" />
-              <span>分享</span>
+              <Share2 className="w-5 h-5 text-white/90" />
+              <span className="text-[11px] font-medium text-white/65">分享好友</span>
             </button>
 
             <button
               onClick={handleLike}
-              className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border backdrop-blur-md text-xs font-bold cursor-pointer ${
-                isLiked
-                  ? 'bg-amber-500/20 border-amber-500/50 text-amber-400'
-                  : 'bg-white/10 border-white/20 text-white'
-              }`}
+              className="flex flex-col items-center gap-1 text-white/80 hover:text-white active:scale-95 transition-all cursor-pointer py-1 px-3"
             >
-              <ThumbsUp className={`w-4 h-4 ${isLiked ? 'fill-amber-400' : ''}`} />
-              <span>{isLiked ? '已赞' : '推荐'}</span>
+              <ThumbsUp
+                className={`w-5 h-5 transition-colors ${
+                  isLiked ? 'fill-amber-400 text-amber-400' : 'text-white/90'
+                }`}
+              />
+              <span className={`text-[11px] font-medium ${isLiked ? 'text-amber-400' : 'text-white/65'}`}>
+                {isLiked ? '已赞推荐' : '点赞推荐'}
+              </span>
             </button>
           </div>
         </div>
@@ -269,10 +275,10 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
         </div>
       </div>
 
-      {/* 极速纯直连提示 (严格左对齐) */}
-      <div className="flex items-center gap-2 text-xs text-white/40 pl-0.5 text-left">
+      {/* 极速纯直连提示 */}
+      <div className="flex items-center justify-center md:justify-start gap-1.5 text-[11px] sm:text-xs text-white/45 w-full pl-0.5 text-center md:text-left">
         <Sparkles className="w-3.5 h-3.5 text-amber-400/80 shrink-0" />
-        <span>浏览器纯直连第三方 CDN · 零等待秒播 · 海外华人免翻墙</span>
+        <span>浏览器纯直连第三方 CDN · 零等待秒播 · 海外免翻墙</span>
       </div>
 
       {/* Toast 动效提示 */}
