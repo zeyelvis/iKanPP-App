@@ -45,9 +45,8 @@ function seedPrebakedData() {
     const entityId = formatEntityId(seq++);
     const slug = generateSlug(s.title);
 
-    // 解析 TMDB ID（如果 cover 中包含，或用自增）
-    const tmdbIdMatch = s.id?.match(/\d+/);
-    const tmdbId = tmdbIdMatch ? tmdbIdMatch[0] : String(seq + 1000);
+    // 解析 TMDB ID（只有纯数字且大于等于 4 位的有效外部 ID 才能当作真实 TMDB ID，严禁将类似 iyf_hero_tv_5 等内部槽位字符串误读为 ID）
+    const tmdbId = (s.id && /^\d{4,}$/.test(s.id.trim())) ? s.id.trim() : String(seq + 900000);
 
     const entity: TitleEntity = {
       entityId,

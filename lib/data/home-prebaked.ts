@@ -36,7 +36,7 @@ export const PREBAKED_HOME_DATA: {
   "movie": {
     "hero": [
         {
-                "id": "iyf_hero_movie_1",
+                "id": "1353926",
                 "title": "特立独行",
                 "rate": "6.4",
                 "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
@@ -51,10 +51,23 @@ export const PREBAKED_HOME_DATA: {
                 "episodes_info": "电影·剧情",
                 "type": "movie",
                 "is_new": true,
-                "playable": true
+                "playable": true,
+                "directors": [
+                        "邢文雄"
+                ],
+                "actors": [
+                        "白敬亭",
+                        "魏翔",
+                        "张国强",
+                        "苏小玎",
+                        "黄才伦",
+                        "刘流",
+                        "丁勇岱",
+                        "王智"
+                ]
         },
         {
-                "id": "iyf_hero_movie_2",
+                "id": "1671548",
                 "title": "给阿嬷的情书",
                 "rate": "8.9",
                 "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
@@ -69,10 +82,23 @@ export const PREBAKED_HOME_DATA: {
                 "episodes_info": "电影·剧情",
                 "type": "movie",
                 "is_new": true,
-                "playable": true
+                "playable": true,
+                "directors": [
+                        "蓝鸿春"
+                ],
+                "actors": [
+                        "李思潼",
+                        "王彦桐",
+                        "吴少卿",
+                        "郑润奇",
+                        "王晓慧",
+                        "赵曙光",
+                        "李德如",
+                        "李树浩"
+                ]
         },
         {
-                "id": "iyf_hero_movie_3",
+                "id": "1084244",
                 "title": "玩具总动员5",
                 "rate": "8.4",
                 "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
@@ -87,10 +113,20 @@ export const PREBAKED_HOME_DATA: {
                 "episodes_info": "电影·动画",
                 "type": "movie",
                 "is_new": true,
-                "playable": true
+                "playable": true,
+                "directors": [
+                        "安德鲁·斯坦顿"
+                ],
+                "actors": [
+                        "琼·库萨克",
+                        "汤姆·汉克斯",
+                        "蒂姆·艾伦",
+                        "柯南·奥布莱恩",
+                        "格蕾塔·李"
+                ]
         },
         {
-                "id": "iyf_hero_movie_4",
+                "id": "1499071",
                 "title": "寒战1994",
                 "rate": "6.5",
                 "cover": "https://image.tmdb.org/t/p/w500/9C3ZxhGJvdpxmNC5PhkBMwzTMRT.jpg",
@@ -105,10 +141,23 @@ export const PREBAKED_HOME_DATA: {
                 "episodes_info": "电影·剧情",
                 "type": "movie",
                 "is_new": true,
-                "playable": true
+                "playable": true,
+                "directors": [
+                        "梁乐民"
+                ],
+                "actors": [
+                        "吴彦祖",
+                        "刘俊谦",
+                        "吴慷仁",
+                        "谢君豪",
+                        "王丹妮",
+                        "廖子妤",
+                        "周润发",
+                        "郭富城"
+                ]
         },
         {
-                "id": "iyf_hero_tv_5",
+                "id": "294486",
                 "title": "交锋",
                 "rate": "9.0",
                 "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
@@ -122,10 +171,22 @@ export const PREBAKED_HOME_DATA: {
                 "episodes_info": "更新至08集 | 共40集",
                 "type": "tv",
                 "is_new": true,
-                "playable": true
+                "playable": true,
+                "directors": [
+                        "姚晓峰"
+                ],
+                "actors": [
+                        "王凯",
+                        "彭昱畅",
+                        "欧豪",
+                        "周依然",
+                        "祖峰",
+                        "邱天",
+                        "吴启华"
+                ]
         },
         {
-                "id": "iyf_hero_tv_6",
+                "id": "286686",
                 "title": "生逢其时",
                 "rate": "9.0",
                 "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
@@ -139,10 +200,23 @@ export const PREBAKED_HOME_DATA: {
                 "episodes_info": "更新至09集 | 共26集",
                 "type": "tv",
                 "is_new": true,
-                "playable": true
+                "playable": true,
+                "directors": [
+                        "林妍"
+                ],
+                "actors": [
+                        "关晓彤",
+                        "王子奇",
+                        "刘琳",
+                        "郭涛",
+                        "郭晓东",
+                        "邹元清",
+                        "冷纪元",
+                        "黑泽"
+                ]
         },
         {
-                "id": "iyf_hero_tv_7",
+                "id": "319659",
                 "title": "重案六组:消失的警号",
                 "rate": "8.0",
                 "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
@@ -156,7 +230,18 @@ export const PREBAKED_HOME_DATA: {
                 "episodes_info": "更新至20集 | 共26集",
                 "type": "tv",
                 "is_new": true,
-                "playable": true
+                "playable": true,
+                "directors": [
+                        "徐庆东"
+                ],
+                "actors": [
+                        "张一山",
+                        "李沐宸",
+                        "郭晓东",
+                        "葛铮",
+                        "吴昊宸",
+                        "华雯"
+                ]
         }
       ],
     "top10": [
@@ -1701,7 +1786,69 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_movie_3",
+                "id": "1353926",
+                "title": "特立独行",
+                "rate": "6.4",
+                "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
+                "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "type": "movie",
+                "is_new": true,
+                "playable": true,
+                "directors": [
+                        "邢文雄"
+                ],
+                "actors": [
+                        "白敬亭",
+                        "魏翔",
+                        "张国强",
+                        "苏小玎",
+                        "黄才伦",
+                        "刘流",
+                        "丁勇岱",
+                        "王智"
+                ]
+        },
+        {
+                "id": "1671548",
+                "title": "给阿嬷的情书",
+                "rate": "8.9",
+                "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/AwmlL79nKTcX5tzAhyoV298xXlz.jpg",
+                "description": "潮汕阿嬷叶淑柔一直守着平淡的日子，安享晚年。孙子晓伟因债务缠身，瞒着家人远赴泰国，寻找传闻中已成亿万富豪的阿公郑木生。然而，一个令人意外的消息打破了整个家庭的平静：多年来一直通过跨国信件与阿嬷“谈情说爱”诉说思念的人，竟然并非阿嬷的丈夫郑木生。随着晓伟的调查，一个感人的真相被缓缓揭开。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "type": "movie",
+                "is_new": true,
+                "playable": true,
+                "directors": [
+                        "蓝鸿春"
+                ],
+                "actors": [
+                        "李思潼",
+                        "王彦桐",
+                        "吴少卿",
+                        "郑润奇",
+                        "王晓慧",
+                        "赵曙光",
+                        "李德如",
+                        "李树浩"
+                ]
+        },
+        {
+                "id": "1084244",
                 "title": "玩具总动员5",
                 "rate": "8.4",
                 "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
@@ -1716,10 +1863,20 @@ export const PREBAKED_HOME_DATA: {
                 "episodes_info": "电影·动画",
                 "type": "movie",
                 "is_new": true,
-                "playable": true
+                "playable": true,
+                "directors": [
+                        "安德鲁·斯坦顿"
+                ],
+                "actors": [
+                        "琼·库萨克",
+                        "汤姆·汉克斯",
+                        "蒂姆·艾伦",
+                        "柯南·奥布莱恩",
+                        "格蕾塔·李"
+                ]
         },
         {
-                "id": "iyf_hero_movie_4",
+                "id": "1499071",
                 "title": "寒战1994",
                 "rate": "6.5",
                 "cover": "https://image.tmdb.org/t/p/w500/9C3ZxhGJvdpxmNC5PhkBMwzTMRT.jpg",
@@ -1734,10 +1891,23 @@ export const PREBAKED_HOME_DATA: {
                 "episodes_info": "电影·剧情",
                 "type": "movie",
                 "is_new": true,
-                "playable": true
+                "playable": true,
+                "directors": [
+                        "梁乐民"
+                ],
+                "actors": [
+                        "吴彦祖",
+                        "刘俊谦",
+                        "吴慷仁",
+                        "谢君豪",
+                        "王丹妮",
+                        "廖子妤",
+                        "周润发",
+                        "郭富城"
+                ]
         },
         {
-                "id": "iyf_hero_tv_5",
+                "id": "294486",
                 "title": "交锋",
                 "rate": "9.0",
                 "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
@@ -1751,10 +1921,22 @@ export const PREBAKED_HOME_DATA: {
                 "episodes_info": "更新至08集 | 共40集",
                 "type": "tv",
                 "is_new": true,
-                "playable": true
+                "playable": true,
+                "directors": [
+                        "姚晓峰"
+                ],
+                "actors": [
+                        "王凯",
+                        "彭昱畅",
+                        "欧豪",
+                        "周依然",
+                        "祖峰",
+                        "邱天",
+                        "吴启华"
+                ]
         },
         {
-                "id": "iyf_hero_tv_6",
+                "id": "286686",
                 "title": "生逢其时",
                 "rate": "9.0",
                 "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
@@ -1768,10 +1950,23 @@ export const PREBAKED_HOME_DATA: {
                 "episodes_info": "更新至09集 | 共26集",
                 "type": "tv",
                 "is_new": true,
-                "playable": true
+                "playable": true,
+                "directors": [
+                        "林妍"
+                ],
+                "actors": [
+                        "关晓彤",
+                        "王子奇",
+                        "刘琳",
+                        "郭涛",
+                        "郭晓东",
+                        "邹元清",
+                        "冷纪元",
+                        "黑泽"
+                ]
         },
         {
-                "id": "iyf_hero_tv_7",
+                "id": "319659",
                 "title": "重案六组:消失的警号",
                 "rate": "8.0",
                 "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
@@ -1785,7 +1980,18 @@ export const PREBAKED_HOME_DATA: {
                 "episodes_info": "更新至20集 | 共26集",
                 "type": "tv",
                 "is_new": true,
-                "playable": true
+                "playable": true,
+                "directors": [
+                        "徐庆东"
+                ],
+                "actors": [
+                        "张一山",
+                        "李沐宸",
+                        "郭晓东",
+                        "葛铮",
+                        "吴昊宸",
+                        "华雯"
+                ]
         }
       ],
     "top10": [

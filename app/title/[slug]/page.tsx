@@ -187,27 +187,58 @@ export default async function TitlePage({ params }: Props) {
   let validDirectors = filterFakePeople(entity.directors);
   let validActors = filterFakePeople(entity.actors);
 
-  // 演职员数据缺失或包含假数据时，若有 TMDB ID，现场异步向 TMDB 自动丰润拉取真实演职员并更新持久化
-  if ((validDirectors.length === 0 || validActors.length === 0) && entity.tmdbId) {
-    try {
-      const tmdbMediaType: 'movie' | 'tv' = entity.type === 'movie' ? 'movie' : 'tv';
+  // 演职员质量与一致性智能校验（彻底杜绝张冠李戴错配）
+  try {
+    const tmdbMediaType: 'movie' | 'tv' = entity.type === 'movie' ? 'movie' : 'tv';
+    let isMismatch = false;
+
+    // 1. 若已有 tmdbId，深度校验该 tmdbId 对应的标题是否与本片一致（防槽位 ID 污染，如把 5 当作四个房间）
+    if (entity.tmdbId && /^\d+$/.test(entity.tmdbId)) {
       const detail = await fetchTMDBDetails(entity.tmdbId, tmdbMediaType);
-      if (detail?.credits) {
-        const realDirs = (detail.credits.crew || []).filter(c => c.job === 'Director').map(c => c.name).filter(Boolean);
-        const realActs = (detail.credits.cast || []).slice(0, 5).map(c => c.name).filter(Boolean);
-        if (realDirs.length > 0) {
-          entity.directors = realDirs;
-          validDirectors = realDirs;
-        }
-        if (realActs.length > 0) {
-          entity.actors = realActs;
-          validActors = realActs;
-        }
-        if (realDirs.length > 0 || realActs.length > 0) {
+      if (detail) {
+        const fetchedTitle = (detail.title || detail.name || '').trim().toLowerCase();
+        const origTitle = (detail.original_title || detail.original_name || '').trim().toLowerCase();
+        const myTitle = entity.title.trim().toLowerCase();
+        // 标题完全不包含且不相符，判定为历史错配垃圾 ID
+        if (fetchedTitle && !fetchedTitle.includes(myTitle) && !myTitle.includes(fetchedTitle) && !origTitle.includes(myTitle) && !myTitle.includes(origTitle)) {
+          isMismatch = true;
+          entity.tmdbId = '';
+          entity.directors = [];
+          entity.actors = [];
+          validDirectors = [];
+          validActors = [];
+        } else if ((validDirectors.length === 0 || validActors.length === 0) && detail.credits) {
+          const realDirs = (detail.credits.crew || []).filter(c => c.job === 'Director').map(c => c.name).filter(Boolean);
+          const realActs = (detail.credits.cast || []).slice(0, 8).map(c => c.name).filter(Boolean);
+          if (realDirs.length > 0) {
+            entity.directors = realDirs;
+            validDirectors = realDirs;
+          }
+          if (realActs.length > 0) {
+            entity.actors = realActs;
+            validActors = realActs;
+          }
           await saveEntity(entity);
         }
       }
-    } catch {}
+    }
+
+    // 2. 若发现错配，或演职员仍为空，以影片真实标题触发在线精准重丰润自愈
+    if (isMismatch || validDirectors.length === 0 || validActors.length === 0) {
+      const enriched = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
+      if (enriched) {
+        entity.tmdbId = enriched.tmdbId;
+        entity.directors = enriched.directors;
+        entity.actors = enriched.actors;
+        if (enriched.cover && (!entity.cover || entity.cover.includes('douban'))) entity.cover = enriched.cover;
+        if (enriched.backdrop && (!entity.backdrop || entity.backdrop.includes('douban'))) entity.backdrop = enriched.backdrop;
+        validDirectors = filterFakePeople(entity.directors);
+        validActors = filterFakePeople(entity.actors);
+        await saveEntity(entity);
+      }
+    }
+  } catch (err) {
+    console.warn('[Enrich credits fail]:', err);
   }
 
   // 获取同题材、同导演与同主演相关推荐影片（构建站内强内链拓扑）
