@@ -32,6 +32,12 @@ interface VideoPlayerProps {
   // 片源连接与检索状态文本（收拢全屏 Loading 至播放器视窗内）
   connectingMessage?: string;
   isLoadingSource?: boolean;
+  // Netflix 级新交互
+  episodes?: Array<{ name?: string; url: string }>;
+  onSelectEpisode?: (index: number) => void;
+  sources?: Array<import('./desktop/InPlayerSourceDrawer').SourceItem>;
+  currentSource?: string;
+  onSelectSource?: (source: import('./desktop/InPlayerSourceDrawer').SourceItem) => void;
 }
 
 export function VideoPlayer({
@@ -51,6 +57,11 @@ export function VideoPlayer({
   onPlaybackError,
   connectingMessage,
   isLoadingSource,
+  episodes,
+  onSelectEpisode,
+  sources,
+  currentSource,
+  onSelectSource,
 }: VideoPlayerProps) {
   const [videoError, setVideoError] = useState<string>('');
   const [useProxy, setUseProxy] = useState(false);
@@ -272,6 +283,11 @@ export function VideoPlayer({
           isPremium={isPremium}
           onBack={onBack}
           onResolutionDetected={onResolutionDetected}
+          episodes={episodes}
+          onSelectEpisode={onSelectEpisode}
+          sources={sources}
+          currentSource={currentSource}
+          onSelectSource={onSelectSource}
         />
       )}
     </div>

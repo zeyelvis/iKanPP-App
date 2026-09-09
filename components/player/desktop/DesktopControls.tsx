@@ -37,6 +37,12 @@ interface DesktopControlsProps {
     onProgressMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
     onProgressTouchStart: (e: React.TouchEvent<HTMLDivElement>) => void;
     formatTime: (seconds: number) => string;
+    // Netflix 级新交互
+    totalEpisodes?: number;
+    onToggleEpisodesDrawer?: () => void;
+    sourcesCount?: number;
+    onToggleSourceDrawer?: () => void;
+    onToggleShortcutsModal?: () => void;
 }
 
 export function DesktopControls(props: DesktopControlsProps) {

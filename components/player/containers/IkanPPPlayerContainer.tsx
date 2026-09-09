@@ -18,6 +18,8 @@ import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
 import { getSourceName } from '@/lib/utils/source-names';
 import { storeGroupedSources, retrieveGroupedSources } from '@/lib/utils/grouped-sources-cache';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
+import Link from 'next/link';
+import { Tv, Clapperboard, Sparkles, User, Star, Film, MonitorPlay, Layers, CheckCircle2 } from 'lucide-react';
 import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
 
 interface TitleAnalysis {
@@ -607,6 +609,43 @@ export function IkanPPPlayerContainer() {
     }
   }, [videoData, currentEpisode, handleEpisodeClick]);
 
+  const handleSourceChange = useCallback((newSource: { id: string | number; source: string }) => {
+    const params = new URLSearchParams();
+    params.set('id', String(newSource.id));
+    params.set('source', newSource.source);
+    params.set('title', title || '');
+    if (entityParam) params.set('entity', entityParam);
+    if (expectedType) params.set('type', expectedType);
+    if (expectedYear) params.set('year', expectedYear);
+    params.set('episode', currentEpisode.toString());
+    if (playerTimeRef.current > 1) {
+      params.set('t', Math.floor(playerTimeRef.current).toString());
+    }
+    if (groupedSources.length > 1) {
+      const gsKey = storeGroupedSources(groupedSources);
+      if (gsKey) params.set('gsKey', gsKey);
+    }
+    setCurrentSourceId(newSource.source);
+    router.replace(`/player?${params.toString()}`, { scroll: false });
+  }, [title, entityParam, expectedType, expectedYear, currentEpisode, groupedSources, router]);
+
+  // 影院巨幕模式 (Cinema Stage Mode)
+  const [isCinemaMode, setIsCinemaMode] = useState(false);
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('ikanpp_cinema_mode');
+      if (saved === 'true') setIsCinemaMode(true);
+    } catch {}
+  }, []);
+
+  const toggleCinemaMode = () => {
+    setIsCinemaMode((prev) => {
+      const next = !prev;
+      try { localStorage.setItem('ikanpp_cinema_mode', String(next)); } catch {}
+      return next;
+    });
+  };
+
   const handleBack = useCallback(() => {
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('ikanpp_playing_from_hub');
@@ -700,14 +739,34 @@ export function IkanPPPlayerContainer() {
     );
   }
 
+  // 解析演职员（导演与演员）用于 Netflix 风格肖像滑轨
+  const directorsList = useMemo(() => {
+    if (!videoData?.vod_director) return [];
+    return videoData.vod_director
+      .split(/[,，/ ]/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 3);
+  }, [videoData?.vod_director]);
+
+  const actorsList = useMemo(() => {
+    if (!videoData?.vod_actor) return [];
+    return videoData.vod_actor
+      .split(/[,，/ ]/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 8);
+  }, [videoData?.vod_actor]);
+
   return (
-    <div className="min-h-screen bg-(--bg-color)">
+    <div className={`min-h-screen ${isCinemaMode ? 'bg-[#050505]' : 'bg-(--bg-color)'}`}>
       <JsonLd data={jsonLdData} />
       <Navbar variant="player" isPremiumMode={false} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-        <div className="grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+      {/* 巨幕模式下的全宽顶部播放器舞台 */}
+      {isCinemaMode ? (
+        <div className="w-full bg-black pt-16 pb-6 border-b border-white/5 shadow-2xl">
+          <div className="max-w-[1680px] mx-auto px-2 sm:px-4 lg:px-6">
             <VideoPlayer
               playUrl={playUrl}
               videoId={videoId || undefined}
@@ -724,98 +783,275 @@ export function IkanPPPlayerContainer() {
               onPlaybackError={handlePlaybackError}
               connectingMessage={connectingMessage}
               isLoadingSource={isConnecting}
+              episodes={videoData?.episodes || []}
+              onSelectEpisode={(idx) => {
+                if (videoData?.episodes?.[idx]) {
+                  handleEpisodeClick(videoData.episodes[idx], idx);
+                }
+              }}
+              sources={groupedSources}
+              currentSource={currentSourceId || source || ''}
+              onSelectSource={handleSourceChange}
             />
-
-            <div className="hidden lg:block">
-              <VideoMetadata
-                videoData={videoData}
-                source={source}
-                title={title}
-              />
-            </div>
-
-            {videoData && videoId && (
-              <div className="hidden lg:flex items-center gap-3 mt-4">
-                <FavoriteButton
-                  videoId={videoId}
-                  source={source || ''}
-                  title={videoData.vod_name || title || '未知视频'}
-                  poster={videoData.vod_pic}
-                  type={videoData.type_name}
-                  year={videoData.vod_year}
-                  size={20}
-                  isPremium={false}
-                />
-                <span className="text-sm text-(--text-color-secondary)">
-                  收藏这个视频
-                </span>
-                <div className="ml-auto flex items-center gap-3">
-                  {source && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const el = document.getElementById('source-selector-section');
-                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                      }}
-                      className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-xs text-purple-200 hover:text-white transition-all cursor-pointer font-medium"
-                      title="点击平滑定位至右侧多线路面板"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span>正在播放：{getSourceName(source)}</span>
-                      {groupedSources.length > 1 && (
-                        <span className="text-purple-300/80 text-[11px] font-bold">
-                          ({groupedSources.length} 条专线可用 ⇄)
-                        </span>
-                      )}
-                    </button>
-                  )}
-                  <ShareButton
-                    title={videoData.vod_name || title || ''}
-                    poster={videoData.vod_pic}
-                    episodeName={videoData.episodes?.[currentEpisode]?.name}
-                    year={videoData.vod_year}
-                    type={videoData.type_name}
-                    size={20}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="lg:col-span-1">
-            <div className="lg:sticky lg:top-28 space-y-4 sm:space-y-6">
-              <EpisodeList
-                episodes={videoData?.episodes || null}
-                currentEpisode={currentEpisode}
-                isReversed={isReversed}
-                onEpisodeClick={handleEpisodeClick}
-                onToggleReverse={handleToggleReverse}
-                sources={groupedSources.length > 0 ? groupedSources : undefined}
-                currentSource={currentSourceId || source || ''}
-                onSourceChange={(newSource) => {
-                  const params = new URLSearchParams();
-                  params.set('id', String(newSource.id));
-                  params.set('source', newSource.source);
-                  params.set('title', title || '');
-                  if (entityParam) params.set('entity', entityParam);
-                  if (expectedType) params.set('type', expectedType);
-                  if (expectedYear) params.set('year', expectedYear);
-                  params.set('episode', currentEpisode.toString());
-                  if (playerTimeRef.current > 1) {
-                    params.set('t', Math.floor(playerTimeRef.current).toString());
-                  }
-                  if (groupedSources.length > 1) {
-                    const gsKey = storeGroupedSources(groupedSources);
-                    if (gsKey) params.set('gsKey', gsKey);
-                  }
-                  setCurrentSourceId(newSource.source);
-                  router.replace(`/player?${params.toString()}`, { scroll: false });
-                }}
-              />
-            </div>
           </div>
         </div>
+      ) : null}
 
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-18 pb-16">
+        {/* 标准模式下的网格布局 */}
+        {!isCinemaMode ? (
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+              <VideoPlayer
+                playUrl={playUrl}
+                videoId={videoId || undefined}
+                currentEpisode={currentEpisode}
+                onBack={handleBack}
+                totalEpisodes={videoData?.episodes?.length || 0}
+                onNextEpisode={handleNextEpisode}
+                isReversed={isReversed}
+                isPremium={false}
+                videoTitle={videoData?.vod_name || title || ''}
+                episodeName={videoData?.episodes?.[currentEpisode]?.name || ''}
+                externalTimeRef={playerTimeRef}
+                nextEpisodeUrl={nextEpisodeUrl}
+                onPlaybackError={handlePlaybackError}
+                connectingMessage={connectingMessage}
+                isLoadingSource={isConnecting}
+                episodes={videoData?.episodes || []}
+                onSelectEpisode={(idx) => {
+                  if (videoData?.episodes?.[idx]) {
+                    handleEpisodeClick(videoData.episodes[idx], idx);
+                  }
+                }}
+                sources={groupedSources}
+                currentSource={currentSourceId || source || ''}
+                onSelectSource={handleSourceChange}
+              />
+            </div>
+
+            <div className="lg:col-span-1">
+              <div className="lg:sticky lg:top-28 space-y-4 sm:space-y-6">
+                <EpisodeList
+                  episodes={videoData?.episodes || null}
+                  currentEpisode={currentEpisode}
+                  isReversed={isReversed}
+                  onEpisodeClick={handleEpisodeClick}
+                  onToggleReverse={handleToggleReverse}
+                  sources={groupedSources.length > 0 ? groupedSources : undefined}
+                  currentSource={currentSourceId || source || ''}
+                  onSourceChange={handleSourceChange}
+                />
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {/* Netflix 级影院信息控制台 */}
+        <div className="mt-8 space-y-6">
+          {/* 标题、品质认证徽章与控制按钮行 */}
+          <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="space-y-2.5">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                  {currentTitle}
+                </h1>
+                {videoData?.episodes && videoData.episodes.length > 1 && (
+                  <span className="text-sm font-bold text-red-400 bg-red-500/15 border border-red-500/30 px-2.5 py-0.5 rounded-full">
+                    {videoData.episodes[currentEpisode]?.name || `第 ${currentEpisode + 1} 集`}
+                  </span>
+                )}
+              </div>
+
+              {/* 认证徽章 */}
+              <div className="flex flex-wrap items-center gap-2 text-xs text-white/70">
+                <span className="px-2 py-0.5 rounded bg-red-600 text-white font-black tracking-wider text-[11px]">
+                  Ultra HD 4K
+                </span>
+                <span className="px-2 py-0.5 rounded bg-white/15 text-white font-bold border border-white/20 text-[11px]">
+                  HDR10
+                </span>
+                <span className="px-2 py-0.5 rounded bg-white/15 text-white font-bold border border-white/20 text-[11px]">
+                  5.1 环绕声
+                </span>
+                {videoData?.vod_year && (
+                  <span className="text-white/50">· {videoData.vod_year}</span>
+                )}
+                {videoData?.vod_area && (
+                  <span className="text-white/50">· {videoData.vod_area}</span>
+                )}
+                {videoData?.type_name && (
+                  <span className="text-white/50">· {videoData.type_name}</span>
+                )}
+              </div>
+            </div>
+
+            {/* 操作控制区 */}
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              {/* 巨幕影院模式切换按钮 */}
+              <button
+                type="button"
+                onClick={toggleCinemaMode}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                  isCinemaMode
+                    ? 'bg-red-600 text-white border-red-500 shadow-lg shadow-red-600/30'
+                    : 'bg-white/10 hover:bg-white/20 text-white/90 hover:text-white border-white/15'
+                }`}
+                title={isCinemaMode ? '退出巨幕影院模式' : '开启巨幕影院模式'}
+              >
+                <MonitorPlay size={16} />
+                <span>{isCinemaMode ? '退出巨幕' : '巨幕影院'}</span>
+              </button>
+
+              {/* 追剧清单收藏 */}
+              {videoData && videoId && (
+                <div className="flex items-center">
+                  <FavoriteButton
+                    videoId={videoId}
+                    source={source || ''}
+                    title={videoData.vod_name || title || '未知视频'}
+                    poster={videoData.vod_pic}
+                    type={videoData.type_name}
+                    year={videoData.vod_year}
+                    size={18}
+                    isPremium={false}
+                  />
+                </div>
+              )}
+
+              {/* 分享按钮 */}
+              {videoData && (
+                <ShareButton
+                  title={videoData.vod_name || title || ''}
+                  poster={videoData.vod_pic}
+                  episodeName={videoData.episodes?.[currentEpisode]?.name}
+                  year={videoData.vod_year}
+                  type={videoData.type_name}
+                  size={18}
+                />
+              )}
+
+              {/* 正在播放线路指示 */}
+              {source && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('source-selector-section');
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-xs text-purple-200 hover:text-white transition-all cursor-pointer font-medium"
+                  title="点击定位至专线面板"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>{getSourceName(source)}</span>
+                  {groupedSources.length > 1 && (
+                    <span className="text-purple-300 font-bold">
+                      ({groupedSources.length} 线)
+                    </span>
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* 巨幕模式下的选集面板 */}
+          {isCinemaMode && videoData?.episodes && videoData.episodes.length > 1 && (
+            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Layers size={18} className="text-red-500" />
+                  <h3 className="text-base font-bold text-white">全剧集选集</h3>
+                  <span className="text-xs text-white/50 bg-white/10 px-2 py-0.5 rounded-full">
+                    共 {videoData.episodes.length} 集
+                  </span>
+                </div>
+                <span className="text-xs text-white/40">在播放器内可直接按 E 键或点击「选集」抽屉秒切</span>
+              </div>
+
+              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-2 max-h-60 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-white/20">
+                {videoData.episodes.map((ep, idx) => {
+                  const isCurrent = idx === currentEpisode;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleEpisodeClick(ep, idx)}
+                      className={`py-2 px-1 rounded-xl text-xs font-semibold text-center transition-all cursor-pointer border ${
+                        isCurrent
+                          ? 'bg-red-600 text-white border-red-500 shadow-md shadow-red-600/30 ring-2 ring-red-400/50'
+                          : 'bg-white/5 hover:bg-white/15 text-white/70 hover:text-white border-white/10'
+                      }`}
+                    >
+                      {ep.name?.replace(/第|集/g, '') || idx + 1}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* 演职员圆形肖像滑轨 */}
+          {(directorsList.length > 0 || actorsList.length > 0) && (
+            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl space-y-4">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <User size={18} className="text-red-500" />
+                <span>导演与主演阵容</span>
+              </h3>
+
+              <div className="flex items-center gap-4 overflow-x-auto pb-2 scrollbar-none">
+                {directorsList.map((dir) => (
+                  <Link
+                    key={dir}
+                    href={`/director/${encodeURIComponent(dir)}`}
+                    className="group flex flex-col items-center gap-2 shrink-0 p-2 rounded-xl hover:bg-white/5 transition-all text-center"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-purple-600/40 to-red-600/40 border border-white/20 flex items-center justify-center text-white font-bold text-base shadow-lg group-hover:scale-105 group-hover:border-red-500 transition-all">
+                      {dir.slice(0, 1)}
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-white/90 group-hover:text-red-400 transition-colors">
+                        {dir}
+                      </p>
+                      <span className="text-[10px] text-white/40">导演</span>
+                    </div>
+                  </Link>
+                ))}
+
+                {actorsList.map((actor) => (
+                  <Link
+                    key={actor}
+                    href={`/actor/${encodeURIComponent(actor)}`}
+                    className="group flex flex-col items-center gap-2 shrink-0 p-2 rounded-xl hover:bg-white/5 transition-all text-center"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-white/10 to-white/20 border border-white/20 flex items-center justify-center text-white font-bold text-base shadow-lg group-hover:scale-105 group-hover:border-red-500 transition-all">
+                      {actor.slice(0, 1)}
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-white/90 group-hover:text-red-400 transition-colors">
+                        {actor}
+                      </p>
+                      <span className="text-[10px] text-white/40">主演</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 剧情简介 */}
+          {videoData?.vod_content && (
+            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl space-y-2">
+              <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider">
+                故事梗概
+              </h3>
+              <p className="text-sm text-white/80 leading-relaxed">
+                {videoData.vod_content.replace(/<[^>]+>/g, '').trim()}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* 猜你喜欢 */}
         <div className="mt-12 pt-8 border-t border-white/10">
           <ContentRail
             title="🍿 喜欢这部影视的观众还在看"

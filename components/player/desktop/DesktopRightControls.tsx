@@ -1,7 +1,6 @@
 import React from 'react';
 import { Icons } from '@/components/ui/Icon';
-
-
+import { Layers, Server, HelpCircle } from 'lucide-react';
 
 interface DesktopRightControlsProps {
     isNativeFullscreen: boolean;
@@ -14,6 +13,12 @@ interface DesktopRightControlsProps {
     onTogglePictureInPicture: () => void;
     onShowAirPlayMenu: () => void;
     onShowCastMenu: () => void;
+    // Netflix 级新交互
+    totalEpisodes?: number;
+    onToggleEpisodesDrawer?: () => void;
+    sourcesCount?: number;
+    onToggleSourceDrawer?: () => void;
+    onToggleShortcutsModal?: () => void;
 }
 
 export function DesktopRightControls({
@@ -26,10 +31,40 @@ export function DesktopRightControls({
     onToggleWebFullscreen,
     onTogglePictureInPicture,
     onShowAirPlayMenu,
-    onShowCastMenu
+    onShowCastMenu,
+    totalEpisodes = 1,
+    onToggleEpisodesDrawer,
+    sourcesCount = 1,
+    onToggleSourceDrawer,
+    onToggleShortcutsModal,
 }: DesktopRightControlsProps) {
     return (
-        <div className="player-controls-right relative z-50 flex shrink-0 items-center gap-3">
+        <div className="player-controls-right relative z-50 flex shrink-0 items-center gap-2 sm:gap-3">
+            {/* Netflix 剧集选集抽屉入口 */}
+            {totalEpisodes > 1 && onToggleEpisodesDrawer && (
+                <button
+                    onClick={onToggleEpisodesDrawer}
+                    className="btn-icon shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer"
+                    aria-label="剧集选集"
+                    title="展开剧集选集"
+                >
+                    <Layers size={17} />
+                    <span className="text-xs font-bold hidden sm:inline">选集</span>
+                </button>
+            )}
+
+            {/* Netflix 专线切换抽屉入口 */}
+            {sourcesCount > 1 && onToggleSourceDrawer && (
+                <button
+                    onClick={onToggleSourceDrawer}
+                    className="btn-icon shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer"
+                    aria-label="切换专线"
+                    title="切换专线"
+                >
+                    <Server size={17} />
+                    <span className="text-xs font-bold hidden sm:inline">专线</span>
+                </button>
+            )}
             {/* Picture-in-Picture */}
             {
                 isPiPSupported && (
@@ -71,6 +106,18 @@ export function DesktopRightControls({
                     </button>
                 )
             }
+
+            {/* 键盘快捷键帮助 */}
+            {onToggleShortcutsModal && (
+                <button
+                    onClick={onToggleShortcutsModal}
+                    className="btn-icon shrink-0 hidden md:flex items-center justify-center text-white/70 hover:text-white"
+                    aria-label="键盘快捷键"
+                    title="键盘快捷键 (?)"
+                >
+                    <HelpCircle size={18} />
+                </button>
+            )}
 
             {/* Web Fullscreen (窗口内放大) */}
             <button

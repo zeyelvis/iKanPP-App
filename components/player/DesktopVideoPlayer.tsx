@@ -75,6 +75,12 @@ interface DesktopVideoPlayerProps {
   onBack?: () => void;
   // Resolution callback
   onResolutionDetected?: (info: import('./hooks/useVideoResolution').VideoResolutionInfo) => void;
+  // Netflix 级新交互
+  episodes?: Array<{ name?: string; url: string }>;
+  onSelectEpisode?: (index: number) => void;
+  sources?: Array<import('./desktop/InPlayerSourceDrawer').SourceItem>;
+  currentSource?: string;
+  onSelectSource?: (source: import('./desktop/InPlayerSourceDrawer').SourceItem) => void;
 }
 
 export function DesktopVideoPlayer({
@@ -93,6 +99,11 @@ export function DesktopVideoPlayer({
   isPremium = false,
   onBack,
   onResolutionDetected,
+  episodes,
+  onSelectEpisode,
+  sources,
+  currentSource,
+  onSelectSource,
 }: DesktopVideoPlayerProps) {
   const { refs, data, actions } = useDesktopPlayerState();
   const { fullscreenType: settingsFullscreenType } = usePlayerSettings(isPremium);
@@ -248,6 +259,56 @@ export function DesktopVideoPlayer({
   // 移动端/全屏屏幕防误触锁定机制
   const [isScreenLocked, setIsScreenLocked] = React.useState(false);
   const [showLockToast, setShowLockToast] = React.useState<string | null>(null);
+
+  // Netflix 级沉浸式交互状态
+  const [isEpisodesDrawerOpen, setIsEpisodesDrawerOpen] = React.useState(false);
+  const [isSourceDrawerOpen, setIsSourceDrawerOpen] = React.useState(false);
+  const [isShortcutsModalOpen, setIsShortcutsModalOpen] = React.useState(false);
+  const [showNextEpisodeCountdown, setShowNextEpisodeCountdown] = React.useState(false);
+  const nextCountdownDismissedRef = React.useRef(false);
+
+  // 切集或切片源时，重置倒计时与抽屉状态
+  React.useEffect(() => {
+    setShowNextEpisodeCountdown(false);
+    nextCountdownDismissedRef.current = false;
+    setIsEpisodesDrawerOpen(false);
+    setIsSourceDrawerOpen(false);
+  }, [src, currentEpisodeIndex]);
+
+  // 检测进入尾声倒数 15 秒且有下一集时，自动滑出 Netflix 经典倒计时卡片
+  React.useEffect(() => {
+    if (!onNextEpisode) return;
+    const hasNext = currentEpisodeIndex < totalEpisodes - 1;
+    if (!hasNext) return;
+
+    if (
+      data.duration > 30 &&
+      data.duration - data.currentTime <= 15 &&
+      data.currentTime > 10 &&
+      !nextCountdownDismissedRef.current
+    ) {
+      if (!showNextEpisodeCountdown) {
+        setShowNextEpisodeCountdown(true);
+      }
+    }
+  }, [data.currentTime, data.duration, currentEpisodeIndex, totalEpisodes, onNextEpisode, showNextEpisodeCountdown]);
+
+  // 全局/全屏键盘快捷键监听增强（按下 ? 开启帮助，按下 E 开启选集）
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
+
+      if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+        e.preventDefault();
+        setIsShortcutsModalOpen(prev => !prev);
+      } else if ((e.key === 'e' || e.key === 'E') && totalEpisodes > 1) {
+        e.preventDefault();
+        setIsEpisodesDrawerOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [totalEpisodes]);
 
   // 退出全屏时自动解除屏幕锁定
   React.useEffect(() => {
@@ -596,6 +657,30 @@ export function DesktopVideoPlayer({
             onCycleWebFullscreenSize={cycleWebFullscreenSize}
             // Portal container
             containerRef={containerRef}
+            // Netflix 级新交互
+            episodes={episodes}
+            currentEpisode={currentEpisodeIndex}
+            isEpisodesDrawerOpen={isEpisodesDrawerOpen}
+            onCloseEpisodesDrawer={() => setIsEpisodesDrawerOpen(false)}
+            onSelectEpisode={onSelectEpisode}
+            sources={sources}
+            currentSource={currentSource}
+            isSourceDrawerOpen={isSourceDrawerOpen}
+            onCloseSourceDrawer={() => setIsSourceDrawerOpen(false)}
+            onSelectSource={onSelectSource}
+            isShortcutsModalOpen={isShortcutsModalOpen}
+            onCloseShortcutsModal={() => setIsShortcutsModalOpen(false)}
+            showNextEpisodeCountdown={showNextEpisodeCountdown}
+            nextEpisodeName={episodes?.[currentEpisodeIndex + 1]?.name || `第 ${currentEpisodeIndex + 2} 集`}
+            nextEpisodeIndex={currentEpisodeIndex + 1}
+            onPlayNextEpisode={() => {
+              setShowNextEpisodeCountdown(false);
+              onNextEpisode?.();
+            }}
+            onCancelNextEpisode={() => {
+              setShowNextEpisodeCountdown(false);
+              nextCountdownDismissedRef.current = true;
+            }}
           />
 
           {/* 全屏屏幕防误触锁定悬浮按钮 */}
@@ -631,6 +716,11 @@ export function DesktopVideoPlayer({
               data={data}
               logic={logic}
               refs={refs}
+              totalEpisodes={totalEpisodes}
+              onToggleEpisodesDrawer={() => setIsEpisodesDrawerOpen((prev) => !prev)}
+              sourcesCount={sources?.length || 1}
+              onToggleSourceDrawer={() => setIsSourceDrawerOpen((prev) => !prev)}
+              onToggleShortcutsModal={() => setIsShortcutsModalOpen((prev) => !prev)}
             />
           )}
           </div>

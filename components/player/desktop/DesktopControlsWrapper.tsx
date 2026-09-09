@@ -8,9 +8,24 @@ interface DesktopControlsWrapperProps {
     data: ReturnType<typeof useDesktopPlayerState>['data'];
     logic: ReturnType<typeof useDesktopPlayerLogic>;
     refs: ReturnType<typeof useDesktopPlayerState>['refs'];
+    totalEpisodes?: number;
+    onToggleEpisodesDrawer?: () => void;
+    sourcesCount?: number;
+    onToggleSourceDrawer?: () => void;
+    onToggleShortcutsModal?: () => void;
 }
 
-export function DesktopControlsWrapper({ src, data, logic, refs }: DesktopControlsWrapperProps) {
+export function DesktopControlsWrapper({
+    src,
+    data,
+    logic,
+    refs,
+    totalEpisodes,
+    onToggleEpisodesDrawer,
+    sourcesCount,
+    onToggleSourceDrawer,
+    onToggleShortcutsModal,
+}: DesktopControlsWrapperProps) {
     const {
         isPlaying,
         currentTime,
@@ -84,6 +99,11 @@ export function DesktopControlsWrapper({ src, data, logic, refs }: DesktopContro
             onProgressMouseDown={handleProgressMouseDown}
             onProgressTouchStart={handleProgressTouchStart}
             formatTime={formatTime}
+            totalEpisodes={totalEpisodes}
+            onToggleEpisodesDrawer={onToggleEpisodesDrawer}
+            sourcesCount={sourcesCount}
+            onToggleSourceDrawer={onToggleSourceDrawer}
+            onToggleShortcutsModal={onToggleShortcutsModal}
         />
     );
 }

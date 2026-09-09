@@ -22,6 +22,12 @@ interface CustomVideoPlayerProps {
   onBack?: () => void;
   // Resolution callback
   onResolutionDetected?: (info: import('./hooks/useVideoResolution').VideoResolutionInfo) => void;
+  // Netflix 级新交互
+  episodes?: Array<{ name?: string; url: string }>;
+  onSelectEpisode?: (index: number) => void;
+  sources?: Array<import('./desktop/InPlayerSourceDrawer').SourceItem>;
+  currentSource?: string;
+  onSelectSource?: (source: import('./desktop/InPlayerSourceDrawer').SourceItem) => void;
 }
 
 /**
