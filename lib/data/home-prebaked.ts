@@ -191,7 +191,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "欢迎来龙餐馆",
         "rate": "8.7",
         "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2935109312.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2935109312.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/zr7om0GOLOcLo7SXMmNEG5rz6de.jpg",
         "description": "豆瓣一周电影口碑榜 TOP 2。动荡时代下人间烟火与人性温暖的细腻交织，全网极高赞誉与感动。",
         "year": "2026",
         "types": [
@@ -418,7 +418,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "欢迎来龙餐馆",
         "rate": "8.7",
         "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2935109312.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2935109312.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/zr7om0GOLOcLo7SXMmNEG5rz6de.jpg",
         "description": "2026 院线热播巨制。由文牧野执导，沈腾 / 蒋奇明 / 奥马尔·谢里夫联袂呈现。",
         "year": "2026",
         "types": [
@@ -496,7 +496,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "蜘蛛侠：崭新之日",
         "rate": "7.8",
         "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934276912.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934276912.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/qeQJx07rK2xm8SD2sJxFKhE7gs0.jpg",
         "description": "2026 院线热播巨制。由德斯汀·丹尼尔·克雷顿执导，汤姆·霍兰德 / 赞达亚 / 萨迪·辛克联袂呈现。",
         "year": "2026",
         "types": [

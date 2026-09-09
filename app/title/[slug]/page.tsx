@@ -6,7 +6,7 @@ import { Star, Clock, Calendar, Film, ArrowLeft, Clapperboard, User, Sparkles, C
 import { getEntityBySlug, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity } from '@/lib/services/entity-kv';
 import { getGenreBySlug } from '@/lib/data/genres';
 import { parseEntitySlug } from '@/lib/data/entities/entity-utils';
-import { searchAndEnrichFromTMDB, fetchTMDBDetails } from '@/lib/services/entity-enrichment';
+import { searchAndEnrichFromTMDB, fetchTMDBDetails, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
 import { getPersonAvatars } from '@/lib/services/person-avatar';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { TitleEntity } from '@/lib/types/entity';
@@ -94,7 +94,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const metaDescription = `在 iKanPP 免费在线观看《${entity.title}》(${entity.year}) ${isTv ? '电视剧全集' : '电影完整版'}。${cleanDesc ? `${cleanDesc}...` : ''}${peopleText}海外华人免翻墙极速超清播放。`;
   const canonicalUrl = `${BASE_URL}/title/${entity.entityId}-${entity.slug}`;
-  const ogImage = entity.backdrop || entity.cover;
+  let resolvedBackdrop = entity.backdrop;
+  if (isFakeBackdrop(entity.backdrop, entity.cover)) {
+    const realBackdrop = await resolveRealBackdrop(
+      entity.title,
+      entity.backdrop,
+      entity.cover,
+      entity.tmdbId,
+      entity.type,
+      entity.year
+    );
+    if (realBackdrop) {
+      resolvedBackdrop = realBackdrop;
+    }
+  }
+  const ogImage = resolvedBackdrop || entity.cover;
 
   return {
     title: pageTitle,
@@ -209,7 +223,29 @@ export default async function TitlePage({ params }: Props) {
   const isTv = entity.type === 'tv';
   const channelPath = isTv ? '/tv' : '/movie';
   const channelName = isTv ? '电视剧' : '电影';
-  const heroBackdrop = getOptimizedImageUrl(entity.backdrop || entity.cover);
+
+  // 智能识别并自动丰润 TMDB 真实 16:9 横版电影大画幅剧照
+  let resolvedBackdrop = entity.backdrop;
+  if (isFakeBackdrop(entity.backdrop, entity.cover)) {
+    const realBackdrop = await resolveRealBackdrop(
+      entity.title,
+      entity.backdrop,
+      entity.cover,
+      entity.tmdbId,
+      entity.type,
+      entity.year
+    );
+    if (realBackdrop) {
+      entity.backdrop = realBackdrop;
+      resolvedBackdrop = realBackdrop;
+      // 异步持久化入库，下次访问直接极速秒开
+      saveEntity(entity).catch(() => {});
+    }
+  }
+
+  // 是否为纯正的 16:9 横版电影剧照大图
+  const isTrueBackdrop = !isFakeBackdrop(resolvedBackdrop, entity.cover);
+  const heroBackdrop = getOptimizedImageUrl(resolvedBackdrop || entity.cover);
   const entityCover = getOptimizedImageUrl(entity.cover);
 
   return (
@@ -252,7 +288,11 @@ export default async function TitlePage({ params }: Props) {
               fill
               priority
               sizes="100vw"
-              className="object-cover object-top opacity-35 sm:opacity-45 filter brightness-90 saturate-[1.15]"
+              className={
+                isTrueBackdrop
+                  ? "object-cover object-center opacity-40 lg:opacity-50 filter brightness-95 saturate-[1.15] transition-all duration-700"
+                  : "object-cover object-top opacity-20 filter blur-3xl scale-125 transition-all duration-700"
+              }
             />
             {/* 多重电影级渐变融合：底边向上淡入深黑，侧边向右压暗文字背景 */}
             <div className="absolute inset-0 bg-linear-to-t from-[#0A0A0F] via-[#0A0A0F]/70 to-transparent" />

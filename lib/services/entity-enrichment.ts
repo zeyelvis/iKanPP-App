@@ -354,10 +354,74 @@ export async function searchAndEnrichPersonCredits(
       }
     }
 
-    return results;
-  } catch (err) {
-    console.warn(`[Enrich person fail] name=${personName}:`, err);
-    return [];
+      return results;
+    } catch (err) {
+      console.warn(`[Enrich person fail] name=${personName}:`, err);
+      return [];
+    }
   }
-}
+
+  /**
+   * 判定当前背景图是否为无效/竖版海报假数据
+   */
+  export function isFakeBackdrop(backdrop?: string, cover?: string): boolean {
+    if (!backdrop) return true;
+    if (cover && backdrop === cover) return true;
+    if (backdrop.includes('ratio_poster')) return true;
+    return false;
+  }
+
+  /**
+   * 智能获取真实的 16:9 横版电影大剧照 (Backdrop)
+   * 当 backdrop 缺失或误填了竖版封面时，自动向 TMDB 查询获取原汁原味的横幅剧照大图
+   */
+  export async function resolveRealBackdrop(
+    title: string,
+    currentBackdrop?: string,
+    currentCover?: string,
+    tmdbId?: string,
+    type: 'movie' | 'tv' | 'anime' = 'movie',
+    year?: string
+  ): Promise<string | null> {
+    // 若当前已有真正的横版剧照，直接返回
+    if (!isFakeBackdrop(currentBackdrop, currentCover)) {
+      return currentBackdrop || null;
+    }
+
+    if (!TMDB_API_KEY || !title) return null;
+
+    try {
+      const tmdbMediaType = type === 'movie' ? 'movie' : 'tv';
+
+      // 1. 若有 tmdbId，优先直接查询详情获取 backdrop_path
+      if (tmdbId) {
+        const detail = await fetchTMDBDetails(tmdbId, tmdbMediaType);
+        if (detail?.backdrop_path) {
+          return `https://image.tmdb.org/t/p/w1280${detail.backdrop_path}`;
+        }
+      }
+
+      // 2. 按纯净标题到 TMDB 搜索获取 16:9 横版剧照
+      const cleanQuery = sanitizeSearchTitle(title);
+      if (!cleanQuery) return null;
+
+      const searchUrl = `${TMDB_BASE}/search/${tmdbMediaType}?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(cleanQuery)}${year ? `&year=${year.slice(0, 4)}` : ''}`;
+      const res = await fetch(searchUrl, {
+        headers: { Accept: 'application/json' },
+        next: { revalidate: 86400 * 7 },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const firstHit = data.results?.[0];
+        if (firstHit?.backdrop_path) {
+          return `https://image.tmdb.org/t/p/w1280${firstHit.backdrop_path}`;
+        }
+      }
+    } catch (e) {
+      console.warn(`[resolveRealBackdrop fail] title=${title}:`, e);
+    }
+
+    return null;
+  }
 
