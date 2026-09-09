@@ -35,180 +35,130 @@ export const PREBAKED_HOME_DATA: {
 } = {
   "movie": {
     "hero": [
-      {
-        "id": "iyf_hero_movie_1",
-        "title": "特立独行",
-        "rate": "5.8",
-        "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
-        "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
-        "year": "2026",
-        "types": [
-          "热门",
-          "剧情",
-          "电影"
-        ],
-        "episodes_info": "电影·剧情",
-        "type": "movie",
-        "is_new": true,
-        "playable": true,
-        "directors": [
-          "邢文雄"
-        ],
-        "actors": [
-          "白敬亭",
-          "魏翔",
-          "张国强",
-          "苏小玎",
-          "黄才伦"
-        ]
-      },
-      {
-        "id": "iyf_hero_movie_2",
-        "title": "给阿嬷的情书",
-        "rate": "8.9",
-        "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/AwmlL79nKTcX5tzAhyoV298xXlz.jpg",
-        "description": "潮汕阿嬷叶淑柔一直守着平淡的日子，安享晚年。孙子晓伟因债务缠身，瞒着家人远赴泰国，寻找传闻中已成亿万富豪的阿公郑木生。然而，一个令人意外的消息打破了整个家庭的平静：多年来一直通过跨国信件与阿嬷“谈情说爱”诉说思念的人，竟然并非阿嬷的丈夫郑木生。随着晓伟的调查，一个感人的真相被缓缓揭开。",
-        "year": "2026",
-        "types": [
-          "热门",
-          "剧情",
-          "电影"
-        ],
-        "episodes_info": "电影·剧情",
-        "type": "movie",
-        "is_new": true,
-        "playable": true,
-        "directors": [
-          "蓝鸿春"
-        ],
-        "actors": [
-          "李思潼",
-          "王彦桐",
-          "吴少卿",
-          "郑润奇",
-          "王晓慧"
-        ]
-      },
-      {
-        "id": "iyf_hero_movie_3",
-        "title": "玩具总动员5",
-        "rate": "8.4",
-        "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
-        "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
-        "year": "2026",
-        "types": [
-          "热门",
-          "动画",
-          "电影"
-        ],
-        "episodes_info": "电影·动画",
-        "type": "movie",
-        "is_new": true,
-        "playable": true,
-        "directors": [
-          "安德鲁·斯坦顿"
-        ],
-        "actors": [
-          "琼·库萨克",
-          "汤姆·汉克斯",
-          "蒂姆·艾伦",
-          "柯南·奥布莱恩",
-          "Scarlett Spears"
-        ]
-      },
-      {
-        "id": "iyf_hero_movie_4",
-        "title": "寒战1994",
-        "rate": "6.5",
-        "cover": "https://image.tmdb.org/t/p/w500/9C3ZxhGJvdpxmNC5PhkBMwzTMRT.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/q2ErBUKeS85UXM32nzvW44E8sG4.jpg",
-        "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
-        "year": "2026",
-        "types": [
-          "热门",
-          "剧情",
-          "电影"
-        ],
-        "episodes_info": "电影·剧情",
-        "type": "movie",
-        "is_new": true,
-        "playable": true,
-        "directors": [
-          "梁乐民"
-        ],
-        "actors": [
-          "吴彦祖",
-          "刘俊谦",
-          "吴慷仁",
-          "谢君豪",
-          "王丹妮"
-        ]
-      },
-      {
-        "id": "iyf_hero_tv_5",
-        "title": "交锋",
-        "rate": "9.0",
-        "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/lYDwHYOR8PROQfSJGZ8LqvwUVcW.jpg",
-        "description": "一宗世纪之交的泄密大案扣动两岸局势脉搏，同时还掩藏着一场境外势力与我方在隐蔽战线上的针锋较量。二十世纪九十年代末，闽州市国家安全局一对性格迥异的师徒，因机缘巧合的命运安排，为了共同的使命与信仰并肩作战。他们联手挫败了各种阴谋，也与敌手在横跨二十年的命运长河里不断纠缠。当时间流转，新世纪的潮流剧变席卷而来，国家安全局势攻防易势，隐蔽战线上的较量却不止不休。在一次次关乎人性的考验中，这三人的命运关系因不同抉择，在岁月洗礼中悄然改变着。",
-        "year": "2026",
-        "types": [
-          "热门",
-          "连续剧"
-        ],
-        "episodes_info": "更新至06集 | 共40集",
-        "type": "tv",
-        "is_new": true,
-        "playable": true,
-        "directors": [
-          "Matt Shapira"
-        ],
-        "actors": [
-          "David A.R. White",
-          "小库珀·古丁",
-          "卡特里娜·鲍登",
-          "杰森·帕特里克",
-          "Scott Baio"
-        ]
-      },
-      {
-        "id": "iyf_hero_tv_6",
-        "title": "生逢其时",
-        "rate": "9.0",
-        "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/7HXIhc3aRr1v7KmOrCulszXf3YP.jpg",
-        "description": "八十年代初，青梧小镇住着家庭模式完全不同的齐家和曹家。某天两家同时诞下齐时、曹信。身患白化病的齐时，自小就意识到了自己的“与众不同”，于是她喝酱油、戴假发，试图通过这样的方式，成为和普通人一样的存在。另一边的曹信，一路走来都是家长口中“别人家的孩子”，然而光环之下却始终伴随着父亲的严苛要求。当特立独行、勇敢倔强的少女齐时，遇上乖巧听话、优秀自律的少年曹信，两个家庭也在邻里间日积月累的相处中，也因荒唐“换子”碰撞出了眼泪的故事和“新生”的契机。孩子们经历着关于亲情、友情、爱情的考验，大人们也在面对关于事业、婚姻、家庭的难题。在时代洪流中，纵使生活跌跌撞撞，他们亦携手缝缝补补修炼人生，共同找寻属于自己的人生和幸福。",
-        "year": "2026",
-        "types": [
-          "热门",
-          "连续剧"
-        ],
-        "episodes_info": "更新至08集 | 共26集",
-        "type": "tv",
-        "is_new": true,
-        "playable": true
-      },
-      {
-        "id": "iyf_hero_tv_7",
-        "title": "重案六组:消失的警号",
-        "rate": "8.0",
-        "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/nr1uqvJs4kqtGcBTwIAew5OiSXI.jpg",
-        "description": "剧情核心围绕“消失的警号”展开，通过“老警号传承”设计致敬原版角色，并融入科技办案、新老刑侦理念碰撞等创新元素。",
-        "year": "2026",
-        "types": [
-          "热门",
-          "连续剧"
-        ],
-        "episodes_info": "更新至20集 | 共26集",
-        "type": "tv",
-        "is_new": true,
-        "playable": true
-      }
-    ],
+        {
+                "id": "iyf_hero_movie_1",
+                "title": "特立独行",
+                "rate": "6.4",
+                "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
+                "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "type": "movie",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_2",
+                "title": "给阿嬷的情书",
+                "rate": "8.9",
+                "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/AwmlL79nKTcX5tzAhyoV298xXlz.jpg",
+                "description": "潮汕阿嬷叶淑柔一直守着平淡的日子，安享晚年。孙子晓伟因债务缠身，瞒着家人远赴泰国，寻找传闻中已成亿万富豪的阿公郑木生。然而，一个令人意外的消息打破了整个家庭的平静：多年来一直通过跨国信件与阿嬷“谈情说爱”诉说思念的人，竟然并非阿嬷的丈夫郑木生。随着晓伟的调查，一个感人的真相被缓缓揭开。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "type": "movie",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_3",
+                "title": "玩具总动员5",
+                "rate": "8.4",
+                "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
+                "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "动画",
+                        "电影"
+                ],
+                "episodes_info": "电影·动画",
+                "type": "movie",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_4",
+                "title": "寒战1994",
+                "rate": "6.5",
+                "cover": "https://image.tmdb.org/t/p/w500/9C3ZxhGJvdpxmNC5PhkBMwzTMRT.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/q2ErBUKeS85UXM32nzvW44E8sG4.jpg",
+                "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "type": "movie",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_5",
+                "title": "交锋",
+                "rate": "9.0",
+                "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/lYDwHYOR8PROQfSJGZ8LqvwUVcW.jpg",
+                "description": "一宗世纪之交的泄密大案扣动两岸局势脉搏，同时还掩藏着一场境外势力与我方在隐蔽战线上的针锋较量。二十世纪九十年代末，闽州市国家安全局一对性格迥异的师徒，因机缘巧合的命运安排，为了共同的使命与信仰并肩作战。他们联手挫败了各种阴谋，也与敌手在横跨二十年的命运长河里不断纠缠。当时间流转，新世纪的潮流剧变席卷而来，国家安全局势攻防易势，隐蔽战线上的较量却不止不休。在一次次关乎人性的考验中，这三人的命运关系因不同抉择，在岁月洗礼中悄然改变着。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至08集 | 共40集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_6",
+                "title": "生逢其时",
+                "rate": "9.0",
+                "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/7HXIhc3aRr1v7KmOrCulszXf3YP.jpg",
+                "description": "八十年代初，青梧小镇住着家庭模式完全不同的齐家和曹家。某天两家同时诞下齐时、曹信。身患白化病的齐时，自小就意识到了自己的“与众不同”，于是她喝酱油、戴假发，试图通过这样的方式，成为和普通人一样的存在。另一边的曹信，一路走来都是家长口中“别人家的孩子”，然而光环之下却始终伴随着父亲的严苛要求。当特立独行、勇敢倔强的少女齐时，遇上乖巧听话、优秀自律的少年曹信，两个家庭也在邻里间日积月累的相处中，也因荒唐“换子”碰撞出了眼泪的故事和“新生”的契机。孩子们经历着关于亲情、友情、爱情的考验，大人们也在面对关于事业、婚姻、家庭的难题。在时代洪流中，纵使生活跌跌撞撞，他们亦携手缝缝补补修炼人生，共同找寻属于自己的人生和幸福。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至09集 | 共26集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_7",
+                "title": "重案六组:消失的警号",
+                "rate": "8.0",
+                "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/nr1uqvJs4kqtGcBTwIAew5OiSXI.jpg",
+                "description": "剧情核心围绕“消失的警号”展开，通过“老警号传承”设计致敬原版角色，并融入科技办案、新老刑侦理念碰撞等创新元素。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至20集 | 共26集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        }
+      ],
     "top10": [
       {
         "id": "pb_m_top10_1",
@@ -1714,164 +1664,130 @@ export const PREBAKED_HOME_DATA: {
   },
   "tv": {
     "hero": [
-      {
-        "id": "iyf_hero_movie_1",
-        "title": "特立独行",
-        "rate": "5.8",
-        "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
-        "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
-        "year": "2026",
-        "types": [
-          "热门",
-          "剧情",
-          "电影"
-        ],
-        "episodes_info": "电影·剧情",
-        "type": "movie",
-        "is_new": true,
-        "playable": true,
-        "actors": [
-          "李洪绸",
-          "安宁",
-          "赵宁",
-          "杨羽",
-          "黎伟"
-        ]
-      },
-      {
-        "id": "iyf_hero_movie_2",
-        "title": "给阿嬷的情书",
-        "rate": "8.9",
-        "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/AwmlL79nKTcX5tzAhyoV298xXlz.jpg",
-        "description": "潮汕阿嬷叶淑柔一直守着平淡的日子，安享晚年。孙子晓伟因债务缠身，瞒着家人远赴泰国，寻找传闻中已成亿万富豪的阿公郑木生。然而，一个令人意外的消息打破了整个家庭的平静：多年来一直通过跨国信件与阿嬷“谈情说爱”诉说思念的人，竟然并非阿嬷的丈夫郑木生。随着晓伟的调查，一个感人的真相被缓缓揭开。",
-        "year": "2026",
-        "types": [
-          "热门",
-          "剧情",
-          "电影"
-        ],
-        "episodes_info": "电影·剧情",
-        "type": "movie",
-        "is_new": true,
-        "playable": true
-      },
-      {
-        "id": "iyf_hero_movie_3",
-        "title": "玩具总动员5",
-        "rate": "8.4",
-        "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
-        "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
-        "year": "2026",
-        "types": [
-          "热门",
-          "动画",
-          "电影"
-        ],
-        "episodes_info": "电影·动画",
-        "type": "movie",
-        "is_new": true,
-        "playable": true
-      },
-      {
-        "id": "iyf_hero_movie_4",
-        "title": "寒战1994",
-        "rate": "6.5",
-        "cover": "https://image.tmdb.org/t/p/w500/9C3ZxhGJvdpxmNC5PhkBMwzTMRT.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/q2ErBUKeS85UXM32nzvW44E8sG4.jpg",
-        "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
-        "year": "2026",
-        "types": [
-          "热门",
-          "剧情",
-          "电影"
-        ],
-        "episodes_info": "电影·剧情",
-        "type": "movie",
-        "is_new": true,
-        "playable": true
-      },
-      {
-        "id": "iyf_hero_tv_5",
-        "title": "交锋",
-        "rate": "9.0",
-        "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/lYDwHYOR8PROQfSJGZ8LqvwUVcW.jpg",
-        "description": "一宗世纪之交的泄密大案扣动两岸局势脉搏，同时还掩藏着一场境外势力与我方在隐蔽战线上的针锋较量。二十世纪九十年代末，闽州市国家安全局一对性格迥异的师徒，因机缘巧合的命运安排，为了共同的使命与信仰并肩作战。他们联手挫败了各种阴谋，也与敌手在横跨二十年的命运长河里不断纠缠。当时间流转，新世纪的潮流剧变席卷而来，国家安全局势攻防易势，隐蔽战线上的较量却不止不休。在一次次关乎人性的考验中，这三人的命运关系因不同抉择，在岁月洗礼中悄然改变着。",
-        "year": "2026",
-        "types": [
-          "热门",
-          "连续剧"
-        ],
-        "episodes_info": "更新至06集 | 共40集",
-        "type": "tv",
-        "is_new": true,
-        "playable": true,
-        "directors": [
-          "姚晓峰"
-        ],
-        "actors": [
-          "王凯",
-          "彭昱畅",
-          "欧豪",
-          "周依然",
-          "祖峰"
-        ]
-      },
-      {
-        "id": "iyf_hero_tv_6",
-        "title": "生逢其时",
-        "rate": "9.0",
-        "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/7HXIhc3aRr1v7KmOrCulszXf3YP.jpg",
-        "description": "八十年代初，青梧小镇住着家庭模式完全不同的齐家和曹家。某天两家同时诞下齐时、曹信。身患白化病的齐时，自小就意识到了自己的“与众不同”，于是她喝酱油、戴假发，试图通过这样的方式，成为和普通人一样的存在。另一边的曹信，一路走来都是家长口中“别人家的孩子”，然而光环之下却始终伴随着父亲的严苛要求。当特立独行、勇敢倔强的少女齐时，遇上乖巧听话、优秀自律的少年曹信，两个家庭也在邻里间日积月累的相处中，也因荒唐“换子”碰撞出了眼泪的故事和“新生”的契机。孩子们经历着关于亲情、友情、爱情的考验，大人们也在面对关于事业、婚姻、家庭的难题。在时代洪流中，纵使生活跌跌撞撞，他们亦携手缝缝补补修炼人生，共同找寻属于自己的人生和幸福。",
-        "year": "2026",
-        "types": [
-          "热门",
-          "连续剧"
-        ],
-        "episodes_info": "更新至08集 | 共26集",
-        "type": "tv",
-        "is_new": true,
-        "playable": true,
-        "directors": [
-          "林妍"
-        ],
-        "actors": [
-          "关晓彤",
-          "王子奇",
-          "刘琳",
-          "郭涛",
-          "郭晓东"
-        ]
-      },
-      {
-        "id": "iyf_hero_tv_7",
-        "title": "重案六组:消失的警号",
-        "rate": "8.0",
-        "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/nr1uqvJs4kqtGcBTwIAew5OiSXI.jpg",
-        "description": "剧情核心围绕“消失的警号”展开，通过“老警号传承”设计致敬原版角色，并融入科技办案、新老刑侦理念碰撞等创新元素。",
-        "year": "2026",
-        "types": [
-          "热门",
-          "连续剧"
-        ],
-        "episodes_info": "更新至20集 | 共26集",
-        "type": "tv",
-        "is_new": true,
-        "playable": true,
-        "actors": [
-          "张一山",
-          "李沐宸",
-          "郭晓东",
-          "葛铮",
-          "吴昊宸"
-        ]
-      }
-    ],
+        {
+                "id": "iyf_hero_movie_1",
+                "title": "特立独行",
+                "rate": "6.4",
+                "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
+                "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "type": "movie",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_2",
+                "title": "给阿嬷的情书",
+                "rate": "8.9",
+                "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/AwmlL79nKTcX5tzAhyoV298xXlz.jpg",
+                "description": "潮汕阿嬷叶淑柔一直守着平淡的日子，安享晚年。孙子晓伟因债务缠身，瞒着家人远赴泰国，寻找传闻中已成亿万富豪的阿公郑木生。然而，一个令人意外的消息打破了整个家庭的平静：多年来一直通过跨国信件与阿嬷“谈情说爱”诉说思念的人，竟然并非阿嬷的丈夫郑木生。随着晓伟的调查，一个感人的真相被缓缓揭开。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "type": "movie",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_3",
+                "title": "玩具总动员5",
+                "rate": "8.4",
+                "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
+                "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "动画",
+                        "电影"
+                ],
+                "episodes_info": "电影·动画",
+                "type": "movie",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_4",
+                "title": "寒战1994",
+                "rate": "6.5",
+                "cover": "https://image.tmdb.org/t/p/w500/9C3ZxhGJvdpxmNC5PhkBMwzTMRT.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/q2ErBUKeS85UXM32nzvW44E8sG4.jpg",
+                "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "type": "movie",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_5",
+                "title": "交锋",
+                "rate": "9.0",
+                "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/lYDwHYOR8PROQfSJGZ8LqvwUVcW.jpg",
+                "description": "一宗世纪之交的泄密大案扣动两岸局势脉搏，同时还掩藏着一场境外势力与我方在隐蔽战线上的针锋较量。二十世纪九十年代末，闽州市国家安全局一对性格迥异的师徒，因机缘巧合的命运安排，为了共同的使命与信仰并肩作战。他们联手挫败了各种阴谋，也与敌手在横跨二十年的命运长河里不断纠缠。当时间流转，新世纪的潮流剧变席卷而来，国家安全局势攻防易势，隐蔽战线上的较量却不止不休。在一次次关乎人性的考验中，这三人的命运关系因不同抉择，在岁月洗礼中悄然改变着。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至08集 | 共40集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_6",
+                "title": "生逢其时",
+                "rate": "9.0",
+                "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/7HXIhc3aRr1v7KmOrCulszXf3YP.jpg",
+                "description": "八十年代初，青梧小镇住着家庭模式完全不同的齐家和曹家。某天两家同时诞下齐时、曹信。身患白化病的齐时，自小就意识到了自己的“与众不同”，于是她喝酱油、戴假发，试图通过这样的方式，成为和普通人一样的存在。另一边的曹信，一路走来都是家长口中“别人家的孩子”，然而光环之下却始终伴随着父亲的严苛要求。当特立独行、勇敢倔强的少女齐时，遇上乖巧听话、优秀自律的少年曹信，两个家庭也在邻里间日积月累的相处中，也因荒唐“换子”碰撞出了眼泪的故事和“新生”的契机。孩子们经历着关于亲情、友情、爱情的考验，大人们也在面对关于事业、婚姻、家庭的难题。在时代洪流中，纵使生活跌跌撞撞，他们亦携手缝缝补补修炼人生，共同找寻属于自己的人生和幸福。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至09集 | 共26集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_7",
+                "title": "重案六组:消失的警号",
+                "rate": "8.0",
+                "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/nr1uqvJs4kqtGcBTwIAew5OiSXI.jpg",
+                "description": "剧情核心围绕“消失的警号”展开，通过“老警号传承”设计致敬原版角色，并融入科技办案、新老刑侦理念碰撞等创新元素。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至20集 | 共26集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        }
+      ],
     "top10": [
       {
         "id": "pb_t_top10_1",
