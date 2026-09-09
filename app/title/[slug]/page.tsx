@@ -243,7 +243,7 @@ export default async function TitlePage({ params }: Props) {
       {/* Netflix 级沉浸式全屏背景大画幅 (Hero Billboard Backdrop) */}
       <div className="relative w-full overflow-hidden">
         {heroBackdrop && (
-          <div className="absolute inset-0 h-[60vh] sm:h-[75vh] lg:h-[82vh] w-full select-none pointer-events-none z-0">
+          <div className="hidden md:block absolute inset-0 h-[60vh] sm:h-[75vh] lg:h-[82vh] w-full select-none pointer-events-none z-0">
             <Image
               src={heroBackdrop}
               alt={`${entity.title} 剧照大图`}
@@ -277,63 +277,65 @@ export default async function TitlePage({ params }: Props) {
           <article className="grid grid-cols-1 md:grid-cols-12 gap-3.5 md:gap-8 lg:gap-12 pb-6 sm:pb-16 items-end">
             {/* 左侧海报区：移动端 16:9 宽屏剧照舞台（点击秒播） vs 桌面端 2:3 立体大悬浮海报 */}
             <div className="md:col-span-4 lg:col-span-3">
-              {/* 1. 移动端 16:9 全画幅沉浸式舞台 (md:hidden) */}
-              <Link
-                href={`/player?${new URLSearchParams({
-                  entity: entity.entityId,
-                  title: entity.title,
-                  type: entity.type === 'tv' ? 'tv' : 'movie',
-                  episode: '1',
-                }).toString()}`}
-                className="md:hidden group relative block w-full aspect-16/9 rounded-2xl overflow-hidden bg-black/60 border border-white/15 shadow-2xl shadow-black cursor-pointer mb-1"
-              >
-                {heroBackdrop ? (
-                  <Image
-                    src={heroBackdrop}
-                    alt={`${entity.title} 封面海报`}
-                    fill
-                    priority
-                    sizes="100vw"
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-white/30">
-                    <Film className="w-12 h-12" />
+              {/* 1. 移动端 16:9 全画幅沉浸式舞台 (仅在小于 md 渲染) */}
+              <div className="block md:hidden w-full mb-1">
+                <Link
+                  href={`/player?${new URLSearchParams({
+                    entity: entity.entityId,
+                    title: entity.title,
+                    type: entity.type === 'tv' ? 'tv' : 'movie',
+                    episode: '1',
+                  }).toString()}`}
+                  className="group relative block w-full aspect-16/9 rounded-2xl overflow-hidden bg-black/60 border border-white/15 shadow-2xl shadow-black cursor-pointer"
+                >
+                  {heroBackdrop ? (
+                    <Image
+                      src={heroBackdrop}
+                      alt={`${entity.title} 封面海报`}
+                      fill
+                      priority
+                      sizes="100vw"
+                      className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-white/30">
+                      <Film className="w-12 h-12" />
+                    </div>
+                  )}
+                  {/* 电影级暗黑渐变 */}
+                  <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/25 to-transparent" />
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
+
+                  {/* 居中浮动呼吸光晕【▶ 播放】大徽标 */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="w-13 h-13 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-xl shadow-red-950/60 group-hover:scale-110 group-active:scale-95 transition-all duration-300 border border-white/30 backdrop-blur-xs">
+                      <Play className="w-6 h-6 fill-white translate-x-0.5" />
+                    </div>
                   </div>
-                )}
-                {/* 电影级暗黑渐变 */}
-                <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/25 to-transparent" />
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
 
-                {/* 居中浮动呼吸光晕【▶ 播放】大徽标 */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="w-13 h-13 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-xl shadow-red-950/60 group-hover:scale-110 group-active:scale-95 transition-all duration-300 border border-white/30 backdrop-blur-xs">
-                    <Play className="w-6 h-6 fill-white translate-x-0.5" />
+                  {/* 移动端左上角简易标 */}
+                  <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md border border-white/15 text-[11px] font-bold text-white/90">
+                    {channelName} · {entity.year || '2024'}
                   </div>
-                </div>
 
-                {/* 移动端左上角简易标 */}
-                <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md border border-white/15 text-[11px] font-bold text-white/90">
-                  {channelName} · {entity.year || '2024'}
-                </div>
+                  {/* 移动端右上角评分 */}
+                  {entity.rate && (
+                    <div className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md border border-amber-500/40 flex items-center gap-1 text-[11px] font-black text-amber-400">
+                      <Star className="w-3 h-3 fill-amber-400" />
+                      <span>{entity.rate}</span>
+                    </div>
+                  )}
 
-                {/* 移动端右上角评分 */}
-                {entity.rate && (
-                  <div className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md border border-amber-500/40 flex items-center gap-1 text-[11px] font-black text-amber-400">
-                    <Star className="w-3 h-3 fill-amber-400" />
-                    <span>{entity.rate}</span>
+                  {/* 底部微提示 */}
+                  <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between text-[10px] text-white/80 font-medium pointer-events-none">
+                    <span className="flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span>超清直连秒播</span>
+                    </span>
+                    <span className="text-white/60">轻点海报直接播放 ▶</span>
                   </div>
-                )}
-
-                {/* 底部微提示 */}
-                <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between text-[10px] text-white/80 font-medium pointer-events-none">
-                  <span className="flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>超清直连秒播</span>
-                  </span>
-                  <span className="text-white/60">轻点海报直接播放 ▶</span>
-                </div>
-              </Link>
+                </Link>
+              </div>
 
               {/* 2. 桌面端 2:3 黄金比例悬浮立体海报 (hidden md:block) */}
               <div className="hidden md:block relative aspect-2/3 w-full max-w-[260px] lg:max-w-[290px] rounded-2xl overflow-hidden shadow-2xl shadow-black/80 border border-white/15 bg-black/40 group">
