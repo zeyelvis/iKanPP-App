@@ -274,7 +274,7 @@ export default async function TitlePage({ params }: Props) {
           </nav>
 
           {/* 影视主体大横幅 (Hero Article) */}
-          <article className="grid grid-cols-1 md:grid-cols-12 gap-3.5 md:gap-8 lg:gap-12 pb-6 sm:pb-16 items-end">
+          <article className="grid grid-cols-1 md:grid-cols-12 gap-2.5 md:gap-8 lg:gap-12 pb-4 sm:pb-16 items-end">
             {/* 左侧海报区：移动端 16:9 宽屏剧照舞台（点击秒播） vs 桌面端 2:3 立体大悬浮海报 */}
             <div className="md:col-span-4 lg:col-span-3">
               {/* 1. 移动端 16:9 全画幅沉浸式舞台 (仅在小于 md 渲染) */}
@@ -302,37 +302,15 @@ export default async function TitlePage({ params }: Props) {
                       <Film className="w-12 h-12" />
                     </div>
                   )}
-                  {/* 电影级暗黑渐变 */}
-                  <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/25 to-transparent" />
+                  {/* 电影级微光暗角融合 */}
+                  <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-black/30" />
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
 
-                  {/* 居中浮动呼吸光晕【▶ 播放】大徽标 */}
+                  {/* 居中浮动 Netflix 级透明磨砂玻璃【▶ 播放】高阶按钮 */}
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="w-13 h-13 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-xl shadow-red-950/60 group-hover:scale-110 group-active:scale-95 transition-all duration-300 border border-white/30 backdrop-blur-xs">
-                      <Play className="w-6 h-6 fill-white translate-x-0.5" />
+                    <div className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/30 text-white flex items-center justify-center shadow-2xl shadow-black/80 group-hover:scale-110 group-active:scale-95 group-hover:bg-black/55 group-hover:border-white/50 transition-all duration-300">
+                      <Play className="w-6 h-6 fill-white text-white translate-x-0.5 opacity-90 group-hover:opacity-100" />
                     </div>
-                  </div>
-
-                  {/* 移动端左上角简易标 */}
-                  <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md border border-white/15 text-[11px] font-bold text-white/90">
-                    {channelName} · {entity.year || '2024'}
-                  </div>
-
-                  {/* 移动端右上角评分 */}
-                  {entity.rate && (
-                    <div className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md border border-amber-500/40 flex items-center gap-1 text-[11px] font-black text-amber-400">
-                      <Star className="w-3 h-3 fill-amber-400" />
-                      <span>{entity.rate}</span>
-                    </div>
-                  )}
-
-                  {/* 底部微提示 */}
-                  <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between text-[10px] text-white/80 font-medium pointer-events-none">
-                    <span className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span>超清直连秒播</span>
-                    </span>
-                    <span className="text-white/60">轻点海报直接播放 ▶</span>
                   </div>
                 </Link>
               </div>
@@ -366,7 +344,7 @@ export default async function TitlePage({ params }: Props) {
             {/* 右侧：电影巨幕主标题、规格徽章与行动栏 (严格靠左对齐 items-start) */}
             <div className="md:col-span-8 lg:col-span-9 flex flex-col justify-end items-start text-left">
               {/* 唯一语义主标题 H1 */}
-              <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight mb-2 sm:mb-3 drop-shadow-md text-left">
+              <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight mb-1.5 sm:mb-3 drop-shadow-md text-left">
                 {entity.title}
                 {entity.originalTitle && entity.originalTitle !== entity.title && (
                   <span className="block text-xs sm:text-2xl font-light text-white/50 mt-0.5 sm:mt-1 tracking-normal font-sans">
@@ -376,7 +354,7 @@ export default async function TitlePage({ params }: Props) {
               </h1>
 
               {/* Netflix 风格视听规格徽章行 */}
-              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2.5 text-xs sm:text-sm text-white/80 mb-3 sm:mb-6">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2.5 text-xs sm:text-sm text-white/80 mb-2 sm:mb-6">
                 {/* 评分胶囊 */}
                 {entity.rate && (
                   <span className="flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md sm:rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold text-[11px] sm:text-sm">
@@ -422,7 +400,7 @@ export default async function TitlePage({ params }: Props) {
               </div>
 
               {/* 题材分类标签 */}
-              <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3.5 sm:mb-6">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2.5 sm:mb-6">
                 {entity.genres?.map(genre => {
                   const gInfo = getGenreBySlug(genre);
                   const href = gInfo ? `/genre/${gInfo.slug}` : `/genre/${encodeURIComponent(genre)}`;
