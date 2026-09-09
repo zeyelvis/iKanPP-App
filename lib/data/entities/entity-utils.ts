@@ -59,6 +59,41 @@ export function normalizeTitle(title: string): string {
   if (!title) return '';
   return title
     .toLowerCase()
-    .replace(/[\s\-_:：·•/／\\、，,。！？!?~～@#$%^&*+=|（()）]/g, '')
-    .trim();
+    .replace(/[（(][^）)]*[）)]/g, '')
+    .replace(/[【\[][^】\]]*[】\]]/g, '')
+    .replace(/\s+/g, '')
+    .replace(/[^\w\u4e00-\u9fa5]/g, '');
+}
+
+/**
+ * 校验影视条目是否为脱口秀、真人秀、综艺通告或颁奖典礼等非影视正片
+ */
+export function isInvalidDramaOrMovie(entity: {
+  title?: string;
+  genres?: string[];
+  description?: string;
+}): boolean {
+  if (!entity) return true;
+  const title = (entity.title || '').trim();
+  const genres = Array.isArray(entity.genres) ? entity.genres : [];
+  const desc = (entity.description || '').trim();
+
+  // 1. 分类标签过滤
+  const invalidGenres = ['脱口秀', '真人秀', '新闻', 'talk', 'reality', 'news', 'soap'];
+  if (genres.some(g => invalidGenres.some(ig => g.toLowerCase().includes(ig)))) {
+    return true;
+  }
+
+  // 2. 标题关键词过滤（脱口秀、晚会、综艺、颁奖典礼、日常访谈等）
+  const invalidTitleRegex = /(\bshow$|秀$|脱口秀|晚间秀|深夜秀|今夜秀|直播秀|现场观察|周六夜现场|颁奖典礼|电影节|奥斯卡|艾美奖|金球奖|格莱美|音乐奖|星光大赏|红毯|春晚|春节联欢晚会|圆桌派|天天向上|快乐大本营|中餐厅|王牌对王牌|奔跑吧|极限挑战|向往的生活|Running Man|Close-Up with|Late Night with|The Tonight Show|The Late Late Show|The Daily Show|Watch What Happens|Today with|The Ellen|Off Camera)/i;
+  if (invalidTitleRegex.test(title)) {
+    return true;
+  }
+
+  // 3. 简介关键词过滤
+  if (/脱口秀节目|访谈节目|电视访谈|真人秀节目|现场脱口秀/.test(desc)) {
+    return true;
+  }
+
+  return false;
 }

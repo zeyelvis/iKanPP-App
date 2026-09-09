@@ -1,6 +1,6 @@
 import { TitleEntity } from '@/lib/types/entity';
 import { generateSlug, formatEntityId, normalizeTitle } from '@/lib/data/entities/entity-utils';
-import { getEntityByTitle, getEntityByTmdb, getNextEntitySeq, saveEntity } from '@/lib/services/entity-kv';
+import { getEntityByTitle, getEntityByTmdb, getNextEntitySeq, saveEntity, setPersonEntitiesIndex } from '@/lib/services/entity-kv';
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
@@ -311,6 +311,16 @@ export async function searchAndEnrichPersonCredits(
       }
 
       results.push(entity);
+    }
+
+    // 覆盖更新 KV 中的人物作品索引，彻底冲刷掉历史遗留的脱口秀等脏数据
+    if (results.length > 0) {
+      try {
+        const cleanIds = results.map(r => r.entityId);
+        await setPersonEntitiesIndex(role, cleanName, cleanIds);
+      } catch (e) {
+        console.warn(`[Failed to update person index] name=${cleanName}:`, e);
+      }
     }
 
     return results;

@@ -1,5 +1,5 @@
 import { TitleEntity } from '@/lib/types/entity';
-import { generateSlug, formatEntityId, normalizeTitle } from '@/lib/data/entities/entity-utils';
+import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie } from '@/lib/data/entities/entity-utils';
 import { PREBAKED_HOME_DATA, PrebakedSubject } from '@/lib/data/home-prebaked';
 import { POPULAR_DIRECTORS, POPULAR_ACTORS } from '@/lib/data/popular-people';
 import { PEOPLE_PREBAKED_ENTITIES } from '@/lib/data/people-prebaked';
@@ -358,8 +358,8 @@ export async function saveEntity(entity: TitleEntity): Promise<void> {
     }
   }
 
-  // 7. 追加到导演索引
-  if (Array.isArray(entity.directors)) {
+  // 7. 追加到导演索引（严禁脱口秀/综艺通告等非影视正片污染）
+  if (Array.isArray(entity.directors) && !isInvalidDramaOrMovie(entity)) {
     for (const d of entity.directors) {
       if (!d || d === '知名导演') continue;
       const dKey = `director:${d.trim()}`;
@@ -372,8 +372,8 @@ export async function saveEntity(entity: TitleEntity): Promise<void> {
     }
   }
 
-  // 8. 追加到演员索引
-  if (Array.isArray(entity.actors)) {
+  // 8. 追加到演员索引（严禁脱口秀/综艺通告等非影视正片污染）
+  if (Array.isArray(entity.actors) && !isInvalidDramaOrMovie(entity)) {
     for (const a of entity.actors) {
       if (!a || a === '实力主演') continue;
       const aKey = `actor:${a.trim()}`;
@@ -405,7 +405,16 @@ export async function getEntitiesByGenre(genre: string, limit = 12): Promise<Tit
 }
 
 /**
- * 获取同导演作品（用于详情页内链与导演作品专栏）
+ * 覆写指定导演或演员的作品 ID 列表索引（用于清洗脏数据和自愈更新）
+ */
+export async function setPersonEntitiesIndex(role: 'director' | 'actor', personName: string, entityIds: string[]): Promise<void> {
+  const clean = personName.trim();
+  const key = `${role}:${clean}`;
+  await kvPut(key, JSON.stringify(entityIds));
+}
+
+/**
+ * 获取同导演作品（用于详情页内链与导演作品专栏，严格剔除脱口秀/综艺通告）
  */
 export async function getEntitiesByDirector(director: string, limit = 48): Promise<TitleEntity[]> {
   if (!director || director === '知名导演') return [];
@@ -436,13 +445,17 @@ export async function getEntitiesByDirector(director: string, limit = 48): Promi
 
   if (!ids || ids.length === 0) return [];
 
-  const selectedIds = ids.slice(0, limit);
+  // 取更多条目以应对脱口秀过滤
+  const selectedIds = ids.slice(0, Math.max(limit * 2, 60));
   const results = await Promise.all(selectedIds.map(id => getEntityById(id)));
-  return results.filter((e): e is TitleEntity => e !== null);
+  const valid = results
+    .filter((e): e is TitleEntity => e !== null)
+    .filter(e => !isInvalidDramaOrMovie(e));
+  return valid.slice(0, limit);
 }
 
 /**
- * 获取同主演作品（用于详情页内链与演员作品专栏）
+ * 获取同主演作品（用于详情页内链与演员作品专栏，严格剔除脱口秀/综艺通告）
  */
 export async function getEntitiesByActor(actor: string, limit = 48): Promise<TitleEntity[]> {
   if (!actor || actor === '实力主演') return [];
@@ -473,9 +486,13 @@ export async function getEntitiesByActor(actor: string, limit = 48): Promise<Tit
 
   if (!ids || ids.length === 0) return [];
 
-  const selectedIds = ids.slice(0, limit);
+  // 取更多条目以应对脱口秀过滤
+  const selectedIds = ids.slice(0, Math.max(limit * 2, 60));
   const results = await Promise.all(selectedIds.map(id => getEntityById(id)));
-  return results.filter((e): e is TitleEntity => e !== null);
+  const valid = results
+    .filter((e): e is TitleEntity => e !== null)
+    .filter(e => !isInvalidDramaOrMovie(e));
+  return valid.slice(0, limit);
 }
 
 /**

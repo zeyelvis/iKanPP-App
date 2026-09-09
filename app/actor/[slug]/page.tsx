@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Star, Film, User } from 'lucide-react';
 import { getEntitiesByActor } from '@/lib/services/entity-kv';
 import { searchAndEnrichPersonCredits } from '@/lib/services/entity-enrichment';
+import { isInvalidDramaOrMovie } from '@/lib/data/entities/entity-utils';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { Navbar } from '@/components/layout/Navbar';
 
@@ -63,8 +64,8 @@ export default async function ActorPage({ params }: Props) {
 
   let entities = await getEntitiesByActor(actorName, 48);
 
-  // 演员作品自愈与自繁殖扩充（通过 TMDB 人物履历抓取其全部主演与参演代表作）
-  if (entities.length === 0) {
+  // 1. 如果作品过少（低于 6 部，说明尚未深度抓取或历史脏数据已被过滤），强制触发高质量 TMDB 代表作自愈与覆写
+  if (entities.length < 6) {
     try {
       const enriched = await searchAndEnrichPersonCredits(actorName, 'actor', 36);
       if (enriched.length > 0) {
@@ -72,6 +73,16 @@ export default async function ActorPage({ params }: Props) {
       }
     } catch {}
   }
+
+  // 2. 严格剔除脱口秀、真人秀等非影视正片
+  entities = entities.filter(e => !isInvalidDramaOrMovie(e));
+
+  // 3. 权威口碑评分排序（让真正的传世高分神作稳居前排）
+  entities.sort((a, b) => {
+    const rateA = parseFloat(a.rate || '0');
+    const rateB = parseFloat(b.rate || '0');
+    return rateB - rateA;
+  });
 
   const itemList = entities.map((e, idx) => ({
     position: idx + 1,
