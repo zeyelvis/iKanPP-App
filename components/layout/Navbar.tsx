@@ -81,7 +81,19 @@ function NavbarInner({
   }, []);
 
   const handleSearch = (query: string) => {
-    onSearch?.(query);
+    const trimmed = query.trim();
+    if (!trimmed) return;
+
+    if (onSearch) {
+      onSearch(trimmed);
+    } else {
+      // 全局兜底搜索跳转：跨页从详情页/播放页直接唤起全网聚合秒播
+      if (isIkanX || isPremiumMode) {
+        window.location.href = `https://ikanx.com/?q=${encodeURIComponent(trimmed)}`;
+      } else {
+        router.push(`/?q=${encodeURIComponent(trimmed)}`);
+      }
+    }
     setMobileSearchOpen(false);
   };
 
@@ -214,38 +226,34 @@ function NavbarInner({
           )}
         </div>
 
-        {/* 右侧：全网搜索框 + 移动端菜单展开 */}
-        <div className="flex items-center gap-3 shrink-0">
-          {/* 桌面端展开式搜索栏 */}
-          {onSearch && !isPlayer && (
-            <div className="hidden sm:block">
-              <SearchBox
-                onSearch={handleSearch}
-                onClear={handleClear}
-                initialQuery={initialQuery}
-                isPremium={isPremiumMode}
-              />
-            </div>
-          )}
+        {/* 右侧：全网搜索框 + 移动端搜索与菜单展开 */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* 桌面端胶囊搜索栏 (在主站首页、详情页、播放页等所有页面全量常驻) */}
+          <div className="hidden sm:block">
+            <SearchBox
+              onSearch={handleSearch}
+              onClear={handleClear}
+              initialQuery={initialQuery}
+              isPremium={isPremiumMode}
+            />
+          </div>
 
-          {/* 移动端搜索放大镜触发按钮 */}
-          {onSearch && !isPlayer && (
-            <div className="sm:hidden">
-              <button
-                onClick={() => setMobileSearchOpen(true)}
-                className="p-2 rounded-full text-white/80 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
-                aria-label="打开搜索"
-              >
-                <Icons.Search size={18} />
-              </button>
-            </div>
-          )}
+          {/* 移动端搜索放大镜触发按钮 (随时唤起全屏搜索抽屉) */}
+          <div className="sm:hidden">
+            <button
+              onClick={() => setMobileSearchOpen(true)}
+              className="p-2 rounded-full text-white/80 hover:text-white bg-white/5 hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+              aria-label="打开搜索"
+            >
+              <Icons.Search size={18} />
+            </button>
+          </div>
 
-          {/* 移动端汉堡菜单按钮 */}
+          {/* 移动端汉堡菜单按钮 (仅在非播放页呈现) */}
           {!isPlayer && (
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors lg:hidden"
+              className="p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer lg:hidden"
               aria-label="展开导航菜单"
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -305,15 +313,14 @@ function NavbarInner({
         </div>
       )}
 
-      {/* 移动端全屏搜索弹层 */}
-      {onSearch && (
-        <MobileSearchOverlay
-          isOpen={mobileSearchOpen}
-          onClose={() => setMobileSearchOpen(false)}
-          onSearch={handleSearch}
-          initialQuery={initialQuery}
-        />
-      )}
+      {/* 移动端全屏搜索弹层 (全站全量开放) */}
+      <MobileSearchOverlay
+        isOpen={mobileSearchOpen}
+        onClose={() => setMobileSearchOpen(false)}
+        onSearch={handleSearch}
+        initialQuery={initialQuery}
+        isPremium={isPremiumMode}
+      />
     </nav>
   );
 }
