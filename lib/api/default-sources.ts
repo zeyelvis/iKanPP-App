@@ -1,6 +1,6 @@
 import type { VideoSource } from '@/lib/types';
 
-// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-09T07:37:59.898Z）
+// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-10T07:34:33.318Z）
 export const DEFAULT_SOURCES: VideoSource[] = [
   {
     id: 'jisu',
@@ -163,6 +163,16 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     priority: 16,
   },
   {
+    id: 'youku',
+    name: '优酷资源',
+    baseUrl: 'https://api.ukuapi88.com',
+    searchPath: '/api.php/provide/vod',
+    detailPath: '/api.php/provide/vod',
+    group: 'normal',
+    enabled: true,
+    priority: 17,
+  },
+  {
     id: 'wujin',
     name: '无尽资源',
     baseUrl: 'https://api.wujinapi.com',
@@ -170,7 +180,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 17,
+    priority: 18,
   },
   {
     id: 'zuida',
@@ -180,7 +190,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 18,
+    priority: 19,
   },
   {
     id: 'hongniu',
@@ -190,7 +200,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 19,
+    priority: 20,
   },
   {
     id: 'modu',
@@ -200,7 +210,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 20,
+    priority: 21,
   },
   {
     id: 'jingyu',
@@ -210,7 +220,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 21,
+    priority: 22,
   },
   {
     id: 'moduys',
@@ -220,7 +230,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 22,
+    priority: 23,
   },
   {
     id: 'modu_dm',
@@ -230,6 +240,6 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 23,
+    priority: 24,
   },
 ];
