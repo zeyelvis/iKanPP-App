@@ -45,6 +45,8 @@ const SHELVES = [
   { title: '高能烧脑 · 悬疑惊悚精选', icon: '🕵️', badge: 'SUSPENSE', tag: '悬疑' },
   { title: '合家欢 · 爆笑喜剧精选', icon: '🍿', badge: 'COMEDY', tag: '喜剧' },
   { title: '全球高分经典动画电影', icon: '🎨', badge: 'ANIMATION', tag: '动画' },
+  { title: '震撼自然与人文 · 高分纪录片', icon: '🌍', badge: 'DOCS', tag: '纪录片' },
+  { title: '冷门黑马 · 深度挖掘口碑佳片', icon: '💎', badge: 'HIDDEN GEMS', tag: '冷门佳片' },
 ];
 
 export default function MovieClient() {

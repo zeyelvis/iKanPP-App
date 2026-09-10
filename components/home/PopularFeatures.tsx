@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { createPortal } from 'react-dom';
 import { HeroSlideshow } from './TmdbSlideshow';
 import { Top10Rail } from './Top10Rail';
 import { ContentRail } from './ContentRail';
@@ -14,14 +13,16 @@ import { ExploreHubFooterBanner } from './ExploreHubFooterBanner';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 
+export type HomeContentType = 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'short';
+
 interface PopularFeaturesProps {
   onSearch?: (query: string) => void;
 }
 
 // ── SWR 货架本地瞬间缓存 ──────────────────────────
-const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v7-';
+const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v9-';
 
-function getLocalShelves(type: 'movie' | 'tv') {
+function getLocalShelves(type: HomeContentType) {
   if (typeof window === 'undefined') return null;
   try {
     const raw = localStorage.getItem(SHELVES_CACHE_KEY + type);
@@ -34,17 +35,17 @@ function getLocalShelves(type: 'movie' | 'tv') {
   return null;
 }
 
-function setLocalShelves(type: 'movie' | 'tv', data: { s1: any[]; s2: any[]; s3: any[]; s4: any[] }) {
+function setLocalShelves(type: HomeContentType, data: { s1: any[]; s2: any[]; s3: any[]; s4: any[] }) {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(SHELVES_CACHE_KEY + type, JSON.stringify(data));
   } catch {}
 }
 
-// ── 豆瓣一周口碑榜 SWR 本地秒开缓存 ──────────────────────────
-const WEEKLY_CHART_CACHE_KEY = 'kvideo-weekly-douban-chart-v2-';
+// ── 豆瓣/平台一周口碑榜 SWR 本地秒开缓存 ──────────────────────────
+const WEEKLY_CHART_CACHE_KEY = 'kvideo-weekly-douban-chart-v4-';
 
-function getLocalWeeklyChart(type: 'movie' | 'tv') {
+function getLocalWeeklyChart(type: HomeContentType) {
   if (typeof window === 'undefined') return null;
   try {
     const raw = localStorage.getItem(WEEKLY_CHART_CACHE_KEY + type);
@@ -57,22 +58,107 @@ function getLocalWeeklyChart(type: 'movie' | 'tv') {
   return null;
 }
 
-function setLocalWeeklyChart(type: 'movie' | 'tv', data: any[]) {
+function setLocalWeeklyChart(type: HomeContentType, data: any[]) {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(WEEKLY_CHART_CACHE_KEY + type, JSON.stringify(data));
   } catch {}
 }
 
+interface ShelfMeta {
+  title: string;
+  icon: string;
+  badge: string;
+  tag: string;
+  doubanType: 'movie' | 'tv';
+  viewAll: string;
+  prebakedOnly?: boolean;
+}
+
+function getShelvesMeta(contentType: HomeContentType): [ShelfMeta, ShelfMeta, ShelfMeta, ShelfMeta] {
+  switch (contentType) {
+    case 'all':
+      return [
+        { title: '🔥 院线重磅 & 华语热播', icon: '🔥', badge: 'HOT PICKS', tag: '热门', doubanType: 'movie', viewAll: '/movie' },
+        { title: '🌟 顶级欧美神剧 & 艾美奖力作', icon: '🌟', badge: 'TOP HBO/NETFLIX', tag: '美剧', doubanType: 'tv', viewAll: '/tv?region=美剧' },
+        { title: '⚡ 热血动漫 & 当季新番连载', icon: '⚡', badge: 'ANIME HIT', tag: '日本动画', doubanType: 'tv', viewAll: '/anime' },
+        { title: '🎬 全网爆款微短剧精选', icon: '🎬', badge: 'SHORT DRAMA', tag: '短剧', doubanType: 'tv', viewAll: '/short', prebakedOnly: true },
+      ];
+    case 'movie':
+      return [
+        { title: '🔥 最新院线热播', icon: '🔥', badge: 'NOW PLAYING', tag: '最新', doubanType: 'movie', viewAll: '/movie?genre=最新' },
+        { title: '⭐ 豆瓣 8.5+ 影史殿堂神作', icon: '⭐', badge: '豆瓣 9.0+', tag: '豆瓣高分', doubanType: 'movie', viewAll: '/movie?genre=豆瓣高分' },
+        { title: '🏮 华语经典 & 港影黄金时代', icon: '🏮', badge: 'CLASSIC', tag: '华语', doubanType: 'movie', viewAll: '/movie?region=华语' },
+        { title: '🚀 好莱坞震撼视效 & 科幻动作巅峰', icon: '🚀', badge: 'SUPER HIT', tag: '欧美', doubanType: 'movie', viewAll: '/movie?region=欧美' },
+      ];
+    case 'tv':
+      return [
+        { title: '🔥 2026 华语爆款热播连续剧', icon: '🔥', badge: 'HOT SERIES', tag: '国产剧', doubanType: 'tv', viewAll: '/tv?region=国产剧' },
+        { title: '🌟 顶级欧美神剧专区', icon: '🌟', badge: 'TOP US', tag: '美剧', doubanType: 'tv', viewAll: '/tv?region=美剧' },
+        { title: '🍿 人气韩剧 & 现象级爆款', icon: '🍿', badge: 'TRENDING', tag: '韩剧', doubanType: 'tv', viewAll: '/tv?region=韩剧' },
+        { title: '🌸 经典口碑高分日剧', icon: '🌸', badge: 'JAPAN', tag: '日剧', doubanType: 'tv', viewAll: '/tv?region=日剧' },
+      ];
+    case 'anime':
+      return [
+        { title: '⚡ 当季热血新番连载', icon: '⚡', badge: 'SEASON', tag: '日本动画', doubanType: 'tv', viewAll: '/anime?region=日本动画' },
+        { title: '🐉 国创修真年番巅峰', icon: '🐉', badge: 'CHINESE ANIME', tag: '国产动画', doubanType: 'tv', viewAll: '/anime?region=国产动画' },
+        { title: '👑 殿堂级经典不朽神作', icon: '👑', badge: 'CLASSIC', tag: '日本动画', doubanType: 'tv', viewAll: '/anime' },
+        { title: '🎨 全球经典剧场版动画电影', icon: '🎨', badge: 'MOVIE', tag: '动画', doubanType: 'movie', viewAll: '/movie?genre=动画' },
+      ];
+    case 'variety':
+      return [
+        { title: '🎤 全网爆款真人秀', icon: '🎤', badge: 'HOT SHOW', tag: '综艺', doubanType: 'tv', viewAll: '/variety' },
+        { title: '🤣 爆笑喜剧与名场面脱口秀', icon: '🤣', badge: 'COMEDY', tag: '脱口秀', doubanType: 'tv', viewAll: '/variety?genre=脱口秀' },
+        { title: '🎵 顶级音乐竞演现场', icon: '🎵', badge: 'MUSIC', tag: '综艺', doubanType: 'tv', viewAll: '/variety?genre=音乐' },
+        { title: '🌿 慢生活治愈与美食旅行', icon: '🌿', badge: 'SLOW LIFE', tag: '综艺', doubanType: 'tv', viewAll: '/variety?genre=美食' },
+      ];
+    case 'short':
+      return [
+        { title: '⚡ 战神归来 · 逆袭打脸爽剧', icon: '⚡', badge: 'GOD OF WAR', tag: '战神', doubanType: 'tv', viewAll: '/short?genre=战神', prebakedOnly: true },
+        { title: '💍 豪门恩怨 · 甜宠闪婚霸总', icon: '💍', badge: 'SWEET LOVE', tag: '豪门', doubanType: 'tv', viewAll: '/short?genre=豪门', prebakedOnly: true },
+        { title: '⏳ 穿越重生 · 年代绝地反击', icon: '⏳', badge: 'REBORN', tag: '重生', doubanType: 'tv', viewAll: '/short?genre=重生', prebakedOnly: true },
+        { title: '👑 古装权谋 · 绝色大女主戏', icon: '👑', badge: 'PALACE', tag: '古装', doubanType: 'tv', viewAll: '/short?genre=古装', prebakedOnly: true },
+      ];
+  }
+}
+
+function getTop10Info(contentType: HomeContentType): { title: string; badge: string } {
+  switch (contentType) {
+    case 'all':
+      return { title: '🔥 全网全品类综合热播 TOP 10', badge: '全站综合权威榜 · 每日自动更新' };
+    case 'movie':
+      return { title: '豆瓣一周电影口碑榜 TOP 10', badge: '豆瓣权威榜 · 每日自动更新' };
+    case 'tv':
+      return { title: '豆瓣一周华语口碑剧集 TOP 10', badge: '豆瓣权威榜 · 每日自动更新' };
+    case 'anime':
+      return { title: '年度动漫新番热播榜 TOP 10', badge: '番剧高分榜 · 每日自动更新' };
+    case 'variety':
+      return { title: '热门爆款综艺口碑榜 TOP 10', badge: '全民热度榜 · 每日自动更新' };
+    case 'short':
+      return { title: '精品微短剧热度 TOP 10', badge: '爆款爽剧榜 · 每日自动更新' };
+  }
+}
+
+const TABS: Array<{ id: HomeContentType | 'iptv'; label: string; isRoute?: boolean; href?: string }> = [
+  { id: 'all', label: '🔥 全部推荐' },
+  { id: 'movie', label: '🎬 电影' },
+  { id: 'tv', label: '📺 电视剧' },
+  { id: 'anime', label: '🏮 动漫' },
+  { id: 'variety', label: '🎤 综艺' },
+  { id: 'short', label: '⚡ 短剧' },
+  { id: 'iptv', label: '📡 直播', isRoute: true, href: '/iptv' },
+];
+
 export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   const router = useRouter();
-  const [contentType, setContentType] = useState<'movie' | 'tv'>('movie');
+  // 默认 Tab 设为 🔥 全部推荐 (all)
+  const [contentType, setContentType] = useState<HomeContentType>('all');
 
   // 主题货架分片数据获取（SWR: 优先使用本地缓存，新用户首次访问直接秒级呈现预烘焙高清精选数据，0ms 瞬间秒开）
+  const prebaked = useMemo(() => PREBAKED_HOME_DATA[contentType] || PREBAKED_HOME_DATA.all, [contentType]);
   const initialCache = typeof window !== 'undefined' ? getLocalShelves(contentType) : null;
-  const prebaked = PREBAKED_HOME_DATA[contentType];
 
-  // 豆瓣一周口碑榜 TOP 10（首屏 0ms 瞬间秒出，后台静默自动每日同步）
+  // 一周口碑榜 TOP 10（首屏 0ms 瞬间秒出，后台静默自动每日同步）
   const initialWeeklyCache = typeof window !== 'undefined' ? getLocalWeeklyChart(contentType) : null;
   const [weeklyMovies, setWeeklyMovies] = useState<any[]>(() => initialWeeklyCache || prebaked.top10);
   const [weeklyLoading, setWeeklyLoading] = useState<boolean>(false);
@@ -83,24 +169,26 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   const [shelf4Movies, setShelf4Movies] = useState<any[]>(() => initialCache?.s4 || prebaked.s4);
   const [loadingShelves, setLoadingShelves] = useState<boolean>(false);
 
-  // 根据 contentType 动态确定 4 个货架的标签
-  const isMovie = contentType === 'movie';
-  const tag1 = isMovie ? '院线热播' : '国产剧';
-  const tag2 = isMovie ? '豆瓣高分' : '美剧';
-  const tag3 = isMovie ? '华语' : '韩剧';
-  const tag4 = isMovie ? '欧美' : '日本动画';
+  const shelvesMeta = useMemo(() => getShelvesMeta(contentType), [contentType]);
+  const top10Info = useMemo(() => getTop10Info(contentType), [contentType]);
 
+  // 切换品类时，瞬间同步本地缓存或预烘焙数据
+  useEffect(() => {
+    const cache = getLocalShelves(contentType);
+    const pb = PREBAKED_HOME_DATA[contentType] || PREBAKED_HOME_DATA.all;
+    setShelf1Movies(cache?.s1 || pb.s1);
+    setShelf2Movies(cache?.s2 || pb.s2);
+    setShelf3Movies(cache?.s3 || pb.s3);
+    setShelf4Movies(cache?.s4 || pb.s4);
+
+    const weeklyCache = getLocalWeeklyChart(contentType);
+    setWeeklyMovies(weeklyCache || pb.top10);
+  }, [contentType]);
+
+  // 后台异步静默拉取货架数据（带 SWR 智能防抖与局部刷新）
   useEffect(() => {
     let isMounted = true;
     const cache = getLocalShelves(contentType);
-    if (cache) {
-      setShelf1Movies(cache.s1);
-      setShelf2Movies(cache.s2);
-      setShelf3Movies(cache.s3);
-      setShelf4Movies(cache.s4);
-    }
-    // 始终保持 false，首屏直接基于预烘焙数据秒开，后台异步静默更新
-    setLoadingShelves(false);
 
     // 智能比对两个影片序列是否相同（按 title 比对），杜绝相同列表触发无谓的重新渲染和 DOM 抖动
     const isSameList = (a: any[], b: any[]) => {
@@ -129,15 +217,23 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         let latestS3: any[] = cache?.s3 || prebaked.s3 || [];
         let latestS4: any[] = cache?.s4 || prebaked.s4 || [];
 
-        // 第一阶段：优先极速拉取前 2 个首屏高光货架
-        const [res1, res2] = await Promise.allSettled([
-          fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(tag1)}&type=${contentType}&page_limit=14&page_start=0`),
-          fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(tag2)}&type=${contentType}&page_limit=14&page_start=0`),
-        ]);
+        const [m1, m2, m3, m4] = shelvesMeta;
+
+        // 第一阶段：优先拉取前 2 个首屏高光货架（跳过纯预烘焙货架）
+        const p1 = m1.prebakedOnly
+          ? Promise.resolve({ subjects: prebaked.s1 })
+          : fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(m1.tag)}&type=${m1.doubanType}&page_limit=14&page_start=0`);
+
+        const p2 = m2.prebakedOnly
+          ? Promise.resolve({ subjects: prebaked.s2 })
+          : fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(m2.tag)}&type=${m2.doubanType}&page_limit=14&page_start=0`);
+
+        const [res1, res2] = await Promise.allSettled([p1, p2]);
 
         if (isMounted) {
           const s1 = res1.status === 'fulfilled' && res1.value?.subjects?.length ? res1.value.subjects : [];
           const s2 = res2.status === 'fulfilled' && res2.value?.subjects?.length ? res2.value.subjects : [];
+
           if (s1.length) {
             latestS1 = s1;
             setShelf1Movies(prev => isSameList(prev, s1) ? prev : s1);
@@ -161,10 +257,15 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         await new Promise(r => setTimeout(r, 1000));
         if (!isMounted) return;
 
-        const [res3, res4] = await Promise.allSettled([
-          fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(tag3)}&type=${contentType}&page_limit=14&page_start=0`),
-          fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(tag4)}&type=${contentType}&page_limit=14&page_start=0`),
-        ]);
+        const p3 = m3.prebakedOnly
+          ? Promise.resolve({ subjects: prebaked.s3 })
+          : fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(m3.tag)}&type=${m3.doubanType}&page_limit=14&page_start=0`);
+
+        const p4 = m4.prebakedOnly
+          ? Promise.resolve({ subjects: prebaked.s4 })
+          : fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(m4.tag)}&type=${m4.doubanType}&page_limit=14&page_start=0`);
+
+        const [res3, res4] = await Promise.allSettled([p3, p4]);
 
         if (isMounted) {
           const s3 = res3.status === 'fulfilled' && res3.value?.subjects?.length ? res3.value.subjects : [];
@@ -196,16 +297,21 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
     return () => {
       isMounted = false;
     };
-  }, [contentType, tag1, tag2, tag3, tag4]);
+  }, [contentType, shelvesMeta, prebaked]);
 
-  // ── 豆瓣一周口碑榜：后台静默每日自动更新 ──────────────────
+  // ── 口碑榜：后台静默每日自动更新 ──────────────────
   useEffect(() => {
     let isMounted = true;
     const cache = getLocalWeeklyChart(contentType);
     if (cache && cache.length > 0) {
       setWeeklyMovies(cache);
-    } else if (PREBAKED_HOME_DATA[contentType]?.top10) {
-      setWeeklyMovies(PREBAKED_HOME_DATA[contentType].top10);
+    } else if (prebaked.top10) {
+      setWeeklyMovies(prebaked.top10);
+    }
+
+    // 仅当为电影或剧集时走豆瓣官方周榜 API，其余品类（全部/动漫/综艺/短剧）直接使用高清预烘焙精选榜单
+    if (contentType !== 'movie' && contentType !== 'tv') {
+      return;
     }
 
     const fetchWeekly = async () => {
@@ -233,20 +339,12 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
     return () => {
       isMounted = false;
     };
-  }, [contentType]);
+  }, [contentType, prebaked]);
 
   // ── 全局流媒体防重管道（Deduplication Funnel） ──────────────────
-  // 按照页面视觉从上至下的动线流动，严格依次排除上游模块已展示过的影片：
-  // 1. Hero 巨幕专属大片 -> 标记已看
-  // 2. 豆瓣一周口碑榜 TOP 10 -> 剔除 Hero 重复项，标记已看
-  // 3. 货架 1（院线/新剧） -> 剔除前面所有重复项，用预置池补足
-  // 4. 货架 2（高分/美剧） -> 剔除前面所有重复项，用预置池补足
-  // 5. 货架 3（华语/韩剧） -> 剔除前面所有重复项，用预置池补足
-  // 6. 货架 4（科幻/动漫） -> 剔除前面所有重复项，用预置池补足
   const deduplicatedContent = useMemo(() => {
     const seen = new Set<string>();
 
-    // 辅助归一化标题函数（去除季数、括号等轻微差异，防止重复）
     const normalize = (t: string) =>
       (t || '')
         .replace(/\s*第[一二三四五六七八九十\d]+季/, '')
@@ -255,7 +353,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         .trim()
         .toLowerCase();
 
-    // 1. Hero 巨幕：专属大片
+    // 1. Hero 巨幕专属大片
     const heroPool = prebaked.hero || [];
     const heroList: any[] = [];
     for (const item of heroPool) {
@@ -266,7 +364,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       }
     }
 
-    // 2. 豆瓣一周口碑榜 TOP 10：从实际口碑榜中选出 10 部作品（排查 Hero 零重复）
+    // 2. 一周口碑榜 TOP 10
     const top10Source = (weeklyMovies && weeklyMovies.length > 0) ? weeklyMovies : (prebaked.top10 || []);
     const top10List: any[] = [];
     for (const item of top10Source) {
@@ -277,7 +375,6 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         top10List.push(item);
       }
     }
-    // 若因过滤不足 10 部，从 prebaked.top10 补足
     if (top10List.length < 10 && prebaked.top10) {
       for (const item of prebaked.top10) {
         if (top10List.length >= 10) break;
@@ -292,7 +389,6 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
     // 3. 通用货架过滤填充器
     const filterAndFill = (current: any[], fallback: any[], minCount = 10) => {
       const result: any[] = [];
-      // 优先装载网络或缓存的最新数据
       for (const m of (current || [])) {
         if (!m || !m.title) continue;
         const key = normalize(m.title);
@@ -301,7 +397,6 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
           result.push(m);
         }
       }
-      // 不足时，用该专区的高清预置精选池补足
       if (result.length < minCount) {
         for (const m of (fallback || [])) {
           if (!m || !m.title) continue;
@@ -321,125 +416,123 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
     const s4 = filterAndFill(shelf4Movies, prebaked.s4);
 
     return { heroList, top10List, s1, s2, s3, s4, seenSnapshot: new Set(seen) };
-  }, [contentType, prebaked, weeklyMovies, shelf1Movies, shelf2Movies, shelf3Movies, shelf4Movies]);
+  }, [prebaked, weeklyMovies, shelf1Movies, shelf2Movies, shelf3Movies, shelf4Movies]);
 
   const handleMovieClick = (movie: any) => {
     router.push(`/title/${generateSlug(movie.title)}`);
   };
 
+  const [m1, m2, m3, m4] = shelvesMeta;
+
   return (
     <div className="animate-fade-in pb-28 sm:pb-16">
-      {/* 1. 🏆 影院级全景沉浸式巨幕 Billboard（专属 5 大视效巨制，横版剧照 + 深度看点） */}
+      {/* 1. 🏆 影院级全景沉浸式巨幕 Billboard */}
       <HeroSlideshow contentType={contentType} onSearch={onSearch} customHeroMovies={deduplicatedContent.heroList} />
 
       {/* 2. 🎬 断点续播 / 最近观看记录横轨 */}
       <ContinueWatchingRail />
 
-      {/* 3. 🌟 流媒体核心分类快速切换（电影 / 电视剧 / 动漫 / 综艺） */}
-      <div className="flex items-center justify-between gap-4 mb-6 border-b border-white/10 pb-4">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setContentType('movie')}
-            className={`px-5 py-2 rounded-full text-sm font-bold transition-all cursor-pointer ${
-              contentType === 'movie'
-                ? 'bg-(--accent-color) text-white shadow-lg shadow-(--accent-color)/30 scale-105'
-                : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
-            }`}
-          >
-            🎬 电影专区
-          </button>
-          <button
-            onClick={() => setContentType('tv')}
-            className={`px-5 py-2 rounded-full text-sm font-bold transition-all cursor-pointer ${
-              contentType === 'tv'
-                ? 'bg-(--accent-color) text-white shadow-lg shadow-(--accent-color)/30 scale-105'
-                : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
-            }`}
-          >
-            📺 电视剧集
-          </button>
-          <button
-            onClick={() => router.push('/iptv')}
-            className="px-4 py-2 rounded-full text-sm font-medium bg-white/5 text-white/60 hover:text-white hover:bg-white/10 transition-all cursor-pointer hidden sm:inline-flex items-center gap-1.5"
-          >
-            📡 电视直播
-          </button>
+      {/* 3. 🌟 流媒体 7 大核心品类导航条（支持移动端横向滑动手势） */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b border-white/10 pb-3">
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 px-0.5 -mx-0.5">
+          {TABS.map((tab) => {
+            const isActive = contentType === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  if (tab.isRoute && tab.href) {
+                    router.push(tab.href);
+                  } else {
+                    setContentType(tab.id as HomeContentType);
+                  }
+                }}
+                className={`shrink-0 whitespace-nowrap px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-(--accent-color) text-white shadow-lg shadow-(--accent-color)/30 scale-105'
+                    : 'bg-white/5 text-white/70 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
-        <span className="text-xs text-white/40 font-medium hidden md:inline">
-          全球多源秒播 · 4K 超清聚合 · 零重复策划
+        <span className="text-xs text-white/40 font-medium hidden lg:inline">
+          全品类 0 延时秒播 · 4K 官方高清聚合 · 智能无重复货架
         </span>
       </div>
 
-      {/* 5. 🥇 豆瓣一周口碑榜 TOP 10（每日定时自动更新） */}
+      {/* 4. 🥇 口碑榜 TOP 10（每日定时自动更新） */}
       <Top10Rail
-        title={contentType === 'movie' ? '豆瓣一周电影口碑榜 TOP 10' : '豆瓣一周华语口碑剧集 TOP 10'}
-        badge="豆瓣权威榜 · 每日自动更新"
+        title={top10Info.title}
+        badge={top10Info.badge}
         movies={deduplicatedContent.top10List}
         loading={weeklyLoading && deduplicatedContent.top10List.length === 0}
         onMovieClick={handleMovieClick}
         contentType={contentType}
       />
 
-      {/* 6. 🎯 猜你喜欢 · 智能定制推荐（排除已展示影片，挖掘真正冷门黑马） */}
+      {/* 5. 🎯 猜你喜欢 · 智能定制推荐 */}
       <PersonalizedForYouRail
         onMovieClick={handleMovieClick}
-        contentType={contentType}
+        contentType={contentType === 'all' ? 'movie' : contentType}
         excludeTitles={deduplicatedContent.seenSnapshot}
       />
 
-      {/* 7. 货架 1：最新热院线热播 / 华语热播连续剧 */}
+      {/* 6. 货架 1 */}
       <ContentRail
-        title={isMovie ? '🔥 最新热院线热播' : '🔥 2026 华语爆款热播连续剧'}
-        icon="🔥"
-        badge={isMovie ? 'NOW PLAYING' : 'HOT SERIES'}
+        title={m1.title}
+        icon={m1.icon}
+        badge={m1.badge}
         movies={deduplicatedContent.s1}
         loading={loadingShelves}
         isPriority={true}
         onMovieClick={handleMovieClick}
-        onViewAll={() => router.push(isMovie ? '/movie?genre=最新' : '/tv?region=国产剧')}
+        onViewAll={() => router.push(m1.viewAll)}
       />
 
-      {/* 8. 货架 2：豆瓣 8.5+ 影史高分神作 / 顶级欧美神剧专区 */}
+      {/* 7. 货架 2 */}
       <ContentRail
-        title={isMovie ? '⭐ 豆瓣 8.5+ 影史殿堂神作' : '🌟 顶级欧美神剧 & 艾美奖力作'}
-        icon={isMovie ? '⭐' : '🌟'}
-        badge={isMovie ? '豆瓣 9.0+' : 'TOP HBO/NETFLIX'}
+        title={m2.title}
+        icon={m2.icon}
+        badge={m2.badge}
         movies={deduplicatedContent.s2}
         loading={loadingShelves}
         onMovieClick={handleMovieClick}
-        onViewAll={() => router.push(isMovie ? '/movie?genre=豆瓣高分' : '/tv?region=美剧')}
+        onViewAll={() => router.push(m2.viewAll)}
       />
 
-      {/* 9. 📡 电视直播精选频道 */}
+      {/* 8. 📡 电视直播精选频道（在推荐主干展示） */}
       <LiveChannelsPreview />
 
-      {/* 10. 货架 3：华语经典口碑大片 / 人气韩剧 & 经典日剧 */}
+      {/* 9. 货架 3 */}
       <ContentRail
-        title={isMovie ? '🏮 华语经典 & 港影黄金时代' : '🍿 人气韩剧 & 现象级爆款'}
-        icon={isMovie ? '🏮' : '🍿'}
-        badge="CLASSIC"
+        title={m3.title}
+        icon={m3.icon}
+        badge={m3.badge}
         movies={deduplicatedContent.s3}
         loading={loadingShelves}
         onMovieClick={handleMovieClick}
-        onViewAll={() => router.push(isMovie ? '/movie?region=华语' : '/tv?region=韩剧')}
+        onViewAll={() => router.push(m3.viewAll)}
       />
 
-      {/* 11. 货架 4：好莱坞震撼视效 / 热血动漫新番 */}
+      {/* 10. 货架 4 */}
       <ContentRail
-        title={isMovie ? '🚀 好莱坞震撼视效 & 科幻动作巅峰' : '⚡ 热血动漫 & 连载新番巅峰'}
-        icon={isMovie ? '🚀' : '⚡'}
-        badge="SUPER HIT"
+        title={m4.title}
+        icon={m4.icon}
+        badge={m4.badge}
         movies={deduplicatedContent.s4}
         loading={loadingShelves}
         onMovieClick={handleMovieClick}
-        onViewAll={() => router.push(isMovie ? '/movie?region=欧美' : '/anime')}
+        onViewAll={() => router.push(m4.viewAll)}
       />
 
-      {/* 12. 🛡️ 平台核心特性与极速播放优势 */}
+      {/* 11. 🛡️ 平台核心特性与极速播放优势 */}
       <PlatformFeaturesStrip />
 
-      {/* 13. 🧭 全库多维分类检索大厅导航卡片 */}
+      {/* 12. 🧭 全库多维分类检索大厅导航卡片 */}
       <ExploreHubFooterBanner />
     </div>
   );

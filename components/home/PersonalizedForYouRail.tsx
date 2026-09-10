@@ -6,11 +6,11 @@ import { ContentRail, type RailMovie } from './ContentRail';
 
 interface PersonalizedForYouRailProps {
   onMovieClick: (movie: any) => void;
-  contentType: 'movie' | 'tv';
+  contentType?: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'short' | string;
   excludeTitles?: Set<string>;
 }
 
-export function PersonalizedForYouRail({ onMovieClick, contentType, excludeTitles }: PersonalizedForYouRailProps) {
+export function PersonalizedForYouRail({ onMovieClick, contentType = 'movie', excludeTitles }: PersonalizedForYouRailProps) {
   const { movies: personalizedMovies, loading: personalizedLoading } = usePersonalizedRecommendations(false);
   const [fallbackMovies, setFallbackMovies] = useState<RailMovie[]>([]);
   const [loadingFallback, setLoadingFallback] = useState(false);
@@ -20,8 +20,10 @@ export function PersonalizedForYouRail({ onMovieClick, contentType, excludeTitle
     if (personalizedMovies.length === 0 && !personalizedLoading) {
       let isMounted = true;
       setLoadingFallback(true);
-      const fallbackTag = contentType === 'movie' ? '冷门佳片' : '悬疑';
-      fetch(`/api/douban/recommend?tag=${encodeURIComponent(fallbackTag)}&type=${contentType}&page_limit=14&page_start=0`)
+      const isMovie = contentType === 'movie';
+      const targetType = isMovie ? 'movie' : 'tv';
+      const fallbackTag = isMovie ? '冷门佳片' : '悬疑';
+      fetch(`/api/douban/recommend?tag=${encodeURIComponent(fallbackTag)}&type=${targetType}&page_limit=14&page_start=0`)
         .then((r) => r.json())
         .then((data) => {
           if (isMounted && data.subjects?.length) {

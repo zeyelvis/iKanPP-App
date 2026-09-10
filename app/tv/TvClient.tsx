@@ -40,7 +40,9 @@ const SHELVES = [
   { title: '顶级欧美神剧专区（权游/绝命毒师）', icon: '🌟', badge: 'TOP US', tag: '美剧' },
   { title: '人气爆款韩剧精选', icon: '🍿', badge: 'TRENDING', tag: '韩剧' },
   { title: '经典口碑高分日剧', icon: '🌸', badge: 'JAPAN', tag: '日剧' },
-  { title: '经典 TVB & 港台警匪商战', icon: '🏙️', badge: 'HK TVB', tag: '港剧' },
+  { title: '经典 TVB & 港剧黄金年代', icon: '🏙️', badge: 'HK TVB', tag: '港剧' },
+  { title: '高分口碑华语台剧 & 时代光影', icon: '🍵', badge: 'TAIWAN', tag: '台剧' },
+  { title: '东南亚悬疑与浪漫热播泰剧', icon: '🐘', badge: 'THAI', tag: '泰剧' },
   { title: '英伦高分罪案与历史大剧', icon: '👑', badge: 'BRITISH', tag: '英剧' },
 ];
 

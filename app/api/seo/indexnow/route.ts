@@ -55,6 +55,7 @@ async function handleIndexNowPush(req: NextRequest) {
 
         `${BASE_URL}/anime`,
         `${BASE_URL}/variety`,
+        `${BASE_URL}/short`,
         `${BASE_URL}/ranking`,
         `${BASE_URL}/iptv`
       );

@@ -175,7 +175,7 @@ function HeroBackdrop({
 }
 
 interface HeroSlideshowProps {
-  contentType: 'movie' | 'tv';
+  contentType: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'short';
   onSearch?: (query: string) => void;
   customHeroMovies?: PrebakedSubject[];
 }
@@ -210,10 +210,11 @@ export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroS
         if (needFetch.length === 0) return;
 
         const items = needFetch.map(m => ({ title: m.title, year: m.year }));
+        const tmdbType = contentType === 'movie' ? 'movie' : 'tv';
         const res = await fetch('/api/tmdb/trending', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items, type: contentType }),
+          body: JSON.stringify({ items, type: tmdbType }),
         });
         const data = await res.json();
         const bds: Record<string, string | null> = {};

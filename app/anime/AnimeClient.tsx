@@ -28,10 +28,18 @@ const YEARS = [
   { label: '经典神作', value: '日本动画' },
 ];
 
-const SHELVES = [
+const SHELVES: Array<{
+  title: string;
+  icon: string;
+  badge: string;
+  tag: string;
+  doubanType?: 'movie' | 'tv';
+}> = [
   { title: '当季热血新番连载', icon: '⚡', badge: 'SEASON', tag: '日本动画' },
-  { title: '国创动画巅峰之作', icon: '🐉', badge: 'CHINESE ANIME', tag: '国产动画' },
-  { title: '经典不朽神作（鬼灭/巨人/海贼/咒术）', icon: '👑', badge: 'CLASSIC', tag: '动漫' },
+  { title: '国创修真年番巅峰（凡人/仙逆/遮天）', icon: '🐉', badge: 'CHINESE ANIME', tag: '国产动画' },
+  { title: '经典殿堂级不朽神作', icon: '👑', badge: 'CLASSIC', tag: '日本动画' },
+  { title: '全球经典剧场版动画大电影', icon: '🎨', badge: 'MOVIE', tag: '动画', doubanType: 'movie' },
+  { title: '欧美高分动画与科幻视效', icon: '🚀', badge: 'US ANIME', tag: '动画', doubanType: 'movie' },
 ];
 
 export default function AnimeClient() {

@@ -19,6 +19,8 @@ export const GENRE_MAP: Record<string, GenreInfo> = {
   wuxia: { slug: 'wuxia', name: '武侠', desc: '刀光剑影的传统江湖与快意恩仇武侠巨作' },
   war: { slug: 'war', name: '战争', desc: '铁血铸就的真实二战与现代战争史诗' },
   documentary: { slug: 'documentary', name: '纪录片', desc: '探索自然与人文历史的高清优质纪录片' },
+  short: { slug: 'short', name: '短剧', desc: '全网爆款微短剧与快节奏爽剧合集' },
+  variety: { slug: 'variety', name: '综艺', desc: '爆笑真人秀、音乐竞演与脱口秀精选' },
 };
 
 export function getGenreBySlug(slug: string): GenreInfo | null {

@@ -21,7 +21,7 @@ interface Top10RailProps {
   movies: Top10Movie[];
   loading?: boolean;
   onMovieClick: (movie: Top10Movie) => void;
-  contentType: 'movie' | 'tv';
+  contentType?: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'short' | string;
 }
 
 function Top10Item({

@@ -41,6 +41,20 @@ export async function GET() {
       url: `${BASE_URL}/title/${generateSlug(m.title)}`,
       pubDate: staticBuildDate,
     })),
+    ...PREBAKED_HOME_DATA.anime.s1.slice(0, 8).map(a => ({
+      title: a.title,
+      type: '动漫番剧',
+      desc: `iKanPP 当季热血新番《${a.title}》，评分 ${a.rate || '9.0'}，正版画质无卡顿极速播放。`,
+      url: `${BASE_URL}/title/${generateSlug(a.title)}`,
+      pubDate: staticBuildDate,
+    })),
+    ...PREBAKED_HOME_DATA.short.s1.slice(0, 8).map(s => ({
+      title: s.title,
+      type: '精品短剧',
+      desc: `2026 全网爆款微短剧《${s.title}》，高能爽剧全集连播免 VIP。`,
+      url: `${BASE_URL}/title/${generateSlug(s.title)}`,
+      pubDate: staticBuildDate,
+    })),
   ];
 
   const rssItemsXml = items.map(item => `    <item>

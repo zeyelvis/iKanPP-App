@@ -32,31 +32,40 @@ const HUB_FEATURES: HubFeature[] = [
     borderHover: 'hover:border-amber-500/50',
   },
   {
-    title: '🏮 国创 & 动漫',
+    title: '🏮 动漫番剧',
     tag: 'ANIME HUB',
-    desc: '东方玄幻修真年番 · 日本新番热血连载',
+    desc: '东方玄幻修真年番 · 日本当季新番连载',
     href: '/anime',
-    tags: ['凡人修仙', '遮天', '完美世界', '仙逆', '鬼灭之刃', '咒术回战'],
+    tags: ['凡人修仙', '仙逆', '鬼灭之刃', '咒术回战', '芙莉莲'],
     gradient: 'from-orange-950/40 via-amber-900/10 to-transparent',
     borderHover: 'hover:border-orange-500/50',
-  },
-  {
-    title: '⚡ 动漫新番',
-    tag: 'ANIME HUB',
-    desc: '当季热血新番 · 日本连载 · 经典剧场版',
-    href: '/anime',
-    tags: ['2026 新番', '热血战斗', '奇幻冒险', '咒术回战', '治愈日常'],
-    gradient: 'from-purple-950/40 via-indigo-900/10 to-transparent',
-    borderHover: 'hover:border-purple-500/50',
   },
   {
     title: '🎤 热门综艺',
     tag: 'VARIETY SHOW',
     desc: '爆笑真人秀 · 顶级音乐竞演 · 名场面脱口秀',
     href: '/variety',
-    tags: ['热门真人秀', '脱口秀', '音乐竞技', '美食旅行', '韩国综艺'],
+    tags: ['热门真人秀', '脱口秀', '音乐竞技', '美食旅行', '大侦探'],
     gradient: 'from-emerald-950/40 via-teal-900/10 to-transparent',
     borderHover: 'hover:border-emerald-500/50',
+  },
+  {
+    title: '⚡ 精品短剧',
+    tag: 'SHORT DRAMA',
+    desc: '爆款微短剧 · 战神逆袭 · 豪门甜宠全集连播',
+    href: '/short',
+    tags: ['我在八零当后妈', '无双', '执笔', '黑莲花', '闪婚马甲'],
+    gradient: 'from-purple-950/40 via-indigo-900/10 to-transparent',
+    borderHover: 'hover:border-purple-500/50',
+  },
+  {
+    title: '📡 电视直播',
+    tag: 'LIVE IPTV',
+    desc: '央视卫视 · 港澳台 · 体育与海外频道秒开',
+    href: '/iptv',
+    tags: ['CCTV-1', 'CCTV-5', '湖南卫视', '凤凰中文', '超清源'],
+    gradient: 'from-blue-950/40 via-cyan-900/10 to-transparent',
+    borderHover: 'hover:border-blue-500/50',
   },
 ];
 
@@ -84,8 +93,8 @@ export function ExploreHubFooterBanner() {
         </Link>
       </div>
 
-      {/* 5 大专区卡片 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      {/* 6 大专区卡片 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {HUB_FEATURES.map((hub) => (
           <Link
             key={hub.title}

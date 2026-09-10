@@ -114,6 +114,7 @@ function NavbarInner({
         { id: 'tv', label: '电视剧', href: '/tv', isExternal: false },
         { id: 'anime', label: '动漫', href: '/anime', isExternal: false },
         { id: 'variety', label: '综艺', href: '/variety', isExternal: false },
+        { id: 'short', label: '短剧', href: '/short', isExternal: false },
         { id: 'ranking', label: '风云榜', href: '/ranking', isExternal: false },
         { id: 'iptv', label: '电视直播', href: '/iptv', isExternal: false },
         { id: 'premium', label: '午夜版', href: 'https://ikanx.com', isExternal: true },

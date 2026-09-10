@@ -251,6 +251,38 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       cover: 'https://image.tmdb.org/t/p/w500/5gaf9yFJHJTkg6KtLc7enqBY6UK.jpg',
       year: '2023',
       types: ['热血', '动作', '末日']
+    },
+    {
+      id: 'pb_cat_a5',
+      title: '怪兽8号',
+      rate: '8.4',
+      cover: 'https://image.tmdb.org/t/p/w500/kdE1ALF5G6DFMyDU67AyyUklEtn.jpg',
+      year: '2024',
+      types: ['热血', '怪兽']
+    },
+    {
+      id: 'pb_cat_a6',
+      title: '迷宫饭',
+      rate: '8.7',
+      cover: 'https://image.tmdb.org/t/p/w500/1TtrtRIwXz5BB0gXEl8zgBypl9c.jpg',
+      year: '2024',
+      types: ['美食', '奇幻']
+    },
+    {
+      id: 'pb_cat_a7',
+      title: '药屋少女的呢喃',
+      rate: '8.9',
+      cover: 'https://image.tmdb.org/t/p/w500/1TtrtRIwXz5BB0gXEl8zgBypl9c.jpg',
+      year: '2023',
+      types: ['悬疑', '古风']
+    },
+    {
+      id: 'pb_cat_a8',
+      title: '你的名字。',
+      rate: '8.5',
+      cover: 'https://image.tmdb.org/t/p/w500/1TtrtRIwXz5BB0gXEl8zgBypl9c.jpg',
+      year: '2016',
+      types: ['动画', '爱情']
     }
   ],
 
@@ -287,6 +319,138 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       cover: 'https://image.tmdb.org/t/p/w500/nYsiHMplUCBFazdAOVr1gQaGy34.jpg',
       year: '2024',
       types: ['竞技', '真人秀']
+    },
+    {
+      id: 'pb_cat_v5',
+      title: '脱口秀和Ta的朋友们',
+      rate: '8.4',
+      cover: 'https://image.tmdb.org/t/p/w500/nYsiHMplUCBFazdAOVr1gQaGy34.jpg',
+      year: '2024',
+      types: ['脱口秀', '喜剧']
+    },
+    {
+      id: 'pb_cat_v6',
+      title: '大侦探 第九季',
+      rate: '8.8',
+      cover: 'https://image.tmdb.org/t/p/w500/jOl12DTFiMcp9ga2KaEKwt5H8oo.jpg',
+      year: '2024',
+      types: ['推理', '悬疑']
+    },
+    {
+      id: 'pb_cat_v7',
+      title: '披荆斩棘 第四季',
+      rate: '7.8',
+      cover: 'https://image.tmdb.org/t/p/w500/gZxoF6ks9mMufSbcey3hC4XsYgy.jpg',
+      year: '2024',
+      types: ['音乐', '舞台']
+    },
+    {
+      id: 'pb_cat_v8',
+      title: '花儿与少年·丝路季',
+      rate: '8.9',
+      cover: 'https://image.tmdb.org/t/p/w500/vl5WKVXgL1tQs9D9wGE2ido6dwW.jpg',
+      year: '2023',
+      types: ['旅行', '治愈']
+    }
+  ],
+
+  // ── 精品短剧大厅精选 ──────────────────────────────────────────
+  short: [
+    {
+      id: 'pb_cat_s1',
+      title: '我在八零年代当后妈',
+      rate: '8.6',
+      cover: 'https://image.tmdb.org/t/p/w500/dXjYk7fnA6HNqhJHTnmeD6rV4Aw.jpg',
+      year: '2024',
+      types: ['年代', '甜宠', '逆袭']
+    },
+    {
+      id: 'pb_cat_s2',
+      title: '无双',
+      rate: '8.8',
+      cover: 'https://image.tmdb.org/t/p/w500/b5P8eg7u4XgDSYNF6da17CcZy2d.jpg',
+      year: '2024',
+      types: ['战神', '热血', '逆袭']
+    },
+    {
+      id: 'pb_cat_s3',
+      title: '执笔',
+      rate: '8.5',
+      cover: 'https://image.tmdb.org/t/p/w500/czembW0Rk1Ke7lCJGahbOhdCuhV.jpg',
+      year: '2024',
+      types: ['古装', '权谋', '重生']
+    },
+    {
+      id: 'pb_cat_s4',
+      title: '黑莲花上位手册',
+      rate: '8.7',
+      cover: 'https://image.tmdb.org/t/p/w500/cDJwZ4lSZiUnHtixdyhaPPwsjyo.jpg',
+      year: '2023',
+      types: ['宫斗', '复仇']
+    },
+    {
+      id: 'pb_cat_s5',
+      title: '闪婚后傅先生的马甲藏不住了',
+      rate: '8.4',
+      cover: 'https://image.tmdb.org/t/p/w500/nSpk8U35rPVlMMfZ1uxHnbC14Nd.jpg',
+      year: '2024',
+      types: ['豪门', '甜宠']
+    },
+    {
+      id: 'pb_cat_s6',
+      title: '授她以柄',
+      rate: '8.5',
+      cover: 'https://image.tmdb.org/t/p/w500/dS8C60iEHnuZEFgKFjRx0GCLVRf.jpg',
+      year: '2024',
+      types: ['古风', '虐恋']
+    },
+    {
+      id: 'pb_cat_s7',
+      title: '盛夏的果实',
+      rate: '8.3',
+      cover: 'https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg',
+      year: '2024',
+      types: ['都市', '情感']
+    },
+    {
+      id: 'pb_cat_s8',
+      title: '绝世天将',
+      rate: '8.6',
+      cover: 'https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg',
+      year: '2024',
+      types: ['战神', '逆袭']
+    },
+    {
+      id: 'pb_cat_s9',
+      title: '重生后我成了首富千金',
+      rate: '8.4',
+      cover: 'https://image.tmdb.org/t/p/w500/cAS2e9hUwu6Ydsx7byXj16H00Ai.jpg',
+      year: '2024',
+      types: ['重生', '逆袭']
+    },
+    {
+      id: 'pb_cat_s10',
+      title: '顾少的隐婚罪妻',
+      rate: '8.2',
+      cover: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
+      year: '2024',
+      types: ['豪门', '总裁']
+    },
+    {
+      id: 'pb_cat_s11',
+      title: '龙王出狱',
+      rate: '8.7',
+      cover: 'https://image.tmdb.org/t/p/w500/cDJwZ4lSZiUnHtixdyhaPPwsjyo.jpg',
+      year: '2024',
+      types: ['战神', '都市']
+    },
+    {
+      id: 'pb_cat_s12',
+      title: '长公主的谋逆日常',
+      rate: '8.4',
+      cover: 'https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg',
+      year: '2024',
+      types: ['古装', '权谋']
     }
   ]
 };

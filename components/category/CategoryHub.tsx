@@ -10,7 +10,7 @@ import { Icons } from '@/components/ui/Icon';
 import { FavoritesSidebar } from '@/components/favorites/FavoritesSidebar';
 import { WatchHistorySidebar } from '@/components/history/WatchHistorySidebar';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
-import { getPrebakedCategoryShelves } from '@/lib/data/category-prebaked';
+import { getPrebakedCategoryShelves, PREBAKED_CATEGORY_ITEMS } from '@/lib/data/category-prebaked';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 export interface FilterOption {
@@ -23,6 +23,8 @@ export interface ShelfConfig {
   icon: string;
   badge?: string;
   tag: string;
+  doubanType?: 'movie' | 'tv';
+  prebakedOnly?: boolean;
 }
 
 export interface CategoryHubProps {
@@ -35,6 +37,7 @@ export interface CategoryHubProps {
   years: FilterOption[];
   shelves: ShelfConfig[];
   defaultTag?: string;
+  usePrebakedOnly?: boolean;
 }
 
 export function CategoryHub({
@@ -47,6 +50,7 @@ export function CategoryHub({
   years,
   shelves,
   defaultTag = '热门',
+  usePrebakedOnly = false,
 }: CategoryHubProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -140,19 +144,24 @@ function isSameList(a: any[], b: any[]): boolean {
     const cacheKey = activeNav || doubanType;
 
     const fetchShelvesData = async () => {
+      // 若当前频道声明为纯预烘焙（如短剧），直接使用本地种子，无需发起任何豆瓣 API 请求
+      if (usePrebakedOnly) return;
+
       try {
         // 第一批：优先请求首屏可见的前 2 个核心货架
         const primaryShelves = shelves.slice(0, 2);
         const remainingShelves = shelves.slice(2);
 
-        const fetchShelf = async (shelf: { tag: string }) => {
+        const fetchShelf = async (shelf: ShelfConfig) => {
+          if (shelf.prebakedOnly) return null;
+          const targetDoubanType = shelf.doubanType || doubanType;
           try {
             const controller = new AbortController();
             const timer = setTimeout(() => controller.abort(), 1800);
             const res = await fetch(
               `/api/douban/recommend?tag=${encodeURIComponent(
                 shelf.tag
-              )}&type=${doubanType}&page_limit=20&page_start=0`,
+              )}&type=${targetDoubanType}&page_limit=20&page_start=0`,
               { signal: controller.signal }
             );
             clearTimeout(timer);
@@ -248,6 +257,24 @@ function isSameList(a: any[], b: any[]): boolean {
     async (pageNum: number) => {
       setLoadingGrid(true);
       try {
+        if (usePrebakedOnly) {
+          // 纯预烘焙频道（短剧）：直接使用本地精选池进行内存过滤与分页呈现
+          const pool = PREBAKED_CATEGORY_ITEMS[activeNav] || PREBAKED_CATEGORY_ITEMS.short || [];
+          let filtered = [...pool];
+          if (selectedGenre) {
+            filtered = filtered.filter(item => item.types?.some(t => t.includes(selectedGenre)));
+          }
+          if (selectedYear) {
+            filtered = filtered.filter(item => item.year === selectedYear);
+          }
+          const pageStart = pageNum * PAGE_SIZE;
+          const subjects = filtered.slice(pageStart, pageStart + PAGE_SIZE);
+          setGridMovies(subjects);
+          setHasMore(pageStart + PAGE_SIZE < filtered.length);
+          setPage(pageNum);
+          return;
+        }
+
         const pageStart = pageNum * PAGE_SIZE;
         const params = new URLSearchParams();
         if (selectedGenre) params.set('genre', selectedGenre);
@@ -272,7 +299,7 @@ function isSameList(a: any[], b: any[]): boolean {
         setLoadingGrid(false);
       }
     },
-    [selectedGenre, selectedRegion, selectedYear, activeSearchTag, doubanType]
+    [selectedGenre, selectedRegion, selectedYear, activeSearchTag, doubanType, usePrebakedOnly, activeNav]
   );
 
   // 筛选器变化时重置回第 0 页

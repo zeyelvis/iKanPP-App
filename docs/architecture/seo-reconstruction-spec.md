@@ -165,8 +165,8 @@ interface TitleEntity {
 ### 4.5 分层 Sitemap 架构
 ```text
 /sitemap-index.xml (总索引)
-  ├─ /sitemap.xml          (核心主频道与公开静态页面，~15 个)
-  ├─ /sitemap-genres.xml   (14 大核心题材分类聚合页)
+  ├─ /sitemap.xml          (核心主频道与公开静态页面，~16 个，含 /movie, /tv, /anime, /variety, /short)
+  ├─ /sitemap-genres.xml   (16 大核心题材分类聚合页，含短剧与综艺专区)
   └─ /sitemap-titles-1.xml (影视实体详情页分卷，单卷上限 10,000 条)
 ```
 
@@ -190,6 +190,9 @@ interface TitleEntity {
 | **全局根布局** | [app/layout.tsx](file:///Users/zeyelvis/KVideo/app/layout.tsx) |
 | **首页服务端组件** | [app/page.tsx](file:///Users/zeyelvis/KVideo/app/page.tsx) |
 | **首页客户端组件** | [components/home/HomePageClient.tsx](file:///Users/zeyelvis/KVideo/components/home/HomePageClient.tsx) |
+| **首页多Tab流媒体货架** | [components/home/PopularFeatures.tsx](file:///Users/zeyelvis/KVideo/components/home/PopularFeatures.tsx) |
+| **短剧频道主路由 (SSR)**| [app/short/page.tsx](file:///Users/zeyelvis/KVideo/app/short/page.tsx) |
+| **短剧频道客户端组件** | [app/short/ShortClient.tsx](file:///Users/zeyelvis/KVideo/app/short/ShortClient.tsx) |
 | **实体详情页 (SSR)** | [app/title/[slug]/page.tsx](file:///Users/zeyelvis/KVideo/app/title/[slug]/page.tsx) |
 | **详情页播放按钮** | [components/title/PlayButton.tsx](file:///Users/zeyelvis/KVideo/components/title/PlayButton.tsx) |
 | **影视 Schema.org** | [components/seo/TitleJsonLd.tsx](file:///Users/zeyelvis/KVideo/components/seo/TitleJsonLd.tsx) |

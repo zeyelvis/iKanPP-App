@@ -29,10 +29,17 @@ export interface PrebakedHomeCategory {
   s4: PrebakedSubject[];
 }
 
+import { ANIME_HOME_DATA, VARIETY_HOME_DATA, SHORT_HOME_DATA, ALL_HOME_DATA } from './home-prebaked-extra';
+
 export const PREBAKED_HOME_DATA: {
+  all: PrebakedHomeCategory;
   movie: PrebakedHomeCategory;
   tv: PrebakedHomeCategory;
+  anime: PrebakedHomeCategory;
+  variety: PrebakedHomeCategory;
+  short: PrebakedHomeCategory;
 } = {
+  "all": ALL_HOME_DATA,
   "movie": {
     "hero": [
         {
@@ -2962,5 +2969,8 @@ export const PREBAKED_HOME_DATA: {
         "playable": true
       }
     ]
-  }
+  },
+  "anime": ANIME_HOME_DATA,
+  "variety": VARIETY_HOME_DATA,
+  "short": SHORT_HOME_DATA
 };
