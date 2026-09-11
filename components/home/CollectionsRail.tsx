@@ -71,7 +71,7 @@ function CascadeDeckCard({
   return (
     <div
       onClick={handleClick}
-      className="group/card shrink-0 w-[160px] sm:w-[185px] lg:w-[195px] cursor-pointer select-none transition-transform duration-200 hover:-translate-y-1 focus:outline-none"
+      className="group/card shrink-0 w-[156px] sm:w-[210px] lg:w-[242px] cursor-pointer select-none transition-transform duration-200 hover:-translate-y-1 focus:outline-none"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -82,25 +82,25 @@ function CascadeDeckCard({
       }}
       aria-label={`片单：${collection.title}`}
     >
-      {/* 海报组合容器 */}
-      <div className="relative w-full h-[155px] sm:h-[180px]">
+      {/* 海报组合容器：主海报 100% 严格对齐全局货架尺寸 (w-[118px] sm:w-40 lg:w-46 aspect-2/3) */}
+      <div className="relative">
         {/* 右上角极简数量标：与原型图一致的纯粹 +15 */}
-        <div className="absolute top-0 right-0.5 z-40 text-xs sm:text-sm font-semibold text-white/90 font-mono tracking-tight select-none">
+        <div className="absolute top-0 right-0 z-40 text-xs sm:text-sm font-semibold text-white/90 font-mono tracking-tight select-none">
           +{collection.totalCount}
         </div>
 
-        {/* 第 3 张海报（最底、最右）：平直无旋转，上下略缩，右侧露出 */}
-        <div className="absolute left-[48px] sm:left-[56px] top-[8px] bottom-[8px] w-[105px] sm:w-[122px] rounded-xl sm:rounded-2xl overflow-hidden brightness-90 transition-transform duration-300 group-hover/card:translate-x-1.5 z-10">
+        {/* 第 3 张海报（最底、最右）：严格 aspect-2/3，上下略微收敛 6px，右侧清晰露出 */}
+        <div className="absolute left-[36px] sm:left-[48px] lg:left-[56px] top-[6px] bottom-[6px] w-[118px] sm:w-40 lg:w-46 rounded-2xl overflow-hidden border border-white/10 brightness-90 transition-transform duration-300 group-hover/card:translate-x-1.5 z-10">
           <DeckPosterItem src={p3} alt={`${collection.title} 海报3`} />
         </div>
 
-        {/* 第 2 张海报（中间）：平直无旋转，上下微缩，右侧露出 */}
-        <div className="absolute left-[24px] sm:left-[28px] top-[4px] bottom-[4px] w-[105px] sm:w-[122px] rounded-xl sm:rounded-2xl overflow-hidden shadow-[3px_0_10px_rgba(0,0,0,0.45)] transition-transform duration-300 group-hover/card:translate-x-1 z-20">
+        {/* 第 2 张海报（中间）：严格 aspect-2/3，上下微收 3px，右侧清晰露出 */}
+        <div className="absolute left-[18px] sm:left-[24px] lg:left-[28px] top-[3px] bottom-[3px] w-[118px] sm:w-40 lg:w-46 rounded-2xl overflow-hidden border border-white/10 shadow-[3px_0_12px_rgba(0,0,0,0.45)] transition-transform duration-300 group-hover/card:translate-x-1 z-20">
           <DeckPosterItem src={p2} alt={`${collection.title} 海报2`} />
         </div>
 
-        {/* 第 1 张海报（最前、最左）：完整展示，圆润大圆角，自然深阴影 */}
-        <div className="absolute left-0 top-0 bottom-0 w-[105px] sm:w-[122px] rounded-xl sm:rounded-2xl overflow-hidden shadow-[5px_0_16px_rgba(0,0,0,0.6)] z-30">
+        {/* 第 1 张主海报（最前、最左）：与全站所有货架海报尺寸像素级绝对统一！ */}
+        <div className="relative w-[118px] sm:w-40 lg:w-46 aspect-2/3 rounded-2xl overflow-hidden border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.5)] z-30 group-hover/card:border-white/25 transition-colors">
           <DeckPosterItem
             src={p1}
             alt={collection.title}
@@ -109,9 +109,9 @@ function CascadeDeckCard({
         </div>
       </div>
 
-      {/* 底部标题：与原型图一致的单行浅灰优雅排版 */}
-      <div className="mt-2.5 px-0.5">
-        <h3 className="text-xs sm:text-sm font-normal text-white/80 truncate group-hover/card:text-white transition-colors leading-snug">
+      {/* 底部标题：与全站货架标题尺寸排版完全一致 */}
+      <div className="mt-2 sm:mt-2.5 px-0.5">
+        <h3 className="text-xs sm:text-sm font-medium text-white/80 truncate group-hover/card:text-white transition-colors leading-snug">
           {collection.title}
         </h3>
       </div>
