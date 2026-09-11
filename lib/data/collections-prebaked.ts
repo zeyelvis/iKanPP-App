@@ -1096,26 +1096,24 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
       },
       {
         "id": "col_film_3_14",
-        "title": "网络谜踪2",
-        "rate": "7.4",
-        "cover": "https://image.tmdb.org/t/p/w500/bAuG5N3wrWchuyK2cUjVSqtHgtT.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/tVH1qEFyKiCpP6kNDFyXKW2Tiif.jpg",
-        "year": "2023",
-        "description": "少女朱恩（斯托姆·瑞德 饰）为了寻找离奇失踪的母亲（尼娅·朗 饰），展开抽丝剥茧般的互联网跨国追踪。巨大的信息量浩如烟海，未知的危险在暗中潜伏，朱恩能否找到真相，妈妈能否平安归来？…",
+        "title": "网络谜踪",
+        "rate": "8.5",
+        "cover": "https://image.tmdb.org/t/p/w500/2WO4MX151sRnOpQCJik3GhlNp1X.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/jOqOduY1tLhXgVZo7ypCtDVr0mM.jpg",
+        "year": "2018",
+        "description": "工程师大卫·金（约翰·赵 饰）一直引以为傲的16岁乖女玛戈特突然失踪。前来调查此案的警探怀疑女儿离家出走。不满这一结论的父亲为了寻找真相，独自展开调查。他打开了女儿的笔记本电脑，用社交软件开始寻找破案线索。大卫必须在女儿消失之前，沿着她在虚拟世界的足迹找到她…",
         "types": [
           "剧情",
           "悬疑",
           "惊悚"
         ],
         "directors": [
-          "维尔·梅里克",
-          "尼古拉斯·D·约翰逊"
+          "阿尼什·查甘蒂"
         ],
         "actors": [
-          "斯托姆·瑞德",
-          "华金姆·德·艾尔梅达",
-          "肯·兰格",
-          "艾米·兰德克"
+          "约翰·赵",
+          "米切尔·拉",
+          "黛博拉·梅辛"
         ]
       },
       {
@@ -1142,24 +1140,23 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
       {
         "id": "col_film_3_16",
         "title": "调音师",
-        "rate": "7.6",
-        "cover": "https://image.tmdb.org/t/p/w500/29YqkGW6ztW3jbe0Nse6TwcXbhs.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/2f5Viug0j2jskSmeyhd89QYhqmS.jpg",
-        "year": "2026",
-        "description": "一位才华横溢的钢琴调音师，发现自己精湛的钢琴调音技艺可以用于破解保险箱，由此他的生活发生了翻天覆地的变化。",
+        "rate": "8.3",
+        "cover": "https://image.tmdb.org/t/p/w500/66TM84iLYInGYrmOGZ0Fkceis6C.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/ArvKQJv3nEpnBoVyjWDUT7TtJOL.jpg",
+        "year": "2018",
+        "description": "改编自2010年的同名法国高分悬疑短片。  双目失明的钢琴家阿卡什（阿尤斯曼·库拉纳 Ayushmann Khurrana 饰）为了参加国际大赛，平日里通过私人授课赚取经费。事实上他的眼睛完全正常，只不过希望通过这种方式感受不同的生活。  因为一场意外，阿卡什…",
         "types": [
           "犯罪",
-          "剧情",
+          "悬疑",
           "惊悚"
         ],
         "directors": [
-          "Daniel Roher"
+          "斯里兰姆·拉格万"
         ],
         "actors": [
-          "利奥·伍德尔",
-          "达斯汀·霍夫曼",
-          "Alisen Richmond-Peck",
-          "Ellyn Jameson"
+          "阿尤斯曼·库拉纳",
+          "塔布",
+          "拉迪卡·艾普特"
         ]
       }
     ]
@@ -1386,24 +1383,23 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
       {
         "id": "col_film_4_10",
         "title": "白夜追凶",
-        "rate": "8.3",
-        "cover": "https://image.tmdb.org/t/p/w500/cMUymzvJL0MeXR7OuuBmR0KGaxZ.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/fBClDP2SLBn4NlqYSMkZwky3VEp.jpg",
-        "year": "2017",
-        "description": "一场灭门惨案，让原本逍遥浪荡的关宏宇成了在逃的通缉嫌犯。身为刑侦支队队长的双胞胎哥哥关宏峰，誓要查出真相，但出于亲属回避的原则，警队禁止关宏峰参与灭门案的调查工作，关宏峰义愤辞职。调任了代支队长的周巡处于破案压力，也为了追寻关宏宇的下落，他…",
+        "rate": "7.5",
+        "cover": "https://image.tmdb.org/t/p/w500/grgvwGEAUNurWDsIyTLeGSQkc5r.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/jU8MC5uSgBkZXyZYGtZgMsMsfeN.jpg",
+        "year": "2002",
+        "description": "Will Dormer（阿尔·帕西诺 Al Pacino 饰）与搭档Hap Eckhart（马丁·唐文 Martin Donovan 饰）来到远离洛杉矶一处日不落的小镇阿拉斯加，调查一名17岁少女被活活殴打致死的案件。阿拉斯加一名女警察llie Burr（希拉…",
         "types": [
+          "惊悚",
           "犯罪",
-          "剧情",
-          "悬疑"
+          "剧情"
         ],
         "directors": [
-          "刘英剑"
+          "克里斯托弗·诺兰"
         ],
         "actors": [
-          "潘粤明",
-          "王龙正",
-          "梁缘",
-          "尹姝贻"
+          "阿尔·帕西诺",
+          "罗宾·威廉姆斯",
+          "希拉里·斯万克"
         ]
       },
       {
@@ -1459,7 +1455,7 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
     "slug": "hong-kong-golden-age",
     "coverPosters": [
       "https://image.tmdb.org/t/p/w500/qvdvGB9d58zjberXoCX5RihD5PY.jpg",
-      "https://image.tmdb.org/t/p/w500/4VcbDfb0CzX0UzNEg6QEUruXXnK.jpg",
+      "https://image.tmdb.org/t/p/w500/5RY3c5m7lElGAWHUbkJJXQtgKEQ.jpg",
       "https://image.tmdb.org/t/p/w500/Apy624adTXc4prITxtcVbEdUPUm.jpg"
     ],
     "totalCount": 16,
@@ -1492,23 +1488,23 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
       {
         "id": "col_film_5_2",
         "title": "纵横四海",
-        "rate": "5.0",
-        "cover": "https://image.tmdb.org/t/p/w500/4VcbDfb0CzX0UzNEg6QEUruXXnK.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/nfcx1QYNojKW3gEtNSEogIs1BLh.jpg",
-        "year": "1999",
-        "description": "利兆天（陶大宇 饰）是香港巨富，他的出身却颇为复杂。原来，以前他的父亲来香港闯荡前曾在老家娶了妻子明星（叶德娴 饰），来港后被富商的女儿白宴（鲍起静 饰）看上，于是又娶了白宴。后来怀孕的明星来港找寻丈夫，白宴大方的让明星入了门。可惜后来…",
+        "rate": "8.8",
+        "cover": "https://image.tmdb.org/t/p/w500/5RY3c5m7lElGAWHUbkJJXQtgKEQ.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/ld6pkUVbFBdhtTwFNoRv4BRx0aM.jpg",
+        "year": "1991",
+        "description": "钵仔糕/阿海（周润发 饰）、阿占（张国荣 饰）与红豆（锺楚红 饰）都是孤儿，从小被养父（曾江 饰）培养成国际艺术品大盗，专为他盗取名画赚钱。与此同时，他们亦认了一名警察（朱江 饰）作干爹。  　　法国巴黎博物馆内，名画《赫林之女仆》突然失窃。不久，阿海、阿…",
         "types": [
-          "剧情",
-          "犯罪"
+          "动作",
+          "喜剧",
+          "惊悚"
         ],
         "directors": [
-          "知名导演"
+          "吴宇森"
         ],
         "actors": [
-          "陶大宇",
-          "杨恭如",
-          "周海媚",
-          "谭耀文"
+          "周润发",
+          "张国荣",
+          "钟楚红"
         ]
       },
       {
@@ -1537,25 +1533,24 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
       },
       {
         "id": "col_film_5_4",
-        "title": "新警察故事",
-        "rate": "7.2",
-        "cover": "https://image.tmdb.org/t/p/w500/k0toKZFxU7E7Jd7oUSqhwQhIXBQ.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/qDcLJIeg2z1oMtAWs9qFLeJVJ6E.jpg",
-        "year": "2004",
-        "description": "陈国荣（成龙饰）的所在那一组警察是警队精英，破案无数。阿祖（吴彦祖饰）是总警师的儿子，却勾结了几个高官子弟挑战警方。他们到银行抢劫，警钟敲响警察赶到时，就把阿荣及队员带进了一个早已设计好的空旷仓库里。警员都陷进了匪徒早已设计好的游戏程序里，…",
+        "title": "警察故事",
+        "rate": "8.3",
+        "cover": "https://image.tmdb.org/t/p/w500/xSRr8CW9ACMNqt5XBzX6deB6Es6.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/eYDAnSidN4rIEuneS5gEJkTyk3l.jpg",
+        "year": "1985",
+        "description": "受过特警训练的警察陈家驹 为人正直办案拼命，时常将女友 忽略。某次围剿行动中陈家驹拘捕了大毒枭朱滔，但因证人 莎莲娜 的突然失踪，未能将其绳之于法，陈家驹因此受降职处分。事后含恨在心的朱滔为了报复陈家驹，设计将其诱至囚禁莎莲娜的别墅，并派手下杀死一名警察嫁祸其…",
         "types": [
           "动作",
-          "惊悚",
-          "犯罪"
+          "犯罪",
+          "喜剧"
         ],
         "directors": [
-          "陈木胜"
+          "成龙"
         ],
         "actors": [
           "成龙",
-          "谢霆锋",
-          "杨采妮",
-          "蔡卓妍"
+          "林青霞",
+          "张曼玉"
         ]
       },
       {
@@ -1652,22 +1647,23 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
         "id": "col_film_5_9",
         "title": "枪火",
         "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/flmNCOe0y2LtX3hm3TQs9bhXD8M.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/tfdNIWA9Pf0wNiB7HGAgymO9o6M.jpg",
-        "year": "2014",
-        "description": "1931年的奉天，日本关东军频频造事挑衅。东北军主战派将领徐国真，派出留德归来的独子徐文杰和养子多吉所在部队，与关东军对峙。关东军少佐丰田一郎是徐文杰的昔日同窗，他纵容部下骚扰平民，蓄意挑衅。徐文杰不顾“不许交火”的军令，举枪击毙日寇，由…",
+        "cover": "https://image.tmdb.org/t/p/w500/aorcY8fuuWjFvhuXDieAcFnJvNA.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/jNxw6CREDD6dYK443LWrjCNQyI7.jpg",
+        "year": "1999",
+        "description": "黑社会老大文哥（高雄 饰）被人追杀，其弟阿南（任达华 饰）安排五个人来做其兄的保镖，并命令他们查出暗杀文哥的幕后人物。这五人分别是阿鬼（黄秋生 饰）、阿来（吴镇宇 饰）、阿Mike（张耀扬 饰）、阿信（吕颂贤 饰）和阿肥（林雪 饰）。阿来和阿信是知名的高手，阿…",
         "types": [
-          "精选",
+          "动作",
+          "犯罪",
           "剧情"
         ],
         "directors": [
-          "知名导演"
+          "杜琪峰"
         ],
         "actors": [
-          "马雅舒",
-          "韩青",
-          "朱泳腾",
-          "冯恩鹤"
+          "吴镇宇",
+          "黄秋生",
+          "吕颂贤",
+          "张耀扬"
         ]
       },
       {
@@ -1783,23 +1779,23 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
       {
         "id": "col_film_5_15",
         "title": "暗战",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/qDbQFn8HyF3GcNu03a8MgijQZgF.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/qDbQFn8HyF3GcNu03a8MgijQZgF.jpg",
-        "year": "2003",
-        "description": "十年前，时任龙兴市公安局缉毒支队支队长的骆成龙得到情报，大宗毒品要转运到龙兴市，骆成龙亲自出马指挥围捕行动。他的儿子，也就是龙兴市公安局特警大队队长骆树英奉命配合缉毒支队行动。由于骆成龙固执己见，导致行动失败。 省厅派人调查情况，骆树英如实…",
+        "rate": "8.6",
+        "cover": "https://image.tmdb.org/t/p/w500/vHZS5Ja1JJ7oxPLKI5ilae7iSNu.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/a0jFMDNLmkIooaOvlWHnkrUJMeF.jpg",
+        "year": "1999",
+        "description": "只剩四个星期寿命的癌症患者张华（刘德华 饰）打劫财务公司，抢去钻石并胁持人质。刚被调任文职兼任談判專家的何尚生（刘青云 饰）赶到现场，想劝张华自首。张华扬言要与尚生玩一场72小时的“游戏”后逃掉，尚生对此深深不忿。张华在逃离过程中，遇上警察路障，于是胁持路人梁…",
         "types": [
-          "犯罪",
-          "剧情"
+          "剧情",
+          "动作",
+          "惊悚"
         ],
         "directors": [
-          "刘新"
+          "杜琪峰"
         ],
         "actors": [
-          "奚美娟",
-          "王庆祥",
-          "金鑫",
-          "李宗翰"
+          "刘德华",
+          "刘青云",
+          "蒙嘉慧"
         ]
       },
       {
@@ -2050,23 +2046,24 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
       },
       {
         "id": "col_film_6_10",
-        "title": "吉卜力创作的秘密：宫崎骏与新人导演的400天",
-        "rate": "9.0",
-        "cover": "https://image.tmdb.org/t/p/w500/vkoNFR1HahRq9F2mW6jj1nyJxSW.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/62aOkESgB4QADseUmDYBs9nzx7T.jpg",
+        "title": "借东西的小人阿莉埃蒂",
+        "rate": "8.9",
+        "cover": "https://image.tmdb.org/t/p/w500/r2lsQVIBF911YzJ51cRXDHNelJe.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/7Z7WVzJsSReG8B0CaPk0bvWD7tK.jpg",
         "year": "2010",
-        "description": "吉卜力过去曾数度采用新人担任导演，但因为宫崎骏导演自己的龟毛与讲究，一再介入作品製作的情况下，最后乾脆自己接掌下来拍的情况也是经常发生。然而这次在「阿丽埃蒂」，宫崎导演痛下决心一概不插手，除了自己负责的脚本工作外，完全交由过去在他旗下担任动…",
+        "description": "患有严重心脏病的12岁少年翔，为准备即将到来的手术，来到姨婆贞子的乡间老宅静养。老宅地板下秘密生活着一个身材微小的“借东西的小人”家庭：少女艾莉缇和她的父母。他们从人类家中悄悄“借”走少量生活必需品，并始终遵守着不能被人类发现的规矩。即将14岁的艾莉缇第一次跟…",
         "types": [
-          "纪录"
+          "奇幻",
+          "动画",
+          "家庭"
         ],
         "directors": [
-          "細田直生"
+          "米林宏昌"
         ],
         "actors": [
-          "宫崎骏",
-          "铃木敏夫",
-          "米林宏昌",
-          "久石让"
+          "志田未来",
+          "神木隆之介",
+          "大竹忍"
         ]
       },
       {
@@ -2140,24 +2137,24 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
       },
       {
         "id": "col_film_6_14",
-        "title": "高畑勋制作《辉夜姬物语》933天的传说",
-        "rate": "6.7",
-        "cover": "https://image.tmdb.org/t/p/w500/atG1lwE8VByvtT8rmsSekMcDayC.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/5E0glLr2mIYWhOXGuXfVaLwnKYh.jpg",
-        "year": "2014",
-        "description": "这是一部记录高畑勋导演创作动画电影《辉夜姬物语》全过程的幕后纪录片。影片历时两年半，跟拍记录了吉卜力工作室为突破动画表现极限而设立第7工作室，历经933天完成这部划时代作品的制作历程。纪录片首次深入高畑勋的执导现场，展现其如何实现背景与角色…",
+        "title": "辉夜姬物语",
+        "rate": "8.5",
+        "cover": "https://image.tmdb.org/t/p/w500/tW3vdd7xbHGEjALeqQoA4fcx8VL.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/lMaWlYThCSnsmW3usxWTpSuyZp1.jpg",
+        "year": "2013",
+        "description": "深山中的一位老竹匠在发光的竹笋中发现了一个只有掌心大小的女孩，并将她带回家与妻子一同抚养。女孩以惊人的速度长大，在山林与田野间度过无忧无虑的童年，也与伙伴舍丸结下深厚情谊。后来，老人又在竹林中接连发现黄金和华美衣物，认定这是上天希望女孩过上高贵生活的启示，于是…",
         "types": [
-          "纪录"
+          "动画",
+          "剧情",
+          "奇幻"
         ],
         "directors": [
-          "佐藤英和",
-          "Akira Miki"
+          "高畑勋"
         ],
         "actors": [
-          "高畑勋",
-          "男鹿和雄",
-          "久石让",
-          "铃木敏夫"
+          "朝仓亚纪",
+          "高良健吾",
+          "地井武男"
         ]
       }
     ]
@@ -2682,9 +2679,9 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
           "孙树培"
         ],
         "actors": [
-          "黄奕",
-          "马伊琍",
-          "古巨基",
+          "赵薇",
+          "林心如",
+          "苏有朋",
           "周杰"
         ]
       },
@@ -3297,7 +3294,7 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
     "slug": "trending-short-dramas",
     "coverPosters": [
       "https://image.tmdb.org/t/p/w500/mR8avNpdNieD0LYjpfcUKx9Rm28.jpg",
-      "https://image.tmdb.org/t/p/w500/5p9vUBqjeOnmSdj7ngRoc3PQGv1.jpg",
+      "https://image.tmdb.org/t/p/w500/mBVeWC52usD36bjQAPYSf48NqGy.jpg",
       "https://image.tmdb.org/t/p/w500/tSY8NLbUvcjTE6WO5l4jRykHVZw.jpg"
     ],
     "totalCount": 16,
@@ -3326,24 +3323,24 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
       },
       {
         "id": "col_film_10_2",
-        "title": "念无双",
-        "rate": "6.6",
-        "cover": "https://image.tmdb.org/t/p/w500/5p9vUBqjeOnmSdj7ngRoc3PQGv1.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/i7bHHftPPu7oly5w2jFeoPtR8rY.jpg",
-        "year": "2025",
-        "description": "数万年前，神魔大战，源生之神泰和利用世间至高至强的神器“神之左手”封印魔神，结果神器折毁坠落人界，源生之众神陷人长眠，自此三界再无神迹。战鬼族趁乱崛起，引发大战，神女无双受天界之托，化身人族少女进入神仆家族有狐一族的洞府，成为祭司源仲的贴身…",
+        "title": "招惹",
+        "rate": "7.2",
+        "cover": "https://image.tmdb.org/t/p/w500/mBVeWC52usD36bjQAPYSf48NqGy.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/eqbj7hDGr5DFoACL6zdpFpBlOia.jpg",
+        "year": "2023",
+        "description": "二十世纪初的上海滩，群雄崛起。永升船运董事长杜景窗是上海滩首屈一指的商业大亨，坊间传言，新仙林的头牌歌女姜罂不日便会成为杜景窗的二姨太。新仙林的晚宴上，永升船运的二把手曾二爷向杜景窗之子杜寻羽发难，称这个两年前回杜家认亲的儿子是假扮的，而真正的杜寻羽早就身故了…",
         "types": [
+          "犯罪",
           "剧情",
-          "Sci-Fi & Fantasy"
+          "悬疑"
         ],
         "directors": [
-          "郭虎"
+          "曾庆杰"
         ],
         "actors": [
-          "唐嫣",
-          "刘学义",
-          "郭晓婷",
-          "王弘毅"
+          "李沐宸",
+          "赵弈钦",
+          "王若麟"
         ]
       },
       {
@@ -3589,43 +3586,43 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
       },
       {
         "id": "col_film_10_15",
-        "title": "脱缰者也",
-        "rate": "5.0",
-        "cover": "https://image.tmdb.org/t/p/w500/g5Pvbjn5S6KwXlz2nDGMcMF8lOQ.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/25HqnWqd0cCp8E2rUljqEopC8Cs.jpg",
-        "year": "2025",
-        "description": "世纪之交，背井离乡的马飞（郭麒麟 饰）重返天津，在种种不尽如意的遭遇下“拐走”外甥李嘉文（胡朗荃 饰），舅甥就此踏上一段“离经叛道”之旅。事态脱缰失控，抽象不断升级，一切荒唐随之而来……",
+        "title": "虚颜",
+        "rate": "7.4",
+        "cover": "https://image.tmdb.org/t/p/w500/uoH83hAqdU7FfBHJZYqfjR2clZm.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/1MNvFtI8m32FzrJAOwhOQlewIIJ.jpg",
+        "year": "2022",
+        "description": "纯爱画师换脸替嫁反遇旧时心上人，心机千金舍弃容颜与虎谋皮竟为守真爱。君臣过招，成败几何，双姝对智，颜假情真。",
         "types": [
-          "喜剧",
-          "犯罪"
+          "剧情",
+          "悬疑"
         ],
         "directors": [
-          "曹保平"
+          "曾庆杰"
         ],
         "actors": [
-          "郭麒麟",
-          "齐溪",
-          "孙安可",
-          "常远"
+          "柯颖",
+          "丞磊",
+          "王泽轩",
+          "宋昭艺"
         ]
       },
       {
         "id": "col_film_10_16",
-        "title": "都市修仙传",
-        "rate": "6.0",
-        "cover": "https://image.tmdb.org/t/p/w500/k9WbCBs1W1QC230bR1nLAzCLR91.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/k9WbCBs1W1QC230bR1nLAzCLR91.jpg",
-        "year": "2023",
-        "description": "本片讲述了生活颓废的主人公林风在玩一款治愈类的游戏时，在意识维度中历经了“黄粱一梦”，最终对生命的意义有所感悟的故事。",
+        "title": "长公主在上",
+        "rate": "7.0",
+        "cover": "https://image.tmdb.org/t/p/w500/jLupXWbDwvJ74iXsbGjbWZhyOyu.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/f7ZXBhQkE6jmRS9j63Qfdhh1KF5.jpg",
+        "year": "2022",
+        "description": "传说长公主李云贞（圻夏夏饰）骄奢淫逸、贪污谋私，让人闻之不齿，侍卫顾玄清（锦超饰）被派卧底长公主身边，搜集证据，以期将她绳之以法。在朝政纷争的背景下，长公主的难言之隐伴随着贪污案的真相逐渐浮出水面，侍卫顾玄清也在卧底任务中彻底爱上任务对象。",
         "types": [
-          "精选",
           "剧情"
         ],
         "directors": [
-          "知名导演"
+          "知竹"
         ],
         "actors": [
-          "实力派演员"
+          "圻夏夏",
+          "锦超"
         ]
       }
     ]
@@ -3826,24 +3823,24 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
       },
       {
         "id": "col_film_11_9",
-        "title": "射雕英雄传",
-        "rate": "9.2",
-        "cover": "https://image.tmdb.org/t/p/w500/wuOGPke8Dm5g5X4qfYwHu3gXAyX.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/fcKuYJGQdI8E0Pec4PJUGILKXWe.jpg",
-        "year": "1983",
-        "description": "南宋年间，全真教道士丘处机与江南七怪武功不相上下，两方决定各培养一个徒弟，日后比武来决定双方武功高低。丘处机的徒弟是金国小王子杨康（苗侨伟 饰），江南七怪的徒弟则是自小随母亲在蒙古生活的郭靖（黄日华 饰）。从蒙古来到中原的郭靖，邂逅了“东邪…",
+        "title": "东成西就",
+        "rate": "8.9",
+        "cover": "https://image.tmdb.org/t/p/w500/x2ehXnTm65Ow9XutfAG5z1gC8as.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/A7SfkQbYiU5iN275bZzA3vumWAo.jpg",
+        "year": "1993",
+        "description": "金轮国王妃与表哥欧阳锋暗中勾结，企图夺取王位，却始终找不到象征王权的传国玉玺。原来玉玺已经落到三公主手中，她带着玉玺逃离王宫，并前往九宫山寻找援手。为了斩草除根并夺回玉玺，欧阳锋一路紧追不舍，却在阴差阳错间惹出一连串荒唐事端。随着黄药师、洪七、周伯通等各路人物…",
         "types": [
-          "剧情",
-          "动作冒险"
+          "动作",
+          "喜剧"
         ],
         "directors": [
-          "杜琪峰"
+          "刘镇伟"
         ],
         "actors": [
-          "黄日华",
-          "翁美玲",
-          "苗侨伟",
-          "杨盼盼"
+          "张国荣",
+          "林青霞",
+          "梁朝伟",
+          "张学友"
         ]
       },
       {
