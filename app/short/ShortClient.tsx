@@ -83,9 +83,33 @@ export default function ShortClient({ topCustomRails }: ShortClientProps) {
     router.push(`/short/player?title=${encodeURIComponent(q)}&search=1`);
   };
 
-  // 顶层挂接：1. 实时热搜榜 TOP10 2. 猜你想追推荐 3. 6大主题策展片单
+  // 顶层挂接：0. 短剧专属搜索栏 1. 实时热搜榜 TOP10 2. 猜你想追推荐 3. 6大主题策展片单
   const shortRails = (
-    <div className="space-y-4 my-2">
+    <div className="space-y-6 my-2">
+      {/* 短剧专属频道搜索栏 */}
+      <div className="pt-2 pb-1">
+        <form
+          onSubmit={handleShortSearch}
+          className="flex items-center gap-2 max-w-2xl mx-auto bg-white/5 hover:bg-white/10 focus-within:bg-white/10 border border-white/10 focus-within:border-(--accent-color) rounded-2xl px-4 py-2.5 sm:py-3 transition-all shadow-xl"
+        >
+          <Icons.Search size={18} className="text-white/40 shrink-0" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="在 36,000+ 部短剧中搜索剧名（如：龙王、战神、夫人、逆袭）..."
+            className="w-full bg-transparent text-sm sm:text-base text-white placeholder-white/30 focus:outline-none"
+          />
+          <button
+            type="submit"
+            disabled={!searchQuery.trim()}
+            className="px-4 py-1.5 bg-(--accent-color) hover:brightness-110 disabled:opacity-40 disabled:hover:brightness-100 text-white rounded-xl text-xs sm:text-sm font-bold shrink-0 transition-all cursor-pointer"
+          >
+            搜短剧
+          </button>
+        </form>
+      </div>
+
       <ShortDramaTrendingRail />
       <ShortDramaForYouRail />
       <ShortCollectionsRail />
@@ -101,46 +125,20 @@ export default function ShortClient({ topCustomRails }: ShortClientProps) {
         </div>
       }
     >
-      <div className="relative">
-        {/* 短剧专属频道搜索栏 */}
-        <div className="pt-20 px-4 sm:px-8 max-w-7xl mx-auto">
-          <form
-            onSubmit={handleShortSearch}
-            className="flex items-center gap-2 max-w-xl mx-auto bg-white/5 hover:bg-white/10 focus-within:bg-white/10 border border-white/10 focus-within:border-(--accent-color) rounded-2xl px-4 py-2.5 transition-all shadow-xl"
-          >
-            <Icons.Search size={18} className="text-white/40 shrink-0" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="在 36,000+ 部短剧中搜索剧名（如：龙王、战神、夫人、逆袭）..."
-              className="w-full bg-transparent text-sm text-white placeholder-white/30 focus:outline-none"
-            />
-            <button
-              type="submit"
-              disabled={!searchQuery.trim()}
-              className="px-3.5 py-1 bg-(--accent-color) hover:brightness-110 disabled:opacity-40 disabled:hover:brightness-100 text-white rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer"
-            >
-              搜短剧
-            </button>
-          </form>
-        </div>
-
-        <CategoryHub
-          categoryTitle="精品微短剧"
-          categorySubtitle="36,000+ 热门短剧 · 9大精细分类 · 9:16 竖屏上下滑动沉浸全集连播"
-          doubanType="tv"
-          activeNav="short"
-          genres={GENRES}
-          regions={REGIONS}
-          years={YEARS}
-          shelves={SHELVES}
-          defaultTag="shuangju"
-          usePrebakedOnly={false}
-          shortDramaMode={true}
-          topCustomRails={shortRails}
-        />
-      </div>
+      <CategoryHub
+        categoryTitle="精品微短剧"
+        categorySubtitle="36,000+ 热门短剧 · 9大精细分类 · 9:16 竖屏上下滑动沉浸全集连播"
+        doubanType="tv"
+        activeNav="short"
+        genres={GENRES}
+        regions={REGIONS}
+        years={YEARS}
+        shelves={SHELVES}
+        defaultTag="shuangju"
+        usePrebakedOnly={false}
+        shortDramaMode={true}
+        topCustomRails={shortRails}
+      />
     </Suspense>
   );
 }
