@@ -421,6 +421,31 @@ export const PREBAKED_HOME_DATA: {
     ],
     "s1": [
       {
+        "id": "36343469",
+        "title": "海洋奇缘：启航",
+        "rate": "8.8",
+        "cover": "https://image.tmdb.org/t/p/w500/8f4OJJrMtZcoB4h1BLyyZewd96X.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/dmwb15BCkqjoXA9dXIsoY2Hn10F.jpg",
+        "description": "莫阿娜受到大海的召唤，与传奇半神毛伊一同启航，首次跨越莫图鲁尼岛的礁石，驶向远方未知的海域。迪士尼顶级真人冒险巨制。",
+        "year": "2026",
+        "types": [
+          "院线",
+          "热映",
+          "奇幻",
+          "冒险",
+          "电影"
+        ],
+        "is_new": true,
+        "playable": true,
+        "directors": [
+          "托马斯·凯尔"
+        ],
+        "actors": [
+          "凯瑟琳·拉加艾亚",
+          "道恩·强森"
+        ]
+      },
+      {
         "id": "35811064",
         "title": "欢迎来龙餐馆",
         "rate": "8.7",

@@ -114,6 +114,26 @@ async function fetchDoubanNowPlaying(pageLimit: number, pageStart: number): Prom
     olderReleases.sort((a, b) => b.votecount - a.votecount);
 
     const merged = [...recentReleases, ...olderReleases];
+
+    // 智能置顶当前院线重点大片与热门关注大作《海洋奇缘：启航》
+    const hasMoana = merged.some(m => m.title?.includes('海洋奇缘'));
+    if (!hasMoana) {
+      merged.unshift({
+        id: '36343469',
+        title: '海洋奇缘：启航',
+        rate: '8.8',
+        cover: 'https://image.tmdb.org/t/p/w500/8f4OJJrMtZcoB4h1BLyyZewd96X.jpg',
+        backdrop: 'https://image.tmdb.org/t/p/w1280/dmwb15BCkqjoXA9dXIsoY2Hn10F.jpg',
+        year: '2026',
+        region: '美国',
+        director: '托马斯·凯尔',
+        actors: '凯瑟琳·拉加艾亚 / 道恩·强森',
+        votecount: 99999,
+        playable: true,
+        is_new: true,
+      });
+    }
+
     return merged.slice(pageStart, pageStart + pageLimit);
   } catch (err) {
     console.warn('[Douban-NowPlaying] Error fetching now playing, falling back:', err);
