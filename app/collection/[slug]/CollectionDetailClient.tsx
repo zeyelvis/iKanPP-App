@@ -187,15 +187,10 @@ export function CollectionDetailClient({ collection }: CollectionDetailClientPro
         {/* 顶部 Hero 策展看板 */}
         <section className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-white/[0.07] via-white/[0.03] to-transparent border border-white/10 p-5 sm:p-8 lg:p-10 mb-8 shadow-2xl backdrop-blur-xl">
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6 lg:gap-10">
-            {/* 左侧：3 层错位堆叠海报组视觉徽章 */}
-            <div className="relative w-44 sm:w-52 lg:w-60 aspect-[3/4] shrink-0 pt-2 pr-4">
+            {/* 左侧：3 层平直水平错位阶梯海报组视觉看板 */}
+            <div className="relative w-48 sm:w-56 lg:w-64 h-[175px] sm:h-[200px] shrink-0">
               {/* 第 3 层 */}
-              <div
-                className="absolute inset-x-2 top-0 bottom-4 rounded-2xl overflow-hidden border border-white/10 opacity-30 shadow-lg z-10"
-                style={{
-                  transform: 'translate(14px, -4px) scale(0.88) rotate(2deg)',
-                }}
-              >
+              <div className="absolute left-[56px] top-[8px] bottom-[8px] w-[115px] sm:w-[135px] rounded-2xl overflow-hidden border border-white/10 opacity-70 shadow-lg z-10 brightness-90">
                 <Image
                   src={collection.coverPosters[2] || collection.films[2]?.cover || ''}
                   alt="海报3"
@@ -206,12 +201,7 @@ export function CollectionDetailClient({ collection }: CollectionDetailClientPro
               </div>
 
               {/* 第 2 层 */}
-              <div
-                className="absolute inset-x-1 top-1 bottom-3 rounded-2xl overflow-hidden border border-white/15 opacity-65 shadow-xl z-20"
-                style={{
-                  transform: 'translate(7px, -2px) scale(0.94) rotate(1deg)',
-                }}
-              >
+              <div className="absolute left-[28px] top-[4px] bottom-[4px] w-[115px] sm:w-[135px] rounded-2xl overflow-hidden border border-white/15 opacity-85 shadow-xl z-20">
                 <Image
                   src={collection.coverPosters[1] || collection.films[1]?.cover || ''}
                   alt="海报2"
@@ -222,7 +212,7 @@ export function CollectionDetailClient({ collection }: CollectionDetailClientPro
               </div>
 
               {/* 顶层 */}
-              <div className="relative w-[90%] aspect-[2/3] rounded-2xl overflow-hidden border border-white/20 shadow-2xl z-30">
+              <div className="absolute left-0 top-0 bottom-0 w-[115px] sm:w-[135px] rounded-2xl overflow-hidden border border-white/20 shadow-2xl z-30">
                 <Image
                   src={collection.coverPosters[0] || collection.films[0]?.cover || ''}
                   alt={collection.title}
@@ -231,23 +221,12 @@ export function CollectionDetailClient({ collection }: CollectionDetailClientPro
                   priority
                   unoptimized
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/70 backdrop-blur-md text-[10px] font-bold text-white border border-white/20">
-                  {collection.badge}
-                </div>
               </div>
             </div>
 
             {/* 右侧：片单信息与行动项 */}
             <div className="flex-1 text-center lg:text-left flex flex-col justify-between">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-semibold text-white/90 mb-3">
-                  <span>{collection.emoji}</span>
-                  <span>官方编辑部策展</span>
-                  <span className="w-1 h-1 rounded-full bg-amber-400" />
-                  <span className="text-amber-300">{collection.totalCount} 部殿堂佳作</span>
-                </div>
-
                 <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight mb-3">
                   {collection.title}
                 </h1>
@@ -338,7 +317,6 @@ export function CollectionDetailClient({ collection }: CollectionDetailClientPro
                       : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10'
                   }`}
                 >
-                  <span>{c.emoji}</span>
                   <span>{c.title}</span>
                   <span className="text-[10px] opacity-70 font-mono">({c.totalCount})</span>
                 </Link>
