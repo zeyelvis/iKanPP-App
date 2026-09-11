@@ -6,11 +6,11 @@ import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 export const metadata: Metadata = {
-  title: '精品短剧专区 - 2026 最新爆款短剧在线免费全集连播 | iKanPP 爱看片片',
-  description: 'iKanPP 精品短剧专区汇聚 2026 全网爆款微短剧，涵盖战神归来、逆袭打脸、豪门总裁、甜宠闪婚、穿越重生、古装权谋等高能爽剧。1080P 超清画质免 VIP 免费极速在线看。',
+  title: '精品微短剧专区 - 36,000+ 热门爆款短剧在线免费全集极速播放 | iKanPP 爱看片片',
+  description: 'iKanPP 微短剧频道汇聚 36,000+ 部全网超人气微短剧，9 大子分类精准涵盖反转爽剧、言情总裁、现代都市、古装仙侠、穿越年代、重生民国、脑洞悬疑等。支持 9:16 沉浸式竖屏上下滑动切集与免费连播。',
   openGraph: {
-    title: '精品短剧专区 - 爆款微短剧免费全集连播 | iKanPP',
-    description: '全网爆款爽剧 · 战神逆袭 · 豪门甜宠 · 穿越重生全集连播，免 VIP 超清畅享。',
+    title: '精品微短剧专区 - 36,000+ 部爆款爽剧沉浸式免费看 | iKanPP',
+    description: '反转爽剧 · 言情总裁 · 古装仙侠 · 穿越重生全集连播，9:16 沉浸式竖屏播放免 VIP 畅享。',
     type: 'website',
     url: 'https://www.ikanpp.com/short',
   },

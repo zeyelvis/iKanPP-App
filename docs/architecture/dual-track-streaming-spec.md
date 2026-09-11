@@ -111,3 +111,22 @@
    - **路由铁律**：详情页“立即播放”按钮必须携带 `entity` 参数（如 `/player?entity=ik000001&...`），与旧版历史链接 `/player?title=xxx` 的 301 重定向检测严格解耦，绝不触发循环重定向；
    - **状态轻量化**：多线路数据通过 `sessionStorage` (`gsKey`) 传递，绝不将 `groupedSources` JSON 巨石写入 URL。
 
+---
+
+## 6. 微短剧专区 (Track A) 架构规范 (2026-09 升级)
+
+随着微短剧频道全量上线 36,000+ 部动态资源与 9:16 竖屏播放器，特此明确短剧专区的流媒体与架构归属：
+
+1. **轨道归属明确性**：
+   - 微短剧（`/short`）与短剧沉浸竖屏播放器（`/short/player`）**100% 严格归属于轨道 A（Track A：普通公网影视）**。
+   - 播放配置：`isPremium` 恒为 `false`，`proxyMode` 恒为 `'none'`，`effectiveUseProxy` 恒为 `false`。
+   - 严禁任何边缘反向代理，绝不允许使用 `processM3u8Content` 改写短剧切片。
+2. **三源容灾路由**：
+   - 数据源与流媒体线路：光速资源 (P1) ➔ 极速资源 (P2) ➔ 红牛资源 (P3)。
+   - 当某源超时 (2.5s) 或死链时，系统在 API 层与前端自动降级切源，绝不用代理拯救死链。
+3. **竖屏播放器卡顿红线**：
+   - 短剧播放器手势滑动、自动连播与卡顿自愈中，**严禁执行 `videoRef.current.currentTime += 0.1`**。
+   - 缓冲等待时仅显示 `isLoading` 动画，给予底层 Hls.js 充裕的下载缓冲时间。
+4. **存储隔离与数据分流**：
+   - 短剧观看历史与集数进度使用 `useHistoryStore`（`type_name: '微短剧'`）。
+   - 热度统计使用轻量级客户端本地 Store（`useShortTrendingStore`），与午夜特区严格分库分表隔离。

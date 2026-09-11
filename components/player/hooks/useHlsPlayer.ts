@@ -9,6 +9,7 @@ interface UseHlsPlayerProps {
     src: string;
     isPremium?: boolean;
     autoPlay?: boolean;
+    preloadMode?: boolean;
     onAutoPlayPrevented?: (error: Error) => void;
     onError?: (message: string) => void;
 }
@@ -18,6 +19,7 @@ export function useHlsPlayer({
     src,
     isPremium = false,
     autoPlay = false,
+    preloadMode = false,
     onAutoPlayPrevented,
     onError
 }: UseHlsPlayerProps) {
@@ -188,7 +190,7 @@ export function useHlsPlayer({
                         }
                     }
 
-                    if (autoPlay) {
+                    if (autoPlay && !preloadMode) {
                         video.play().catch((err) => {
                             // console.warn('[HLS] Autoplay prevented:', err);
                             onAutoPlayPreventedRef.current?.(err);
@@ -445,5 +447,5 @@ export function useHlsPlayer({
             }
             extraBlobs.forEach(url => URL.revokeObjectURL(url));
         };
-    }, [src, autoPlay, isPremium]);
+    }, [src, autoPlay, isPremium, preloadMode]);
 }

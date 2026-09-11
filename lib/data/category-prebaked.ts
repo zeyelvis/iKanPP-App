@@ -11,6 +11,8 @@ export interface PrebakedCategoryItem {
   year?: string;
   types?: string[];
   is_new?: boolean;
+  remarks?: string;
+  play_url?: string;
 }
 
 export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
@@ -358,99 +360,123 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
   short: [
     {
       id: 'pb_cat_s1',
-      title: '我在八零年代当后妈',
-      rate: '8.6',
-      cover: 'https://image.tmdb.org/t/p/w500/dXjYk7fnA6HNqhJHTnmeD6rV4Aw.jpg',
-      year: '2024',
-      types: ['年代', '甜宠', '逆袭']
+      title: '秘方遭老板觊觎，我带乡邻逆风翻盘',
+      rate: '9.2',
+      cover: 'https://img.guangsuimage.com/cover/3f18478daa064f8a9b67f86302dc5e28.jpg',
+      year: '2026',
+      types: ['反转爽剧', '逆袭', '战神'],
+      remarks: '全集完结',
+      play_url: '全集完结$https://v.gsuus.com/play/bDk8y3qa/index.m3u8'
     },
     {
       id: 'pb_cat_s2',
-      title: '无双',
-      rate: '8.8',
-      cover: 'https://image.tmdb.org/t/p/w500/b5P8eg7u4XgDSYNF6da17CcZy2d.jpg',
-      year: '2024',
-      types: ['战神', '热血', '逆袭']
+      title: '穿书70，竹马他真香了',
+      rate: '9.0',
+      cover: 'https://img.guangsuimage.com/cover/a9cbc68f9df45c53d7cd75191626bcdf.jpg',
+      year: '2026',
+      types: ['年代', '甜宠', '穿越'],
+      remarks: '全集完结',
+      play_url: '全集完结$https://v.gsuus.com/play/erk9Ojpa/index.m3u8'
     },
     {
       id: 'pb_cat_s3',
-      title: '执笔',
-      rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/czembW0Rk1Ke7lCJGahbOhdCuhV.jpg',
-      year: '2024',
-      types: ['古装', '权谋', '重生']
+      title: '代号冥王',
+      rate: '9.3',
+      cover: 'https://img.guangsuimage.com/cover/f22d9c3b0d6a54671018cde797fbfcd2.jpg',
+      year: '2026',
+      types: ['战神', '逆袭', '热血'],
+      remarks: '全集完结',
+      play_url: '全集完结$https://v.gsuus.com/play/ejR8lZye/index.m3u8'
     },
     {
       id: 'pb_cat_s4',
-      title: '黑莲花上位手册',
-      rate: '8.7',
-      cover: 'https://image.tmdb.org/t/p/w500/cDJwZ4lSZiUnHtixdyhaPPwsjyo.jpg',
-      year: '2023',
-      types: ['宫斗', '复仇']
+      title: '老实人家的最强话事人',
+      rate: '8.9',
+      cover: 'https://img.guangsuimage.com/cover/27ec94dfdefd3f3f9665ef0e2d531d49.jpg',
+      year: '2026',
+      types: ['现代都市', '反转爽剧'],
+      remarks: '全集完结',
+      play_url: '全集完结$https://v.gsuus.com/play/erk9x04a/index.m3u8'
     },
     {
       id: 'pb_cat_s5',
-      title: '闪婚后傅先生的马甲藏不住了',
-      rate: '8.4',
-      cover: 'https://image.tmdb.org/t/p/w500/nSpk8U35rPVlMMfZ1uxHnbC14Nd.jpg',
-      year: '2024',
-      types: ['豪门', '甜宠']
+      title: '你资助的穷小子，十年后为你撑腰',
+      rate: '9.1',
+      cover: 'https://img.guangsuimage.com/cover/f38df137248cb76aa4ba3fdfb84f3e98.jpg',
+      year: '2026',
+      types: ['都市', '逆袭', '豪门'],
+      remarks: '全集完结',
+      play_url: '全集完结$https://v.gsuus.com/play/dyPXv8nb/index.m3u8'
     },
     {
       id: 'pb_cat_s6',
-      title: '授她以柄',
-      rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/dS8C60iEHnuZEFgKFjRx0GCLVRf.jpg',
-      year: '2024',
-      types: ['古风', '虐恋']
+      title: '弃少不好惹，我乃魔道至尊',
+      rate: '9.4',
+      cover: 'https://img.guangsuimage.com/cover/77454ee9aa2274886c53d66768e201d3.jpg',
+      year: '2026',
+      types: ['战神', '反转爽剧', '修仙'],
+      remarks: '全集完结',
+      play_url: '全集完结$https://v.gsuus.com/play/elY7g7la/index.m3u8'
     },
     {
       id: 'pb_cat_s7',
-      title: '盛夏的果实',
-      rate: '8.3',
-      cover: 'https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg',
-      year: '2024',
-      types: ['都市', '情感']
+      title: '司先生别藏了',
+      rate: '8.8',
+      cover: 'https://img.guangsuimage.com/cover/b8feed246945057fc799573b899a9f45.jpg',
+      year: '2026',
+      types: ['言情总裁', '甜宠', '闪婚'],
+      remarks: '全集完结',
+      play_url: '全集完结$https://v.gsuus.com/play/aAD1lRpe/index.m3u8'
     },
     {
       id: 'pb_cat_s8',
-      title: '绝世天将',
-      rate: '8.6',
-      cover: 'https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg',
-      year: '2024',
-      types: ['战神', '逆袭']
+      title: '夜港绯尘',
+      rate: '8.7',
+      cover: 'https://img.guangsuimage.com/cover/f63931a910b94513f759377cd4dcbc70.jpg',
+      year: '2026',
+      types: ['言情总裁', '都市', '虐恋'],
+      remarks: '全集完结',
+      play_url: '全集完结$https://v.gsuus.com/play/b2kWNWJd/index.m3u8'
     },
     {
       id: 'pb_cat_s9',
-      title: '重生后我成了首富千金',
-      rate: '8.4',
-      cover: 'https://image.tmdb.org/t/p/w500/cAS2e9hUwu6Ydsx7byXj16H00Ai.jpg',
-      year: '2024',
-      types: ['重生', '逆袭']
+      title: '京夜诱温，你管我闺蜜叫姐',
+      rate: '8.9',
+      cover: 'https://img.guangsuimage.com/cover/4907d9f46494794c4ecc024e52a4b4b2.jpg',
+      year: '2026',
+      types: ['言情总裁', '甜宠'],
+      remarks: '全集完结',
+      play_url: '全集完结$https://v.gsuus.com/play/erk9o9wa/index.m3u8'
     },
     {
       id: 'pb_cat_s10',
-      title: '顾少的隐婚罪妻',
-      rate: '8.2',
-      cover: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
-      year: '2024',
-      types: ['豪门', '总裁']
+      title: '如诗说一千里共明月',
+      rate: '8.8',
+      cover: 'https://img.guangsuimage.com/cover/0726e051d18e9ae347c103a30035f9a1.jpg',
+      year: '2026',
+      types: ['古装仙侠', '奇幻'],
+      remarks: '全集完结',
+      play_url: '全集完结$https://v.gsuus.com/play/eVONOpza/index.m3u8'
     },
     {
       id: 'pb_cat_s11',
-      title: '龙王出狱',
-      rate: '8.7',
-      cover: 'https://image.tmdb.org/t/p/w500/cDJwZ4lSZiUnHtixdyhaPPwsjyo.jpg',
-      year: '2024',
-      types: ['战神', '都市']
+      title: '大小姐回京后整顿侯府满门',
+      rate: '9.2',
+      cover: 'https://img.guangsuimage.com/cover/081a65f7d7d18dd2ea14a63d7987db82.jpg',
+      year: '2026',
+      types: ['古装仙侠', '权谋', '重生'],
+      remarks: '全集完结',
+      play_url: '全集完结$https://v.gsuus.com/play/epYzwOya/index.m3u8'
     },
     {
       id: 'pb_cat_s12',
-      title: '长公主的谋逆日常',
-      rate: '8.4',
-      cover: 'https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg',
-      year: '2024',
-      types: ['古装', '权谋']
+      title: '愿我如星卿如月',
+      rate: '8.7',
+      cover: 'https://img.guangsuimage.com/cover/5077e7522a87b9fc9c829a061c1fb1d9.jpg',
+      year: '2026',
+      types: ['古装仙侠', '言情'],
+      remarks: '全集完结',
+      play_url: '全集完结$https://v.gsuus.com/play/aADmDN3e/index.m3u8'
     }
   ]
 };

@@ -38,6 +38,8 @@ export interface CategoryHubProps {
   shelves: ShelfConfig[];
   defaultTag?: string;
   usePrebakedOnly?: boolean;
+  shortDramaMode?: boolean;
+  topCustomRails?: React.ReactNode;
 }
 
 export function CategoryHub({
@@ -51,6 +53,8 @@ export function CategoryHub({
   shelves,
   defaultTag = '热门',
   usePrebakedOnly = false,
+  shortDramaMode = false,
+  topCustomRails,
 }: CategoryHubProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -154,10 +158,33 @@ function isSameList(a: any[], b: any[]): boolean {
 
         const fetchShelf = async (shelf: ShelfConfig) => {
           if (shelf.prebakedOnly) return null;
-          const targetDoubanType = shelf.doubanType || doubanType;
           try {
             const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), 1800);
+            const timer = setTimeout(() => controller.abort(), shortDramaMode ? 2500 : 1800);
+
+            if (shortDramaMode) {
+              const res = await fetch(
+                `/api/short-dramas/browse?category=${encodeURIComponent(shelf.tag)}&limit=20`,
+                { signal: controller.signal }
+              );
+              clearTimeout(timer);
+              if (!res.ok) return null;
+              const data = await res.json();
+              const subjects = (data.list || []).map((item: any) => ({
+                id: String(item.id),
+                title: item.title,
+                cover: item.poster,
+                rate: item.remarks || (item.totalEpisodes ? `全${item.totalEpisodes}集` : '9.0'),
+                year: item.year,
+                types: [item.categoryName || '短剧'],
+                url: item.firstPlayUrl || '',
+                play_url: item.playUrl,
+                episodes: item.episodes,
+              }));
+              return { tag: shelf.tag, subjects };
+            }
+
+            const targetDoubanType = shelf.doubanType || doubanType;
             const res = await fetch(
               `/api/douban/recommend?tag=${encodeURIComponent(
                 shelf.tag
@@ -275,6 +302,35 @@ function isSameList(a: any[], b: any[]): boolean {
           return;
         }
 
+        if (shortDramaMode && !usePrebakedOnly) {
+          const currentCategory = selectedGenre || 'all';
+          const targetPage = pageNum + 1;
+          const res = await fetch(
+            `/api/short-dramas/browse?category=${encodeURIComponent(currentCategory)}&page=${targetPage}&limit=${PAGE_SIZE}`
+          );
+          if (!res.ok) {
+            setGridMovies([]);
+            setHasMore(false);
+            return;
+          }
+          const data = await res.json();
+          const subjects = (data.list || []).map((item: any) => ({
+            id: String(item.id),
+            title: item.title,
+            cover: item.poster,
+            rate: item.remarks || (item.totalEpisodes ? `全${item.totalEpisodes}集` : '9.0'),
+            year: item.year,
+            types: [item.categoryName || '短剧'],
+            url: item.firstPlayUrl || '',
+            play_url: item.playUrl,
+            episodes: item.episodes,
+          }));
+          setGridMovies(subjects);
+          setHasMore(data.page < data.pagecount && subjects.length > 0);
+          setPage(pageNum);
+          return;
+        }
+
         const pageStart = pageNum * PAGE_SIZE;
         const params = new URLSearchParams();
         if (selectedGenre) params.set('genre', selectedGenre);
@@ -299,7 +355,7 @@ function isSameList(a: any[], b: any[]): boolean {
         setLoadingGrid(false);
       }
     },
-    [selectedGenre, selectedRegion, selectedYear, activeSearchTag, doubanType, usePrebakedOnly, activeNav]
+    [selectedGenre, selectedRegion, selectedYear, activeSearchTag, doubanType, usePrebakedOnly, activeNav, shortDramaMode]
   );
 
   // 筛选器变化时重置回第 0 页
@@ -308,6 +364,17 @@ function isSameList(a: any[], b: any[]): boolean {
   }, [loadGridPage]);
 
   const handleMovieClick = (movie: any) => {
+    if (shortDramaMode) {
+      const playUrl = movie.url || movie.firstPlayUrl || movie.play_url || '';
+      const title = movie.title || '';
+      const poster = movie.cover || movie.poster || '';
+      const query = new URLSearchParams();
+      if (title) query.set('title', title);
+      if (playUrl) query.set('url', playUrl);
+      if (poster) query.set('poster', poster);
+      router.push(`/short/player?${query.toString()}`);
+      return;
+    }
     router.push(`/title/${generateSlug(movie.title)}`);
   };
 
@@ -377,6 +444,9 @@ function isSameList(a: any[], b: any[]): boolean {
             </div>
           </div>
         )}
+
+        {/* 顶部自定义专属推荐与热度榜等 */}
+        {topCustomRails}
 
         {/* 2. 专属垂直特色片单滑轨 */}
         <div className="space-y-4">

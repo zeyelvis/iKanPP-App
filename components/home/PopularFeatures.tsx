@@ -419,6 +419,15 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   }, [prebaked, weeklyMovies, shelf1Movies, shelf2Movies, shelf3Movies, shelf4Movies]);
 
   const handleMovieClick = (movie: any) => {
+    if (contentType === 'short' || movie.play_url || movie.firstPlayUrl || (movie.types && movie.types.includes('短剧'))) {
+      const playUrl = movie.url || movie.firstPlayUrl || movie.play_url || '';
+      const query = new URLSearchParams();
+      if (movie.title) query.set('title', movie.title);
+      if (playUrl) query.set('url', playUrl);
+      if (movie.cover || movie.poster) query.set('poster', movie.cover || movie.poster);
+      router.push(`/short/player?${query.toString()}`);
+      return;
+    }
     router.push(`/title/${generateSlug(movie.title)}`);
   };
 

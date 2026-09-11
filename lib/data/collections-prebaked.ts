@@ -15,6 +15,8 @@ export interface CollectionSubject {
   types?: string[];
   directors?: string[];
   actors?: string[];
+  remarks?: string;
+  play_url?: string;
 }
 
 export interface CuratedCollection {
@@ -5144,10 +5146,581 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
   }
 ];
 
+
+
+// ── 6 大短剧专属主题精选片单 (Short Drama Curated Collections) ──────────
+export const SHORT_DRAMA_COLLECTIONS: CuratedCollection[] = [
+  {
+    "id": "col-short-trending",
+    "title": "2026 全网爆款微短剧 TOP",
+    "subtitle": "播放破亿现象级爆款，反转不断高能停不下来",
+    "slug": "2026-trending-short-drama",
+    "coverPosters": [
+      "https://img.guangsuimage.com/cover/3f18478daa064f8a9b67f86302dc5e28.jpg",
+      "https://img.guangsuimage.com/cover/b8feed246945057fc799573b899a9f45.jpg",
+      "https://img.guangsuimage.com/cover/432ebb0d4b2f6084266e88e050f5da94.jpg"
+    ],
+    "totalCount": 12,
+    "description": "汇聚2026全网人气最高、播放量破亿的现象级微短剧。从战神回归到豪门契约，从反转打脸到商界传奇，剧情节奏极快，反转高能不断。",
+    "accent": "#EF4444",
+    "films": [
+      {
+        "id": "sd_217766",
+        "title": "秘方遭老板觊觎，我带乡邻逆风翻盘",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/3f18478daa064f8a9b67f86302dc5e28.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "反转爽剧"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/bDk8y3qa$$$全集完结$https://v.gsuus.com/play/bDk8y3qa/index.m3u8"
+      },
+      {
+        "id": "sd_217563",
+        "title": "穿书70，竹马他真香了",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/a9cbc68f9df45c53d7cd75191626bcdf.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "反转爽剧"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/erk9Ojpa$$$全集完结$https://v.gsuus.com/play/erk9Ojpa/index.m3u8"
+      },
+      {
+        "id": "sd_217455",
+        "title": "代号冥王",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/f22d9c3b0d6a54671018cde797fbfcd2.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "反转爽剧"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/ejR8lZye$$$全集完结$https://v.gsuus.com/play/ejR8lZye/index.m3u8"
+      },
+      {
+        "id": "sd_218166",
+        "title": "重生：大嫂别闹，我要护家",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/432ebb0d4b2f6084266e88e050f5da94.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "现代都市"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/epYzYVra$$$全集完结$https://v.gsuus.com/play/epYzYVra/index.m3u8"
+      },
+      {
+        "id": "sd_218160",
+        "title": "原主作天作地，前夫回国和我兜底",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/9cc299a264339b3a46f531c90a11dc35.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "现代都市"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/aM898Dme$$$全集完结$https://v.gsuus.com/play/aM898Dme/index.m3u8"
+      },
+      {
+        "id": "sd_218158",
+        "title": "乖乖女退场，京圈浪子沦陷了2",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/0aa467df0f39878eb0d37b5f434113f9.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "现代都市"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/aQWOWk0d$$$全集完结$https://v.gsuus.com/play/aQWOWk0d/index.m3u8"
+      }
+    ]
+  },
+  {
+    "id": "col-short-warrior",
+    "title": "战神归来 · 男频逆袭爽剧巅峰",
+    "subtitle": "龙王/战神/神医回归，王者出山爽度拉满",
+    "slug": "warrior-return-counterattack",
+    "coverPosters": [
+      "https://img.guangsuimage.com/cover/f22d9c3b0d6a54671018cde797fbfcd2.jpg",
+      "https://img.guangsuimage.com/cover/77454ee9aa2274886c53d66768e201d3.jpg",
+      "https://img.guangsuimage.com/cover/9cc299a264339b3a46f531c90a11dc35.jpg"
+    ],
+    "totalCount": 6,
+    "description": "战神隐世、王者归来、赘婿逆袭、神豪打脸！精选男频爆款高燃短剧，主角身份层层揭晓，绝地反杀打脸恶霸，极致爽感席卷而来。",
+    "accent": "#3B82F6",
+    "films": [
+      {
+        "id": "sd_217766",
+        "title": "秘方遭老板觊觎，我带乡邻逆风翻盘",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/3f18478daa064f8a9b67f86302dc5e28.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "反转爽剧"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/bDk8y3qa$$$全集完结$https://v.gsuus.com/play/bDk8y3qa/index.m3u8"
+      },
+      {
+        "id": "sd_217563",
+        "title": "穿书70，竹马他真香了",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/a9cbc68f9df45c53d7cd75191626bcdf.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "反转爽剧"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/erk9Ojpa$$$全集完结$https://v.gsuus.com/play/erk9Ojpa/index.m3u8"
+      },
+      {
+        "id": "sd_217455",
+        "title": "代号冥王",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/f22d9c3b0d6a54671018cde797fbfcd2.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "反转爽剧"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/ejR8lZye$$$全集完结$https://v.gsuus.com/play/ejR8lZye/index.m3u8"
+      },
+      {
+        "id": "sd_217078",
+        "title": "老实人家的最强话事人",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/27ec94dfdefd3f3f9665ef0e2d531d49.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "反转爽剧"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/erk9x04a$$$全集完结$https://v.gsuus.com/play/erk9x04a/index.m3u8"
+      },
+      {
+        "id": "sd_216898",
+        "title": "你资助的穷小子，十年后为你撑腰",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/f38df137248cb76aa4ba3fdfb84f3e98.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "反转爽剧"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/dyPXv8nb$$$全集完结$https://v.gsuus.com/play/dyPXv8nb/index.m3u8"
+      },
+      {
+        "id": "sd_216858",
+        "title": "弃少不好惹，我乃魔道至尊",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/77454ee9aa2274886c53d66768e201d3.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "反转爽剧"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/elY7g7la$$$全集完结$https://v.gsuus.com/play/elY7g7la/index.m3u8"
+      }
+    ]
+  },
+  {
+    "id": "col-short-romance",
+    "title": "甜宠霸总 · 豪门心动专宠指南",
+    "subtitle": "闪婚契约/腹黑总裁/双向奔赴心动暴击",
+    "slug": "billionaire-sweet-romance",
+    "coverPosters": [
+      "https://img.guangsuimage.com/cover/b8feed246945057fc799573b899a9f45.jpg",
+      "https://img.guangsuimage.com/cover/f63931a910b94513f759377cd4dcbc70.jpg",
+      "https://img.guangsuimage.com/cover/4907d9f46494794c4ecc024e52a4b4b2.jpg"
+    ],
+    "totalCount": 6,
+    "description": "亿万总裁为爱折腰，契约隐婚假戏真做！汇聚全网最火爆的女频言情短剧，双向奔赴与高甜宠溺交织，带来让人心跳加速的视听享受。",
+    "accent": "#EC4899",
+    "films": [
+      {
+        "id": "sd_216884",
+        "title": "司先生别藏了",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/b8feed246945057fc799573b899a9f45.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "言情总裁"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/aAD1lRpe$$$全集完结$https://v.gsuus.com/play/aAD1lRpe/index.m3u8"
+      },
+      {
+        "id": "sd_216860",
+        "title": "夜港绯尘",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/f63931a910b94513f759377cd4dcbc70.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "言情总裁"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/b2kWNWJd$$$全集完结$https://v.gsuus.com/play/b2kWNWJd/index.m3u8"
+      },
+      {
+        "id": "sd_216857",
+        "title": "京夜诱温，你管我闺蜜叫姐",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/4907d9f46494794c4ecc024e52a4b4b2.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "言情总裁"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/erk9o9wa$$$全集完结$https://v.gsuus.com/play/erk9o9wa/index.m3u8"
+      },
+      {
+        "id": "sd_216855",
+        "title": "结婚证是假的，苏小姐可以恋爱了",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/35eabd310e6bcf487825a3cdfe6d1fd8.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "言情总裁"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/eVOQjQ5a$$$全集完结$https://v.gsuus.com/play/eVOQjQ5a/index.m3u8"
+      },
+      {
+        "id": "sd_216850",
+        "title": "说好养猪，你却成了名门心尖宠",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/765a7a3e8423a4ce104d1a06ab00d8c5.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "言情总裁"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/e0RL70Xb$$$全集完结$https://v.gsuus.com/play/e0RL70Xb/index.m3u8"
+      },
+      {
+        "id": "sd_216528",
+        "title": "老板非要和我结婚怎么办第二季",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/81211ad1023395bcf60b81236665dd9e.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "言情总裁"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/dG68AA7b$$$全集完结$https://v.gsuus.com/play/dG68AA7b/index.m3u8"
+      }
+    ]
+  },
+  {
+    "id": "col-short-palace",
+    "title": "古风仙侠 · 权谋绝色虐恋之巅",
+    "subtitle": "宫廷权谋/侯府大女主/仙侠奇缘美学巅峰",
+    "slug": "ancient-palace-immortal",
+    "coverPosters": [
+      "https://img.guangsuimage.com/cover/0726e051d18e9ae347c103a30035f9a1.jpg",
+      "https://img.guangsuimage.com/cover/081a65f7d7d18dd2ea14a63d7987db82.jpg",
+      "https://img.guangsuimage.com/cover/5077e7522a87b9fc9c829a061c1fb1d9.jpg"
+    ],
+    "totalCount": 6,
+    "description": "深宫深闺步步为营，仙门奇缘历经情劫。精选东方美学古风短剧，侯府大女主绝地反击，宫斗权谋智商在线，仙侠情缘感人至深。",
+    "accent": "#F59E0B",
+    "films": [
+      {
+        "id": "sd_218159",
+        "title": "如诗说一千里共明月",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/0726e051d18e9ae347c103a30035f9a1.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "古装仙侠"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/eVONOpza$$$全集完结$https://v.gsuus.com/play/eVONOpza/index.m3u8"
+      },
+      {
+        "id": "sd_218156",
+        "title": "大小姐回京后整顿侯府满门",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/081a65f7d7d18dd2ea14a63d7987db82.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "古装仙侠"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/epYzwOya$$$全集完结$https://v.gsuus.com/play/epYzwOya/index.m3u8"
+      },
+      {
+        "id": "sd_218155",
+        "title": "愿我如星卿如月",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/5077e7522a87b9fc9c829a061c1fb1d9.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "古装仙侠"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/aADmDN3e$$$全集完结$https://v.gsuus.com/play/aADmDN3e/index.m3u8"
+      },
+      {
+        "id": "sd_218154",
+        "title": "魂穿西楚：吾乃少年霸王是也！",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/88c744249e42dc37b812e4c0deb53da0.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "古装仙侠"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/erkYk84a$$$全集完结$https://v.gsuus.com/play/erkYk84a/index.m3u8"
+      },
+      {
+        "id": "sd_218137",
+        "title": "太子殿下，臣妾真的不想当女帝",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/ef6ba92cb35d6f667c00a8d9c27403c6.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "古装仙侠"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/epYzYgQa$$$全集完结$https://v.gsuus.com/play/epYzYgQa/index.m3u8"
+      },
+      {
+        "id": "sd_218130",
+        "title": "蛮女养蛊也养夫",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/a2c69aa3f036dbf8dfec37096962447a.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "古装仙侠"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/ejRnQG4e$$$全集完结$https://v.gsuus.com/play/ejRnQG4e/index.m3u8"
+      }
+    ]
+  },
+  {
+    "id": "col-short-reborn",
+    "title": "穿越重生 · 逆风翻盘当家做主",
+    "subtitle": "重回年代/穿越古今/逆天改命大爽文",
+    "slug": "time-travel-rebirth-legend",
+    "coverPosters": [
+      "https://img.guangsuimage.com/cover/34be1e096a2904a958f26a93b17970c5.jpg",
+      "https://img.guangsuimage.com/cover/dd82822d5ee17f5f5c33f4883e2c2145.jpg",
+      "https://img.guangsuimage.com/cover/a424ad1cc4b4419843a6528197b05ff0.jpg"
+    ],
+    "totalCount": 6,
+    "description": "带着前世记忆重新开局，弥补遗憾大展身手！精选年代穿越与重生逆袭短剧，抓商机、搞事业、护至亲、虐前任，爽感层层递进。",
+    "accent": "#8B5CF6",
+    "films": [
+      {
+        "id": "sd_218157",
+        "title": "七零相亲走错桌，嫁对人后赢麻了",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/34be1e096a2904a958f26a93b17970c5.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "穿越年代"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/b680orNe$$$全集完结$https://v.gsuus.com/play/b680orNe/index.m3u8"
+      },
+      {
+        "id": "sd_218134",
+        "title": "七零年代，乘风破浪的一家人",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/dd82822d5ee17f5f5c33f4883e2c2145.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "穿越年代"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/eZ6WOlge$$$全集完结$https://v.gsuus.com/play/eZ6WOlge/index.m3u8"
+      },
+      {
+        "id": "sd_218083",
+        "title": "我的熏肉铺子享誉全国",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/a424ad1cc4b4419843a6528197b05ff0.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "穿越年代"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/b4xLEvxb$$$全集完结$https://v.gsuus.com/play/b4xLEvxb/index.m3u8"
+      },
+      {
+        "id": "sd_217943",
+        "title": "九零东北：逐梦年代",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/ff0066766f790fe2d082e128f0e6a047.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "穿越年代"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/bDk8GG6a$$$全集完结$https://v.gsuus.com/play/bDk8GG6a/index.m3u8"
+      },
+      {
+        "id": "sd_217919",
+        "title": "八零糙汉，重生宠发妻",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/c7e6a64eb8dc363bd36fdf8fce374412.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "穿越年代"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/aM81R3Re$$$全集完结$https://v.gsuus.com/play/aM81R3Re/index.m3u8"
+      },
+      {
+        "id": "sd_217856",
+        "title": "老太片场跑龙套，养活古代一家人第二季",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/8e9b4ef798d7df24c53beba8fb45c4e5.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "穿越年代"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/aKrQg0Ye$$$全集完结$https://v.gsuus.com/play/aKrQg0Ye/index.m3u8"
+      }
+    ]
+  },
+  {
+    "id": "col-short-suspense",
+    "title": "高能烧脑 · 脑洞神级反转短剧",
+    "subtitle": "层层反转/结局猜不透/高智商烧脑局",
+    "slug": "high-energy-brainhole-suspense",
+    "coverPosters": [
+      "https://img.guangsuimage.com/cover/49360dcc9b1e4052d86bac40de101fdb.jpg",
+      "https://img.guangsuimage.com/cover/afdbf04da1eeb732903a0af1ef5eeccd.jpg",
+      "https://img.guangsuimage.com/cover/45eae5dfccfec80f8a97e393cd271fd0.jpg"
+    ],
+    "totalCount": 6,
+    "description": "每一集都是谜题，每一个眼神都是伏笔！精选高分悬疑烧脑微短剧，反转反转再反转，打破常规套路，挑战你的推理解密极限。",
+    "accent": "#10B981",
+    "films": [
+      {
+        "id": "sd_218168",
+        "title": "无限返利：我靠发工资成为首富",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/49360dcc9b1e4052d86bac40de101fdb.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "脑洞悬疑"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/e0R9RoGb$$$全集完结$https://v.gsuus.com/play/e0R9RoGb/index.m3u8"
+      },
+      {
+        "id": "sd_218150",
+        "title": "三界红包群",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/afdbf04da1eeb732903a0af1ef5eeccd.jpg",
+        "year": "2026",
+        "description": "2026",
+        "types": [
+          "脑洞悬疑"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/b829213e$$$全集完结$https://v.gsuus.com/play/b829213e/index.m3u8"
+      },
+      {
+        "id": "sd_218141",
+        "title": "我的宠物能说话",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/45eae5dfccfec80f8a97e393cd271fd0.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "脑洞悬疑"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/dyPmP8nb$$$全集完结$https://v.gsuus.com/play/dyPmP8nb/index.m3u8"
+      },
+      {
+        "id": "sd_218125",
+        "title": "遗信邮差",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/ff316970209a2dfd3ea91bf29b1f791e.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "脑洞悬疑"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/b2k946Wd$$$全集完结$https://v.gsuus.com/play/b2k946Wd/index.m3u8"
+      },
+      {
+        "id": "sd_218087",
+        "title": "纵横古今！我靠神秘古井逆袭人生",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/4ec357ce221e2474805b179a27e926eb.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "脑洞悬疑"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/dwprMy8e$$$全集完结$https://v.gsuus.com/play/dwprMy8e/index.m3u8"
+      },
+      {
+        "id": "sd_218005",
+        "title": "闺蜜是只猫，我俩硬控全场",
+        "rate": "9.0",
+        "cover": "https://img.guangsuimage.com/cover/42a99838f036df5eb4ca437102e5dbd3.jpg",
+        "year": "2026",
+        "description": "暂无简介",
+        "types": [
+          "脑洞悬疑"
+        ],
+        "remarks": "全集完结",
+        "play_url": "全集完结$https://v.gsuus.com/play/aOY8QpEd$$$全集完结$https://v.gsuus.com/play/aOY8QpEd/index.m3u8"
+      }
+    ]
+  }
+];
+
 export function getCollectionBySlug(slug: string): CuratedCollection | undefined {
-  return CURATED_COLLECTIONS.find((c) => c.slug === slug);
+  return CURATED_COLLECTIONS.find((c) => c.slug === slug) || SHORT_DRAMA_COLLECTIONS.find((c) => c.slug === slug);
 }
 
 export function getCollectionById(id: string): CuratedCollection | undefined {
-  return CURATED_COLLECTIONS.find((c) => c.id === id);
+  return CURATED_COLLECTIONS.find((c) => c.id === id) || SHORT_DRAMA_COLLECTIONS.find((c) => c.id === id);
 }
+
