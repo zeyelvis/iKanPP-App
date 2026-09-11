@@ -53,10 +53,80 @@ async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number,
   }
 }
 
+const TMDB_API_KEY = process.env.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957';
+const TMDB_BASE = 'https://api.themoviedb.org/3';
+
 /**
- * 抓取豆瓣官方全国院线正在热映列表（实时跟进院线排片与最新爆款大片）
+ * 智能标题归一化工具（用于海内外多数据源去重合并）
  */
-async function fetchDoubanNowPlaying(pageLimit: number, pageStart: number): Promise<any[]> {
+function normalizeFilmTitle(t: string): string {
+  return (t || '')
+    .replace(/[:：,\s，·•\-]/g, '')
+    .replace(/\s*第[一二三四五六七八九十\d]+季/, '')
+    .replace(/\s*[（(][^)）]*[)）]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+/**
+ * 抓取 TMDB 全球趋势周榜与全球热映大片（覆盖好莱坞/海外已上映但大陆未引进的顶级爆款）
+ */
+async function fetchTMDBGlobalNowPlaying(): Promise<any[]> {
+  if (!TMDB_API_KEY) return [];
+  try {
+    const urls = [
+      `${TMDB_BASE}/trending/movie/week?api_key=${TMDB_API_KEY}&language=zh-CN`,
+      `${TMDB_BASE}/movie/now_playing?api_key=${TMDB_API_KEY}&language=zh-CN&page=1`,
+    ];
+
+    const results = await Promise.allSettled(
+      urls.map(url =>
+        fetch(url, {
+          headers: { Accept: 'application/json' },
+          signal: AbortSignal.timeout(3000),
+          next: { revalidate: 43200 },
+        }).then(res => (res.ok ? res.json() : { results: [] }))
+      )
+    );
+
+    const pool: any[] = [];
+    const seen = new Set<string>();
+
+    for (const r of results) {
+      if (r.status === 'fulfilled' && Array.isArray(r.value?.results)) {
+        for (const m of r.value.results) {
+          if (!m || !m.title) continue;
+          const key = normalizeFilmTitle(m.title);
+          if (key && !seen.has(key)) {
+            seen.add(key);
+            pool.push({
+              id: String(m.id),
+              title: m.title,
+              rate: m.vote_average && m.vote_average > 0 ? m.vote_average.toFixed(1) : '8.5',
+              cover: m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : '',
+              backdrop: m.backdrop_path ? `https://image.tmdb.org/t/p/w1280${m.backdrop_path}` : '',
+              year: (m.release_date || '2026').slice(0, 4),
+              region: '全球',
+              votecount: m.vote_count || 10000,
+              source: 'tmdb_global',
+              playable: true,
+              is_new: true,
+            });
+          }
+        }
+      }
+    }
+    return pool;
+  } catch (err) {
+    console.warn('[TMDB-Global] Error fetching global trending:', err);
+    return [];
+  }
+}
+
+/**
+ * 抓取豆瓣官方全国院线正在热映列表（国内影院正在售票公映的热门华语大片）
+ */
+async function fetchDoubanDomesticNowPlaying(): Promise<any[]> {
   try {
     const url = 'https://movie.douban.com/cinema/nowplaying/beijing/';
     const response = await fetch(url, {
@@ -66,7 +136,7 @@ async function fetchDoubanNowPlaying(pageLimit: number, pageStart: number): Prom
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       },
       signal: AbortSignal.timeout(3000),
-      next: { revalidate: 43200 }, // 12 小时边缘缓存，每日自动保持最新院线数据
+      next: { revalidate: 43200 },
     });
 
     if (!response.ok) return [];
@@ -94,49 +164,76 @@ async function fetchDoubanNowPlaying(pageLimit: number, pageStart: number): Prom
         rate: match[3] || '7.5',
         cover,
         year,
-        region: match[5] || '',
+        region: match[5] || '华语',
         director: match[6] || '',
         actors: match[7] || '',
         votecount,
+        source: 'douban_domestic',
         playable: true,
         is_new: true,
       });
     }
 
-    if (allSubjects.length === 0) return [];
+    return allSubjects;
+  } catch (err) {
+    console.warn('[Douban-Domestic] Error fetching now playing:', err);
+    return [];
+  }
+}
 
-    // 智能筛选与热度加权：
-    // 优先 2025-2026 最新院线大片（含功夫女足、怒之杀、欢迎来龙餐馆、奥德赛等），按观众热度降序
-    const recentReleases = allSubjects.filter(item => parseInt(item.year, 10) >= 2025);
-    const olderReleases = allSubjects.filter(item => parseInt(item.year, 10) < 2025);
+/**
+ * 🏆 海内外双轨融合引擎：国内院线排片 + TMDB 全球流行趋势智能合流
+ * 彻底消除海内外上映时效鸿沟，海外火爆但国内未上映的大作全自动置顶
+ */
+async function fetchGlobalAndDomesticNowPlaying(pageLimit: number, pageStart: number): Promise<any[]> {
+  try {
+    const [tmdbGlobalList, doubanDomesticList] = await Promise.all([
+      fetchTMDBGlobalNowPlaying(),
+      fetchDoubanDomesticNowPlaying(),
+    ]);
 
-    recentReleases.sort((a, b) => b.votecount - a.votecount);
+    // 智能筛选与时效加权（优先 2024-2026 新片，经典重映片后置）
+    const isModern = (m: any) => parseInt(m.year || '2026', 10) >= 2024;
+    const globalModern = tmdbGlobalList.filter(isModern);
+    const domesticModern = doubanDomesticList.filter(isModern);
+    const olderReleases = [
+      ...doubanDomesticList.filter(m => !isModern(m)),
+      ...tmdbGlobalList.filter(m => !isModern(m)),
+    ];
+
+    // 国内按观众评分票数排序
+    domesticModern.sort((a, b) => b.votecount - a.votecount);
     olderReleases.sort((a, b) => b.votecount - a.votecount);
 
-    const merged = [...recentReleases, ...olderReleases];
+    const fused: any[] = [];
+    const seen = new Set<string>();
 
-    // 智能置顶当前院线重点大片与热门关注大作《海洋奇缘：启航》
-    const hasMoana = merged.some(m => m.title?.includes('海洋奇缘'));
-    if (!hasMoana) {
-      merged.unshift({
-        id: '36343469',
-        title: '海洋奇缘：启航',
-        rate: '8.8',
-        cover: 'https://image.tmdb.org/t/p/w500/8f4OJJrMtZcoB4h1BLyyZewd96X.jpg',
-        backdrop: 'https://image.tmdb.org/t/p/w1280/dmwb15BCkqjoXA9dXIsoY2Hn10F.jpg',
-        year: '2026',
-        region: '美国',
-        director: '托马斯·凯尔',
-        actors: '凯瑟琳·拉加艾亚 / 道恩·强森',
-        votecount: 99999,
-        playable: true,
-        is_new: true,
-      });
+    const addFilm = (item: any) => {
+      if (!item || !item.title) return;
+      const key = normalizeFilmTitle(item.title);
+      if (key && !seen.has(key)) {
+        seen.add(key);
+        fused.push(item);
+      }
+    };
+
+    // 交织排布加权策略：
+    // 头部前列交替插入全球顶尖爆款与国内院线排片主力
+    const maxLen = Math.max(globalModern.length, domesticModern.length);
+    for (let i = 0; i < maxLen; i++) {
+      if (i < globalModern.length) addFilm(globalModern[i]);
+      if (i < domesticModern.length) addFilm(domesticModern[i]);
     }
 
-    return merged.slice(pageStart, pageStart + pageLimit);
+    // 后续放入其他年份热片
+    for (const m of olderReleases) {
+      addFilm(m);
+    }
+
+    if (fused.length === 0) return [];
+    return fused.slice(pageStart, pageStart + pageLimit);
   } catch (err) {
-    console.warn('[Douban-NowPlaying] Error fetching now playing, falling back:', err);
+    console.warn('[Hybrid-Cinema-Engine] Error fusing now playing streams:', err);
     return [];
   }
 }
@@ -167,7 +264,7 @@ export async function GET(request: Request) {
   );
 
   if (isNowPlayingMovie) {
-    const nowPlayingList = await fetchDoubanNowPlaying(pageLimit, pageStart);
+    const nowPlayingList = await fetchGlobalAndDomesticNowPlaying(pageLimit, pageStart);
     if (nowPlayingList && nowPlayingList.length > 0) {
       return NextResponse.json({
         subjects: nowPlayingList,
