@@ -7,6 +7,7 @@ import { Top10Rail } from './Top10Rail';
 import { ContentRail } from './ContentRail';
 import { ContinueWatchingRail } from './ContinueWatchingRail';
 import { LiveChannelsPreview } from './LiveChannelsPreview';
+import { CollectionsRail } from './CollectionsRail';
 import { PlatformFeaturesStrip } from './PlatformFeaturesStrip';
 import { PersonalizedForYouRail } from './PersonalizedForYouRail';
 import { ExploreHubFooterBanner } from './ExploreHubFooterBanner';
@@ -505,6 +506,9 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
 
       {/* 8. 📡 电视直播精选频道（在推荐主干展示） */}
       <LiveChannelsPreview />
+
+      {/* 8.5 📚 精选片单 · 官方策展（常驻独立版位，不受品类 Tab 切换干扰） */}
+      <CollectionsRail />
 
       {/* 9. 货架 3 */}
       <ContentRail
