@@ -170,6 +170,24 @@ async function main() {
     } else {
       console.log('[iyf-sync] 轮播内容未变动或匹配区已是最优');
     }
+
+    // 同步更新 home-prebaked-extra.ts 中的 ALL_HOME_DATA.hero
+    const extraPath = path.resolve(process.cwd(), 'lib/data/home-prebaked-extra.ts');
+    if (fs.existsSync(extraPath)) {
+      let extraContent = fs.readFileSync(extraPath, 'utf-8');
+      const allHeroRegex = /(ALL_HOME_DATA:\s*PrebakedHomeCategory\s*=\s*\{[\s\S]*?"hero":\s*\[)[\s\S]*?(\]\s*,\s*"top10")/;
+      if (allHeroRegex.test(extraContent)) {
+        const formattedJson = JSON.stringify(finalHeros, null, 8)
+          .replace(/^\[/, '')
+          .replace(/\]$/, '')
+          .trim();
+        const updatedExtra = extraContent.replace(allHeroRegex, `$1\n        ${formattedJson}\n      $2`);
+        if (updatedExtra !== extraContent) {
+          fs.writeFileSync(extraPath, updatedExtra, 'utf-8');
+          console.log(`✅ [iyf-sync] 同步更新 lib/data/home-prebaked-extra.ts 中的全部推荐轮播巨幕！`);
+        }
+      }
+    }
   } catch (err) {
     console.error('[iyf-sync] 执行异常:', err);
     process.exit(1);

@@ -175,12 +175,12 @@ function HeroBackdrop({
 }
 
 interface HeroSlideshowProps {
-  contentType: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'short';
+  contentType?: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'short';
   onSearch?: (query: string) => void;
   customHeroMovies?: PrebakedSubject[];
 }
 
-export function HeroSlideshow({ contentType, onSearch, customHeroMovies }: HeroSlideshowProps) {
+export function HeroSlideshow({ contentType = 'all', onSearch, customHeroMovies }: HeroSlideshowProps) {
   const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
   const [backdrops, setBackdrops] = useState<Record<string, string | null>>({});

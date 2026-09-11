@@ -353,8 +353,8 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         .trim()
         .toLowerCase();
 
-    // 1. Hero 巨幕专属大片
-    const heroPool = prebaked.hero || [];
+    // 1. Hero 巨幕专属大片（常驻独立：固定展示爱壹帆每日定时同步的 7 席正片巨幕，与下方 Tab 解耦）
+    const heroPool = PREBAKED_HOME_DATA.movie.hero || [];
     const heroList: any[] = [];
     for (const item of heroPool) {
       const key = normalize(item.title);
@@ -426,8 +426,8 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
 
   return (
     <div className="animate-fade-in pb-28 sm:pb-16">
-      {/* 1. 🏆 影院级全景沉浸式巨幕 Billboard */}
-      <HeroSlideshow contentType={contentType} onSearch={onSearch} customHeroMovies={deduplicatedContent.heroList} />
+      {/* 1. 🏆 影院级全景沉浸式巨幕 Billboard（常驻独立：固定展示爱壹帆每日定时同步的 7 席大片，不受下方 Tab 切换干扰） */}
+      <HeroSlideshow onSearch={onSearch} customHeroMovies={deduplicatedContent.heroList} />
 
       {/* 2. 🎬 断点续播 / 最近观看记录横轨 */}
       <ContinueWatchingRail />
