@@ -52,7 +52,12 @@ function normalizeDramaItem(item: any, source: ShortDramaSource): ShortDramaItem
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const query = (searchParams.get('q') || '').trim();
+  const query = (
+    searchParams.get('q') ||
+    searchParams.get('wd') ||
+    searchParams.get('keyword') ||
+    ''
+  ).trim();
   const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
 
   if (!query) {
