@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import {
   getCollectionBySlug,
   CURATED_COLLECTIONS,
+  CollectionSubject,
 } from '@/lib/data/collections-prebaked';
 import { Navbar } from '@/components/layout/Navbar';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
@@ -71,7 +72,7 @@ export default async function CollectionPage({ params }: Props) {
     notFound();
   }
 
-  const itemList = collection.films.map((f, idx) => ({
+  const itemList = collection.films.map((f: CollectionSubject, idx: number) => ({
     position: idx + 1,
     url: `${BASE_URL}/title/${generateSlug(f.title)}`,
     name: f.title,
