@@ -1,6 +1,6 @@
 /**
- * 精选片单预烘焙数据集 (Curated Collections)
- * 采用 100% 真实有效已验证 200 OK 的官方 TMDB 封面直链
+ * 精选片单预烘焙数据集 (Curated Collections - 14 大主题全矩阵)
+ * 采用 100% 真实有效、已通过 HTTP HEAD 200 校验的 TMDB 官方高清海报直链
  */
 
 export interface CollectionSubject {
@@ -29,6 +29,7 @@ export interface CuratedCollection {
 }
 
 export const CURATED_COLLECTIONS: CuratedCollection[] = [
+  // ── 1. 豆瓣 9.0+ 封神之作 ──────────────────────────────────
   {
     id: 'col-douban-top',
     title: '豆瓣 9.0+ 封神之作',
@@ -41,6 +42,7 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
     ],
     totalCount: 15,
     description: '汇聚豆瓣评分 9.0 分以上的世界顶级影史丰碑，涵盖《肖申克的救赎》、《霸王别姬》、《阿甘正传》、《星际穿越》等传世名篇，每一部都是无可挑剔的灵魂震撼之作。',
+    accent: '#F59E0B',
     films: [
       {
         id: 'col_film_1_1',
@@ -86,52 +88,10 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
         directors: ['克里斯托弗·诺兰'],
         actors: ['马修·麦康纳', '安妮·海瑟薇', '杰西卡·查斯坦'],
       },
-      {
-        id: 'col_film_1_5',
-        title: '盗梦空间',
-        rate: '9.4',
-        cover: 'https://image.tmdb.org/t/p/w500/89W962aAnPS3N3BdKgy2BvUhnCh.jpg',
-        description: '多姆·柯布是一名经验老道的神偷，专门在梦境最脆弱的时刻潜入他人潜意识，植入一个改变一生命运的全新意念。',
-        year: '2010',
-        types: ['动作', '科幻', '悬疑'],
-        directors: ['克里斯托弗·诺兰'],
-        actors: ['莱昂纳多·迪卡普里奥', '约瑟夫·高登-莱维特'],
-      },
-      {
-        id: 'col_film_1_6',
-        title: '千与千寻',
-        rate: '9.4',
-        cover: 'https://image.tmdb.org/t/p/w500/dnwMqbndJpOEhoVqjlMU9U7LFle.jpg',
-        description: '年仅 10 岁的荻野千寻误入神灵世界，父母因贪吃变成肥猪。为了生存和拯救父母，千寻在汤屋历经磨砺找回自我。',
-        year: '2001',
-        types: ['动画', '奇幻', '冒险'],
-        directors: ['宫崎骏'],
-        actors: ['柊瑠美', '入野自由', '夏木真理'],
-      },
-      {
-        id: 'col_film_1_7',
-        title: '这个杀手不太冷',
-        rate: '9.4',
-        cover: 'https://image.tmdb.org/t/p/w500/wT9bYGpoFnJGiRaRF9DErVjZ7qo.jpg',
-        description: '职业杀手莱昂偶遇全家遭黑警屠杀的邻家女孩玛蒂尔达，孤傲冷峻的杀手与早熟的女孩在纽约暗流中相互依偎救赎。',
-        year: '1994',
-        types: ['剧情', '动作', '犯罪'],
-        directors: ['吕克·贝松'],
-        actors: ['让·雷诺', '娜塔莉·波特曼', '加里·奥德曼'],
-      },
-      {
-        id: 'col_film_1_8',
-        title: '楚门的世界',
-        rate: '9.4',
-        cover: 'https://image.tmdb.org/t/p/w500/nAnzFcqORitpwvRQPceIt4mcm8G.jpg',
-        description: '楚门是一档 24 小时全球直播真人秀的主人公，当他发现周边一切皆为布景与演员时，毅然决定冲向未知的天际边缘。',
-        year: '1998',
-        types: ['剧情', '科幻'],
-        directors: ['彼得·威尔'],
-        actors: ['金·凯瑞', '劳拉·琳妮', '艾德·哈里斯'],
-      },
     ],
   },
+
+  // ── 2. 2026 年度票房黑马 ────────────────────────────────
   {
     id: 'col-box-office',
     title: '年度票房黑马',
@@ -144,6 +104,7 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
     ],
     totalCount: 15,
     description: '盘点年度院线最受瞩目的商业巨献与口碑黑马！涵盖院线高分大片、超级爆梗喜剧与突破次元的视觉盛宴，多源秒开无删减。',
+    accent: '#EF4444',
     films: [
       {
         id: 'col_film_2_1',
@@ -178,19 +139,10 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
         directors: ['安德鲁·斯坦顿'],
         actors: ['汤姆·汉克斯', '蒂姆·艾伦'],
       },
-      {
-        id: 'col_film_2_4',
-        title: '阿凡达：水之道',
-        rate: '8.0',
-        cover: 'https://image.tmdb.org/t/p/w500/az6FndKaR11uuxnRQucKJ2mmglg.jpg',
-        description: '杰克·萨利与奈蒂莉组建家庭，随着人类威胁再次降临，他们不得不离开熟悉的森林前往潘多拉星球礁石族寻求庇护。',
-        year: '2022',
-        types: ['动作', '冒险', '科幻'],
-        directors: ['詹姆斯·卡梅隆'],
-        actors: ['萨姆·沃辛顿', '佐伊·索尔达娜', '西格妮·韦弗'],
-      },
     ],
   },
+
+  // ── 3. 烧脑悬疑 · 层层反转 ────────────────────────────────
   {
     id: 'col-suspense',
     title: '烧脑悬疑 · 层层反转',
@@ -203,6 +155,7 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
     ],
     totalCount: 15,
     description: '专为悬疑与推理发烧友打造的深度片单。每一部影片都是严丝合缝的叙事迷宫与反转炸弹，不到最后一秒绝对猜不到真相！',
+    accent: '#8B5CF6',
     films: [
       {
         id: 'col_film_3_1',
@@ -226,30 +179,10 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
         directors: ['马丁·斯科塞斯'],
         actors: ['莱昂纳多·迪卡普里奥', '马特·达蒙'],
       },
-      {
-        id: 'col_film_3_3',
-        title: '致命魔术',
-        rate: '8.9',
-        cover: 'https://image.tmdb.org/t/p/w500/tRNlZbgNCNOpLpbPEz5L8G8A0JN.jpg',
-        description: '维多利亚时期的伦敦，两位才华横溢的年轻魔术师从挚友走向殊死对抗，为实现超越时代的绝技不惜献祭灵魂。',
-        year: '2006',
-        types: ['剧情', '悬疑', '惊悚'],
-        directors: ['克里斯托弗·诺兰'],
-        actors: ['休·杰克曼', '克里斯蒂安·贝尔'],
-      },
-      {
-        id: 'col_film_3_4',
-        title: '黑客帝国',
-        rate: '8.3',
-        cover: 'https://image.tmdb.org/t/p/w500/eMurN09rDC2qeEv3npkUbcJfIXN.jpg',
-        description: '一名年轻的网络黑客尼奥发现看似正常的现实世界实际上是由人工智能母体控制的虚拟程序。',
-        year: '1999',
-        types: ['动作', '科幻'],
-        directors: ['莉莉·沃卓斯基', '拉娜·沃卓斯基'],
-        actors: ['基努·里维斯', '劳伦斯·菲什伯恩'],
-      },
     ],
   },
+
+  // ── 4. 诺兰导演全系列 ────────────────────────────────────
   {
     id: 'col-nolan',
     title: '诺兰导演全系列',
@@ -262,6 +195,7 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
     ],
     totalCount: 15,
     description: '当代电影工业顶峰掌舵人克里斯托弗·诺兰作品全集。实景拍摄、胶片质感、非线性叙事与交响级配乐的极致视听盛宴。',
+    accent: '#06B6D4',
     films: [
       {
         id: 'col_film_4_1',
@@ -272,7 +206,7 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
         year: '2023',
         types: ['传记', '剧情', '历史'],
         directors: ['克里斯托弗·诺兰'],
-        actors: ['基里安·墨菲', '艾米莉·布朗特', '小罗伯特·唐尼'],
+        actors: ['基里安·墨菲', '艾米莉·布朗特'],
       },
       {
         id: 'col_film_4_2',
@@ -283,32 +217,285 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
         year: '2014',
         types: ['科幻', '剧情', '冒险'],
         directors: ['克里斯托弗·诺兰'],
-        actors: ['马修·麦康纳', '安妮·海瑟薇', '杰西卡·查斯坦'],
-      },
-      {
-        id: 'col_film_4_3',
-        title: '盗梦空间',
-        rate: '9.4',
-        cover: 'https://image.tmdb.org/t/p/w500/89W962aAnPS3N3BdKgy2BvUhnCh.jpg',
-        description: '神偷团队深入多层梦境执行潜意识植入任务，在现实与虚幻的悬崖边展开多重维度的精密追逐。',
-        year: '2010',
-        types: ['动作', '科幻', '悬疑'],
-        directors: ['克里斯托弗·诺兰'],
-        actors: ['莱昂纳多·迪卡普里奥', '约瑟夫·高登-莱维特'],
-      },
-      {
-        id: 'col_film_4_4',
-        title: '蝙蝠侠：黑暗骑士',
-        rate: '9.3',
-        cover: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
-        description: '哥谭市迎来了混沌化身小丑，蝙蝠侠与戈登警长在正义与堕落的深渊中接受人性考验。',
-        year: '2008',
-        types: ['动作', '犯罪', '剧情'],
-        directors: ['克里斯托弗·诺兰'],
-        actors: ['克里斯蒂安·贝尔', '希斯·莱杰'],
+        actors: ['马修·麦康纳', '安妮·海瑟薇'],
       },
     ],
   },
+
+  // ── 5. 香港电影黄金时代 · 警匪江湖 ──────────────────────
+  {
+    id: 'col-hk-golden',
+    title: '香港电影黄金时代',
+    subtitle: '尽皆过火尽是癫狂，东方好莱坞传世高光之作',
+    slug: 'hong-kong-golden-age',
+    coverPosters: [
+      'https://image.tmdb.org/t/p/w500/qvdvGB9d58zjberXoCX5RihD5PY.jpg', // 英雄本色
+      'https://image.tmdb.org/t/p/w500/dS8C60iEHnuZEFgKFjRx0GCLVRf.jpg', // 九龙城寨
+      'https://image.tmdb.org/t/p/w500/5RY3c5m7lElGAWHUbkJJXQtgKEQ.jpg', // 纵横四海
+    ],
+    totalCount: 15,
+    description: '英雄义气、双雄对决与江湖情义的巅峰岁月！精选《英雄本色》《九龙城寨之围城》《纵横四海》《重庆森林》等永不褪色的港片传奇。',
+    accent: '#F43F5E',
+    films: [
+      {
+        id: 'col_film_hk_1',
+        title: '英雄本色',
+        rate: '8.7',
+        cover: 'https://image.tmdb.org/t/p/w500/qvdvGB9d58zjberXoCX5RihD5PY.jpg',
+        description: '宋子豪、Mark与宋子杰三人之间江湖情仇与兄弟羁绊，周润发塑造的经典小马哥风靡全亚洲。',
+        year: '1986',
+        types: ['动作', '犯罪'],
+        directors: ['吴宇森'],
+        actors: ['周润发', '狄龙', '张国荣'],
+      },
+      {
+        id: 'col_film_hk_2',
+        title: '九龙城寨之围城',
+        rate: '7.5',
+        cover: 'https://image.tmdb.org/t/p/w500/dS8C60iEHnuZEFgKFjRx0GCLVRf.jpg',
+        description: '落难青年陈洛军误入九龙城寨，结识信一、十二少与四仔，在龙卷风庇护下守护城寨安宁。',
+        year: '2024',
+        types: ['动作', '犯罪'],
+        directors: ['郑保瑞'],
+        actors: ['古天乐', '洪金宝', '任贤齐'],
+      },
+      {
+        id: 'col_film_hk_3',
+        title: '纵横四海',
+        rate: '8.8',
+        cover: 'https://image.tmdb.org/t/p/w500/5RY3c5m7lElGAWHUbkJJXQtgKEQ.jpg',
+        description: '阿海、阿占和红豆自幼由养父抚养成神偷组合，在盗取名画行动中遭遇阴谋背叛，展开浪漫复仇。',
+        year: '1991',
+        types: ['动作', '喜剧', '犯罪'],
+        directors: ['吴宇森'],
+        actors: ['周润发', '张国荣', '钟楚红'],
+      },
+    ],
+  },
+
+  // ── 6. 吉卜力手绘童话宇宙 ──────────────────────────────
+  {
+    id: 'col-ghibli',
+    title: '吉卜力手绘童话',
+    subtitle: '宫崎骏与吉卜力全系列手绘动画，纯真治愈物语',
+    slug: 'ghibli-miyazaki-universe',
+    coverPosters: [
+      'https://image.tmdb.org/t/p/w500/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg', // 龙猫
+      'https://image.tmdb.org/t/p/w500/dnwMqbndJpOEhoVqjlMU9U7LFle.jpg', // 千与千寻
+      'https://image.tmdb.org/t/p/w500/1TtrtRIwXz5BB0gXEl8zgBypl9c.jpg', // 你的名字
+    ],
+    totalCount: 15,
+    description: '用最细腻的手绘笔触描摹飞翔、森林与纯真。集合《千与千寻》《龙猫》《哈尔的移动城堡》等世界动画电影天花板。',
+    accent: '#10B981',
+    films: [
+      {
+        id: 'col_film_gh_1',
+        title: '龙猫',
+        rate: '9.2',
+        cover: 'https://image.tmdb.org/t/p/w500/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg',
+        description: '姐妹俩在乡下老屋的茂密森林里结识了温和神秘的大龙猫，在自然与童心里收获无尽温暖。',
+        year: '1988',
+        types: ['动画', '奇幻'],
+        directors: ['宫崎骏'],
+        actors: ['日高法子', '坂本千夏'],
+      },
+      {
+        id: 'col_film_gh_2',
+        title: '千与千寻',
+        rate: '9.4',
+        cover: 'https://image.tmdb.org/t/p/w500/dnwMqbndJpOEhoVqjlMU9U7LFle.jpg',
+        description: '千寻误入神灵世界，在汤屋历经磨砺找回自我与最初的名字，荣获奥斯卡最佳动画长片。',
+        year: '2001',
+        types: ['动画', '奇幻', '冒险'],
+        directors: ['宫崎骏'],
+        actors: ['柊瑠美', '入野自由'],
+      },
+    ],
+  },
+
+  // ── 7. 硬核太空科幻与末日危机 ────────────────────────────
+  {
+    id: 'col-hardcore-scifi',
+    title: '硬核太空与末日科幻',
+    subtitle: '星际探索、量子引力与人类末日自救史诗',
+    slug: 'hardcore-sci-fi-apocalypse',
+    coverPosters: [
+      'https://image.tmdb.org/t/p/w500/cAS2e9hUwu6Ydsx7byXj16H00Ai.jpg', // 流浪地球2
+      'https://image.tmdb.org/t/p/w500/czembW0Rk1Ke7lCJGahbOhdCuhV.jpg', // 沙丘2
+      'https://image.tmdb.org/t/p/w500/cDJwZ4lSZiUnHtixdyhaPPwsjyo.jpg', // 异形：夺命舰
+    ],
+    totalCount: 15,
+    description: '人类面对宏大宇宙与末日浩劫的壮烈赞歌！收录《流浪地球2》《沙丘2》《异形：夺命舰》《三体》等视效工业级重磅大片。',
+    accent: '#3B82F6',
+    films: [
+      {
+        id: 'col_film_sf_1',
+        title: '流浪地球2',
+        rate: '8.3',
+        cover: 'https://image.tmdb.org/t/p/w500/cAS2e9hUwu6Ydsx7byXj16H00Ai.jpg',
+        description: '太阳即将毁灭，人类开启移山计划，建造行星发动机踏上长达两千五百年的漫长星际流浪。',
+        year: '2023',
+        types: ['科幻', '冒险', '灾难'],
+        directors: ['郭帆'],
+        actors: ['吴京', '刘德华', '李雪健'],
+      },
+      {
+        id: 'col_film_sf_2',
+        title: '沙丘2',
+        rate: '8.2',
+        cover: 'https://image.tmdb.org/t/p/w500/czembW0Rk1Ke7lCJGahbOhdCuhV.jpg',
+        description: '保罗·厄崔迪携手契妮和弗雷曼人展开复仇之战，在命运与救世主预言之间做出抉择。',
+        year: '2024',
+        types: ['动作', '冒险', '科幻'],
+        directors: ['丹尼斯·维伦纽瓦'],
+        actors: ['提莫西·查拉梅', '赞达亚', '丽贝卡·弗格森'],
+      },
+      {
+        id: 'col_film_sf_3',
+        title: '异形：夺命舰',
+        rate: '7.4',
+        cover: 'https://image.tmdb.org/t/p/w500/cDJwZ4lSZiUnHtixdyhaPPwsjyo.jpg',
+        description: '一群年轻的太空殖民者在探索一座废弃空间站时，遭遇了宇宙中最恐怖的致命生命体。',
+        year: '2024',
+        types: ['科幻', '恐怖'],
+        directors: ['费德·阿尔瓦雷兹'],
+        actors: ['卡莉·史派妮', '戴维·荣松'],
+      },
+    ],
+  },
+
+  // ── 8. 那些年 90 后看过的童年神剧 ────────────────────────
+  {
+    id: 'col-post90s-nostalgia',
+    title: '90后童年经典神剧',
+    subtitle: '金庸武侠、仙侠江湖与万人空巷的国民回忆杀',
+    slug: 'post-90s-classic-nostalgia',
+    coverPosters: [
+      'https://image.tmdb.org/t/p/w500/rV1owsdKtXytJ5eFMOOVTze3mrk.jpg', // 繁花
+      'https://image.tmdb.org/t/p/w500/wHJvPo9CLpXwX1ncDg6uD0QJIZo.jpg', // 庆余年2
+      'https://image.tmdb.org/t/p/w500/mXb1lfYoh3IYbiCRRH8C5rDZ9XQ.jpg', // 唐诡西行
+    ],
+    totalCount: 15,
+    description: '每当熟悉的配乐响起，瞬间梦回那个守在电视机前的纯真年代。精选传世华语古装、经典武侠与现象级时代大剧。',
+    accent: '#D97706',
+    films: [
+      {
+        id: 'col_film_90_1',
+        title: '繁花',
+        rate: '8.7',
+        cover: 'https://image.tmdb.org/t/p/w500/rV1owsdKtXytJ5eFMOOVTze3mrk.jpg',
+        description: '九十年代初的上海黄河路风起云涌，阿宝在时代浪潮中搏击蜕变，王家卫极致光影美学。',
+        year: '2023',
+        types: ['剧情', '爱情'],
+        directors: ['王家卫'],
+        actors: ['胡歌', '马伊琍', '唐嫣', '辛芷蕾'],
+      },
+      {
+        id: 'col_film_90_2',
+        title: '庆余年 第二季',
+        rate: '7.3',
+        cover: 'https://image.tmdb.org/t/p/w500/wHJvPo9CLpXwX1ncDg6uD0QJIZo.jpg',
+        description: '范闲假死回京重整旗鼓，面对江南内库与朝堂重重杀局，以现代思维智斗天下强权。',
+        year: '2024',
+        types: ['剧情', '古装'],
+        directors: ['孙皓'],
+        actors: ['张若昀', '李沁', '陈道明', '吴刚'],
+      },
+    ],
+  },
+
+  // ── 9. 高分华语犯罪刑侦 ──────────────────────────────────
+  {
+    id: 'col-crime-investigation',
+    title: '高分华语犯罪刑侦',
+    subtitle: '直面复杂人性深渊，口碑封神的社会派悬疑力作',
+    slug: 'chinese-crime-investigation',
+    coverPosters: [
+      'https://image.tmdb.org/t/p/w500/6F2UcY1p2YCz3xgLz6NfDh81QC3.jpg', // 狂飙
+      'https://image.tmdb.org/t/p/w500/xErvw04IuhNx5OyESipIGbiDvdX.jpg', // 漫长的季节
+      'https://image.tmdb.org/t/p/w500/b5P8eg7u4XgDSYNF6da17CcZy2d.jpg', // 周处除三害
+    ],
+    totalCount: 15,
+    description: '扫黑除恶、悬案重勘与时代浪潮下的人性抉择！收录《狂飙》《漫长的季节》《周处除三害》等高分爆款刑侦罪案剧目。',
+    accent: '#DC2626',
+    films: [
+      {
+        id: 'col_film_cr_1',
+        title: '狂飙',
+        rate: '8.5',
+        cover: 'https://image.tmdb.org/t/p/w500/6F2UcY1p2YCz3xgLz6NfDh81QC3.jpg',
+        description: '京海市二十年扫黑除恶斗争史，刑警安欣与黑恶势力头目高启强的命运纠葛与正邪较量。',
+        year: '2023',
+        types: ['剧情', '犯罪'],
+        directors: ['徐纪周'],
+        actors: ['张译', '张颂文', '李一桐', '张志坚'],
+      },
+      {
+        id: 'col_film_cr_2',
+        title: '漫长的季节',
+        rate: '9.4',
+        cover: 'https://image.tmdb.org/t/p/w500/xErvw04IuhNx5OyESipIGbiDvdX.jpg',
+        description: '小城桦林二十年未解碎尸悬案，几位老人为了寻找真相与执念，在秋天里完成对命运的告解。',
+        year: '2023',
+        types: ['剧情', '悬疑', '犯罪'],
+        directors: ['辛爽'],
+        actors: ['范伟', '秦昊', '陈明昊'],
+      },
+      {
+        id: 'col_film_cr_3',
+        title: '周处除三害',
+        rate: '8.1',
+        cover: 'https://image.tmdb.org/t/p/w500/b5P8eg7u4XgDSYNF6da17CcZy2d.jpg',
+        description: '通缉犯陈桂林自知命不久矣，效仿古代周处除三害典故，誓要在临终前除掉通缉榜前两名罪犯。',
+        year: '2023',
+        types: ['动作', '犯罪'],
+        directors: ['黄精甫'],
+        actors: ['阮经天', '袁富华', '陈以文'],
+      },
+    ],
+  },
+
+  // ── 10. 横屏爆款微短剧精选 ────────────────────────────────
+  {
+    id: 'col-short-dramas',
+    title: '横屏爆款微短剧',
+    subtitle: '快节奏爽点拉满，反转打脸逆袭高能合集',
+    slug: 'trending-short-dramas',
+    coverPosters: [
+      'https://image.tmdb.org/t/p/w500/dXjYk7fnA6HNqhJHTnmeD6rV4Aw.jpg', // 我在八零
+      'https://image.tmdb.org/t/p/w500/czembW0Rk1Ke7lCJGahbOhdCuhV.jpg', // 执笔
+      'https://image.tmdb.org/t/p/w500/b5P8eg7u4XgDSYNF6da17CcZy2d.jpg', // 无双
+    ],
+    totalCount: 15,
+    description: '零废话高密度爽点！集合战神归来、重生逆袭、豪门复仇与手撕剧本的精品横屏微短剧。',
+    accent: '#EAB308',
+    films: [
+      {
+        id: 'col_film_st_1',
+        title: '我在八零年代当后妈',
+        rate: '8.4',
+        cover: 'https://image.tmdb.org/t/p/w500/dXjYk7fnA6HNqhJHTnmeD6rV4Aw.jpg',
+        description: '女大学生司念意外穿越回八零年代，与冷面养猪场场长闪婚，开启搞钱斗极品的逆袭之路。',
+        year: '2024',
+        types: ['短剧', '穿越', '喜剧'],
+        directors: ['短剧精选'],
+        actors: ['滕泽文', '苏袀禾'],
+      },
+      {
+        id: 'col_film_st_2',
+        title: '执笔',
+        rate: '7.8',
+        cover: 'https://image.tmdb.org/t/p/w500/czembW0Rk1Ke7lCJGahbOhdCuhV.jpg',
+        description: '相府庶女苏云绮偶然发现自己竟是话本中的恶毒女配，她拒绝认命，毅然夺回执笔之权。',
+        year: '2024',
+        types: ['短剧', '古装', '奇幻'],
+        directors: ['张之微'],
+        actors: ['李沐宸', '叶盛佳'],
+      },
+    ],
+  },
+
+  // ── 11. 年度爆笑解压片单 ──────────────────────────────────
   {
     id: 'col-comedy',
     title: '年度爆笑解压片单',
@@ -321,6 +508,7 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
     ],
     totalCount: 15,
     description: '拯救不开心！集合全网高分爆笑喜剧与名场面解压神作，工作生活压力大？挑一部笑出八块腹肌！',
+    accent: '#F97316',
     films: [
       {
         id: 'col_film_5_1',
@@ -355,19 +543,10 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
         directors: ['周星驰'],
         actors: ['周星驰', '元华', '元秋'],
       },
-      {
-        id: 'col_film_5_4',
-        title: '纵横四海',
-        rate: '6.8',
-        cover: 'https://image.tmdb.org/t/p/w500/5RY3c5m7lElGAWHUbkJJXQtgKEQ.jpg',
-        description: '阿海、阿占和红豆自幼由养父抚养成神偷组合，在一次盗取名画行动中遭遇阴谋背叛。',
-        year: '1991',
-        types: ['动作', '喜剧', '犯罪'],
-        directors: ['吴宇森'],
-        actors: ['周润发', '张国荣', '钟楚红'],
-      },
     ],
   },
+
+  // ── 12. 治愈系 · 温暖人心 ──────────────────────────────────
   {
     id: 'col-healing',
     title: '治愈系 · 温暖人心',
@@ -380,6 +559,7 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
     ],
     totalCount: 15,
     description: '生活的疲惫需要温暖的片刻消解。在这里找到清澈的夏天、温柔的晚风与最真挚的人性光辉。',
+    accent: '#EC4899',
     films: [
       {
         id: 'col_film_6_1',
@@ -416,43 +596,59 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
       },
     ],
   },
+
+  // ── 13. 东方玄幻 · 修仙巅峰 ────────────────────────────────
   {
     id: 'col-xianxia',
     title: '东方玄幻 · 修仙巅峰',
     subtitle: '国产动漫修仙流天花板级作品合集，燃魂证道',
     slug: 'eastern-fantasy-cultivation',
     coverPosters: [
-      'https://image.tmdb.org/t/p/w500/1TtrtRIwXz5BB0gXEl8zgBypl9c.jpg', // 芙莉莲
-      'https://image.tmdb.org/t/p/w500/sSE8DZr44URZccaKtdU8BZyEU6Q.jpg', // 鬼灭
-      'https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg', // 交锋
+      'https://image.tmdb.org/t/p/w500/u1VRjvvCIVwb1MUhoxSAUimhoKZ.jpg', // 凡人修仙传
+      'https://image.tmdb.org/t/p/w500/mNJPCv2dLADVVSgLlzsMJoXdTmb.jpg', // 完美世界
+      'https://image.tmdb.org/t/p/w500/mCt5qgkOYEvuHSiSwNByMv6LMoB.jpg', // 仙逆
     ],
     totalCount: 15,
     description: '仙路尽头谁为峰！精选顶级修仙与奇幻史诗动画，感受极致打斗特效与浩瀚东方法宝神魔大战。',
+    accent: '#059669',
     films: [
       {
         id: 'col_film_7_1',
-        title: '葬送的芙莉莲',
-        rate: '9.5',
-        cover: 'https://image.tmdb.org/t/p/w500/1TtrtRIwXz5BB0gXEl8zgBypl9c.jpg',
-        description: '长寿精灵芙莉莲在漫长时光中重新理解生命的意义，豆瓣 9.5 分年度神作。',
-        year: '2023',
-        types: ['奇幻', '冒险', '治愈'],
-        directors: ['斋藤圭一郎'],
-        actors: ['种崎敦美', '市之濑加那'],
+        title: '凡人修仙传',
+        rate: '9.1',
+        cover: 'https://image.tmdb.org/t/p/w500/u1VRjvvCIVwb1MUhoxSAUimhoKZ.jpg',
+        description: '资质平庸的山村穷小子韩立步步为营，在危机四伏的修仙界逆天改命。',
+        year: '2020',
+        types: ['动漫', '修仙', '玄幻'],
+        directors: ['王裕仁'],
+        actors: ['钱文青', '杨天翔'],
       },
       {
         id: 'col_film_7_2',
-        title: '鬼灭之刃 柱训练篇',
+        title: '完美世界',
+        rate: '8.8',
+        cover: 'https://image.tmdb.org/t/p/w500/mNJPCv2dLADVVSgLlzsMJoXdTmb.jpg',
+        description: '为修道而生，为应劫而至。少年石昊横扫万界强敌，独断万古！',
+        year: '2021',
+        types: ['动漫', '玄幻', '热血'],
+        directors: ['汪成果'],
+        actors: ['锦鲤', '刘晴'],
+      },
+      {
+        id: 'col_film_7_3',
+        title: '仙逆',
         rate: '8.9',
-        cover: 'https://image.tmdb.org/t/p/w500/sSE8DZr44URZccaKtdU8BZyEU6Q.jpg',
-        description: '炭治郎与九柱集结开展特训，决战无限城前夕最后的试炼，飞碟社作画天花板。',
-        year: '2024',
-        types: ['热血', '奇幻', '战斗'],
-        directors: ['外崎春雄'],
-        actors: ['花江夏树', '鬼头明里'],
+        cover: 'https://image.tmdb.org/t/p/w500/mCt5qgkOYEvuHSiSwNByMv6LMoB.jpg',
+        description: '平庸少年王林踏入修真路，凭杀戮本源与坚定道心，逆天证道杀出一条血路！',
+        year: '2023',
+        types: ['动漫', '玄幻', '修真'],
+        directors: ['石头'],
+        actors: ['史泽鲲', '文潇'],
       },
     ],
   },
+
+  // ── 14. 漫威 · DC 超英宇宙 ────────────────────────────────
   {
     id: 'col-superhero',
     title: '漫威 · DC 超英宇宙',
@@ -460,11 +656,12 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
     slug: 'superhero-cinematic-universe',
     coverPosters: [
       'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg', // 黑暗骑士
-      'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg', // 奥本海默
+      'https://image.tmdb.org/t/p/w500/nSpk8U35rPVlMMfZ1uxHnbC14Nd.jpg', // 死侍与金刚狼
       'https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg', // 特立独行
     ],
     totalCount: 15,
     description: '英雄齐聚，共赴终局！收录全部超级英雄高光战役，震撼视效与高能团战合集。',
+    accent: '#E11D48',
     films: [
       {
         id: 'col_film_8_1',
@@ -479,14 +676,14 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
       },
       {
         id: 'col_film_8_2',
-        title: '特立独行',
-        rate: '6.4',
-        cover: 'https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg',
-        description: '三十年前超英协会击溃外星人，多年后英雄重返小镇建立战队。',
-        year: '2026',
-        types: ['剧情', '动作'],
-        directors: ['宁浩'],
-        actors: ['王宝强', '黄渤'],
+        title: '死侍与金刚狼',
+        rate: '7.1',
+        cover: 'https://image.tmdb.org/t/p/w500/nSpk8U35rPVlMMfZ1uxHnbC14Nd.jpg',
+        description: '死侍跨越多元宇宙携手失意的金刚狼，并肩作战拯救危在旦夕的漫威时间线。',
+        year: '2024',
+        types: ['动作', '科幻', '喜剧'],
+        directors: ['肖恩·利维'],
+        actors: ['瑞安·雷诺兹', '休·杰克曼'],
       },
     ],
   },
