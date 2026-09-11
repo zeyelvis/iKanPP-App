@@ -140,7 +140,6 @@ function getTop10Info(contentType: HomeContentType): { title: string; badge: str
 }
 
 const TABS: Array<{ id: HomeContentType | 'iptv'; label: string; isRoute?: boolean; href?: string }> = [
-  { id: 'all', label: '🔥 全部推荐' },
   { id: 'movie', label: '🎬 电影' },
   { id: 'tv', label: '📺 电视剧' },
   { id: 'anime', label: '🏮 动漫' },
@@ -151,8 +150,8 @@ const TABS: Array<{ id: HomeContentType | 'iptv'; label: string; isRoute?: boole
 
 export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   const router = useRouter();
-  // 默认 Tab 设为 🔥 全部推荐 (all)
-  const [contentType, setContentType] = useState<HomeContentType>('all');
+  // 默认 Tab 设为 🎬 电影 (movie)
+  const [contentType, setContentType] = useState<HomeContentType>('movie');
 
   // 主题货架分片数据获取（SWR: 优先使用本地缓存，新用户首次访问直接秒级呈现预烘焙高清精选数据，0ms 瞬间秒开）
   const prebaked = useMemo(() => PREBAKED_HOME_DATA[contentType] || PREBAKED_HOME_DATA.all, [contentType]);
