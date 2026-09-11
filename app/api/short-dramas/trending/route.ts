@@ -8,27 +8,18 @@ import {
 
 export const runtime = 'edge';
 
-const FETCH_TIMEOUT_MS = 2500;
+const FETCH_TIMEOUT_MS = 3000;
 
 export async function GET() {
-  const primarySource = SHORT_DRAMA_SOURCES[0]; // 光速资源优先
+  const primarySources = SHORT_DRAMA_SOURCES.filter((s) => s.isEpisodic);
 
-  // 各核心热门子分类
-  const coreCategories = [
-    { key: 'shuangju', id: 49, name: '反转爽剧' },
-    { key: 'yanqing', id: 47, name: '言情总裁' },
-    { key: 'dushi', id: 45, name: '现代都市' },
-    { key: 'guzhuang', id: 44, name: '古风仙侠' },
-    { key: 'chuanyue', id: 46, name: '穿越年代' },
-    { key: 'naodong', id: 50, name: '脑洞悬疑' },
-  ];
-
-  const fetchCategoryTop = async (cat: { key: string; id: number; name: string }) => {
+  for (const source of primarySources) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
     try {
-      const url = `${primarySource.baseUrl}${primarySource.apiPath}?ac=detail&t=${cat.id}&pg=1`;
+      // 聚合短剧最新榜单
+      const url = `${source.baseUrl}${source.apiPath}?ac=detail&t=38&pg=1`;
       const res = await fetch(url, {
         signal: controller.signal,
         headers: {
@@ -37,68 +28,61 @@ export async function GET() {
         },
       });
       clearTimeout(timer);
-      if (!res.ok) return [];
-      const data = await res.json();
-      if (!data || !Array.isArray(data.list)) return [];
 
-      return data.list.slice(0, 4).map((item: any) => {
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (!data || !Array.isArray(data.list) || data.list.length === 0) continue;
+
+      const candidates: ShortDramaItem[] = [];
+
+      for (const item of data.list) {
         const playUrl = item.vod_play_url || '';
         const episodes = parseShortDramaPlayUrl(playUrl);
-        const totalEpisodes = parseEpisodesCount(item.vod_remarks, episodes.length);
+        const parsedCount = parseEpisodesCount(item.vod_remarks, episodes.length);
+        const totalEpisodes = episodes.length > 0 ? episodes.length : parsedCount;
+        const isEpisodic = episodes.length > 1;
 
-        return {
-          id: `${primarySource.id}-${item.vod_id}`,
+        let displayRemarks = item.vod_remarks || '';
+        if (isEpisodic) {
+          displayRemarks = `全${totalEpisodes}集`;
+        } else if (displayRemarks.includes('全集') || displayRemarks.includes('完结')) {
+          displayRemarks = '全集长片版';
+        }
+
+        candidates.push({
+          id: `${source.id}-${item.vod_id}`,
           title: item.vod_name || '短剧',
           poster: item.vod_pic || '',
-          category: cat.key,
-          categoryName: cat.name,
+          category: 'trending',
+          categoryName: '全网热播',
           year: item.vod_year || '2026',
-          remarks: item.vod_remarks || (totalEpisodes > 0 ? `共${totalEpisodes}集` : '全集完结'),
+          remarks: displayRemarks,
           totalEpisodes,
           playUrl,
           episodes,
           firstPlayUrl: episodes[0]?.url || '',
           updatedAt: item.vod_time || '',
-        } as ShortDramaItem;
+          isEpisodic,
+        });
+      }
+
+      // 优先展示分集数较多的
+      candidates.sort((a, b) => (b.totalEpisodes || 0) - (a.totalEpisodes || 0));
+
+      return NextResponse.json({
+        success: true,
+        total: candidates.length,
+        source: source.id,
+        list: candidates.slice(0, 20),
       });
     } catch {
       clearTimeout(timer);
-      return [];
+      continue;
     }
-  };
-
-  try {
-    const settled = await Promise.allSettled(coreCategories.map(fetchCategoryTop));
-    const allCandidates: ShortDramaItem[] = [];
-
-    settled.forEach((res) => {
-      if (res.status === 'fulfilled' && Array.isArray(res.value)) {
-        allCandidates.push(...res.value);
-      }
-    });
-
-    // 跨分类混排去重
-    const seenTitles = new Set<string>();
-    const uniqueDramas: ShortDramaItem[] = [];
-
-    for (const item of allCandidates) {
-      const norm = item.title.trim().toLowerCase();
-      if (!seenTitles.has(norm)) {
-        seenTitles.add(norm);
-        uniqueDramas.push(item);
-      }
-    }
-
-    return NextResponse.json({
-      success: true,
-      total: uniqueDramas.length,
-      list: uniqueDramas.slice(0, 20),
-    });
-  } catch (err) {
-    console.error('Fetch trending error:', err);
-    return NextResponse.json({
-      success: false,
-      list: [],
-    });
   }
+
+  return NextResponse.json({
+    success: false,
+    list: [],
+  });
 }

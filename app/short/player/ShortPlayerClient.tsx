@@ -78,10 +78,10 @@ export default function ShortPlayerClient() {
     let isMounted = true;
 
     async function initDramaData() {
-      // 若已传入 rawUrl
+      // 1. 若已传入 rawUrl 且包含真实多集（> 1 集）
       if (rawUrlParam) {
         const parsed = parseShortDramaPlayUrl(rawUrlParam);
-        if (parsed.length > 0) {
+        if (parsed.length > 1) {
           if (isMounted) {
             setEpisodes(parsed);
             return;
@@ -89,7 +89,7 @@ export default function ShortPlayerClient() {
         }
       }
 
-      // 否则走频道内搜索自愈拉取完整剧集列表
+      // 2. 如果未传 rawUrl 或者传入仅有 1 集，通过 search API 寻找真正拥有多集分集的版本
       if (titleParam) {
         setIsLoading(true);
         try {
@@ -97,30 +97,40 @@ export default function ShortPlayerClient() {
           if (!res.ok) throw new Error('Search failed');
           const data = await res.json();
           if (data.list && data.list.length > 0) {
-            const firstHit = data.list[0];
+            // 优先匹配包含真实多集的版本
+            const bestHit =
+              data.list.find((it: any) => it.episodes && it.episodes.length > 1) || data.list[0];
+
             if (isMounted) {
-              setTitle(firstHit.title || titleParam);
-              if (firstHit.poster) setPoster(firstHit.poster);
-              if (firstHit.episodes && firstHit.episodes.length > 0) {
-                setEpisodes(firstHit.episodes);
-              } else if (firstHit.playUrl) {
-                const epList = parseShortDramaPlayUrl(firstHit.playUrl);
-                setEpisodes(epList);
+              setTitle(bestHit.title || titleParam);
+              if (bestHit.poster) setPoster(bestHit.poster);
+              if (bestHit.episodes && bestHit.episodes.length > 0) {
+                setEpisodes(bestHit.episodes);
+                return;
+              } else if (bestHit.playUrl) {
+                const epList = parseShortDramaPlayUrl(bestHit.playUrl);
+                if (epList.length > 0) {
+                  setEpisodes(epList);
+                  return;
+                }
               }
-            }
-          } else if (rawUrlParam) {
-            if (isMounted) {
-              setEpisodes([{ name: '第1集', url: rawUrlParam, epIndex: 1 }]);
             }
           }
         } catch (err) {
-          console.error('Init drama error:', err);
-          if (rawUrlParam && isMounted) {
-            setEpisodes([{ name: '第1集', url: rawUrlParam, epIndex: 1 }]);
-          }
+          console.error('Init drama search error:', err);
         } finally {
           if (isMounted) setIsLoading(false);
         }
+      }
+
+      // 3. 兜底降级：若搜索无多集结果，但传入了 rawUrl，则加载该单集
+      if (rawUrlParam && isMounted) {
+        const fallbackParsed = parseShortDramaPlayUrl(rawUrlParam);
+        setEpisodes(
+          fallbackParsed.length > 0
+            ? fallbackParsed
+            : [{ name: '第1集', url: rawUrlParam, epIndex: 1 }]
+        );
       }
     }
 

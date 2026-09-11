@@ -13,6 +13,9 @@ const FETCH_TIMEOUT_MS = 3000;
 
 function isShortDramaItem(item: any, source: ShortDramaSource): boolean {
   const typeId = Number(item.type_id);
+  // 魔都源 38 是短剧，42 是 AI 漫剧
+  if (source.id.startsWith('modu') && (typeId === 38 || typeId === 42)) return true;
+
   const allCatIds = Object.values(source.categories).flatMap((val) =>
     Array.isArray(val) ? val : [val]
   );
@@ -26,7 +29,18 @@ function isShortDramaItem(item: any, source: ShortDramaSource): boolean {
 function normalizeDramaItem(item: any, source: ShortDramaSource): ShortDramaItem {
   const playUrl = item.vod_play_url || '';
   const episodes = parseShortDramaPlayUrl(playUrl);
-  const totalEpisodes = parseEpisodesCount(item.vod_remarks, episodes.length);
+  const parsedCount = parseEpisodesCount(item.vod_remarks, episodes.length);
+  const totalEpisodes = episodes.length > 0 ? episodes.length : parsedCount;
+  const isEpisodic = episodes.length > 1;
+
+  let displayRemarks = item.vod_remarks || '';
+  if (isEpisodic) {
+    displayRemarks = `全${totalEpisodes}集`;
+  } else if (displayRemarks.includes('全集') || displayRemarks.includes('完结')) {
+    displayRemarks = '全集长片版';
+  } else if (totalEpisodes > 0) {
+    displayRemarks = `共${totalEpisodes}集`;
+  }
 
   return {
     id: `${source.id}-${item.vod_id}`,
@@ -36,7 +50,7 @@ function normalizeDramaItem(item: any, source: ShortDramaSource): ShortDramaItem
     categoryName: item.type_name || '短剧',
     year: item.vod_year || '',
     area: item.vod_area || '',
-    remarks: item.vod_remarks || (totalEpisodes > 0 ? `共${totalEpisodes}集` : ''),
+    remarks: displayRemarks,
     totalEpisodes,
     director: item.vod_director || '',
     actor: item.vod_actor || '',
@@ -47,6 +61,7 @@ function normalizeDramaItem(item: any, source: ShortDramaSource): ShortDramaItem
     episodes,
     firstPlayUrl: episodes[0]?.url || '',
     updatedAt: item.vod_time || '',
+    isEpisodic,
   };
 }
 
@@ -92,12 +107,15 @@ export async function GET(req: NextRequest) {
 
       // 过滤短剧相关项目
       const filteredList = data.list.filter((it: any) => isShortDramaItem(it, source));
-      const normalizedList = (filteredList.length > 0 ? filteredList : data.list).map((it: any) =>
-        normalizeDramaItem(it, source)
-      );
+      const targetItems = filteredList.length > 0 ? filteredList : data.list;
+
+      const normalizedList = targetItems.map((it: any) => normalizeDramaItem(it, source));
+
+      // 智能排序：优先展示真实分集数最多的短剧
+      normalizedList.sort((a: ShortDramaItem, b: ShortDramaItem) => (b.totalEpisodes || 0) - (a.totalEpisodes || 0));
 
       return NextResponse.json({
-        total: filteredList.length > 0 ? filteredList.length : Number(data.total) || 0,
+        total: targetItems.length,
         pagecount: Number(data.pagecount) || 1,
         page,
         source: source.id,

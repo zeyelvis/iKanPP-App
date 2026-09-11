@@ -5,6 +5,8 @@ export interface ShortDramaSource {
   apiPath: string;
   priority: number;
   categories: Record<string, number | number[]>;
+  categoryKeywords?: Record<string, string>;
+  isEpisodic?: boolean; // 标记是否为原生真实分集短剧源
 }
 
 export interface ShortDramaEpisode {
@@ -21,7 +23,7 @@ export interface ShortDramaItem {
   categoryName?: string;
   year?: string;
   area?: string;
-  remarks?: string; // 例如 "共80集" 或 "更新至60集"
+  remarks?: string; // 例如 "全80集" 或 "全集长片版"
   totalEpisodes?: number;
   director?: string;
   actor?: string;
@@ -32,15 +34,59 @@ export interface ShortDramaItem {
   episodes?: ShortDramaEpisode[];
   firstPlayUrl?: string;
   updatedAt?: string;
+  isEpisodic?: boolean; // 是否具备真实分集
 }
 
 export const SHORT_DRAMA_SOURCES: ShortDramaSource[] = [
+  {
+    id: 'modu',
+    name: '魔都短剧专线',
+    baseUrl: 'https://caiji.moduapi.cc',
+    apiPath: '/api.php/provide/vod',
+    priority: 1,
+    isEpisodic: true,
+    categories: {
+      all: 38,       // 全部短剧（34,395+ 部，100% 分集）
+      ai: 42,        // AI漫剧专区
+    },
+    categoryKeywords: {
+      shuangju: '逆袭',
+      yanqing: '总裁',
+      dushi: '都市',
+      guzhuang: '古装',
+      chuanyue: '穿越',
+      chongsheng: '重生',
+      naodong: '系统',
+    },
+  },
+  {
+    id: 'modu_mirror',
+    name: '魔都镜像专线',
+    baseUrl: 'https://www.mdzyapi.com',
+    apiPath: '/api.php/provide/vod',
+    priority: 2,
+    isEpisodic: true,
+    categories: {
+      all: 38,
+      ai: 42,
+    },
+    categoryKeywords: {
+      shuangju: '逆袭',
+      yanqing: '总裁',
+      dushi: '都市',
+      guzhuang: '古装',
+      chuanyue: '穿越',
+      chongsheng: '重生',
+      naodong: '系统',
+    },
+  },
   {
     id: 'guangsu',
     name: '光速资源',
     baseUrl: 'https://api.guangsuapi.com',
     apiPath: '/api.php/provide/vod',
-    priority: 1,
+    priority: 3,
+    isEpisodic: false,
     categories: {
       all: [44, 45, 46, 47, 48, 49, 50, 52],
       guzhuang: 44, // 古装仙侠
@@ -58,30 +104,18 @@ export const SHORT_DRAMA_SOURCES: ShortDramaSource[] = [
     name: '极速资源',
     baseUrl: 'https://jszyapi.com',
     apiPath: '/api.php/provide/vod',
-    priority: 2,
+    priority: 4,
+    isEpisodic: false,
     categories: {
       all: [45, 46, 47, 48, 49, 50, 52, 54],
-      guzhuang: 45, // 古装仙侠
-      dushi: 46,    // 现代都市
-      chuanyue: 47, // 穿越年代
-      yanqing: 48,  // 言情总裁
-      chongsheng: 49, // 重生民国
-      shuangju: 50, // 反转爽剧
-      naodong: 52,  // 脑洞悬疑
-      ai: 54,       // AI漫剧
-    },
-  },
-  {
-    id: 'hongniu',
-    name: '红牛资源',
-    baseUrl: 'https://www.hongniuzy2.com',
-    apiPath: '/api.php/provide/vod',
-    priority: 3,
-    categories: {
-      all: [43, 45, 46],
-      guzhuang: 43,
-      chuanyue: 45,
-      yanqing: 46,
+      guzhuang: 45,
+      dushi: 46,
+      chuanyue: 47,
+      yanqing: 48,
+      chongsheng: 49,
+      shuangju: 50,
+      naodong: 52,
+      ai: 54,
     },
   },
 ];
@@ -100,26 +134,27 @@ export const SHORT_DRAMA_GENRES = [
 
 /**
  * 将 CMS 返回的 vod_play_url 解析为剧集列表
- * 格式通常为: "第01集$https://...m3u8#第02集$https://...m3u8"
- * 或者多个播放源: "gsyun$$$第01集$url#...$$$gsm3u8$$$第01集$url#..."
+ * 智能策略：如果包含多个播放源 ($$$)，优先挑选有效分集数最多的那组源
  */
 export function parseShortDramaPlayUrl(rawUrl?: string): ShortDramaEpisode[] {
   if (!rawUrl) return [];
 
-  // 如果包含多个播放源源分隔符 ($$$)，优先提取 m3u8 源
-  let targetPlaySource = rawUrl;
+  let bestSource = rawUrl;
   if (rawUrl.includes('$$$')) {
     const sources = rawUrl.split('$$$');
-    // 寻找包含 m3u8 的片段组
-    for (let i = 0; i < sources.length; i++) {
-      if (sources[i].includes('.m3u8')) {
-        targetPlaySource = sources[i];
-        break;
+    let maxEpisodesCount = 0;
+    for (const src of sources) {
+      const parts = src.split('#').filter(Boolean);
+      // 必须包含 m3u8 或可播放 http 协议
+      const hasPlayable = parts.some(p => p.includes('.m3u8') || p.includes('http'));
+      if (hasPlayable && parts.length > maxEpisodesCount) {
+        maxEpisodesCount = parts.length;
+        bestSource = src;
       }
     }
   }
 
-  const items = targetPlaySource.split('#');
+  const items = bestSource.split('#');
   const episodes: ShortDramaEpisode[] = [];
 
   for (let i = 0; i < items.length; i++) {
