@@ -53,7 +53,12 @@ export function ShortEpisodeSheet({
     : episodes;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-end bg-black/70 backdrop-blur-md transition-all duration-300 animate-fadeIn">
+    <div
+      className="player-control-interactive fixed inset-0 z-[70] flex flex-col justify-end bg-black/75 backdrop-blur-md transition-all duration-300 animate-fadeIn select-none"
+      onTouchStart={(e) => e.stopPropagation()}
+      onTouchMove={(e) => e.stopPropagation()}
+      onTouchEnd={(e) => e.stopPropagation()}
+    >
       {/* 遮罩点击关闭 */}
       <div className="absolute inset-0" onClick={onClose} />
 

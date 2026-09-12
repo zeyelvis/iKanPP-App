@@ -57,6 +57,10 @@ export default function ShortPlayerClient() {
   const [controlsVisible, setControlsVisible] = useState(true);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
+  // 移动端手势与跟手微动效状态
+  const [dragOffsetY, setDragOffsetY] = useState(0);
+  const [swipeHint, setSwipeHint] = useState<string | null>(null);
+
   // 引用
   const containerRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -64,10 +68,38 @@ export default function ShortPlayerClient() {
   const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const touchStartYRef = useRef(0);
+  const touchStartXRef = useRef(0);
   const touchStartTimeRef = useRef(0);
   const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
   const wheelThrottleRef = useRef(false);
+
+  // 核心视口绝对锁定：挂载时彻底锁定 body 与 html 滚动，防止移动端上下滑拉拽出白底或页脚
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    const originalBodyTouchAction = document.body.style.touchAction;
+    const originalHtmlTouchAction = document.documentElement.style.touchAction;
+    const originalBodyOverscroll = document.body.style.overscrollBehavior;
+    const originalHtmlOverscroll = document.documentElement.style.overscrollBehavior;
+
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+    document.documentElement.style.touchAction = 'none';
+    document.body.style.overscrollBehavior = 'none';
+    document.documentElement.style.overscrollBehavior = 'none';
+
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
+      document.body.style.touchAction = originalBodyTouchAction;
+      document.documentElement.style.touchAction = originalHtmlTouchAction;
+      document.body.style.overscrollBehavior = originalBodyOverscroll;
+      document.documentElement.style.overscrollBehavior = originalHtmlOverscroll;
+    };
+  }, []);
 
   // 历史记录 Store
   const addToHistory = useHistoryStore((s) => s.addToHistory);
@@ -312,48 +344,120 @@ export default function ShortPlayerClient() {
     showToast(seconds > 0 ? '+10秒' : '-10秒');
   }, [showToast]);
 
-  // 手势交互引擎
-  const handlePointerDown = (e: React.PointerEvent) => {
+  // 原生移动端触摸手势交互引擎（消除移动端浏览器对 PointerEvent 的滚动中断丢弃问题）
+  const handleTouchStart = (e: React.TouchEvent) => {
     if ((e.target as HTMLElement).closest('.player-control-interactive')) return;
+    const touch = e.touches[0];
+    if (!touch) return;
 
-    touchStartYRef.current = e.clientY;
+    touchStartYRef.current = touch.clientY;
+    touchStartXRef.current = touch.clientX;
     touchStartTimeRef.current = Date.now();
+    setDragOffsetY(0);
+    setSwipeHint(null);
 
+    // 启动 500ms 长按检测（触发 3.0x 超速播放）
     longPressTimerRef.current = setTimeout(() => {
       const video = videoRef.current;
       if (video && !video.paused) {
         setIsLongPressing(true);
         video.playbackRate = 3.0;
+        showToast('⚡ 3.0X 超速播放中');
       }
     }, 500);
   };
 
-  const handlePointerUp = (e: React.PointerEvent) => {
+  const handleTouchMove = (e: React.TouchEvent) => {
     if ((e.target as HTMLElement).closest('.player-control-interactive')) return;
+    const touch = e.touches[0];
+    if (!touch) return;
+
+    const deltaY = touch.clientY - touchStartYRef.current;
+    const deltaX = touch.clientX - touchStartXRef.current;
+    const absY = Math.abs(deltaY);
+    const absX = Math.abs(deltaX);
+
+    // 一旦手指移动超过 10px，立即打断长按定时器，防止误触超速
+    if (absY > 10 || absX > 10) {
+      if (longPressTimerRef.current) {
+        clearTimeout(longPressTimerRef.current);
+        longPressTimerRef.current = null;
+      }
+    }
+
+    // 垂直位移明显大于水平位移时，提供跟手位移与动态上下滑切换提示
+    if (absY > 15 && absY > absX) {
+      // 阻尼跟手位移（最大限制在 90px 保持弹性视觉）
+      const clampedOffset = Math.sign(deltaY) * Math.min(absY * 0.35, 90);
+      setDragOffsetY(clampedOffset);
+
+      if (deltaY < -30) {
+        if (currentEpIndex < episodes.length) {
+          setSwipeHint(`上滑切换至第 ${currentEpIndex + 1} 集`);
+        } else {
+          setSwipeHint('已是全剧最后一集');
+        }
+      } else if (deltaY > 30) {
+        if (currentEpIndex > 1) {
+          setSwipeHint(`下滑切换至第 ${currentEpIndex - 1} 集`);
+        } else {
+          setSwipeHint('已是全剧第 1 集');
+        }
+      } else {
+        setSwipeHint(null);
+      }
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if ((e.target as HTMLElement).closest('.player-control-interactive')) {
+      setDragOffsetY(0);
+      setSwipeHint(null);
+      return;
+    }
 
     if (longPressTimerRef.current) {
       clearTimeout(longPressTimerRef.current);
       longPressTimerRef.current = null;
     }
 
+    // 如果处于长按状态，松手恢复正常播放速度
     if (isLongPressing) {
       setIsLongPressing(false);
       const video = videoRef.current;
       if (video) video.playbackRate = playbackRate;
+      setDragOffsetY(0);
+      setSwipeHint(null);
       return;
     }
 
-    const deltaY = e.clientY - touchStartYRef.current;
-    const durationMs = Date.now() - touchStartTimeRef.current;
+    const touch = e.changedTouches[0];
+    if (!touch) {
+      setDragOffsetY(0);
+      setSwipeHint(null);
+      return;
+    }
 
-    if (Math.abs(deltaY) > 50 && durationMs < 500) {
+    const deltaY = touch.clientY - touchStartYRef.current;
+    const deltaX = touch.clientX - touchStartXRef.current;
+    const absY = Math.abs(deltaY);
+    const absX = Math.abs(deltaX);
+
+    // 重置跟手位移与提示
+    setDragOffsetY(0);
+    setSwipeHint(null);
+
+    // 1. 上下滑动手势判断：Y 轴滑动绝对值 >= 35px 且垂直位移明显大于水平位移
+    if (absY >= 35 && absY > absX) {
       if (deltaY < 0) {
+        // 手指向上滑动：进入下一集
         if (currentEpIndex < episodes.length) {
           switchEpisode(currentEpIndex + 1);
         } else {
           showToast('已经是最后一集啦');
         }
       } else {
+        // 手指向下滑动：返回上一集
         if (currentEpIndex > 1) {
           switchEpisode(currentEpIndex - 1);
         } else {
@@ -363,24 +467,42 @@ export default function ShortPlayerClient() {
       return;
     }
 
-    if (Math.abs(deltaY) < 15) {
+    // 2. 点击 / 双击判定（位移极小，排除滑动干扰）
+    if (absY < 15 && absX < 15) {
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const clickX = touch.clientX - rect.left;
+
       if (clickTimerRef.current) {
+        // 双击：左半屏后退 10 秒，右半屏快进 10 秒
         clearTimeout(clickTimerRef.current);
         clickTimerRef.current = null;
-        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
         if (clickX < rect.width / 2) {
           seekRelative(-10);
         } else {
           seekRelative(10);
         }
       } else {
+        // 单击：延迟 260ms 判定切换播放 / 暂停
         clickTimerRef.current = setTimeout(() => {
           togglePlay();
           clickTimerRef.current = null;
         }, 260);
       }
     }
+  };
+
+  const handleTouchCancel = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+    if (isLongPressing) {
+      setIsLongPressing(false);
+      const video = videoRef.current;
+      if (video) video.playbackRate = playbackRate;
+    }
+    setDragOffsetY(0);
+    setSwipeHint(null);
   };
 
   // 鼠标滚轮切集
@@ -523,19 +645,45 @@ export default function ShortPlayerClient() {
   return (
     <div
       ref={containerRef}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchCancel}
+      onClick={(e) => {
+        if ((e.target as HTMLElement).closest('.player-control-interactive')) return;
+        // PC 桌面端鼠标单击切换播放/暂停（移动端由 onTouchEnd 判定，避免触发两次）
+        if (typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) return;
+        togglePlay();
+      }}
       onWheel={handleWheel}
       onMouseMove={handleMouseMove}
-      className="relative w-screen h-[100dvh] bg-[#0A0A10] overflow-hidden select-none flex items-center justify-center p-0 lg:p-4"
+      className="fixed inset-0 w-full h-[100dvh] z-50 bg-[#0A0A10] overflow-hidden select-none touch-none overscroll-none flex items-center justify-center p-0 lg:p-4"
     >
       {/* 桌面端背景柔和环境微光 */}
       <div className="hidden lg:block absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/5 via-[#0A0A10] to-[#0A0A10] -z-20 pointer-events-none" />
 
-      {/* 核心播放器容器：移动端全屏铺满，桌面端严格保持 9:16 黄金胶囊微光视窗 */}
-      <div className="relative w-full h-full lg:w-auto lg:h-[92vh] lg:max-h-[880px] aspect-auto lg:aspect-[9/16] bg-black rounded-none lg:rounded-3xl overflow-hidden shadow-2xl lg:ring-1 lg:ring-white/15 flex items-center justify-center transition-all duration-300">
+      {/* 核心播放器容器：移动端全屏铺满，桌面端严格保持 9:16 黄金胶囊微光视窗，支持跟手弹性位移 */}
+      <div
+        className="relative w-full h-full lg:w-auto lg:h-[92vh] lg:max-h-[880px] aspect-auto lg:aspect-[9/16] bg-black rounded-none lg:rounded-3xl overflow-hidden shadow-2xl lg:ring-1 lg:ring-white/15 flex items-center justify-center transition-all duration-300"
+        style={{
+          transform: dragOffsetY !== 0 ? `translateY(${dragOffsetY}px)` : undefined,
+          transition: dragOffsetY === 0 ? 'transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)' : 'none',
+        }}
+      >
         {/* 桌面端胶囊视窗外发光微光晕 */}
         <div className="hidden lg:block absolute -inset-4 bg-gradient-to-tr from-(--accent-color)/15 via-purple-600/10 to-transparent rounded-[40px] blur-2xl -z-10 pointer-events-none" />
+
+        {/* 上下滑动实时手势提示胶囊 */}
+        {swipeHint && (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 px-5 py-2.5 rounded-full bg-black/85 backdrop-blur-2xl border border-white/25 text-white font-black text-sm sm:text-base flex items-center gap-2 shadow-2xl animate-scaleIn pointer-events-none">
+            {dragOffsetY < 0 ? (
+              <Icons.ChevronDown className="animate-bounce text-(--accent-color)" size={20} />
+            ) : (
+              <Icons.ChevronUp className="animate-bounce text-(--accent-color)" size={20} />
+            )}
+            <span>{swipeHint}</span>
+          </div>
+        )}
 
         {/* 核心视频：全端保持 object-contain 原画比例，彻底杜绝任何拉伸和裁切 */}
         <video

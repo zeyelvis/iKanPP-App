@@ -50,7 +50,7 @@ export function MobileBottomNav() {
   }
 
   // 播放页隐藏底部导航，避免挡住全屏播放器与控制条
-  if (pathname?.startsWith('/player')) {
+  if (pathname?.startsWith('/player') || pathname?.startsWith('/short/player')) {
     return null;
   }
 
