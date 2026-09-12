@@ -426,9 +426,12 @@ export function HeroSlideshow({
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款双排 6 列热播追更纯文字矩阵（self-end 贴底，高度与左侧播放按钮精准对齐） */}
+            {/* 2. 中栏：爱壹帆同款双排 6 列热播追更纯文字矩阵（自适应列宽 + 贴底对齐，彻底杜绝重叠与截断） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
-              <div className="hidden lg:grid grid-cols-6 grid-rows-2 gap-x-4 xl:gap-x-6 gap-y-2 xl:gap-y-2.5 self-end max-w-2xl xl:max-w-3xl px-2 pb-0.5 sm:pb-1">
+              <div
+                className="hidden lg:grid grid-rows-2 justify-between items-center gap-x-4 xl:gap-x-7 gap-y-2 xl:gap-y-2.5 self-end flex-1 max-w-2xl xl:max-w-[780px] px-2 pb-0.5 sm:pb-1"
+                style={{ gridTemplateColumns: 'repeat(6, auto)' }}
+              >
                 {activeTrendingNav.slice(0, 12).map((item, idx) => {
                   const isCurrentActive = active.title === item.title;
                   return (
@@ -443,7 +446,7 @@ export function HeroSlideshow({
                       }`}
                       title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                     >
-                      <span className="text-[13px] xl:text-[15px] font-normal tracking-tight truncate max-w-[95px] xl:max-w-[125px] leading-snug">
+                      <span className="text-[13px] xl:text-[15px] font-normal tracking-tight whitespace-nowrap leading-snug">
                         {item.title}
                       </span>
                       {item.updateBadge ? (

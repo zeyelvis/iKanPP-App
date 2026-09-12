@@ -164,14 +164,20 @@ async function fetchTrendingNav() {
       if (items.length >= 12) break;
     }
 
-    // 头部国漫与短剧兜底，确保始终保持 12 席完整
+    // 官方 12 席完整基线，确保无论何时均与爱壹帆首页真实展示保持一致
     const defaultBaselines = [
+      { title: '早春晴朗', updateBadge: '' },
+      { title: '兰香如故', updateBadge: '1' },
       { title: '凡人修仙传', updateBadge: '1' },
-      { title: '光阴之外', updateBadge: '1' },
-      { title: '花儿与少年第8季', updateBadge: '' },
-      { title: '杀手妈咪', updateBadge: '1' },
       { title: '飞到我心上', updateBadge: '' },
-      { title: '死有对证', updateBadge: '' }
+      { title: '交锋', updateBadge: '' },
+      { title: '冬城猎凶', updateBadge: '2' },
+      { title: '深渊无间', updateBadge: '' },
+      { title: '生逢其时', updateBadge: '' },
+      { title: '花儿与少年第8季', updateBadge: '' },
+      { title: '光阴之外', updateBadge: '1' },
+      { title: '死有对证', updateBadge: '' },
+      { title: '杀手妈咪', updateBadge: '1' }
     ];
     for (const fb of defaultBaselines) {
       if (!seen.has(fb.title)) {
