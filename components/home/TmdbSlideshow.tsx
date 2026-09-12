@@ -400,30 +400,35 @@ export function HeroSlideshow({
         <div className="fluid-container">
           <div className="iyf-hero-bar pointer-events-auto">
             
-            {/* 1. 左栏：大片主标题、副标题与爱壹帆同款药丸胶囊播放按钮 */}
-            <div className="shrink-0 flex flex-col items-start min-w-[180px] max-w-[240px] xl:max-w-[280px]">
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] mb-1 line-clamp-1">
-                {active.title}
-              </h2>
-              <div className="text-white/80 text-xs sm:text-sm font-normal mb-2.5 flex items-center gap-1.5 line-clamp-1 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
-                <span>{active.episodes_info || (active.types && active.types.length > 0 ? active.types.join('·') : '电影·剧情')}</span>
-                {active.rate && parseFloat(active.rate) > 0 && (
-                  <span className="text-amber-400 font-medium text-xs">★ {active.rate}</span>
-                )}
+            {/* 1. 左栏：大片主标题与评分在上方相对放大，放大的播放按钮在下方与推荐严格对齐 */}
+            <div className="shrink-0 flex flex-col items-start min-w-[220px] max-w-[380px] xl:max-w-[480px] justify-end">
+              {/* 上方：相对放大、极具视觉冲击力的大片片名与评分 */}
+              <div className="mb-3 sm:mb-4">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[42px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1.5 sm:mb-2 line-clamp-1 leading-tight">
+                  {active.title}
+                </h2>
+                <div className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                  <span>{active.episodes_info || (active.types && active.types.length > 0 ? active.types.join(' · ') : '电影 · 剧情')}</span>
+                  {active.rate && parseFloat(active.rate) > 0 && (
+                    <span className="text-amber-400 font-bold text-sm sm:text-base flex items-center gap-0.5 shrink-0">★ {active.rate}</span>
+                  )}
+                </div>
               </div>
+
+              {/* 下方：放大后的流媒体播放大按钮（高度约 52px，与右侧双排推荐在纵向与底线上精准对齐） */}
               <button
                 type="button"
                 onClick={() => handleMovieClick(active)}
-                className="inline-flex items-center gap-2 px-5 py-2 bg-white/20 hover:bg-white/30 active:scale-95 backdrop-blur-md text-white rounded-full text-sm font-medium border border-white/25 shadow-lg transition-all cursor-pointer hover:shadow-[0_0_16px_rgba(255,255,255,0.25)]"
+                className="inline-flex items-center justify-center gap-2.5 px-6.5 py-3 sm:px-7 sm:py-3.5 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-base sm:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102"
               >
                 <span>立即播放</span>
-                <span className="text-xs">▷</span>
+                <span className="text-sm sm:text-base">▷</span>
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款双排 6 列热播追更直达纯文字矩阵（大字舒展排版，浑然一体无突兀黑框） */}
+            {/* 2. 中栏：爱壹帆同款双排 6 列热播追更纯文字矩阵（self-end 贴底，高度与左侧播放按钮精准对齐） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
-              <div className="hidden lg:grid grid-cols-6 grid-rows-2 gap-x-4 xl:gap-x-6 gap-y-2.5 xl:gap-y-3.5 my-auto max-w-2xl xl:max-w-3xl px-2 py-1">
+              <div className="hidden lg:grid grid-cols-6 grid-rows-2 gap-x-4 xl:gap-x-6 gap-y-2 xl:gap-y-2.5 self-end max-w-2xl xl:max-w-3xl px-2 pb-0.5 sm:pb-1">
                 {activeTrendingNav.slice(0, 12).map((item, idx) => {
                   const isCurrentActive = active.title === item.title;
                   return (
@@ -454,7 +459,7 @@ export function HeroSlideshow({
 
             {/* 移动端/平板专享中栏（双排横滑纯文字，同款舒展大字） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
-              <div className="grid lg:hidden grid-flow-col grid-rows-2 auto-cols-max overflow-x-auto gap-x-4 gap-y-2.5 px-2 py-1.5 scrollbar-none">
+              <div className="grid lg:hidden grid-flow-col grid-rows-2 auto-cols-max overflow-x-auto gap-x-4 gap-y-2.5 px-2 py-1.5 scrollbar-none self-end">
                 {activeTrendingNav.slice(0, 12).map((item, idx) => {
                   const isCurrentActive = active.title === item.title;
                   return (
@@ -478,8 +483,8 @@ export function HeroSlideshow({
               </div>
             )}
 
-            {/* 3. 右栏：爱壹帆同款完整 7 席轮播大片缩略海报卡片列表 */}
-            <div className="hidden md:flex items-center gap-1.5 xl:gap-2 shrink-0 my-auto p-1.5 rounded-xl bg-black/20 backdrop-blur-xs border border-white/5">
+            {/* 3. 右栏：爱壹帆同款完整 7 席轮播大片缩略海报卡片列表（self-end 贴底，与播放按钮、中栏底线完全平齐） */}
+            <div className="hidden md:flex items-center gap-1.5 xl:gap-2 shrink-0 self-end p-1.5 rounded-xl bg-black/20 backdrop-blur-xs border border-white/5">
               {currentData.slice(0, 7).map((item, idx) => {
                 const isSelected = idx === activeIndex;
                 return (
