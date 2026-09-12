@@ -150,13 +150,20 @@ export async function GET(req: NextRequest) {
             const items = result.list
               .slice(0, limit)
               .map((it) => normalizeDramaItem(it, source, categoryParam));
-            return NextResponse.json({
-              total: result.total,
-              pagecount: result.pagecount,
-              page,
-              source: source.id,
-              list: items,
-            });
+            return NextResponse.json(
+              {
+                total: result.total,
+                pagecount: result.pagecount,
+                page,
+                source: source.id,
+                list: items,
+              },
+              {
+                headers: {
+                  'Cache-Control': 'public, max-age=300, s-maxage=1800, stale-while-revalidate=86400',
+                },
+              }
+            );
           }
         }
       }

@@ -465,8 +465,61 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       year: "2026",
       types: ["微短剧", "精选热播", "竖屏"],
       remarks: "全46集"
+    },
+    {
+      id: "pb_cat_s_ai1",
+      title: "镜中影：神豪与替身主播",
+      rate: "9.5",
+      cover: "https://www.mdzypic.com/upload/vod/20260911-1/b6d16ec220fba08fcde96ee7a28abe19.jpg",
+      year: "2026",
+      types: ["微短剧", "AI漫剧", "神豪"],
+      remarks: "全73集"
+    },
+    {
+      id: "pb_cat_s_ai2",
+      title: "偏偏京夜想你",
+      rate: "9.4",
+      cover: "https://www.mdzypic.com/upload/vod/20260911-1/8f1fdad65b24195325e9c56a81a4ebbd.jpg",
+      year: "2026",
+      types: ["微短剧", "AI漫剧", "言情"],
+      remarks: "全80集"
+    },
+    {
+      id: "pb_cat_s_ai3",
+      title: "竹马出殡当天，我被迫嫁给了神君",
+      rate: "9.6",
+      cover: "https://www.mdzypic.com/upload/vod/20260911-1/57639c809cc684c6be25099822262002.jpg",
+      year: "2026",
+      types: ["微短剧", "AI漫剧", "玄幻"],
+      remarks: "全62集"
+    },
+    {
+      id: "pb_cat_s_ai4",
+      title: "嫡姐夺骨我为帝，万鬼同悲血作祭",
+      rate: "9.7",
+      cover: "https://www.mdzypic.com/upload/vod/20260911-1/c97826cf24ebe7bfc5ebf0e262efa064.jpg",
+      year: "2026",
+      types: ["微短剧", "AI漫剧", "复仇"],
+      remarks: "全99集"
+    },
+    {
+      id: "pb_cat_s_ai5",
+      title: "让你当宫女，你让暴君跪搓衣板",
+      rate: "9.3",
+      cover: "https://www.mdzypic.com/upload/vod/20260911-1/49ab95925d242e0787905d0246f04b5c.jpg",
+      year: "2026",
+      types: ["微短剧", "AI漫剧", "穿越"],
+      remarks: "全61集"
+    },
+    {
+      id: "pb_cat_s_ai6",
+      title: "闪婚室友慢慢爱，玫瑰入瓮",
+      rate: "9.2",
+      cover: "https://www.mdzypic.com/upload/vod/20260911-1/1fc20ab3e306058ceb0bc2021f58aa75.jpg",
+      year: "2026",
+      types: ["微短剧", "AI漫剧", "都市"],
+      remarks: "全94集"
     }
-
   ]
 };
 
@@ -486,6 +539,13 @@ export function getPrebakedCategoryShelves(
 
   // 将预烘焙数据分配到前几个货架中，保证首屏 100% 满屏渲染
   shelves.forEach((shelf, idx) => {
+    if (shelf.tag === 'ai') {
+      const aiItems = list.filter((it) => it.types?.some((t) => t.includes('AI') || t.includes('漫剧')));
+      if (aiItems.length > 0) {
+        result[shelf.tag] = aiItems;
+        return;
+      }
+    }
     // 错位切片展示不同影片
     const start = (idx * 3) % list.length;
     const rotated = [...list.slice(start), ...list.slice(0, start)];

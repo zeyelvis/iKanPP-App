@@ -82,7 +82,7 @@ export function CategoryHub({
   }, [selectedGenre, selectedRegion, selectedYear]);
 
 // ── SWR 频道大厅本地瞬间缓存 ──────────────────────────
-const CATHUB_CACHE_KEY = 'kvideo-cathub-v2-';
+const CATHUB_CACHE_KEY = 'kvideo-cathub-v3-';
 
 function getLocalCatHub(key: string): Record<string, RailMovie[]> | null {
   if (typeof window === 'undefined') return null;
@@ -122,7 +122,10 @@ function isSameList(a: any[], b: any[]): boolean {
   const [shelfData, setShelfData] = useState<Record<string, RailMovie[]>>(() => {
     if (typeof window !== 'undefined') {
       const cached = getLocalCatHub(activeNav || doubanType);
-      if (cached && Object.keys(cached).length > 0) return cached;
+      if (cached && Object.keys(cached).length > 0) {
+        // 安全合并：确保新增的货架（如 ai）即使在旧缓存中不存在，也能立刻显示初始预烘焙海报
+        return { ...initialPrebaked, ...cached };
+      }
     }
     return initialPrebaked;
   });
@@ -142,7 +145,7 @@ function isSameList(a: any[], b: any[]): boolean {
     return firstList && firstList.length > 0 ? firstList[0] : null;
   }, [shelves, shelfData]);
 
-  // 获取多个专属货架片单（分两批低压力拉取，带 1800ms 快速超时熔断，绝不卡死连接池）
+  // 获取多个专属货架片单（分两批低压力拉取，带超时熔断，绝不卡死连接池）
   useEffect(() => {
     let isMounted = true;
     const cacheKey = activeNav || doubanType;
@@ -160,7 +163,8 @@ function isSameList(a: any[], b: any[]): boolean {
           if (shelf.prebakedOnly) return null;
           try {
             const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), shortDramaMode ? 2500 : 1800);
+            // 短剧从源站采集需要更从容的超时时间（6000ms），避免 2500ms 造成 abort 熔断
+            const timer = setTimeout(() => controller.abort(), shortDramaMode ? 6000 : 3500);
 
             if (shortDramaMode) {
               const res = await fetch(
