@@ -166,18 +166,22 @@ function HeroBackdrop({
         />
       )}
 
-      {/* 3. 电影级四向深邃暗黑羽化渐变系统（爱壹帆 1:1 全景沉浸质感） */}
-      {/* 底部融合渐变：向上延展 75%，平滑过渡融入页面背景色 #0A0A0F */}
-      <div className="absolute inset-x-0 bottom-0 h-3/4 bg-linear-to-t from-[#0A0A0F] via-[#0A0A0F]/85 via-40% via-[#0A0A0F]/25 to-transparent pointer-events-none" />
+      {/* 3. 电影级多层次深邃暗黑羽化渐变系统（爱壹帆 1:1 全景沉浸质感） */}
+      {/* 底部融合多段渐变：向上延展 80%，平滑过渡融入页面背景色 #0A0A0F，消除断层 */}
+      <div className="absolute inset-x-0 bottom-0 h-4/5 bg-linear-to-t from-[#0A0A0F] via-[#0A0A0F]/90 via-30% via-[#0A0A0F]/40 via-65% to-transparent pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-24 sm:h-36 bg-linear-to-t from-[#0A0A0F] to-transparent pointer-events-none" />
 
       {/* 顶部防眩保护渐变：向下延展，保护全透明浮动 Navbar 文字与搜索框 */}
       <div className="absolute inset-x-0 top-0 h-48 sm:h-64 bg-linear-to-b from-[#0A0A0F]/95 via-[#0A0A0F]/50 via-40% to-transparent pointer-events-none" />
 
-      {/* 左翼深度羽化：为左侧大片主标题与药丸播放键提供坚实深色基底 */}
-      <div className="absolute inset-y-0 left-0 w-full max-w-xl xl:max-w-2xl bg-linear-to-r from-[#0A0A0F] via-[#0A0A0F]/70 via-35% to-transparent pointer-events-none" />
+      {/* 左翼深度羽化：为左侧大片主标题、副标题与操作按钮提供强对比度深色基底 */}
+      <div className="absolute inset-y-0 left-0 w-full max-w-2xl xl:max-w-3xl bg-linear-to-r from-[#0A0A0F] via-[#0A0A0F]/85 via-45% via-[#0A0A0F]/30 via-75% to-transparent pointer-events-none" />
+
+      {/* 左下角专属暗角遮罩：强化左下标题与信息区基底，在浅色海报下也能保持绝佳可读性 */}
+      <div className="absolute bottom-0 left-0 w-full sm:w-[650px] h-[380px] bg-linear-to-tr from-[#0A0A0F] via-[#0A0A0F]/80 via-40% to-transparent pointer-events-none" />
 
       {/* 右翼柔和消隐：消除右边缘生硬切边，与深色背景浑然天成 */}
-      <div className="absolute inset-y-0 right-0 w-48 sm:w-80 bg-linear-to-l from-[#0A0A0F]/90 via-[#0A0A0F]/35 to-transparent pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-56 sm:w-96 bg-linear-to-l from-[#0A0A0F]/90 via-[#0A0A0F]/35 to-transparent pointer-events-none" />
     </div>
   );
 }
@@ -388,10 +392,10 @@ export function HeroSlideshow({
             
             {/* 1. 左栏：大片主标题、副标题与爱壹帆同款药丸胶囊播放按钮 */}
             <div className="shrink-0 flex flex-col items-start min-w-[180px] max-w-[240px] xl:max-w-[280px]">
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight drop-shadow-md mb-1 line-clamp-1">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] mb-1 line-clamp-1">
                 {active.title}
               </h2>
-              <div className="text-white/60 text-xs sm:text-sm font-normal mb-3.5 flex items-center gap-1.5 line-clamp-1">
+              <div className="text-white/80 text-xs sm:text-sm font-normal mb-3.5 flex items-center gap-1.5 line-clamp-1 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
                 <span>{active.episodes_info || (active.types && active.types.length > 0 ? active.types.join('·') : '电影·剧情')}</span>
                 {active.rate && parseFloat(active.rate) > 0 && (
                   <span className="text-amber-400 font-medium text-xs">★ {active.rate}</span>
@@ -400,16 +404,16 @@ export function HeroSlideshow({
               <button
                 type="button"
                 onClick={() => handleMovieClick(active)}
-                className="inline-flex items-center gap-2 px-5 py-2 bg-white/20 hover:bg-white/30 active:scale-95 backdrop-blur-md text-white rounded-full text-sm font-medium border border-white/20 shadow-md transition-all cursor-pointer hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+                className="inline-flex items-center gap-2 px-5 py-2 bg-white/20 hover:bg-white/30 active:scale-95 backdrop-blur-md text-white rounded-full text-sm font-medium border border-white/25 shadow-lg transition-all cursor-pointer hover:shadow-[0_0_16px_rgba(255,255,255,0.25)]"
               >
                 <span>立即播放</span>
                 <span className="text-xs">▷</span>
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款双排 6 列热播追更直达纯文字矩阵（桌面端展示，共 12 部） */}
+            {/* 2. 中栏：爱壹帆同款双排 6 列热播追更直达纯文字矩阵（晶莹通透暗色底板，保证全天候可读） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
-              <div className="hidden lg:grid grid-cols-6 grid-rows-2 gap-x-3 xl:gap-x-5 gap-y-2.5 my-auto max-w-xl xl:max-w-2xl px-1">
+              <div className="hidden lg:grid grid-cols-6 grid-rows-2 gap-x-3 xl:gap-x-4.5 gap-y-2.5 my-auto max-w-xl xl:max-w-2xl px-4 py-2.5 rounded-2xl bg-black/35 backdrop-blur-md border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
                 {activeTrendingNav.slice(0, 12).map((item, idx) => {
                   const isCurrentActive = active.title === item.title;
                   return (
@@ -420,7 +424,7 @@ export function HeroSlideshow({
                       className={`group flex items-center justify-start text-left cursor-pointer transition-colors duration-150 select-none ${
                         isCurrentActive
                           ? 'text-[#00D1FF] font-bold drop-shadow-[0_0_8px_rgba(0,209,255,0.7)]'
-                          : 'text-white/70 hover:text-white font-normal'
+                          : 'text-white/80 hover:text-white font-normal hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]'
                       }`}
                       title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                     >
@@ -438,9 +442,9 @@ export function HeroSlideshow({
               </div>
             )}
 
-            {/* 移动端/平板专享中栏（双排横滑纯文字） */}
+            {/* 移动端/平板专享中栏（双排横滑纯文字，同款半透明底板） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
-              <div className="grid lg:hidden grid-flow-col grid-rows-2 auto-cols-max overflow-x-auto gap-x-4 gap-y-2 py-1 scrollbar-none">
+              <div className="grid lg:hidden grid-flow-col grid-rows-2 auto-cols-max overflow-x-auto gap-x-4 gap-y-2 px-3.5 py-2 rounded-xl bg-black/35 backdrop-blur-md border border-white/10 scrollbar-none shadow-md">
                 {activeTrendingNav.slice(0, 12).map((item, idx) => {
                   const isCurrentActive = active.title === item.title;
                   return (
@@ -449,7 +453,7 @@ export function HeroSlideshow({
                       type="button"
                       onClick={() => handleTrendingClick(item)}
                       className={`flex items-center gap-1 text-xs shrink-0 select-none ${
-                        isCurrentActive ? 'text-[#00D1FF] font-bold' : 'text-white/75'
+                        isCurrentActive ? 'text-[#00D1FF] font-bold' : 'text-white/80'
                       }`}
                     >
                       <span>{item.title}</span>
@@ -464,8 +468,8 @@ export function HeroSlideshow({
               </div>
             )}
 
-            {/* 3. 右栏：爱壹帆同款当前轮播大片缩略海报卡片列表（4~5 席） */}
-            <div className="hidden md:flex items-center gap-2 xl:gap-2.5 shrink-0 my-auto">
+            {/* 3. 右栏：爱壹帆同款当前轮播大片缩略海报卡片列表（精致毛玻璃托盘底座，4~5 席） */}
+            <div className="hidden md:flex items-center gap-2 xl:gap-2.5 shrink-0 my-auto p-2 xl:p-2.5 rounded-2xl bg-black/30 backdrop-blur-md border border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
               {currentData.slice(0, 5).map((item, idx) => {
                 const isSelected = idx === activeIndex;
                 return (
@@ -476,7 +480,7 @@ export function HeroSlideshow({
                     className={`group relative w-15 h-21 lg:w-16 lg:h-23 xl:w-18 xl:h-25 rounded-lg overflow-hidden transition-all duration-300 cursor-pointer border ${
                       isSelected
                         ? 'border-[#00D1FF] ring-2 ring-[#00D1FF]/60 scale-105 shadow-[0_0_12px_rgba(0,209,255,0.5)] z-10'
-                        : 'border-white/10 opacity-70 hover:opacity-100 hover:scale-102'
+                        : 'border-white/15 opacity-75 hover:opacity-100 hover:scale-102 hover:border-white/40'
                     }`}
                     title={item.title}
                   >
@@ -500,7 +504,7 @@ export function HeroSlideshow({
         </div>
       </div>
 
-      {/* 4. 左右翻页箭头 */}
+      {/* 4. 左右翻页箭头（加深对比度与高级毛玻璃，消除浮动干扰） */}
       {currentData.length > 1 && (
         <>
           <button
@@ -510,7 +514,7 @@ export function HeroSlideshow({
               goToPrev();
             }}
             aria-label="切换到上一部大片"
-            className="absolute left-2.5 sm:left-5 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-black/70 active:scale-90 text-white/80 hover:text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all cursor-pointer shadow-xl hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+            className="absolute left-2.5 sm:left-5 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/85 active:scale-90 text-white/85 hover:text-white backdrop-blur-xl border border-white/25 hover:border-white/50 flex items-center justify-center transition-all duration-200 cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(255,255,255,0.25)]"
           >
             <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
               <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
@@ -524,7 +528,7 @@ export function HeroSlideshow({
               goToNext();
             }}
             aria-label="切换到下一部大片"
-            className="absolute right-2.5 sm:right-5 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-black/70 active:scale-90 text-white/80 hover:text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all cursor-pointer shadow-xl hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+            className="absolute right-2.5 sm:right-5 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/85 active:scale-90 text-white/85 hover:text-white backdrop-blur-xl border border-white/25 hover:border-white/50 flex items-center justify-center transition-all duration-200 cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(255,255,255,0.25)]"
           >
             <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
               <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />

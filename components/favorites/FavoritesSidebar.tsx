@@ -107,10 +107,10 @@ export function FavoritesSidebar({ isPremium = false }: { isPremium?: boolean })
 
     return (
         <>
-            {/* Toggle Button - Left side */}
+            {/* Toggle Button - Left side (下移至下半区，彻底避免与巨幕翻页箭头冲突) */}
             <button
                 onClick={() => setIsOpen(true)}
-                className={`fixed left-6 top-[45%] -translate-y-1/2 z-40 hidden sm:flex bg-(--glass-bg) backdrop-blur-sm saturate-120 border border-(--glass-border) rounded-2xl shadow-(--shadow-md) p-3 hover:scale-105 transition-all duration-300 cursor-pointer ${showToggle ? 'opacity-60 hover:opacity-100' : 'opacity-0 pointer-events-none'}`}
+                className={`fixed left-6 bottom-24 z-40 hidden sm:flex bg-(--glass-bg) backdrop-blur-md saturate-120 border border-(--glass-border) rounded-2xl shadow-(--shadow-md) p-3 hover:scale-105 transition-all duration-300 cursor-pointer ${showToggle ? 'opacity-60 hover:opacity-100' : 'opacity-0 pointer-events-none'}`}
                 aria-label="打开收藏夹"
             >
                 <Icons.Heart size={20} className="text-(--text-color)" />
