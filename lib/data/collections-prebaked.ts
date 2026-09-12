@@ -5287,6 +5287,102 @@ export const SHORT_DRAMA_COLLECTIONS: CuratedCollection[] = [
     ]
   },
   {
+    "id": "col-short-ai-gen",
+    "title": "2026 生成式 AI 短剧大赏",
+    "subtitle": "大模型视觉革命，Sora与可灵科技前沿脑洞短剧",
+    "slug": "2026-ai-generated-short-dramas",
+    "coverPosters": [
+      "https://www.mdzypic.com/upload/vod/20260911-1/b6d16ec220fba08fcde96ee7a28abe19.jpg",
+      "https://www.mdzypic.com/upload/vod/20260911-1/8f1fdad65b24195325e9c56a81a4ebbd.jpg",
+      "https://www.mdzypic.com/upload/vod/20260911-1/c97826cf24ebe7bfc5ebf0e262efa064.jpg"
+    ],
+    "totalCount": 8,
+    "description": "精选 2026 年最新爆火的生成式 AI 漫剧与 AI 微短剧。依托顶尖多模态大模型视觉生成，剧情突破现实维度，异能觉醒、神豪替身、复仇逆袭狂欢呈现。",
+    "accent": "#8B5CF6",
+    "films": [
+      {
+        "id": "sd_ai_89506",
+        "title": "镜中影：神豪与替身主播",
+        "rate": "9.5",
+        "cover": "https://www.mdzypic.com/upload/vod/20260911-1/b6d16ec220fba08fcde96ee7a28abe19.jpg",
+        "year": "2026",
+        "description": "2026 最新爆款生成式 AI 漫剧，神豪逆袭与替身反转",
+        "types": ["AI漫剧", "神豪", "都市"],
+        "remarks": "全73集"
+      },
+      {
+        "id": "sd_ai_89504",
+        "title": "偏偏京夜想你",
+        "rate": "9.4",
+        "cover": "https://www.mdzypic.com/upload/vod/20260911-1/8f1fdad65b24195325e9c56a81a4ebbd.jpg",
+        "year": "2026",
+        "description": "AI 细腻唯美画风，京圈豪门深情虐恋",
+        "types": ["AI漫剧", "言情", "甜宠"],
+        "remarks": "全80集"
+      },
+      {
+        "id": "sd_ai_89498",
+        "title": "竹马出殡当天，我被迫嫁给了神君",
+        "rate": "9.6",
+        "cover": "https://www.mdzypic.com/upload/vod/20260911-1/57639c809cc684c6be25099822262002.jpg",
+        "year": "2026",
+        "description": "玄幻宏大东方神话，大模型场景天花板",
+        "types": ["AI漫剧", "仙侠", "玄幻"],
+        "remarks": "全62集"
+      },
+      {
+        "id": "sd_ai_89493",
+        "title": "嫡姐夺骨我为帝，万鬼同悲血作祭",
+        "rate": "9.7",
+        "cover": "https://www.mdzypic.com/upload/vod/20260911-1/c97826cf24ebe7bfc5ebf0e262efa064.jpg",
+        "year": "2026",
+        "description": "大女主暗黑玄幻复仇，万鬼降临震撼视效",
+        "types": ["AI漫剧", "玄幻", "复仇"],
+        "remarks": "全99集"
+      },
+      {
+        "id": "sd_ai_89476",
+        "title": "让你当宫女，你让暴君跪搓衣板",
+        "rate": "9.3",
+        "cover": "https://www.mdzypic.com/upload/vod/20260911-1/49ab95925d242e0787905d0246f04b5c.jpg",
+        "year": "2026",
+        "description": "爆笑古代穿越脑洞，整顿后宫暴打权贵",
+        "types": ["AI漫剧", "穿越", "搞笑"],
+        "remarks": "全61集"
+      },
+      {
+        "id": "sd_ai_89481",
+        "title": "闪婚室友慢慢爱，玫瑰入瓮",
+        "rate": "9.2",
+        "cover": "https://www.mdzypic.com/upload/vod/20260911-1/1fc20ab3e306058ceb0bc2021f58aa75.jpg",
+        "year": "2026",
+        "description": "同居先婚后爱，都市暖心高糖微剧",
+        "types": ["AI漫剧", "都市", "言情"],
+        "remarks": "全94集"
+      },
+      {
+        "id": "sd_ai_89486",
+        "title": "万物回收我靠捡破烂成神第一季",
+        "rate": "9.5",
+        "cover": "https://www.mdzypic.com/upload/vod/20260911-1/647b9655b4ed359e034c7a27dd5ba93e.jpg",
+        "year": "2026",
+        "description": "脑洞大开系统流，万物皆可分解变废为宝",
+        "types": ["AI漫剧", "系统", "脑洞"],
+        "remarks": "全30集"
+      },
+      {
+        "id": "sd_ai_89470",
+        "title": "末日游戏：庇护所是瞭望塔第五季",
+        "rate": "9.6",
+        "cover": "https://www.mdzypic.com/upload/vod/20260911-1/c669537630993d2e17eb47629c4f755f.jpg",
+        "year": "2026",
+        "description": "末日废土科幻巨构，极具代入感的生存之战",
+        "types": ["AI漫剧", "末日", "科幻"],
+        "remarks": "全91集"
+      }
+    ]
+  },
+  {
     "id": "col-short-god-of-war",
     "title": "逆袭称王 · 战神归来爽剧专区",
     "subtitle": "潜龙出渊，谁与争锋！超燃逆袭封神大戏",

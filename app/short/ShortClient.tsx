@@ -10,6 +10,7 @@ import { ShortCollectionsRail } from '@/components/home/ShortCollectionsRail';
 
 const GENRES = [
   { label: '全部短剧', value: '' },
+  { label: '🤖 2026 AI短剧', value: 'ai' },
   { label: '⚡ 反转爽剧', value: 'shuangju' },
   { label: '💕 言情总裁', value: 'yanqing' },
   { label: '🏙️ 现代都市', value: 'dushi' },
@@ -17,11 +18,11 @@ const GENRES = [
   { label: '⏳ 穿越年代', value: 'chuanyue' },
   { label: '🔄 重生民国', value: 'chongsheng' },
   { label: '🔍 脑洞悬疑', value: 'naodong' },
-  { label: '🤖 AI漫剧', value: 'ai' },
 ];
 
 const REGIONS = [
   { label: '全部来源', value: '' },
+  { label: '🤖 AI生成漫剧', value: 'ai' },
   { label: '⚡ 爽剧打脸', value: 'shuangju' },
   { label: '💕 甜宠恋爱', value: 'yanqing' },
   { label: '🏙️ 都市职场', value: 'dushi' },
@@ -36,6 +37,12 @@ const YEARS = [
 ];
 
 const SHELVES = [
+  {
+    title: '🤖 2026 AI短剧 · 生成式大模型脑洞神作',
+    icon: '🤖',
+    badge: '2026 AI HOT',
+    tag: 'ai',
+  },
   {
     title: '⚡ 爆款爽剧 · 逆天改命打脸封神',
     icon: '⚡',
@@ -97,7 +104,7 @@ export default function ShortClient({ topCustomRails }: ShortClientProps) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="在 36,000+ 部短剧中搜索剧名（如：龙王、战神、夫人、逆袭）..."
+            placeholder="在 36,000+ 部短剧中搜索剧名（如：神豪、2026 AI短剧、暴君、逆袭）..."
             className="w-full bg-transparent text-sm sm:text-base text-white placeholder-white/30 focus:outline-none"
           />
           <button
