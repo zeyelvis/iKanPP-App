@@ -106,11 +106,21 @@ export default function ShortPlayerClient() {
               if (bestHit.poster) setPoster(bestHit.poster);
               if (bestHit.episodes && bestHit.episodes.length > 0) {
                 setEpisodes(bestHit.episodes);
+                if (bestHit.playUrl && typeof window !== 'undefined') {
+                  const p = new URLSearchParams(window.location.search);
+                  p.set('url', bestHit.playUrl);
+                  window.history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+                }
                 return;
               } else if (bestHit.playUrl) {
                 const epList = parseShortDramaPlayUrl(bestHit.playUrl);
                 if (epList.length > 0) {
                   setEpisodes(epList);
+                  if (typeof window !== 'undefined') {
+                    const p = new URLSearchParams(window.location.search);
+                    p.set('url', bestHit.playUrl);
+                    window.history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+                  }
                   return;
                 }
               }
@@ -209,7 +219,7 @@ export default function ShortPlayerClient() {
           title,
           currentUrl,
           currentEpIndex,
-          'guangsu',
+          'modu',
           video.currentTime,
           video.duration,
           poster,

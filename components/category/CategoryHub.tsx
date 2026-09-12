@@ -177,7 +177,7 @@ function isSameList(a: any[], b: any[]): boolean {
                 rate: item.remarks || (item.totalEpisodes ? `全${item.totalEpisodes}集` : '9.0'),
                 year: item.year,
                 types: [item.categoryName || '短剧'],
-                url: item.firstPlayUrl || '',
+                url: item.playUrl || item.firstPlayUrl || '',
                 play_url: item.playUrl,
                 episodes: item.episodes,
               }));
@@ -321,7 +321,7 @@ function isSameList(a: any[], b: any[]): boolean {
             rate: item.remarks || (item.totalEpisodes ? `全${item.totalEpisodes}集` : '9.0'),
             year: item.year,
             types: [item.categoryName || '短剧'],
-            url: item.firstPlayUrl || '',
+            url: item.playUrl || item.firstPlayUrl || '',
             play_url: item.playUrl,
             episodes: item.episodes,
           }));
@@ -365,13 +365,14 @@ function isSameList(a: any[], b: any[]): boolean {
 
   const handleMovieClick = (movie: any) => {
     if (shortDramaMode) {
-      const playUrl = movie.url || movie.firstPlayUrl || movie.play_url || '';
+      const playUrl = movie.play_url || movie.playUrl || movie.url || movie.firstPlayUrl || '';
       const title = movie.title || '';
       const poster = movie.cover || movie.poster || '';
       const query = new URLSearchParams();
       if (title) query.set('title', title);
       if (playUrl) query.set('url', playUrl);
       if (poster) query.set('poster', poster);
+      if (movie.id) query.set('id', String(movie.id));
       router.push(`/short/player?${query.toString()}`);
       return;
     }

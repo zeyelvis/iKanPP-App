@@ -91,19 +91,39 @@ export async function GET(req: NextRequest) {
     const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
     try {
-      const url = `${source.baseUrl}${source.apiPath}?ac=detail&wd=${encodeURIComponent(query)}&pg=${page}`;
-      const res = await fetch(url, {
+      let url = `${source.baseUrl}${source.apiPath}?ac=detail&wd=${encodeURIComponent(query)}&pg=${page}`;
+      let res = await fetch(url, {
         signal: controller.signal,
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
           Accept: 'application/json',
         },
       });
+
+      let data: any = null;
+      if (res.ok) {
+        data = await res.json();
+      }
+
+      // 若整句未查到且 query 包含标点/副标题，尝试取主标题词二次检索
+      const subTitle = query.split(/[,，、:：\s\-—_]/)[0]?.trim();
+      if ((!data || !Array.isArray(data.list) || data.list.length === 0) && subTitle && subTitle.length >= 2 && subTitle !== query) {
+        url = `${source.baseUrl}${source.apiPath}?ac=detail&wd=${encodeURIComponent(subTitle)}&pg=${page}`;
+        res = await fetch(url, {
+          signal: controller.signal,
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            Accept: 'application/json',
+          },
+        });
+        if (res.ok) {
+          data = await res.json();
+        }
+      }
+
       clearTimeout(timer);
 
-      if (!res.ok) continue;
-      const data = await res.json();
-      if (!data || !Array.isArray(data.list)) continue;
+      if (!data || !Array.isArray(data.list) || data.list.length === 0) continue;
 
       // 过滤短剧相关项目
       const filteredList = data.list.filter((it: any) => isShortDramaItem(it, source));

@@ -19,11 +19,12 @@ export function ShortDramaForYouRail() {
   };
 
   const handleClickDrama = (drama: any) => {
-    const playUrl = drama.firstPlayUrl || drama.playUrl || '';
+    const playUrl = drama.playUrl || drama.firstPlayUrl || '';
     const query = new URLSearchParams();
     if (drama.title) query.set('title', drama.title);
     if (playUrl) query.set('url', playUrl);
     if (drama.poster) query.set('poster', drama.poster);
+    if (drama.id) query.set('id', String(drama.id));
     router.push(`/short/player?${query.toString()}`);
   };
 

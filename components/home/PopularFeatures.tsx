@@ -419,12 +419,13 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   }, [prebaked, weeklyMovies, shelf1Movies, shelf2Movies, shelf3Movies, shelf4Movies]);
 
   const handleMovieClick = (movie: any) => {
-    if (contentType === 'short' || movie.play_url || movie.firstPlayUrl || (movie.types && movie.types.includes('短剧'))) {
-      const playUrl = movie.url || movie.firstPlayUrl || movie.play_url || '';
+    if (contentType === 'short' || movie.play_url || movie.playUrl || movie.firstPlayUrl || (movie.types && movie.types.includes('短剧'))) {
+      const playUrl = movie.play_url || movie.playUrl || movie.url || movie.firstPlayUrl || '';
       const query = new URLSearchParams();
       if (movie.title) query.set('title', movie.title);
       if (playUrl) query.set('url', playUrl);
       if (movie.cover || movie.poster) query.set('poster', movie.cover || movie.poster);
+      if (movie.id) query.set('id', String(movie.id));
       router.push(`/short/player?${query.toString()}`);
       return;
     }
