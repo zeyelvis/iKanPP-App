@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import { CategoryHub } from '@/components/category/CategoryHub';
+import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 
 const GENRES = [
   { label: '古装', value: '古装' },
@@ -59,6 +60,7 @@ export default function TvClient() {
         years={YEARS}
         shelves={SHELVES}
         defaultTag="热门"
+        heroItems={PREBAKED_HOME_DATA.tv.hero}
       />
     </Suspense>
   );

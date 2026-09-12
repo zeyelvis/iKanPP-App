@@ -12,6 +12,8 @@ import { WatchHistorySidebar } from '@/components/history/WatchHistorySidebar';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { getPrebakedCategoryShelves, PREBAKED_CATEGORY_ITEMS } from '@/lib/data/category-prebaked';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { HeroSlideshow } from '@/components/home/TmdbSlideshow';
+import type { PrebakedSubject } from '@/lib/data/home-prebaked';
 
 export interface FilterOption {
   label: string;
@@ -40,6 +42,7 @@ export interface CategoryHubProps {
   usePrebakedOnly?: boolean;
   shortDramaMode?: boolean;
   topCustomRails?: React.ReactNode;
+  heroItems?: PrebakedSubject[];
 }
 
 export function CategoryHub({
@@ -55,6 +58,7 @@ export function CategoryHub({
   usePrebakedOnly = false,
   shortDramaMode = false,
   topCustomRails,
+  heroItems,
 }: CategoryHubProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -396,8 +400,22 @@ function isSameList(a: any[], b: any[]): boolean {
       />
 
       <div className="fluid-container pt-3 sm:pt-4 pb-24 sm:pb-20 space-y-6 sm:space-y-10">
-        {/* 1. 频道顶部焦点巨幕 (Hero Spotlight) */}
-        {heroMovie && (
+        {/* SEO 规范：为分类页提供显式唯一的 H1 标题 */}
+        <h1 className="sr-only">
+          {categoryTitle} - {categorySubtitle}
+        </h1>
+
+        {/* 1. 频道顶部焦点巨幕 (Hero Spotlight / HeroSlideshow 轮播) */}
+        {heroItems && heroItems.length > 0 ? (
+          <HeroSlideshow
+            contentType={doubanType === 'movie' ? 'movie' : 'tv'}
+            customHeroMovies={heroItems}
+            onMovieClick={handleMovieClick}
+            onSearch={handleSearch}
+            badgeTitle={`${categoryTitle} · 焦点热播`}
+            compact={true}
+          />
+        ) : heroMovie ? (
           <div className="relative w-full h-[48vh] min-h-85 sm:h-[55vh] lg:h-[60vh] max-h-150 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-white/10 group select-none">
             {/* 背景大图 */}
             <div className="absolute inset-0">
@@ -424,9 +442,9 @@ function isSameList(a: any[], b: any[]): boolean {
                 )}
               </div>
 
-              <h1 className="text-2xl sm:text-5xl font-black text-white tracking-tight drop-shadow-2xl mb-3 sm:mb-4 line-clamp-2">
+              <h2 className="text-2xl sm:text-5xl font-black text-white tracking-tight drop-shadow-2xl mb-3 sm:mb-4 line-clamp-2">
                 {heroMovie.title}
-              </h1>
+              </h2>
 
               <div className="flex items-center gap-2.5 sm:gap-3">
                 <button
@@ -448,7 +466,7 @@ function isSameList(a: any[], b: any[]): boolean {
               </div>
             </div>
           </div>
-        )}
+        ) : null}
 
         {/* 顶部自定义专属推荐与热度榜等 */}
         {topCustomRails}

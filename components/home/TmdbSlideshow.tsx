@@ -178,9 +178,19 @@ interface HeroSlideshowProps {
   contentType?: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'short';
   onSearch?: (query: string) => void;
   customHeroMovies?: PrebakedSubject[];
+  onMovieClick?: (movie: PrebakedSubject) => void;
+  badgeTitle?: string;
+  compact?: boolean;
 }
 
-export function HeroSlideshow({ contentType = 'all', onSearch, customHeroMovies }: HeroSlideshowProps) {
+export function HeroSlideshow({
+  contentType = 'all',
+  onSearch,
+  customHeroMovies,
+  onMovieClick,
+  badgeTitle,
+  compact = false,
+}: HeroSlideshowProps) {
   const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
   const [backdrops, setBackdrops] = useState<Record<string, string | null>>({});
@@ -258,12 +268,16 @@ export function HeroSlideshow({ contentType = 'all', onSearch, customHeroMovies 
   }, [isPaused, currentData.length, activeIndex]);
 
   const handleMovieClick = (movie: any) => {
+    if (onMovieClick) {
+      onMovieClick(movie);
+      return;
+    }
     router.push(`/title/${generateSlug(movie.title)}`);
   };
 
   if (currentData.length === 0) {
     return (
-      <div className="relative w-full h-[52vh] sm:h-[62vh] lg:h-[70vh] max-h-180 rounded-3xl overflow-hidden bg-white/5 animate-pulse mb-8 border border-white/5" />
+      <div className={`relative w-full ${compact ? 'h-[50vh] sm:h-[58vh] lg:h-[64vh]' : 'h-[52vh] sm:h-[62vh] lg:h-[70vh]'} max-h-180 rounded-2xl sm:rounded-3xl overflow-hidden bg-white/5 animate-pulse mb-8 border border-white/5`} />
     );
   }
 
@@ -324,7 +338,11 @@ export function HeroSlideshow({ contentType = 'all', onSearch, customHeroMovies 
 
   return (
     <div
-      className="relative w-full h-[58vh] min-h-97.5 sm:h-[64vh] lg:h-[72vh] max-h-187.5 rounded-3xl overflow-hidden mb-10 group select-none shadow-2xl border border-white/10"
+      className={`relative w-full ${
+        compact
+          ? 'h-[50vh] min-h-85 sm:h-[58vh] lg:h-[64vh] max-h-160 mb-6 sm:mb-8'
+          : 'h-[58vh] min-h-97.5 sm:h-[64vh] lg:h-[72vh] max-h-187.5 mb-10'
+      } rounded-2xl sm:rounded-3xl overflow-hidden group select-none shadow-2xl border border-white/10`}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
@@ -343,7 +361,7 @@ export function HeroSlideshow({ contentType = 'all', onSearch, customHeroMovies 
           {/* 榜单热度与类型徽章 */}
           <div className="flex items-center gap-2 flex-wrap mb-3">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-linear-to-r from-red-600 to-amber-600 text-white text-xs font-black rounded-full shadow-lg">
-              🔥 #{activeIndex + 1} 全网焦点热播
+              🔥 #{activeIndex + 1} {badgeTitle || '全网焦点热播'}
             </span>
 
             {active.rate && parseFloat(active.rate) > 0 ? (
@@ -369,21 +387,34 @@ export function HeroSlideshow({ contentType = 'all', onSearch, customHeroMovies 
           </div>
 
           {/* 巨幕超大片名 (SEO 语义规范：首页全局唯一 H1 位于服务端外壳，轮播巨幕使用 H2) */}
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-2xl mb-4 sm:mb-6 line-clamp-2">
+          <h2 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-2xl mb-4 sm:mb-6 line-clamp-2">
             {active.title}
           </h2>
 
           {/* 操作按钮组 */}
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => handleMovieClick(active)}
-              className="inline-flex items-center justify-center gap-2.5 px-7 py-3 sm:py-3.5 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-full text-sm sm:text-base font-bold shadow-xl transition-all cursor-pointer hover:shadow-[0_0_25px_rgba(229,9,20,0.6)]"
+              className="inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-2.5 sm:py-3.5 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-full text-xs sm:text-base font-bold shadow-xl transition-all cursor-pointer hover:shadow-[0_0_25px_rgba(229,9,20,0.6)]"
             >
               <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z" />
               </svg>
               立即播放
             </button>
+
+            {onSearch && (
+              <button
+                type="button"
+                onClick={() => onSearch(active.title)}
+                className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 sm:py-3.5 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-xl text-white rounded-full text-xs sm:text-sm font-semibold border border-white/15 transition-all cursor-pointer shadow-lg"
+              >
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                搜全网源
+              </button>
+            )}
           </div>
         </div>
       </div>

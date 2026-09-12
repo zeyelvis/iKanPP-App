@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import { CategoryHub } from '@/components/category/CategoryHub';
+import { VARIETY_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 
 const GENRES = [
   { label: '真人秀', value: '真人秀' },
@@ -49,6 +50,7 @@ export default function VarietyClient() {
         years={YEARS}
         shelves={SHELVES}
         defaultTag="综艺"
+        heroItems={VARIETY_HOME_DATA.hero}
       />
     </Suspense>
   );

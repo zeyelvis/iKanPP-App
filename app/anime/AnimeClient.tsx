@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import { CategoryHub } from '@/components/category/CategoryHub';
+import { ANIME_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 
 const GENRES = [
   { label: '热血', value: '热血' },
@@ -55,6 +56,7 @@ export default function AnimeClient() {
         years={YEARS}
         shelves={SHELVES}
         defaultTag="日本动画"
+        heroItems={ANIME_HOME_DATA.hero}
       />
     </Suspense>
   );

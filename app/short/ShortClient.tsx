@@ -9,6 +9,7 @@ import { ShortDramaTrendingRail } from '@/components/home/ShortDramaTrendingRail
 import { ShortDramaForYouRail } from '@/components/home/ShortDramaForYouRail';
 import { ShortCollectionsRail } from '@/components/home/ShortCollectionsRail';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { SHORT_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 
 const GENRES = [
   { label: '全部短剧', value: '' },
@@ -331,6 +332,7 @@ function ShortContent({ topCustomRails }: ShortClientProps) {
       usePrebakedOnly={false}
       shortDramaMode={true}
       topCustomRails={shortRails}
+      heroItems={SHORT_HOME_DATA.hero}
     />
   );
 }

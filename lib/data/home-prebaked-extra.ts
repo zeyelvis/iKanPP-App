@@ -52,6 +52,36 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
       is_new: true,
       playable: true,
       actors: ['钱文青', '杨天翔', '佟心竹']
+    },
+    {
+      id: 'pb_anime_hero_4',
+      title: '咒术回战 第二季',
+      rate: '9.2',
+      cover: 'https://image.tmdb.org/t/p/w500/kdE1ALF5G6DFMyDU67AyyUklEtn.jpg',
+      backdrop: 'https://image.tmdb.org/t/p/w1280/kdE1ALF5G6DFMyDU67AyyUklEtn.jpg',
+      description: '五条悟与夏油杰高专时期的青春往事与残酷转折，紧接着引爆现代咒术界最大动乱“涩谷事变”！顶级动画制作与爆燃战斗盛宴。',
+      year: '2023',
+      types: ['热血', '战斗', '奇幻'],
+      episodes_info: '全23集·已完结',
+      type: 'tv',
+      is_new: false,
+      playable: true,
+      actors: ['榎木淳弥', '内田雄马', '濑户麻沙美', '中村悠一']
+    },
+    {
+      id: 'pb_anime_hero_5',
+      title: '进击的巨人 最终季',
+      rate: '9.6',
+      cover: 'https://image.tmdb.org/t/p/w500/5gaf9yFJHJTkg6KtLc7enqBY6UK.jpg',
+      backdrop: 'https://image.tmdb.org/t/p/w1280/5gaf9yFJHJTkg6KtLc7enqBY6UK.jpg',
+      description: '艾伦发动地鸣势将帕拉迪岛以外的一切践踏殆尽，三笠与阿尔敏众人迎战终局决战！十年史诗级巨作迎来震撼动人的最终结局。',
+      year: '2023',
+      types: ['热血', '史诗', '末日'],
+      episodes_info: '完结篇·神作',
+      type: 'tv',
+      is_new: false,
+      playable: true,
+      actors: ['梶裕贵', '石川由依', '井上麻里奈', '神谷浩史']
     }
   ],
   top10: [
@@ -533,6 +563,36 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
       is_new: true,
       playable: true,
       actors: ['张绍刚', '大张伟', '鲁豫', '呼兰', '徐志胜']
+    },
+    {
+      id: 'pb_var_hero_4',
+      title: '大侦探 第九季',
+      rate: '8.8',
+      cover: 'https://image.tmdb.org/t/p/w500/jOl12DTFiMcp9ga2KaEKwt5H8oo.jpg',
+      backdrop: 'https://image.tmdb.org/t/p/w1280/jOl12DTFiMcp9ga2KaEKwt5H8oo.jpg',
+      description: '硬核实景烧脑探案，老友重逢共赴侦探之约！何炅、大张伟、王鸥、魏晨高能集结，揭开层层伪装下的真相。',
+      year: '2024',
+      types: ['悬疑', '推理', '真人秀'],
+      episodes_info: '全12案·已完结',
+      type: 'tv',
+      is_new: true,
+      playable: true,
+      actors: ['何炅', '大张伟', '王鸥', '魏晨', '杨蓉']
+    },
+    {
+      id: 'pb_var_hero_5',
+      title: '喜剧之王单口季',
+      rate: '8.2',
+      cover: 'https://image.tmdb.org/t/p/w500/nYsiHMplUCBFazdAOVr1gQaGy34.jpg',
+      backdrop: 'https://image.tmdb.org/t/p/w1280/nYsiHMplUCBFazdAOVr1gQaGy34.jpg',
+      description: '周星驰发起，庞博、杨天真等加盟评委！全国脱口秀黑马齐聚一堂，用幽默消解焦虑，爆笑解压神作。',
+      year: '2024',
+      types: ['脱口秀', '幽默', '真人秀'],
+      episodes_info: '全10期·已完结',
+      type: 'tv',
+      is_new: true,
+      playable: true,
+      actors: ['周星驰', '罗永浩', '杨天真', '庞博']
     }
   ],
   top10: [
@@ -1014,6 +1074,36 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       is_new: true,
       playable: true,
       actors: ['李沐宸', '叶盛佳']
+    },
+    {
+      id: 'pb_short_hero_4',
+      title: '黑莲花上位手册',
+      rate: '8.7',
+      cover: 'https://image.tmdb.org/t/p/w500/cDJwZ4lSZiUnHtixdyhaPPwsjyo.jpg',
+      backdrop: 'https://image.tmdb.org/t/p/w1280/cDJwZ4lSZiUnHtixdyhaPPwsjyo.jpg',
+      description: '护母复仇，步步为营！庶女宋昭入宫手撕仇人，凭借过人智谋在勾心斗角的后宫绝地反杀，大女主宫斗爽剧巅峰天花板。',
+      year: '2023',
+      types: ['短剧', '复仇', '宫斗', '逆袭'],
+      episodes_info: '全120集·已完结',
+      type: 'tv',
+      is_new: false,
+      playable: true,
+      actors: ['马秋元']
+    },
+    {
+      id: 'pb_short_hero_5',
+      title: '闪婚后傅先生的马甲藏不住了',
+      rate: '8.4',
+      cover: 'https://image.tmdb.org/t/p/w500/nSpk8U35rPVlMMfZ1uxHnbC14Nd.jpg',
+      backdrop: 'https://image.tmdb.org/t/p/w1280/nSpk8U35rPVlMMfZ1uxHnbC14Nd.jpg',
+      description: '假结婚变真爱，千亿身价商界帝王隐藏身份化身普通打工人宠妻无极限，高甜高爽反转不断，全网爆火都市甜宠短剧。',
+      year: '2024',
+      types: ['短剧', '豪门', '甜宠', '反转'],
+      episodes_info: '全80集·已完结',
+      type: 'tv',
+      is_new: true,
+      playable: true,
+      actors: ['舒童', '赵夕汐']
     }
   ],
   top10: [

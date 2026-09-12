@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import { CategoryHub } from '@/components/category/CategoryHub';
+import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 
 const GENRES = [
   { label: '动作', value: '动作' },
@@ -62,6 +63,7 @@ export default function MovieClient() {
         years={YEARS}
         shelves={SHELVES}
         defaultTag="热门"
+        heroItems={PREBAKED_HOME_DATA.movie.hero}
       />
     </Suspense>
   );
