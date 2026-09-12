@@ -325,12 +325,7 @@ export function HeroSlideshow({
   const activeTrendingNav = trendingNav || (PREBAKED_HOME_DATA as any)[contentType]?.trendingNav || (contentType === 'all' ? PREBAKED_HOME_DATA.all?.trendingNav : undefined);
 
   const handleTrendingClick = (item: TrendingNavItem) => {
-    // 若当前轮播数据包含该片，直接切换轮播大图
-    const matchIdx = currentData.findIndex(m => m.title === item.title);
-    if (matchIdx !== -1) {
-      setActiveIndex(matchIdx);
-    }
-    // 同时直接进入播放页
+    // 独立追更速报：直接进入播放/详情页，绝不切换顶栏焦点轮播大图，与爱壹帆原生体验保持一致
     if (onMovieClick) {
       onMovieClick({ title: item.title, id: item.title, rate: '', cover: '' });
     } else {
@@ -457,63 +452,51 @@ export function HeroSlideshow({
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（双排 6 列自适应宽，100% 完整显示全片名，绝无省略号截断） */}
+            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（双排 6 列自适应宽，100% 完整显示全片名，绝无省略号截断，独立纯净展示不与轮播大图联动） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
               <div
                 className="hidden lg:grid grid-rows-2 justify-between items-center gap-x-2 xl:gap-x-3 gap-y-2 xl:gap-y-2.5 self-end shrink-0 max-w-fit px-1 pb-1"
                 style={{ gridTemplateColumns: 'repeat(6, auto)' }}
               >
-                {activeTrendingNav.slice(0, 12).map((item: TrendingNavItem, idx: number) => {
-                  const isCurrentActive = active.title === item.title;
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleTrendingClick(item)}
-                      className={`group flex items-center justify-start text-left cursor-pointer transition-colors duration-200 select-none ${
-                        isCurrentActive
-                          ? 'text-[#00D1FF] drop-shadow-[0_0_10px_rgba(0,209,255,0.8)]'
-                          : 'text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]'
-                      }`}
-                      title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
-                    >
-                      <span className={`text-[12.5px] xl:text-[13px] ${isCurrentActive ? 'font-bold' : 'font-medium'} tracking-tight whitespace-nowrap leading-snug`}>
-                        {item.title}
+                {activeTrendingNav.slice(0, 12).map((item: TrendingNavItem, idx: number) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleTrendingClick(item)}
+                    className="group flex items-center justify-start text-left cursor-pointer text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-colors duration-200 select-none"
+                    title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
+                  >
+                    <span className="text-[12.5px] xl:text-[13px] font-medium tracking-tight whitespace-nowrap leading-snug">
+                      {item.title}
+                    </span>
+                    {item.updateBadge ? (
+                      <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9.5px] xl:text-[10px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0 shadow-xs">
+                        {item.updateBadge}
                       </span>
-                      {item.updateBadge ? (
-                        <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9.5px] xl:text-[10px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0 shadow-xs">
-                          {item.updateBadge}
-                        </span>
-                      ) : null}
-                    </button>
-                  );
-                })}
+                    ) : null}
+                  </button>
+                ))}
               </div>
             )}
 
-            {/* 移动端/平板专享中栏（双排横滑纯文字，同款舒展大字） */}
+            {/* 移动端/平板专享中栏（双排横滑纯文字，同款舒展大字，独立纯净展示） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
               <div className="grid lg:hidden grid-flow-col grid-rows-2 auto-cols-max overflow-x-auto gap-x-4 gap-y-2.5 px-2 py-1.5 scrollbar-none self-end">
-                {activeTrendingNav.slice(0, 12).map((item: TrendingNavItem, idx: number) => {
-                  const isCurrentActive = active.title === item.title;
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleTrendingClick(item)}
-                      className={`flex items-center gap-1 text-xs sm:text-sm shrink-0 select-none ${
-                        isCurrentActive ? 'text-[#00D1FF] font-bold' : 'text-white/80'
-                      }`}
-                    >
-                      <span>{item.title}</span>
-                      {item.updateBadge && (
-                        <span className="bg-[#E50914] text-white text-[9px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 leading-none">
-                          {item.updateBadge}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
+                {activeTrendingNav.slice(0, 12).map((item: TrendingNavItem, idx: number) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleTrendingClick(item)}
+                    className="flex items-center gap-1 text-xs sm:text-sm shrink-0 select-none text-white/80 active:text-white"
+                  >
+                    <span>{item.title}</span>
+                    {item.updateBadge && (
+                      <span className="bg-[#E50914] text-white text-[9px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 leading-none">
+                        {item.updateBadge}
+                      </span>
+                    )}
+                  </button>
+                ))}
               </div>
             )}
 
