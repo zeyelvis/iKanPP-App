@@ -7,6 +7,7 @@ import { Icons } from '@/components/ui/Icon';
 import { useHlsPlayer } from '@/components/player/hooks/useHlsPlayer';
 import { useHistoryStore } from '@/lib/store/history-store';
 import { ShortEpisodeSheet } from '@/components/player/ShortEpisodeSheet';
+import { ShortDesktopSidebar } from '@/components/player/ShortDesktopSidebar';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import {
   ShortDramaEpisode,
@@ -51,10 +52,17 @@ export default function ShortPlayerClient() {
   const [endRecommendations, setEndRecommendations] = useState<EndRecommendItem[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // 桌面端专属状态
+  const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
   // 引用
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const preloadedRef = useRef(false);
   const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const touchStartYRef = useRef(0);
   const touchStartTimeRef = useRef(0);
   const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -416,6 +424,95 @@ export default function ShortPlayerClient() {
     }
   };
 
+  // 切换全屏
+  const toggleFullScreen = useCallback(() => {
+    if (typeof document === 'undefined') return;
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen?.().catch(() => {});
+      setIsFullScreen(true);
+    } else {
+      document.exitFullscreen?.().catch(() => {});
+      setIsFullScreen(false);
+    }
+  }, []);
+
+  // 鼠标移动唤醒控制栏，并在 3.5 秒后自动隐藏
+  const handleMouseMove = useCallback(() => {
+    setControlsVisible(true);
+    if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    controlsTimeoutRef.current = setTimeout(() => {
+      setControlsVisible(false);
+    }, 3500);
+  }, []);
+
+  // 键盘快捷键系统
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+      switch (e.code) {
+        case 'Space':
+        case 'KeyK':
+          e.preventDefault();
+          togglePlay();
+          break;
+        case 'ArrowUp':
+        case 'PageUp':
+          e.preventDefault();
+          if (currentEpIndex > 1) {
+            switchEpisode(currentEpIndex - 1);
+          } else {
+            showToast('已经是第一集啦');
+          }
+          break;
+        case 'ArrowDown':
+        case 'PageDown':
+          e.preventDefault();
+          if (currentEpIndex < episodes.length) {
+            switchEpisode(currentEpIndex + 1);
+          } else {
+            showToast('已经是最后一集啦');
+          }
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          seekRelative(-5);
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          seekRelative(5);
+          break;
+        case 'KeyM':
+          e.preventDefault();
+          toggleMute();
+          break;
+        case 'KeyF':
+          e.preventDefault();
+          toggleFullScreen();
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [togglePlay, switchEpisode, currentEpIndex, episodes.length, seekRelative, toggleMute, toggleFullScreen, showToast]);
+
+  // 进度条点击寻道
+  const handleSeekClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const targetPercent = Math.max(0, Math.min(1, clickX / rect.width));
+    const video = videoRef.current;
+    if (video && video.duration > 0) {
+      video.currentTime = targetPercent * video.duration;
+      setCurrentTime(video.currentTime);
+    }
+  };
+
   // 格式化时间 00:00
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60);
@@ -425,265 +522,328 @@ export default function ShortPlayerClient() {
 
   return (
     <div
+      ref={containerRef}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onWheel={handleWheel}
-      className="relative w-screen h-[100dvh] bg-black overflow-hidden select-none touch-none flex items-center justify-center"
+      onMouseMove={handleMouseMove}
+      className="relative w-screen h-[100dvh] bg-[#0A0A10] overflow-hidden select-none flex items-center justify-center p-0 lg:p-4"
     >
-      {/* 核心视频容器（9:16 沉浸比例） */}
-      <video
-        ref={videoRef}
-        playsInline
-        webkit-playsinline="true"
-        x5-playsinline="true"
-        className="w-full h-full object-contain md:object-cover bg-black cursor-pointer"
-      />
+      {/* 桌面端背景柔和环境微光 */}
+      <div className="hidden lg:block absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/5 via-[#0A0A10] to-[#0A0A10] -z-20 pointer-events-none" />
 
-      {/* 顶部左侧返回按钮与剧名 */}
-      <div className="player-control-interactive absolute top-0 left-0 right-0 z-30 p-4 pt-6 bg-gradient-to-b from-black/80 via-black/40 to-transparent flex items-center justify-between pointer-events-auto">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.push('/short')}
-            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-xl flex items-center justify-center text-white border border-white/10 transition-all cursor-pointer active:scale-90 shadow-lg"
-          >
-            <Icons.ChevronLeft size={22} />
-          </button>
-          <div>
-            <h1 className="text-base sm:text-lg font-black text-white truncate max-w-[220px] sm:max-w-md drop-shadow-md">
-              {title}
-            </h1>
-            <p className="text-xs text-white/60 drop-shadow">
-              第 {currentEpIndex} 集 {episodes.length > 0 && `/ 共 ${episodes.length} 集`}
-            </p>
-          </div>
-        </div>
+      {/* 核心播放器容器：移动端全屏铺满，桌面端严格保持 9:16 黄金胶囊微光视窗 */}
+      <div className="relative w-full h-full lg:w-auto lg:h-[92vh] lg:max-h-[880px] aspect-auto lg:aspect-[9/16] bg-black rounded-none lg:rounded-3xl overflow-hidden shadow-2xl lg:ring-1 lg:ring-white/15 flex items-center justify-center transition-all duration-300">
+        {/* 桌面端胶囊视窗外发光微光晕 */}
+        <div className="hidden lg:block absolute -inset-4 bg-gradient-to-tr from-(--accent-color)/15 via-purple-600/10 to-transparent rounded-[40px] blur-2xl -z-10 pointer-events-none" />
 
-        {/* 顶部右侧功能按键 */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={toggleMute}
-            className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer"
-          >
-            {isMuted ? <Icons.VolumeX size={18} /> : <Icons.Volume2 size={18} />}
-          </button>
-          <button
-            onClick={() => setShowEpisodeSheet(true)}
-            className="px-3 py-1.5 rounded-full bg-(--accent-color) hover:brightness-110 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition-all cursor-pointer"
-          >
-            <Icons.List size={14} />
-            <span>选集</span>
-          </button>
-        </div>
-      </div>
+        {/* 核心视频：全端保持 object-contain 原画比例，彻底杜绝任何拉伸和裁切 */}
+        <video
+          ref={videoRef}
+          playsInline
+          webkit-playsinline="true"
+          x5-playsinline="true"
+          className="w-full h-full object-contain bg-black cursor-pointer"
+        />
 
-      {/* 长按 3x 倍速浮动徽标 */}
-      {isLongPressing && (
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-30 px-4 py-1.5 rounded-full bg-amber-500/90 backdrop-blur-md text-black font-black text-xs sm:text-sm flex items-center gap-1.5 shadow-2xl animate-pulse">
-          <Icons.Zap size={16} />
-          <span>3.0X 超速播放中</span>
-        </div>
-      )}
-
-      {/* 画面中间加载动画 */}
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-          <div className="w-14 h-14 rounded-full border-4 border-white/20 border-t-(--accent-color) animate-spin" />
-        </div>
-      )}
-
-      {/* 画面中间暂停指示图标 */}
-      {!isPlaying && !isLoading && !showEndModal && (
-        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none animate-scaleIn">
-          <div className="w-16 h-16 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-2xl">
-            <Icons.Play size={32} className="ml-1 fill-white" />
-          </div>
-        </div>
-      )}
-
-      {/* 右侧悬浮垂直操作栏 */}
-      <div className="player-control-interactive absolute right-3 bottom-24 z-30 flex flex-col items-center gap-4 pointer-events-auto">
-        {/* 分享 */}
-        <button
-          onClick={handleShare}
-          className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-all cursor-pointer group active:scale-90"
+        {/* 顶部控制栏 */}
+        <div
+          className={`player-control-interactive absolute top-0 left-0 right-0 z-30 p-4 pt-5 bg-gradient-to-b from-black/85 via-black/40 to-transparent flex items-center justify-between pointer-events-auto transition-opacity duration-300 ${
+            controlsVisible || !isPlaying ? 'opacity-100' : 'opacity-0'
+          }`}
         >
-          <div className="w-11 h-11 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-xl border border-white/15 flex items-center justify-center shadow-lg group-hover:border-(--accent-color)">
-            <Icons.Share2 size={18} />
+          <div className="flex items-center gap-3 min-w-0">
+            <button
+              onClick={() => router.push('/short')}
+              className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-xl flex items-center justify-center text-white border border-white/10 transition-all cursor-pointer active:scale-90 shadow-lg shrink-0"
+              title="返回短剧频道"
+            >
+              <Icons.ChevronLeft size={22} />
+            </button>
+            <div className="min-w-0">
+              <h1 className="text-sm sm:text-base font-black text-white truncate max-w-[160px] sm:max-w-xs drop-shadow-md">
+                {title}
+              </h1>
+              <p className="text-xs text-white/60 drop-shadow">
+                第 {currentEpIndex} 集 {episodes.length > 0 && `/ 共 ${episodes.length} 集`}
+              </p>
+            </div>
           </div>
-          <span className="text-[10px] font-bold">分享</span>
-        </button>
 
-        {/* 选集 */}
-        <button
-          onClick={() => setShowEpisodeSheet(true)}
-          className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-all cursor-pointer group active:scale-90"
+          {/* 顶部右侧功能按键 */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <button
+              onClick={toggleMute}
+              className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer"
+              title={isMuted ? '取消静音 (M)' : '静音 (M)'}
+            >
+              {isMuted ? <Icons.VolumeX size={18} /> : <Icons.Volume2 size={18} />}
+            </button>
+
+            {/* 桌面端全屏按钮 */}
+            <button
+              onClick={toggleFullScreen}
+              className="hidden lg:flex w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer"
+              title="全屏播放 (F)"
+            >
+              <Icons.Maximize size={16} />
+            </button>
+
+            {/* 桌面端折叠/展开侧边栏切换按钮 */}
+            <button
+              onClick={() => setIsDesktopSidebarOpen((prev) => !prev)}
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all cursor-pointer border border-white/10"
+              title="展开/收起选集面板"
+            >
+              <Icons.List size={14} />
+              <span>{isDesktopSidebarOpen ? '收起选集' : '展开选集'}</span>
+            </button>
+
+            {/* 移动端选集抽屉呼出按钮 */}
+            <button
+              onClick={() => setShowEpisodeSheet(true)}
+              className="lg:hidden px-3 py-1.5 rounded-full bg-(--accent-color) hover:brightness-110 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition-all cursor-pointer"
+            >
+              <Icons.List size={14} />
+              <span>选集</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 长按 3x 倍速浮动徽标 */}
+        {isLongPressing && (
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 z-30 px-4 py-1.5 rounded-full bg-amber-500/90 backdrop-blur-md text-black font-black text-xs sm:text-sm flex items-center gap-1.5 shadow-2xl animate-pulse">
+            <Icons.Zap size={16} />
+            <span>3.0X 超速播放中</span>
+          </div>
+        )}
+
+        {/* 画面中间加载动画 */}
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+            <div className="w-14 h-14 rounded-full border-4 border-white/20 border-t-(--accent-color) animate-spin" />
+          </div>
+        )}
+
+        {/* 画面中间暂停指示图标 */}
+        {!isPlaying && !isLoading && !showEndModal && (
+          <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none animate-scaleIn">
+            <div className="w-16 h-16 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-2xl">
+              <Icons.Play size={32} className="ml-1 fill-white" />
+            </div>
+          </div>
+        )}
+
+        {/* 右侧悬浮垂直操作栏 */}
+        <div
+          className={`player-control-interactive absolute right-3 bottom-24 z-30 flex flex-col items-center gap-4 pointer-events-auto transition-opacity duration-300 ${
+            controlsVisible || !isPlaying ? 'opacity-100' : 'opacity-0'
+          }`}
         >
-          <div className="w-11 h-11 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-xl border border-white/15 flex items-center justify-center shadow-lg group-hover:border-(--accent-color)">
-            <Icons.Layers size={20} />
-          </div>
-          <span className="text-[10px] font-bold">选集</span>
-        </button>
-
-        {/* 倍速 */}
-        <div className="relative">
+          {/* 分享 */}
           <button
-            onClick={() => setShowSpeedMenu((prev) => !prev)}
+            onClick={handleShare}
             className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-all cursor-pointer group active:scale-90"
           >
             <div className="w-11 h-11 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-xl border border-white/15 flex items-center justify-center shadow-lg group-hover:border-(--accent-color)">
-              <span className="text-xs font-black">{playbackRate}x</span>
+              <Icons.Share2 size={18} />
             </div>
-            <span className="text-[10px] font-bold">倍速</span>
+            <span className="text-[10px] font-bold">分享</span>
           </button>
 
-          {/* 倍速切换面板 */}
-          {showSpeedMenu && (
-            <div className="absolute right-14 bottom-0 bg-[#14141E]/95 backdrop-blur-2xl border border-white/15 rounded-2xl p-2 shadow-2xl flex flex-col gap-1 min-w-[70px] animate-scaleIn">
-              {SPEED_OPTIONS.map((rate) => (
-                <button
-                  key={rate}
-                  onClick={() => handleSelectRate(rate)}
-                  className={`py-1.5 px-3 rounded-xl text-xs font-bold text-center transition-all cursor-pointer ${
-                    playbackRate === rate
-                      ? 'bg-(--accent-color) text-white shadow-md'
-                      : 'text-white/70 hover:bg-white/10 hover:text-white'
-                  }`}
-                >
-                  {rate}x
-                </button>
-              ))}
+          {/* 选集 (仅在移动端展示悬浮按钮，桌面端有右侧面板) */}
+          <button
+            onClick={() => setShowEpisodeSheet(true)}
+            className="lg:hidden flex flex-col items-center gap-1 text-white/80 hover:text-white transition-all cursor-pointer group active:scale-90"
+          >
+            <div className="w-11 h-11 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-xl border border-white/15 flex items-center justify-center shadow-lg group-hover:border-(--accent-color)">
+              <Icons.Layers size={20} />
             </div>
-          )}
+            <span className="text-[10px] font-bold">选集</span>
+          </button>
+
+          {/* 倍速 */}
+          <div className="relative">
+            <button
+              onClick={() => setShowSpeedMenu((prev) => !prev)}
+              className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-all cursor-pointer group active:scale-90"
+            >
+              <div className="w-11 h-11 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-xl border border-white/15 flex items-center justify-center shadow-lg group-hover:border-(--accent-color)">
+                <span className="text-xs font-black">{playbackRate}x</span>
+              </div>
+              <span className="text-[10px] font-bold">倍速</span>
+            </button>
+
+            {/* 倍速切换面板 */}
+            {showSpeedMenu && (
+              <div className="absolute right-14 bottom-0 bg-[#14141E]/95 backdrop-blur-2xl border border-white/15 rounded-2xl p-2 shadow-2xl flex flex-col gap-1 min-w-[70px] animate-scaleIn">
+                {SPEED_OPTIONS.map((rate) => (
+                  <button
+                    key={rate}
+                    onClick={() => handleSelectRate(rate)}
+                    className={`py-1.5 px-3 rounded-xl text-xs font-bold text-center transition-all cursor-pointer ${
+                      playbackRate === rate
+                        ? 'bg-(--accent-color) text-white shadow-md'
+                        : 'text-white/70 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    {rate}x
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 上一集 */}
+          <button
+            onClick={() => switchEpisode(currentEpIndex - 1)}
+            disabled={currentEpIndex <= 1}
+            className="flex flex-col items-center gap-1 text-white/80 hover:text-white disabled:opacity-30 transition-all cursor-pointer active:scale-90"
+            title="上一集 (快捷键 ↑)"
+          >
+            <div className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-lg border border-white/10 flex items-center justify-center shadow-lg">
+              <Icons.ChevronUp size={18} />
+            </div>
+            <span className="text-[9px]">上一集</span>
+          </button>
+
+          {/* 下一集 */}
+          <button
+            onClick={() => switchEpisode(currentEpIndex + 1)}
+            disabled={currentEpIndex >= episodes.length}
+            className="flex flex-col items-center gap-1 text-white/80 hover:text-white disabled:opacity-30 transition-all cursor-pointer active:scale-90"
+            title="下一集 (快捷键 ↓)"
+          >
+            <div className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-lg border border-white/10 flex items-center justify-center shadow-lg">
+              <Icons.ChevronDown size={18} />
+            </div>
+            <span className="text-[9px]">下一集</span>
+          </button>
         </div>
 
-        {/* 上一集 */}
-        <button
-          onClick={() => switchEpisode(currentEpIndex - 1)}
-          disabled={currentEpIndex <= 1}
-          className="flex flex-col items-center gap-1 text-white/80 hover:text-white disabled:opacity-30 transition-all cursor-pointer active:scale-90"
+        {/* 底部信息与精准点击寻道进度条 */}
+        <div
+          className={`player-control-interactive absolute bottom-0 left-0 right-0 z-30 p-4 pb-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col gap-2 pointer-events-auto transition-opacity duration-300 ${
+            controlsVisible || !isPlaying ? 'opacity-100' : 'opacity-0'
+          }`}
         >
-          <div className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-lg border border-white/10 flex items-center justify-center shadow-lg">
-            <Icons.ChevronUp size={18} />
+          <div className="flex items-center justify-between text-xs text-white/70">
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded-md bg-(--accent-color)/80 text-white font-black text-[11px]">
+                第 {currentEpIndex} 集
+              </span>
+              <span className="truncate max-w-[180px] sm:max-w-xs">{title}</span>
+            </div>
+            <div className="text-[11px] font-mono text-white/50">
+              {formatTime(currentTime)} / {formatTime(duration)}
+            </div>
           </div>
-          <span className="text-[9px]">上一集</span>
-        </button>
 
-        {/* 下一集 */}
-        <button
-          onClick={() => switchEpisode(currentEpIndex + 1)}
-          disabled={currentEpIndex >= episodes.length}
-          className="flex flex-col items-center gap-1 text-white/80 hover:text-white disabled:opacity-30 transition-all cursor-pointer active:scale-90"
-        >
-          <div className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-lg border border-white/10 flex items-center justify-center shadow-lg">
-            <Icons.ChevronDown size={18} />
-          </div>
-          <span className="text-[9px]">下一集</span>
-        </button>
-      </div>
-
-      {/* 底部信息浮层与进度条 */}
-      <div className="player-control-interactive absolute bottom-0 left-0 right-0 z-30 p-4 pb-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col gap-2 pointer-events-auto">
-        <div className="flex items-center justify-between text-xs text-white/70">
-          <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded-md bg-(--accent-color)/80 text-white font-black text-[11px]">
-              第 {currentEpIndex} 集
-            </span>
-            <span className="truncate max-w-[200px]">{title}</span>
-          </div>
-          <div className="text-[11px] font-mono text-white/50">
-            {formatTime(currentTime)} / {formatTime(duration)}
-          </div>
-        </div>
-
-        <div className="relative w-full h-2 bg-white/20 rounded-full overflow-hidden cursor-pointer">
+          {/* 点击/拖拽进度条 */}
           <div
-            className="h-full bg-(--accent-color) rounded-full transition-all duration-100"
-            style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
-          />
-        </div>
-
-        <div className="flex items-center justify-center gap-1 text-[11px] text-white/40 pt-1">
-          <span>↑ 上滑看下一集</span>
-          <span className="mx-2 text-white/20">|</span>
-          <span>↓ 下滑看上一集</span>
-          <span className="mx-2 text-white/20">|</span>
-          <span>按住 3x 倍速</span>
-        </div>
-      </div>
-
-      {/* 全剧完结推荐弹窗浮层 */}
-      {showEndModal && (
-        <div className="player-control-interactive absolute inset-0 z-45 bg-black/85 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-white animate-fadeIn pointer-events-auto">
-          <div className="w-full max-w-sm bg-[#14141E] border border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col items-center text-center">
-            <div className="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center mb-3">
-              <Icons.Sparkles size={24} />
-            </div>
-            <h2 className="text-lg font-black text-white">🎉 全剧完结</h2>
-            <p className="text-xs text-white/50 mt-1 mb-4">
-              精彩不打烊，为您精选以下高能短剧立即无缝连播：
-            </p>
-
-            {/* 3 部推荐短剧 */}
-            <div className="w-full grid grid-cols-3 gap-2.5 mb-5">
-              {endRecommendations.map((rec) => (
-                <div
-                  key={rec.title}
-                  onClick={() => {
-                    const q = new URLSearchParams();
-                    q.set('title', rec.title);
-                    if (rec.firstPlayUrl) q.set('url', rec.firstPlayUrl);
-                    if (rec.poster) q.set('poster', rec.poster);
-                    router.push(`/short/player?${q.toString()}`);
-                    setShowEndModal(false);
-                  }}
-                  className="group cursor-pointer flex flex-col gap-1"
-                >
-                  <div className="relative aspect-[9/13] rounded-xl overflow-hidden bg-white/5 border border-white/10 group-hover:border-(--accent-color) transition-all">
-                    <Image
-                      src={getOptimizedImageUrl(rec.poster)}
-                      alt={rec.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform"
-                      unoptimized
-                    />
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Icons.Play size={20} className="fill-white text-white" />
-                    </div>
-                  </div>
-                  <span className="text-[11px] font-bold line-clamp-1 group-hover:text-(--accent-color) transition-colors">
-                    {rec.title}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* 操作按钮组 */}
-            <div className="flex items-center gap-2.5 w-full">
-              <button
-                onClick={() => switchEpisode(1)}
-                className="flex-1 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-xs font-bold transition-all cursor-pointer"
-              >
-                从头重温
-              </button>
-              <button
-                onClick={() => router.push('/short')}
-                className="flex-1 py-2.5 rounded-2xl bg-(--accent-color) hover:brightness-110 text-xs font-black transition-all cursor-pointer shadow-lg"
-              >
-                返回频道
-              </button>
+            onClick={handleSeekClick}
+            className="group/seek relative w-full h-3 py-1 flex items-center cursor-pointer"
+            title="点击快进/快退"
+          >
+            <div className="w-full h-1.5 group-hover/seek:h-2.5 bg-white/20 rounded-full overflow-hidden transition-all">
+              <div
+                className="h-full bg-(--accent-color) rounded-full transition-all duration-100"
+                style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
+              />
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Toast 提示浮窗 */}
-      {toastMessage && (
-        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/20 text-white text-xs font-bold shadow-2xl animate-fadeIn">
-          {toastMessage}
+          <div className="flex items-center justify-center gap-1 text-[11px] text-white/40 pt-0.5">
+            <span className="hidden lg:inline">空格 暂停 · ↑/↓ 切集 · ←/→ 快进退5秒 · M 静音</span>
+            <span className="lg:hidden">↑ 上滑下一集 · ↓ 下滑上一集 · 长按3x</span>
+          </div>
         </div>
-      )}
 
-      {/* 底部全集选集弹窗 */}
+        {/* 全剧完结推荐弹窗浮层 */}
+        {showEndModal && (
+          <div className="player-control-interactive absolute inset-0 z-45 bg-black/85 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-white animate-fadeIn pointer-events-auto">
+            <div className="w-full max-w-sm bg-[#14141E] border border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center mb-3">
+                <Icons.Sparkles size={24} />
+              </div>
+              <h2 className="text-lg font-black text-white">🎉 全剧完结</h2>
+              <p className="text-xs text-white/50 mt-1 mb-4">
+                精彩不打烊，为您精选以下高能短剧立即无缝连播：
+              </p>
+
+              {/* 3 部推荐短剧 */}
+              <div className="w-full grid grid-cols-3 gap-2.5 mb-5">
+                {endRecommendations.map((rec) => (
+                  <div
+                    key={rec.title}
+                    onClick={() => {
+                      const q = new URLSearchParams();
+                      q.set('title', rec.title);
+                      if (rec.firstPlayUrl) q.set('url', rec.firstPlayUrl);
+                      if (rec.poster) q.set('poster', rec.poster);
+                      router.push(`/short/player?${q.toString()}`);
+                      setShowEndModal(false);
+                    }}
+                    className="group cursor-pointer flex flex-col gap-1"
+                  >
+                    <div className="relative aspect-[9/13] rounded-xl overflow-hidden bg-white/5 border border-white/10 group-hover:border-(--accent-color) transition-all">
+                      <Image
+                        src={getOptimizedImageUrl(rec.poster)}
+                        alt={rec.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform"
+                        unoptimized
+                      />
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Icons.Play size={20} className="fill-white text-white" />
+                      </div>
+                    </div>
+                    <span className="text-[11px] font-bold line-clamp-1 group-hover:text-(--accent-color) transition-colors">
+                      {rec.title}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* 操作按钮组 */}
+              <div className="flex items-center gap-2.5 w-full">
+                <button
+                  onClick={() => switchEpisode(1)}
+                  className="flex-1 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-xs font-bold transition-all cursor-pointer"
+                >
+                  从头重温
+                </button>
+                <button
+                  onClick={() => router.push('/short')}
+                  className="flex-1 py-2.5 rounded-2xl bg-(--accent-color) hover:brightness-110 text-xs font-black transition-all cursor-pointer shadow-lg"
+                >
+                  返回频道
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Toast 提示浮窗 */}
+        {toastMessage && (
+          <div className="absolute top-24 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/20 text-white text-xs font-bold shadow-2xl animate-fadeIn">
+            {toastMessage}
+          </div>
+        )}
+      </div>
+
+      {/* 桌面端大屏专属右侧常驻选集面板 */}
+      <ShortDesktopSidebar
+        title={title}
+        poster={poster}
+        episodes={episodes}
+        currentEpIndex={currentEpIndex}
+        onSelectEpisode={switchEpisode}
+        isOpen={isDesktopSidebarOpen}
+        onToggleOpen={() => setIsDesktopSidebarOpen((prev) => !prev)}
+      />
+
+      {/* 移动端底部选集抽屉 */}
       <ShortEpisodeSheet
         isOpen={showEpisodeSheet}
         onClose={() => setShowEpisodeSheet(false)}
