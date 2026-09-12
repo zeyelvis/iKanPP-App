@@ -426,11 +426,11 @@ export function HeroSlideshow({
         <div className="fluid-container">
           <div className="iyf-hero-bar pointer-events-auto">
             
-            {/* 1. 左栏：大片主标题与评分在上方相对放大，放大的播放按钮在下方与推荐严格对齐，固定物理宽度彻底杜绝中栏受挤压漂移 */}
-            <div className="shrink-0 w-[180px] lg:w-[200px] xl:w-[230px] flex flex-col items-start justify-end">
-              {/* 上方：相对放大、极具视觉冲击力的大片片名与评分，固定高度绝对零抖动 */}
+            {/* 1. 左栏：大片主标题与评分在上方相对放大，放大的播放按钮在下方与推荐严格对齐，弹性宽度确保片名完整显示不截断 */}
+            <div className="shrink-0 min-w-[180px] max-w-[280px] lg:max-w-[320px] xl:max-w-[360px] flex flex-col items-start justify-end">
+              {/* 上方：相对放大、极具视觉冲击力的大片片名与评分，支持多行完整舒展展示 */}
               <div className="mb-3 sm:mb-4 w-full">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[40px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1.5 sm:mb-2 truncate leading-tight h-9 sm:h-11 lg:h-12 flex items-center">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[38px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1.5 sm:mb-2 leading-tight flex items-center break-words line-clamp-2 min-h-9 sm:min-h-11 lg:min-h-12">
                   {active.title}
                 </h2>
                 <div className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] h-6">
@@ -512,35 +512,50 @@ export function HeroSlideshow({
               </div>
             )}
 
-            {/* 3. 右栏：爱壹帆同款完整轮播大片缩略海报卡片列表（饱满大尺寸海报，紧贴右侧安全视口绝不截断） */}
+            {/* 3. 右栏：爱壹帆同款完整轮播大片缩略海报卡片列表（片名 100% 完整展示，绝不截断） */}
             <div className="hidden md:flex items-center gap-1 xl:gap-1.5 shrink-0 self-end p-1.5 rounded-xl bg-black/25 backdrop-blur-xs border border-white/10 ml-auto lg:ml-0">
               {currentData.slice(0, 8).map((item, idx) => {
                 const isSelected = idx === activeIndex;
                 const cardSizeClass = currentData.length > 7
-                  ? 'w-[36px] h-[52px] sm:w-[38px] sm:h-[54px] lg:w-[40px] lg:h-[58px] xl:w-[45px] xl:h-[64px]'
-                  : 'w-[40px] h-[58px] sm:w-[42px] sm:h-[60px] lg:w-[45px] lg:h-[64px] xl:w-[50px] xl:h-[70px]';
+                  ? 'w-[42px] h-[60px] sm:w-[46px] sm:h-[66px] lg:w-[50px] lg:h-[72px] xl:w-[56px] xl:h-[80px]'
+                  : 'w-[46px] h-[66px] sm:w-[50px] sm:h-[72px] lg:w-[56px] lg:h-[80px] xl:w-[62px] xl:h-[88px]';
                 return (
                   <button
                     key={item.title ? `hero-thumb-${item.title}` : (item.id || idx)}
                     type="button"
                     onClick={() => setActiveIndex(idx)}
-                    className={`group relative ${cardSizeClass} rounded-lg overflow-hidden transition-[transform,border-color,box-shadow,opacity] duration-200 cursor-pointer border ${
+                    className={`group relative ${cardSizeClass} rounded-lg overflow-visible transition-[transform,border-color,box-shadow,opacity] duration-200 cursor-pointer border ${
                       isSelected
                         ? 'border-[#00D1FF] ring-2 ring-[#00D1FF]/70 scale-105 shadow-[0_0_14px_rgba(0,209,255,0.6)] z-10'
-                        : 'border-white/10 opacity-70 hover:opacity-100 hover:scale-102 hover:border-white/30'
+                        : 'border-white/10 opacity-75 hover:opacity-100 hover:scale-102 hover:border-white/30'
                     }`}
                     title={item.title}
                   >
-                    <PosterImage
-                      src={item.cover}
-                      alt={item.title}
-                      className="object-cover w-full h-full"
-                      sizes="75px"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/95 via-black/50 to-transparent pt-3 pb-0.5 px-0.5">
-                      <p className="text-[8.5px] xl:text-[9px] text-white/90 truncate text-center font-medium leading-tight">
-                        {item.title}
-                      </p>
+                    {/* 悬停与激活时的全称气泡提示（绝对零死角保障） */}
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/95 text-white text-[10.5px] xl:text-[11px] font-semibold px-2 py-0.5 rounded-md shadow-2xl border border-white/20 pointer-events-none z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                      {item.title}
+                    </div>
+
+                    {/* 海报卡片内容（圆角防溢出） */}
+                    <div className="w-full h-full rounded-[7px] overflow-hidden relative">
+                      <PosterImage
+                        src={item.cover}
+                        alt={item.title}
+                        className="object-cover w-full h-full"
+                        sizes="80px"
+                      />
+                      {/* 底部片名容器：彻底移除截断限制与省略号，根据字数自适应字号，片名 100% 逐字完整舒展呈现 */}
+                      <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/95 via-black/80 to-transparent pt-3.5 pb-0.5 px-0.5 flex items-end justify-center z-10">
+                        <p
+                          className={`${
+                            (item.title || '').length > 8
+                              ? 'text-[7.5px] sm:text-[8px] lg:text-[8.5px] xl:text-[9px] leading-[1.06]'
+                              : 'text-[8px] sm:text-[8.5px] lg:text-[9px] xl:text-[9.5px] leading-[1.12]'
+                          } text-white/95 text-center font-medium tracking-tighter break-all w-full`}
+                        >
+                          {item.title}
+                        </p>
+                      </div>
                     </div>
                   </button>
                 );
