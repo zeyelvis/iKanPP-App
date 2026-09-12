@@ -146,46 +146,25 @@ async function main() {
     // 完整对应爱壹帆首页真实正片数量
     const finalHeros = allHeroItems;
 
-    // 读取现有 home-prebaked.ts
-    const filePath = path.resolve(process.cwd(), 'lib/data/home-prebaked.ts');
-    let fileContent = fs.readFileSync(filePath, 'utf-8');
-
-    // 采用正则精准替换 "hero": [ ... ]
-    const replaceHeroSection = (sourceCode, categoryKey, newHeros) => {
-      const categoryRegex = new RegExp(`("${categoryKey}":\\s*\\{[\\s\\S]*?"hero":\\s*\\[)[\\s\\S]*?(\\]\\s*,\\s*"top10")`);
-      const formattedJson = JSON.stringify(newHeros, null, 8)
-        .replace(/^\[/, '')
-        .replace(/\]$/, '')
-        .trim();
-      return sourceCode.replace(categoryRegex, `$1\n        ${formattedJson}\n      $2`);
-    };
-
-    // 保证首页顶部全站焦点巨幕精准呈现爱壹帆首页真实正片阵容
-    let updatedContent = replaceHeroSection(fileContent, 'movie', finalHeros);
-    updatedContent = replaceHeroSection(updatedContent, 'tv', finalHeros);
-
-    if (updatedContent !== fileContent) {
-      fs.writeFileSync(filePath, updatedContent, 'utf-8');
-      console.log(`✅ [iyf-sync] 成功将爱壹帆首页真实 ${finalHeros.length} 席最新轮播巨幕更新至 lib/data/home-prebaked.ts！`);
-    } else {
-      console.log('[iyf-sync] 轮播内容未变动或匹配区已是最优');
-    }
-
-    // 同步更新 home-prebaked-extra.ts 中的 ALL_HOME_DATA.hero
+    // 仅同步更新首页全站综合巨幕 ALL_HOME_DATA.hero，绝不污染分类专区的 movie.hero 与 tv.hero
     const extraPath = path.resolve(process.cwd(), 'lib/data/home-prebaked-extra.ts');
     if (fs.existsSync(extraPath)) {
       let extraContent = fs.readFileSync(extraPath, 'utf-8');
-      const allHeroRegex = /(ALL_HOME_DATA:\s*PrebakedHomeCategory\s*=\s*\{[\s\S]*?"hero":\s*\[)[\s\S]*?(\]\s*,\s*"top10")/;
+      const allHeroRegex = /(ALL_HOME_DATA:\s*PrebakedHomeCategory\s*=\s*\{[\s\S]*?["']?hero["']?:\s*\[)[\s\S]*?(\]\s*,\s*["']?top10["']?)/;
       if (allHeroRegex.test(extraContent)) {
-        const formattedJson = JSON.stringify(finalHeros, null, 8)
+        const formattedJson = JSON.stringify(finalHeros, null, 4)
           .replace(/^\[/, '')
           .replace(/\]$/, '')
           .trim();
-        const updatedExtra = extraContent.replace(allHeroRegex, `$1\n        ${formattedJson}\n      $2`);
+        const updatedExtra = extraContent.replace(allHeroRegex, `$1\n    ${formattedJson}\n  $2`);
         if (updatedExtra !== extraContent) {
           fs.writeFileSync(extraPath, updatedExtra, 'utf-8');
-          console.log(`✅ [iyf-sync] 同步更新 lib/data/home-prebaked-extra.ts 中的全部推荐轮播巨幕！`);
+          console.log(`✅ [iyf-sync] 成功将爱壹帆首页真实 ${finalHeros.length} 席最新轮播巨幕同步至 lib/data/home-prebaked-extra.ts (ALL_HOME_DATA.hero)！`);
+        } else {
+          console.log('[iyf-sync] ALL_HOME_DATA.hero 轮播内容未变动或已是最新');
         }
+      } else {
+        console.warn('[iyf-sync] 未能在 home-prebaked-extra.ts 中匹配到 ALL_HOME_DATA.hero 区域');
       }
     }
   } catch (err) {

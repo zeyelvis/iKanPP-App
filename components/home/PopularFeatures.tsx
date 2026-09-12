@@ -354,7 +354,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         .toLowerCase();
 
     // 1. Hero 巨幕专属大片（常驻独立：固定展示爱壹帆每日定时同步的 7 席正片巨幕，与下方 Tab 解耦）
-    const heroPool = PREBAKED_HOME_DATA.movie.hero || [];
+    const heroPool = PREBAKED_HOME_DATA.all.hero || [];
     const heroList: any[] = [];
     for (const item of heroPool) {
       const key = normalize(item.title);
