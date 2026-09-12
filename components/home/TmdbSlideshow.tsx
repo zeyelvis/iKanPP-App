@@ -109,20 +109,36 @@ function HeroBackdrop({
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loaded, setLoaded] = useState(false);
+  const [displaySrc, setDisplaySrc] = useState<string>('');
+  const [prevSrc, setPrevSrc] = useState<string>('');
 
-  // 影片切换时，从首选源开始尝试，重置淡入状态
+  const currentSrc = candidates[currentIndex] || '';
+
   useEffect(() => {
     setCurrentIndex(0);
     setLoaded(false);
   }, [backdrop, cover]);
 
-  const currentSrc = candidates[currentIndex] || '';
+  useEffect(() => {
+    if (currentSrc && currentSrc !== displaySrc) {
+      // 切换新图源时，将当前已加载的图像沉降为底衬 prevSrc，避免任何白屏、黑屏与闪烁
+      if (displaySrc) {
+        setPrevSrc(displaySrc);
+      }
+      setDisplaySrc(currentSrc);
+      setLoaded(false);
+    }
+  }, [currentSrc, displaySrc]);
 
   const handleBackdropError = () => {
     // 当前源失败，无缝激活下一级容灾候选源（如：Backdrop -> Cover 海报）
     if (currentIndex + 1 < candidates.length) {
       setCurrentIndex(prev => prev + 1);
     }
+  };
+
+  const handleLoaded = () => {
+    setLoaded(true);
   };
 
   // 底层即时氛围图（用封面海报高斯模糊铺底，0秒呈现，彻底杜绝任何黑屏）
@@ -146,27 +162,42 @@ function HeroBackdrop({
         </div>
       )}
 
-      {/* 2. 顶层：巨幕横版高清剧照（支持多源自动容灾 + 丝滑淡入） */}
-      {currentSrc && (
+      {/* 2. 底层前一帧剧照（保留至新图完全加载，彻底根除切换瞬间的黑屏/闪烁） */}
+      {prevSrc && prevSrc !== displaySrc && (
         <Image
-          key={currentSrc}
-          src={currentSrc}
+          src={prevSrc}
+          alt=""
+          fill
+          sizes="100vw"
+          unoptimized
+          priority
+          referrerPolicy="no-referrer"
+          className="object-cover scale-105"
+          style={{ objectPosition: 'center 20%' }}
+        />
+      )}
+
+      {/* 3. 顶层：当前最新巨幕高清剧照（支持多源自动容灾 + 极速双缓冲平滑淡入） */}
+      {displaySrc && (
+        <Image
+          key={displaySrc}
+          src={displaySrc}
           alt={title}
           fill
           priority
           sizes="100vw"
           unoptimized
           referrerPolicy="no-referrer"
-          onLoad={() => setLoaded(true)}
+          onLoad={handleLoaded}
           onError={handleBackdropError}
-          className={`object-cover scale-105 transition-all duration-1000 ease-out ${
+          className={`object-cover scale-105 transition-opacity duration-700 ease-out ${
             loaded ? 'opacity-100' : 'opacity-0'
           }`}
           style={{ objectPosition: 'center 20%' }}
         />
       )}
 
-      {/* 3. 纯净极简电影级自然羽化系统（仅保留头部与底部自然平滑渐变，还原大片通透沉浸感） */}
+      {/* 4. 纯净极简电影级自然羽化系统（仅保留头部与底部自然平滑渐变，还原大片通透沉浸感） */}
       {/* 顶部自然防眩羽化：柔和保护全透明浮动 Navbar 文字与搜索框，向下自然淡出 */}
       <div
         className="absolute inset-x-0 top-0 pointer-events-none"
@@ -400,15 +431,15 @@ export function HeroSlideshow({
         <div className="fluid-container">
           <div className="iyf-hero-bar pointer-events-auto">
             
-            {/* 1. 左栏：大片主标题与评分在上方相对放大，放大的播放按钮在下方与推荐严格对齐 */}
-            <div className="shrink-0 flex flex-col items-start min-w-[220px] max-w-[380px] xl:max-w-[480px] justify-end">
-              {/* 上方：相对放大、极具视觉冲击力的大片片名与评分 */}
-              <div className="mb-3 sm:mb-4">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[42px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1.5 sm:mb-2 line-clamp-1 leading-tight">
+            {/* 1. 左栏：锁死宽度与固定行高，大片片名与评分在上方，播放按钮在下方贴底（杜绝文本长短引发的挤压抖动） */}
+            <div className="w-[260px] sm:w-[300px] lg:w-[340px] xl:w-[380px] shrink-0 flex flex-col items-start justify-end">
+              {/* 上方：固定高度的大片片名与评分，超长文本自动 truncate，绝对零位移 */}
+              <div className="mb-3 sm:mb-4 w-full">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[40px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1.5 sm:mb-2 truncate leading-tight h-8 sm:h-10 lg:h-12 flex items-center">
                   {active.title}
                 </h2>
-                <div className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-                  <span>{active.episodes_info || (active.types && active.types.length > 0 ? active.types.join(' · ') : '电影 · 剧情')}</span>
+                <div className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] h-6">
+                  <span className="truncate">{active.episodes_info || (active.types && active.types.length > 0 ? active.types.join(' · ') : '电影 · 剧情')}</span>
                   {active.rate && parseFloat(active.rate) > 0 && (
                     <span className="text-amber-400 font-bold text-sm sm:text-base flex items-center gap-0.5 shrink-0">★ {active.rate}</span>
                   )}
@@ -426,12 +457,11 @@ export function HeroSlideshow({
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款双排 6 列热播追更纯文字矩阵（自适应列宽 + 贴底对齐，彻底杜绝重叠与截断） */}
-            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（双排 6 列，中英大字舒展排版，与播放按钮严格对齐） */}
+            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（双排 6 列定宽单元格，消除字体加粗/变形带来的晃动） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
               <div
-                className="hidden lg:grid grid-rows-2 justify-between items-center gap-x-3 xl:gap-x-5 gap-y-2 xl:gap-y-2.5 self-end shrink-0 max-w-fit px-2 pb-0.5 sm:pb-1"
-                style={{ gridTemplateColumns: 'repeat(6, auto)' }}
+                className="hidden lg:grid grid-rows-2 justify-between items-center gap-x-2.5 xl:gap-x-4 gap-y-2 xl:gap-y-2.5 self-end shrink-0 px-1 pb-0.5 sm:pb-1"
+                style={{ gridTemplateColumns: 'repeat(6, minmax(86px, 102px))' }}
               >
                 {activeTrendingNav.slice(0, 12).map((item: TrendingNavItem, idx: number) => {
                   const isCurrentActive = active.title === item.title;
@@ -440,18 +470,18 @@ export function HeroSlideshow({
                       key={idx}
                       type="button"
                       onClick={() => handleTrendingClick(item)}
-                      className={`group flex items-center justify-start text-left cursor-pointer transition-all duration-150 select-none ${
+                      className={`group flex items-center justify-start text-left cursor-pointer transition-colors duration-200 select-none ${
                         isCurrentActive
-                          ? 'text-[#00D1FF] font-bold drop-shadow-[0_0_10px_rgba(0,209,255,0.8)] scale-102'
-                          : 'text-white/80 hover:text-white font-medium hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]'
+                          ? 'text-[#00D1FF] drop-shadow-[0_0_10px_rgba(0,209,255,0.8)]'
+                          : 'text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]'
                       }`}
                       title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                     >
-                      <span className="text-[13px] xl:text-[14px] font-normal tracking-tight whitespace-nowrap leading-snug max-w-[92px] xl:max-w-[108px] truncate">
+                      <span className={`text-[13px] xl:text-[14px] ${isCurrentActive ? 'font-bold' : 'font-medium'} tracking-tight whitespace-nowrap leading-snug max-w-[84px] xl:max-w-[96px] truncate`}>
                         {item.title}
                       </span>
                       {item.updateBadge ? (
-                        <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[10px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1.5 shrink-0 shadow-xs">
+                        <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[10px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0 shadow-xs">
                           {item.updateBadge}
                         </span>
                       ) : null}
@@ -499,7 +529,7 @@ export function HeroSlideshow({
                     key={item.title ? `hero-thumb-${item.title}` : (item.id || idx)}
                     type="button"
                     onClick={() => setActiveIndex(idx)}
-                    className={`group relative ${cardSizeClass} rounded-lg overflow-hidden transition-all duration-300 cursor-pointer border ${
+                    className={`group relative ${cardSizeClass} rounded-lg overflow-hidden transition-[transform,border-color,box-shadow,opacity] duration-200 cursor-pointer border ${
                       isSelected
                         ? 'border-[#00D1FF] ring-2 ring-[#00D1FF]/70 scale-105 shadow-[0_0_14px_rgba(0,209,255,0.6)] z-10'
                         : 'border-white/10 opacity-70 hover:opacity-100 hover:scale-102 hover:border-white/30'
