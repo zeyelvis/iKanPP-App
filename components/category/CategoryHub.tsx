@@ -88,7 +88,7 @@ export function CategoryHub({
   }, [selectedGenre, selectedRegion, selectedYear]);
 
 // ── SWR 频道大厅本地瞬间缓存 ──────────────────────────
-const CATHUB_CACHE_KEY = 'kvideo-cathub-v3-';
+const CATHUB_CACHE_KEY = 'kvideo-cathub-v4-';
 
 function getLocalCatHub(key: string): Record<string, RailMovie[]> | null {
   if (typeof window === 'undefined') return null;

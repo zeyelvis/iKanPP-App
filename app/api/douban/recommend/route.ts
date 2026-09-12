@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { GUOMAN_DATASET } from '@/lib/data/guoman-data';
+import { DOCUMENTARY_DATASET } from '@/lib/data/documentary-data';
 
 export const runtime = 'edge';
 
@@ -43,7 +44,13 @@ async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number,
     return [];
   } catch (err) {
     console.warn(`[Douban-API] Timeout or error for tag "${tag}", triggering instant prebaked fallback:`, (err as any)?.message || err);
-    // 触发即时预置数据熔断兜底，并确保预置数据封面全部经过代理保护
+    // 若请求纪录片发生超时熔断，返回纯净纪录片神作兜底，绝不返回普通商业电影
+    if (tag === '纪录片') {
+      return DOCUMENTARY_DATASET.slice(pageStart, pageStart + pageLimit).map((item: any) => ({
+        ...item,
+        cover: item.cover?.startsWith('http') ? `/api/img-proxy?url=${encodeURIComponent(item.cover)}` : item.cover,
+      }));
+    }
     const prebaked = type === 'tv' ? PREBAKED_HOME_DATA.tv : PREBAKED_HOME_DATA.movie;
     const fallbackList = [...prebaked.s1, ...prebaked.s2, ...prebaked.s3, ...prebaked.s4];
     return fallbackList.slice(0, pageLimit).map((item: any) => ({
@@ -341,6 +348,107 @@ export async function GET(request: Request) {
     });
   }
 
+  // 0.2 特殊处理：纪录片专区与细分题材精准路由 (100% 杜绝任何商业故事电影混入)
+  const isDocumentary =
+    rawTag === '纪录片' ||
+    genre === '纪录片' ||
+    (type === 'tv' && ['自然', '美食', '历史', '科学', '冒险', '社会', '地理', '海洋', '豆瓣高分'].includes(rawTag)) ||
+    (type === 'tv' && ['自然', '美食', '历史', '科学', '冒险', '社会', '地理', '海洋', '豆瓣高分'].includes(genre));
+
+  if (isDocumentary) {
+    const targetTag = ['自然', '美食', '历史', '科学', '冒险', '社会', '地理', '海洋', '豆瓣高分'].includes(genre)
+      ? genre
+      : ['自然', '美食', '历史', '科学', '冒险', '社会', '地理', '海洋', '豆瓣高分'].includes(rawTag)
+      ? rawTag
+      : genre || '';
+
+    // 1. 若请求具体细分题材货架（自然/历史/美食/科学/冒险/社会/豆瓣高分等）
+    if (targetTag) {
+      let filtered = targetTag === '豆瓣高分'
+        ? DOCUMENTARY_DATASET.filter(item => parseFloat(item.rate || '0') >= 9.4)
+        : DOCUMENTARY_DATASET.filter(item =>
+            item.types?.some(t => t.includes(targetTag) || targetTag.includes(t))
+          );
+      if (year && year !== '经典高分') {
+        filtered = filtered.filter(item => item.year === year);
+      }
+      if (filtered.length < 4) {
+        const seen = new Set(filtered.map(f => f.title));
+        for (const item of DOCUMENTARY_DATASET) {
+          if (!seen.has(item.title)) {
+            seen.add(item.title);
+            filtered.push(item);
+          }
+        }
+      }
+      const paged = filtered.slice(pageStart, pageStart + pageLimit).map(item => ({
+        ...item,
+        cover: item.cover?.includes('doubanio.com')
+          ? `/api/douban/image?url=${encodeURIComponent(item.cover)}`
+          : item.cover,
+        playable: true,
+      }));
+
+      return NextResponse.json({
+        subjects: paged,
+        tag: targetTag,
+        genre,
+        region,
+        year,
+        total: filtered.length,
+      }, {
+        headers: {
+          'Cache-Control': 'public, max-age=3600, s-maxage=7200, stale-while-revalidate=86400',
+          'CDN-Cache-Control': 'public, s-maxage=7200',
+          'Cloudflare-CDN-Cache-Control': 'public, s-maxage=7200',
+        },
+      });
+    }
+
+    // 2. 若为全库底部分页网格（tag=纪录片），优先拉取豆瓣官方 type=tv&tag=纪录片
+    try {
+      const doubanDocs = await fetchDoubanSubjects('tv', '纪录片', pageLimit, pageStart);
+      const finalSubjects = doubanDocs.length > 0 ? doubanDocs : DOCUMENTARY_DATASET.slice(pageStart, pageStart + pageLimit).map(item => ({
+        ...item,
+        cover: item.cover?.includes('doubanio.com')
+          ? `/api/douban/image?url=${encodeURIComponent(item.cover)}`
+          : item.cover,
+        playable: true,
+      }));
+
+      return NextResponse.json({
+        subjects: finalSubjects,
+        tag: '纪录片',
+        genre,
+        region,
+        year,
+        total: finalSubjects.length,
+      }, {
+        headers: {
+          'Cache-Control': 'public, max-age=3600, s-maxage=7200, stale-while-revalidate=86400',
+          'CDN-Cache-Control': 'public, s-maxage=7200',
+          'Cloudflare-CDN-Cache-Control': 'public, s-maxage=7200',
+        },
+      });
+    } catch {
+      const fallbackList = DOCUMENTARY_DATASET.slice(pageStart, pageStart + pageLimit).map(item => ({
+        ...item,
+        cover: item.cover?.includes('doubanio.com')
+          ? `/api/douban/image?url=${encodeURIComponent(item.cover)}`
+          : item.cover,
+        playable: true,
+      }));
+      return NextResponse.json({
+        subjects: fallbackList,
+        tag: '纪录片',
+        genre,
+        region,
+        year,
+        total: fallbackList.length,
+      });
+    }
+  }
+
   // 1. 确定针对豆瓣的 1~3 个最精准查询 Tag
   const doubanTags: string[] = [];
 
@@ -351,10 +459,10 @@ export async function GET(request: Request) {
       '欧美': '欧美', '美国': '欧美', '英国': '欧美', '法国': '欧美',
       '韩国': '韩国', '日本': '日本',
     };
-    // 电影题材映射
+    // 电影题材映射（严禁将纪录片映射为冷门佳片电影）
     const genreMap: Record<string, string> = {
       '动作': '动作', '喜剧': '喜剧', '爱情': '爱情', '科幻': '科幻', '悬疑': '悬疑',
-      '恐怖': '恐怖', '动画': '动画', '犯罪': '悬疑', '奇幻': '科幻', '战争': '动作', '纪录片': '冷门佳片',
+      '恐怖': '恐怖', '动画': '动画', '犯罪': '悬疑', '奇幻': '科幻', '战争': '动作',
     };
     // 年份映射
     const yearMap: Record<string, string> = {

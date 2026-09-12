@@ -34,13 +34,13 @@ const YEARS = [
 ];
 
 const SHELVES = [
-  { title: '🌍 BBC 史诗级自然与浩瀚宇宙', icon: '🌍', badge: 'BBC 4K', tag: '自然' },
-  { title: '🍲 人间烟火 · 顶级华语美食图鉴', icon: '🍲', badge: 'FOOD', tag: '美食' },
-  { title: '🏺 华夏光影 · 历史人文与国宝探寻', icon: '🏺', badge: 'HISTORY', tag: '历史' },
-  { title: '🏆 影史殿堂 · 豆瓣 9.5+ 极致口碑神作', icon: '⭐', badge: 'TOP 9.5+', tag: '豆瓣高分' },
-  { title: '🔬 前沿探索 · 科学奥秘与未知文明', icon: '🔬', badge: 'SCIENCE', tag: '科学' },
-  { title: '🏔️ 极限挑战 · 人性与自然无畏冒险', icon: '🏔️', badge: 'ADVENTURE', tag: '冒险' },
-  { title: '🏙️ 城市微光 · 时代社会与温情纪实', icon: '🏙️', badge: 'LIFE', tag: '社会' },
+  { title: '🌍 BBC 史诗级自然与浩瀚宇宙', icon: '🌍', badge: 'BBC 4K', tag: '自然', doubanType: 'tv' as const },
+  { title: '🍲 人间烟火 · 顶级华语美食图鉴', icon: '🍲', badge: 'FOOD', tag: '美食', doubanType: 'tv' as const },
+  { title: '🏺 华夏光影 · 历史人文与国宝探寻', icon: '🏺', badge: 'HISTORY', tag: '历史', doubanType: 'tv' as const },
+  { title: '🏆 影史殿堂 · 豆瓣 9.5+ 极致口碑神作', icon: '⭐', badge: 'TOP 9.5+', tag: '豆瓣高分', doubanType: 'tv' as const },
+  { title: '🔬 前沿探索 · 科学奥秘与未知文明', icon: '🔬', badge: 'SCIENCE', tag: '科学', doubanType: 'tv' as const },
+  { title: '🏔️ 极限挑战 · 人性与自然无畏冒险', icon: '🏔️', badge: 'ADVENTURE', tag: '冒险', doubanType: 'tv' as const },
+  { title: '🏙️ 城市微光 · 时代社会与温情纪实', icon: '🏙️', badge: 'LIFE', tag: '社会', doubanType: 'tv' as const },
 ];
 
 export default function DocumentaryClient() {
@@ -55,7 +55,7 @@ export default function DocumentaryClient() {
       <CategoryHub
         categoryTitle="纪录片大厅"
         categorySubtitle="全球 4K 顶级自然生态 · 华夏史诗人文 · 舌尖人间烟火"
-        doubanType="movie"
+        doubanType="tv"
         activeNav="documentary"
         genres={GENRES}
         regions={REGIONS}
