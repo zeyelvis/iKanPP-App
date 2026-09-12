@@ -436,18 +436,20 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
 
   return (
     <div className="animate-fade-in pb-28 sm:pb-16">
-      {/* 1. 🏆 影院级全景沉浸式巨幕 Billboard（左侧主标题与胶囊播放按钮，右侧双排 6 列爱壹帆热播追更直达矩阵） */}
+      {/* 1. 🏆 影院级全景沉浸式巨幕 Billboard（100% 全宽通顶，四周电影级暗黑羽化系统） */}
       <HeroSlideshow
         onSearch={onSearch}
         customHeroMovies={deduplicatedContent.heroList}
         trendingNav={PREBAKED_HOME_DATA.all.trendingNav}
       />
 
-      {/* 2. 🎬 断点续播 / 最近观看记录横轨 */}
-      <ContinueWatchingRail />
+      {/* 2. 核心流式内容货架区（包裹在 fluid-container 中，无缝承接上方羽化渐变） */}
+      <div className="fluid-container space-y-6 sm:space-y-8 mt-2 sm:mt-4 relative z-20">
+        {/* 🎬 断点续播 / 最近观看记录横轨 */}
+        <ContinueWatchingRail />
 
-      {/* 3. 🌟 流媒体 7 大核心品类导航条（支持移动端横向滑动手势） */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b border-white/10 pb-3">
+        {/* 🌟 流媒体 7 大核心品类导航条（支持移动端横向滑动手势） */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 px-0.5 -mx-0.5">
           {TABS.map((tab) => {
             const isActive = contentType === tab.id;
@@ -551,6 +553,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
 
       {/* 12. 🧭 全库多维分类检索大厅导航卡片 */}
       <ExploreHubFooterBanner />
+      </div>
     </div>
   );
 }

@@ -19,6 +19,7 @@ interface NavbarProps {
   isSearching?: boolean;
   activeCategory?: string;
   onSelectCategory?: (category: string) => void;
+  transparentFloat?: boolean;
 }
 
 function NavbarInner({
@@ -31,6 +32,7 @@ function NavbarInner({
   isSearching = false,
   activeCategory = 'home',
   onSelectCategory,
+  transparentFloat = false,
 }: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -122,10 +124,14 @@ function NavbarInner({
 
   return (
     <nav
-      className={`sticky top-0 z-2000 w-full transition-all duration-300 ${
-        isScrolled
-          ? 'bg-[#0A0A0F]/90 backdrop-blur-2xl border-b border-white/10 shadow-2xl py-3'
-          : 'bg-linear-to-b from-black/80 via-black/40 to-transparent py-4'
+      className={`z-2000 w-full transition-all duration-300 ${
+        transparentFloat
+          ? (isScrolled
+              ? 'fixed top-0 inset-x-0 bg-[#0A0A0F]/90 backdrop-blur-2xl border-b border-white/10 shadow-2xl py-3'
+              : 'absolute top-0 inset-x-0 bg-transparent py-4')
+          : (isScrolled
+              ? 'sticky top-0 bg-[#0A0A0F]/90 backdrop-blur-2xl border-b border-white/10 shadow-2xl py-3'
+              : 'sticky top-0 bg-linear-to-b from-black/80 via-black/40 to-transparent py-4')
       }`}
     >
       <div className="fluid-container flex items-center justify-between gap-4">

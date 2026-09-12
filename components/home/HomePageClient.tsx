@@ -59,11 +59,12 @@ export function HomePageClient() {
         onClearSearch={handleReset}
         initialQuery={query}
         isSearching={loading}
+        transparentFloat={!hasSearched && !loading}
       />
 
       {/* Search Loading Animation */}
       {loading && (
-        <div className="fluid-container mt-4">
+        <div className="fluid-container mt-20 pt-4">
           <div className="max-w-3xl mx-auto">
             <SearchLoadingAnimation
               currentSource=""
@@ -75,17 +76,19 @@ export function HomePageClient() {
       )}
 
       {/* Main Content */}
-      <main className="fluid-container pb-20">
+      <main className="pb-20">
         {/* Results Section */}
         {(results.length >= 1 || (!loading && results.length > 0)) && (
-          <SearchResults
-            results={results}
-            availableSources={availableSources}
-            loading={loading}
-            latencies={latencies}
-            query={query}
-            onSearch={handleSearch}
-          />
+          <div className="fluid-container pt-20">
+            <SearchResults
+              results={results}
+              availableSources={availableSources}
+              loading={loading}
+              latencies={latencies}
+              query={query}
+              onSearch={handleSearch}
+            />
+          </div>
         )}
 
         {/* Popular Features - Homepage */}
@@ -95,7 +98,9 @@ export function HomePageClient() {
 
         {/* No Results */}
         {!loading && hasSearched && results.length === 0 && (
-          <NoResults onReset={handleReset} />
+          <div className="fluid-container pt-20">
+            <NoResults onReset={handleReset} />
+          </div>
         )}
       </main>
 
