@@ -20,6 +20,13 @@ export interface PrebakedSubject {
   tagline?: string;
 }
 
+export interface TrendingNavItem {
+  title: string;
+  updateBadge?: string;
+  url?: string;
+  type?: string;
+}
+
 export interface PrebakedHomeCategory {
   hero: PrebakedSubject[];
   top10: PrebakedSubject[];
@@ -27,6 +34,7 @@ export interface PrebakedHomeCategory {
   s2: PrebakedSubject[];
   s3: PrebakedSubject[];
   s4: PrebakedSubject[];
+  trendingNav?: TrendingNavItem[];
 }
 
 import { ANIME_HOME_DATA, VARIETY_HOME_DATA, SHORT_HOME_DATA, ALL_HOME_DATA } from './home-prebaked-extra';

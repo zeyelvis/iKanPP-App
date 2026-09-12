@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
-import { PREBAKED_HOME_DATA, type PrebakedSubject } from '@/lib/data/home-prebaked';
+import { PREBAKED_HOME_DATA, type PrebakedSubject, type TrendingNavItem } from '@/lib/data/home-prebaked';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 interface PosterImageProps {
@@ -181,6 +181,7 @@ interface HeroSlideshowProps {
   onMovieClick?: (movie: PrebakedSubject) => void;
   badgeTitle?: string;
   compact?: boolean;
+  trendingNav?: TrendingNavItem[];
 }
 
 export function HeroSlideshow({
@@ -190,6 +191,7 @@ export function HeroSlideshow({
   onMovieClick,
   badgeTitle,
   compact = false,
+  trendingNav,
 }: HeroSlideshowProps) {
   const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -266,6 +268,22 @@ export function HeroSlideshow({
     }, 7000);
     return () => clearInterval(timer);
   }, [isPaused, currentData.length, activeIndex]);
+
+  const activeTrendingNav = trendingNav || (contentType === 'all' ? PREBAKED_HOME_DATA.all?.trendingNav : undefined);
+
+  const handleTrendingClick = (item: TrendingNavItem) => {
+    // 若当前轮播数据包含该片，直接切换轮播大图
+    const matchIdx = currentData.findIndex(m => m.title === item.title);
+    if (matchIdx !== -1) {
+      setActiveIndex(matchIdx);
+    }
+    // 同时直接进入播放页
+    if (onMovieClick) {
+      onMovieClick({ title: item.title, id: item.title, rate: '', cover: '' });
+    } else {
+      router.push(`/title/${generateSlug(item.title)}`);
+    }
+  };
 
   const handleMovieClick = (movie: any) => {
     if (onMovieClick) {
@@ -355,71 +373,175 @@ export function HeroSlideshow({
         title={active.title}
       />
 
-      {/* 3. 巨幕内容排版 */}
-      <div className="relative z-20 h-full fluid-container flex flex-col justify-end pb-8 sm:pb-12 pt-16">
-        <div className="max-w-3xl">
-          {/* 榜单热度与类型徽章 */}
-          <div className="flex items-center gap-2 flex-wrap mb-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-linear-to-r from-red-600 to-amber-600 text-white text-xs font-black rounded-full shadow-lg">
-              🔥 #{activeIndex + 1} {badgeTitle || '全网焦点热播'}
-            </span>
-
-            {active.rate && parseFloat(active.rate) > 0 ? (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 font-black text-xs rounded-full border border-amber-400/30">
-                ★ 豆瓣 {active.rate}
+      {/* 3. 巨幕内容排版：爱壹帆同款布局（左侧标题胶囊按钮，右侧双排 6 列热播追更直达矩阵） */}
+      <div className="relative z-20 h-full fluid-container flex flex-col justify-end pb-7 sm:pb-9 pt-16">
+        <div className="w-full flex flex-col lg:flex-row lg:items-end justify-between gap-6 lg:gap-8">
+          {/* 左侧：大片焦点信息区 */}
+          <div className="max-w-xl shrink-0">
+            {/* 榜单热度与类型徽章 */}
+            <div className="flex items-center gap-2 flex-wrap mb-2">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-linear-to-r from-red-600 to-amber-600 text-white text-[11px] font-black rounded-full shadow-md">
+                🔥 #{activeIndex + 1} {badgeTitle || '全网焦点'}
               </span>
-            ) : null}
 
-            {active.types?.slice(0, 3).map((type: string, i: number) => (
-              <span
-                key={i}
-                className="px-2.5 py-1 bg-white/10 backdrop-blur-md text-white/80 text-xs rounded-full border border-white/15"
-              >
-                {type}
-              </span>
-            ))}
+              {active.rate && parseFloat(active.rate) > 0 ? (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-black/60 backdrop-blur-md text-amber-300 font-black text-[11px] rounded-full border border-amber-400/30">
+                  ★ 豆瓣 {active.rate}
+                </span>
+              ) : null}
 
-            {active.year && (
-              <span className="text-white/40 text-xs font-medium px-1">
-                {active.year}
-              </span>
-            )}
-          </div>
+              {active.year && (
+                <span className="text-white/45 text-xs font-medium px-0.5">
+                  {active.year}
+                </span>
+              )}
+            </div>
 
-          {/* 巨幕超大片名 (SEO 语义规范：首页全局唯一 H1 位于服务端外壳，轮播巨幕使用 H2) */}
-          <h2 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-2xl mb-4 sm:mb-6 line-clamp-2">
-            {active.title}
-          </h2>
+            {/* 巨幕主标题 */}
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight drop-shadow-2xl mb-1.5 line-clamp-1">
+              {active.title}
+            </h2>
 
-          {/* 操作按钮组 */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => handleMovieClick(active)}
-              className="inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-2.5 sm:py-3.5 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-full text-xs sm:text-base font-bold shadow-xl transition-all cursor-pointer hover:shadow-[0_0_25px_rgba(229,9,20,0.6)]"
-            >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-              立即播放
-            </button>
+            {/* 副标题与类型（如：电影·剧情 / 更新至04集 | 共47集） */}
+            <div className="text-white/65 text-xs sm:text-sm font-medium mb-4 flex items-center gap-2 line-clamp-1">
+              <span>{active.episodes_info || (active.types && active.types.length > 0 ? active.types.join('·') : '精选大片')}</span>
+            </div>
 
-            {onSearch && (
+            {/* 操作按钮组：爱壹帆同款半透明毛玻璃药丸胶囊播放按钮 */}
+            <div className="flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => onSearch(active.title)}
-                className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 sm:py-3.5 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-xl text-white rounded-full text-xs sm:text-sm font-semibold border border-white/15 transition-all cursor-pointer shadow-lg"
+                onClick={() => handleMovieClick(active)}
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-2.5 bg-white/20 hover:bg-white/30 active:scale-95 backdrop-blur-xl text-white rounded-full text-sm sm:text-base font-bold border border-white/25 shadow-lg transition-all cursor-pointer hover:shadow-[0_0_20px_rgba(255,255,255,0.25)]"
               >
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <span>立即播放</span>
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current ml-0.5" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
                 </svg>
-                搜全网源
               </button>
-            )}
+
+              {onSearch && (
+                <button
+                  type="button"
+                  onClick={() => onSearch(active.title)}
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md text-white/80 hover:text-white rounded-full text-xs font-medium border border-white/15 transition-all cursor-pointer"
+                  title="全网搜源"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <span>搜全源</span>
+                </button>
+              )}
+            </div>
           </div>
+
+          {/* 右侧：爱壹帆同款双排 6 列热播追更直达矩阵（共 12 部） */}
+          {activeTrendingNav && activeTrendingNav.length > 0 ? (
+            <div className="shrink-0 w-full lg:w-auto">
+              {/* 桌面端：固定 6 列 × 2 排精美网格 */}
+              <div className="hidden lg:grid grid-cols-6 grid-rows-2 gap-x-5 xl:gap-x-7 gap-y-3 max-w-2xl py-2 px-1">
+                {activeTrendingNav.slice(0, 12).map((item, idx) => {
+                  const isCurrentActive = active.title === item.title;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleTrendingClick(item)}
+                      className={`group relative flex items-center justify-start text-left cursor-pointer transition-colors duration-200 select-none ${
+                        isCurrentActive
+                          ? 'text-[#00D1FF] font-bold drop-shadow-[0_0_8px_rgba(0,209,255,0.7)]'
+                          : 'text-white/75 hover:text-white font-medium'
+                      }`}
+                      title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
+                    >
+                      <span className="text-xs xl:text-sm tracking-tight truncate max-w-[85px] xl:max-w-[105px]">
+                        {item.title}
+                      </span>
+                      {item.updateBadge ? (
+                        <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9px] font-black rounded-full px-1.5 py-0.2 min-w-4 h-3.5 leading-none ml-1 shadow-sm shrink-0">
+                          {item.updateBadge}
+                        </span>
+                      ) : null}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* 移动端/小屏：双排水平横滑微型卡片 */}
+              <div className="flex lg:hidden flex-col gap-2 overflow-x-auto scrollbar-none py-1 -mx-2 px-2">
+                <div className="flex items-center gap-2 shrink-0">
+                  {activeTrendingNav.slice(0, 6).map((item, idx) => {
+                    const isCurrentActive = active.title === item.title;
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => handleTrendingClick(item)}
+                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors shrink-0 backdrop-blur-md border ${
+                          isCurrentActive
+                            ? 'bg-[#00D1FF]/20 text-[#00D1FF] border-[#00D1FF]/40 font-bold'
+                            : 'bg-black/40 text-white/80 hover:text-white border-white/10 font-medium'
+                        }`}
+                      >
+                        <span>{item.title}</span>
+                        {item.updateBadge && (
+                          <span className="bg-[#E50914] text-white text-[9px] font-black rounded-full px-1 py-0.2 min-w-3.5 text-center leading-none">
+                            {item.updateBadge}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {activeTrendingNav.slice(6, 12).map((item, idx) => {
+                    const isCurrentActive = active.title === item.title;
+                    return (
+                      <button
+                        key={idx + 6}
+                        type="button"
+                        onClick={() => handleTrendingClick(item)}
+                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors shrink-0 backdrop-blur-md border ${
+                          isCurrentActive
+                            ? 'bg-[#00D1FF]/20 text-[#00D1FF] border-[#00D1FF]/40 font-bold'
+                            : 'bg-black/40 text-white/80 hover:text-white border-white/10 font-medium'
+                        }`}
+                      >
+                        <span>{item.title}</span>
+                        {item.updateBadge && (
+                          <span className="bg-[#E50914] text-white text-[9px] font-black rounded-full px-1 py-0.2 min-w-3.5 text-center leading-none">
+                            {item.updateBadge}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* 分类大厅兜底：桌面端右侧缩略卡片 */
+            <div className="hidden md:flex items-center gap-2 bg-black/40 backdrop-blur-xl p-2 rounded-2xl border border-white/10 shrink-0">
+              {displayItems.map((item, idx) => (
+                <button
+                  key={item.title ? `hero-thumb-${item.title}` : (item.id || idx)}
+                  onClick={() => setActiveIndex(idx)}
+                  className={`relative w-12 h-16 rounded-xl overflow-hidden border-2 transition-all duration-300 cursor-pointer ${
+                    idx === activeIndex
+                      ? 'border-(--accent-color) scale-110 shadow-lg'
+                      : 'border-transparent opacity-50 hover:opacity-100'
+                  }`}
+                >
+                  <PosterImage src={item.cover} alt={item.title} className="object-cover" sizes="50px" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* 4. 左右微光翻页按键（单手随时秒切上一部/下一部，无需干等自动轮播） */}
+      {/* 4. 左右翻页箭头 */}
       {currentData.length > 1 && (
         <>
           <button
@@ -452,49 +574,34 @@ export function HeroSlideshow({
         </>
       )}
 
-      {/* 5. 桌面端右下角快速切换指示器（缩略卡片 + 进度指示） */}
-      <div className="absolute right-4 sm:right-8 bottom-6 z-20 hidden md:flex items-center gap-2 bg-black/40 backdrop-blur-xl p-2 rounded-2xl border border-white/10">
-        {displayItems.map((item, idx) => (
-          <button
-            key={item.title ? `hero-thumb-${item.title}` : (item.id || idx)}
-            onClick={() => setActiveIndex(idx)}
-            className={`relative w-12 h-16 rounded-xl overflow-hidden border-2 transition-all duration-300 cursor-pointer ${
-              idx === activeIndex
-                ? 'border-(--accent-color) scale-110 shadow-lg'
-                : 'border-transparent opacity-50 hover:opacity-100'
-            }`}
-          >
-            <PosterImage src={item.cover} alt={item.title} className="object-cover" sizes="50px" />
-          </button>
-        ))}
-      </div>
-
-      {/* 6. 移动端大热区指示栏（支持手指精准点按，带 2/7 页码状态指示） */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex md:hidden items-center gap-0.5 bg-black/60 backdrop-blur-xl px-2 py-0.5 rounded-full border border-white/15 shadow-2xl">
-        {displayItems.map((_, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setActiveIndex(idx);
-            }}
-            className="p-1.5 flex items-center justify-center cursor-pointer active:scale-95 transition-transform"
-            aria-label={`切换到第 ${idx + 1} 张`}
-          >
-            <span
-              className={`block h-1.5 rounded-full transition-all duration-300 ${
-                idx === activeIndex
-                  ? 'w-5 bg-(--accent-color) shadow-[0_0_8px_rgba(229,9,20,0.9)]'
-                  : 'w-1.5 bg-white/35 hover:bg-white/70'
-              }`}
-            />
-          </button>
-        ))}
-        <span className="text-[10px] font-bold text-white/50 pl-1 pr-1 select-none font-mono">
-          {activeIndex + 1}/{displayItems.length}
-        </span>
-      </div>
+      {/* 5. 分类页移动端指示条（仅在无 trendingNav 时展示） */}
+      {(!activeTrendingNav || activeTrendingNav.length === 0) && (
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex md:hidden items-center gap-0.5 bg-black/60 backdrop-blur-xl px-2 py-0.5 rounded-full border border-white/15 shadow-2xl">
+          {displayItems.map((_, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveIndex(idx);
+              }}
+              className="p-1.5 flex items-center justify-center cursor-pointer active:scale-95 transition-transform"
+              aria-label={`切换到第 ${idx + 1} 张`}
+            >
+              <span
+                className={`block h-1.5 rounded-full transition-all duration-300 ${
+                  idx === activeIndex
+                    ? 'w-5 bg-(--accent-color) shadow-[0_0_8px_rgba(229,9,20,0.9)]'
+                    : 'w-1.5 bg-white/35 hover:bg-white/70'
+                }`}
+              />
+            </button>
+          ))}
+          <span className="text-[10px] font-bold text-white/50 pl-1 pr-1 select-none font-mono">
+            {activeIndex + 1}/{displayItems.length}
+          </span>
+        </div>
+      )}
     </div>
   );
 }

@@ -1540,6 +1540,56 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
 
 // ── 4. 🔥 全部推荐专区精选 (All / Mixed) ──────────────────────────────────
 export const ALL_HOME_DATA: PrebakedHomeCategory = {
+  trendingNav: [
+    {
+        "title": "兰香如故",
+        "updateBadge": "2"
+    },
+    {
+        "title": "冬城猎凶",
+        "updateBadge": "2"
+    },
+    {
+        "title": "深渊无间",
+        "updateBadge": "1"
+    },
+    {
+        "title": "交锋",
+        "updateBadge": "2"
+    },
+    {
+        "title": "生逢其时",
+        "updateBadge": "1"
+    },
+    {
+        "title": "重案六组:消失的警号",
+        "updateBadge": "2"
+    },
+    {
+        "title": "早春晴朗",
+        "updateBadge": ""
+    },
+    {
+        "title": "金色",
+        "updateBadge": ""
+    },
+    {
+        "title": "蝉",
+        "updateBadge": "2"
+    },
+    {
+        "title": "藏锋",
+        "updateBadge": ""
+    },
+    {
+        "title": "特立独行",
+        "updateBadge": ""
+    },
+    {
+        "title": "给阿嬷的情书",
+        "updateBadge": ""
+    }
+  ],
   hero: [
     {
         "id": "iyf_hero_movie_1",

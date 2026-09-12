@@ -127,6 +127,68 @@ async function enrichMovieData(slideItem, index) {
   };
 }
 
+async function fetchTrendingNav() {
+  console.log('[iyf-sync] 正在向爱壹帆拉取最新 12 席热播追更速报...');
+  try {
+    const [dramaRes, homeRes] = await Promise.allSettled([
+      fetch("https://m10.iyf.tv/v3/home/getflashbanner?cinema=1&region=GL.&cid=0,1,4&size=20", {
+        headers: { "User-Agent": "Mozilla/5.0" },
+        signal: AbortSignal.timeout(4000)
+      }).then(r => r.json()),
+      fetch("https://m10.iyf.tv/v3/home/getflashbanner?cinema=1&region=GL.&cid=0,1&size=20", {
+        headers: { "User-Agent": "Mozilla/5.0" },
+        signal: AbortSignal.timeout(4000)
+      }).then(r => r.json())
+    ]);
+
+    const dramaList = dramaRes.status === 'fulfilled' ? dramaRes.value?.data?.info || [] : [];
+    const homeList = homeRes.status === 'fulfilled' ? homeRes.value?.data?.info || [] : [];
+    const combined = [...dramaList, ...homeList];
+
+    const items = [];
+    const seen = new Set();
+
+    for (const item of combined) {
+      if (!item || !item.title || item.external || item.title.includes("爽剧来袭")) continue;
+      const title = item.title.trim();
+      if (!seen.has(title)) {
+        seen.add(title);
+        let updateBadge = "";
+        const sub = item.subTitle || "";
+        const m = sub.match(/更新至0?(\d+)集/);
+        if (m) {
+          updateBadge = parseInt(m[1], 10) % 2 === 0 ? "2" : "1";
+        }
+        items.push({ title, updateBadge });
+      }
+      if (items.length >= 12) break;
+    }
+
+    // 头部国漫与短剧兜底，确保始终保持 12 席完整
+    const defaultBaselines = [
+      { title: '凡人修仙传', updateBadge: '1' },
+      { title: '光阴之外', updateBadge: '1' },
+      { title: '花儿与少年第8季', updateBadge: '' },
+      { title: '杀手妈咪', updateBadge: '1' },
+      { title: '飞到我心上', updateBadge: '' },
+      { title: '死有对证', updateBadge: '' }
+    ];
+    for (const fb of defaultBaselines) {
+      if (!seen.has(fb.title)) {
+        seen.add(fb.title);
+        items.push(fb);
+      }
+      if (items.length >= 12) break;
+    }
+
+    console.log(`[iyf-sync] 成功获取 ${items.length} 席热播追更速报:`, items.map(i => `${i.title}${i.updateBadge ? `[${i.updateBadge}]` : ''}`));
+    return items.slice(0, 12);
+  } catch (err) {
+    console.warn('[iyf-sync] 抓取热播追更速报异常，保留现有数据:', err.message);
+    return null;
+  }
+}
+
 async function main() {
   try {
     const slides = await fetchIyfHeroSlides();
@@ -143,29 +205,39 @@ async function main() {
 
     console.log(`[iyf-sync] 成功补全爱壹帆首页真实 ${allHeroItems.length} 部正片 Hero 影视`);
 
-    // 完整对应爱壹帆首页真实正片数量
     const finalHeros = allHeroItems;
+    const trendingNavItems = await fetchTrendingNav();
 
-    // 仅同步更新首页全站综合巨幕 ALL_HOME_DATA.hero，绝不污染分类专区的 movie.hero 与 tv.hero
+    // 仅同步更新首页全站综合巨幕 ALL_HOME_DATA.hero 与 ALL_HOME_DATA.trendingNav，绝不污染分类专区
     const extraPath = path.resolve(process.cwd(), 'lib/data/home-prebaked-extra.ts');
     if (fs.existsSync(extraPath)) {
       let extraContent = fs.readFileSync(extraPath, 'utf-8');
+
+      // 1. 同步 Hero 轮播大图
       const allHeroRegex = /(ALL_HOME_DATA:\s*PrebakedHomeCategory\s*=\s*\{[\s\S]*?["']?hero["']?:\s*\[)[\s\S]*?(\]\s*,\s*["']?top10["']?)/;
       if (allHeroRegex.test(extraContent)) {
         const formattedJson = JSON.stringify(finalHeros, null, 4)
           .replace(/^\[/, '')
           .replace(/\]$/, '')
           .trim();
-        const updatedExtra = extraContent.replace(allHeroRegex, `$1\n    ${formattedJson}\n  $2`);
-        if (updatedExtra !== extraContent) {
-          fs.writeFileSync(extraPath, updatedExtra, 'utf-8');
-          console.log(`✅ [iyf-sync] 成功将爱壹帆首页真实 ${finalHeros.length} 席最新轮播巨幕同步至 lib/data/home-prebaked-extra.ts (ALL_HOME_DATA.hero)！`);
-        } else {
-          console.log('[iyf-sync] ALL_HOME_DATA.hero 轮播内容未变动或已是最新');
-        }
-      } else {
-        console.warn('[iyf-sync] 未能在 home-prebaked-extra.ts 中匹配到 ALL_HOME_DATA.hero 区域');
+        extraContent = extraContent.replace(allHeroRegex, `$1\n    ${formattedJson}\n  $2`);
+        console.log(`✅ [iyf-sync] 成功将爱壹帆首页真实 ${finalHeros.length} 席最新轮播巨幕同步至 ALL_HOME_DATA.hero！`);
       }
+
+      // 2. 同步 12 席热播追更速报矩阵（如果抓取成功）
+      if (trendingNavItems && trendingNavItems.length > 0) {
+        const trendingRegex = /(ALL_HOME_DATA:\s*PrebakedHomeCategory\s*=\s*\{[\s\S]*?trendingNav:\s*\[)[\s\S]*?(\]\s*,\s*["']?hero["']?:)/;
+        if (trendingRegex.test(extraContent)) {
+          const formattedTrending = JSON.stringify(trendingNavItems, null, 4)
+            .replace(/^\[/, '')
+            .replace(/\]$/, '')
+            .trim();
+          extraContent = extraContent.replace(trendingRegex, `$1\n    ${formattedTrending}\n  $2`);
+          console.log(`✅ [iyf-sync] 成功将爱壹帆最新 ${trendingNavItems.length} 席热播追更矩阵同步至 ALL_HOME_DATA.trendingNav！`);
+        }
+      }
+
+      fs.writeFileSync(extraPath, extraContent, 'utf-8');
     }
   } catch (err) {
     console.error('[iyf-sync] 执行异常:', err);
