@@ -426,8 +426,8 @@ export function HeroSlideshow({
         <div className="fluid-container">
           <div className="iyf-hero-bar pointer-events-auto">
             
-            {/* 1. 左栏：大片主标题与评分在上方相对放大，放大的播放按钮在下方与推荐严格对齐 */}
-            <div className="shrink-0 max-w-[220px] xl:max-w-[250px] flex flex-col items-start justify-end">
+            {/* 1. 左栏：大片主标题与评分在上方相对放大，放大的播放按钮在下方与推荐严格对齐，固定物理宽度彻底杜绝中栏受挤压漂移 */}
+            <div className="shrink-0 w-[220px] xl:w-[250px] flex flex-col items-start justify-end">
               {/* 上方：相对放大、极具视觉冲击力的大片片名与评分，固定高度绝对零抖动 */}
               <div className="mb-3 sm:mb-4 w-full">
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[40px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1.5 sm:mb-2 truncate leading-tight h-9 sm:h-11 lg:h-12 flex items-center">
