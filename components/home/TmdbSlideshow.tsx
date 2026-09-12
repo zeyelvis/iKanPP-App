@@ -166,59 +166,30 @@ function HeroBackdrop({
         />
       )}
 
-      {/* 3. 电影级多层次深邃暗黑羽化渐变系统（原生 CSS 渐变引擎，确保 100% 渲染与沉浸质感） */}
-      {/* 底部融合多段渐变：向上延展 82%，平滑过渡融入页面背景色 #0A0A0F，消除断层 */}
-      <div
-        className="absolute inset-x-0 bottom-0 pointer-events-none"
-        style={{
-          height: '82%',
-          background: 'linear-gradient(to top, #0A0A0F 0%, rgba(10, 10, 15, 0.96) 22%, rgba(10, 10, 15, 0.78) 50%, rgba(10, 10, 15, 0.3) 75%, transparent 100%)',
-        }}
-      />
-      {/* 底部纯黑接缝过渡层：彻底消除与下方轨道内容之间的任何色差断层 */}
-      <div
-        className="absolute inset-x-0 bottom-0 pointer-events-none"
-        style={{
-          height: '140px',
-          background: 'linear-gradient(to top, #0A0A0F 0%, rgba(10, 10, 15, 0.92) 55%, transparent 100%)',
-        }}
-      />
-
-      {/* 顶部防眩保护渐变：向下延展，保护全透明浮动 Navbar 文字与搜索框 */}
+      {/* 3. 纯净极简电影级自然羽化系统（仅保留头部与底部自然平滑渐变，还原大片通透沉浸感） */}
+      {/* 顶部自然防眩羽化：柔和保护全透明浮动 Navbar 文字与搜索框，向下自然淡出 */}
       <div
         className="absolute inset-x-0 top-0 pointer-events-none"
         style={{
-          height: '240px',
-          background: 'linear-gradient(to bottom, rgba(10, 10, 15, 0.96) 0%, rgba(10, 10, 15, 0.65) 45%, rgba(10, 10, 15, 0.2) 75%, transparent 100%)',
+          height: '180px',
+          background: 'linear-gradient(to bottom, rgba(10, 10, 15, 0.88) 0%, rgba(10, 10, 15, 0.5) 45%, rgba(10, 10, 15, 0.15) 75%, transparent 100%)',
         }}
       />
 
-      {/* 左翼深度羽化：为左侧大片主标题、副标题与药丸播放键提供深黑坚实基底 */}
+      {/* 底部自然平滑羽化：向上优雅延展约 320px，刚好柔和托衬贴底控制栏，并与下方页面无缝融合 */}
       <div
-        className="absolute inset-y-0 left-0 pointer-events-none"
+        className="absolute inset-x-0 bottom-0 pointer-events-none"
         style={{
-          width: '58%',
-          maxWidth: '880px',
-          background: 'linear-gradient(to right, #0A0A0F 0%, rgba(10, 10, 15, 0.96) 28%, rgba(10, 10, 15, 0.78) 58%, rgba(10, 10, 15, 0.25) 82%, transparent 100%)',
+          height: '320px',
+          background: 'linear-gradient(to top, #0A0A0F 0%, rgba(10, 10, 15, 0.95) 25%, rgba(10, 10, 15, 0.65) 55%, rgba(10, 10, 15, 0.18) 82%, transparent 100%)',
         }}
       />
-
-      {/* 左下角专属聚光暗角：L形高密度遮罩，无论浅色/艳黄背景均能保证文字完美清晰 */}
+      {/* 底边极细纯黑衔接层：确保底部边缘与下方内容轨道色值完全一致 */}
       <div
-        className="absolute bottom-0 left-0 pointer-events-none"
+        className="absolute inset-x-0 bottom-0 pointer-events-none"
         style={{
-          width: '750px',
-          height: '440px',
-          background: 'radial-gradient(ellipse at bottom left, rgba(10, 10, 15, 0.98) 0%, rgba(10, 10, 15, 0.88) 42%, rgba(10, 10, 15, 0.25) 75%, transparent 100%)',
-        }}
-      />
-
-      {/* 右翼柔和消隐：消除右边缘生硬切边，与深色背景浑然天成 */}
-      <div
-        className="absolute inset-y-0 right-0 pointer-events-none"
-        style={{
-          width: '320px',
-          background: 'linear-gradient(to left, rgba(10, 10, 15, 0.88) 0%, rgba(10, 10, 15, 0.35) 55%, transparent 100%)',
+          height: '60px',
+          background: 'linear-gradient(to top, #0A0A0F 0%, rgba(10, 10, 15, 0.85) 60%, transparent 100%)',
         }}
       />
     </div>
@@ -424,8 +395,8 @@ export function HeroSlideshow({
         title={active.title}
       />
 
-      {/* 3. 巨幕内容排版：爱壹帆 1:1 经典三栏布局（左：标题与播放；中：双排6列追更；右：轮播海报缩略图） */}
-      <div className="absolute inset-x-0 bottom-0 z-20 w-full flex flex-col justify-end pb-8 sm:pb-11 pointer-events-none">
+      {/* 3. 巨幕内容排版：爱壹帆 1:1 经典三栏布局（整体贴齐图片最下方边缘） */}
+      <div className="absolute inset-x-0 bottom-0 z-20 w-full flex flex-col justify-end pb-2.5 sm:pb-3.5 pointer-events-none">
         <div className="fluid-container">
           <div className="iyf-hero-bar pointer-events-auto">
             
@@ -434,7 +405,7 @@ export function HeroSlideshow({
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] mb-1 line-clamp-1">
                 {active.title}
               </h2>
-              <div className="text-white/80 text-xs sm:text-sm font-normal mb-3.5 flex items-center gap-1.5 line-clamp-1 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
+              <div className="text-white/80 text-xs sm:text-sm font-normal mb-2.5 flex items-center gap-1.5 line-clamp-1 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
                 <span>{active.episodes_info || (active.types && active.types.length > 0 ? active.types.join('·') : '电影·剧情')}</span>
                 {active.rate && parseFloat(active.rate) > 0 && (
                   <span className="text-amber-400 font-medium text-xs">★ {active.rate}</span>
