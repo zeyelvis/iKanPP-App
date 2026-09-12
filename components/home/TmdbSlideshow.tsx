@@ -373,119 +373,120 @@ export function HeroSlideshow({
         title={active.title}
       />
 
-      {/* 3. 巨幕内容排版：爱壹帆同款布局（左侧标题胶囊按钮，右侧双排 6 列热播追更直达矩阵） */}
-      <div className="relative z-20 h-full w-full flex flex-col justify-end px-5 sm:px-8 lg:px-10 pb-7 sm:pb-9 pt-16">
-        <div className="w-full flex flex-col lg:flex-row lg:items-end justify-between gap-6 lg:gap-8">
-          {/* 左侧：大片焦点信息区 */}
-          <div className="max-w-xl shrink-0">
-            {/* 榜单热度与类型徽章 */}
-            <div className="flex items-center gap-2 flex-wrap mb-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-linear-to-r from-red-600 to-amber-600 text-white text-[11px] font-black rounded-full shadow-md">
-                🔥 #{activeIndex + 1} {badgeTitle || '全网焦点'}
-              </span>
-
-              {active.rate && parseFloat(active.rate) > 0 ? (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-black/60 backdrop-blur-md text-amber-300 font-black text-[11px] rounded-full border border-amber-400/30">
-                  ★ 豆瓣 {active.rate}
-                </span>
-              ) : null}
-
-              {active.year && (
-                <span className="text-white/45 text-xs font-medium px-0.5">
-                  {active.year}
-                </span>
-              )}
-            </div>
-
-            {/* 巨幕主标题 */}
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight drop-shadow-2xl mb-1.5 line-clamp-1">
+      {/* 3. 巨幕内容排版：爱壹帆 1:1 经典三栏布局（左：标题与播放；中：双排6列追更；右：轮播海报缩略图） */}
+      <div className="absolute inset-x-0 bottom-0 z-20 w-full flex flex-col justify-end px-5 sm:px-8 lg:px-10 pb-6 sm:pb-8 pt-20 bg-linear-to-t from-black/95 via-black/60 to-transparent">
+        <div className="w-full flex flex-col lg:flex-row lg:items-end justify-between gap-5 lg:gap-6 xl:gap-8">
+          
+          {/* 1. 左栏：大片主标题、副标题与爱壹帆同款药丸胶囊播放按钮 */}
+          <div className="shrink-0 flex flex-col items-start min-w-[180px] max-w-[240px] xl:max-w-[280px]">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight drop-shadow-md mb-1 line-clamp-1">
               {active.title}
             </h2>
-
-            {/* 副标题与类型（如：电影·剧情 / 更新至04集 | 共47集） */}
-            <div className="text-white/65 text-xs sm:text-sm font-medium mb-4 flex items-center gap-2 line-clamp-1">
-              <span>{active.episodes_info || (active.types && active.types.length > 0 ? active.types.join('·') : '精选大片')}</span>
-            </div>
-
-            {/* 操作按钮组：爱壹帆同款半透明毛玻璃药丸胶囊播放按钮 */}
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => handleMovieClick(active)}
-                className="inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-2.5 bg-white/20 hover:bg-white/30 active:scale-95 backdrop-blur-xl text-white rounded-full text-sm sm:text-base font-bold border border-white/25 shadow-lg transition-all cursor-pointer hover:shadow-[0_0_20px_rgba(255,255,255,0.25)]"
-              >
-                <span>立即播放</span>
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current ml-0.5" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </button>
-
-              {onSearch && (
-                <button
-                  type="button"
-                  onClick={() => onSearch(active.title)}
-                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md text-white/80 hover:text-white rounded-full text-xs font-medium border border-white/15 transition-all cursor-pointer"
-                  title="全网搜源"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  <span>搜全源</span>
-                </button>
+            <div className="text-white/60 text-xs sm:text-sm font-normal mb-3.5 flex items-center gap-1.5 line-clamp-1">
+              <span>{active.episodes_info || (active.types && active.types.length > 0 ? active.types.join('·') : '电影·剧情')}</span>
+              {active.rate && parseFloat(active.rate) > 0 && (
+                <span className="text-amber-400 font-medium text-xs">★ {active.rate}</span>
               )}
             </div>
+            <button
+              type="button"
+              onClick={() => handleMovieClick(active)}
+              className="inline-flex items-center gap-2 px-5 py-2 bg-white/20 hover:bg-white/30 active:scale-95 backdrop-blur-md text-white rounded-full text-sm font-medium border border-white/20 shadow-md transition-all cursor-pointer hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+            >
+              <span>立即播放</span>
+              <span className="text-xs">▷</span>
+            </button>
           </div>
 
-          {/* 右侧：爱壹帆同款双排 6 列热播追更直达矩阵（共 12 部） */}
-          {/* 右侧：爱壹帆同款双排 6 列热播追更直达矩阵（共 12 部，单网格容器自适应） */}
-          {activeTrendingNav && activeTrendingNav.length > 0 ? (
-            <div className="shrink-0 w-full lg:w-auto">
-              <div className="grid grid-flow-col grid-rows-2 auto-cols-max overflow-x-auto lg:overflow-visible lg:grid-flow-row lg:grid-cols-6 lg:grid-rows-2 lg:auto-cols-auto gap-x-4 lg:gap-x-6 xl:gap-x-7 gap-y-2.5 max-w-2xl py-2 px-1 scrollbar-none">
-                {activeTrendingNav.slice(0, 12).map((item, idx) => {
-                  const isCurrentActive = active.title === item.title;
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleTrendingClick(item)}
-                      className={`group relative flex items-center justify-start text-left cursor-pointer transition-colors duration-200 select-none shrink-0 ${
-                        isCurrentActive
-                          ? 'text-[#00D1FF] font-bold drop-shadow-[0_0_8px_rgba(0,209,255,0.7)]'
-                          : 'text-white/75 hover:text-white font-medium'
-                      }`}
-                      title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
-                    >
-                      <span className="text-xs xl:text-sm tracking-tight truncate max-w-[85px] sm:max-w-[95px] xl:max-w-[105px]">
-                        {item.title}
+          {/* 2. 中栏：爱壹帆同款双排 6 列热播追更直达纯文字矩阵（桌面端展示，共 12 部） */}
+          {activeTrendingNav && activeTrendingNav.length > 0 && (
+            <div className="hidden lg:grid grid-cols-6 grid-rows-2 gap-x-3 xl:gap-x-5 gap-y-2.5 my-auto max-w-xl xl:max-w-2xl px-1">
+              {activeTrendingNav.slice(0, 12).map((item, idx) => {
+                const isCurrentActive = active.title === item.title;
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleTrendingClick(item)}
+                    className={`group flex items-center justify-start text-left cursor-pointer transition-colors duration-150 select-none ${
+                      isCurrentActive
+                        ? 'text-[#00D1FF] font-bold drop-shadow-[0_0_8px_rgba(0,209,255,0.7)]'
+                        : 'text-white/70 hover:text-white font-normal'
+                    }`}
+                    title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
+                  >
+                    <span className="text-xs xl:text-[13px] tracking-tight truncate max-w-[68px] xl:max-w-[84px]">
+                      {item.title}
+                    </span>
+                    {item.updateBadge ? (
+                      <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9px] font-bold rounded px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0">
+                        {item.updateBadge}
                       </span>
-                      {item.updateBadge ? (
-                        <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9px] font-black rounded-full px-1.5 py-0.2 min-w-4 h-3.5 leading-none ml-1 shadow-sm shrink-0">
-                          {item.updateBadge}
-                        </span>
-                      ) : null}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ) : (
-            /* 分类大厅兜底：桌面端右侧缩略卡片 */
-            <div className="hidden md:flex items-center gap-2 bg-black/40 backdrop-blur-xl p-2 rounded-2xl border border-white/10 shrink-0">
-              {displayItems.map((item, idx) => (
-                <button
-                  key={item.title ? `hero-thumb-${item.title}` : (item.id || idx)}
-                  onClick={() => setActiveIndex(idx)}
-                  className={`relative w-12 h-16 rounded-xl overflow-hidden border-2 transition-all duration-300 cursor-pointer ${
-                    idx === activeIndex
-                      ? 'border-(--accent-color) scale-110 shadow-lg'
-                      : 'border-transparent opacity-50 hover:opacity-100'
-                  }`}
-                >
-                  <PosterImage src={item.cover} alt={item.title} className="object-cover" sizes="50px" />
-                </button>
-              ))}
+                    ) : null}
+                  </button>
+                );
+              })}
             </div>
           )}
+
+          {/* 移动端/平板专享中栏（双排横滑纯文字） */}
+          {activeTrendingNav && activeTrendingNav.length > 0 && (
+            <div className="grid lg:hidden grid-flow-col grid-rows-2 auto-cols-max overflow-x-auto gap-x-4 gap-y-2 py-1 scrollbar-none">
+              {activeTrendingNav.slice(0, 12).map((item, idx) => {
+                const isCurrentActive = active.title === item.title;
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleTrendingClick(item)}
+                    className={`flex items-center gap-1 text-xs shrink-0 select-none ${
+                      isCurrentActive ? 'text-[#00D1FF] font-bold' : 'text-white/75'
+                    }`}
+                  >
+                    <span>{item.title}</span>
+                    {item.updateBadge && (
+                      <span className="bg-[#E50914] text-white text-[9px] font-bold rounded px-1 py-0.2 min-w-3.5 leading-none">
+                        {item.updateBadge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* 3. 右栏：爱壹帆同款当前轮播大片缩略海报卡片列表（4~5 席） */}
+          <div className="hidden md:flex items-center gap-2 xl:gap-2.5 shrink-0 my-auto">
+            {currentData.slice(0, 5).map((item, idx) => {
+              const isSelected = idx === activeIndex;
+              return (
+                <button
+                  key={item.title ? `hero-thumb-${item.title}` : (item.id || idx)}
+                  type="button"
+                  onClick={() => setActiveIndex(idx)}
+                  className={`group relative w-15 h-21 lg:w-16 lg:h-23 xl:w-18 xl:h-25 rounded-lg overflow-hidden transition-all duration-300 cursor-pointer border ${
+                    isSelected
+                      ? 'border-[#00D1FF] ring-2 ring-[#00D1FF]/60 scale-105 shadow-[0_0_12px_rgba(0,209,255,0.5)] z-10'
+                      : 'border-white/10 opacity-70 hover:opacity-100 hover:scale-102'
+                  }`}
+                  title={item.title}
+                >
+                  <PosterImage
+                    src={item.cover}
+                    alt={item.title}
+                    className="object-cover w-full h-full"
+                    sizes="80px"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/95 via-black/50 to-transparent pt-3 pb-1 px-1">
+                    <p className="text-[10px] text-white/90 truncate text-center font-medium leading-tight">
+                      {item.title}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
         </div>
       </div>
 
