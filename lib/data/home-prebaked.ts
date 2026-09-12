@@ -159,7 +159,7 @@ export const PREBAKED_HOME_DATA: {
                 "title": "寒战1994",
                 "rate": "6.5",
                 "cover": "https://image.tmdb.org/t/p/w500/8NaaLrhXbhuXmjndCKmgaJvLTb1.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/lYSlqEvvbTsNhRx3gs8RRBbazxj.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/gIpIMTZKhDNqFsoSj04sKZfV0g0.jpg",
                 "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
                 "year": "2026",
                 "types": [
@@ -1774,32 +1774,93 @@ export const PREBAKED_HOME_DATA: {
     ]
   },
   "tv": {
+    "trendingNav": [
+        {
+                "title": "兰香如故",
+                "updateBadge": "1"
+        },
+        {
+                "title": "冬城猎凶",
+                "updateBadge": "2"
+        },
+        {
+                "title": "深渊无间",
+                "updateBadge": ""
+        },
+        {
+                "title": "交锋",
+                "updateBadge": ""
+        },
+        {
+                "title": "生逢其时",
+                "updateBadge": ""
+        },
+        {
+                "title": "重案六组:消失的警号",
+                "updateBadge": ""
+        },
+        {
+                "title": "早春晴朗",
+                "updateBadge": ""
+        },
+        {
+                "title": "金色",
+                "updateBadge": ""
+        },
+        {
+                "title": "狂飙",
+                "updateBadge": ""
+        },
+        {
+                "title": "繁花",
+                "updateBadge": ""
+        },
+        {
+                "title": "三体",
+                "updateBadge": ""
+        },
+        {
+                "title": "庆余年第二季",
+                "updateBadge": ""
+        }
+      ],
     "hero": [
         {
                 "id": "iyf_hero_tv_1",
-                "title": "交锋",
+                "title": "兰香如故",
                 "rate": "9.0",
-                "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/lYDwHYOR8PROQfSJGZ8LqvwUVcW.jpg",
-                "description": "一宗世纪之交的泄密大案扣动两岸局势脉搏，同时还掩藏着一场境外势力与我方在隐蔽战线上的针锋较量。二十世纪九十年代末，闽州市国家安全局一对性格迥异的师徒，因机缘巧合的命运安排，为了共同的使命与信仰并肩作战。他们联手挫败了各种阴谋，也与敌手在横跨二十年的命运长河里不断纠缠。当时间流转，新世纪的潮流剧变席卷而来，国家安全局势攻防易势，隐蔽战线上的较量却不止不休。在一次次关乎人性的考验中，这三人的命运关系因不同抉择，在岁月洗礼中悄然改变着。",
+                "cover": "https://image.tmdb.org/t/p/w500/kfurXRMH1ZkUoyT5HN72zLTQxzZ.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/mZSewqVlY4F2F2Axm7hiG6KBOBp.jpg",
+                "description": "大学士府长孙女沈嘉兰与吏部尚书林家的长孙林锦岐订下婚约，然而朝堂风云突变，祖父沈大学士被判谋逆之罪，沈家惨遭灭门。林家为了自保，与沈家退婚，另与御前新贵赵家结亲。沈嘉兰母亲崔氏曾接济过的林家家奴许万全夫妇用刚病亡的女儿许兰香替下嘉兰。嘉兰从此顶着许兰香的身份，成为林府的一名三等丫鬟。在艰难的境遇中，兰香没有向命运低头，始终为自己和家人的幸福生活努力着，反抗一切不公与压迫。最终，兰香凭借自己的善良与聪慧，突破阶级身份的束缚，赢得林锦岐倾心的同时也获得了林家上下的信服与尊重，成为林家的当家人，将命运牢牢掌控在自己的手中，为沈家洗刷冤屈讨回公道。",
                 "year": "2026",
                 "types": [
-                        "悬疑",
-                        "谍战",
+                        "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至12集 | 共40集",
+                "episodes_info": "更新至06集 | 共47集",
                 "type": "tv",
                 "is_new": true,
-                "playable": true,
-                "actors": [
-                        "黄景瑜",
-                        "王千源",
-                        "辛芷蕾"
-                ]
+                "playable": true
         },
         {
                 "id": "iyf_hero_tv_2",
+                "title": "冬城猎凶",
+                "rate": "8.0",
+                "cover": "https://image.tmdb.org/t/p/w500/64NVbdSuNgrK90wqhtnlR2S4sPK.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/oI2XgjWXeXdYG325ZLHvdxzLD5L.jpg",
+                "description": "银行大劫案，搅动大城风云；儿童拐卖案，重起罪恶迷雾。双时空、案中案，极致追凶。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至08集 | 共18集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_3",
                 "title": "深渊无间",
                 "rate": "8.5",
                 "cover": "https://image.tmdb.org/t/p/w500/b9ngtGNgaHBbLihRrT0MsPRY0GW.jpg",
@@ -1807,139 +1868,98 @@ export const PREBAKED_HOME_DATA: {
                 "description": "一篇名为《深渊》的推理网文悄然上线，打破了保守小城多年来的平静，文中诸多情节与警方未曾公布的多年前悬案案情有着惊人的相似。热血正义的新警李成，与多方嫌疑人，一次次上演高智对弈。",
                 "year": "2026",
                 "types": [
-                        "刑侦",
-                        "悬疑",
+                        "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至07集 | 共16集",
+                "episodes_info": "更新至11集 | 共16集",
                 "type": "tv",
                 "is_new": true,
-                "playable": true,
-                "actors": [
-                        "张译",
-                        "秦岚",
-                        "李光洁"
-                ]
-        },
-        {
-                "id": "iyf_hero_tv_3",
-                "title": "冬城猎凶",
-                "rate": "7.0",
-                "cover": "https://image.tmdb.org/t/p/w500/64NVbdSuNgrK90wqhtnlR2S4sPK.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/yfJn4TktTqvFr5DCTqd1dC8I16M.jpg",
-                "description": "银行大劫案，搅动大城风云；儿童拐卖案，重起罪恶迷雾。双时空、案中案，极致追凶。",
-                "year": "2026",
-                "types": [
-                        "罪案",
-                        "悬疑",
-                        "连续剧"
-                ],
-                "episodes_info": "更新至05集 | 共18集",
-                "type": "tv",
-                "is_new": true,
-                "playable": true,
-                "actors": [
-                        "段奕宏",
-                        "大鹏",
-                        "张国立"
-                ]
+                "playable": true
         },
         {
                 "id": "iyf_hero_tv_4",
-                "title": "玫瑰的故事",
-                "rate": "7.4",
-                "cover": "https://image.tmdb.org/t/p/w500/stxOoW8qTj3JdSX8ENlN6daaCSo.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/80ukSQi9aHAfm8CoDxdPwGGLeOt.jpg",
-                "description": "出生于书香世家的黄亦玫一路在呵护中长大，初入职场与相爱、成长的都市情感史诗巨制。刘亦菲、佟大为、林更新领衔呈现一段荡气回肠的女性成长长卷。",
-                "year": "2024",
+                "title": "交锋",
+                "rate": "9.0",
+                "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/lYDwHYOR8PROQfSJGZ8LqvwUVcW.jpg",
+                "description": "一宗世纪之交的泄密大案扣动两岸局势脉搏，同时还掩藏着一场境外势力与我方在隐蔽战线上的针锋较量。二十世纪九十年代末，闽州市国家安全局一对性格迥异的师徒，因机缘巧合的命运安排，为了共同的使命与信仰并肩作战。他们联手挫败了各种阴谋，也与敌手在横跨二十年的命运长河里不断纠缠。当时间流转，新世纪的潮流剧变席卷而来，国家安全局势攻防易势，隐蔽战线上的较量却不止不休。在一次次关乎人性的考验中，这三人的命运关系因不同抉择，在岁月洗礼中悄然改变着。",
+                "year": "2026",
                 "types": [
-                        "剧情",
-                        "爱情",
+                        "热门",
                         "连续剧"
                 ],
-                "episodes_info": "全38集·完结",
+                "episodes_info": "更新至16集 | 共40集",
                 "type": "tv",
-                "is_new": false,
-                "playable": true,
-                "actors": [
-                        "刘亦菲",
-                        "佟大为",
-                        "林更新",
-                        "万茜",
-                        "林一"
-                ]
+                "is_new": true,
+                "playable": true
         },
         {
                 "id": "iyf_hero_tv_5",
-                "title": "与凤行",
-                "rate": "8.5",
-                "cover": "https://image.tmdb.org/t/p/w500/zW1YdedNH24xVCMrWHOZHxpJC39.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/4J8znHxVaZY3vKb05IWqWfzczXR.jpg",
-                "description": "身为魔界衔珠而生的碧苍王沈璃逃婚遇上世间最后一位上古神行止，神魔爱恋与三界苍生命运的壮丽仙侠传奇。赵丽颖、林更新领衔主演。",
-                "year": "2024",
+                "title": "生逢其时",
+                "rate": "9.0",
+                "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/7HXIhc3aRr1v7KmOrCulszXf3YP.jpg",
+                "description": "　　八十年代初，北方厂矿小镇青梧镇，住着齐家和曹家两户比邻而居的人家——齐爱华（郭涛 饰）与霍青莲（刘琳 饰）性格迥异但彼此包容；曹东方（郭晓东 饰）在妻子去世后与爸爸曹本顺（霍青 饰）两个男人一起撑起家，日子艰难但乐在其中。两家在同一天诞下孩子，却因医院疏忽，将两个婴儿抱错——齐家健康的男婴成了曹家的曹信，曹家患有白化病的女婴成了齐家的齐时。长辈们约定互不声张，两个孩子便在各自家庭中错位成长。\n\n　　身患白化病的齐时（关晓彤 饰）自小便意识到自己的“与众不同”。一头白发让她在小镇受尽旁人异样的目光，她喝酱油、戴假发，试图成为和普通人一样的存在。另一边的曹信（王子奇 饰），一路走来都是家长口中“别人家的孩子”，然而光环之下却始终伴随着父亲的严苛要求，他始终向往遵从本心的活法。\n\n　　当特立独行、勇敢倔强的齐时，遇上乖巧听话、优秀自律的曹信，两个家庭在邻里间日积月累的相处中，因荒唐的“换子”碰撞出了眼泪的故事和“新生”的契机。孩子们经历着关于亲情、友情、爱情的考验，大人们也在面对关于事业、婚姻、家庭的难题。在时代洪流中，纵使生活跌跌撞撞，他们亦携手缝缝补补修炼人生，共同找寻属于自己的人生和幸福。",
+                "year": "2026",
                 "types": [
-                        "古装",
-                        "仙侠",
+                        "热门",
                         "连续剧"
                 ],
-                "episodes_info": "全39集·完结",
+                "episodes_info": "更新至14集 | 共26集",
                 "type": "tv",
-                "is_new": false,
-                "playable": true,
-                "actors": [
-                        "赵丽颖",
-                        "林更新",
-                        "辛云来",
-                        "何与"
-                ]
+                "is_new": true,
+                "playable": true
         },
         {
                 "id": "iyf_hero_tv_6",
-                "title": "莲花楼",
-                "rate": "8.5",
-                "cover": "https://image.tmdb.org/t/p/w500/h8DteNYVPnGn6ZgCjIlQXW5KFUb.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/v0It4jPMkYT3H57x6ot4Fd56C8E.jpg",
-                "description": "十年前四顾门门主李相夷冠绝天下，重伤隐姓埋名化身游医李莲花重出江湖，携手方多病破奇案、解谜团的热血新武侠神作。成毅、曾舜晞领衔主演。",
-                "year": "2023",
+                "title": "重案六组:消失的警号",
+                "rate": "8.0",
+                "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/nr1uqvJs4kqtGcBTwIAew5OiSXI.jpg",
+                "description": "剧情核心围绕“消失的警号”展开，通过“老警号传承”设计致敬原版角色，并融入科技办案、新老刑侦理念碰撞等创新元素。",
+                "year": "2026",
                 "types": [
-                        "古装",
-                        "武侠",
+                        "热门",
                         "连续剧"
                 ],
-                "episodes_info": "全40集·完结",
+                "episodes_info": "更新至20集 | 共26集",
                 "type": "tv",
-                "is_new": false,
-                "playable": true,
-                "actors": [
-                        "成毅",
-                        "曾舜晞",
-                        "肖顺尧",
-                        "陈都灵"
-                ]
+                "is_new": true,
+                "playable": true
         },
         {
                 "id": "iyf_hero_tv_7",
-                "title": "长相思",
-                "rate": "7.8",
-                "cover": "https://image.tmdb.org/t/p/w500/sIWIB7Q6vsU3b4ULoa6a1kq7SXg.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/8g14KLvaJ23lj9OlPHtJRwuEzyM.jpg",
-                "description": "大荒动荡，小夭历经百年颠沛流离，与玱玹、涂山璟、相柳命运交织的大型古装神话史诗。杨紫、张晚意、邓为、檀健次倾情呈现。",
-                "year": "2023",
+                "title": "早春晴朗",
+                "rate": "8.2",
+                "cover": "https://image.tmdb.org/t/p/w500/nLWFbYv1r99Yy7dWvjoxMRegoe0.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/oUFUvEMCBP80e4eYsfVfxC8n7ih.jpg",
+                "description": "这是一段十年交锋，敬于才华，合于性格、久于平等的禁忌之恋。北漂伊始的尚之桃与极具天赋的“鬼才”栾念狭路相逢。热烈勇敢的尚之桃亦步亦趋地蜕变成长，撬碎了栾念世故坚硬的心防，互相吸引的二人在都市丛林中极限拉扯、分分合合。爱情，就是用光所有勇气，再无遗憾。爱，则是互相修复，共同成长。但情和爱之间，她选择生存。当她独当一面，他收敛锋芒，势均力敌的他们将会为彼此写下了新的结局……",
+                "year": "2026",
                 "types": [
-                        "古装",
-                        "神话",
+                        "热门",
                         "连续剧"
                 ],
-                "episodes_info": "全39集·完结",
+                "episodes_info": "24集全",
                 "type": "tv",
-                "is_new": false,
-                "playable": true,
-                "actors": [
-                        "杨紫",
-                        "张晚意",
-                        "邓为",
-                        "檀健次"
-                ]
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_8",
+                "title": "金色",
+                "rate": "9.0",
+                "cover": "https://image.tmdb.org/t/p/w500/cxRa9PDb9gGyRLSJE1NHJNt5gl9.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/xirWeEiatY915u837oq1l2t4oPP.jpg",
+                "description": "三十万两黄金突现大漠，传言寻金之人皆成厉鬼，相互厮杀。横遭灭门的女子孤闯大漠，决心复仇！权欲之争暗涌，一群江湖侠客纷纷卷入这场恩怨情仇，共谱一段新武侠故事。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "13集全",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
         }
       ],
     "top10": [

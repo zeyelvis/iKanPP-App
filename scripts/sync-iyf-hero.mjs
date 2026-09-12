@@ -305,18 +305,207 @@ async function syncMovieChannel() {
   }
 }
 
+async function syncTvChannel() {
+  console.log('\n====== [3/5] 同步爱壹帆电视剧频道专属轮播剧王 ======');
+  const slides = await fetchIyfSlides('https://www.iyf.tv/drama', '电视剧频道');
+  if (slides.length === 0) {
+    console.warn('[iyf-sync] 电视剧频道未抓取到有效轮播项，跳过');
+    return;
+  }
+
+  const tvHeroItems = [];
+  for (let i = 0; i < slides.length; i++) {
+    const item = await enrichMovieData(slides[i], i, 'tv');
+    tvHeroItems.push(item);
+  }
+
+  // 电视剧专区专属 12 席黄金档速报
+  const tvTrendingNav = [
+    { title: '兰香如故', updateBadge: '1' },
+    { title: '冬城猎凶', updateBadge: '2' },
+    { title: '深渊无间', updateBadge: '' },
+    { title: '交锋', updateBadge: '' },
+    { title: '生逢其时', updateBadge: '' },
+    { title: '重案六组:消失的警号', updateBadge: '' },
+    { title: '早春晴朗', updateBadge: '' },
+    { title: '金色', updateBadge: '' },
+    { title: '狂飙', updateBadge: '' },
+    { title: '繁花', updateBadge: '' },
+    { title: '三体', updateBadge: '' },
+    { title: '庆余年第二季', updateBadge: '' },
+  ];
+
+  const prebakedPath = path.resolve(process.cwd(), 'lib/data/home-prebaked.ts');
+  if (fs.existsSync(prebakedPath)) {
+    let prebakedContent = fs.readFileSync(prebakedPath, 'utf-8');
+
+    // 1. 同步 PREBAKED_HOME_DATA.tv.hero
+    const tvHeroRegex = /(["']?tv["']?:\s*\{[\s\S]*?["']?hero["']?:\s*\[)[\s\S]*?(\]\s*,\s*["']?top10["']?:)/;
+    if (tvHeroRegex.test(prebakedContent)) {
+      const formattedTvJson = JSON.stringify(tvHeroItems, null, 8)
+        .replace(/^\[/, '')
+        .replace(/\]$/, '')
+        .trim();
+      prebakedContent = prebakedContent.replace(tvHeroRegex, `$1\n        ${formattedTvJson}\n      $2`);
+      console.log(`✅ [iyf-sync] 成功将爱壹帆电视剧频道真实 ${tvHeroItems.length} 席剧王巨幕同步至 PREBAKED_HOME_DATA.tv.hero！`);
+    }
+
+    // 2. 同步或注入 PREBAKED_HOME_DATA.tv.trendingNav
+    const tvTrendingRegex = /(["']?tv["']?:\s*\{[\s\S]*?)(["']?trendingNav["']?:\s*\[[\s\S]*?\]\s*,\s*)?(["']?hero["']?:)/;
+    if (tvTrendingRegex.test(prebakedContent)) {
+      const formattedTrending = JSON.stringify(tvTrendingNav, null, 8)
+        .replace(/^\[/, '')
+        .replace(/\]$/, '')
+        .trim();
+      prebakedContent = prebakedContent.replace(tvTrendingRegex, `$1"trendingNav": [\n        ${formattedTrending}\n      ],\n    $3`);
+      console.log(`✅ [iyf-sync] 成功为电视剧频道写入专属 12 席黄金档速报至 PREBAKED_HOME_DATA.tv.trendingNav！`);
+    }
+
+    fs.writeFileSync(prebakedPath, prebakedContent, 'utf-8');
+  }
+}
+
+async function syncAnimeChannel() {
+  console.log('\n====== [4/5] 同步爱壹帆动漫频道专属轮播新番 ======');
+  const slides = await fetchIyfSlides('https://www.iyf.tv/anime', '动漫频道');
+  if (slides.length === 0) {
+    console.warn('[iyf-sync] 动漫频道未抓取到有效轮播项，跳过');
+    return;
+  }
+
+  const animeHeroItems = [];
+  for (let i = 0; i < slides.length; i++) {
+    const item = await enrichMovieData(slides[i], i, 'tv');
+    animeHeroItems.push(item);
+  }
+
+  // 动漫专区专属 12 席当季热血与新番速报
+  const animeTrendingNav = [
+    { title: '时光代理人第3季', updateBadge: '1' },
+    { title: '我独自盗墓', updateBadge: '' },
+    { title: '世界最强的后卫', updateBadge: '' },
+    { title: '暗黑灯火', updateBadge: '' },
+    { title: '从0位居民开始的边境领主大人', updateBadge: '' },
+    { title: 'LV999的村民', updateBadge: '' },
+    { title: '斩神之凡尘神域第2季', updateBadge: '1' },
+    { title: '镖人第2季', updateBadge: '' },
+    { title: '凡人修仙传', updateBadge: '1' },
+    { title: '完美世界', updateBadge: '' },
+    { title: '遮天', updateBadge: '' },
+    { title: '仙逆', updateBadge: '1' },
+  ];
+
+  const extraPath = path.resolve(process.cwd(), 'lib/data/home-prebaked-extra.ts');
+  if (fs.existsSync(extraPath)) {
+    let extraContent = fs.readFileSync(extraPath, 'utf-8');
+
+    // 1. 同步 ANIME_HOME_DATA.hero
+    const animeHeroRegex = /(ANIME_HOME_DATA:\s*PrebakedHomeCategory\s*=\s*\{[\s\S]*?["']?hero["']?:\s*\[)[\s\S]*?(\]\s*,\s*["']?top10["']?:)/;
+    if (animeHeroRegex.test(extraContent)) {
+      const formattedJson = JSON.stringify(animeHeroItems, null, 4)
+        .replace(/^\[/, '')
+        .replace(/\]$/, '')
+        .trim();
+      extraContent = extraContent.replace(animeHeroRegex, `$1\n    ${formattedJson}\n  $2`);
+      console.log(`✅ [iyf-sync] 成功将爱壹帆动漫频道真实 ${animeHeroItems.length} 席新番巨幕同步至 ANIME_HOME_DATA.hero！`);
+    }
+
+    // 2. 同步或注入 ANIME_HOME_DATA.trendingNav
+    const animeTrendingRegex = /(ANIME_HOME_DATA:\s*PrebakedHomeCategory\s*=\s*\{[\s\S]*?)(trendingNav:\s*\[[\s\S]*?\]\s*,\s*)?(hero:)/;
+    if (animeTrendingRegex.test(extraContent)) {
+      const formattedTrending = JSON.stringify(animeTrendingNav, null, 4)
+        .replace(/^\[/, '')
+        .replace(/\]$/, '')
+        .trim();
+      extraContent = extraContent.replace(animeTrendingRegex, `$1trendingNav: [\n    ${formattedTrending}\n  ],\n  $3`);
+      console.log(`✅ [iyf-sync] 成功为动漫频道写入专属 12 席热播速报至 ANIME_HOME_DATA.trendingNav！`);
+    }
+
+    fs.writeFileSync(extraPath, extraContent, 'utf-8');
+  }
+}
+
+async function syncVarietyChannel() {
+  console.log('\n====== [5/5] 同步爱壹帆综艺频道专属轮播爆款 ======');
+  const slides = await fetchIyfSlides('https://www.iyf.tv/variety', '综艺频道');
+  if (slides.length === 0) {
+    console.warn('[iyf-sync] 综艺频道未抓取到有效轮播项，跳过');
+    return;
+  }
+
+  const varietyHeroItems = [];
+  for (let i = 0; i < slides.length; i++) {
+    const item = await enrichMovieData(slides[i], i, 'tv');
+    varietyHeroItems.push(item);
+  }
+
+  // 综艺专区专属 12 席爆笑与现场速报
+  const varietyTrendingNav = [
+    { title: '打歌2026', updateBadge: '' },
+    { title: '我家那闺女2026', updateBadge: '1' },
+    { title: '花儿与少年第8季', updateBadge: '' },
+    { title: '舞蹈新风暴', updateBadge: '' },
+    { title: '披荆斩棘2026', updateBadge: '' },
+    { title: '心动的信号第9季', updateBadge: '' },
+    { title: '一饭封神第2季', updateBadge: '' },
+    { title: '家乡美食大赛', updateBadge: '' },
+    { title: '大侦探第九季', updateBadge: '' },
+    { title: '密室大逃脱', updateBadge: '' },
+    { title: '奔跑吧', updateBadge: '' },
+    { title: '极限挑战', updateBadge: '' },
+  ];
+
+  const extraPath = path.resolve(process.cwd(), 'lib/data/home-prebaked-extra.ts');
+  if (fs.existsSync(extraPath)) {
+    let extraContent = fs.readFileSync(extraPath, 'utf-8');
+
+    // 1. 同步 VARIETY_HOME_DATA.hero
+    const varietyHeroRegex = /(VARIETY_HOME_DATA:\s*PrebakedHomeCategory\s*=\s*\{[\s\S]*?["']?hero["']?:\s*\[)[\s\S]*?(\]\s*,\s*["']?top10["']?:)/;
+    if (varietyHeroRegex.test(extraContent)) {
+      const formattedJson = JSON.stringify(varietyHeroItems, null, 4)
+        .replace(/^\[/, '')
+        .replace(/\]$/, '')
+        .trim();
+      extraContent = extraContent.replace(varietyHeroRegex, `$1\n    ${formattedJson}\n  $2`);
+      console.log(`✅ [iyf-sync] 成功将爱壹帆综艺频道真实 ${varietyHeroItems.length} 席爆款巨幕同步至 VARIETY_HOME_DATA.hero！`);
+    }
+
+    // 2. 同步或注入 VARIETY_HOME_DATA.trendingNav
+    const varietyTrendingRegex = /(VARIETY_HOME_DATA:\s*PrebakedHomeCategory\s*=\s*\{[\s\S]*?)(trendingNav:\s*\[[\s\S]*?\]\s*,\s*)?(hero:)/;
+    if (varietyTrendingRegex.test(extraContent)) {
+      const formattedTrending = JSON.stringify(varietyTrendingNav, null, 4)
+        .replace(/^\[/, '')
+        .replace(/\]$/, '')
+        .trim();
+      extraContent = extraContent.replace(varietyTrendingRegex, `$1trendingNav: [\n    ${formattedTrending}\n  ],\n  $3`);
+      console.log(`✅ [iyf-sync] 成功为综艺频道写入专属 12 席热播速报至 VARIETY_HOME_DATA.trendingNav！`);
+    }
+
+    fs.writeFileSync(extraPath, extraContent, 'utf-8');
+  }
+}
+
 async function main() {
   const args = process.argv.slice(2);
-  const target = args.find(a => a.startsWith('--target='))?.split('=')[1] || 'both';
+  const target = args.find(a => a.startsWith('--target='))?.split('=')[1] || 'all_channels';
 
   try {
-    if (target === 'all' || target === 'both') {
+    if (target === 'all' || target === 'home' || target === 'all_channels') {
       await syncHomeAll();
     }
-    if (target === 'movie' || target === 'both') {
+    if (target === 'movie' || target === 'all_channels') {
       await syncMovieChannel();
     }
-    console.log('\n🎉 [iyf-sync] 全部爱壹帆官方轮播巨幕同步完成！');
+    if (target === 'tv' || target === 'all_channels') {
+      await syncTvChannel();
+    }
+    if (target === 'anime' || target === 'all_channels') {
+      await syncAnimeChannel();
+    }
+    if (target === 'variety' || target === 'all_channels') {
+      await syncVarietyChannel();
+    }
+    console.log('\n🎉 [iyf-sync] 全站（首页+电影+电视剧+动漫+综艺）爱壹帆官方轮播巨幕与速报同步完成！');
   } catch (err) {
     console.error('[iyf-sync] 执行异常:', err);
     process.exit(1);

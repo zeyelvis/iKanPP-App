@@ -7,81 +7,192 @@ import type { PrebakedSubject, PrebakedHomeCategory } from './home-prebaked';
 
 // ── 1. 🏮 动漫专区精选 (Anime) ──────────────────────────────────────────
 export const ANIME_HOME_DATA: PrebakedHomeCategory = {
+  trendingNav: [
+    {
+        "title": "时光代理人第3季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "我独自盗墓",
+        "updateBadge": ""
+    },
+    {
+        "title": "世界最强的后卫",
+        "updateBadge": ""
+    },
+    {
+        "title": "暗黑灯火",
+        "updateBadge": ""
+    },
+    {
+        "title": "从0位居民开始的边境领主大人",
+        "updateBadge": ""
+    },
+    {
+        "title": "LV999的村民",
+        "updateBadge": ""
+    },
+    {
+        "title": "斩神之凡尘神域第2季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "镖人第2季",
+        "updateBadge": ""
+    },
+    {
+        "title": "凡人修仙传",
+        "updateBadge": "1"
+    },
+    {
+        "title": "完美世界",
+        "updateBadge": ""
+    },
+    {
+        "title": "遮天",
+        "updateBadge": ""
+    },
+    {
+        "title": "仙逆",
+        "updateBadge": "1"
+    }
+  ],
   hero: [
     {
-      id: 'pb_anime_hero_1',
-      title: '葬送的芙莉莲',
-      rate: '9.5',
-      cover: 'https://image.tmdb.org/t/p/w500/1TtrtRIwXz5BB0gXEl8zgBypl9c.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/1TtrtRIwXz5BB0gXEl8zgBypl9c.jpg',
-      description: '打倒魔王后的世界里，长寿的精灵魔法使芙莉莲在漫长的时光中重新理解生命与人心的旅程。豆瓣 9.5 分年度神作，治愈与史诗感交织。',
-      year: '2023',
-      types: ['奇幻', '治愈', '冒险'],
-      episodes_info: '全28集·已完结',
-      type: 'tv',
-      is_new: false,
-      playable: true,
-      actors: ['种崎敦美', '市之濑加那', '小林千晃', '冈本信彦']
+        "id": "iyf_hero_tv_1",
+        "title": "时光代理人第3季",
+        "rate": "8.8",
+        "cover": "https://static.iyf.tv/upload/video/202608141332313200888.gif",
+        "backdrop": "https://static.iyf.tv/upload/user/202608182003170363776.jpg",
+        "description": "《时光代理人第3季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至06集 | 共12集。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至06集 | 共12集",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
     },
     {
-      id: 'pb_anime_hero_2',
-      title: '鬼灭之刃 柱训练篇',
-      rate: '8.9',
-      cover: 'https://image.tmdb.org/t/p/w500/sSE8DZr44URZccaKtdU8BZyEU6Q.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/sSE8DZr44URZccaKtdU8BZyEU6Q.jpg',
-      description: '炭治郎与九柱集结开展特训，决战无限城前夕最后的宁静与高燃试炼！飞碟社顶级作画再次刷新视觉天花板。',
-      year: '2024',
-      types: ['热血', '奇幻', '战斗'],
-      episodes_info: '全8集·已完结',
-      type: 'tv',
-      is_new: true,
-      playable: true,
-      actors: ['花江夏树', '鬼头明里', '下野纮', '松冈祯丞']
+        "id": "iyf_hero_tv_2",
+        "title": "我独自盗墓",
+        "rate": "8.5",
+        "cover": "https://image.tmdb.org/t/p/w500/auWQytep71FZx1XHFqY8WaHSuDD.jpg",
+        "backdrop": "https://static.iyf.tv/upload/user/202607201054385434470.jpg",
+        "description": "2025年世界各处惊现古墓，获得墓中“宝物”之人便能获得先人的异能。全世界为获得宝物而疯狂。无往不利盗墓者徐浩钧，在一次任务中落入陷阱，不幸丧命。然而他带着前世的记忆，回到了一切开始的地方。虽然失去了宝物，却获得了“系统”。这是重启的新生，还是命运的捉弄。在系统加持下，这一世徐浩钧能否告别蝼蚁的人生，登上王之宝座？",
+        "year": "2020",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至10集",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
     },
     {
-      id: 'pb_anime_hero_3',
-      title: '凡人修仙传',
-      rate: '9.3',
-      cover: 'https://image.tmdb.org/t/p/w500/mCt5qgkOYEvuHSiSwNByMv6LMoB.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/mCt5qgkOYEvuHSiSwNByMv6LMoB.jpg',
-      description: '一个普通山村少年韩立，凭借坚韧毅力与过人智慧，历经无尽凶险与坎坷，在弱肉强食的修仙界一步步逆天修仙、傲立诸天！国漫 3D 动作巅峰。',
-      year: '2024',
-      types: ['仙侠', '玄幻', '修真'],
-      episodes_info: '连载中年番',
-      type: 'tv',
-      is_new: true,
-      playable: true,
-      actors: ['钱文青', '杨天翔', '佟心竹']
+        "id": "iyf_hero_tv_3",
+        "title": "世界最强的后卫 迷宫国的新人探索者",
+        "rate": "5.5",
+        "cover": "https://image.tmdb.org/t/p/w500/5vhYO0hMacNlyNDaYlS2HRXOtoZ.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/93G5xLkTan3fdkUzQVvCcf8IAMx.jpg",
+        "description": "身为社畜的后部有人，因为一场意外事故，转生到了被称为“迷宫国”的异世界。在那里，成为迷宫探索者的有人，获得的竟是不明职业“后卫”。那是兼具攻击和防御，以及治疗能力的万能支援职！与神秘的亚人佣兵少女、转生前的美女上司，以及一群个性鲜明的伙伴们一起，有人将一步步爬升迷宫国的序列！“各位，我来‘支援’你们！”他的支援，强化了力量与情谊——最强支援职的冒险谭，正式揭幕！",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至10集",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
     },
     {
-      id: 'pb_anime_hero_4',
-      title: '咒术回战 第二季',
-      rate: '9.2',
-      cover: 'https://image.tmdb.org/t/p/w500/kdE1ALF5G6DFMyDU67AyyUklEtn.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/kdE1ALF5G6DFMyDU67AyyUklEtn.jpg',
-      description: '五条悟与夏油杰高专时期的青春往事与残酷转折，紧接着引爆现代咒术界最大动乱“涩谷事变”！顶级动画制作与爆燃战斗盛宴。',
-      year: '2023',
-      types: ['热血', '战斗', '奇幻'],
-      episodes_info: '全23集·已完结',
-      type: 'tv',
-      is_new: false,
-      playable: true,
-      actors: ['榎木淳弥', '内田雄马', '濑户麻沙美', '中村悠一']
+        "id": "iyf_hero_tv_4",
+        "title": "暗黑灯火",
+        "rate": "8.6",
+        "cover": "https://image.tmdb.org/t/p/w500/k446fZqGvCVsVstjUq7KQIK1PqX.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/ceirDIa8QgeeiFKFnLcQpfAH5V7.jpg",
+        "description": "次郎是一个拥有与动物交谈能力的少年。从小由祖父抚养并接受忍者训练，他因与众不同而被他人疏远，却在动物中找到了慰藉，并致力于保护它们。一天，他救了一只受伤的黑猫——拉格，但很快发现它并非普通的猫，而是一只“物怪”，正被一个神秘组织追捕。面对这一情况，次郎毫不犹豫地决定帮助他的新朋友。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至11集 | 共12集",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
     },
     {
-      id: 'pb_anime_hero_5',
-      title: '进击的巨人 最终季',
-      rate: '9.6',
-      cover: 'https://image.tmdb.org/t/p/w500/5gaf9yFJHJTkg6KtLc7enqBY6UK.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/5gaf9yFJHJTkg6KtLc7enqBY6UK.jpg',
-      description: '艾伦发动地鸣势将帕拉迪岛以外的一切践踏殆尽，三笠与阿尔敏众人迎战终局决战！十年史诗级巨作迎来震撼动人的最终结局。',
-      year: '2023',
-      types: ['热血', '史诗', '末日'],
-      episodes_info: '完结篇·神作',
-      type: 'tv',
-      is_new: false,
-      playable: true,
-      actors: ['梶裕贵', '石川由依', '井上麻里奈', '神谷浩史']
+        "id": "iyf_hero_tv_5",
+        "title": "从0位居民开始的边境领主大人",
+        "rate": "6.7",
+        "cover": "https://image.tmdb.org/t/p/w500/oz6Aet1VmsjxA70oGIhiaNnXxuk.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/pEhFkDyRMpUZr1lwmmPFVGzdgNl.jpg",
+        "description": "迪亚斯是个孤儿，但他却在战场上屡立战功，被誉为“救国英雄”。国王赐予他一块领地作为奖励。然而当他抵达时，却发现这片领地偏僻荒凉，人烟稀少，食物匮乏。这时，迪亚斯遇到了一位名叫阿尔娜的鬼人族女孩，她的额头上长著一根蓝色的角。阿尔娜带领迪亚斯来到了她族人居住的村庄。身为领主，迪亚斯决定尽其所能治理好自己的领地。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至11集 | 共12集",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_tv_6",
+        "title": "LV999的村民",
+        "rate": "6.7",
+        "cover": "https://image.tmdb.org/t/p/w500/pwtHWJ2yblGRJenW9THxGGDEjIZ.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/ydWwc4NOeDb7t8pcR3tf6n12rLB.jpg",
+        "description": "每个诞生在这个名为“阿斯克利亚”世界的人都会被赋予该扮演包括王族、勇者、贤者、战士、武斗家、僧侣、魔法师及只为了繁荣世界而存在最弱的“村民”等职业。在平均等级只有十级且没有战斗力导致只有依赖其他职业保护的村民中，出现了一个到达等级上限999的村民“镜浩二”。他在已经找不到赚钱以外生存价值之时，遇见本该被人类讨伐的魔族少女“艾莉丝”。这场邂逅也让“镜浩二”找到自己新价值，并决心踏上对抗世界的险恶道路。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至12集",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_tv_7",
+        "title": "斩神之凡尘神域第2季",
+        "rate": "8.8",
+        "cover": "https://static.iyf.tv/upload/video/202606242205520524430.jpg",
+        "backdrop": "https://static.iyf.tv/upload/user/202606251206380640678.jpg",
+        "description": "《斩神之凡尘神域第2季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：15集全。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "15集全",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_tv_8",
+        "title": "镖人第2季",
+        "rate": "8.8",
+        "cover": "https://static.iyf.tv/upload/video/202606111155205546724.gif",
+        "backdrop": "https://static.iyf.tv/upload/user/202606111233583373778.jpg",
+        "description": "《镖人第2季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至08集 | 共8集。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至08集 | 共8集",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
     }
   ],
   top10: [
@@ -518,81 +629,192 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
 
 // ── 2. 🎤 综艺专区精选 (Variety) ──────────────────────────────────────────
 export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
+  trendingNav: [
+    {
+        "title": "打歌2026",
+        "updateBadge": ""
+    },
+    {
+        "title": "我家那闺女2026",
+        "updateBadge": "1"
+    },
+    {
+        "title": "花儿与少年第8季",
+        "updateBadge": ""
+    },
+    {
+        "title": "舞蹈新风暴",
+        "updateBadge": ""
+    },
+    {
+        "title": "披荆斩棘2026",
+        "updateBadge": ""
+    },
+    {
+        "title": "心动的信号第9季",
+        "updateBadge": ""
+    },
+    {
+        "title": "一饭封神第2季",
+        "updateBadge": ""
+    },
+    {
+        "title": "家乡美食大赛",
+        "updateBadge": ""
+    },
+    {
+        "title": "大侦探第九季",
+        "updateBadge": ""
+    },
+    {
+        "title": "密室大逃脱",
+        "updateBadge": ""
+    },
+    {
+        "title": "奔跑吧",
+        "updateBadge": ""
+    },
+    {
+        "title": "极限挑战",
+        "updateBadge": ""
+    }
+  ],
   hero: [
     {
-      id: 'pb_var_hero_1',
-      title: '歌手2024',
-      rate: '8.0',
-      cover: 'https://image.tmdb.org/t/p/w500/gZxoF6ks9mMufSbcey3hC4XsYgy.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/gZxoF6ks9mMufSbcey3hC4XsYgy.jpg',
-      description: '全开麦、不修音、国际顶级唱将同台直播竞技！掀起 2024 年华语乐坛现象级音乐风暴与全民话题狂潮。',
-      year: '2024',
-      types: ['音乐', '真人秀', '竞技'],
-      episodes_info: '全12期·已完结',
-      type: 'tv',
-      is_new: true,
-      playable: true,
-      actors: ['那英', '凡希亚', '香缇莫', '孙楠', '谭维维']
+        "id": "iyf_hero_tv_1",
+        "title": "打歌2026",
+        "rate": "8.8",
+        "cover": "https://static.iyf.tv/upload/video/202609111636583635663.jpg",
+        "backdrop": "https://static.iyf.tv/upload/user/202609111853405324148.jpg",
+        "description": "《打歌2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260911(第1期纯享)。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至20260911(第1期纯享)",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
     },
     {
-      id: 'pb_var_hero_2',
-      title: '种地吧 第二季',
-      rate: '9.0',
-      cover: 'https://image.tmdb.org/t/p/w500/vl5WKVXgL1tQs9D9wGE2ido6dwW.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/vl5WKVXgL1tQs9D9wGE2ido6dwW.jpg',
-      description: '十个勤天重聚后沟村，用汗水与热血在土地上播种希望。豆瓣 9.0 分超高口碑，最真实的田园劳作与青年奋斗史诗。',
-      year: '2024',
-      types: ['真人秀', '治愈', '生活'],
-      episodes_info: '全50期·已完结',
-      type: 'tv',
-      is_new: true,
-      playable: true,
-      actors: ['陈少熙', '何浩楠', '蒋敦豪', '李耕耘', '李昊']
+        "id": "iyf_hero_tv_2",
+        "title": "我家那闺女2026",
+        "rate": "8.8",
+        "cover": "https://static.iyf.tv/upload/video/202608271524382431872.jpg",
+        "backdrop": "https://static.iyf.tv/upload/user/202609111844144414888.jpg",
+        "description": "《我家那闺女2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260912(超前营业)。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至20260912(超前营业)",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
     },
     {
-      id: 'pb_var_hero_3',
-      title: '脱口秀和Ta的朋友们',
-      rate: '8.4',
-      cover: 'https://image.tmdb.org/t/p/w500/nYsiHMplUCBFazdAOVr1gQaGy34.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/nYsiHMplUCBFazdAOVr1gQaGy34.jpg',
-      description: '生活需要笑对！老将回归、黑马杀出，金句频现、爆梗齐飞，献上一场场酣畅淋漓的国民级爆笑视听盛宴。',
-      year: '2024',
-      types: ['脱口秀', '喜剧', '语言'],
-      episodes_info: '全10期·已完结',
-      type: 'tv',
-      is_new: true,
-      playable: true,
-      actors: ['张绍刚', '大张伟', '鲁豫', '呼兰', '徐志胜']
+        "id": "iyf_hero_tv_3",
+        "title": "花儿与少年第8季",
+        "rate": "8.8",
+        "cover": "https://static.iyf.tv/upload/video/202609041706270661205.jpg",
+        "backdrop": "https://static.iyf.tv/upload/user/202609111843274326403.jpg",
+        "description": "《花儿与少年第8季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260911(第1期下)。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至20260911(第1期下)",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
     },
     {
-      id: 'pb_var_hero_4',
-      title: '大侦探 第九季',
-      rate: '8.8',
-      cover: 'https://image.tmdb.org/t/p/w500/jOl12DTFiMcp9ga2KaEKwt5H8oo.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/jOl12DTFiMcp9ga2KaEKwt5H8oo.jpg',
-      description: '硬核实景烧脑探案，老友重逢共赴侦探之约！何炅、大张伟、王鸥、魏晨高能集结，揭开层层伪装下的真相。',
-      year: '2024',
-      types: ['悬疑', '推理', '真人秀'],
-      episodes_info: '全12案·已完结',
-      type: 'tv',
-      is_new: true,
-      playable: true,
-      actors: ['何炅', '大张伟', '王鸥', '魏晨', '杨蓉']
+        "id": "iyf_hero_tv_4",
+        "title": "舞蹈新风暴",
+        "rate": "8.5",
+        "cover": "https://image.tmdb.org/t/p/w500/jej7FfIvWZyLSMoNbPP3MkEByob.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/WQSOHT9QFxMMpQ4TAscX3f9IMO.jpg",
+        "description": "《舞蹈风暴》是一档大型舞蹈竞技类真人秀。节目邀请全舞种年轻顶级舞者同台竞技，层层筛选只为诞生金牌舞蹈作品；四组“风暴见证官”携手观众，共同选拔领衔中国舞蹈的新生代力量；一位“风暴伙伴”，见证舞者的蜕变与成长；“360°时空凝结”技术，以全新维度鉴赏舞者每一个高光瞬间！高燃舞综热血来袭，带你刷新舞蹈认知，见证超级舞者的诞生！",
+        "year": "2019",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至20260909(Plus)",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
     },
     {
-      id: 'pb_var_hero_5',
-      title: '喜剧之王单口季',
-      rate: '8.2',
-      cover: 'https://image.tmdb.org/t/p/w500/nYsiHMplUCBFazdAOVr1gQaGy34.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/nYsiHMplUCBFazdAOVr1gQaGy34.jpg',
-      description: '周星驰发起，庞博、杨天真等加盟评委！全国脱口秀黑马齐聚一堂，用幽默消解焦虑，爆笑解压神作。',
-      year: '2024',
-      types: ['脱口秀', '幽默', '真人秀'],
-      episodes_info: '全10期·已完结',
-      type: 'tv',
-      is_new: true,
-      playable: true,
-      actors: ['周星驰', '罗永浩', '杨天真', '庞博']
+        "id": "iyf_hero_tv_5",
+        "title": "披荆斩棘2026",
+        "rate": "8.8",
+        "cover": "https://static.iyf.tv/upload/video/202608102124022465304.gif",
+        "backdrop": "https://static.iyf.tv/upload/user/202608261125002570740.jpg",
+        "description": "《披荆斩棘2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260912(第5期下)。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至20260912(第5期下)",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_tv_6",
+        "title": "心动的信号第9季",
+        "rate": "8.8",
+        "cover": "https://static.iyf.tv/upload/video/202607311122522270150.jpg",
+        "backdrop": "https://static.iyf.tv/upload/user/202608031821302167723.jpg",
+        "description": "《心动的信号第9季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260911(第6期陪看下)。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至20260911(第6期陪看下)",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_tv_7",
+        "title": "一饭封神第2季",
+        "rate": "8.8",
+        "cover": "https://static.iyf.tv/upload/video/202607231303450351514.jpg",
+        "backdrop": "https://static.iyf.tv/upload/user/202607271339373917253.jpg",
+        "description": "《一饭封神第2季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260912(一饭小馆第7期)。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至20260912(一饭小馆第7期)",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_tv_8",
+        "title": "家乡美食大赛",
+        "rate": "8.5",
+        "cover": "https://image.tmdb.org/t/p/w500/1ZOAVVMtbtnDmBxwlzfv8iU53ZP.jpg",
+        "backdrop": "https://static.iyf.tv/upload/user/202607271339253947372.jpg",
+        "description": "《家乡美食大赛》是湖南卫视、芒果TV出品，京东联合出品的美食综艺节目，总导演、制片人为王梓睿 ，由黄晓明担任首席掌勺官，李维嘉、沈梦辰担任掌勺主理人 。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至20260906",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
     }
   ],
   top10: [
@@ -1029,6 +1251,20 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 
 // ── 3. ⚡ 精品短剧专区精选 (Short Drama) ──────────────────────────────────
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
+  trendingNav: [
+    { title: '我在八零年代当后妈', updateBadge: 'HOT' },
+    { title: '无双', updateBadge: 'TOP' },
+    { title: '执笔', updateBadge: '' },
+    { title: '裴总每天都想父凭子贵', updateBadge: '' },
+    { title: '盛夏的秘密', updateBadge: '' },
+    { title: '龙王出狱', updateBadge: 'HOT' },
+    { title: '狂龙战婿', updateBadge: '' },
+    { title: '顾总太太又跑了', updateBadge: '' },
+    { title: '重生之都市修仙', updateBadge: '' },
+    { title: '真假千金归来', updateBadge: '' },
+    { title: '天降萌宝总裁爹地', updateBadge: '' },
+    { title: '2026 AI短剧元宇宙', updateBadge: 'AI' },
+  ],
   hero: [
     {
       id: 'pb_short_hero_1',
@@ -1542,52 +1778,52 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
 export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-      "title": "早春晴朗",
-      "updateBadge": ""
+        "title": "兰香如故",
+        "updateBadge": "2"
     },
     {
-      "title": "兰香如故",
-      "updateBadge": "1"
+        "title": "冬城猎凶",
+        "updateBadge": "2"
     },
     {
-      "title": "凡人修仙传",
-      "updateBadge": "1"
+        "title": "深渊无间",
+        "updateBadge": "1"
     },
     {
-      "title": "飞到我心上",
-      "updateBadge": ""
+        "title": "交锋",
+        "updateBadge": "2"
     },
     {
-      "title": "交锋",
-      "updateBadge": ""
+        "title": "生逢其时",
+        "updateBadge": "2"
     },
     {
-      "title": "冬城猎凶",
-      "updateBadge": "2"
+        "title": "重案六组:消失的警号",
+        "updateBadge": "2"
     },
     {
-      "title": "深渊无间",
-      "updateBadge": ""
+        "title": "早春晴朗",
+        "updateBadge": ""
     },
     {
-      "title": "生逢其时",
-      "updateBadge": ""
+        "title": "金色",
+        "updateBadge": ""
     },
     {
-      "title": "花儿与少年第8季",
-      "updateBadge": ""
+        "title": "蝉",
+        "updateBadge": "2"
     },
     {
-      "title": "光阴之外",
-      "updateBadge": "1"
+        "title": "藏锋",
+        "updateBadge": ""
     },
     {
-      "title": "死有对证",
-      "updateBadge": ""
+        "title": "特立独行",
+        "updateBadge": ""
     },
     {
-      "title": "杀手妈咪",
-      "updateBadge": "1"
+        "title": "给阿嬷的情书",
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -1650,7 +1886,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "title": "寒战1994",
         "rate": "6.5",
         "cover": "https://image.tmdb.org/t/p/w500/8NaaLrhXbhuXmjndCKmgaJvLTb1.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/lYSlqEvvbTsNhRx3gs8RRBbazxj.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/gIpIMTZKhDNqFsoSj04sKZfV0g0.jpg",
         "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
         "year": "2026",
         "types": [
@@ -1675,7 +1911,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至04集 | 共47集",
+        "episodes_info": "更新至06集 | 共47集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1709,7 +1945,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至09集 | 共16集",
+        "episodes_info": "更新至11集 | 共16集",
         "type": "tv",
         "is_new": true,
         "playable": true

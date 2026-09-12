@@ -12,7 +12,7 @@ export default function IPTVClient() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white">
-      <Navbar />
+      <Navbar activeCategory="iptv" />
 
       <div className="fluid-container pt-3 sm:pt-4 pb-28 sm:pb-16 space-y-6 sm:space-y-8">
         {/* 1. 演播大厅顶部：超清直播播放器 */}

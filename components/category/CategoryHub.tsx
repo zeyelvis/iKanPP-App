@@ -13,7 +13,7 @@ import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { getPrebakedCategoryShelves, PREBAKED_CATEGORY_ITEMS } from '@/lib/data/category-prebaked';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 import { HeroSlideshow } from '@/components/home/TmdbSlideshow';
-import type { PrebakedSubject } from '@/lib/data/home-prebaked';
+import type { PrebakedSubject, TrendingNavItem } from '@/lib/data/home-prebaked';
 
 export interface FilterOption {
   label: string;
@@ -43,6 +43,7 @@ export interface CategoryHubProps {
   shortDramaMode?: boolean;
   topCustomRails?: React.ReactNode;
   heroItems?: PrebakedSubject[];
+  trendingNav?: TrendingNavItem[];
 }
 
 export function CategoryHub({
@@ -59,6 +60,7 @@ export function CategoryHub({
   shortDramaMode = false,
   topCustomRails,
   heroItems,
+  trendingNav,
 }: CategoryHubProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -393,17 +395,19 @@ function isSameList(a: any[], b: any[]): boolean {
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white">
-      {/* 顶部导航 */}
+      {/* 顶部导航：在大片巨幕上方浮动穿透，与首页 100% 统一 */}
       <Navbar
         onSearch={handleSearch}
         activeCategory={activeNav}
+        transparentFloat={Boolean(heroItems && heroItems.length > 0)}
       />
 
       {/* 1. 频道顶部影院级全景通栏大片巨幕 (Hero Spotlight / HeroSlideshow 轮播) */}
       {heroItems && heroItems.length > 0 ? (
         <HeroSlideshow
-          contentType={doubanType === 'movie' ? 'movie' : 'tv'}
+          contentType={(activeNav as any) || (doubanType === 'movie' ? 'movie' : 'tv')}
           customHeroMovies={heroItems}
+          trendingNav={trendingNav}
           onMovieClick={handleMovieClick}
           onSearch={handleSearch}
           badgeTitle={`${categoryTitle} · 焦点热播`}
