@@ -291,7 +291,7 @@ export function HeroSlideshow({
     return () => clearInterval(timer);
   }, [isPaused, currentData.length, activeIndex]);
 
-  const activeTrendingNav = trendingNav || (contentType === 'all' ? PREBAKED_HOME_DATA.all?.trendingNav : undefined);
+  const activeTrendingNav = trendingNav || (PREBAKED_HOME_DATA as any)[contentType]?.trendingNav || (contentType === 'all' ? PREBAKED_HOME_DATA.all?.trendingNav : undefined);
 
   const handleTrendingClick = (item: TrendingNavItem) => {
     // 若当前轮播数据包含该片，直接切换轮播大图
@@ -427,12 +427,13 @@ export function HeroSlideshow({
             </div>
 
             {/* 2. 中栏：爱壹帆同款双排 6 列热播追更纯文字矩阵（自适应列宽 + 贴底对齐，彻底杜绝重叠与截断） */}
+            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（双排 6 列，中英大字舒展排版，与播放按钮严格对齐） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
               <div
-                className="hidden lg:grid grid-rows-2 justify-between items-center gap-x-4 xl:gap-x-7 gap-y-2 xl:gap-y-2.5 self-end flex-1 max-w-2xl xl:max-w-[780px] px-2 pb-0.5 sm:pb-1"
+                className="hidden lg:grid grid-rows-2 justify-between items-center gap-x-3 xl:gap-x-5 gap-y-2 xl:gap-y-2.5 self-end shrink-0 max-w-fit px-2 pb-0.5 sm:pb-1"
                 style={{ gridTemplateColumns: 'repeat(6, auto)' }}
               >
-                {activeTrendingNav.slice(0, 12).map((item, idx) => {
+                {activeTrendingNav.slice(0, 12).map((item: TrendingNavItem, idx: number) => {
                   const isCurrentActive = active.title === item.title;
                   return (
                     <button
@@ -446,7 +447,7 @@ export function HeroSlideshow({
                       }`}
                       title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                     >
-                      <span className="text-[13px] xl:text-[15px] font-normal tracking-tight whitespace-nowrap leading-snug">
+                      <span className="text-[13px] xl:text-[14px] font-normal tracking-tight whitespace-nowrap leading-snug max-w-[92px] xl:max-w-[108px] truncate">
                         {item.title}
                       </span>
                       {item.updateBadge ? (
@@ -463,7 +464,7 @@ export function HeroSlideshow({
             {/* 移动端/平板专享中栏（双排横滑纯文字，同款舒展大字） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
               <div className="grid lg:hidden grid-flow-col grid-rows-2 auto-cols-max overflow-x-auto gap-x-4 gap-y-2.5 px-2 py-1.5 scrollbar-none self-end">
-                {activeTrendingNav.slice(0, 12).map((item, idx) => {
+                {activeTrendingNav.slice(0, 12).map((item: TrendingNavItem, idx: number) => {
                   const isCurrentActive = active.title === item.title;
                   return (
                     <button
@@ -486,16 +487,19 @@ export function HeroSlideshow({
               </div>
             )}
 
-            {/* 3. 右栏：爱壹帆同款完整 7 席轮播大片缩略海报卡片列表（self-end 贴底，与播放按钮、中栏底线完全平齐） */}
-            <div className="hidden md:flex items-center gap-1.5 xl:gap-2 shrink-0 self-end p-1.5 rounded-xl bg-black/20 backdrop-blur-xs border border-white/5">
-              {currentData.slice(0, 7).map((item, idx) => {
+            {/* 3. 右栏：爱壹帆同款完整轮播大片缩略海报卡片列表（最多 8 席，self-end 贴底，与播放按钮、中栏底线完全平齐，避开右下角常驻浮标） */}
+            <div className={`hidden md:flex items-center ${currentData.length > 7 ? 'gap-1 xl:gap-1.5' : 'gap-1.5 xl:gap-2'} shrink-0 self-end p-1.5 rounded-xl bg-black/20 backdrop-blur-xs border border-white/5 mr-8 sm:mr-10 xl:mr-12`}>
+              {currentData.slice(0, 8).map((item, idx) => {
                 const isSelected = idx === activeIndex;
+                const cardSizeClass = currentData.length > 7
+                  ? 'w-10.5 h-15 sm:w-11 sm:h-16 lg:w-12 lg:h-17.5 xl:w-13 xl:h-19'
+                  : 'w-12 h-17 sm:w-13 sm:h-18 lg:w-14 lg:h-20 xl:w-16 xl:h-23';
                 return (
                   <button
                     key={item.title ? `hero-thumb-${item.title}` : (item.id || idx)}
                     type="button"
                     onClick={() => setActiveIndex(idx)}
-                    className={`group relative w-12 h-17 sm:w-13 sm:h-18 lg:w-14 lg:h-20 xl:w-16 xl:h-23 rounded-lg overflow-hidden transition-all duration-300 cursor-pointer border ${
+                    className={`group relative ${cardSizeClass} rounded-lg overflow-hidden transition-all duration-300 cursor-pointer border ${
                       isSelected
                         ? 'border-[#00D1FF] ring-2 ring-[#00D1FF]/70 scale-105 shadow-[0_0_14px_rgba(0,209,255,0.6)] z-10'
                         : 'border-white/10 opacity-70 hover:opacity-100 hover:scale-102 hover:border-white/30'

@@ -49,6 +49,56 @@ export const PREBAKED_HOME_DATA: {
 } = {
   "all": ALL_HOME_DATA,
   "movie": {
+    "trendingNav": [
+        {
+                "title": "特立独行",
+                "updateBadge": ""
+        },
+        {
+                "title": "给阿嬷的情书",
+                "updateBadge": ""
+        },
+        {
+                "title": "玩具总动员5",
+                "updateBadge": ""
+        },
+        {
+                "title": "寒战1994",
+                "updateBadge": ""
+        },
+        {
+                "title": "穿普拉达的女王2",
+                "updateBadge": ""
+        },
+        {
+                "title": "我的妈耶",
+                "updateBadge": ""
+        },
+        {
+                "title": "镖人：风起大漠",
+                "updateBadge": ""
+        },
+        {
+                "title": "迈克尔·杰克逊：巨星之路",
+                "updateBadge": ""
+        },
+        {
+                "title": "奥德赛",
+                "updateBadge": ""
+        },
+        {
+                "title": "抓娃娃",
+                "updateBadge": ""
+        },
+        {
+                "title": "九龙城寨之围城",
+                "updateBadge": ""
+        },
+        {
+                "title": "异形：夺命舰",
+                "updateBadge": ""
+        }
+      ],
     "hero": [
         {
                 "id": "iyf_hero_movie_1",
@@ -124,71 +174,75 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "id": "iyf_hero_movie_5",
-                "title": "海洋奇缘：启航",
-                "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/8f4OJJrMtZcoB4h1BLyyZewd96X.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/dmwb15BCkqjoXA9dXIsoY2Hn10F.jpg",
-                "description": "莫阿娜受到大海的召唤，与传奇半神毛伊一同启航，首次跨越莫图鲁尼岛的礁石，驶向远方未知的海域。迪士尼顶级真人冒险巨制。",
+                "title": "穿普拉达的女王2",
+                "rate": "7.0",
+                "cover": "https://image.tmdb.org/t/p/w500/zGQyw7v2dvb2FNDdVUJFcaPrD5y.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/Af907x5h9W1wVis8XrSd7ynTWuy.jpg",
+                "description": "　　随着传统出版业的式微，时尚女王米兰达在职业生涯中迎来新挑战。她不得不与手握广告预算的曾经的助理，如今已是奢侈品牌集团高管的艾米莉正面交锋。两人在行业变局中展开了一场关乎权力与生存的较量。",
                 "year": "2026",
                 "types": [
-                        "奇幻",
-                        "冒险",
+                        "热门",
+                        "剧情",
                         "电影"
                 ],
-                "episodes_info": "电影·奇幻",
+                "episodes_info": "电影·剧情",
                 "type": "movie",
                 "is_new": true,
-                "playable": true,
-                "actors": [
-                        "凯瑟琳·拉加艾亚",
-                        "道恩·强森"
-                ]
+                "playable": true
         },
         {
                 "id": "iyf_hero_movie_6",
-                "title": "蜘蛛侠：崭新之日",
-                "rate": "7.8",
-                "cover": "https://image.tmdb.org/t/p/w500/qeQJx07rK2xm8SD2sJxFKhE7gs0.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/qeQJx07rK2xm8SD2sJxFKhE7gs0.jpg",
-                "description": "彼得·帕克在被世人遗忘后重新出发，开启属于漫威电影宇宙新篇章的震撼冒险。汤姆·赫兰德、赞达亚领衔主演。",
+                "title": "我的妈耶",
+                "rate": "6.3",
+                "cover": "https://image.tmdb.org/t/p/w500/cE15hXnCv6VfADRCo69n83BRNsS.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/tRg0CIV7HQVKcdd2Jabv4GdhEVF.jpg",
+                "description": "十一（黄明昊 饰）从小由父亲张永勋（白客 饰）独自抚养长大，自出生时就离世的妈妈东玉（马思纯 饰）对于他而言则是陌生人般的存在。处于青春叛逆期的十一，在自己18岁生日这天意外发现了一本「妈妈的日记」。在好奇心的驱使下，十一翻开日记，开启了一段“认识妈妈”的旅程——十一跟随着妈妈的成长经历，邂逅了她人生不同阶段的重要人物——霹雳舞学长（梁靖康 饰）、高中闺蜜彩霞（嵇嘉禾 饰）、发小刘皮孩（王天放 饰）、初恋小哥（孙阳 饰）以及老公张永勋。这些人物串联起东玉一生所经历的友谊、爱情与亲情…… 透过这本「日记」，十一看见了东玉短暂却向阳的一生，也终于感受到了她对自己从始至终不曾缺席的爱……",
                 "year": "2026",
                 "types": [
+                        "热门",
+                        "剧情",
+                        "电影"
+                ],
+                "episodes_info": "电影·剧情",
+                "type": "movie",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_7",
+                "title": "镖人：风起大漠",
+                "rate": "8.2",
+                "cover": "https://image.tmdb.org/t/p/w500/ki0ilBYgbOZKUuE1NN53FYWK9zQ.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/wHwoA0K8GO5vTcOSro8viyfxf6m.jpg",
+                "description": "大漠之上，镖人、官府、西域五大家族等多方势力盘根错节、暗潮涌动。“天字第二号逃犯”刀马受恩人莫族长所托，接下一趟特殊的押镖任务，护送神秘人物知世郎从西域前往长安。然而，他很快发现自己护送的竟是“天字第一号逃犯”。随着消息传开，各方势力纷纷闻风而动，一场围绕这趟神秘押镖展开的争夺席卷大漠。面对接踵而来的追杀与危机，刀马也逐渐发现，这趟任务背后还隐藏着与自己和小七有关的秘密……",
+                "year": "2026",
+                "types": [
+                        "热门",
                         "动作",
-                        "科幻",
                         "电影"
                 ],
                 "episodes_info": "电影·动作",
                 "type": "movie",
                 "is_new": true,
-                "playable": true,
-                "actors": [
-                        "汤姆·赫兰德",
-                        "赞达亚·科尔曼",
-                        "马克·鲁法洛"
-                ]
+                "playable": true
         },
         {
-                "id": "iyf_hero_movie_7",
-                "title": "星际穿越",
-                "rate": "8.5",
-                "cover": "https://image.tmdb.org/t/p/w500/spQm5r317XPNHK1941ChWmqzkZs.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/5XNQBqnBwPA9yT0jZ0p3s8bbLh0.jpg",
-                "description": "近未来地球环境恶化，前宇航员库珀告别儿女穿过虫洞前往未知星系寻找人类新家园。诺兰影史科幻天花板，爱与引力的时空交响。",
-                "year": "2014",
+                "id": "iyf_hero_movie_8",
+                "title": "迈克尔·杰克逊：巨星之路",
+                "rate": "8.6",
+                "cover": "https://image.tmdb.org/t/p/w500/1hPSbiyfAhtWAIBf2XtDPA0NyvS.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/ufSwlnECLoUbBjPrFqEQcWBzHwc.jpg",
+                "description": "　　本片将通过一段从未展现过的深度视角，真实记录传奇巨星迈克尔·杰克逊的复杂人生。影片不仅再现了他最具标志性的艺术表演瞬间，更深入挖掘了他的内心世界——从天才神童的成长阵痛到全球偶像背后的争议与坚韧，全面呈现这位伟大艺术家的辉煌与坎坷。",
+                "year": "2026",
                 "types": [
-                        "科幻",
-                        "冒险",
+                        "热门",
+                        "剧情",
                         "电影"
                 ],
-                "episodes_info": "电影·科幻",
+                "episodes_info": "电影·剧情",
                 "type": "movie",
-                "is_new": false,
-                "playable": true,
-                "actors": [
-                        "马修·麦康纳",
-                        "安妮·海瑟薇",
-                        "杰西卡·查斯坦"
-                ]
+                "is_new": true,
+                "playable": true
         }
       ],
     "top10": [
