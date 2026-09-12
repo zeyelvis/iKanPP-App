@@ -452,31 +452,43 @@ export function HeroSlideshow({
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（底部居中对齐，自适应流式双排折行，与爱壹帆1:1对标） */}
-            {activeTrendingNav && activeTrendingNav.length > 0 && (
-              <div className="hidden lg:flex flex-1 justify-center items-end px-3 pb-1">
-                <div className="flex flex-wrap items-center gap-x-4 xl:gap-x-5 gap-y-2 xl:gap-y-2.5 max-w-[500px] xl:max-w-[530px]">
-                  {activeTrendingNav.slice(0, 12).map((item: TrendingNavItem, idx: number) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleTrendingClick(item)}
-                      className="group flex items-center justify-start text-left cursor-pointer text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-colors duration-200 select-none shrink-0"
-                      title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
-                    >
-                      <span className="text-[12.5px] xl:text-[13px] font-medium tracking-tight whitespace-nowrap leading-snug">
-                        {item.title}
-                      </span>
-                      {item.updateBadge ? (
-                        <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9.5px] xl:text-[10px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0 shadow-xs">
-                          {item.updateBadge}
-                        </span>
-                      ) : null}
-                    </button>
-                  ))}
+            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（底部居中对齐，严格双排黄金比例，100%对齐爱壹帆全站各专区规范） */}
+            {activeTrendingNav && activeTrendingNav.length > 0 && (() => {
+              const splitIdx = (contentType === 'anime' || activeTrendingNav.some((item: TrendingNavItem, i: number) => i < 6 && item.title.length >= 10)) ? 5 : 6;
+              const line1 = activeTrendingNav.slice(0, splitIdx);
+              const line2 = activeTrendingNav.slice(splitIdx, 12);
+              const renderItem = (item: TrendingNavItem, idx: number) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleTrendingClick(item)}
+                  className="group flex items-center justify-start text-left cursor-pointer text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-colors duration-200 select-none shrink-0"
+                  title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
+                >
+                  <span className="text-[12.5px] xl:text-[13px] font-medium tracking-tight whitespace-nowrap leading-snug">
+                    {item.title}
+                  </span>
+                  {item.updateBadge ? (
+                    <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9.5px] xl:text-[10px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0 shadow-xs">
+                      {item.updateBadge}
+                    </span>
+                  ) : null}
+                </button>
+              );
+
+              return (
+                <div className="hidden lg:flex flex-1 justify-center items-end px-3 pb-1">
+                  <div className="flex flex-col items-center gap-y-2 xl:gap-y-2.5 max-w-fit">
+                    <div className="flex items-center gap-x-3.5 xl:gap-x-5 whitespace-nowrap">
+                      {line1.map(renderItem)}
+                    </div>
+                    <div className="flex items-center gap-x-3.5 xl:gap-x-5 whitespace-nowrap">
+                      {line2.map((item: TrendingNavItem, idx: number) => renderItem(item, idx + splitIdx))}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* 移动端/平板专享中栏（双排横滑纯文字，同款舒展大字，独立纯净展示） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
