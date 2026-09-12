@@ -62,6 +62,7 @@ export default function DocumentaryClient() {
         years={YEARS}
         shelves={SHELVES}
         defaultTag="纪录片"
+        usePrebakedOnly={true}
         heroItems={PREBAKED_HOME_DATA.documentary?.hero}
         trendingNav={PREBAKED_HOME_DATA.documentary?.trendingNav}
       />

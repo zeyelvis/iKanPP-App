@@ -40,6 +40,10 @@ function RailPosterItem({
   const [imageError, setImageError] = useState(false);
   const proxiedCover = getOptimizedImageUrl(movie.cover);
 
+  useEffect(() => {
+    setImageError(false);
+  }, [movie.cover]);
+
   return (
     <div
       onClick={() => onMovieClick(movie)}
@@ -236,7 +240,7 @@ export function ContentRail({
         ) : movies.length > 0 ? (
           movies.map((movie, idx) => (
             <RailPosterItem
-              key={movie.title || movie.id || idx}
+              key={`${movie.id || movie.title || idx}-${movie.cover || ''}`}
               movie={movie}
               idx={idx}
               isPriority={isPriority}

@@ -88,7 +88,7 @@ export function CategoryHub({
   }, [selectedGenre, selectedRegion, selectedYear]);
 
 // ── SWR 频道大厅本地瞬间缓存 ──────────────────────────
-const CATHUB_CACHE_KEY = 'kvideo-cathub-v4-';
+const CATHUB_CACHE_KEY = 'kvideo-cathub-v6-';
 
 function getLocalCatHub(key: string): Record<string, RailMovie[]> | null {
   if (typeof window === 'undefined') return null;
@@ -126,7 +126,7 @@ function isSameList(a: any[], b: any[]): boolean {
   }, [doubanType, activeNav, shelves]);
 
   const [shelfData, setShelfData] = useState<Record<string, RailMovie[]>>(() => {
-    if (typeof window !== 'undefined') {
+    if (!usePrebakedOnly && typeof window !== 'undefined') {
       const cached = getLocalCatHub(activeNav || doubanType);
       if (cached && Object.keys(cached).length > 0) {
         // 安全合并：确保新增的货架（如 ai）即使在旧缓存中不存在，也能立刻显示初始预烘焙海报
