@@ -9,51 +9,51 @@ import type { PrebakedSubject, PrebakedHomeCategory } from './home-prebaked';
 export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "时光代理人第3季",
-        "updateBadge": "6"
-    },
-    {
-        "title": "我独自盗墓",
-        "updateBadge": "10"
-    },
-    {
-        "title": "世界最强的后卫 迷宫国的新人探索者",
-        "updateBadge": "10"
-    },
-    {
-        "title": "暗黑灯火",
-        "updateBadge": "11"
-    },
-    {
-        "title": "从0位居民开始的边境领主大人",
-        "updateBadge": "11"
-    },
-    {
-        "title": "LV999的村民",
-        "updateBadge": "12"
-    },
-    {
-        "title": "斩神之凡尘神域第2季",
-        "updateBadge": "全"
-    },
-    {
-        "title": "镖人第2季",
-        "updateBadge": "8"
-    },
-    {
-        "title": "全职法师第7季",
-        "updateBadge": "全"
-    },
-    {
-        "title": "咒术回战第3季",
-        "updateBadge": "全"
+        "title": "斗破苍穹年番",
+        "updateBadge": "1"
     },
     {
         "title": "凡人修仙传",
         "updateBadge": "1"
     },
     {
-        "title": "完美世界",
+        "title": "光阴之外",
+        "updateBadge": "1"
+    },
+    {
+        "title": "仙逆",
+        "updateBadge": ""
+    },
+    {
+        "title": "择日飞升",
+        "updateBadge": ""
+    },
+    {
+        "title": "海贼王",
+        "updateBadge": ""
+    },
+    {
+        "title": "沧元图",
+        "updateBadge": ""
+    },
+    {
+        "title": "牧神记",
+        "updateBadge": ""
+    },
+    {
+        "title": "炼气十万年",
+        "updateBadge": "1"
+    },
+    {
+        "title": "遮天",
+        "updateBadge": ""
+    },
+    {
+        "title": "万界独尊",
+        "updateBadge": "1"
+    },
+    {
+        "title": "关于我转生变成史莱姆这档事第4季",
         "updateBadge": ""
     }
   ],
@@ -631,51 +631,51 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
 export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "打歌2026",
+        "title": "说唱巅峰对决2026",
+        "updateBadge": "2"
+    },
+    {
+        "title": "花儿与少年第8季",
+        "updateBadge": ""
+    },
+    {
+        "title": "心动的信号第9季",
+        "updateBadge": ""
+    },
+    {
+        "title": "披荆斩棘2026",
+        "updateBadge": "1"
+    },
+    {
+        "title": "一饭封神第2季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "你好星期六",
+        "updateBadge": "1"
+    },
+    {
+        "title": "地球超新鲜第2季",
         "updateBadge": "1"
     },
     {
         "title": "我家那闺女2026",
-        "updateBadge": "0912"
-    },
-    {
-        "title": "花儿与少年第8季",
         "updateBadge": "1"
     },
     {
-        "title": "舞蹈新风暴",
-        "updateBadge": "0909"
-    },
-    {
-        "title": "披荆斩棘2026",
-        "updateBadge": "5"
-    },
-    {
-        "title": "心动的信号第9季",
-        "updateBadge": "6"
-    },
-    {
-        "title": "一饭封神第2季",
-        "updateBadge": "7"
-    },
-    {
-        "title": "家乡美食大赛",
-        "updateBadge": "0906"
-    },
-    {
-        "title": "姐姐当家第2季",
-        "updateBadge": "10"
+        "title": "大哥小助理",
+        "updateBadge": "1"
     },
     {
         "title": "密室大逃脱第8季",
-        "updateBadge": "0911"
-    },
-    {
-        "title": "大侦探第九季",
         "updateBadge": ""
     },
     {
-        "title": "密室大逃脱",
+        "title": "姐姐当家第2季",
+        "updateBadge": "3"
+    },
+    {
+        "title": "喜剧之王单口季第3季",
         "updateBadge": ""
     }
   ],
@@ -1778,52 +1778,52 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
 export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "特立独行",
-        "updateBadge": ""
-    },
-    {
-        "title": "给阿嬷的情书",
-        "updateBadge": ""
-    },
-    {
-        "title": "玩具总动员5",
-        "updateBadge": ""
-    },
-    {
-        "title": "寒战1994",
-        "updateBadge": ""
-    },
-    {
         "title": "兰香如故",
-        "updateBadge": "6"
+        "updateBadge": "2"
     },
     {
-        "title": "冬城猎凶",
-        "updateBadge": "8"
+        "title": "早春晴朗",
+        "updateBadge": ""
     },
     {
-        "title": "深渊无间",
-        "updateBadge": "11"
-    },
-    {
-        "title": "交锋",
-        "updateBadge": "16"
-    },
-    {
-        "title": "打歌2026",
+        "title": "斗破苍穹年番",
         "updateBadge": "1"
     },
     {
-        "title": "我家那闺女2026",
-        "updateBadge": "0912"
+        "title": "交锋",
+        "updateBadge": "2"
     },
     {
-        "title": "时光代理人第3季",
-        "updateBadge": "6"
+        "title": "凡人修仙传",
+        "updateBadge": "1"
     },
     {
-        "title": "欢迎来地球",
-        "updateBadge": "6"
+        "title": "飞到我心上",
+        "updateBadge": ""
+    },
+    {
+        "title": "生逢其时",
+        "updateBadge": "1"
+    },
+    {
+        "title": "冬城猎凶",
+        "updateBadge": "2"
+    },
+    {
+        "title": "深渊无间",
+        "updateBadge": "2"
+    },
+    {
+        "title": "说唱巅峰对决2026",
+        "updateBadge": "2"
+    },
+    {
+        "title": "杀手妈咪",
+        "updateBadge": "1"
+    },
+    {
+        "title": "死有对证",
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -2391,52 +2391,52 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
 export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "欢迎来地球",
-        "updateBadge": "6"
+        "title": "克拉克森的农场第1季",
+        "updateBadge": ""
     },
     {
-        "title": "泰国洞穴救援",
-        "updateBadge": "1"
+        "title": "克拉克森的农场第5季",
+        "updateBadge": ""
     },
     {
-        "title": "内马尔：不完美的完美球星",
-        "updateBadge": "3"
+        "title": "克拉克森的农场第3季",
+        "updateBadge": ""
     },
     {
-        "title": "屏住呼吸：挑战冰潜记录",
-        "updateBadge": "1"
+        "title": "克拉克森的农场第4季",
+        "updateBadge": ""
     },
     {
-        "title": "史前星球",
-        "updateBadge": "5"
-    },
-    {
-        "title": "王朝第2季",
-        "updateBadge": "5"
-    },
-    {
-        "title": "漫威616",
-        "updateBadge": "8"
-    },
-    {
-        "title": "欢迎来到雷克斯汉姆",
-        "updateBadge": "18"
-    },
-    {
-        "title": "美丽美利坚",
-        "updateBadge": "6"
+        "title": "若泽·穆里尼奥：特立之道",
+        "updateBadge": ""
     },
     {
         "title": "克拉克森的农场第2季",
-        "updateBadge": "8"
+        "updateBadge": ""
     },
     {
-        "title": "地球脉动",
-        "updateBadge": "9.9"
+        "title": "恐龙时代：你不知道的故事",
+        "updateBadge": ""
     },
     {
-        "title": "蓝色星球",
-        "updateBadge": "9.8"
+        "title": "史前星球",
+        "updateBadge": ""
+    },
+    {
+        "title": "守护解放西第6季",
+        "updateBadge": ""
+    },
+    {
+        "title": "欢迎来到雷克斯汉姆",
+        "updateBadge": ""
+    },
+    {
+        "title": "中国通史",
+        "updateBadge": ""
+    },
+    {
+        "title": "爱达荷州血案：大学梦魇",
+        "updateBadge": ""
     }
   ],
   hero: [

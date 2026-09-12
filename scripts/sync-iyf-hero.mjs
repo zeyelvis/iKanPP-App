@@ -135,17 +135,14 @@ async function enrichMovieData(slideItem, index, forceType = null) {
 }
 
 /**
- * 动态拉取爱壹帆指定板块 (CID) 实时更新速报矩阵 (12 席)
- * 精确解析更新集数角标：
- * - 电视剧/动漫: "更新至08集" -> "8", "更新至16集" -> "16"
- * - 综艺: "更新至20260912(第5期下)" -> "5" 或 "0912"
- * - 纪录片: "更新至05" -> "5"
- * - 电影: "" (院线电影无集数角标)
+ * 动态拉取爱壹帆指定板块 (CID) 官方原生二级速报推荐标签矩阵 (nav-second-links 12 席)
+ * 对应爱壹帆底层原生接口：/v3/list/getHotVideoTop?cinema=1&cid=${cid}&pageSize=12
+ * 包含电影、电视剧、综艺、动漫、纪录片等专属推荐片名及实时更新角标
  */
 async function fetchChannelTrendingNav(cid, channelName, defaultBaselines = []) {
-  console.log(`[iyf-sync] 正在向爱壹帆拉取【${channelName}】(cid=${cid}) 专属 12 席实时更新速报...`);
+  console.log(`[iyf-sync] 正在向爱壹帆拉取【${channelName}】(cid=${cid}) 官方专属 12 席热门推荐标签 (getHotVideoTop)...`);
   try {
-    const res = await fetch(`https://m10.iyf.tv/v3/home/getflashbanner?cinema=1&region=GL.&cid=${cid}&size=20`, {
+    const res = await fetch(`https://m10.iyf.tv/v3/list/getHotVideoTop?cinema=1&cid=${cid}&pageSize=12`, {
       headers: { "User-Agent": "Mozilla/5.0" },
       signal: AbortSignal.timeout(6000)
     });
@@ -157,28 +154,16 @@ async function fetchChannelTrendingNav(cid, channelName, defaultBaselines = []) 
     const seen = new Set();
 
     for (const item of list) {
-      if (!item || !item.title || item.external || item.title.includes("爽剧") || item.title.includes("短剧开启")) continue;
+      if (!item || !item.title || item.external) continue;
       const title = item.title.trim();
       if (!seen.has(title)) {
         seen.add(title);
         let updateBadge = "";
-        const sub = item.subTitle || "";
-
-        // 精确角标规则
-        const mVarietyIssue = sub.match(/第(\d+)期/);
-        const mVarietyDate = sub.match(/更新至(\d{4})(\d{2})(\d{2})/);
-        const mEp = sub.match(/更新至第?0?(\d+)(?:集|$|\s)/);
-
-        if (mVarietyIssue) {
-          updateBadge = mVarietyIssue[1];
-        } else if (mVarietyDate) {
-          updateBadge = `${mVarietyDate[2]}${mVarietyDate[3]}`;
-        } else if (mEp) {
-          updateBadge = String(parseInt(mEp[1], 10));
-        } else if (sub.includes('完结') || sub.includes('全')) {
-          updateBadge = '全';
+        if (item.notifications && String(item.notifications).trim()) {
+          updateBadge = String(item.notifications).trim();
+        } else if (item.updateNumber && Number(item.updateNumber) > 0) {
+          updateBadge = String(item.updateNumber);
         }
-
         items.push({ title, updateBadge });
       }
       if (items.length >= 12) break;
@@ -217,18 +202,18 @@ async function syncHomeAll() {
   }
 
   const defaultHomeTrending = [
-    { title: '特立独行', updateBadge: '' },
-    { title: '给阿嬷的情书', updateBadge: '' },
-    { title: '玩具总动员5', updateBadge: '' },
-    { title: '寒战1994', updateBadge: '' },
-    { title: '兰香如故', updateBadge: '6' },
-    { title: '冬城猎凶', updateBadge: '8' },
-    { title: '深渊无间', updateBadge: '11' },
-    { title: '打歌2026', updateBadge: '1' },
-    { title: '我家那闺女2026', updateBadge: '0912' },
-    { title: '时光代理人第3季', updateBadge: '6' },
-    { title: '欢迎来地球', updateBadge: '6' },
-    { title: '史前星球', updateBadge: '5' },
+    { title: '兰香如故', updateBadge: '2' },
+    { title: '早春晴朗', updateBadge: '' },
+    { title: '斗破苍穹年番', updateBadge: '1' },
+    { title: '交锋', updateBadge: '2' },
+    { title: '凡人修仙传', updateBadge: '1' },
+    { title: '飞到我心上', updateBadge: '' },
+    { title: '生逢其时', updateBadge: '1' },
+    { title: '冬城猎凶', updateBadge: '2' },
+    { title: '深渊无间', updateBadge: '2' },
+    { title: '说唱巅峰对决2026', updateBadge: '2' },
+    { title: '杀手妈咪', updateBadge: '1' },
+    { title: '死有对证', updateBadge: '' },
   ];
 
   const trendingNavItems = await fetchChannelTrendingNav('0,1', '全站精选', defaultHomeTrending);
@@ -280,19 +265,20 @@ async function syncMovieChannel() {
     movieHeroItems.push(item);
   }
 
+  // 100% 对齐爱壹帆电影官方 getHotVideoTop 专属 12 席热映推荐标签
   const defaultMovieTrending = [
-    { title: '特立独行', updateBadge: '' },
+    { title: '蜂鸟行动', updateBadge: '' },
+    { title: '欢迎来龙餐馆', updateBadge: '' },
     { title: '给阿嬷的情书', updateBadge: '' },
+    { title: '出入平安', updateBadge: '' },
+    { title: '特立独行', updateBadge: '' },
+    { title: '海洋奇缘：启航', updateBadge: '' },
+    { title: '百分之十', updateBadge: '' },
+    { title: '求救信号', updateBadge: '' },
+    { title: '夜王', updateBadge: '' },
+    { title: '怒之杀(听译)', updateBadge: '' },
     { title: '玩具总动员5', updateBadge: '' },
-    { title: '寒战1994', updateBadge: '' },
-    { title: '穿普拉达的女王2', updateBadge: '' },
-    { title: '我的妈耶', updateBadge: '' },
-    { title: '镖人：风起大漠', updateBadge: '' },
-    { title: '迈克尔·杰克逊：巨星之路', updateBadge: '' },
-    { title: '奥德赛', updateBadge: '' },
-    { title: '抓娃娃', updateBadge: '' },
-    { title: '九龙城寨之围城', updateBadge: '' },
-    { title: '异形：夺命舰', updateBadge: '' },
+    { title: '不成功穿越指南', updateBadge: '' },
   ];
 
   const movieTrendingNav = await fetchChannelTrendingNav('0,1,3', '电影频道', defaultMovieTrending);
@@ -342,19 +328,20 @@ async function syncTvChannel() {
     tvHeroItems.push(item);
   }
 
+  // 100% 对齐爱壹帆电视剧官方 getHotVideoTop 专属 12 席黄金档推荐标签
   const defaultTvTrending = [
-    { title: '兰香如故', updateBadge: '6' },
-    { title: '冬城猎凶', updateBadge: '8' },
-    { title: '深渊无间', updateBadge: '11' },
-    { title: '交锋', updateBadge: '16' },
-    { title: '生逢其时', updateBadge: '14' },
-    { title: '重案六组:消失的警号', updateBadge: '' },
+    { title: '兰香如故', updateBadge: '2' },
     { title: '早春晴朗', updateBadge: '' },
-    { title: '金色', updateBadge: '' },
-    { title: '狂飙', updateBadge: '' },
-    { title: '繁花', updateBadge: '' },
-    { title: '三体', updateBadge: '' },
-    { title: '庆余年第二季', updateBadge: '' },
+    { title: '交锋', updateBadge: '2' },
+    { title: '飞到我心上', updateBadge: '' },
+    { title: '生逢其时', updateBadge: '1' },
+    { title: '冬城猎凶', updateBadge: '2' },
+    { title: '深渊无间', updateBadge: '2' },
+    { title: '杀手妈咪', updateBadge: '1' },
+    { title: '死有对证', updateBadge: '' },
+    { title: '花开锦绣', updateBadge: '' },
+    { title: '百花杀', updateBadge: '' },
+    { title: '九门', updateBadge: '' },
   ];
 
   const tvTrendingNav = await fetchChannelTrendingNav('0,1,4', '电视剧频道', defaultTvTrending);
@@ -404,19 +391,20 @@ async function syncAnimeChannel() {
     animeHeroItems.push(item);
   }
 
+  // 100% 对齐爱壹帆动漫官方 getHotVideoTop 专属 12 席新番推荐标签
   const defaultAnimeTrending = [
-    { title: '时光代理人第3季', updateBadge: '6' },
-    { title: '我独自盗墓', updateBadge: '10' },
-    { title: '世界最强的后卫 迷宫国的新人探索者', updateBadge: '10' },
-    { title: '暗黑灯火', updateBadge: '11' },
-    { title: '从0位居民开始的边境领主大人', updateBadge: '11' },
-    { title: 'LV999的村民', updateBadge: '11' },
-    { title: '斩神之凡尘神域第2季', updateBadge: '1' },
-    { title: '镖人第2季', updateBadge: '' },
+    { title: '斗破苍穹年番', updateBadge: '1' },
     { title: '凡人修仙传', updateBadge: '1' },
-    { title: '完美世界', updateBadge: '' },
+    { title: '光阴之外', updateBadge: '1' },
+    { title: '仙逆', updateBadge: '' },
+    { title: '择日飞升', updateBadge: '' },
+    { title: '海贼王', updateBadge: '' },
+    { title: '沧元图', updateBadge: '' },
+    { title: '牧神记', updateBadge: '' },
+    { title: '炼气十万年', updateBadge: '1' },
     { title: '遮天', updateBadge: '' },
-    { title: '仙逆', updateBadge: '1' },
+    { title: '万界独尊', updateBadge: '1' },
+    { title: '关于我转生变成史莱姆这档事第4季', updateBadge: '' },
   ];
 
   const animeTrendingNav = await fetchChannelTrendingNav('0,1,6', '动漫频道', defaultAnimeTrending);
@@ -466,19 +454,20 @@ async function syncVarietyChannel() {
     varietyHeroItems.push(item);
   }
 
+  // 100% 对齐爱壹帆综艺官方 getHotVideoTop 专属 12 席爆款推荐标签
   const defaultVarietyTrending = [
-    { title: '打歌2026', updateBadge: '1' },
-    { title: '我家那闺女2026', updateBadge: '0912' },
-    { title: '花儿与少年第8季', updateBadge: '1' },
-    { title: '舞蹈新风暴', updateBadge: '0909' },
-    { title: '披荆斩棘2026', updateBadge: '5' },
+    { title: '说唱巅峰对决2026', updateBadge: '2' },
+    { title: '花儿与少年第8季', updateBadge: '' },
     { title: '心动的信号第9季', updateBadge: '' },
-    { title: '一饭封神第2季', updateBadge: '' },
-    { title: '家乡美食大赛', updateBadge: '' },
-    { title: '大侦探第九季', updateBadge: '' },
-    { title: '密室大逃脱', updateBadge: '' },
-    { title: '奔跑吧', updateBadge: '' },
-    { title: '极限挑战', updateBadge: '' },
+    { title: '披荆斩棘2026', updateBadge: '1' },
+    { title: '一饭封神第2季', updateBadge: '1' },
+    { title: '你好星期六', updateBadge: '1' },
+    { title: '地球超新鲜第2季', updateBadge: '1' },
+    { title: '我家那闺女2026', updateBadge: '1' },
+    { title: '大哥小助理', updateBadge: '1' },
+    { title: '密室大逃脱第8季', updateBadge: '' },
+    { title: '姐姐当家第2季', updateBadge: '3' },
+    { title: '喜剧之王单口季第3季', updateBadge: '' },
   ];
 
   const varietyTrendingNav = await fetchChannelTrendingNav('0,1,5', '综艺频道', defaultVarietyTrending);
@@ -588,20 +577,20 @@ async function syncDocumentaryChannel() {
     });
   }
 
-  // 纪录片专区专属 12 席动态速报（从爱壹帆 CID 0,1,7 抓取）
+  // 100% 对齐爱壹帆纪录片官方 getHotVideoTop 专属 12 席口碑推荐标签
   const defaultDocTrending = [
-    { title: '欢迎来地球', updateBadge: '6' },
-    { title: '史前星球', updateBadge: '5' },
-    { title: '泰国洞穴救援', updateBadge: '1' },
-    { title: '内马尔：不完美的完美球星', updateBadge: '3' },
-    { title: '地球脉动', updateBadge: '9.9' },
-    { title: '蓝色星球', updateBadge: '9.8' },
-    { title: '河西走廊', updateBadge: '9.7' },
-    { title: '风味人间', updateBadge: '' },
-    { title: '七个世界，一个星球', updateBadge: '9.7' },
-    { title: '如果国宝会说话', updateBadge: '' },
-    { title: '航拍中国', updateBadge: '' },
-    { title: '人生一串', updateBadge: '9.0' },
+    { title: '克拉克森的农场第1季', updateBadge: '' },
+    { title: '克拉克森的农场第5季', updateBadge: '' },
+    { title: '克拉克森的农场第3季', updateBadge: '' },
+    { title: '克拉克森的农场第4季', updateBadge: '' },
+    { title: '若泽·穆里尼奥：特立之道', updateBadge: '' },
+    { title: '克拉克森的农场第2季', updateBadge: '' },
+    { title: '恐龙时代：你不知道的故事', updateBadge: '' },
+    { title: '史前星球', updateBadge: '' },
+    { title: '守护解放西第6季', updateBadge: '' },
+    { title: '欢迎来到雷克斯汉姆', updateBadge: '' },
+    { title: '中国通史', updateBadge: '' },
+    { title: '爱达荷州血案：大学梦魇', updateBadge: '' },
   ];
 
   const docTrendingNav = await fetchChannelTrendingNav('0,1,7', '纪录片频道', defaultDocTrending);

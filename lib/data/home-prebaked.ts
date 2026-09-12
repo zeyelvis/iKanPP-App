@@ -53,7 +53,11 @@ export const PREBAKED_HOME_DATA: {
   "movie": {
     "trendingNav": [
         {
-                "title": "特立独行",
+                "title": "蜂鸟行动",
+                "updateBadge": ""
+        },
+        {
+                "title": "欢迎来龙餐馆",
                 "updateBadge": ""
         },
         {
@@ -61,43 +65,39 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "出入平安",
+                "updateBadge": ""
+        },
+        {
+                "title": "特立独行",
+                "updateBadge": ""
+        },
+        {
+                "title": "海洋奇缘：启航",
+                "updateBadge": ""
+        },
+        {
+                "title": "百分之十",
+                "updateBadge": ""
+        },
+        {
+                "title": "求救信号",
+                "updateBadge": ""
+        },
+        {
+                "title": "夜王",
+                "updateBadge": ""
+        },
+        {
+                "title": "怒之杀(听译)",
+                "updateBadge": ""
+        },
+        {
                 "title": "玩具总动员5",
                 "updateBadge": ""
         },
         {
-                "title": "寒战1994",
-                "updateBadge": ""
-        },
-        {
-                "title": "穿普拉达的女王2",
-                "updateBadge": ""
-        },
-        {
-                "title": "我的妈耶",
-                "updateBadge": ""
-        },
-        {
-                "title": "镖人：风起大漠",
-                "updateBadge": ""
-        },
-        {
-                "title": "迈克尔·杰克逊：巨星之路",
-                "updateBadge": ""
-        },
-        {
-                "title": "真人快打2",
-                "updateBadge": ""
-        },
-        {
-                "title": "超级马力欧银河大电影",
-                "updateBadge": ""
-        },
-        {
-                "title": "奥德赛",
-                "updateBadge": ""
-        },
-        {
-                "title": "抓娃娃",
+                "title": "不成功穿越指南",
                 "updateBadge": ""
         }
       ],
@@ -1779,50 +1779,50 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": "6"
-        },
-        {
-                "title": "冬城猎凶",
-                "updateBadge": "8"
-        },
-        {
-                "title": "深渊无间",
-                "updateBadge": "11"
-        },
-        {
-                "title": "交锋",
-                "updateBadge": "16"
-        },
-        {
-                "title": "生逢其时",
-                "updateBadge": "14"
-        },
-        {
-                "title": "重案六组:消失的警号",
-                "updateBadge": "20"
+                "updateBadge": "2"
         },
         {
                 "title": "早春晴朗",
-                "updateBadge": "全"
-        },
-        {
-                "title": "金色",
-                "updateBadge": "全"
-        },
-        {
-                "title": "蝉",
-                "updateBadge": "16"
-        },
-        {
-                "title": "藏锋",
-                "updateBadge": "全"
-        },
-        {
-                "title": "狂飙",
                 "updateBadge": ""
         },
         {
-                "title": "繁花",
+                "title": "交锋",
+                "updateBadge": "2"
+        },
+        {
+                "title": "飞到我心上",
+                "updateBadge": ""
+        },
+        {
+                "title": "生逢其时",
+                "updateBadge": "1"
+        },
+        {
+                "title": "冬城猎凶",
+                "updateBadge": "2"
+        },
+        {
+                "title": "深渊无间",
+                "updateBadge": "2"
+        },
+        {
+                "title": "杀手妈咪",
+                "updateBadge": "1"
+        },
+        {
+                "title": "死有对证",
+                "updateBadge": ""
+        },
+        {
+                "title": "花开锦绣",
+                "updateBadge": ""
+        },
+        {
+                "title": "百花杀",
+                "updateBadge": ""
+        },
+        {
+                "title": "九门",
                 "updateBadge": ""
         }
       ],
