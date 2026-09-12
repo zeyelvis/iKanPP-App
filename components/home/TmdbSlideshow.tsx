@@ -421,16 +421,9 @@ export function HeroSlideshow({
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款双排 6 列热播追更直达纯文字矩阵（晶莹通透暗色底板，保证全天候可读） */}
+            {/* 2. 中栏：爱壹帆同款双排 6 列热播追更直达纯文字矩阵（大字舒展排版，浑然一体无突兀黑框） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
-              <div
-                className="hidden lg:grid grid-cols-6 grid-rows-2 gap-x-3 xl:gap-x-4.5 gap-y-2.5 my-auto max-w-xl xl:max-w-2xl px-4 py-3 rounded-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.45)]"
-                style={{
-                  backgroundColor: 'rgba(10, 10, 15, 0.65)',
-                  backdropFilter: 'blur(16px)',
-                  WebkitBackdropFilter: 'blur(16px)',
-                }}
-              >
+              <div className="hidden lg:grid grid-cols-6 grid-rows-2 gap-x-4 xl:gap-x-6 gap-y-2.5 xl:gap-y-3.5 my-auto max-w-2xl xl:max-w-3xl px-2 py-1">
                 {activeTrendingNav.slice(0, 12).map((item, idx) => {
                   const isCurrentActive = active.title === item.title;
                   return (
@@ -438,18 +431,18 @@ export function HeroSlideshow({
                       key={idx}
                       type="button"
                       onClick={() => handleTrendingClick(item)}
-                      className={`group flex items-center justify-start text-left cursor-pointer transition-colors duration-150 select-none ${
+                      className={`group flex items-center justify-start text-left cursor-pointer transition-all duration-150 select-none ${
                         isCurrentActive
-                          ? 'text-[#00D1FF] font-bold drop-shadow-[0_0_8px_rgba(0,209,255,0.7)]'
-                          : 'text-white/80 hover:text-white font-normal hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]'
+                          ? 'text-[#00D1FF] font-bold drop-shadow-[0_0_10px_rgba(0,209,255,0.8)] scale-102'
+                          : 'text-white/80 hover:text-white font-medium hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]'
                       }`}
                       title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                     >
-                      <span className="text-xs xl:text-[13px] tracking-tight truncate max-w-[68px] xl:max-w-[84px]">
+                      <span className="text-[13px] xl:text-[15px] font-normal tracking-tight truncate max-w-[95px] xl:max-w-[125px] leading-snug">
                         {item.title}
                       </span>
                       {item.updateBadge ? (
-                        <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9px] font-bold rounded px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0">
+                        <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[10px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1.5 shrink-0 shadow-xs">
                           {item.updateBadge}
                         </span>
                       ) : null}
@@ -459,16 +452,9 @@ export function HeroSlideshow({
               </div>
             )}
 
-            {/* 移动端/平板专享中栏（双排横滑纯文字，同款半透明底板） */}
+            {/* 移动端/平板专享中栏（双排横滑纯文字，同款舒展大字） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
-              <div
-                className="grid lg:hidden grid-flow-col grid-rows-2 auto-cols-max overflow-x-auto gap-x-4 gap-y-2 px-3.5 py-2.5 rounded-xl border border-white/10 scrollbar-none shadow-md"
-                style={{
-                  backgroundColor: 'rgba(10, 10, 15, 0.65)',
-                  backdropFilter: 'blur(16px)',
-                  WebkitBackdropFilter: 'blur(16px)',
-                }}
-              >
+              <div className="grid lg:hidden grid-flow-col grid-rows-2 auto-cols-max overflow-x-auto gap-x-4 gap-y-2.5 px-2 py-1.5 scrollbar-none">
                 {activeTrendingNav.slice(0, 12).map((item, idx) => {
                   const isCurrentActive = active.title === item.title;
                   return (
@@ -476,13 +462,13 @@ export function HeroSlideshow({
                       key={idx}
                       type="button"
                       onClick={() => handleTrendingClick(item)}
-                      className={`flex items-center gap-1 text-xs shrink-0 select-none ${
+                      className={`flex items-center gap-1 text-xs sm:text-sm shrink-0 select-none ${
                         isCurrentActive ? 'text-[#00D1FF] font-bold' : 'text-white/80'
                       }`}
                     >
                       <span>{item.title}</span>
                       {item.updateBadge && (
-                        <span className="bg-[#E50914] text-white text-[9px] font-bold rounded px-1 py-0.2 min-w-3.5 leading-none">
+                        <span className="bg-[#E50914] text-white text-[9px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 leading-none">
                           {item.updateBadge}
                         </span>
                       )}
@@ -492,26 +478,19 @@ export function HeroSlideshow({
               </div>
             )}
 
-            {/* 3. 右栏：爱壹帆同款当前轮播大片缩略海报卡片列表（精致毛玻璃托盘底座，4~5 席） */}
-            <div
-              className="hidden md:flex items-center gap-2 xl:gap-2.5 shrink-0 my-auto p-2 xl:p-2.5 rounded-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.45)]"
-              style={{
-                backgroundColor: 'rgba(10, 10, 15, 0.55)',
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
-              }}
-            >
-              {currentData.slice(0, 5).map((item, idx) => {
+            {/* 3. 右栏：爱壹帆同款完整 7 席轮播大片缩略海报卡片列表 */}
+            <div className="hidden md:flex items-center gap-1.5 xl:gap-2 shrink-0 my-auto p-1.5 rounded-xl bg-black/20 backdrop-blur-xs border border-white/5">
+              {currentData.slice(0, 7).map((item, idx) => {
                 const isSelected = idx === activeIndex;
                 return (
                   <button
                     key={item.title ? `hero-thumb-${item.title}` : (item.id || idx)}
                     type="button"
                     onClick={() => setActiveIndex(idx)}
-                    className={`group relative w-15 h-21 lg:w-16 lg:h-23 xl:w-18 xl:h-25 rounded-lg overflow-hidden transition-all duration-300 cursor-pointer border ${
+                    className={`group relative w-12 h-17 sm:w-13 sm:h-18 lg:w-14 lg:h-20 xl:w-16 xl:h-23 rounded-lg overflow-hidden transition-all duration-300 cursor-pointer border ${
                       isSelected
-                        ? 'border-[#00D1FF] ring-2 ring-[#00D1FF]/60 scale-105 shadow-[0_0_12px_rgba(0,209,255,0.5)] z-10'
-                        : 'border-white/15 opacity-75 hover:opacity-100 hover:scale-102 hover:border-white/40'
+                        ? 'border-[#00D1FF] ring-2 ring-[#00D1FF]/70 scale-105 shadow-[0_0_14px_rgba(0,209,255,0.6)] z-10'
+                        : 'border-white/10 opacity-70 hover:opacity-100 hover:scale-102 hover:border-white/30'
                     }`}
                     title={item.title}
                   >
@@ -519,10 +498,10 @@ export function HeroSlideshow({
                       src={item.cover}
                       alt={item.title}
                       className="object-cover w-full h-full"
-                      sizes="80px"
+                      sizes="70px"
                     />
-                    <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/95 via-black/50 to-transparent pt-3 pb-1 px-1">
-                      <p className="text-[10px] text-white/90 truncate text-center font-medium leading-tight">
+                    <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/95 via-black/50 to-transparent pt-3 pb-0.5 px-0.5">
+                      <p className="text-[9px] xl:text-[10px] text-white/90 truncate text-center font-medium leading-tight">
                         {item.title}
                       </p>
                     </div>
