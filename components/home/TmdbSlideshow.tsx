@@ -452,30 +452,32 @@ export function HeroSlideshow({
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（双排 6 列自适应宽，100% 完整显示全片名，绝无省略号截断，独立纯净展示不与轮播大图联动） */}
+            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（底部居中对齐，自适应舒展间距，独立纯净展示不与轮播大图联动） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
-              <div
-                className="hidden lg:grid grid-rows-2 justify-between items-center gap-x-2 xl:gap-x-3 gap-y-2 xl:gap-y-2.5 self-end shrink-0 max-w-fit px-1 pb-1"
-                style={{ gridTemplateColumns: 'repeat(6, auto)' }}
-              >
-                {activeTrendingNav.slice(0, 12).map((item: TrendingNavItem, idx: number) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => handleTrendingClick(item)}
-                    className="group flex items-center justify-start text-left cursor-pointer text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-colors duration-200 select-none"
-                    title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
-                  >
-                    <span className="text-[12.5px] xl:text-[13px] font-medium tracking-tight whitespace-nowrap leading-snug">
-                      {item.title}
-                    </span>
-                    {item.updateBadge ? (
-                      <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9.5px] xl:text-[10px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0 shadow-xs">
-                        {item.updateBadge}
+              <div className="hidden lg:flex flex-1 justify-center items-end px-3 pb-1">
+                <div
+                  className="grid grid-rows-2 items-center gap-x-3.5 xl:gap-x-5 gap-y-2 xl:gap-y-2.5 max-w-fit"
+                  style={{ gridTemplateColumns: 'repeat(6, auto)' }}
+                >
+                  {activeTrendingNav.slice(0, 12).map((item: TrendingNavItem, idx: number) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleTrendingClick(item)}
+                      className="group flex items-center justify-start text-left cursor-pointer text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-colors duration-200 select-none"
+                      title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
+                    >
+                      <span className="text-[12.5px] xl:text-[13px] font-medium tracking-tight whitespace-nowrap leading-snug">
+                        {item.title}
                       </span>
-                    ) : null}
-                  </button>
-                ))}
+                      {item.updateBadge ? (
+                        <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9.5px] xl:text-[10px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0 shadow-xs">
+                          {item.updateBadge}
+                        </span>
+                      ) : null}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -500,8 +502,8 @@ export function HeroSlideshow({
               </div>
             )}
 
-            {/* 3. 右栏：爱壹帆同款完整轮播大片缩略海报卡片列表（饱满大尺寸海报，ml-auto 紧贴安全视口绝不截断） */}
-            <div className="hidden md:flex items-center gap-1 xl:gap-1.5 shrink-0 ml-auto self-end p-1.5 rounded-xl bg-black/25 backdrop-blur-xs border border-white/10">
+            {/* 3. 右栏：爱壹帆同款完整轮播大片缩略海报卡片列表（饱满大尺寸海报，紧贴右侧安全视口绝不截断） */}
+            <div className="hidden md:flex items-center gap-1 xl:gap-1.5 shrink-0 self-end p-1.5 rounded-xl bg-black/25 backdrop-blur-xs border border-white/10">
               {currentData.slice(0, 8).map((item, idx) => {
                 const isSelected = idx === activeIndex;
                 const cardSizeClass = currentData.length > 7
