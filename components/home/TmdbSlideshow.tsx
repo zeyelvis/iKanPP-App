@@ -374,7 +374,7 @@ export function HeroSlideshow({
       />
 
       {/* 3. 巨幕内容排版：爱壹帆同款布局（左侧标题胶囊按钮，右侧双排 6 列热播追更直达矩阵） */}
-      <div className="relative z-20 h-full fluid-container flex flex-col justify-end pb-7 sm:pb-9 pt-16">
+      <div className="relative z-20 h-full w-full flex flex-col justify-end px-5 sm:px-8 lg:px-10 pb-7 sm:pb-9 pt-16">
         <div className="w-full flex flex-col lg:flex-row lg:items-end justify-between gap-6 lg:gap-8">
           {/* 左侧：大片焦点信息区 */}
           <div className="max-w-xl shrink-0">
@@ -437,10 +437,10 @@ export function HeroSlideshow({
           </div>
 
           {/* 右侧：爱壹帆同款双排 6 列热播追更直达矩阵（共 12 部） */}
+          {/* 右侧：爱壹帆同款双排 6 列热播追更直达矩阵（共 12 部，单网格容器自适应） */}
           {activeTrendingNav && activeTrendingNav.length > 0 ? (
             <div className="shrink-0 w-full lg:w-auto">
-              {/* 桌面端：固定 6 列 × 2 排精美网格 */}
-              <div className="hidden lg:grid grid-cols-6 grid-rows-2 gap-x-5 xl:gap-x-7 gap-y-3 max-w-2xl py-2 px-1">
+              <div className="grid grid-flow-col grid-rows-2 auto-cols-max overflow-x-auto lg:overflow-visible lg:grid-flow-row lg:grid-cols-6 lg:grid-rows-2 lg:auto-cols-auto gap-x-4 lg:gap-x-6 xl:gap-x-7 gap-y-2.5 max-w-2xl py-2 px-1 scrollbar-none">
                 {activeTrendingNav.slice(0, 12).map((item, idx) => {
                   const isCurrentActive = active.title === item.title;
                   return (
@@ -448,14 +448,14 @@ export function HeroSlideshow({
                       key={idx}
                       type="button"
                       onClick={() => handleTrendingClick(item)}
-                      className={`group relative flex items-center justify-start text-left cursor-pointer transition-colors duration-200 select-none ${
+                      className={`group relative flex items-center justify-start text-left cursor-pointer transition-colors duration-200 select-none shrink-0 ${
                         isCurrentActive
                           ? 'text-[#00D1FF] font-bold drop-shadow-[0_0_8px_rgba(0,209,255,0.7)]'
                           : 'text-white/75 hover:text-white font-medium'
                       }`}
                       title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                     >
-                      <span className="text-xs xl:text-sm tracking-tight truncate max-w-[85px] xl:max-w-[105px]">
+                      <span className="text-xs xl:text-sm tracking-tight truncate max-w-[85px] sm:max-w-[95px] xl:max-w-[105px]">
                         {item.title}
                       </span>
                       {item.updateBadge ? (
@@ -466,58 +466,6 @@ export function HeroSlideshow({
                     </button>
                   );
                 })}
-              </div>
-
-              {/* 移动端/小屏：双排水平横滑微型卡片 */}
-              <div className="flex lg:hidden flex-col gap-2 overflow-x-auto scrollbar-none py-1 -mx-2 px-2">
-                <div className="flex items-center gap-2 shrink-0">
-                  {activeTrendingNav.slice(0, 6).map((item, idx) => {
-                    const isCurrentActive = active.title === item.title;
-                    return (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => handleTrendingClick(item)}
-                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors shrink-0 backdrop-blur-md border ${
-                          isCurrentActive
-                            ? 'bg-[#00D1FF]/20 text-[#00D1FF] border-[#00D1FF]/40 font-bold'
-                            : 'bg-black/40 text-white/80 hover:text-white border-white/10 font-medium'
-                        }`}
-                      >
-                        <span>{item.title}</span>
-                        {item.updateBadge && (
-                          <span className="bg-[#E50914] text-white text-[9px] font-black rounded-full px-1 py-0.2 min-w-3.5 text-center leading-none">
-                            {item.updateBadge}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  {activeTrendingNav.slice(6, 12).map((item, idx) => {
-                    const isCurrentActive = active.title === item.title;
-                    return (
-                      <button
-                        key={idx + 6}
-                        type="button"
-                        onClick={() => handleTrendingClick(item)}
-                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors shrink-0 backdrop-blur-md border ${
-                          isCurrentActive
-                            ? 'bg-[#00D1FF]/20 text-[#00D1FF] border-[#00D1FF]/40 font-bold'
-                            : 'bg-black/40 text-white/80 hover:text-white border-white/10 font-medium'
-                        }`}
-                      >
-                        <span>{item.title}</span>
-                        {item.updateBadge && (
-                          <span className="bg-[#E50914] text-white text-[9px] font-black rounded-full px-1 py-0.2 min-w-3.5 text-center leading-none">
-                            {item.updateBadge}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
               </div>
             </div>
           ) : (
