@@ -6,9 +6,10 @@ on:
     - cron: '0 3 * * *'
   workflow_dispatch:
 
-# 赋予工作流代码提交与写入权限
+# 赋予工作流代码提交、推送与调度权限
 permissions:
   contents: write
+  actions: write
 
 jobs:
   sync-data:
@@ -26,7 +27,9 @@ jobs:
         run: |
           node scripts/sync-ikanbot-sources.mjs
 
-      - name: Commit and push if data changed
+      - name: Commit, push and trigger deploy if data changed
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -34,8 +37,10 @@ jobs:
           if [[ -n $(git status --porcelain lib/api/default-sources.ts) ]]; then
             echo "Detected updated sources. Committing changes..."
             git add lib/api/default-sources.ts
-            git commit -m "chore(sync): daily auto-sync sources [skip ci]"
+            git commit -m "chore(sync): daily auto-sync sources"
             git push
+            echo "Triggering Cloudflare Pages deployment..."
+            gh workflow run deploy.yml --ref main
           else
             echo "No changes in sources. Everything is up to date."
           fi

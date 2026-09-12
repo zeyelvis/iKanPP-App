@@ -22,9 +22,10 @@ on:
           - 'documentary'
           - 'home'
 
-# 赋予工作流代码提交与推送权限
+# 赋予工作流代码提交、推送与调度权限
 permissions:
   contents: write
+  actions: write
 
 jobs:
   sync-iyf-hero:
@@ -45,7 +46,9 @@ jobs:
           echo "🚀 正在启动爱壹帆专区同步，目标板块: $TARGET"
           node scripts/sync-iyf-hero.mjs --target="$TARGET"
 
-      - name: Commit and push changes if data updated
+      - name: Commit, push, and trigger deploy if data updated
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -54,9 +57,11 @@ jobs:
             TARGET="${{ github.event.inputs.channel || 'all_channels' }}"
             echo "✅ 检测到预烘焙影视大剧与速报数据更新，正在提交..."
             git add lib/data/home-prebaked.ts lib/data/home-prebaked-extra.ts
-            git commit -m "chore(sync): 自动同步爱壹帆专区板块 [$TARGET] 轮播巨幕与速报 [skip ci]"
+            git commit -m "chore(sync): 自动同步爱壹帆专区板块 [$TARGET] 轮播巨幕与速报"
             git push
-            echo "🎉 数据已成功推送到远程仓库并触发自动部署！"
+            echo "🚀 正在触发 Cloudflare Pages 编译部署工作流..."
+            gh workflow run deploy.yml --ref main
+            echo "🎉 数据已推送到远程仓库并成功触发自动部署！"
           else
             echo "✨ 现有影视数据已是最新，无变动。"
           fi
