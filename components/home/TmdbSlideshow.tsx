@@ -454,7 +454,8 @@ export function HeroSlideshow({
 
             {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（底部居中对齐，严格双排黄金比例，100%对齐爱壹帆全站各专区规范） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (() => {
-              const splitIdx = (contentType === 'anime' || activeTrendingNav.some((item: TrendingNavItem, i: number) => i < 6 && item.title.length >= 10)) ? 5 : 6;
+              // 唯有动漫频道官方规范因《死神》长片名自然拆为 5+7，其余全板块（纪录片、综艺、电影、电视剧、首页）均为严格 6+6 黄金对称
+              const splitIdx = contentType === 'anime' ? 5 : 6;
               const line1 = activeTrendingNav.slice(0, splitIdx);
               const line2 = activeTrendingNav.slice(splitIdx, 12);
               const renderItem = (item: TrendingNavItem, idx: number) => (
@@ -465,7 +466,7 @@ export function HeroSlideshow({
                   className="group flex items-center justify-start text-left cursor-pointer text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-colors duration-200 select-none shrink-0"
                   title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                 >
-                  <span className="text-[12.5px] xl:text-[13px] font-medium tracking-tight whitespace-nowrap leading-snug">
+                  <span className="text-[12px] lg:text-[12.5px] xl:text-[13px] font-medium tracking-tight whitespace-nowrap leading-snug">
                     {item.title}
                   </span>
                   {item.updateBadge ? (
@@ -479,10 +480,10 @@ export function HeroSlideshow({
               return (
                 <div className="hidden lg:flex flex-1 justify-center items-end px-3 pb-1">
                   <div className="flex flex-col items-center gap-y-2 xl:gap-y-2.5 max-w-fit">
-                    <div className="flex items-center gap-x-3.5 xl:gap-x-5 whitespace-nowrap">
+                    <div className="flex items-center gap-x-2.5 lg:gap-x-3.5 xl:gap-x-4.5 whitespace-nowrap">
                       {line1.map(renderItem)}
                     </div>
-                    <div className="flex items-center gap-x-3.5 xl:gap-x-5 whitespace-nowrap">
+                    <div className="flex items-center gap-x-2.5 lg:gap-x-3.5 xl:gap-x-4.5 whitespace-nowrap">
                       {line2.map((item: TrendingNavItem, idx: number) => renderItem(item, idx + splitIdx))}
                     </div>
                   </div>
