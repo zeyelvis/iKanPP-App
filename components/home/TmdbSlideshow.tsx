@@ -374,8 +374,8 @@ export function HeroSlideshow({
       />
 
       {/* 3. 巨幕内容排版：爱壹帆 1:1 经典三栏布局（左：标题与播放；中：双排6列追更；右：轮播海报缩略图） */}
-      <div className="absolute inset-x-0 bottom-0 z-20 w-full flex flex-col justify-end px-5 sm:px-8 lg:px-10 pb-6 sm:pb-8 pt-20 bg-linear-to-t from-black/95 via-black/60 to-transparent">
-        <div className="w-full flex flex-col lg:flex-row lg:items-end justify-between gap-5 lg:gap-6 xl:gap-8">
+      <div className="absolute inset-x-0 bottom-0 z-20 w-full flex flex-col justify-end px-5 sm:px-8 lg:px-10 pb-6 sm:pb-8 pt-20 bg-linear-to-t from-black/95 via-black/60 to-transparent pointer-events-none">
+        <div className="iyf-hero-bar pointer-events-auto">
           
           {/* 1. 左栏：大片主标题、副标题与爱壹帆同款药丸胶囊播放按钮 */}
           <div className="shrink-0 flex flex-col items-start min-w-[180px] max-w-[240px] xl:max-w-[280px]">

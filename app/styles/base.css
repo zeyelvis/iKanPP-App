@@ -725,3 +725,21 @@ body.tv-mode [class*="Pagination"] button {
     min-height: 3.5rem !important;
     font-size: 1.2rem !important;
 }
+
+/* --- 21. 爱壹帆（iyf.tv）1:1 轮播巨幕经典三栏布局控制 --- */
+.iyf-hero-bar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+    .iyf-hero-bar {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-end !important;
+        justify-content: space-between !important;
+        gap: 1.5rem !important;
+    }
+}
