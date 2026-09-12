@@ -51,6 +51,7 @@ export default function VarietyClient() {
         shelves={SHELVES}
         defaultTag="综艺"
         heroItems={VARIETY_HOME_DATA.hero}
+        trendingNav={VARIETY_HOME_DATA.trendingNav}
       />
     </Suspense>
   );

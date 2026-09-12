@@ -10,35 +10,43 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "时光代理人第3季",
-        "updateBadge": "1"
+        "updateBadge": "6"
     },
     {
         "title": "我独自盗墓",
-        "updateBadge": ""
+        "updateBadge": "10"
     },
     {
-        "title": "世界最强的后卫",
-        "updateBadge": ""
+        "title": "世界最强的后卫 迷宫国的新人探索者",
+        "updateBadge": "10"
     },
     {
         "title": "暗黑灯火",
-        "updateBadge": ""
+        "updateBadge": "11"
     },
     {
         "title": "从0位居民开始的边境领主大人",
-        "updateBadge": ""
+        "updateBadge": "11"
     },
     {
         "title": "LV999的村民",
-        "updateBadge": ""
+        "updateBadge": "12"
     },
     {
         "title": "斩神之凡尘神域第2季",
-        "updateBadge": "1"
+        "updateBadge": "全"
     },
     {
         "title": "镖人第2季",
-        "updateBadge": ""
+        "updateBadge": "8"
+    },
+    {
+        "title": "全职法师第7季",
+        "updateBadge": "全"
+    },
+    {
+        "title": "咒术回战第3季",
+        "updateBadge": "全"
     },
     {
         "title": "凡人修仙传",
@@ -47,14 +55,6 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     {
         "title": "完美世界",
         "updateBadge": ""
-    },
-    {
-        "title": "遮天",
-        "updateBadge": ""
-    },
-    {
-        "title": "仙逆",
-        "updateBadge": "1"
     }
   ],
   hero: [
@@ -632,35 +632,43 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "打歌2026",
-        "updateBadge": ""
-    },
-    {
-        "title": "我家那闺女2026",
         "updateBadge": "1"
     },
     {
+        "title": "我家那闺女2026",
+        "updateBadge": "0912"
+    },
+    {
         "title": "花儿与少年第8季",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
         "title": "舞蹈新风暴",
-        "updateBadge": ""
+        "updateBadge": "0909"
     },
     {
         "title": "披荆斩棘2026",
-        "updateBadge": ""
+        "updateBadge": "5"
     },
     {
         "title": "心动的信号第9季",
-        "updateBadge": ""
+        "updateBadge": "6"
     },
     {
         "title": "一饭封神第2季",
-        "updateBadge": ""
+        "updateBadge": "7"
     },
     {
         "title": "家乡美食大赛",
-        "updateBadge": ""
+        "updateBadge": "0906"
+    },
+    {
+        "title": "姐姐当家第2季",
+        "updateBadge": "10"
+    },
+    {
+        "title": "密室大逃脱第8季",
+        "updateBadge": "0911"
     },
     {
         "title": "大侦探第九季",
@@ -668,14 +676,6 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "密室大逃脱",
-        "updateBadge": ""
-    },
-    {
-        "title": "奔跑吧",
-        "updateBadge": ""
-    },
-    {
-        "title": "极限挑战",
         "updateBadge": ""
     }
   ],
@@ -1778,52 +1778,52 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
 export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "兰香如故",
-        "updateBadge": "2"
-    },
-    {
-        "title": "冬城猎凶",
-        "updateBadge": "2"
-    },
-    {
-        "title": "深渊无间",
-        "updateBadge": "1"
-    },
-    {
-        "title": "交锋",
-        "updateBadge": "2"
-    },
-    {
-        "title": "生逢其时",
-        "updateBadge": "2"
-    },
-    {
-        "title": "重案六组:消失的警号",
-        "updateBadge": "2"
-    },
-    {
-        "title": "早春晴朗",
-        "updateBadge": ""
-    },
-    {
-        "title": "金色",
-        "updateBadge": ""
-    },
-    {
-        "title": "蝉",
-        "updateBadge": "2"
-    },
-    {
-        "title": "藏锋",
-        "updateBadge": ""
-    },
-    {
         "title": "特立独行",
         "updateBadge": ""
     },
     {
         "title": "给阿嬷的情书",
         "updateBadge": ""
+    },
+    {
+        "title": "玩具总动员5",
+        "updateBadge": ""
+    },
+    {
+        "title": "寒战1994",
+        "updateBadge": ""
+    },
+    {
+        "title": "兰香如故",
+        "updateBadge": "6"
+    },
+    {
+        "title": "冬城猎凶",
+        "updateBadge": "8"
+    },
+    {
+        "title": "深渊无间",
+        "updateBadge": "11"
+    },
+    {
+        "title": "交锋",
+        "updateBadge": "16"
+    },
+    {
+        "title": "打歌2026",
+        "updateBadge": "1"
+    },
+    {
+        "title": "我家那闺女2026",
+        "updateBadge": "0912"
+    },
+    {
+        "title": "时光代理人第3季",
+        "updateBadge": "6"
+    },
+    {
+        "title": "欢迎来地球",
+        "updateBadge": "6"
     }
   ],
   hero: [
@@ -2391,187 +2391,195 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
 export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
+        "title": "欢迎来地球",
+        "updateBadge": "6"
+    },
+    {
+        "title": "泰国洞穴救援",
+        "updateBadge": "1"
+    },
+    {
+        "title": "内马尔：不完美的完美球星",
+        "updateBadge": "3"
+    },
+    {
+        "title": "屏住呼吸：挑战冰潜记录",
+        "updateBadge": "1"
+    },
+    {
+        "title": "史前星球",
+        "updateBadge": "5"
+    },
+    {
+        "title": "王朝第2季",
+        "updateBadge": "5"
+    },
+    {
+        "title": "漫威616",
+        "updateBadge": "8"
+    },
+    {
+        "title": "欢迎来到雷克斯汉姆",
+        "updateBadge": "18"
+    },
+    {
+        "title": "美丽美利坚",
+        "updateBadge": "6"
+    },
+    {
+        "title": "克拉克森的农场第2季",
+        "updateBadge": "8"
+    },
+    {
         "title": "地球脉动",
         "updateBadge": "9.9"
     },
     {
         "title": "蓝色星球",
         "updateBadge": "9.8"
-    },
-    {
-        "title": "河西走廊",
-        "updateBadge": "9.7"
-    },
-    {
-        "title": "风味人间",
-        "updateBadge": ""
-    },
-    {
-        "title": "七个世界，一个星球",
-        "updateBadge": "9.7"
-    },
-    {
-        "title": "如果国宝会说话",
-        "updateBadge": ""
-    },
-    {
-        "title": "徒手攀岩",
-        "updateBadge": "HOT"
-    },
-    {
-        "title": "航拍中国",
-        "updateBadge": ""
-    },
-    {
-        "title": "人生一串",
-        "updateBadge": "9.0"
-    },
-    {
-        "title": "最后之舞",
-        "updateBadge": ""
-    },
-    {
-        "title": "茶界中国",
-        "updateBadge": ""
-    },
-    {
-        "title": "微观世界",
-        "updateBadge": "经典"
     }
   ],
   hero: [
     {
-        "id": "iyf_hero_doc_1",
-        "title": "地球脉动",
-        "rate": "9.9",
-        "cover": "https://image.tmdb.org/t/p/w500/dpmMKs2nvvtB7QA92mtuMC9MEzm.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/qmRUwosX4BsCj6QanpBYScLl3Sp.jpg",
-        "description": "从南极到北极，从赤道到寒带，从非洲草原到热带雨林，再从荒凉峰顶到深邃大海，难以数计的生物以极其绝美的身姿呈现在世人面前。我们看到了Okavango洪水的涨落及其周边赖以生存的动物们的生存状态，看到了罕见的雪豹在漫天大雪中猎食的珍贵画面；看到了冰原上企鹅、北极熊、海豹等生物相互依存的严苛情景，也见识了生活在大洋深处火山口高温环境下的惊奇生物。当然还有地球各地的壮观美景与奇特地貌，无私地将其最为光艳的一面展现出来。",
-        "year": "2006",
+        "id": "iyf_hero_documentary_1",
+        "title": "欢迎来地球",
+        "rate": "7.6",
+        "cover": "https://image.tmdb.org/t/p/w500/A4Ghyg12eHMhYmhL6eDFhXSTYcX.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/qulWYG9FmT2Vtc7wxkGKkAN5yiR.jpg",
+        "description": "梅丽尔·斯特里普、克里斯·奥多德、雅各布·特伦布莱、鲁丝·内伽将为AppleTV+独家制作的地球日动画短片[我们在这里：生活在地球上的注意事项](Here We Are: Notes for Living on Planet Earth，暂译)献声。故事讲述一个早熟的7岁男孩在地球日当天，从他的父母和一个神秘的展览上学到了地球的奇迹。斯特里普担任旁白。这部36分钟的短片根据作家奥利弗·杰弗斯2017年的畅销书改编，由导演菲利普·亨特([阿普克])和Luke Mathen撰写剧本，将于4月17日首播。",
+        "year": "2020",
         "types": [
             "纪录片",
             "自然",
-            "历史"
+            "探索"
         ],
+        "episodes_info": "更新至06",
         "type": "tv",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_doc_2",
-        "title": "蓝色星球",
-        "rate": "9.8",
-        "cover": "https://image.tmdb.org/t/p/w500/9pUMo06RhIR7R5Vjn7tIziyrH51.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/nDim8mbOWaddIDjmcnBKhevKiyF.jpg",
-        "description": "本节目带您进入令人叹为观止的美丽海洋世界，探索新的物种，造访无人所至的生态，并亲眼目睹从未在镜头前出现过的求生实录。在《与龙同行》、《人体漫游》之后，BBC——世界纪录片的老牌公司，再次挑战世界纪录片最高峰，以这部史上最高制作费纪录片震惊了世界，《蓝地球》以无比炫丽的画面和色彩，创造了海底摄像技术的新境界，在全球播出后，它流畅唯美的镜头和精彩的旁白，使亿万观众大开眼界，如醉如痴。从热带到极地、从岸边到黑暗的深海，成千上万种的奇异生物、植物从你眼前掠过，许多鲜为人知的海洋秘密，许多人类从未涉足的深海处女地一一展现，被称为“瑰丽无比的海洋史诗”。获得世界专业协会7项大奖，其中最为重要的是获“金熊猫”权威国际纪录片大奖，最佳长纪录片奖，最佳摄影奖和最佳音效奖。地球的表面有百分之七十的部分被水覆盖，现在让我们深入其中吧……",
-        "year": "2001",
+        "id": "iyf_hero_documentary_2",
+        "title": "泰国洞穴救援",
+        "rate": "8.0",
+        "cover": "https://image.tmdb.org/t/p/w500/8LAmKiUASJ8OJvercPtE36i4lnA.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/gOBKWe6lHlt8srk11TFlDuBtl0H.jpg",
+        "description": "详尽记录了2018年那场牵动全球人心的绝境求生奇迹：从泰国北部被洪水淹没的洞穴深处，营救十二名少年足球队员及其教练的惊险行动。通过大量首次公开的影像素材与独家访谈，导演伊丽莎白·柴·瓦沙瑞莉与金国威带领观众屏息凝神，重现这场现代最危急非凡的救援行动，既展现了洞穴潜水的高风险世界，也映照出救援者惊人的勇气与悲悯，以及国际社会为拯救生命而凝聚的共通人性光辉。[Greenwich Entertainment]",
+        "year": "2021",
         "types": [
             "纪录片",
             "自然",
-            "历史"
+            "探索"
         ],
+        "episodes_info": "更新至01",
         "type": "tv",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_doc_3",
-        "title": "河西走廊",
-        "rate": "9.7",
-        "cover": "https://image.tmdb.org/t/p/w500/dNNUkE2RKGHQlEPRaffxfa2EfzQ.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/vJSrbOxp4ihtvwd6g5Vc0Vco5jR.jpg",
-        "description": "《河西走廊》是中国中央电视台和中共甘肃省委宣传部联合出品的一部纪录片，正片共10集，以时间为线索，梳理了从汉代到中华人民共和国时期的河西走廊历史，此外还包含两集综述《致敬河西走廊》。纪录片于2015年3月3日起在中央电视台科教频道和凤凰网同步播出。  河西走廊，一段通往文明的道路，一部波澜壮阔的史诗。当张骞这位极具开拓和冒险精神的汉帝国友好使者凿空西域时，这条绵延在黄河以西的窄长通道，开始成为金戈铁马的征途，商旅绵延的古道，中西文化交融碰撞的国际通道。只是，此前从未有过以“河西走廊”为主题的纪录片。三年前，一支充满梦想的纪录片创作团队踏上了这条古老而伟大的通道，撷取河西走廊上的绚烂瞬间，以编年体史诗的形式，跨越汉、三国、两晋、隋唐、蒙元、明清、民国和新中国，系统梳理了河西走廊甚至整个中国西部的历史，呈现出其跨越千年的雄壮、辉煌与苍凉。",
-        "year": "2015",
+        "id": "iyf_hero_documentary_3",
+        "title": "内马尔：不完美的完美球星",
+        "rate": "7.0",
+        "cover": "https://image.tmdb.org/t/p/w500/nFYf3g3CObjx9ri3PMWkK1lWFhr.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/kGpaa9ufi6gFJqLdDtl9mTOEIXj.jpg",
+        "description": "印度第一位元帅萨姆·马内克肖的生平传记，他是波斯裔拜火教徒，出生于英属印度旁遮普邦的一个医生世家，父亲和两个哥哥都是医生，他却出于叛逆选择从军，并考入英属印度军事学院。在二战期间，曾在缅甸与日军作战并立下战功，身受重伤，后获得准将军衔，派往澳大利亚。然而印度独立后，他回国加入印军，历任军事技术总监、军事参谋学院院长、总参谋长等职务，1973年1月1日成为印度第一位元帅。",
+        "year": "2023",
         "types": [
             "纪录片",
             "自然",
-            "历史"
+            "探索"
         ],
+        "episodes_info": "更新至03",
         "type": "tv",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_doc_4",
-        "title": "风味人间",
-        "rate": "9.1",
-        "cover": "https://image.tmdb.org/t/p/w500/d6plBmVJfWLA5UD8tcIvI2QUrTN.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/iwTN8EYAvPtV6Wsgyl3UUi8CxMT.jpg",
-        "description": "在全球视野里审视中国美食的独特性，在历史演化过程中探究中国美食的流变，深度讨论中国人与食物的关系。这种立足于全球的视角，成就了一个多元的“美食探索纪录片”。因为地理环境、文明历程和物产丰厚程度不尽相同，人们对食物的处理时而天差地别，时而异曲同工。不约而同的选择，造就世界的丰富多彩和殊途同归。",
-        "year": "2018",
+        "id": "iyf_hero_documentary_4",
+        "title": "屏住呼吸：挑战冰潜记录",
+        "rate": "6.6",
+        "cover": "https://image.tmdb.org/t/p/w500/efAxEHMvlgE4qterU0FWwovxkOa.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/scgGJYnxLiLCcLIpeXiQgJBldQW.jpg",
+        "description": "这部纪录片聚焦自由潜水者约翰娜·诺德布莱德，讲述她如何尝试在不换气的情况下，打破冰下潜水距离的世界纪录。",
+        "year": "2022",
         "types": [
             "纪录片",
             "自然",
-            "历史"
+            "探索"
         ],
+        "episodes_info": "更新至01",
         "type": "tv",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_doc_5",
-        "title": "七个世界，一个星球",
-        "rate": "9.7",
-        "cover": "https://image.tmdb.org/t/p/w500/rpXcRlP0m72rw4rJYXBnYXcsnJQ.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/5SeRUwZTHuiOnLfcxXqfew1P0Ug.jpg",
-        "description": "数百万年前，不可思议的神奇力量将地壳撕扯得支离破碎，由此创造出七个蔚为壮观的大陆。时光荏苒，每个大陆都孕育了别具特色的野生动物。从郁郁葱葱的南美洲丛林深处到冰雪覆盖的亚洲山峦之巅，从欧洲熙熙攘攘的都市到非洲的广袤平原，《七个世界，一个星球》将开启一次七大洲之旅，呈现匪夷所思的动物行为，讲述鲜为人知的动物故事。我们将探索在这七个世界，丰富多样的生命如何在地球上生长繁衍，同时揭示在人类主导的世界，动物们所面临的不同挑战。",
-        "year": "2019",
+        "id": "iyf_hero_documentary_5",
+        "title": "史前星球",
+        "rate": "6.5",
+        "cover": "https://image.tmdb.org/t/p/w500/xnOx9FgT9t2yXD8psHqHRko88db.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/1j8EHsYcIXtTXRv4tGSePv4akYn.jpg",
+        "description": "在这段穿越四季的旅程中，你将体验数百种植食性恐龙一年的生活。从破壳而出的那一刻起，这些史前巨兽便面临着自然灾害与凶猛掠食者的威胁，同时还要进行捕猎、进食、嬉戏和史诗般的迁徙。依托科学数据，这些数字恐龙在现代阿拉斯加的背景下栩栩如生地复活了。",
+        "year": "2014",
         "types": [
             "纪录片",
             "自然",
-            "历史"
+            "探索"
         ],
+        "episodes_info": "更新至05",
         "type": "tv",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_doc_6",
-        "title": "如果国宝会说话",
-        "rate": "9.5",
-        "cover": "https://image.tmdb.org/t/p/w500/yMl0RrsT3crzm1y9kyokY9sFNeq.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/2LPXsy7d2NJznCuZP4UytOBK2WY.jpg",
-        "description": "该片用100件国宝述说中国古人的创造力，共100集，每集5分钟，通过讲述一件文物，介绍国宝背后的中国精神、中国审美和中国价值观，以全新视角带您读懂中华文化。",
-        "year": "2018",
-        "types": [
-            "纪录片",
-            "自然",
-            "历史"
-        ],
-        "type": "tv",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_doc_7",
-        "title": "徒手攀岩",
+        "id": "iyf_hero_documentary_6",
+        "title": "王朝第2季",
         "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/8GbmgGz77b5FlX7qD8qJwOFR6jS.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/z2uuQasY4gQJ8VDAFki746JWeQJ.jpg",
-        "description": "本片是一部震撼、直观且不加修饰的纪录片，真实记录了无保护攀岩者亚历克斯·霍诺尔德为实现毕生梦想所做的准备：在无绳索保护的情况下，攀登世界上最具标志性的岩壁——约塞米蒂国家公园高达914米（3000英尺）的埃尔卡皮坦峰。",
-        "year": "2018",
+        "cover": "https://static.iyf.tv/upload/video/202205281424242448350s.gif",
+        "backdrop": "https://static.iyf.tv/upload/user/202206021338273860323.jpg",
+        "description": "《王朝第2季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至05。",
+        "year": "2026",
         "types": [
             "纪录片",
             "自然",
-            "历史"
+            "探索"
         ],
-        "type": "movie",
+        "episodes_info": "更新至05",
+        "type": "tv",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_doc_8",
-        "title": "航拍中国",
-        "rate": "9.2",
-        "cover": "https://image.tmdb.org/t/p/w500/kBUN0bTRjV3gkXicvQVrWrTCoLL.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/rHlN0OdPMDFxbP6wujy2CrURNz7.jpg",
-        "description": "由中央电视台出品，央视纪录国际传媒有限公司承制的大型航拍纪录片《航拍中国》是一部以空中视角俯瞰中国，全方位、立体化展示中国历史人文景观、自然地理风貌及经济社会发展变化的纪录片。该系列片共34集，每集50分钟，覆盖全国23个省、5个自治区、4个直辖市和2个特别行政区。本片影像将全部由航拍完成，每集选取各省市区最具代表性和观赏性的历史、人文、自然和现代景观，以空中飞行线路为线索，以故事化的叙事方式展现一个观众既熟悉又充满新鲜感的美丽中国、生态中国、文明中国。",
-        "year": "2017",
+        "id": "iyf_hero_documentary_7",
+        "title": "漫威616",
+        "rate": "8.8",
+        "cover": "https://static.iyf.tv/upload/video/202210052004260422621s.gif",
+        "backdrop": "https://static.iyf.tv/upload/user/202210111143344353824.jpg",
+        "description": "《漫威616》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至08。",
+        "year": "2026",
         "types": [
             "纪录片",
             "自然",
-            "历史"
+            "探索"
         ],
+        "episodes_info": "更新至08",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_documentary_8",
+        "title": "欢迎来到雷克斯汉姆",
+        "rate": "8.8",
+        "cover": "https://static.iyf.tv/upload/video/202210052042294253562s.gif",
+        "backdrop": "https://static.iyf.tv/upload/user/202210111143484364636.jpg",
+        "description": "《欢迎来到雷克斯汉姆》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至18。",
+        "year": "2026",
+        "types": [
+            "纪录片",
+            "自然",
+            "探索"
+        ],
+        "episodes_info": "更新至18",
         "type": "tv",
         "is_new": true,
         "playable": true

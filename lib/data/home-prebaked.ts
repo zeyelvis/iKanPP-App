@@ -85,19 +85,19 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "真人快打2",
+                "updateBadge": ""
+        },
+        {
+                "title": "超级马力欧银河大电影",
+                "updateBadge": ""
+        },
+        {
                 "title": "奥德赛",
                 "updateBadge": ""
         },
         {
                 "title": "抓娃娃",
-                "updateBadge": ""
-        },
-        {
-                "title": "九龙城寨之围城",
-                "updateBadge": ""
-        },
-        {
-                "title": "异形：夺命舰",
                 "updateBadge": ""
         }
       ],
@@ -1779,35 +1779,43 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": "1"
+                "updateBadge": "6"
         },
         {
                 "title": "冬城猎凶",
-                "updateBadge": "2"
+                "updateBadge": "8"
         },
         {
                 "title": "深渊无间",
-                "updateBadge": ""
+                "updateBadge": "11"
         },
         {
                 "title": "交锋",
-                "updateBadge": ""
+                "updateBadge": "16"
         },
         {
                 "title": "生逢其时",
-                "updateBadge": ""
+                "updateBadge": "14"
         },
         {
                 "title": "重案六组:消失的警号",
-                "updateBadge": ""
+                "updateBadge": "20"
         },
         {
                 "title": "早春晴朗",
-                "updateBadge": ""
+                "updateBadge": "全"
         },
         {
                 "title": "金色",
-                "updateBadge": ""
+                "updateBadge": "全"
+        },
+        {
+                "title": "蝉",
+                "updateBadge": "16"
+        },
+        {
+                "title": "藏锋",
+                "updateBadge": "全"
         },
         {
                 "title": "狂飙",
@@ -1815,14 +1823,6 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "繁花",
-                "updateBadge": ""
-        },
-        {
-                "title": "三体",
-                "updateBadge": ""
-        },
-        {
-                "title": "庆余年第二季",
                 "updateBadge": ""
         }
       ],

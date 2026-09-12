@@ -64,6 +64,7 @@ export default function MovieClient() {
         shelves={SHELVES}
         defaultTag="热门"
         heroItems={PREBAKED_HOME_DATA.movie.hero}
+        trendingNav={PREBAKED_HOME_DATA.movie.trendingNav}
       />
     </Suspense>
   );

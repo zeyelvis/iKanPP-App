@@ -57,6 +57,7 @@ export default function AnimeClient() {
         shelves={SHELVES}
         defaultTag="日本动画"
         heroItems={ANIME_HOME_DATA.hero}
+        trendingNav={ANIME_HOME_DATA.trendingNav}
       />
     </Suspense>
   );

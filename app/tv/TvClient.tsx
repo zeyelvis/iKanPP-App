@@ -61,6 +61,7 @@ export default function TvClient() {
         shelves={SHELVES}
         defaultTag="热门"
         heroItems={PREBAKED_HOME_DATA.tv.hero}
+        trendingNav={PREBAKED_HOME_DATA.tv.trendingNav}
       />
     </Suspense>
   );
