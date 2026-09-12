@@ -427,7 +427,7 @@ export function HeroSlideshow({
           <div className="iyf-hero-bar pointer-events-auto">
             
             {/* 1. 左栏：大片主标题与评分在上方相对放大，放大的播放按钮在下方与推荐严格对齐，固定物理宽度彻底杜绝中栏受挤压漂移 */}
-            <div className="shrink-0 w-[220px] xl:w-[250px] flex flex-col items-start justify-end">
+            <div className="shrink-0 w-[180px] lg:w-[200px] xl:w-[230px] flex flex-col items-start justify-end">
               {/* 上方：相对放大、极具视觉冲击力的大片片名与评分，固定高度绝对零抖动 */}
               <div className="mb-3 sm:mb-4 w-full">
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[40px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1.5 sm:mb-2 truncate leading-tight h-9 sm:h-11 lg:h-12 flex items-center">
@@ -445,14 +445,14 @@ export function HeroSlideshow({
               <button
                 type="button"
                 onClick={() => handleMovieClick(active)}
-                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 sm:px-6.5 sm:py-3 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-base sm:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-base sm:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102"
               >
                 <span>立即播放</span>
                 <span className="text-sm sm:text-base">▷</span>
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（底部居中对齐，严格双排黄金比例，100%对齐爱壹帆全站各专区规范） */}
+            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（底部居中对齐，严格双排黄金比例，设置min-w-0与响应式智能截断，彻底杜绝撑爆右栏） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (() => {
               // 唯有动漫频道官方规范因《死神》长片名自然拆为 5+7，其余全板块（纪录片、综艺、电影、电视剧、首页）均为严格 6+6 黄金对称
               const splitIdx = contentType === 'anime' ? 5 : 6;
@@ -463,14 +463,14 @@ export function HeroSlideshow({
                   key={idx}
                   type="button"
                   onClick={() => handleTrendingClick(item)}
-                  className="group flex items-center justify-start text-left cursor-pointer text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-colors duration-200 select-none shrink-0"
+                  className="group flex items-center justify-start text-left cursor-pointer text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-colors duration-200 select-none min-w-0 shrink max-w-[85px] lg:max-w-[100px] xl:max-w-[125px] 2xl:max-w-[155px]"
                   title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                 >
-                  <span className="text-[12px] lg:text-[12.5px] xl:text-[13px] font-medium tracking-tight whitespace-nowrap leading-snug">
+                  <span className="text-[11px] lg:text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-medium tracking-tight truncate leading-snug">
                     {item.title}
                   </span>
                   {item.updateBadge ? (
-                    <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9.5px] xl:text-[10px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0 shadow-xs">
+                    <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[8.5px] xl:text-[9px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-0.5 shrink-0 shadow-xs">
                       {item.updateBadge}
                     </span>
                   ) : null}
@@ -478,12 +478,12 @@ export function HeroSlideshow({
               );
 
               return (
-                <div className="hidden lg:flex flex-1 justify-center items-end px-3 pb-1">
-                  <div className="flex flex-col items-center gap-y-2 xl:gap-y-2.5 max-w-fit">
-                    <div className="flex items-center gap-x-2.5 lg:gap-x-3.5 xl:gap-x-4.5 whitespace-nowrap">
+                <div className="hidden lg:flex flex-1 min-w-0 justify-center items-end px-2 xl:px-4 pb-1 overflow-hidden">
+                  <div className="flex flex-col items-center gap-y-1.5 xl:gap-y-2 max-w-full min-w-0">
+                    <div className="flex items-center justify-center gap-x-2 lg:gap-x-2.5 xl:gap-x-3.5 max-w-full min-w-0">
                       {line1.map(renderItem)}
                     </div>
-                    <div className="flex items-center gap-x-2.5 lg:gap-x-3.5 xl:gap-x-4.5 whitespace-nowrap">
+                    <div className="flex items-center justify-center gap-x-2 lg:gap-x-2.5 xl:gap-x-3.5 max-w-full min-w-0">
                       {line2.map((item: TrendingNavItem, idx: number) => renderItem(item, idx + splitIdx))}
                     </div>
                   </div>
@@ -513,12 +513,12 @@ export function HeroSlideshow({
             )}
 
             {/* 3. 右栏：爱壹帆同款完整轮播大片缩略海报卡片列表（饱满大尺寸海报，紧贴右侧安全视口绝不截断） */}
-            <div className="hidden md:flex items-center gap-1 xl:gap-1.5 shrink-0 self-end p-1.5 rounded-xl bg-black/25 backdrop-blur-xs border border-white/10">
+            <div className="hidden md:flex items-center gap-1 xl:gap-1.5 shrink-0 self-end p-1.5 rounded-xl bg-black/25 backdrop-blur-xs border border-white/10 ml-auto lg:ml-0">
               {currentData.slice(0, 8).map((item, idx) => {
                 const isSelected = idx === activeIndex;
                 const cardSizeClass = currentData.length > 7
-                  ? 'w-10 h-14.5 sm:w-10.5 sm:h-15.5 lg:w-11 lg:h-16 xl:w-[48px] xl:h-[68px]'
-                  : 'w-11 h-15.5 sm:w-11.5 sm:h-16.5 lg:w-12 lg:h-17.5 xl:w-[52px] xl:h-[74px]';
+                  ? 'w-[38px] h-[54px] sm:w-[40px] sm:h-[58px] lg:w-[44px] lg:h-[62px] xl:w-[48px] xl:h-[68px]'
+                  : 'w-[42px] h-[60px] sm:w-[44px] sm:h-[62px] lg:w-[48px] lg:h-[68px] xl:w-[52px] xl:h-[74px]';
                 return (
                   <button
                     key={item.title ? `hero-thumb-${item.title}` : (item.id || idx)}
