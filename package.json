@@ -13,6 +13,7 @@
     "sync:hero:movie": "node scripts/sync-iyf-hero.mjs --target=movie",
     "sync:hero:anime": "node scripts/sync-iyf-hero.mjs --target=anime",
     "sync:hero:variety": "node scripts/sync-iyf-hero.mjs --target=variety",
+    "sync:hero:doc": "node scripts/sync-iyf-hero.mjs --target=doc",
     "sync:all": "node scripts/sync-ikanbot-sources.mjs && node scripts/sync-iyf-hero.mjs",
     "pages:build": "npx @cloudflare/next-on-pages@1"
   },

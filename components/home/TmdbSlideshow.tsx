@@ -197,7 +197,7 @@ function HeroBackdrop({
 }
 
 interface HeroSlideshowProps {
-  contentType?: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'short';
+  contentType?: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'short' | 'documentary';
   onSearch?: (query: string) => void;
   customHeroMovies?: PrebakedSubject[];
   onMovieClick?: (movie: PrebakedSubject) => void;

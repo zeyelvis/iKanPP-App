@@ -37,7 +37,7 @@ export interface PrebakedHomeCategory {
   trendingNav?: TrendingNavItem[];
 }
 
-import { ANIME_HOME_DATA, VARIETY_HOME_DATA, SHORT_HOME_DATA, ALL_HOME_DATA } from './home-prebaked-extra';
+import { ANIME_HOME_DATA, VARIETY_HOME_DATA, SHORT_HOME_DATA, ALL_HOME_DATA, DOCUMENTARY_HOME_DATA } from './home-prebaked-extra';
 
 export const PREBAKED_HOME_DATA: {
   all: PrebakedHomeCategory;
@@ -46,8 +46,10 @@ export const PREBAKED_HOME_DATA: {
   anime: PrebakedHomeCategory;
   variety: PrebakedHomeCategory;
   short: PrebakedHomeCategory;
+  documentary: PrebakedHomeCategory;
 } = {
   "all": ALL_HOME_DATA,
+  "documentary": DOCUMENTARY_HOME_DATA,
   "movie": {
     "trendingNav": [
         {

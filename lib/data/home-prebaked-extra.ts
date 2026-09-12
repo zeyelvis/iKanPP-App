@@ -2386,3 +2386,209 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     }
   ]
 };
+
+// ── 5. 🌍 纪录片专区精选 (Documentary) ──────────────────────────────────
+export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
+  trendingNav: [
+    {
+        "title": "地球脉动",
+        "updateBadge": "9.9"
+    },
+    {
+        "title": "蓝色星球",
+        "updateBadge": "9.8"
+    },
+    {
+        "title": "河西走廊",
+        "updateBadge": "9.7"
+    },
+    {
+        "title": "风味人间",
+        "updateBadge": ""
+    },
+    {
+        "title": "七个世界，一个星球",
+        "updateBadge": "9.7"
+    },
+    {
+        "title": "如果国宝会说话",
+        "updateBadge": ""
+    },
+    {
+        "title": "徒手攀岩",
+        "updateBadge": "HOT"
+    },
+    {
+        "title": "航拍中国",
+        "updateBadge": ""
+    },
+    {
+        "title": "人生一串",
+        "updateBadge": "9.0"
+    },
+    {
+        "title": "最后之舞",
+        "updateBadge": ""
+    },
+    {
+        "title": "茶界中国",
+        "updateBadge": ""
+    },
+    {
+        "title": "微观世界",
+        "updateBadge": "经典"
+    }
+  ],
+  hero: [
+    {
+        "id": "iyf_hero_doc_1",
+        "title": "地球脉动",
+        "rate": "9.9",
+        "cover": "https://image.tmdb.org/t/p/w500/dpmMKs2nvvtB7QA92mtuMC9MEzm.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/qmRUwosX4BsCj6QanpBYScLl3Sp.jpg",
+        "description": "从南极到北极，从赤道到寒带，从非洲草原到热带雨林，再从荒凉峰顶到深邃大海，难以数计的生物以极其绝美的身姿呈现在世人面前。我们看到了Okavango洪水的涨落及其周边赖以生存的动物们的生存状态，看到了罕见的雪豹在漫天大雪中猎食的珍贵画面；看到了冰原上企鹅、北极熊、海豹等生物相互依存的严苛情景，也见识了生活在大洋深处火山口高温环境下的惊奇生物。当然还有地球各地的壮观美景与奇特地貌，无私地将其最为光艳的一面展现出来。",
+        "year": "2006",
+        "types": [
+            "纪录片",
+            "自然",
+            "历史"
+        ],
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_doc_2",
+        "title": "蓝色星球",
+        "rate": "9.8",
+        "cover": "https://image.tmdb.org/t/p/w500/9pUMo06RhIR7R5Vjn7tIziyrH51.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/nDim8mbOWaddIDjmcnBKhevKiyF.jpg",
+        "description": "本节目带您进入令人叹为观止的美丽海洋世界，探索新的物种，造访无人所至的生态，并亲眼目睹从未在镜头前出现过的求生实录。在《与龙同行》、《人体漫游》之后，BBC——世界纪录片的老牌公司，再次挑战世界纪录片最高峰，以这部史上最高制作费纪录片震惊了世界，《蓝地球》以无比炫丽的画面和色彩，创造了海底摄像技术的新境界，在全球播出后，它流畅唯美的镜头和精彩的旁白，使亿万观众大开眼界，如醉如痴。从热带到极地、从岸边到黑暗的深海，成千上万种的奇异生物、植物从你眼前掠过，许多鲜为人知的海洋秘密，许多人类从未涉足的深海处女地一一展现，被称为“瑰丽无比的海洋史诗”。获得世界专业协会7项大奖，其中最为重要的是获“金熊猫”权威国际纪录片大奖，最佳长纪录片奖，最佳摄影奖和最佳音效奖。地球的表面有百分之七十的部分被水覆盖，现在让我们深入其中吧……",
+        "year": "2001",
+        "types": [
+            "纪录片",
+            "自然",
+            "历史"
+        ],
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_doc_3",
+        "title": "河西走廊",
+        "rate": "9.7",
+        "cover": "https://image.tmdb.org/t/p/w500/dNNUkE2RKGHQlEPRaffxfa2EfzQ.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/vJSrbOxp4ihtvwd6g5Vc0Vco5jR.jpg",
+        "description": "《河西走廊》是中国中央电视台和中共甘肃省委宣传部联合出品的一部纪录片，正片共10集，以时间为线索，梳理了从汉代到中华人民共和国时期的河西走廊历史，此外还包含两集综述《致敬河西走廊》。纪录片于2015年3月3日起在中央电视台科教频道和凤凰网同步播出。  河西走廊，一段通往文明的道路，一部波澜壮阔的史诗。当张骞这位极具开拓和冒险精神的汉帝国友好使者凿空西域时，这条绵延在黄河以西的窄长通道，开始成为金戈铁马的征途，商旅绵延的古道，中西文化交融碰撞的国际通道。只是，此前从未有过以“河西走廊”为主题的纪录片。三年前，一支充满梦想的纪录片创作团队踏上了这条古老而伟大的通道，撷取河西走廊上的绚烂瞬间，以编年体史诗的形式，跨越汉、三国、两晋、隋唐、蒙元、明清、民国和新中国，系统梳理了河西走廊甚至整个中国西部的历史，呈现出其跨越千年的雄壮、辉煌与苍凉。",
+        "year": "2015",
+        "types": [
+            "纪录片",
+            "自然",
+            "历史"
+        ],
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_doc_4",
+        "title": "风味人间",
+        "rate": "9.1",
+        "cover": "https://image.tmdb.org/t/p/w500/d6plBmVJfWLA5UD8tcIvI2QUrTN.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/iwTN8EYAvPtV6Wsgyl3UUi8CxMT.jpg",
+        "description": "在全球视野里审视中国美食的独特性，在历史演化过程中探究中国美食的流变，深度讨论中国人与食物的关系。这种立足于全球的视角，成就了一个多元的“美食探索纪录片”。因为地理环境、文明历程和物产丰厚程度不尽相同，人们对食物的处理时而天差地别，时而异曲同工。不约而同的选择，造就世界的丰富多彩和殊途同归。",
+        "year": "2018",
+        "types": [
+            "纪录片",
+            "自然",
+            "历史"
+        ],
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_doc_5",
+        "title": "七个世界，一个星球",
+        "rate": "9.7",
+        "cover": "https://image.tmdb.org/t/p/w500/rpXcRlP0m72rw4rJYXBnYXcsnJQ.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/5SeRUwZTHuiOnLfcxXqfew1P0Ug.jpg",
+        "description": "数百万年前，不可思议的神奇力量将地壳撕扯得支离破碎，由此创造出七个蔚为壮观的大陆。时光荏苒，每个大陆都孕育了别具特色的野生动物。从郁郁葱葱的南美洲丛林深处到冰雪覆盖的亚洲山峦之巅，从欧洲熙熙攘攘的都市到非洲的广袤平原，《七个世界，一个星球》将开启一次七大洲之旅，呈现匪夷所思的动物行为，讲述鲜为人知的动物故事。我们将探索在这七个世界，丰富多样的生命如何在地球上生长繁衍，同时揭示在人类主导的世界，动物们所面临的不同挑战。",
+        "year": "2019",
+        "types": [
+            "纪录片",
+            "自然",
+            "历史"
+        ],
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_doc_6",
+        "title": "如果国宝会说话",
+        "rate": "9.5",
+        "cover": "https://image.tmdb.org/t/p/w500/yMl0RrsT3crzm1y9kyokY9sFNeq.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/2LPXsy7d2NJznCuZP4UytOBK2WY.jpg",
+        "description": "该片用100件国宝述说中国古人的创造力，共100集，每集5分钟，通过讲述一件文物，介绍国宝背后的中国精神、中国审美和中国价值观，以全新视角带您读懂中华文化。",
+        "year": "2018",
+        "types": [
+            "纪录片",
+            "自然",
+            "历史"
+        ],
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_doc_7",
+        "title": "徒手攀岩",
+        "rate": "8.8",
+        "cover": "https://image.tmdb.org/t/p/w500/8GbmgGz77b5FlX7qD8qJwOFR6jS.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/z2uuQasY4gQJ8VDAFki746JWeQJ.jpg",
+        "description": "本片是一部震撼、直观且不加修饰的纪录片，真实记录了无保护攀岩者亚历克斯·霍诺尔德为实现毕生梦想所做的准备：在无绳索保护的情况下，攀登世界上最具标志性的岩壁——约塞米蒂国家公园高达914米（3000英尺）的埃尔卡皮坦峰。",
+        "year": "2018",
+        "types": [
+            "纪录片",
+            "自然",
+            "历史"
+        ],
+        "type": "movie",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_doc_8",
+        "title": "航拍中国",
+        "rate": "9.2",
+        "cover": "https://image.tmdb.org/t/p/w500/kBUN0bTRjV3gkXicvQVrWrTCoLL.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/rHlN0OdPMDFxbP6wujy2CrURNz7.jpg",
+        "description": "由中央电视台出品，央视纪录国际传媒有限公司承制的大型航拍纪录片《航拍中国》是一部以空中视角俯瞰中国，全方位、立体化展示中国历史人文景观、自然地理风貌及经济社会发展变化的纪录片。该系列片共34集，每集50分钟，覆盖全国23个省、5个自治区、4个直辖市和2个特别行政区。本片影像将全部由航拍完成，每集选取各省市区最具代表性和观赏性的历史、人文、自然和现代景观，以空中飞行线路为线索，以故事化的叙事方式展现一个观众既熟悉又充满新鲜感的美丽中国、生态中国、文明中国。",
+        "year": "2017",
+        "types": [
+            "纪录片",
+            "自然",
+            "历史"
+        ],
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    }
+  ],
+  top10: [
+    { id: 'pb_doc_top_1', title: '地球脉动', rate: '9.9', cover: 'https://image.tmdb.org/t/p/w500/uha47P74pT26bC2q5U0k9dJ19sO.jpg', year: '2023', types: ['自然'], is_new: true, playable: true },
+    { id: 'pb_doc_top_2', title: '蓝色星球', rate: '9.8', cover: 'https://image.tmdb.org/t/p/w500/9pUMo06RhIR7R5Vjn7tIziyrH51.jpg', year: '2017', types: ['海洋'], is_new: true, playable: true },
+    { id: 'pb_doc_top_3', title: '河西走廊', rate: '9.7', cover: 'https://image.tmdb.org/t/p/w500/dNNUkE2RKGHQlEPRaffxfa2EfzQ.jpg', year: '2015', types: ['历史'], is_new: false, playable: true },
+    { id: 'pb_doc_top_4', title: '风味人间', rate: '9.1', cover: 'https://image.tmdb.org/t/p/w500/d6plBmVJfWLA5UD8tcIvI2QUrTN.jpg', year: '2020', types: ['美食'], is_new: true, playable: true },
+    { id: 'pb_doc_top_5', title: '七个世界，一个星球', rate: '9.7', cover: 'https://image.tmdb.org/t/p/w500/rpXcRlP0m72rw4rJYXBnYXcsnJQ.jpg', year: '2019', types: ['自然'], is_new: false, playable: true },
+    { id: 'pb_doc_top_6', title: '如果国宝会说话', rate: '9.5', cover: 'https://image.tmdb.org/t/p/w500/yMl0RrsT3crzm1y9kyokY9sFNeq.jpg', year: '2020', types: ['历史'], is_new: false, playable: true },
+    { id: 'pb_doc_top_7', title: '徒手攀岩', rate: '8.8', cover: 'https://image.tmdb.org/t/p/w500/8GbmgGz77b5FlX7qD8qJwOFR6jS.jpg', year: '2018', types: ['极限'], is_new: false, playable: true },
+    { id: 'pb_doc_top_8', title: '航拍中国', rate: '9.2', cover: 'https://image.tmdb.org/t/p/w500/kBUN0bTRjV3gkXicvQVrWrTCoLL.jpg', year: '2022', types: ['航拍'], is_new: true, playable: true }
+  ],
+  s1: [],
+  s2: [],
+  s3: [],
+  s4: []
+};

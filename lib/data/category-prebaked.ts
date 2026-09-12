@@ -520,6 +520,74 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       types: ["微短剧", "AI漫剧", "都市"],
       remarks: "全94集"
     }
+  ],
+
+  // ── 纪录片大厅精选 ──────────────────────────────────────────
+  documentary: [
+    {
+      id: 'pb_cat_doc1',
+      title: '地球脉动',
+      rate: '9.9',
+      cover: 'https://image.tmdb.org/t/p/w500/uha47P74pT26bC2q5U0k9dJ19sO.jpg',
+      year: '2023',
+      types: ['自然', '地理']
+    },
+    {
+      id: 'pb_cat_doc2',
+      title: '蓝色星球',
+      rate: '9.8',
+      cover: 'https://image.tmdb.org/t/p/w500/9pUMo06RhIR7R5Vjn7tIziyrH51.jpg',
+      year: '2017',
+      types: ['海洋', '生态']
+    },
+    {
+      id: 'pb_cat_doc3',
+      title: '河西走廊',
+      rate: '9.7',
+      cover: 'https://image.tmdb.org/t/p/w500/dNNUkE2RKGHQlEPRaffxfa2EfzQ.jpg',
+      year: '2015',
+      types: ['历史', '人文']
+    },
+    {
+      id: 'pb_cat_doc4',
+      title: '风味人间',
+      rate: '9.1',
+      cover: 'https://image.tmdb.org/t/p/w500/d6plBmVJfWLA5UD8tcIvI2QUrTN.jpg',
+      year: '2020',
+      types: ['美食']
+    },
+    {
+      id: 'pb_cat_doc5',
+      title: '七个世界，一个星球',
+      rate: '9.7',
+      cover: 'https://image.tmdb.org/t/p/w500/rpXcRlP0m72rw4rJYXBnYXcsnJQ.jpg',
+      year: '2019',
+      types: ['自然', '动物']
+    },
+    {
+      id: 'pb_cat_doc6',
+      title: '如果国宝会说话',
+      rate: '9.5',
+      cover: 'https://image.tmdb.org/t/p/w500/yMl0RrsT3crzm1y9kyokY9sFNeq.jpg',
+      year: '2020',
+      types: ['历史', '文物']
+    },
+    {
+      id: 'pb_cat_doc7',
+      title: '徒手攀岩',
+      rate: '8.8',
+      cover: 'https://image.tmdb.org/t/p/w500/8GbmgGz77b5FlX7qD8qJwOFR6jS.jpg',
+      year: '2018',
+      types: ['极限', '冒险']
+    },
+    {
+      id: 'pb_cat_doc8',
+      title: '航拍中国',
+      rate: '9.2',
+      cover: 'https://image.tmdb.org/t/p/w500/kBUN0bTRjV3gkXicvQVrWrTCoLL.jpg',
+      year: '2022',
+      types: ['航拍', '地理']
+    }
   ]
 };
 

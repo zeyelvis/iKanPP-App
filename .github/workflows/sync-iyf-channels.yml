@@ -19,6 +19,7 @@ on:
           - 'movie'
           - 'anime'
           - 'variety'
+          - 'documentary'
           - 'home'
 
 # 赋予工作流代码提交与推送权限

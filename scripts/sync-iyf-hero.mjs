@@ -485,6 +485,84 @@ async function syncVarietyChannel() {
   }
 }
 
+async function syncDocumentaryChannel() {
+  console.log('\n====== [6/6] 同步全球高分纪录片专区专属轮播神作 ======');
+  const docSeeds = [
+    { title: '地球脉动', q: '地球脉动', type: 'tv', rate: '9.9' },
+    { title: '蓝色星球', q: '蓝色星球', type: 'tv', rate: '9.8' },
+    { title: '河西走廊', q: '河西走廊', type: 'tv', rate: '9.7' },
+    { title: '风味人间', q: '风味人间', type: 'tv', rate: '9.1' },
+    { title: '七个世界，一个星球', q: '七个世界，一个星球', type: 'tv', rate: '9.7' },
+    { title: '如果国宝会说话', q: '如果国宝会说话', type: 'tv', rate: '9.5' },
+    { title: '徒手攀岩', q: '徒手攀岩', type: 'movie', rate: '8.8' },
+    { title: '航拍中国', q: '航拍中国', type: 'tv', rate: '9.2' },
+  ];
+
+  const docHeroItems = [];
+  for (let i = 0; i < docSeeds.length; i++) {
+    const s = docSeeds[i];
+    const tmdbData = await fetchTMDB(s.q, s.type);
+    docHeroItems.push({
+      id: `iyf_hero_doc_${i + 1}`,
+      title: s.title,
+      rate: s.rate,
+      cover: tmdbData?.poster || '',
+      backdrop: tmdbData?.backdrop || '',
+      description: tmdbData?.overview || `豆瓣 ${s.rate} 分神作纪录片，BBC/央视史诗级殿堂级巨制，全集 4K 超清畅享。`,
+      year: tmdbData?.year || '2024',
+      types: ['纪录片', '自然', '历史'],
+      type: s.type,
+      is_new: true,
+      playable: true
+    });
+  }
+
+  // 纪录片专区专属 12 席殿堂级速报
+  const docTrendingNav = [
+    { title: '地球脉动', updateBadge: '9.9' },
+    { title: '蓝色星球', updateBadge: '9.8' },
+    { title: '河西走廊', updateBadge: '9.7' },
+    { title: '风味人间', updateBadge: '' },
+    { title: '七个世界，一个星球', updateBadge: '9.7' },
+    { title: '如果国宝会说话', updateBadge: '' },
+    { title: '徒手攀岩', updateBadge: 'HOT' },
+    { title: '航拍中国', updateBadge: '' },
+    { title: '人生一串', updateBadge: '9.0' },
+    { title: '最后之舞', updateBadge: '' },
+    { title: '茶界中国', updateBadge: '' },
+    { title: '微观世界', updateBadge: '经典' },
+  ];
+
+  const extraPath = path.resolve(process.cwd(), 'lib/data/home-prebaked-extra.ts');
+  if (fs.existsSync(extraPath)) {
+    let extraContent = fs.readFileSync(extraPath, 'utf-8');
+
+    // 1. 同步 DOCUMENTARY_HOME_DATA.hero
+    const docHeroRegex = /(DOCUMENTARY_HOME_DATA:\s*PrebakedHomeCategory\s*=\s*\{[\s\S]*?["']?hero["']?:\s*\[)[\s\S]*?(\]\s*,\s*["']?top10["']?:)/;
+    if (docHeroRegex.test(extraContent)) {
+      const formattedJson = JSON.stringify(docHeroItems, null, 4)
+        .replace(/^\[/, '')
+        .replace(/\]$/, '')
+        .trim();
+      extraContent = extraContent.replace(docHeroRegex, `$1\n    ${formattedJson}\n  $2`);
+      console.log(`✅ [iyf-sync] 成功将真实 ${docHeroItems.length} 席纪录片殿堂巨幕同步至 DOCUMENTARY_HOME_DATA.hero！`);
+    }
+
+    // 2. 同步或注入 DOCUMENTARY_HOME_DATA.trendingNav
+    const docTrendingRegex = /(DOCUMENTARY_HOME_DATA:\s*PrebakedHomeCategory\s*=\s*\{[\s\S]*?)(trendingNav:\s*\[[\s\S]*?\]\s*,\s*)?(hero:)/;
+    if (docTrendingRegex.test(extraContent)) {
+      const formattedTrending = JSON.stringify(docTrendingNav, null, 4)
+        .replace(/^\[/, '')
+        .replace(/\]$/, '')
+        .trim();
+      extraContent = extraContent.replace(docTrendingRegex, `$1trendingNav: [\n    ${formattedTrending}\n  ],\n  $3`);
+      console.log(`✅ [iyf-sync] 成功为纪录片专区写入专属 12 席口碑速报至 DOCUMENTARY_HOME_DATA.trendingNav！`);
+    }
+
+    fs.writeFileSync(extraPath, extraContent, 'utf-8');
+  }
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const target = args.find(a => a.startsWith('--target='))?.split('=')[1] || 'all_channels';
@@ -505,7 +583,10 @@ async function main() {
     if (target === 'variety' || target === 'all_channels') {
       await syncVarietyChannel();
     }
-    console.log('\n🎉 [iyf-sync] 全站（首页+电影+电视剧+动漫+综艺）爱壹帆官方轮播巨幕与速报同步完成！');
+    if (target === 'doc' || target === 'documentary' || target === 'all_channels') {
+      await syncDocumentaryChannel();
+    }
+    console.log('\n🎉 [iyf-sync] 全站所有板块（首页+电影+电视剧+动漫+综艺+纪录片）轮播巨幕与速报同步完成！');
   } catch (err) {
     console.error('[iyf-sync] 执行异常:', err);
     process.exit(1);
