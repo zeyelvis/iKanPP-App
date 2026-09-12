@@ -14,22 +14,22 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "凡人修仙传",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "光阴之外",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "仙逆",
         "updateBadge": ""
     },
     {
-        "title": "择日飞升",
-        "updateBadge": ""
+        "title": "死神：千年血战篇第4季",
+        "updateBadge": "1"
     },
     {
-        "title": "海贼王",
+        "title": "择日飞升",
         "updateBadge": ""
     },
     {
@@ -37,24 +37,24 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "海贼王",
+        "updateBadge": ""
+    },
+    {
         "title": "牧神记",
         "updateBadge": ""
     },
     {
-        "title": "炼气十万年",
-        "updateBadge": "1"
-    },
-    {
-        "title": "遮天",
+        "title": "吞噬星空",
         "updateBadge": ""
     },
     {
-        "title": "万界独尊",
+        "title": "鬼之花嫁",
         "updateBadge": "1"
     },
     {
-        "title": "关于我转生变成史莱姆这档事第4季",
-        "updateBadge": ""
+        "title": "黄泉的使者",
+        "updateBadge": "1"
     }
   ],
   hero: [
@@ -632,7 +632,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "说唱巅峰对决2026",
-        "updateBadge": "2"
+        "updateBadge": "6"
     },
     {
         "title": "花儿与少年第8季",
@@ -644,38 +644,38 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "披荆斩棘2026",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "一饭封神第2季",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "你好星期六",
         "updateBadge": "1"
     },
     {
-        "title": "地球超新鲜第2季",
-        "updateBadge": "1"
+        "title": "我家那闺女2026",
+        "updateBadge": ""
     },
     {
-        "title": "我家那闺女2026",
-        "updateBadge": "1"
+        "title": "地球超新鲜第2季",
+        "updateBadge": ""
     },
     {
         "title": "大哥小助理",
-        "updateBadge": "1"
-    },
-    {
-        "title": "密室大逃脱第8季",
         "updateBadge": ""
     },
     {
         "title": "姐姐当家第2季",
-        "updateBadge": "3"
+        "updateBadge": ""
     },
     {
         "title": "喜剧之王单口季第3季",
+        "updateBadge": ""
+    },
+    {
+        "title": "密室大逃脱第8季",
         "updateBadge": ""
     }
   ],
@@ -1786,43 +1786,43 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "斗破苍穹年番",
-        "updateBadge": "1"
-    },
-    {
         "title": "交锋",
         "updateBadge": "2"
-    },
-    {
-        "title": "凡人修仙传",
-        "updateBadge": "1"
     },
     {
         "title": "飞到我心上",
         "updateBadge": ""
     },
     {
-        "title": "生逢其时",
+        "title": "冬城猎凶",
+        "updateBadge": "2"
+    },
+    {
+        "title": "斗破苍穹年番",
         "updateBadge": "1"
     },
     {
-        "title": "冬城猎凶",
-        "updateBadge": "2"
+        "title": "凡人修仙传",
+        "updateBadge": ""
     },
     {
         "title": "深渊无间",
         "updateBadge": "2"
     },
     {
-        "title": "说唱巅峰对决2026",
-        "updateBadge": "2"
-    },
-    {
-        "title": "杀手妈咪",
+        "title": "生逢其时",
         "updateBadge": "1"
     },
     {
-        "title": "死有对证",
+        "title": "说唱巅峰对决2026",
+        "updateBadge": "6"
+    },
+    {
+        "title": "花儿与少年第8季",
+        "updateBadge": ""
+    },
+    {
+        "title": "欢迎来龙餐馆",
         "updateBadge": ""
     }
   ],
@@ -1936,7 +1936,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     {
         "id": "iyf_hero_tv_7",
         "title": "深渊无间",
-        "rate": "8.5",
+        "rate": "9.0",
         "cover": "https://image.tmdb.org/t/p/w500/b9ngtGNgaHBbLihRrT0MsPRY0GW.jpg",
         "backdrop": "https://image.tmdb.org/t/p/w1280/s9YSQAJtXjimsjBVsqLtJNnIjEs.jpg",
         "description": "一篇名为《深渊》的推理网文悄然上线，打破了保守小城多年来的平静，文中诸多情节与警方未曾公布的多年前悬案案情有着惊人的相似。热血正义的新警李成，与多方嫌疑人，一次次上演高智对弈。",
@@ -2395,10 +2395,6 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第5季",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第3季",
         "updateBadge": ""
     },
@@ -2407,19 +2403,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "若泽·穆里尼奥：特立之道",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第2季",
-        "updateBadge": ""
-    },
-    {
-        "title": "恐龙时代：你不知道的故事",
-        "updateBadge": ""
-    },
-    {
-        "title": "史前星球",
+        "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
@@ -2427,15 +2411,31 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "克拉克森的农场第2季",
+        "updateBadge": ""
+    },
+    {
+        "title": "转折点：911与反恐战争",
+        "updateBadge": ""
+    },
+    {
+        "title": "史前星球",
+        "updateBadge": ""
+    },
+    {
+        "title": "若泽·穆里尼奥：特立之道",
+        "updateBadge": ""
+    },
+    {
+        "title": "蓝色星球2",
+        "updateBadge": ""
+    },
+    {
         "title": "欢迎来到雷克斯汉姆",
         "updateBadge": ""
     },
     {
-        "title": "中国通史",
-        "updateBadge": ""
-    },
-    {
-        "title": "爱达荷州血案：大学梦魇",
+        "title": "急诊先锋：纽约第1季",
         "updateBadge": ""
     }
   ],

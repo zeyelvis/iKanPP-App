@@ -452,19 +452,16 @@ export function HeroSlideshow({
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（底部居中对齐，自适应舒展间距，独立纯净展示不与轮播大图联动） */}
+            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（底部居中对齐，自适应流式双排折行，与爱壹帆1:1对标） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (
               <div className="hidden lg:flex flex-1 justify-center items-end px-3 pb-1">
-                <div
-                  className="grid grid-rows-2 items-center gap-x-3.5 xl:gap-x-5 gap-y-2 xl:gap-y-2.5 max-w-fit"
-                  style={{ gridTemplateColumns: 'repeat(6, auto)' }}
-                >
+                <div className="flex flex-wrap items-center gap-x-4 xl:gap-x-5 gap-y-2 xl:gap-y-2.5 max-w-[500px] xl:max-w-[530px]">
                   {activeTrendingNav.slice(0, 12).map((item: TrendingNavItem, idx: number) => (
                     <button
                       key={idx}
                       type="button"
                       onClick={() => handleTrendingClick(item)}
-                      className="group flex items-center justify-start text-left cursor-pointer text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-colors duration-200 select-none"
+                      className="group flex items-center justify-start text-left cursor-pointer text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-colors duration-200 select-none shrink-0"
                       title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                     >
                       <span className="text-[12.5px] xl:text-[13px] font-medium tracking-tight whitespace-nowrap leading-snug">
