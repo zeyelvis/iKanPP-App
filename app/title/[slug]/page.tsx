@@ -324,13 +324,16 @@ export default async function TitlePage({ params }: Props) {
         }}
       />
 
-      {/* 顶部导航 */}
-      <Navbar />
+      {/* 顶部导航：在大剧照上方全透明浮动穿透，与首页/各频道 100% 保持一致 */}
+      <Navbar
+        activeCategory={entity.type === 'tv' ? 'tv' : 'movie'}
+        transparentFloat={Boolean(heroBackdrop)}
+      />
 
-      {/* Netflix 级沉浸式全屏背景大画幅 (Hero Billboard Backdrop) */}
+      {/* Netflix 级沉浸式通顶全屏背景大画幅 (Hero Billboard Backdrop) */}
       <div className="relative w-full overflow-hidden">
         {heroBackdrop && (
-          <div className="hidden md:block absolute inset-0 h-[60vh] sm:h-[75vh] lg:h-[82vh] w-full select-none pointer-events-none z-0">
+          <div className="absolute inset-x-0 top-0 h-[68vh] sm:h-[80vh] lg:h-[88vh] w-full select-none pointer-events-none z-0">
             <Image
               src={heroBackdrop}
               alt={`${entity.title} 剧照大图`}
@@ -339,18 +342,35 @@ export default async function TitlePage({ params }: Props) {
               sizes="100vw"
               className={
                 isTrueBackdrop
-                  ? "object-cover object-center opacity-40 lg:opacity-50 filter brightness-95 saturate-[1.15] transition-all duration-700"
+                  ? "object-cover object-center opacity-30 sm:opacity-45 lg:opacity-55 filter brightness-95 saturate-[1.15] transition-all duration-700"
                   : "object-cover object-top opacity-20 filter blur-3xl scale-125 transition-all duration-700"
               }
             />
-            {/* 多重电影级渐变融合：底边向上淡入深黑，侧边向右压暗文字背景 */}
-            <div className="absolute inset-0 bg-linear-to-t from-[#0A0A0F] via-[#0A0A0F]/70 to-transparent" />
+            {/* 1. 顶部自然防眩羽化遮罩：柔和保护全透明浮动 Navbar 文字与搜索框 */}
+            <div
+              className="absolute inset-x-0 top-0 pointer-events-none"
+              style={{
+                height: '180px',
+                background: 'linear-gradient(to bottom, rgba(10, 10, 15, 0.88) 0%, rgba(10, 10, 15, 0.5) 45%, rgba(10, 10, 15, 0.15) 75%, transparent 100%)',
+              }}
+            />
+            {/* 2. 底部自然平滑羽化：向上优雅延展约 320px，与下方内容完全无缝融合 */}
+            <div
+              className="absolute inset-x-0 bottom-0 pointer-events-none"
+              style={{
+                height: '320px',
+                background: 'linear-gradient(to top, #0A0A0F 0%, rgba(10, 10, 15, 0.95) 25%, rgba(10, 10, 15, 0.65) 55%, rgba(10, 10, 15, 0.18) 82%, transparent 100%)',
+              }}
+            />
+            {/* 3. 侧边向右压暗文字背景 */}
             <div className="absolute inset-0 bg-linear-to-r from-[#0A0A0F] via-[#0A0A0F]/85 to-transparent sm:max-w-4xl" />
           </div>
         )}
 
-        {/* 核心视觉区 */}
-        <div className="relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-2.5 sm:pt-8 z-10">
+        {/* 核心视觉区：有通顶大图时优雅避让浮动 Navbar */}
+        <div className={`relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 z-10 ${
+          heroBackdrop ? 'pt-20 sm:pt-24 lg:pt-28' : 'pt-4 sm:pt-8'
+        }`}>
           {/* 面包屑导航 (Breadcrumbs) - 移动端紧凑排布 */}
           <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-sm text-white/50 mb-2.5 sm:mb-8 overflow-x-auto whitespace-nowrap scrollbar-none">
             <Link href="/" className="hover:text-white transition-colors">
