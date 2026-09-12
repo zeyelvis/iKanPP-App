@@ -1,0 +1,61 @@
+name: Auto Sync IYF Channels & Drama Hero Slides
+
+on:
+  schedule:
+    # 每天 3 次自动同步（北京时间早 10:00、下午 16:00、晚 22:00 黄金档更新）
+    - cron: '0 2 * * *'
+    - cron: '0 8 * * *'
+    - cron: '0 14 * * *'
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: '选择需要同步的爱壹帆专区板块'
+        required: true
+        default: 'all_channels'
+        type: choice
+        options:
+          - 'all_channels'
+          - 'tv'
+          - 'movie'
+          - 'anime'
+          - 'variety'
+          - 'home'
+
+# 赋予工作流代码提交与推送权限
+permissions:
+  contents: write
+
+jobs:
+  sync-iyf-hero:
+    name: Sync IYF Hero & Trending Nav
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Execute IYF Channels Sync
+        run: |
+          TARGET="${{ github.event.inputs.channel || 'all_channels' }}"
+          echo "🚀 正在启动爱壹帆专区同步，目标板块: $TARGET"
+          node scripts/sync-iyf-hero.mjs --target="$TARGET"
+
+      - name: Commit and push changes if data updated
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+          if [[ -n $(git status --porcelain lib/data/home-prebaked.ts lib/data/home-prebaked-extra.ts) ]]; then
+            TARGET="${{ github.event.inputs.channel || 'all_channels' }}"
+            echo "✅ 检测到预烘焙影视大剧与速报数据更新，正在提交..."
+            git add lib/data/home-prebaked.ts lib/data/home-prebaked-extra.ts
+            git commit -m "chore(sync): 自动同步爱壹帆专区板块 [$TARGET] 轮播巨幕与速报 [skip ci]"
+            git push
+            echo "🎉 数据已成功推送到远程仓库并触发自动部署！"
+          else
+            echo "✨ 现有影视数据已是最新，无变动。"
+          fi

@@ -8,6 +8,12 @@
     "start": "next start",
     "lint": "eslint",
     "sync:sources": "node scripts/sync-ikanbot-sources.mjs",
+    "sync:hero": "node scripts/sync-iyf-hero.mjs",
+    "sync:hero:tv": "node scripts/sync-iyf-hero.mjs --target=tv",
+    "sync:hero:movie": "node scripts/sync-iyf-hero.mjs --target=movie",
+    "sync:hero:anime": "node scripts/sync-iyf-hero.mjs --target=anime",
+    "sync:hero:variety": "node scripts/sync-iyf-hero.mjs --target=variety",
+    "sync:all": "node scripts/sync-ikanbot-sources.mjs && node scripts/sync-iyf-hero.mjs",
     "pages:build": "npx @cloudflare/next-on-pages@1"
   },
   "dependencies": {
