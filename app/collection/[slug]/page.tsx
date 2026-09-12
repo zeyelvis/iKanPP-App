@@ -10,7 +10,9 @@ import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { CollectionDetailClient } from './CollectionDetailClient';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 
-export const runtime = 'edge';
+export function generateStaticParams() {
+  return CURATED_COLLECTIONS.map(c => ({ slug: c.slug }));
+}
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 

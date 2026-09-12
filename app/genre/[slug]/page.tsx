@@ -8,7 +8,9 @@ import { getEntitiesByGenre } from '@/lib/services/entity-kv';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { Navbar } from '@/components/layout/Navbar';
 
-export const runtime = 'edge';
+export function generateStaticParams() {
+  return Object.keys(GENRE_MAP).map(slug => ({ slug }));
+}
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 
