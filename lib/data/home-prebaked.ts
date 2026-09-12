@@ -85,15 +85,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "夜王",
-                "updateBadge": ""
-        },
-        {
                 "title": "不成功穿越指南",
                 "updateBadge": ""
         },
         {
-                "title": "怒之杀(听译)",
+                "title": "夜王",
+                "updateBadge": ""
+        },
+        {
+                "title": "抓特务",
                 "updateBadge": ""
         },
         {
@@ -1790,10 +1790,6 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
-                "title": "飞到我心上",
-                "updateBadge": ""
-        },
-        {
                 "title": "冬城猎凶",
                 "updateBadge": "2"
         },
@@ -1802,15 +1798,19 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
+                "title": "飞到我心上",
+                "updateBadge": ""
+        },
+        {
                 "title": "生逢其时",
                 "updateBadge": "1"
         },
         {
-                "title": "死有对证",
+                "title": "花开锦绣",
                 "updateBadge": ""
         },
         {
-                "title": "花开锦绣",
+                "title": "死有对证",
                 "updateBadge": ""
         },
         {
@@ -1818,12 +1818,12 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "百花杀",
-                "updateBadge": ""
-        },
-        {
                 "title": "不是你的恋爱",
                 "updateBadge": "1"
+        },
+        {
+                "title": "百花杀",
+                "updateBadge": ""
         }
       ],
     "hero": [

@@ -452,7 +452,7 @@ export function HeroSlideshow({
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（底部居中对齐，严格双排黄金比例，设置min-w-0与响应式智能截断，彻底杜绝撑爆右栏） */}
+            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（底部居中对齐，严格双排黄金比例，文字完整舒展呈现，100%对齐爱壹帆原生规范） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (() => {
               // 唯有动漫频道官方规范因《死神》长片名自然拆为 5+7，其余全板块（纪录片、综艺、电影、电视剧、首页）均为严格 6+6 黄金对称
               const splitIdx = contentType === 'anime' ? 5 : 6;
@@ -463,14 +463,14 @@ export function HeroSlideshow({
                   key={idx}
                   type="button"
                   onClick={() => handleTrendingClick(item)}
-                  className="group flex items-center justify-start text-left cursor-pointer text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-colors duration-200 select-none min-w-0 shrink max-w-[85px] lg:max-w-[100px] xl:max-w-[125px] 2xl:max-w-[155px]"
+                  className="group flex items-center justify-start text-left cursor-pointer text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-colors duration-200 select-none shrink-0"
                   title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                 >
-                  <span className="text-[11px] lg:text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-medium tracking-tight truncate leading-snug">
+                  <span className="text-[11px] lg:text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-medium tracking-tight whitespace-nowrap leading-snug">
                     {item.title}
                   </span>
                   {item.updateBadge ? (
-                    <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[8.5px] xl:text-[9px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-0.5 shrink-0 shadow-xs">
+                    <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[8.5px] xl:text-[9px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0 shadow-xs">
                       {item.updateBadge}
                     </span>
                   ) : null}
@@ -478,12 +478,12 @@ export function HeroSlideshow({
               );
 
               return (
-                <div className="hidden lg:flex flex-1 min-w-0 justify-center items-end px-2 xl:px-4 pb-1 overflow-hidden">
-                  <div className="flex flex-col items-center gap-y-1.5 xl:gap-y-2 max-w-full min-w-0">
-                    <div className="flex items-center justify-center gap-x-2 lg:gap-x-2.5 xl:gap-x-3.5 max-w-full min-w-0">
+                <div className="hidden lg:flex flex-1 min-w-0 justify-center items-end px-2 xl:px-4 pb-1">
+                  <div className="flex flex-col items-center gap-y-1.5 xl:gap-y-2 max-w-fit">
+                    <div className="flex items-center gap-x-2 xl:gap-x-3 2xl:gap-x-4 whitespace-nowrap">
                       {line1.map(renderItem)}
                     </div>
-                    <div className="flex items-center justify-center gap-x-2 lg:gap-x-2.5 xl:gap-x-3.5 max-w-full min-w-0">
+                    <div className="flex items-center gap-x-2 xl:gap-x-3 2xl:gap-x-4 whitespace-nowrap">
                       {line2.map((item: TrendingNavItem, idx: number) => renderItem(item, idx + splitIdx))}
                     </div>
                   </div>
@@ -517,8 +517,8 @@ export function HeroSlideshow({
               {currentData.slice(0, 8).map((item, idx) => {
                 const isSelected = idx === activeIndex;
                 const cardSizeClass = currentData.length > 7
-                  ? 'w-[38px] h-[54px] sm:w-[40px] sm:h-[58px] lg:w-[44px] lg:h-[62px] xl:w-[48px] xl:h-[68px]'
-                  : 'w-[42px] h-[60px] sm:w-[44px] sm:h-[62px] lg:w-[48px] lg:h-[68px] xl:w-[52px] xl:h-[74px]';
+                  ? 'w-[36px] h-[52px] sm:w-[38px] sm:h-[54px] lg:w-[40px] lg:h-[58px] xl:w-[45px] xl:h-[64px]'
+                  : 'w-[40px] h-[58px] sm:w-[42px] sm:h-[60px] lg:w-[45px] lg:h-[64px] xl:w-[50px] xl:h-[70px]';
                 return (
                   <button
                     key={item.title ? `hero-thumb-${item.title}` : (item.id || idx)}

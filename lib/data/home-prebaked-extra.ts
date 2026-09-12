@@ -29,7 +29,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "择日飞升",
+        "title": "海贼王",
         "updateBadge": ""
     },
     {
@@ -37,7 +37,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "海贼王",
+        "title": "择日飞升",
         "updateBadge": ""
     },
     {
@@ -49,12 +49,12 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "鬼之花嫁",
+        "title": "黄泉的使者",
         "updateBadge": "1"
     },
     {
-        "title": "黄泉的使者",
-        "updateBadge": "1"
+        "title": "灵境行者",
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -639,11 +639,11 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "心动的信号第9季",
+        "title": "披荆斩棘2026",
         "updateBadge": ""
     },
     {
-        "title": "披荆斩棘2026",
+        "title": "心动的信号第9季",
         "updateBadge": ""
     },
     {
@@ -659,10 +659,6 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "地球超新鲜第2季",
-        "updateBadge": ""
-    },
-    {
         "title": "大哥小助理",
         "updateBadge": ""
     },
@@ -675,7 +671,11 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "密室大逃脱第8季",
+        "title": "地球超新鲜第2季",
+        "updateBadge": ""
+    },
+    {
+        "title": "脱口秀和Ta的朋友们第3季",
         "updateBadge": ""
     }
   ],
@@ -1790,12 +1790,16 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "2"
     },
     {
-        "title": "飞到我心上",
-        "updateBadge": ""
-    },
-    {
         "title": "冬城猎凶",
         "updateBadge": "2"
+    },
+    {
+        "title": "深渊无间",
+        "updateBadge": "2"
+    },
+    {
+        "title": "飞到我心上",
+        "updateBadge": ""
     },
     {
         "title": "斗破苍穹年番",
@@ -1804,10 +1808,6 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     {
         "title": "凡人修仙传",
         "updateBadge": ""
-    },
-    {
-        "title": "深渊无间",
-        "updateBadge": "2"
     },
     {
         "title": "生逢其时",
@@ -2395,7 +2395,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第3季",
+        "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
@@ -2403,11 +2403,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第5季",
+        "title": "克拉克森的农场第3季",
         "updateBadge": ""
     },
     {
-        "title": "守护解放西第6季",
+        "title": "若泽·穆里尼奥：特立之道",
         "updateBadge": ""
     },
     {
@@ -2419,23 +2419,23 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "史前星球",
+        "title": "守护解放西第6季",
         "updateBadge": ""
     },
     {
-        "title": "若泽·穆里尼奥：特立之道",
+        "title": "守护解放西第5季",
         "updateBadge": ""
     },
     {
-        "title": "蓝色星球2",
+        "title": "大明帝国",
         "updateBadge": ""
     },
     {
-        "title": "欢迎来到雷克斯汉姆",
+        "title": "守护解放西",
         "updateBadge": ""
     },
     {
-        "title": "急诊先锋：纽约第1季",
+        "title": "寻色中国",
         "updateBadge": ""
     }
   ],
