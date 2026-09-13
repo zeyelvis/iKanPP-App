@@ -10,6 +10,7 @@ import { getSourceById } from '@/lib/api/video-sources';
 import { getSourceName } from '@/lib/utils/source-names';
 import { isSafeExternalUrl } from '@/lib/utils/security';
 import { searchAndEnrichFromTMDB } from '@/lib/services/entity-enrichment';
+import { parseSeasonFromTitle, generateSeasonSearchVariants } from '@/lib/utils/season-resolver';
 
 export const runtime = 'edge';
 
@@ -68,12 +69,31 @@ export async function POST(request: NextRequest) {
               setTimeout(() => reject(new Error('Source request timeout')), 2500)
             );
 
-            // Search page 1 for this source
-            const searchPromise = searchVideos(query.trim(), [source], 1);
-            const result: any = await Promise.race([searchPromise, timeoutPromise]);
+            // 若关键词含有季数（如 "时光代理人第3季"），国内采集站通常使用中文数字立项（"时光代理人第三季"）
+            // 且采集站 CMS 会将空格拆分成 OR 导致脱靶，因此使用无空格变体优先搜索
+            const parsedSeason = parseSeasonFromTitle(query.trim());
+            const variants = parsedSeason ? generateSeasonSearchVariants(query.trim()) : [query.trim()];
+            const primaryQuery = variants[0] ? variants[0].replace(/\s+/g, '') : query.trim();
+
+            let searchPromise = searchVideos(primaryQuery, [source], 1);
+            let result: any = await Promise.race([searchPromise, timeoutPromise]);
+            let videos = result[0]?.results || [];
+
+            // 若首选变体未查到且还有原 query，进行快速兜底
+            const cleanRawQuery = query.trim().replace(/\s+/g, '');
+            if (videos.length === 0 && primaryQuery !== cleanRawQuery) {
+              try {
+                const fallbackPromise = searchVideos(cleanRawQuery, [source], 1);
+                const fallbackResult: any = await Promise.race([fallbackPromise, timeoutPromise]);
+                if (fallbackResult[0]?.results?.length) {
+                  videos = fallbackResult[0].results;
+                  result = fallbackResult;
+                }
+              } catch {}
+            }
+
             const endTime = performance.now();
             const latency = Math.round(endTime - startTime);
-            const videos = result[0]?.results || [];
             const pagecount = result[0]?.pagecount ?? 1;
 
             completedSources++;

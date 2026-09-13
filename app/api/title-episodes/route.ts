@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { parseSeasonFromTitle, generateSeasonSearchVariants, matchesTargetSeason } from '@/lib/utils/season-resolver';
 
 export const runtime = 'edge';
 
@@ -13,6 +14,225 @@ const PROBE_SOURCES = [
 interface SimpleEpisode {
   name: string;
   index: number;
+  episodeNumber?: number;
+  isSpecial?: boolean;
+}
+
+/**
+ * 从 remarks（如 "第191集", "更新至191集", "全191集"）提取集数数字
+ */
+function extractEpisodeFromRemarks(remarks?: string): number | null {
+  if (!remarks) return null;
+  const clean = remarks.trim();
+  const m = clean.match(/(?:更新至|更新到|全|第)?\s*(\d+)\s*(?:集|话|期)?/);
+  if (m) {
+    const num = parseInt(m[1], 10);
+    if (num > 0 && num < 2500) return num;
+  }
+  return null;
+}
+
+/**
+ * 智能提取切片名称中的正片集数编号
+ * 过滤花絮、预告、特别篇等非正片切片
+ */
+function extractEpisodeNumber(name?: string): number | null {
+  if (!name) return null;
+  const clean = name.trim();
+  if (/(?:预告|花絮|PV|特辑|采访|彩蛋)/i.test(clean)) return null;
+
+  // 优先匹配：第191集、第191话、EP191、第77集星海飞驰篇
+  const m1 = clean.match(/(?:第|ep)\s*(\d+)\s*(?:集|话)?/i);
+  if (m1) {
+    const num = parseInt(m1[1], 10);
+    if (num > 0 && num < 2500) return num;
+  }
+
+  // 匹配：191集、191话
+  const m2 = clean.match(/^(\d+)\s*(?:集|话)/);
+  if (m2) {
+    const num = parseInt(m2[1], 10);
+    if (num > 0 && num < 2500) return num;
+  }
+
+  // 匹配纯数字：191（排除4位数年份）
+  if (/^\d+$/.test(clean)) {
+    const num = parseInt(clean, 10);
+    if (num > 0 && num < 1900) return num;
+  }
+
+  return null;
+}
+
+/**
+ * 单源季播智能探测
+ */
+async function probeSingleSource(
+  src: typeof PROBE_SOURCES[0],
+  cleanTitle: string,
+  baseTitle: string,
+  targetSeason: number | null,
+  searchVariants: string[]
+) {
+  // 若有季数，尝试中文标准名（如"时光代理人第三季"）与无空格变体及母标题
+  // 采集站（苹果CMS/帝国CMS）会将空格拆分成 OR 导致脱靶，因此搜索词去除多余空格
+  const rawKeywords = targetSeason ? searchVariants : [cleanTitle];
+  const seenKws = new Set<string>();
+  const keywordsToTry: string[] = [];
+
+  for (const raw of rawKeywords) {
+    const compact = raw.replace(/\s+/g, '').trim();
+    if (compact && !seenKws.has(compact)) {
+      seenKws.add(compact);
+      keywordsToTry.push(compact);
+    }
+  }
+
+  // 尝试前 4 个最精准变体（包含中文数字、去符号及核心子标题）
+  const finalKeywords = keywordsToTry.slice(0, 4);
+  const cleanSymbols = (s: string) => (s || '').replace(/[·・\-_:：\s+]/g, '').toLowerCase();
+  const normalizedBase = cleanSymbols(baseTitle);
+
+  for (const kw of finalKeywords) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1800);
+
+      const url = `${src.baseUrl}?ac=detail&wd=${encodeURIComponent(kw)}`;
+      const res = await fetch(url, {
+        signal: controller.signal,
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+      });
+      clearTimeout(timeoutId);
+
+      if (!res.ok) continue;
+      let data: any;
+      try {
+        data = await res.json();
+      } catch {
+        continue;
+      }
+
+      if (!data || !Array.isArray(data.list) || data.list.length === 0) continue;
+
+      // 🌟 强防线 1：过滤掉片名完全不包含母标题 baseTitle 的无关条目（支持中点·等标点符号容错）
+      const validItems = data.list.filter((item: any) => {
+        const rawName = cleanSymbols(item.vod_name);
+        if (rawName.includes(normalizedBase) || normalizedBase.includes(rawName)) return true;
+        // 若长标题包含复合词，只要核心关键词（后 4 个字）相互重合即视为同片
+        if (normalizedBase.length >= 6) {
+          const coreEnd = normalizedBase.slice(-4);
+          if (rawName.includes(coreEnd)) return true;
+        }
+        return false;
+      });
+
+      if (validItems.length === 0) continue;
+
+      let matched: any = null;
+
+      // 🌟 强防线 2：若有明确季数，优先在有效条目中挑选完全匹配目标季的条目（优先正统原版，降级日语/英配版）
+      if (targetSeason) {
+        matched = validItems.find((item: any) => {
+          const rawName = (item.vod_name || '').trim();
+          const isForeignDub = /(?:日语|韩语|英语|日剧|日版|英配)/i.test(rawName);
+          return !isForeignDub && matchesTargetSeason(rawName, targetSeason);
+        });
+        if (!matched) {
+          matched = validItems.find((item: any) => {
+            const rawName = (item.vod_name || '').trim();
+            return matchesTargetSeason(rawName, targetSeason);
+          });
+        }
+      }
+
+      // 🌟 强防线 3：若未匹配到季数专属条目，尝试与当前搜索词或原始标题一致
+      if (!matched) {
+        matched = validItems.find((item: any) => {
+          const rawName = cleanSymbols(item.vod_name);
+          return rawName === cleanSymbols(kw) || rawName === cleanSymbols(cleanTitle);
+        });
+      }
+
+      // 🌟 强防线 4：若无季数要求，取有效条目中的第一条
+      if (!matched && !targetSeason) {
+        matched = validItems[0];
+      }
+
+      if (!matched || !matched.vod_play_url) continue;
+
+      // 解析播放列表：多条线路用 $$$ 分割，单线路集数用 # 分割
+      const lines = matched.vod_play_url.split('$$$');
+      let bestEpisodes: SimpleEpisode[] = [];
+
+      for (const line of lines) {
+        const rawEps = line.split('#');
+        const parsedEps: SimpleEpisode[] = [];
+        for (let i = 0; i < rawEps.length; i++) {
+          const part = rawEps[i].trim();
+          if (!part) continue;
+          const [name] = part.split('$');
+          const cleanName = name || `第${i + 1}集`;
+          const epNum = extractEpisodeNumber(cleanName);
+
+          parsedEps.push({
+            name: cleanName,
+            index: i,
+            episodeNumber: epNum ?? undefined,
+            isSpecial: epNum === null,
+          });
+        }
+        if (parsedEps.length > bestEpisodes.length) {
+          bestEpisodes = parsedEps;
+        }
+      }
+
+      if (bestEpisodes.length === 0) continue;
+
+      // 智能仲裁正片总集数与特别篇
+      let maxParsedEpisode = 0;
+      const specialEpisodes: SimpleEpisode[] = [];
+
+      for (const ep of bestEpisodes) {
+        if (ep.episodeNumber) {
+          if (ep.episodeNumber > maxParsedEpisode) {
+            maxParsedEpisode = ep.episodeNumber;
+          }
+        } else {
+          specialEpisodes.push(ep);
+        }
+      }
+
+      const remarksEp = extractEpisodeFromRemarks(matched.vod_remarks);
+      let totalEpisodes = bestEpisodes.length;
+
+      if (maxParsedEpisode > 0) {
+        if (remarksEp && Math.abs(remarksEp - maxParsedEpisode) <= 5) {
+          totalEpisodes = Math.max(remarksEp, maxParsedEpisode);
+        } else {
+          totalEpisodes = maxParsedEpisode;
+        }
+      } else if (remarksEp && remarksEp > 0) {
+        totalEpisodes = remarksEp;
+      }
+
+      return {
+        id: matched.vod_id,
+        source: src.id,
+        vodName: (matched.vod_name || '').trim(),
+        targetSeason: targetSeason ?? undefined,
+        totalEpisodes,
+        rawTotalCount: bestEpisodes.length,
+        episodes: bestEpisodes,
+        specialEpisodes,
+        remarks: matched.vod_remarks || '',
+      };
+    } catch {
+      continue;
+    }
+  }
+
+  return null;
 }
 
 export async function GET(request: NextRequest) {
@@ -24,65 +244,16 @@ export async function GET(request: NextRequest) {
   }
 
   const cleanTitle = title.replace(/[《》【】\[\]（）()]/g, ' ').replace(/\s+/g, ' ').trim();
+  const parsedSeason = parseSeasonFromTitle(cleanTitle);
+  const baseTitle = parsedSeason ? parsedSeason.baseTitle : cleanTitle;
+  const targetSeason = parsedSeason ? parsedSeason.seasonNumber : null;
+  const searchVariants = generateSeasonSearchVariants(cleanTitle);
 
   try {
-    // 并行向骨干源探测最新集数
-    const probePromises = PROBE_SOURCES.map(async (src) => {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2000);
-
-        const url = `${src.baseUrl}?ac=detail&wd=${encodeURIComponent(cleanTitle)}`;
-        const res = await fetch(url, {
-          signal: controller.signal,
-          headers: { 'User-Agent': 'Mozilla/5.0' },
-        });
-        clearTimeout(timeoutId);
-
-        if (!res.ok) return null;
-        const data = await res.json();
-        if (!data || !Array.isArray(data.list) || data.list.length === 0) return null;
-
-        // 寻找标题完全一致的最佳条目
-        const matched = data.list.find((item: any) => {
-          const rawName = (item.vod_name || '').trim();
-          return rawName === cleanTitle || rawName === title;
-        }) || data.list[0];
-
-        if (!matched || !matched.vod_play_url) return null;
-
-        // 解析播放列表：多条线路用 $$$ 分割，单线路集数用 # 分割
-        const lines = matched.vod_play_url.split('$$$');
-        let bestEpisodes: SimpleEpisode[] = [];
-
-        for (const line of lines) {
-          const rawEps = line.split('#');
-          const parsedEps: SimpleEpisode[] = [];
-          for (let i = 0; i < rawEps.length; i++) {
-            const part = rawEps[i].trim();
-            if (!part) continue;
-            const [name] = part.split('$');
-            parsedEps.push({
-              name: name || `第${i + 1}集`,
-              index: i,
-            });
-          }
-          if (parsedEps.length > bestEpisodes.length) {
-            bestEpisodes = parsedEps;
-          }
-        }
-
-        return {
-          id: matched.vod_id,
-          source: src.id,
-          totalEpisodes: bestEpisodes.length,
-          episodes: bestEpisodes,
-          remarks: matched.vod_remarks || '',
-        };
-      } catch {
-        return null;
-      }
-    });
+    // 并行向骨干源发起探测
+    const probePromises = PROBE_SOURCES.map(src =>
+      probeSingleSource(src, cleanTitle, baseTitle, targetSeason, searchVariants)
+    );
 
     const results = (await Promise.all(probePromises)).filter(Boolean);
 
@@ -90,8 +261,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'No matching episodes found' });
     }
 
-    // 挑选集数最多且最完整的源结果
-    results.sort((a: any, b: any) => b.totalEpisodes - a.totalEpisodes);
+    // 排序优先级：命中目标季优先 > 正片总集数最多
+    results.sort((a: any, b: any) => {
+      if (targetSeason) {
+        const aSeasonMatch = matchesTargetSeason(a.vodName, targetSeason) ? 1 : 0;
+        const bSeasonMatch = matchesTargetSeason(b.vodName, targetSeason) ? 1 : 0;
+        if (aSeasonMatch !== bSeasonMatch) {
+          return bSeasonMatch - aSeasonMatch;
+        }
+      }
+      return b.totalEpisodes - a.totalEpisodes;
+    });
+
     const best = results[0];
 
     if (!best) {
@@ -101,11 +282,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       title,
+      matchedVodName: best.vodName,
+      targetSeason: best.targetSeason,
       id: best.id,
       source: best.source,
       totalEpisodes: best.totalEpisodes,
+      rawTotalCount: best.rawTotalCount,
       remarks: best.remarks,
       episodes: best.episodes,
+      specialEpisodes: best.specialEpisodes,
     }, {
       headers: {
         'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
@@ -115,3 +300,4 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: false, error: err?.message || 'Server error' }, { status: 500 });
   }
 }
+

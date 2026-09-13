@@ -6,12 +6,14 @@ import { Play, Plus, Check, Share2, ThumbsUp, Loader2, Sparkles } from 'lucide-r
 import { useFavoritesStore } from '@/lib/store/favorites-store';
 import { useHistoryStore } from '@/lib/store/history-store';
 import { TitleEntity } from '@/lib/types/entity';
+import { getEpisodeDisplayInfo, EpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
 
 interface TitleActionsBarProps {
   entity: TitleEntity;
+  playTitle?: string;
 }
 
-export function TitleActionsBar({ entity }: TitleActionsBarProps) {
+export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -23,11 +25,18 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
 
   // 联动播放历史 store
   const { viewingHistory } = useHistoryStore();
-  const [lastEpisode, setLastEpisode] = useState<number>(1);
+  const [lastEpisodeInfo, setLastEpisodeInfo] = useState<EpisodeDisplayInfo>({
+    label: '第 1 集',
+    paramValue: '1',
+    episodeNumber: 1,
+    isSpecial: false,
+  });
   const [hasHistory, setHasHistory] = useState(false);
   const [historyPercent, setHistoryPercent] = useState<number>(0);
   const [historySource, setHistorySource] = useState<string | null>(null);
   const [historyVodId, setHistoryVodId] = useState<string | number | null>(null);
+
+  const effectiveTitle = playTitle || entity.title;
 
   useEffect(() => {
     // 检查收藏状态 (以 entityId 作为 videoId)
@@ -35,12 +44,13 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
 
     // 检查历史观看进度 (以 title 模糊匹配)
     const historyItem = viewingHistory.find(
-      h => h.title?.trim().toLowerCase() === entity.title.trim().toLowerCase()
+      h => h.title?.trim().toLowerCase() === effectiveTitle.trim().toLowerCase() ||
+           h.title?.trim().toLowerCase() === entity.title.trim().toLowerCase()
     );
     if (historyItem) {
       setHasHistory(true);
-      const ep = (historyItem.episodeIndex ?? 0) + 1;
-      setLastEpisode(ep);
+      const displayInfo = getEpisodeDisplayInfo(historyItem.episodes, historyItem.episodeIndex);
+      setLastEpisodeInfo(displayInfo);
       if (historyItem.source) setHistorySource(historyItem.source);
       if (historyItem.videoId) setHistoryVodId(historyItem.videoId);
       if (historyItem.duration && historyItem.duration > 0) {
@@ -48,15 +58,15 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
         setHistoryPercent(pct);
       }
     }
-  }, [entity.entityId, entity.title, isFavorite, viewingHistory]);
+  }, [entity.entityId, entity.title, effectiveTitle, isFavorite, viewingHistory]);
 
-  const handlePlay = (ep: number = lastEpisode) => {
+  const handlePlay = (param: string = lastEpisodeInfo.paramValue) => {
     startTransition(() => {
       const params = new URLSearchParams({
         entity: entity.entityId,
-        title: entity.title,
+        title: effectiveTitle,
         type: entity.type === 'tv' ? 'tv' : 'movie',
-        episode: String(ep),
+        episode: String(param),
       });
       if (historyVodId) params.set('id', String(historyVodId));
       if (historySource) params.set('source', historySource);
@@ -72,7 +82,7 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
     } else {
       addFavorite({
         videoId: entity.entityId,
-        title: entity.title,
+        title: effectiveTitle,
         source: 'ikanpp',
         poster: entity.cover,
         type: entity.genres?.[0] || (entity.type === 'tv' ? '电视剧' : '电影'),
@@ -125,7 +135,7 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
         <div className="flex flex-col gap-2.5 w-full">
           {/* 主播放按钮：100% 满宽横跨、高亮利落小圆角、黑底白字 Netflix 质感 */}
           <button
-            onClick={() => handlePlay(lastEpisode)}
+            onClick={() => handlePlay(lastEpisodeInfo.paramValue)}
             disabled={isPending}
             id="btn-netflix-play"
             className="group relative w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-white hover:bg-white/95 text-black font-extrabold text-base shadow-lg shadow-white/10 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-75"
@@ -140,7 +150,7 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
                 <Play className="w-5 h-5 fill-black text-black" />
                 <span>
                   {hasHistory && entity.type === 'tv'
-                    ? `继续观看 第 ${lastEpisode} 集`
+                    ? `继续观看 ${lastEpisodeInfo.label}`
                     : '播放'}
                 </span>
               </>
@@ -202,7 +212,7 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
         <div className="flex items-center gap-3 lg:gap-4 flex-nowrap">
         {/* 立即播放大按钮 */}
         <button
-          onClick={() => handlePlay(lastEpisode)}
+          onClick={() => handlePlay(lastEpisodeInfo.paramValue)}
           disabled={isPending}
           id="btn-netflix-play-desktop"
           className="group relative flex items-center justify-center gap-3 px-8 lg:px-10 py-3.5 lg:py-4 rounded-2xl bg-white hover:bg-white/90 text-black font-black text-base lg:text-lg shadow-2xl shadow-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer disabled:opacity-75 shrink-0"
@@ -217,7 +227,7 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
               <Play className="w-5 h-5 lg:w-6 lg:h-6 fill-black text-black group-hover:scale-110 transition-transform" />
               <span>
                 {hasHistory && entity.type === 'tv'
-                  ? `继续观看 第 ${lastEpisode} 集`
+                  ? `继续观看 ${lastEpisodeInfo.label}`
                   : '立即播放'}
               </span>
             </>

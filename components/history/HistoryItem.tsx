@@ -10,6 +10,7 @@ import { PosterImage } from './PosterImage';
 import { FavoriteButton } from '@/components/favorites/FavoriteButton';
 import { getSourceName } from '@/lib/utils/source-names';
 import { storeGroupedSources } from '@/lib/utils/grouped-sources-cache';
+import { getEpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
 import type { VideoHistoryItem } from '@/lib/types';
 
 interface HistoryItemProps {
@@ -19,12 +20,14 @@ interface HistoryItemProps {
 }
 
 export function HistoryItem({ item, onRemove, isPremium = false }: HistoryItemProps) {
+  const displayInfo = getEpisodeDisplayInfo(item.episodes, item.episodeIndex);
+
   const getVideoUrl = (): string => {
     const params = new URLSearchParams({
       id: item.videoId.toString(),
       source: item.source,
       title: item.title,
-      episode: item.episodeIndex.toString(),
+      episode: displayInfo.paramValue,
     });
     // Pass sourceMap as gsKey for source switching without bloating URL
     if (item.sourceMap && Object.keys(item.sourceMap).length > 1) {
@@ -55,8 +58,8 @@ export function HistoryItem({ item, onRemove, isPremium = false }: HistoryItemPr
 
   const progress = (item.playbackPosition / item.duration) * 100;
   const episodeText = item.episodes && item.episodes.length > 0
-    ? item.episodes[item.episodeIndex]?.name || `第${item.episodeIndex + 1}集`
-    : '';
+    ? displayInfo.label
+    : (item.episodeIndex !== undefined ? `第 ${item.episodeIndex + 1} 集` : '');
 
   return (
     <div className="group bg-[color-mix(in_srgb,var(--glass-bg)_50%,transparent)] rounded-2xl p-3 hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)] transition-all border border-transparent hover:border-(--glass-border)">

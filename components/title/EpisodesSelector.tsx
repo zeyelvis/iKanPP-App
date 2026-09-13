@@ -2,14 +2,23 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Play, Tv, CheckCircle2 } from 'lucide-react';
+import { Play, Tv, Sparkles } from 'lucide-react';
 import { useHistoryStore } from '@/lib/store/history-store';
+import { extractEpisodeNumber } from '@/lib/utils/episode-resolver';
+import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
+
+interface SpecialEpisodeItem {
+  name: string;
+  index: number;
+}
 
 interface EpisodesSelectorProps {
   entityId: string;
   title: string;
   type: string;
   totalEpisodes?: number;
+  numberOfSeasons?: number;
+  currentSeason?: number;
 }
 
 export function EpisodesSelector({
@@ -17,13 +26,27 @@ export function EpisodesSelector({
   title,
   type,
   totalEpisodes = 24,
+  numberOfSeasons = 1,
+  currentSeason = 1,
 }: EpisodesSelectorProps) {
   const router = useRouter();
   const { viewingHistory } = useHistoryStore();
 
+  // 智能提取母片名与当前季数
+  const parsed = parseSeasonFromTitle(title);
+  const baseTitle = parsed ? parsed.baseTitle : title;
+  const initialSeason = currentSeason || (parsed ? parsed.seasonNumber : 1);
+  const [selectedSeason, setSelectedSeason] = useState<number>(initialSeason);
+
+  // 动态构建当前选中的季播探测标题
+  const activeTitle = selectedSeason > 1
+    ? `${baseTitle}第${selectedSeason}季`
+    : (parsed && parsed.seasonNumber === 1 ? `${baseTitle}第1季` : (numberOfSeasons > 1 ? `${baseTitle}第1季` : title));
+
   // 动态真实集数状态（初始以传入的 totalEpisodes 兜底，探测到真实源后自动精确对齐）
   const [realTotalEpisodes, setRealTotalEpisodes] = useState<number | null>(null);
   const [realEpisodeNames, setRealEpisodeNames] = useState<Record<number, string>>({});
+  const [specialEpisodes, setSpecialEpisodes] = useState<SpecialEpisodeItem[]>([]);
   const [realSource, setRealSource] = useState<string | null>(null);
   const [realVodId, setRealVodId] = useState<string | number | null>(null);
 
@@ -40,25 +63,49 @@ export function EpisodesSelector({
   // 异步探测全网片源的真实可播集数（彻底解决 TMDB 预告排期与采集站实际切片不一致的问题）
   useEffect(() => {
     let cancelled = false;
+    setRealTotalEpisodes(null);
+    setRealEpisodeNames({});
+    setSpecialEpisodes([]);
 
     // 1. 本地播放历史优先快速填充
     const historyItem = viewingHistory.find(
-      h => h.title?.trim().toLowerCase() === title.trim().toLowerCase()
+      h => h.title?.trim().toLowerCase() === activeTitle.trim().toLowerCase() ||
+           h.title?.trim().toLowerCase() === title.trim().toLowerCase()
     );
 
     if (historyItem?.episodes && historyItem.episodes.length > 0) {
-      setRealTotalEpisodes(historyItem.episodes.length);
       if (historyItem.source) setRealSource(historyItem.source);
       if (historyItem.videoId) setRealVodId(historyItem.videoId);
+
       const nameMap: Record<number, string> = {};
+      let maxHistoryEp = 0;
+      const historySpecials: SpecialEpisodeItem[] = [];
+
       historyItem.episodes.forEach((ep, i) => {
-        if (ep.name) nameMap[i + 1] = ep.name;
+        if (!ep || !ep.name) return;
+        const epNum = extractEpisodeNumber(ep.name);
+        if (epNum !== null) {
+          nameMap[epNum] = ep.name;
+          if (epNum > maxHistoryEp) maxHistoryEp = epNum;
+        } else {
+          historySpecials.push({ name: ep.name, index: i });
+        }
       });
+
+      // 若历史切片中解析出了正片编号，以正片最大编号为准，杜绝特别篇导致虚高
+      if (maxHistoryEp > 0) {
+        setRealTotalEpisodes(maxHistoryEp);
+      } else {
+        setRealTotalEpisodes(historyItem.episodes.length);
+      }
       setRealEpisodeNames(nameMap);
+      if (historySpecials.length > 0) {
+        setSpecialEpisodes(historySpecials);
+      }
     }
 
     // 2. 异步毫秒级探测骨干源最新收录切片集数
-    fetch(`/api/title-episodes?title=${encodeURIComponent(title)}`)
+    fetch(`/api/title-episodes?title=${encodeURIComponent(activeTitle)}`)
       .then(res => res.json())
       .then(data => {
         if (cancelled) return;
@@ -66,10 +113,22 @@ export function EpisodesSelector({
           setRealTotalEpisodes(data.totalEpisodes);
           if (data.source) setRealSource(data.source);
           if (data.id) setRealVodId(data.id);
+
+          if (Array.isArray(data.specialEpisodes) && data.specialEpisodes.length > 0) {
+            setSpecialEpisodes(data.specialEpisodes);
+          }
+
           if (Array.isArray(data.episodes)) {
             const nameMap: Record<number, string> = {};
             data.episodes.forEach((ep: any, i: number) => {
-              if (ep.name) nameMap[i + 1] = ep.name;
+              if (ep.episodeNumber) {
+                nameMap[ep.episodeNumber] = ep.name;
+              } else if (ep.name) {
+                const epNum = extractEpisodeNumber(ep.name);
+                if (epNum !== null) {
+                  nameMap[epNum] = ep.name;
+                }
+              }
             });
             setRealEpisodeNames(nameMap);
           }
@@ -80,16 +139,21 @@ export function EpisodesSelector({
     return () => {
       cancelled = true;
     };
-  }, [title, viewingHistory]);
+  }, [activeTitle, title, viewingHistory]);
 
   useEffect(() => {
     // 从播放历史中定位该影视的观看集数
     const historyItem = viewingHistory.find(
-      h => h.title?.trim().toLowerCase() === title.trim().toLowerCase()
+      h => h.title?.trim().toLowerCase() === activeTitle.trim().toLowerCase() ||
+           h.title?.trim().toLowerCase() === title.trim().toLowerCase()
     );
 
     if (historyItem) {
-      const rawEp = (historyItem.episodeIndex ?? 0) + 1;
+      // 优先从历史切片名称精确提取真实正片编号，杜绝因特别篇插塞导致的下标偏移
+      const currentEpObj = historyItem.episodes?.[historyItem.episodeIndex];
+      const parsedEp = currentEpObj ? extractEpisodeNumber(currentEpObj.name) : null;
+
+      const rawEp = parsedEp ?? ((historyItem.episodeIndex ?? 0) + 1);
       const ep = Math.min(count, Math.max(1, rawEp));
       setCurrentEpisode(ep);
       // 将所在的组设为活动组
@@ -103,14 +167,26 @@ export function EpisodesSelector({
       }
       setWatchedEpisodes(set);
     }
-  }, [title, viewingHistory, count, GROUP_SIZE]);
+  }, [activeTitle, title, viewingHistory, count, GROUP_SIZE]);
 
   const handleSelectEpisode = (ep: number) => {
     const params = new URLSearchParams({
       entity: entityId,
-      title,
+      title: activeTitle,
       type: type === 'tv' ? 'tv' : 'movie',
       episode: String(ep),
+    });
+    if (realVodId) params.set('id', String(realVodId));
+    if (realSource) params.set('source', realSource);
+    router.push(`/player?${params.toString()}`);
+  };
+
+  const handleSelectSpecial = (special: SpecialEpisodeItem) => {
+    const params = new URLSearchParams({
+      entity: entityId,
+      title: activeTitle,
+      type: type === 'tv' ? 'tv' : 'movie',
+      episode: special.name,
     });
     if (realVodId) params.set('id', String(realVodId));
     if (realSource) params.set('source', realSource);
@@ -127,6 +203,39 @@ export function EpisodesSelector({
 
   return (
     <div className="w-full">
+      {/* 多季快速切换选项卡（仅在存在多季时优雅呈现） */}
+      {numberOfSeasons && numberOfSeasons > 1 && (
+        <div className="flex items-center gap-2 mb-4 pb-2 border-b border-white/5 overflow-x-auto scrollbar-none">
+          <span className="text-xs font-bold text-white/50 shrink-0 mr-1 flex items-center gap-1">
+            <span>📺</span>
+            <span>选择季数：</span>
+          </span>
+          <div className="flex items-center gap-1.5 shrink-0">
+            {Array.from({ length: numberOfSeasons }).map((_, idx) => {
+              const s = idx + 1;
+              const isSelected = selectedSeason === s;
+              return (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => {
+                    setSelectedSeason(s);
+                    setActiveTab(0);
+                  }}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                    isSelected
+                      ? 'bg-red-600 text-white shadow-lg shadow-red-950/40 scale-105'
+                      : 'bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10'
+                  }`}
+                >
+                  第 {s} 季
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* 头部标题与分页切换 */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
         <div className="flex items-center gap-2.5">
@@ -134,7 +243,7 @@ export function EpisodesSelector({
             <Tv className="w-4 h-4" />
           </div>
           <h3 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-            <span>剧集列表</span>
+            <span>{numberOfSeasons > 1 ? `第 ${selectedSeason} 季剧集` : '剧集列表'}</span>
             <span className="text-xs font-normal text-white/40">
               (共 {count} 集 · 极速连播)
             </span>
@@ -201,6 +310,28 @@ export function EpisodesSelector({
           );
         })}
       </div>
+
+      {/* 剧场版 / 特别篇独立导视栏 */}
+      {specialEpisodes.length > 0 && (
+        <div className="mt-5 pt-4 border-t border-white/5 flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center gap-1.5 text-xs text-amber-400 font-bold px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/20">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>剧场·特别篇</span>
+          </div>
+          {specialEpisodes.map((sp) => (
+            <button
+              key={sp.index}
+              onClick={() => handleSelectSpecial(sp)}
+              className="group flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-amber-500/15 border border-white/10 hover:border-amber-500/30 text-white/90 hover:text-amber-300 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-sm"
+              title={`播放特别篇: ${sp.name}`}
+            >
+              <Play className="w-3 h-3 text-amber-400 group-hover:scale-110 transition-transform fill-amber-400/40" />
+              <span>{sp.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
+

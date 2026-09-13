@@ -8,6 +8,7 @@ import { useHistoryStore } from '@/lib/store/history-store';
 import type { VideoHistoryItem } from '@/lib/types';
 import { getSourceName } from '@/lib/utils/source-names';
 import { storeGroupedSources } from '@/lib/utils/grouped-sources-cache';
+import { getEpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
 
 export function ResumePlayBubble() {
   const router = useRouter();
@@ -28,25 +29,30 @@ export function ResumePlayBubble() {
     const isRecent = Date.now() - item.timestamp < 7 * 24 * 60 * 60 * 1000;
     const hasProgress = item.playbackPosition > 5;
     const notFinished = item.duration > 0 ? (item.playbackPosition / item.duration) < 0.95 : true;
+    const isDismissedInSession = typeof window !== 'undefined'
+      && sessionStorage.getItem('kvideo_resume_dismissed') === item.showIdentifier;
 
-    // 检查本次 session 是否已经手动关闭过
-    const dismissedId = sessionStorage.getItem('kvideo_resume_dismissed');
-    if (dismissedId === item.showIdentifier) return;
-
-    if (isRecent && hasProgress && notFinished && !isDismissed) {
+    if (isRecent && hasProgress && notFinished && !isDismissedInSession) {
       setLatestItem(item);
-      // 延迟 1.2 秒优雅滑入，避免与首屏加载抢夺注意力
+      // 延迟 1.5 秒后平滑浮现，避免打扰用户刚进入页面的第一眼视觉
       const timer = setTimeout(() => {
         setIsVisible(true);
-      }, 1200);
+      }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [viewingHistory, isDismissed]);
+  }, [viewingHistory]);
 
-  if (!latestItem || !isVisible) return null;
+  if (!latestItem || !isVisible || isDismissed) return null;
 
-  // 格式化时间
+  // 格式化时间为 mm:ss 或 hh:mm:ss
   const formatTime = (seconds: number) => {
+    if (!seconds || isNaN(seconds)) return '00:00';
+    const hours = Math.floor(seconds / 3600);
+    if (hours > 0) {
+      const mins = Math.floor((seconds % 3600) / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
@@ -58,11 +64,12 @@ export function ResumePlayBubble() {
 
   const handleResume = () => {
     // 跳转到播放页
+    const displayInfo = getEpisodeDisplayInfo(latestItem.episodes, latestItem.episodeIndex);
     const query = new URLSearchParams({
       id: String(latestItem.videoId),
       title: latestItem.title,
       source: latestItem.source,
-      episode: String(latestItem.episodeIndex ?? 0),
+      episode: displayInfo.paramValue,
     });
     if (latestItem.playbackPosition && latestItem.playbackPosition > 1) {
       query.set('t', Math.floor(latestItem.playbackPosition).toString());
@@ -141,7 +148,7 @@ export function ResumePlayBubble() {
             </span>
             {latestItem.episodeIndex !== undefined && (
               <span className="text-[10px] text-white/50 bg-white/5 px-1.5 py-0.2 rounded-md">
-                第 {latestItem.episodeIndex + 1} 集
+                {getEpisodeDisplayInfo(latestItem.episodes, latestItem.episodeIndex).label}
               </span>
             )}
           </div>

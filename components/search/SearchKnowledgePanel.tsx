@@ -8,6 +8,7 @@ import { Icons } from '@/components/ui/Icon';
 import { TitleEntity } from '@/lib/types/entity';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 
 interface SearchKnowledgePanelProps {
   query?: string;
@@ -78,26 +79,36 @@ function getEditionInfo(entity: TitleEntity, allEntities: TitleEntity[], index: 
 const KnowledgeCard = memo(function KnowledgeCard({
   entity,
   editionInfo,
+  searchQuery = '',
 }: {
   entity: TitleEntity;
   editionInfo: ReturnType<typeof getEditionInfo>;
+  searchQuery?: string;
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // 统一使用全局规范的纯净 slug 地址，彻底消除易撞车的动态 ID 导致的历史脏缓存张冠李戴
-  const detailUrl = `/title/${generateSlug(entity.title)}`;
+  // 季数智能透传：若用户搜索词指定了季数（如 "时光代理人第3季"），在母条目上精准对齐目标季
+  const userSeasonInfo = searchQuery ? parseSeasonFromTitle(searchQuery) : null;
+  const isSeasonSpecified = Boolean(userSeasonInfo && !entity.title.includes(userSeasonInfo.rawSeasonMatch));
+  const targetSeasonTag = userSeasonInfo ? (userSeasonInfo.rawSeasonMatch || `第${userSeasonInfo.seasonNumber}季`) : '';
+  const effectiveTitle = isSeasonSpecified ? `${entity.title}${targetSeasonTag}` : entity.title;
+
+  // 统一使用全局规范的纯净 slug 地址，确保跳转到包含目标季的精准详情页
+  const detailUrl = `/title/${generateSlug(effectiveTitle)}`;
   const posterUrl = getOptimizedImageUrl(entity.cover);
   const backdropUrl = entity.backdrop ? getOptimizedImageUrl(entity.backdrop) : '';
 
   const isSeries = entity.type === 'tv' || entity.type === 'anime';
   const episodeBadge = isSeries
-    ? entity.numberOfEpisodes && entity.numberOfEpisodes > 0
-      ? `更新至 ${entity.numberOfEpisodes} 集`
-      : '连载剧集'
+    ? isSeasonSpecified
+      ? `${targetSeasonTag} 连载正片`
+      : entity.numberOfEpisodes && entity.numberOfEpisodes > 0
+        ? `更新至 ${entity.numberOfEpisodes} 集`
+        : '连载剧集'
     : '高清电影';
 
   const playUrl = `/player?${new URLSearchParams({
-    title: entity.title,
+    title: effectiveTitle,
     type: isSeries ? 'tv' : 'movie',
     episode: '1',
   }).toString()}`;
@@ -174,10 +185,15 @@ const KnowledgeCard = memo(function KnowledgeCard({
               <Link
                 href={detailUrl}
                 className="text-base sm:text-xl font-bold text-white hover:text-red-400 transition-colors tracking-tight line-clamp-1"
-                title={entity.title}
+                title={effectiveTitle}
               >
-                {entity.title}
+                <span>{entity.title}</span>
               </Link>
+              {isSeasonSpecified && (
+                <span className="px-2 py-0.5 rounded-md bg-red-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-red-600/30">
+                  {targetSeasonTag}
+                </span>
+              )}
               {entity.year && (
                 <span className="text-xs sm:text-sm font-normal text-neutral-400">
                   ({entity.year})
@@ -354,7 +370,7 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
     const info = getEditionInfo(single, entities, 0);
     return (
       <div className="mb-8">
-        <KnowledgeCard entity={single} editionInfo={info} />
+        <KnowledgeCard entity={single} editionInfo={info} searchQuery={cleanQuery} />
       </div>
     );
   }
@@ -372,6 +388,7 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
             key={ent.entityId}
             entity={ent}
             editionInfo={getEditionInfo(ent, entities, idx)}
+            searchQuery={cleanQuery}
           />
         ))}
       </div>
@@ -399,7 +416,7 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
           })}
         </div>
 
-        <KnowledgeCard entity={activeEntity} editionInfo={activeInfo} />
+        <KnowledgeCard entity={activeEntity} editionInfo={activeInfo} searchQuery={cleanQuery} />
       </div>
     </div>
   );

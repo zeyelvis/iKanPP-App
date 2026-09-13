@@ -426,11 +426,11 @@ export function HeroSlideshow({
         <div className="fluid-container relative">
           <div className="iyf-hero-bar pointer-events-auto relative">
             
-            {/* 1. 左栏：大气沉浸的大片标题与流媒体 CTA 播放大按钮（紧凑黄金宽度，避免右侧留出大黑洞） */}
-            <div className="shrink-0 w-full max-w-[220px] lg:w-[200px] xl:w-[230px] flex flex-col items-start justify-end">
-              {/* 上方：固定高度弹性底对齐，大字号片名气势恢宏，底对齐恒定绝不拉扯整栏高度 */}
-              <div className="mb-3 sm:mb-4 w-full h-[76px] sm:h-[88px] lg:h-[96px] flex flex-col justify-end">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[34px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1 leading-tight line-clamp-2 break-words">
+            {/* 1. 左栏：大气沉浸的大片标题与流媒体 CTA 播放大按钮（全量统一巨幕主标题大字号，单排完整呈现） */}
+            <div className="shrink-0 w-full max-w-[280px] sm:max-w-[340px] lg:w-[380px] xl:w-[480px] 2xl:w-[540px] flex flex-col items-start justify-end">
+              {/* 上方：固定高度弹性底对齐，片名单排完整呈现，统一至尊主标题大字号，容器物理尺寸恒定保证中栏零位移 */}
+              <div className="mb-3 sm:mb-4 w-full h-[76px] sm:h-[88px] lg:h-[96px] flex flex-col justify-end overflow-visible">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[34px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1 leading-tight whitespace-nowrap">
                   {active.title}
                 </h2>
                 <div className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] h-6">
@@ -441,16 +441,16 @@ export function HeroSlideshow({
                 </div>
               </div>
 
-              {/* 下方：放大后的流媒体播放大按钮（高度约 50-52px，位置与底线恒定） */}
-              <button
-                type="button"
-                onClick={() => handleMovieClick(active)}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-base sm:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102 shrink-0"
-              >
-                <span>立即播放</span>
-                <span className="text-sm sm:text-base">▷</span>
-              </button>
-            </div>
+                  {/* 下方：放大后的流媒体播放大按钮（高度约 50-52px，位置与底线恒定） */}
+                  <button
+                    type="button"
+                    onClick={() => handleMovieClick(active)}
+                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-base sm:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102 shrink-0"
+                  >
+                    <span>立即播放</span>
+                    <span className="text-sm sm:text-base">▷</span>
+                  </button>
+                </div>
 
             {/* 2. 中栏：100% 绝对对齐爱壹帆官方各专区原生速报排布（电影6+6/首页与剧集6+5/综艺与动漫纪录片4+4） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (() => {

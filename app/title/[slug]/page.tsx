@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -16,6 +17,7 @@ import { EpisodesSelector } from '@/components/title/EpisodesSelector';
 import { StickyBottomPlayCTA } from '@/components/title/StickyBottomPlayCTA';
 import { Navbar } from '@/components/layout/Navbar';
 import { normalizeVideoType } from '@/lib/utils/taxonomy';
+import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 
 /**
  * 智能频道归属识别器
@@ -157,6 +159,22 @@ async function enrichEpisodeCount(entity: TitleEntity): Promise<TitleEntity> {
   // 仅对剧集类型触发
   if (entity.type === 'movie') return entity;
 
+  // 🌟 性能飞跃守卫：如果已具有有效集数统计，并且在 24 小时内更新过，直接复用当前数据，零网络等待！
+  if (entity.numberOfEpisodes && entity.numberOfEpisodes > 0 && entity.numberOfSeasons && entity.numberOfSeasons > 0) {
+    const lastUpdated = entity.updatedAt ? new Date(entity.updatedAt).getTime() : 0;
+    const now = Date.now();
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+    // 24小时内的新鲜数据直接返回
+    if (now - lastUpdated < ONE_DAY_MS) {
+      return entity;
+    }
+
+    // 超过24小时：立即返回当前数据保障用户秒开，后台异步刷新缓存
+    refreshEpisodeCountInBackground(entity);
+    return entity;
+  }
+
   const tmdbId = entity.tmdbId;
 
   // ====== 尝试用现有 tmdbId 精确统计 ======
@@ -178,6 +196,18 @@ async function enrichEpisodeCount(entity: TitleEntity): Promise<TitleEntity> {
   } catch {}
 
   return entity;
+}
+
+/**
+ * 后台非阻塞刷新剧集已播出集数与季数
+ */
+function refreshEpisodeCountInBackground(entity: TitleEntity) {
+  if (!entity.tmdbId || !/^\d{4,}$/.test(entity.tmdbId)) return;
+  (async () => {
+    try {
+      await tryEnrichFromTMDB(entity, entity.tmdbId);
+    } catch {}
+  })();
 }
 
 /**
@@ -215,6 +245,7 @@ async function tryEnrichFromTMDB(entity: TitleEntity, tmdbId: string): Promise<T
       entity.numberOfEpisodes = airedCount;
       entity.numberOfSeasons = totalSeasons;
       entity.tmdbId = tmdbId; // 确保 tmdbId 已修正
+      entity.updatedAt = new Date().toISOString();
       saveEntity(entity).catch(() => {});
       return entity;
     }
@@ -224,6 +255,7 @@ async function tryEnrichFromTMDB(entity: TitleEntity, tmdbId: string): Promise<T
       entity.numberOfEpisodes = detail.number_of_episodes;
       entity.numberOfSeasons = totalSeasons;
       entity.tmdbId = tmdbId;
+      entity.updatedAt = new Date().toISOString();
       saveEntity(entity).catch(() => {});
       return entity;
     }
@@ -257,11 +289,19 @@ function hasTitleOverlap(a: string, b: string): boolean {
 }
 
 /**
+ * 基于 React 19 cache 的单请求级数据获取去重包装器
+ * 彻底消除 generateMetadata() 与 TitlePage() 对同一条目数据的双重重复解析
+ */
+const getCachedEntity = cache(async (rawSlugParam: string): Promise<TitleEntity | null> => {
+  return resolveEntity(rawSlugParam);
+});
+
+/**
  * 动态 SEO Metadata 生成（含 Google Discover 大图与 AI 摘要授权）
  */
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const entity = await resolveEntity(slug);
+  const entity = await getCachedEntity(slug);
 
   if (!entity) {
     return {
@@ -270,10 +310,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  let decodedSlug = slug.trim();
+  try {
+    decodedSlug = decodeURIComponent(decodedSlug).trim();
+  } catch {}
+  const { entityId: rawEntityId, slug: innerSlug } = parseEntitySlug(decodedSlug);
+  const rawCleanTitle = innerSlug || (rawEntityId ? '' : decodedSlug);
+  const seasonInfo = parseSeasonFromTitle(rawCleanTitle);
+  const seasonTag = seasonInfo ? (seasonInfo.rawSeasonMatch || `第${seasonInfo.seasonNumber}季`) : '';
+
   // 多分类智能识别：动漫也属于「有剧集」形态
   const isSeriesLike = entity.type === 'tv' || entity.type === 'anime';
   const typeText = isSeriesLike ? '全集' : '免费高清完整版';
-  const pageTitle = `${entity.title} (${entity.year}) 在线观看 - ${typeText} | iKanPP 爱看片片`;
+  const displayTitle = seasonTag && !entity.title.includes(seasonTag) ? `${entity.title} ${seasonTag}` : entity.title;
+  const pageTitle = `${displayTitle} (${entity.year}) 在线观看 - ${typeText} | iKanPP 爱看片片`;
   const validDirs = (entity.directors || []).filter(d => d && !['知名导演', '实力主演', '未知', '暂无'].includes(d.trim()));
   const validActs = (entity.actors || []).filter(a => a && !['知名导演', '实力主演', '未知', '暂无'].includes(a.trim()));
   let peopleText = '';
@@ -281,7 +331,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const rawDesc = entity.description || '';
   const cleanDesc = rawDesc.replace(/(?:导演|主演)\s*[:：]\s*(?:知名导演|实力主演)[，。、\s]*/g, '').slice(0, 100);
 
-  const metaDescription = `在 iKanPP 免费在线观看《${entity.title}》(${entity.year}) ${isSeriesLike ? (entity.type === 'anime' ? '动漫全集' : '电视剧全集') : '电影完整版'}。${cleanDesc ? `${cleanDesc}...` : ''}${peopleText}海外华人免翻墙极速超清播放。`;
+  const metaDescription = `在 iKanPP 免费在线观看《${displayTitle}》(${entity.year}) ${isSeriesLike ? (entity.type === 'anime' ? '动漫全集' : '电视剧全集') : '电影完整版'}。${cleanDesc ? `${cleanDesc}...` : ''}${peopleText}海外华人免翻墙极速超清播放。`;
   const canonicalUrl = `${BASE_URL}/title/${entity.entityId}-${entity.slug}`;
   let resolvedBackdrop = entity.backdrop;
   if (isFakeBackdrop(entity.backdrop, entity.cover)) {
@@ -295,6 +345,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     );
     if (realBackdrop) {
       resolvedBackdrop = realBackdrop;
+      entity.backdrop = realBackdrop; // 写入 cached entity 对象供后续 TitlePage 复用
     }
   }
   const ogImage = resolvedBackdrop || entity.cover;
@@ -345,11 +396,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function TitlePage({ params }: Props) {
   const { slug } = await params;
-  let entity = await resolveEntity(slug);
+  let decodedSlug = slug.trim();
+  try {
+    decodedSlug = decodeURIComponent(decodedSlug).trim();
+  } catch {}
+
+  let entity = await getCachedEntity(slug);
 
   if (!entity) {
     notFound();
   }
+
+  // 季数智能解析：若 URL / Slug 带有具体季数（如 "时光代理人第3季"），在母条目上精准对齐当季
+  const { entityId: parsedId, slug: innerSlug } = parseEntitySlug(decodedSlug);
+  const rawTitleFromSlug = innerSlug || (parsedId ? '' : decodedSlug);
+  const seasonInfo = parseSeasonFromTitle(rawTitleFromSlug);
+  const seasonTag = seasonInfo ? (seasonInfo.rawSeasonMatch || `第${seasonInfo.seasonNumber}季`) : '';
+  const isSeasonSpecified = Boolean(seasonTag && !entity.title.includes(seasonTag));
+  const effectiveSearchTitle = isSeasonSpecified ? `${entity.title}${seasonTag}` : entity.title;
 
   // 质量自愈保障：若当前实体缺少封面海报（如历史残缺数据），强制在线触发重新丰润
   if (!entity.cover || entity.cover.trim() === '') {
@@ -366,58 +430,60 @@ export default async function TitlePage({ params }: Props) {
   let validDirectors = filterFakePeople(entity.directors);
   let validActors = filterFakePeople(entity.actors);
 
-  // 演职员质量与一致性智能校验（彻底杜绝张冠李戴错配）
-  try {
-    const tmdbMediaType: 'movie' | 'tv' = entity.type === 'movie' ? 'movie' : 'tv';
-    let isMismatch = false;
+  // 演职员质量与一致性智能校验（仅在演职员确实缺失时触发自愈，避免无谓阻塞主渲染路径）
+  if (validDirectors.length === 0 || validActors.length === 0) {
+    try {
+      const tmdbMediaType: 'movie' | 'tv' = entity.type === 'movie' ? 'movie' : 'tv';
+      let isMismatch = false;
 
-    // 1. 若已有 tmdbId，深度校验该 tmdbId 对应的标题是否与本片一致（防槽位 ID 污染，如把 5 当作四个房间）
-    if (entity.tmdbId && /^\d+$/.test(entity.tmdbId)) {
-      const detail = await fetchTMDBDetails(entity.tmdbId, tmdbMediaType);
-      if (detail) {
-        const fetchedTitle = (detail.title || detail.name || '').trim().toLowerCase();
-        const origTitle = (detail.original_title || detail.original_name || '').trim().toLowerCase();
-        const myTitle = entity.title.trim().toLowerCase();
-        // 标题完全不包含且不相符，判定为历史错配垃圾 ID
-        if (fetchedTitle && !fetchedTitle.includes(myTitle) && !myTitle.includes(fetchedTitle) && !origTitle.includes(myTitle) && !myTitle.includes(origTitle)) {
-          isMismatch = true;
-          entity.tmdbId = '';
-          entity.directors = [];
-          entity.actors = [];
-          validDirectors = [];
-          validActors = [];
-        } else if ((validDirectors.length === 0 || validActors.length === 0) && detail.credits) {
-          const realDirs = (detail.credits.crew || []).filter(c => c.job === 'Director').map(c => c.name).filter(Boolean);
-          const realActs = (detail.credits.cast || []).slice(0, 8).map(c => c.name).filter(Boolean);
-          if (realDirs.length > 0) {
-            entity.directors = realDirs;
-            validDirectors = realDirs;
+      // 1. 若已有 tmdbId，深度校验该 tmdbId 对应的标题是否与本片一致（防槽位 ID 污染）
+      if (entity.tmdbId && /^\d+$/.test(entity.tmdbId)) {
+        const detail = await fetchTMDBDetails(entity.tmdbId, tmdbMediaType);
+        if (detail) {
+          const fetchedTitle = (detail.title || detail.name || '').trim().toLowerCase();
+          const origTitle = (detail.original_title || detail.original_name || '').trim().toLowerCase();
+          const myTitle = entity.title.trim().toLowerCase();
+          // 标题完全不包含且不相符，判定为历史错配垃圾 ID
+          if (fetchedTitle && !fetchedTitle.includes(myTitle) && !myTitle.includes(fetchedTitle) && !origTitle.includes(myTitle) && !myTitle.includes(origTitle)) {
+            isMismatch = true;
+            entity.tmdbId = '';
+            entity.directors = [];
+            entity.actors = [];
+            validDirectors = [];
+            validActors = [];
+          } else if ((validDirectors.length === 0 || validActors.length === 0) && detail.credits) {
+            const realDirs = (detail.credits.crew || []).filter(c => c.job === 'Director').map(c => c.name).filter(Boolean);
+            const realActs = (detail.credits.cast || []).slice(0, 8).map(c => c.name).filter(Boolean);
+            if (realDirs.length > 0) {
+              entity.directors = realDirs;
+              validDirectors = realDirs;
+            }
+            if (realActs.length > 0) {
+              entity.actors = realActs;
+              validActors = realActs;
+            }
+            saveEntity(entity).catch(() => {});
           }
-          if (realActs.length > 0) {
-            entity.actors = realActs;
-            validActors = realActs;
-          }
-          await saveEntity(entity);
         }
       }
-    }
 
-    // 2. 若发现错配，或演职员仍为空，以影片真实标题触发在线精准重丰润自愈
-    if (isMismatch || validDirectors.length === 0 || validActors.length === 0) {
-      const enriched = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
-      if (enriched) {
-        entity.tmdbId = enriched.tmdbId;
-        entity.directors = enriched.directors;
-        entity.actors = enriched.actors;
-        if (enriched.cover && (!entity.cover || entity.cover.includes('douban'))) entity.cover = enriched.cover;
-        if (enriched.backdrop && (!entity.backdrop || entity.backdrop.includes('douban'))) entity.backdrop = enriched.backdrop;
-        validDirectors = filterFakePeople(entity.directors);
-        validActors = filterFakePeople(entity.actors);
-        await saveEntity(entity);
+      // 2. 若发现错配，或演职员仍为空，以影片真实标题触发在线精准重丰润自愈
+      if (isMismatch || validDirectors.length === 0 || validActors.length === 0) {
+        const enriched = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
+        if (enriched) {
+          entity.tmdbId = enriched.tmdbId;
+          entity.directors = enriched.directors;
+          entity.actors = enriched.actors;
+          if (enriched.cover && (!entity.cover || entity.cover.includes('douban'))) entity.cover = enriched.cover;
+          if (enriched.backdrop && (!entity.backdrop || entity.backdrop.includes('douban'))) entity.backdrop = enriched.backdrop;
+          validDirectors = filterFakePeople(entity.directors);
+          validActors = filterFakePeople(entity.actors);
+          saveEntity(entity).catch(() => {});
+        }
       }
+    } catch (err) {
+      console.warn('[Enrich credits fail]:', err);
     }
-  } catch (err) {
-    console.warn('[Enrich credits fail]:', err);
   }
 
   // 获取同题材、同导演与同主演相关推荐影片（构建站内强内链拓扑）
@@ -426,11 +492,17 @@ export default async function TitlePage({ params }: Props) {
   const primaryActor = validActors[0];
 
   const allPeopleNames = [...validDirectors, ...validActors];
+  // 头像获取增加 350ms 超时回退，杜绝外部 API 拖慢整个首屏渲染
+  const avatarsPromise = Promise.race([
+    getPersonAvatars(allPeopleNames),
+    new Promise<Record<string, string>>((resolve) => setTimeout(() => resolve({}), 350)),
+  ]);
+
   const [genreRelated, directorRelated, actorRelated, peopleAvatars] = await Promise.all([
     getEntitiesByGenre(primaryGenre, 8),
     primaryDirector ? getEntitiesByDirector(primaryDirector, 6) : Promise.resolve([]),
     primaryActor ? getEntitiesByActor(primaryActor, 6) : Promise.resolve([]),
-    getPersonAvatars(allPeopleNames),
+    avatarsPromise,
   ]);
 
   // 过滤自身
@@ -563,7 +635,10 @@ export default async function TitlePage({ params }: Props) {
               {channelName}
             </Link>
             <span>/</span>
-            <span className="text-white/80 font-medium truncate max-w-[180px] sm:max-w-xs">{entity.title}</span>
+            <span className="text-white/80 font-medium truncate max-w-[180px] sm:max-w-xs">
+              {entity.title}
+              {isSeasonSpecified && <span className="text-red-400 font-bold ml-1.5">{seasonTag}</span>}
+            </span>
           </nav>
 
           {/* 影视主体大横幅 (Hero Article) */}
@@ -575,7 +650,7 @@ export default async function TitlePage({ params }: Props) {
                 <Link
                   href={`/player?${new URLSearchParams({
                     entity: entity.entityId,
-                    title: entity.title,
+                    title: effectiveSearchTitle,
                     type: entity.type === 'tv' ? 'tv' : 'movie',
                     episode: '1',
                   }).toString()}`}
@@ -637,10 +712,15 @@ export default async function TitlePage({ params }: Props) {
             {/* 右侧：电影巨幕主标题、规格徽章与行动栏 (移动端全宽自适应，桌面端网格靠左) */}
             <div className="w-full md:col-span-8 lg:col-span-9 flex flex-col justify-end items-start text-left">
               {/* 唯一语义主标题 H1 */}
-              <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight mb-1.5 sm:mb-3 drop-shadow-md text-left">
-                {entity.title}
+              <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight mb-1.5 sm:mb-3 drop-shadow-md text-left flex flex-wrap items-center gap-2 sm:gap-3">
+                <span>{entity.title}</span>
+                {isSeasonSpecified && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-xl bg-red-600/90 text-white font-black text-sm sm:text-2xl lg:text-3xl tracking-wide shadow-lg shadow-red-950/40">
+                    {seasonTag}
+                  </span>
+                )}
                 {entity.originalTitle && entity.originalTitle !== entity.title && (
-                  <span className="block text-xs sm:text-2xl font-light text-white/50 mt-0.5 sm:mt-1 tracking-normal font-sans">
+                  <span className="w-full block text-xs sm:text-2xl font-light text-white/50 mt-0.5 sm:mt-1 tracking-normal font-sans">
                     {entity.originalTitle}
                   </span>
                 )}
@@ -711,7 +791,7 @@ export default async function TitlePage({ params }: Props) {
 
               {/* Netflix 主控行动区 (立即播放 / 追剧清单 / 分享 / 推荐) */}
               <div className="w-full mb-2 sm:mb-6">
-                <TitleActionsBar entity={entity} />
+                <TitleActionsBar entity={entity} playTitle={effectiveSearchTitle} />
               </div>
             </div>
           </article>
@@ -744,9 +824,11 @@ export default async function TitlePage({ params }: Props) {
           <section className="mb-14 p-5 sm:p-7 rounded-2xl bg-white/4 border border-white/10 backdrop-blur-md shadow-xl">
             <EpisodesSelector
               entityId={entity.entityId}
-              title={entity.title}
+              title={effectiveSearchTitle}
               type={entity.type}
               totalEpisodes={entity.numberOfEpisodes || 24}
+              numberOfSeasons={entity.numberOfSeasons || 1}
+              currentSeason={seasonInfo?.seasonNumber || 1}
             />
           </section>
         )}
@@ -886,7 +968,7 @@ export default async function TitlePage({ params }: Props) {
       </main>
 
       {/* 移动端专属常驻吸底快捷播放栏 */}
-      <StickyBottomPlayCTA entity={entity} />
+      <StickyBottomPlayCTA entity={entity} playTitle={effectiveSearchTitle} />
     </div>
   );
 }

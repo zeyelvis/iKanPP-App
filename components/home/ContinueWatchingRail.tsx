@@ -7,6 +7,7 @@ import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { getSourceName } from '@/lib/utils/source-names';
 import { storeGroupedSources } from '@/lib/utils/grouped-sources-cache';
+import { getEpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
 
 export function ContinueWatchingRail() {
   const router = useRouter();
@@ -24,8 +25,10 @@ export function ContinueWatchingRail() {
     }
     params.set('title', item.title);
     if (item.source) params.set('source', item.source);
-    if (item.episodeIndex !== undefined && item.episodeIndex !== null) {
-      params.set('episode', String(item.episodeIndex));
+    
+    const displayInfo = getEpisodeDisplayInfo(item.episodes, item.episodeIndex);
+    if (displayInfo.paramValue) {
+      params.set('episode', displayInfo.paramValue);
     }
     if (item.playbackPosition && item.playbackPosition > 1) {
       params.set('t', Math.floor(item.playbackPosition).toString());
@@ -73,6 +76,7 @@ export function ContinueWatchingRail() {
             : 0;
 
           const proxiedPoster = getOptimizedImageUrl(item.poster);
+          const epDisplay = getEpisodeDisplayInfo(item.episodes, item.episodeIndex);
 
           return (
             <div
@@ -108,7 +112,7 @@ export function ContinueWatchingRail() {
                   </h4>
                   <div className="flex items-center gap-1.5 mt-1 text-xs text-white/50">
                     <span className="px-1.5 py-0.5 rounded bg-white/10 text-[11px] font-medium text-white/80">
-                      {item.episodeIndex !== undefined ? `第 ${item.episodeIndex + 1} 集` : '正片'}
+                      {epDisplay.label}
                     </span>
                     {progressPercent > 0 && (
                       <span className="text-[11px] text-amber-300 font-semibold">

@@ -7,25 +7,35 @@ import { Play, Loader2, Sparkles } from 'lucide-react';
 import { useHistoryStore } from '@/lib/store/history-store';
 import { TitleEntity } from '@/lib/types/entity';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { getEpisodeDisplayInfo, EpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
 
 interface StickyBottomPlayCTAProps {
   entity: TitleEntity;
+  playTitle?: string;
 }
 
-export function StickyBottomPlayCTA({ entity }: StickyBottomPlayCTAProps) {
+export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isVisible, setIsVisible] = useState(false);
   const { viewingHistory } = useHistoryStore();
-  const [currentEpisode, setCurrentEpisode] = useState<number>(1);
+  const [episodeInfo, setEpisodeInfo] = useState<EpisodeDisplayInfo>({
+    label: '第 1 集',
+    paramValue: '1',
+    episodeNumber: 1,
+    isSpecial: false,
+  });
+
+  const effectiveTitle = playTitle || entity.title;
 
   useEffect(() => {
     // 检查历史进度
     const historyItem = viewingHistory.find(
-      h => h.title?.trim().toLowerCase() === entity.title.trim().toLowerCase()
+      h => h.title?.trim().toLowerCase() === effectiveTitle.trim().toLowerCase() ||
+           h.title?.trim().toLowerCase() === entity.title.trim().toLowerCase()
     );
     if (historyItem) {
-      setCurrentEpisode((historyItem.episodeIndex ?? 0) + 1);
+      setEpisodeInfo(getEpisodeDisplayInfo(historyItem.episodes, historyItem.episodeIndex));
     }
 
     // 监听主播放区域 `#main-play-cta` 是否滑出视口
@@ -42,15 +52,15 @@ export function StickyBottomPlayCTA({ entity }: StickyBottomPlayCTAProps) {
 
     observer.observe(target);
     return () => observer.disconnect();
-  }, [entity.title, viewingHistory]);
+  }, [entity.title, effectiveTitle, viewingHistory]);
 
   const handlePlay = () => {
     startTransition(() => {
       const params = new URLSearchParams({
         entity: entity.entityId,
-        title: entity.title,
+        title: effectiveTitle,
         type: entity.type === 'tv' ? 'tv' : 'movie',
-        episode: String(currentEpisode),
+        episode: episodeInfo.paramValue,
       });
       router.push(`/player?${params.toString()}`);
     });
@@ -88,7 +98,7 @@ export function StickyBottomPlayCTA({ entity }: StickyBottomPlayCTAProps) {
               {entity.type === 'tv' && (
                 <>
                   <span>·</span>
-                  <span className="text-red-400">第 {currentEpisode} 集</span>
+                  <span className="text-red-400">{episodeInfo.label}</span>
                 </>
               )}
             </div>
@@ -107,7 +117,7 @@ export function StickyBottomPlayCTA({ entity }: StickyBottomPlayCTAProps) {
             <Play className="w-4 h-4 fill-white text-white" />
           )}
           <span>
-            {entity.type === 'tv' ? `播放第 ${currentEpisode} 集` : '立即播放'}
+            {entity.type === 'tv' ? `播放 ${episodeInfo.label}` : '立即播放'}
           </span>
         </button>
       </div>
