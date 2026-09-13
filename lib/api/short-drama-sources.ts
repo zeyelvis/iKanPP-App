@@ -1,3 +1,5 @@
+import { sanitizeStreamUrl } from '@/lib/utils/stream-sanitizer';
+
 export interface ShortDramaSource {
   id: string;
   name: string;
@@ -167,14 +169,14 @@ export function parseShortDramaPlayUrl(rawUrl?: string): ShortDramaEpisode[] {
       if (epUrl.startsWith('http://') || epUrl.startsWith('https://')) {
         episodes.push({
           name: epName,
-          url: epUrl,
-          epIndex: i + 1,
+          url: sanitizeStreamUrl(epUrl),
+          epIndex: i,
         });
       }
     } else if (parts.length === 1 && (parts[0].startsWith('http://') || parts[0].startsWith('https://'))) {
       episodes.push({
         name: `第${i + 1}集`,
-        url: parts[0].trim(),
+        url: sanitizeStreamUrl(parts[0].trim()),
         epIndex: i + 1,
       });
     }

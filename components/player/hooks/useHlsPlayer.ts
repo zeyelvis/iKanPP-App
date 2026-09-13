@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import Hls from 'hls.js';
 import { usePlayerSettings } from './usePlayerSettings';
 import { filterM3u8Ad } from '@/lib/utils/m3u8-utils';
+import { sanitizeStreamUrl } from '@/lib/utils/stream-sanitizer';
 import { useRuntimeFeatures } from '@/components/RuntimeFeaturesProvider';
 
 interface UseHlsPlayerProps {
@@ -44,7 +45,8 @@ export function useHlsPlayer({
 
     useEffect(() => {
         const video = videoRef.current;
-        if (!video || !src) return;
+        const effectiveSrc = sanitizeStreamUrl(src);
+        if (!video || !effectiveSrc) return;
 
         // Cleanup previous HLS instance
         if (hlsRef.current) {
@@ -150,7 +152,7 @@ export function useHlsPlayer({
                 hls = new Hls(config);
                 hlsRef.current = hls;
 
-                hls.loadSource(src);
+                hls.loadSource(effectiveSrc);
                 hls.attachMedia(video);
 
                 // Auto Play Handler
@@ -234,7 +236,7 @@ export function useHlsPlayer({
                 });
             } else {
                 // Native HLS (Desktop Safari, no Filter)
-                video.src = src;
+                video.src = effectiveSrc;
             }
         } else if (isNativeHlsSupported) {
             // Native HLS (iOS, Mobile Safari)
@@ -366,7 +368,7 @@ export function useHlsPlayer({
                     }
                 };
 
-                processMasterPlaylist(src).then((result) => {
+                processMasterPlaylist(effectiveSrc).then((result) => {
                     video.src = result.masterBlobUrl;
                     extraBlobs = result.allBlobs;
 
@@ -383,7 +385,7 @@ export function useHlsPlayer({
                         // Revoke blob URLs immediately
                         extraBlobs.forEach(url => URL.revokeObjectURL(url));
                         extraBlobs = [];
-                        video.src = src;
+                        video.src = effectiveSrc;
                     };
 
                     video.addEventListener('error', onBlobError);
@@ -406,17 +408,17 @@ export function useHlsPlayer({
                 }).catch((e) => {
                     console.warn('[HLS Native] Ad filtering failed, falling back to original source.', e);
                     onErrorRef.current?.('广告过滤失败，已回退到原始视频流');
-                    video.src = src;
+                    video.src = effectiveSrc;
                 });
 
             } else {
-                video.src = src;
+                video.src = effectiveSrc;
             }
         } else {
             // Neither MSE nor native HLS supported
             // Try direct playback as last resort (works for mp4 and some browser WebView)
             console.warn('[HLS] No MSE or native HLS support. Trying direct playback...');
-            video.src = src;
+            video.src = effectiveSrc;
 
             let directFailed = false;
             const handleCanPlay = () => {
@@ -430,7 +432,7 @@ export function useHlsPlayer({
                     return;
                 }
                 // Try proxied URL as final attempt
-                const proxiedUrl = `/api/proxy?url=${encodeURIComponent(src)}`;
+                const proxiedUrl = `/api/proxy?url=${encodeURIComponent(effectiveSrc)}`;
                 video.src = proxiedUrl;
                 video.addEventListener('error', () => {
                     onErrorRef.current?.('当前浏览器不支持 HLS 视频播放。建议使用 Chrome、Edge 或 Safari 浏览器。');

@@ -7,6 +7,8 @@
  * 3. 毫秒级直出 ikanbot 已经预清洗对齐好的 20~30 条每集 m3u8 直链
  */
 
+import { sanitizeStreamUrl } from '@/lib/utils/stream-sanitizer';
+
 export interface IkanbotEpisode {
   name: string;
   url: string;
@@ -137,12 +139,12 @@ function parseEpisodes(raw: string): IkanbotEpisode[] {
       const dollarIdx = trimmed.indexOf('$');
       if (dollarIdx !== -1) {
         const name = trimmed.substring(0, dollarIdx).trim() || `第${index + 1}集`;
-        const url = trimmed.substring(dollarIdx + 1).trim();
-        return { name, url };
+        const rawUrl = trimmed.substring(dollarIdx + 1).trim();
+        return { name, url: sanitizeStreamUrl(rawUrl) };
       }
       return {
         name: `第${index + 1}集`,
-        url: trimmed,
+        url: sanitizeStreamUrl(trimmed),
       };
     })
     .filter((ep): ep is IkanbotEpisode => !!(ep && ep.url && ep.url.startsWith('http')));

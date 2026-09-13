@@ -10,6 +10,7 @@ import {
     shouldFilterBlock,
     findDuplicateSignatureBlockIndices,
 } from './m3u8-ad-detector';
+import { sanitizeStreamUrl, sanitizeStreamContent } from './stream-sanitizer';
 
 const INTERSTITIAL_DATERANGE_MARKERS = [
     'class="com.apple.hls.interstitial"',
@@ -96,12 +97,12 @@ export function filterM3u8Ad(
     const normalizedKeywords = normalizeKeywords(customKeywords);
 
     // Unwrap baseUrl if it's a proxy URL to get correct basePath and origin
-    let effectiveBaseUrl = baseUrl;
-    if (baseUrl.includes('/api/proxy?url=')) {
+    let effectiveBaseUrl = sanitizeStreamUrl(baseUrl);
+    if (effectiveBaseUrl.includes('/api/proxy?url=')) {
         try {
-            const urlMatch = baseUrl.match(/[?&]url=([^&]+)/);
+            const urlMatch = effectiveBaseUrl.match(/[?&]url=([^&]+)/);
             if (urlMatch && urlMatch[1]) {
-                effectiveBaseUrl = decodeURIComponent(urlMatch[1]);
+                effectiveBaseUrl = sanitizeStreamUrl(decodeURIComponent(urlMatch[1]));
             }
         } catch { /* ignore */ }
     }
@@ -287,5 +288,5 @@ export function filterM3u8Ad(
         processedLines.pop();
     }
 
-    return processedLines.join('\n');
+    return sanitizeStreamContent(processedLines.join('\n'));
 }

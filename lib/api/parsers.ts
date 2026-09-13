@@ -3,6 +3,7 @@
  */
 
 import type { Episode } from '@/lib/types';
+import { sanitizeStreamUrl } from '@/lib/utils/stream-sanitizer';
 
 /**
  * Parse episode URL string into structured array
@@ -29,10 +30,12 @@ export function parseEpisodes(playUrl: string): Episode[] {
 
             // Clean up URL: remove double slashes but keep protocol (http:// or https://)
             const cleanUrl = (url || '').replace(/([^:])\/\//g, '$1/');
+            // 防污染与域名自动热修复
+            const sanitizedUrl = sanitizeStreamUrl(cleanUrl);
 
             return {
                 name: name || `第 ${index + 1} 集`,
-                url: cleanUrl,
+                url: sanitizedUrl,
                 index,
             };
         });
