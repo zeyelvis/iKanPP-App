@@ -423,17 +423,17 @@ export function HeroSlideshow({
 
       {/* 3. 巨幕内容排版：爱壹帆 1:1 经典三栏布局（整体贴齐图片最下方边缘） */}
       <div className="absolute inset-x-0 bottom-0 z-20 w-full flex flex-col justify-end pb-3 sm:pb-4 lg:pb-5 pointer-events-none">
-        <div className="fluid-container">
-          <div className="iyf-hero-bar pointer-events-auto">
+        <div className="fluid-container relative">
+          <div className="iyf-hero-bar pointer-events-auto relative">
             
-            {/* 1. 左栏：大片主标题与评分在上方相对放大，放大的播放按钮在下方与推荐严格对齐，弹性宽度确保片名完整显示不截断 */}
-            <div className="shrink-0 min-w-[180px] max-w-[280px] lg:max-w-[320px] xl:max-w-[360px] flex flex-col items-start justify-end">
-              {/* 上方：相对放大、极具视觉冲击力的大片片名与评分，支持多行完整舒展展示 */}
-              <div className="mb-3 sm:mb-4 w-full">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[38px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1.5 sm:mb-2 leading-tight flex items-center break-words line-clamp-2 min-h-9 sm:min-h-11 lg:min-h-12">
+            {/* 1. 左栏：固定宽度保障水平零推移，固定标题高度保障按钮垂直零位移 */}
+            <div className="shrink-0 w-full max-w-[280px] lg:w-[300px] xl:w-[340px] flex flex-col items-start justify-end">
+              {/* 上方：固定高度弹性底对齐，无论1行还是2行片名，高度恒定，绝不拉扯整栏高度 */}
+              <div className="mb-3 sm:mb-4 w-full h-[72px] sm:h-[84px] lg:h-[94px] flex flex-col justify-end">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[36px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1 leading-tight line-clamp-2 break-words">
                   {active.title}
                 </h2>
-                <div className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] h-6">
+                <div className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] h-5.5">
                   <span className="truncate">{active.episodes_info || (active.types && active.types.length > 0 ? active.types.join(' · ') : '电影 · 剧情')}</span>
                   {active.rate && parseFloat(active.rate) > 0 && (
                     <span className="text-amber-400 font-bold text-sm sm:text-base flex items-center gap-0.5 shrink-0">★ {active.rate}</span>
@@ -441,18 +441,21 @@ export function HeroSlideshow({
                 </div>
               </div>
 
-              {/* 下方：放大后的流媒体播放大按钮（高度约 50-52px，与右侧双排推荐在纵向与底线上精准对齐） */}
+              {/* 下方：放大后的流媒体播放大按钮（高度约 50-52px，位置与底线恒定） */}
               <button
                 type="button"
                 onClick={() => handleMovieClick(active)}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-base sm:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-base sm:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102 shrink-0"
               >
                 <span>立即播放</span>
                 <span className="text-sm sm:text-base">▷</span>
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（底部居中对齐，严格双排黄金比例，文字完整舒展呈现，100%对齐爱壹帆原生规范） */}
+            {/* 桌面端中栏占位：保持左右两栏两端分布 */}
+            <div className="hidden lg:block flex-1 pointer-events-none" />
+
+            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（绝对水平居中 + 底部底线贴齐，绝不随左侧片名和右侧海报产生任何位移） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (() => {
               // 唯有动漫频道官方规范因《死神》长片名自然拆为 5+7，其余全板块（纪录片、综艺、电影、电视剧、首页）均为严格 6+6 黄金对称
               const splitIdx = contentType === 'anime' ? 5 : 6;
@@ -478,7 +481,7 @@ export function HeroSlideshow({
               );
 
               return (
-                <div className="hidden lg:flex flex-1 min-w-0 justify-center items-end px-2 xl:px-4 pb-1">
+                <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 bottom-1.5 z-20 flex-col items-center pointer-events-auto pb-1">
                   <div className="flex flex-col items-center gap-y-1.5 xl:gap-y-2 max-w-fit">
                     <div className="flex items-center gap-x-2 xl:gap-x-3 2xl:gap-x-4 whitespace-nowrap">
                       {line1.map(renderItem)}
