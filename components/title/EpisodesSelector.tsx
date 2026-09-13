@@ -21,15 +21,15 @@ export function EpisodesSelector({
   const router = useRouter();
   const { viewingHistory } = useHistoryStore();
 
-  // 默认集数保障（至少 12 集，最多限制在合理范围，如 120 集）
-  const count = Math.max(1, Math.min(totalEpisodes || (type === 'tv' ? 24 : 1), 120));
+  // 默认集数保障（至少 1 集，支持超长连载年番动漫如斗罗大陆 300+ 集、名侦探柯南 1100+ 集）
+  const count = Math.max(1, totalEpisodes || (type === 'tv' ? 24 : 1));
 
   const [currentEpisode, setCurrentEpisode] = useState<number>(1);
   const [watchedEpisodes, setWatchedEpisodes] = useState<Set<number>>(new Set());
   const [activeTab, setActiveTab] = useState<number>(0);
 
-  // 每组 25 集分页
-  const GROUP_SIZE = 25;
+  // 集数分页：≤50 集不分组，51~200 集每组 50，201+ 集每组 100
+  const GROUP_SIZE = count <= 50 ? count : count <= 200 ? 50 : 100;
   const groupsCount = Math.ceil(count / GROUP_SIZE);
 
   useEffect(() => {

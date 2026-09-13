@@ -64,7 +64,7 @@ export function HomePageClient() {
 
       {/* Search Loading Animation */}
       {loading && (
-        <div className="fluid-container mt-20 pt-4">
+        <div className="fluid-container pt-3 pb-1">
           <div className="max-w-3xl mx-auto">
             <SearchLoadingAnimation
               currentSource=""
@@ -79,7 +79,7 @@ export function HomePageClient() {
       <main className="pb-20">
         {/* Results Section */}
         {(results.length >= 1 || (!loading && results.length > 0)) && (
-          <div className="fluid-container pt-20">
+          <div className="fluid-container pt-2 sm:pt-4">
             <SearchResults
               results={results}
               availableSources={availableSources}
@@ -98,7 +98,7 @@ export function HomePageClient() {
 
         {/* No Results */}
         {!loading && hasSearched && results.length === 0 && (
-          <div className="fluid-container pt-20">
+          <div className="fluid-container pt-8">
             <NoResults onReset={handleReset} />
           </div>
         )}

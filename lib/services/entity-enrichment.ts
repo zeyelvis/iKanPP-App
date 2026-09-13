@@ -69,6 +69,58 @@ export async function fetchTMDBDetails(
 }
 
 /**
+ * 从 TMDB 季详情 API 精确统计已播出集数
+ * 
+ * 核心原理：TMDB 的 number_of_episodes 包含了预排期但尚未播出的占位集数，
+ * 导致页面显示虚高的集数（如凡人修仙传实际 191 集却显示 206 集）。
+ * 本函数通过 /tv/{id}/season/{n} 接口获取每集的 air_date，
+ * 仅统计 air_date ≤ 今天的已播出集数，确保 100% 精确。
+ * 
+ * 适用于所有连载中的动漫/剧集（凡人修仙传、斗罗大陆、名侦探柯南等）。
+ */
+export async function fetchTMDBAiredEpisodeCount(
+  tmdbId: string | number,
+  numberOfSeasons: number = 1,
+  apiKey = TMDB_API_KEY
+): Promise<number | null> {
+  if (!apiKey || !tmdbId || numberOfSeasons < 1) return null;
+
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
+  try {
+    // 并行查询所有季（大多数中国动漫只有 1 季，即使多季也通常不超过 5 季）
+    const seasonNumbers = Array.from({ length: numberOfSeasons }, (_, i) => i + 1);
+    const seasonPromises = seasonNumbers.map(async (seasonNum) => {
+      try {
+        const url = `${TMDB_BASE}/tv/${tmdbId}/season/${seasonNum}?api_key=${apiKey}&language=zh-CN`;
+        const res = await fetch(url, {
+          headers: { Accept: 'application/json' },
+          next: { revalidate: 86400 }, // 1 天缓存，适应每周更新节奏
+        });
+        if (!res.ok) return 0;
+        const data = await res.json();
+        if (!data.episodes || !Array.isArray(data.episodes)) return 0;
+
+        // 只统计 air_date ≤ 今天的已播出集数
+        return data.episodes.filter(
+          (ep: any) => ep.air_date && ep.air_date <= today
+        ).length;
+      } catch {
+        return 0;
+      }
+    });
+
+    const airedPerSeason = await Promise.all(seasonPromises);
+    const totalAired = airedPerSeason.reduce((sum, n) => sum + n, 0);
+
+    return totalAired > 0 ? totalAired : null;
+  } catch (err) {
+    console.warn(`[TMDB aired count error] id=${tmdbId}:`, err);
+    return null;
+  }
+}
+
+/**
  * 根据影片名称在 TMDB 搜索并抓取最匹配、最高质量条目的完整详情
  */
 export async function searchAndEnrichFromTMDB(
@@ -195,6 +247,23 @@ export async function searchAndEnrichFromTMDB(
     const best = ranked[0];
     if (!best || !best.hit?.id) return null;
 
+    // ====== 防线：标题匹配度硬性门槛 ======
+    // 防止 TMDB 搜索返回的最高分候选与搜索词完全不相关
+    const bestTitle = (best.hit.title || best.hit.name || '').trim();
+    const bestOrig = (best.hit.original_title || best.hit.original_name || '').trim();
+    const hasChineseQuery = /[\u4e00-\u9fff]/.test(cleanQuery);
+
+    if (hasChineseQuery) {
+      // 中文搜索：要求候选标题至少包含搜索词中的 1 个中文字符
+      const queryChars = cleanQuery.match(/[\u4e00-\u9fff]/g) || [];
+      const combinedTitle = bestTitle + bestOrig;
+      const hasOverlap = queryChars.some(ch => combinedTitle.includes(ch));
+      if (!hasOverlap) return null;
+    } else {
+      // 英文搜索：最低分数门槛，排除得分极低的无关条目
+      if (best.score < 50) return null;
+    }
+
     const firstHit = best.hit;
     const actualType = best.actualType;
 
@@ -269,11 +338,24 @@ export async function searchAndEnrichFromTMDB(
       actors: actors.filter(a => a && a !== '实力主演'),
       runtime: detail.runtime,
       numberOfSeasons: detail.number_of_seasons,
-      numberOfEpisodes: detail.number_of_episodes,
+      numberOfEpisodes: detail.number_of_episodes, // 临时赋值，下面精确覆盖
       keywords,
       createdAt: existingToUpdate?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
+
+    // 精确统计已播出集数（过滤掉预排期的占位集数）
+    if (actualType === 'tv' && detail.number_of_seasons) {
+      try {
+        const airedCount = await fetchTMDBAiredEpisodeCount(
+          detail.id,
+          detail.number_of_seasons
+        );
+        if (airedCount && airedCount > 0) {
+          entity.numberOfEpisodes = airedCount;
+        }
+      } catch {}
+    }
 
     // 存入 KV 索引系统
     await saveEntity(entity);
@@ -283,6 +365,214 @@ export async function searchAndEnrichFromTMDB(
   }
 
   return null;
+}
+
+/**
+ * 内部辅助：将 TMDB Hit 完整转换为 TitleEntity 并持久化到 KV
+ */
+async function convertHitToEntity(
+  firstHit: any,
+  actualType: 'movie' | 'tv',
+  fallbackTitle: string
+): Promise<TitleEntity | null> {
+  try {
+    const existByTmdb = await getEntityByTmdb(actualType, String(firstHit.id));
+    if (existByTmdb && existByTmdb.cover && existByTmdb.cover.trim() !== '') {
+      return enrichEpisodeCount(existByTmdb);
+    }
+
+    const detail = await fetchTMDBDetails(firstHit.id, actualType, TMDB_API_KEY);
+    if (!detail) return null;
+
+    const nextSeq = await getNextEntitySeq();
+    const entityId = formatEntityId(nextSeq);
+
+    const mainTitle = detail.title || detail.name || fallbackTitle;
+    const slug = generateSlug(mainTitle);
+
+    const directors: string[] = [];
+    const actors: string[] = [];
+
+    if (detail.credits?.crew) {
+      for (const c of detail.credits.crew) {
+        if (c.job === 'Director' && !directors.includes(c.name)) {
+          directors.push(c.name);
+        }
+      }
+    }
+
+    if (detail.credits?.cast) {
+      for (const c of detail.credits.cast.slice(0, 8)) {
+        if (c.name && !actors.includes(c.name)) {
+          actors.push(c.name);
+        }
+      }
+    }
+
+    const releaseYear = (detail.release_date || detail.first_air_date || '2024').slice(0, 4);
+    const genres = (detail.genres || []).map(g => g.name).filter(Boolean);
+
+    const rawKeywords = detail.keywords?.keywords || detail.keywords?.results || [];
+    const keywords = rawKeywords.map(k => k.name).filter(Boolean).slice(0, 10);
+
+    const entity: TitleEntity = {
+      entityId,
+      slug,
+      tmdbId: String(detail.id),
+      tmdbType: actualType,
+      title: mainTitle,
+      originalTitle: detail.original_title || detail.original_name,
+      type: actualType,
+      year: releaseYear,
+      description: detail.overview || `${mainTitle} 在线观看，支持海外华人免翻墙极速高清播放。`,
+      cover: detail.poster_path ? `https://image.tmdb.org/t/p/w500${detail.poster_path}` : '',
+      backdrop: detail.backdrop_path ? `https://image.tmdb.org/t/p/w1280${detail.backdrop_path}` : '',
+      rate: detail.vote_average ? detail.vote_average.toFixed(1) : '8.5',
+      genres: genres.length > 0 ? genres : [actualType === 'movie' ? '电影' : '电视剧'],
+      directors: directors.filter(d => d && d !== '知名导演'),
+      actors: actors.filter(a => a && a !== '实力主演'),
+      runtime: detail.runtime,
+      numberOfSeasons: detail.number_of_seasons,
+      numberOfEpisodes: detail.number_of_episodes,
+      keywords,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (actualType === 'tv' && detail.number_of_seasons) {
+      try {
+        const airedCount = await fetchTMDBAiredEpisodeCount(detail.id, detail.number_of_seasons);
+        if (airedCount && airedCount > 0) {
+          entity.numberOfEpisodes = airedCount;
+        }
+      } catch {}
+    }
+
+    await saveEntity(entity);
+    return entity;
+  } catch (err) {
+    console.warn(`[convertHitToEntity fail] id=${firstHit?.id}:`, err);
+    return null;
+  }
+}
+
+/**
+ * 搜索 TMDB 多个权威匹配实体（如动漫原版 + 真人改编版双轨推荐）
+ */
+export async function searchMultipleEntitiesFromTMDB(
+  query: string,
+  limit = 2
+): Promise<TitleEntity[]> {
+  if (!query || !TMDB_API_KEY) return [];
+  const cleanQuery = sanitizeSearchTitle(query);
+  if (!cleanQuery) return [];
+
+  try {
+    const multiUrl = `${TMDB_BASE}/search/multi?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(cleanQuery)}`;
+    const mRes = await fetch(multiUrl, {
+      headers: { Accept: 'application/json' },
+      next: { revalidate: 86400 * 7 }
+    });
+
+    if (!mRes.ok) return [];
+    const mData = await mRes.json();
+    const candidates: any[] = Array.isArray(mData.results) ? mData.results : [];
+    if (candidates.length === 0) return [];
+
+    const cleanQ = cleanQuery.toLowerCase();
+    const ranked = candidates
+      .filter(r => r && (r.media_type === 'movie' || r.media_type === 'tv' || !r.media_type))
+      .map(hit => {
+        let score = 0;
+        const hitTitle = (hit.title || hit.name || '').trim();
+        const origTitle = (hit.original_title || hit.original_name || '').trim();
+
+        if (hitTitle === cleanQuery || origTitle === cleanQuery) score += 100;
+        else if (hitTitle.toLowerCase().startsWith(cleanQ)) score += 70;
+        else if (hitTitle.toLowerCase().includes(cleanQ)) score += 50;
+
+        if (hit.poster_path) score += 70;
+        if (hit.backdrop_path) score += 30;
+        if (hit.overview && hit.overview.trim().length > 10) score += 20;
+
+        const pop = Number(hit.popularity) || 0;
+        score += Math.min(pop * 2, 50);
+
+        const votes = Number(hit.vote_count) || 0;
+        if (votes > 10) score += 10;
+        if (votes > 100) score += 10;
+
+        if (!hit.poster_path && pop < 2.5) {
+          score -= 120;
+        }
+
+        const hitType = hit.media_type || (hit.title ? 'movie' : 'tv');
+        return { hit, score, actualType: (hitType === 'tv' ? 'tv' : 'movie') as 'movie' | 'tv' };
+      })
+      .sort((a, b) => b.score - a.score);
+
+    const best = ranked[0];
+    if (!best || !best.hit?.id) return [];
+
+    const bestTitle = (best.hit.title || best.hit.name || '').trim();
+    const bestOrig = (best.hit.original_title || best.hit.original_name || '').trim();
+    if (!hasTitleOverlap(cleanQuery, bestTitle + bestOrig) && best.score < 50) {
+      return [];
+    }
+
+    const selectedHits = [best];
+
+    // 寻找第二席（如真人版或备受瞩目的衍生版）
+    if (limit >= 2 && ranked.length >= 2) {
+      for (const cand of ranked.slice(1)) {
+        if (!cand.hit?.id || cand.hit.id === best.hit.id) continue;
+        if (!cand.hit.poster_path) continue;
+
+        const candTitle = (cand.hit.title || cand.hit.name || '').trim();
+        const candOrig = (cand.hit.original_title || cand.hit.original_name || '').trim();
+        const candFullTitle = candTitle + candOrig;
+
+        if (!hasTitleOverlap(cleanQuery, candFullTitle) && cand.score < 50) continue;
+
+        const isSameName = candTitle === bestTitle || candTitle === cleanQuery;
+        const hasDecentPop = (cand.hit.popularity || 0) > 3.0 || cand.score >= 80;
+
+        if (isSameName || hasDecentPop) {
+          selectedHits.push(cand);
+          break;
+        }
+      }
+    }
+
+    const entities: TitleEntity[] = [];
+    const seenKeys = new Set<string>();
+
+    for (const item of selectedHits) {
+      if (!item.hit?.id) continue;
+      const tmdbKey = `${item.actualType}:${item.hit.id}`;
+      if (seenKeys.has(tmdbKey)) continue;
+
+      const entity = await convertHitToEntity(item.hit, item.actualType, cleanQuery);
+      if (entity && entity.cover) {
+        let finalEntity = entity;
+        if (finalEntity.type !== 'movie' && (!finalEntity.numberOfEpisodes || finalEntity.numberOfEpisodes === 0)) {
+          finalEntity = await enrichEpisodeCount(finalEntity);
+        }
+
+        if (!seenKeys.has(finalEntity.entityId) && !seenKeys.has(`${finalEntity.type}:${finalEntity.tmdbId}`)) {
+          seenKeys.add(tmdbKey);
+          seenKeys.add(finalEntity.entityId);
+          seenKeys.add(`${finalEntity.type}:${finalEntity.tmdbId}`);
+          entities.push(finalEntity);
+        }
+      }
+    }
+
+    return entities;
+  } catch (err) {
+    console.warn(`[searchMultipleEntitiesFromTMDB fail] query=${query}:`, err);
+    return [];
+  }
 }
 
 /**
@@ -528,4 +818,88 @@ export async function searchAndEnrichPersonCredits(
 
     return null;
   }
+
+/**
+ * 标题相似度检测（中文字符交集）
+ */
+export function hasTitleOverlap(a: string, b: string): boolean {
+  const chineseA = a.match(/[\u4e00-\u9fff]/g);
+  const chineseB = b.match(/[\u4e00-\u9fff]/g);
+
+  if (chineseA && chineseA.length > 0 && chineseB && chineseB.length > 0) {
+    const setB = new Set(chineseB);
+    return chineseA.some(ch => setB.has(ch));
+  }
+
+  const la = a.toLowerCase();
+  const lb = b.toLowerCase();
+  return la.includes(lb) || lb.includes(la);
+}
+
+/**
+ * 内部辅助函数：用指定的 tmdbId 尝试从 TMDB 精确统计已播出集数
+ */
+export async function tryEnrichFromTMDB(entity: TitleEntity, tmdbId: string): Promise<TitleEntity | null> {
+  try {
+    const detail = await fetchTMDBDetails(tmdbId, 'tv');
+    if (!detail || !detail.number_of_seasons) return null;
+
+    const tmdbName = (detail.name || detail.original_name || '').trim();
+    const entityTitle = (entity.title || '').trim();
+    if (tmdbName && entityTitle && !hasTitleOverlap(entityTitle, tmdbName)) {
+      return null;
+    }
+
+    const totalSeasons = detail.number_of_seasons;
+
+    if (detail.genres?.length && (!entity.genres || entity.genres.length <= 1)) {
+      entity.genres = detail.genres.map((g: any) => g.name).filter(Boolean);
+    }
+
+    const airedCount = await fetchTMDBAiredEpisodeCount(tmdbId, totalSeasons);
+
+    if (airedCount && airedCount > 0) {
+      entity.numberOfEpisodes = airedCount;
+      entity.numberOfSeasons = totalSeasons;
+      entity.tmdbId = tmdbId;
+      saveEntity(entity).catch(() => {});
+      return entity;
+    }
+
+    if (detail.number_of_episodes) {
+      entity.numberOfEpisodes = detail.number_of_episodes;
+      entity.numberOfSeasons = totalSeasons;
+      entity.tmdbId = tmdbId;
+      saveEntity(entity).catch(() => {});
+      return entity;
+    }
+  } catch {}
+
+  return null;
+}
+
+/**
+ * TMDB 集数精确补全器（含 tmdbId 自愈）
+ */
+export async function enrichEpisodeCount(entity: TitleEntity): Promise<TitleEntity> {
+  if (entity.type === 'movie') return entity;
+
+  const tmdbId = entity.tmdbId;
+
+  if (tmdbId && /^\d{4,}$/.test(tmdbId)) {
+    const result = await tryEnrichFromTMDB(entity, tmdbId);
+    if (result) return result;
+  }
+
+  try {
+    const healed = await searchAndEnrichFromTMDB(entity.title, 'tv', entity.year, true);
+    if (healed && healed.tmdbId && healed.tmdbId !== tmdbId) {
+      const result = await tryEnrichFromTMDB(healed, healed.tmdbId);
+      if (result) return result;
+      return healed;
+    }
+  } catch {}
+
+  return entity;
+}
 

@@ -7,11 +7,19 @@ interface TitleJsonLdProps {
 
 export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: TitleJsonLdProps) {
   const currentUrl = `${siteUrl}/title/${entity.entityId}-${entity.slug}`;
-  const channelPath = entity.type === 'tv' ? '/tv' : '/movie';
-  const channelName = entity.type === 'tv' ? '电视剧' : '电影';
+
+  // 多分类频道映射（与详情页面包屑保持一致）
+  const genreStr = (entity.genres || []).join(',');
+  const animeKws = ['动漫', '动画', '国漫', '国创', '日漫', '新番', '番剧', '修仙', 'Animation'];
+  const isAnime = entity.type === 'anime' || animeKws.some(kw => genreStr.includes(kw));
+  const isDocumentary = genreStr.includes('纪录');
+  const isVariety = genreStr.includes('综艺') || genreStr.includes('真人秀');
+
+  const channelPath = isAnime ? '/anime' : isDocumentary ? '/documentary' : isVariety ? '/variety' : entity.type === 'tv' ? '/tv' : '/movie';
+  const channelName = isAnime ? '动漫' : isDocumentary ? '纪录片' : isVariety ? '综艺' : entity.type === 'tv' ? '电视剧' : '电影';
 
   // 1. Movie / TVSeries 结构化数据
-  const isTv = entity.type === 'tv';
+  const isTv = entity.type === 'tv' || entity.type === 'anime';
   const mediaSchema: Record<string, any> = {
     '@context': 'https://schema.org',
     '@type': isTv ? 'TVSeries' : 'Movie',

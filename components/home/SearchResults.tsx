@@ -11,6 +11,7 @@ import { useTypeBadges } from '@/lib/hooks/useTypeBadges';
 import { useLanguageBadges } from '@/lib/hooks/useLanguageBadges';
 import { Video, SourceBadge } from '@/lib/types';
 import { Icons } from '@/components/ui/Icon';
+import { SearchKnowledgePanel } from '@/components/search/SearchKnowledgePanel';
 
 interface SearchResultsProps {
     results: Video[];
@@ -69,6 +70,9 @@ export function SearchResults({
                 resultsCount={results.length}
                 availableSources={availableSources}
             />
+
+            {/* 本站 TMDB 权威最高权重推荐知识面板（置顶第一席） */}
+            <SearchKnowledgePanel query={query} />
 
             {/* 可折叠过滤器区域 */}
             {hasFilters && (

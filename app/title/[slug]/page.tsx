@@ -6,7 +6,7 @@ import { Star, Clock, Calendar, Film, ArrowLeft, Clapperboard, User, Sparkles, C
 import { getEntityBySlug, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity } from '@/lib/services/entity-kv';
 import { getGenreBySlug } from '@/lib/data/genres';
 import { parseEntitySlug } from '@/lib/data/entities/entity-utils';
-import { searchAndEnrichFromTMDB, fetchTMDBDetails, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
+import { searchAndEnrichFromTMDB, fetchTMDBDetails, fetchTMDBAiredEpisodeCount, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
 import { getPersonAvatars } from '@/lib/services/person-avatar';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { TitleEntity } from '@/lib/types/entity';
@@ -15,6 +15,50 @@ import { TitleActionsBar } from '@/components/title/TitleActionsBar';
 import { EpisodesSelector } from '@/components/title/EpisodesSelector';
 import { StickyBottomPlayCTA } from '@/components/title/StickyBottomPlayCTA';
 import { Navbar } from '@/components/layout/Navbar';
+import { normalizeVideoType } from '@/lib/utils/taxonomy';
+
+/**
+ * 智能频道归属识别器
+ * 综合 entity.type 与 genres 标签，精准判断影片应归属的面包屑频道。
+ * 解决 TMDB 只返回 movie/tv 导致动漫被误归为"电视剧"的问题。
+ */
+function resolveEntityChannel(entity: TitleEntity): { category: string; path: string; name: string } {
+  // 1. entity.type 已经是 'anime' 的直接命中
+  if (entity.type === 'anime') {
+    return { category: 'anime', path: '/anime', name: '动漫' };
+  }
+
+  // 2. 通过 genres 中的标签进行多维度匹配
+  const genres = entity.genres || [];
+  const genreStr = genres.join(',');
+
+  // 动漫关键词识别（覆盖国漫、日漫、新番等所有变体）
+  const animeKeywords = ['动漫', '动画', '国漫', '国创', '日漫', '新番', '番剧', '修仙', 'Animation'];
+  if (animeKeywords.some(kw => genreStr.includes(kw))) {
+    return { category: 'anime', path: '/anime', name: '动漫' };
+  }
+
+  // 利用 taxonomy 归一化引擎对每个 genre 做深度识别
+  for (const g of genres) {
+    const norm = normalizeVideoType(g, entity.title);
+    if (norm.category === 'anime') {
+      return { category: 'anime', path: '/anime', name: '动漫' };
+    }
+    if (norm.category === 'documentary') {
+      return { category: 'documentary', path: '/documentary', name: '纪录片' };
+    }
+    if (norm.category === 'variety') {
+      return { category: 'variety', path: '/variety', name: '综艺' };
+    }
+  }
+
+  // 3. 标准 movie / tv 回退
+  if (entity.type === 'tv') {
+    return { category: 'tv', path: '/tv', name: '电视剧' };
+  }
+
+  return { category: 'movie', path: '/movie', name: '电影' };
+}
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
@@ -42,9 +86,9 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
   if (entity) {
     if (!entity.cover || entity.cover.trim() === '') {
       const healed = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
-      if (healed && healed.cover) return healed;
+      if (healed && healed.cover) return enrichEpisodeCount(healed);
     }
-    return entity;
+    return enrichEpisodeCount(entity);
   }
 
   // 2. 解析 slug，分离 entityId 与 cleanTitle
@@ -60,9 +104,9 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
     if (entity) {
       if (!entity.cover || entity.cover.trim() === '') {
         const healed = await searchAndEnrichFromTMDB(cleanTitle, entity.type, entity.year, true);
-        if (healed && healed.cover) return healed;
+        if (healed && healed.cover) return enrichEpisodeCount(healed);
       }
-      return entity;
+      return enrichEpisodeCount(entity);
     }
   }
 
@@ -71,11 +115,126 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
   if (queryTitle && !/^ik\d{6}$/i.test(queryTitle)) {
     entity = await searchAndEnrichFromTMDB(queryTitle);
     if (entity) {
-      return entity;
+      return enrichEpisodeCount(entity); // 双保险：确保精确集数统计已执行
     }
   }
 
   return null;
+}
+
+/**
+ * TMDB 集数精确补全器（含 tmdbId 自愈）
+ *
+ * 核心逻辑：
+ * 1. 用现有 tmdbId 查询 TMDB TV 详情 → 成功则按 air_date 精确统计已播出集数
+ * 2. 若 tmdbId 无效或详情查询失败 → 自动重新搜索标题修正 tmdbId → 再次精确统计
+ *
+ * tmdbId 自愈场景（根因修复）：
+ * - 仙逆：KV 中缓存了错误的 tmdbId '900118'（一部无关纪录片），
+ *   导致 TV 详情查询返回 null，集数无法补全。
+ *   自愈后重新匹配到正确的 ID 223911（200 集连载动漫），精确统计已播出 158 集。
+ */
+async function enrichEpisodeCount(entity: TitleEntity): Promise<TitleEntity> {
+  // 仅对剧集类型触发
+  if (entity.type === 'movie') return entity;
+
+  const tmdbId = entity.tmdbId;
+
+  // ====== 尝试用现有 tmdbId 精确统计 ======
+  if (tmdbId && /^\d{4,}$/.test(tmdbId)) {
+    const result = await tryEnrichFromTMDB(entity, tmdbId);
+    if (result) return result;
+  }
+
+  // ====== tmdbId 自愈：现有 tmdbId 失效，重新搜索正确的 TMDB 条目 ======
+  try {
+    const healed = await searchAndEnrichFromTMDB(entity.title, 'tv', entity.year, true);
+    if (healed && healed.tmdbId && healed.tmdbId !== tmdbId) {
+      // 用修正后的 tmdbId 再次精确统计
+      const result = await tryEnrichFromTMDB(healed, healed.tmdbId);
+      if (result) return result;
+      // 即使精确统计失败，修正后的 entity 也比旧的好
+      return healed;
+    }
+  } catch {}
+
+  return entity;
+}
+
+/**
+ * 内部辅助函数：用指定的 tmdbId 尝试从 TMDB 精确统计已播出集数
+ * 成功返回更新后的 entity，失败返回 null
+ *
+ * 防线：增加标题相似度校验，防止 tmdbId 指向一个有效但完全无关的 TV 剧集时静默通过
+ */
+async function tryEnrichFromTMDB(entity: TitleEntity, tmdbId: string): Promise<TitleEntity | null> {
+  try {
+    const detail = await fetchTMDBDetails(tmdbId, 'tv');
+    if (!detail || !detail.number_of_seasons) return null;
+
+    // ====== 标题相似度防线 ======
+    // 校验 TMDB 返回的名称是否与 entity 标题有交集
+    // 防止 tmdbId 指向一个有效但完全无关的外文剧集（如仙逆 → "Intimate Portrait"）
+    const tmdbName = (detail.name || detail.original_name || '').trim();
+    const entityTitle = (entity.title || '').trim();
+    if (tmdbName && entityTitle && !hasTitleOverlap(entityTitle, tmdbName)) {
+      // TMDB 名称与标题完全不相关，视为错误匹配
+      return null;
+    }
+
+    const totalSeasons = detail.number_of_seasons;
+
+    // 补全可能缺失的 genres
+    if (detail.genres?.length && (!entity.genres || entity.genres.length <= 1)) {
+      entity.genres = detail.genres.map((g: any) => g.name).filter(Boolean);
+    }
+
+    // 精确统计已播出集数（通过季详情 API 的 air_date 过滤）
+    const airedCount = await fetchTMDBAiredEpisodeCount(tmdbId, totalSeasons);
+
+    if (airedCount && airedCount > 0) {
+      entity.numberOfEpisodes = airedCount;
+      entity.numberOfSeasons = totalSeasons;
+      entity.tmdbId = tmdbId; // 确保 tmdbId 已修正
+      saveEntity(entity).catch(() => {});
+      return entity;
+    }
+
+    // 季详情 API 失败时，回退到总集数
+    if (detail.number_of_episodes) {
+      entity.numberOfEpisodes = detail.number_of_episodes;
+      entity.numberOfSeasons = totalSeasons;
+      entity.tmdbId = tmdbId;
+      saveEntity(entity).catch(() => {});
+      return entity;
+    }
+  } catch {}
+
+  return null;
+}
+
+/**
+ * 标题相似度检测（中文字符交集）
+ *
+ * 判断两个标题是否至少有 1 个中文字符相同。
+ * 适用于中文动漫/剧集场景，能准确区分"仙逆"与"Intimate Portrait"等完全无关的匹配。
+ * 对于纯英文标题，回退到子串包含检查。
+ */
+function hasTitleOverlap(a: string, b: string): boolean {
+  // 提取中文字符
+  const chineseA = a.match(/[\u4e00-\u9fff]/g);
+  const chineseB = b.match(/[\u4e00-\u9fff]/g);
+
+  if (chineseA && chineseA.length > 0 && chineseB && chineseB.length > 0) {
+    // 两个标题都有中文字符：检查是否有交集
+    const setB = new Set(chineseB);
+    return chineseA.some(ch => setB.has(ch));
+  }
+
+  // 至少一方没有中文字符（纯英文标题）：回退到子串包含检查
+  const la = a.toLowerCase();
+  const lb = b.toLowerCase();
+  return la.includes(lb) || lb.includes(la);
 }
 
 /**
@@ -92,8 +251,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const isTv = entity.type === 'tv';
-  const typeText = isTv ? '全集' : '免费高清完整版';
+  // 多分类智能识别：动漫也属于「有剧集」形态
+  const isSeriesLike = entity.type === 'tv' || entity.type === 'anime';
+  const typeText = isSeriesLike ? '全集' : '免费高清完整版';
   const pageTitle = `${entity.title} (${entity.year}) 在线观看 - ${typeText} | iKanPP 爱看片片`;
   const validDirs = (entity.directors || []).filter(d => d && !['知名导演', '实力主演', '未知', '暂无'].includes(d.trim()));
   const validActs = (entity.actors || []).filter(a => a && !['知名导演', '实力主演', '未知', '暂无'].includes(a.trim()));
@@ -102,7 +262,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const rawDesc = entity.description || '';
   const cleanDesc = rawDesc.replace(/(?:导演|主演)\s*[:：]\s*(?:知名导演|实力主演)[，。、\s]*/g, '').slice(0, 100);
 
-  const metaDescription = `在 iKanPP 免费在线观看《${entity.title}》(${entity.year}) ${isTv ? '电视剧全集' : '电影完整版'}。${cleanDesc ? `${cleanDesc}...` : ''}${peopleText}海外华人免翻墙极速超清播放。`;
+  const metaDescription = `在 iKanPP 免费在线观看《${entity.title}》(${entity.year}) ${isSeriesLike ? (entity.type === 'anime' ? '动漫全集' : '电视剧全集') : '电影完整版'}。${cleanDesc ? `${cleanDesc}...` : ''}${peopleText}海外华人免翻墙极速超清播放。`;
   const canonicalUrl = `${BASE_URL}/title/${entity.entityId}-${entity.slug}`;
   let resolvedBackdrop = entity.backdrop;
   if (isFakeBackdrop(entity.backdrop, entity.cover)) {
@@ -269,9 +429,12 @@ export default async function TitlePage({ params }: Props) {
     }
   }
 
-  const isTv = entity.type === 'tv';
-  const channelPath = isTv ? '/tv' : '/movie';
-  const channelName = isTv ? '电视剧' : '电影';
+  // 多分类智能识别：根据 entity.type + genres 精准定位所属频道
+  const resolvedChannel = resolveEntityChannel(entity);
+  const channelPath = resolvedChannel.path;
+  const channelName = resolvedChannel.name;
+  // isTv 语义：是否有剧集列表（电视剧 + 动漫均有，电影没有）
+  const isTv = entity.type === 'tv' || entity.type === 'anime' || resolvedChannel.category === 'anime' || resolvedChannel.category === 'tv';
 
   // 智能识别并自动丰润 TMDB 真实 16:9 横版电影大画幅剧照
   let resolvedBackdrop = entity.backdrop;
