@@ -1,0 +1,78 @@
+name: Full-Site Auto Prewarm & CDN Edge Ingestion
+
+on:
+  schedule:
+    # 每天 2 次全站全量预热巡检：
+    # 1. UTC 20:00 (北京时间凌晨 04:00，夜间全网低峰全量预热)
+    # 2. UTC 08:30 (北京时间下午 16:30，午后档新片更新后预热)
+    - cron: '0 20 * * *'
+    - cron: '30 8 * * *'
+
+  # 监听爱壹帆新片同步工作流完成：一旦有新片同步，自动执行全量预热
+  workflow_run:
+    workflows: ["Auto Sync IYF Channels & Drama Hero Slides"]
+    types:
+      - completed
+
+  # 支持在 GitHub Actions 页面随时手动一键点击触发
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: '触发全量预热的原因'
+        required: false
+        default: 'Manual trigger full-site prewarm'
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  full-prewarm:
+    name: Execute Full-Site Multi-Dimensional Prewarm
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Full-Site Prewarm Engine
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a' }}
+          CLOUDFLARE_AUTH_EMAIL: ${{ secrets.CLOUDFLARE_AUTH_EMAIL || 'zeyelvis@gmail.com' }}
+          CLOUDFLARE_AUTH_KEY: ${{ secrets.CLOUDFLARE_AUTH_KEY || 'cfk_L8MzQDjTswTK4jBtvJjmcKjEnxTQ1dKNhzNyn4dQa33221aa' }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME || 'ikanpp-images' }}
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957' }}
+          SITE_URL: 'https://www.ikanpp.com'
+        run: |
+          echo "🚀 启动 iKanPP 全站全维度全量自动化预热..."
+          npx tsx scripts/full-site-prewarm.ts
+          EXIT_CODE=$?
+          echo "PREWARM_EXIT_CODE=$EXIT_CODE" >> $GITHUB_ENV
+
+      - name: Commit and push new avatars if updated
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+          if [[ -n $(git status --porcelain lib/data/prebaked-avatars.ts) ]]; then
+            echo "✅ 检测到新增演职员肖像数据，正在提交入库..."
+            git add lib/data/prebaked-avatars.ts
+            git commit -m "chore(prewarm): 自动增量入库新版演职员官方肖像库"
+            git push
+            echo "🚀 正在触发生产环境重新部署..."
+            gh workflow run deploy.yml --ref main
+            echo "🎉 新头像资产已更新至生产环境！"
+          else
+            echo "✨ 现有演职员肖像库已是最新，无新增改动。"
+          fi
