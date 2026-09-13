@@ -21,7 +21,7 @@ interface PopularFeaturesProps {
 }
 
 // ── SWR 货架本地瞬间缓存 ──────────────────────────
-const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v10-';
+const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v11-';
 
 function getLocalShelves(type: HomeContentType) {
   if (typeof window === 'undefined') return null;
@@ -87,7 +87,7 @@ function getShelvesMeta(contentType: HomeContentType): [ShelfMeta, ShelfMeta, Sh
       ];
     case 'movie':
       return [
-        { title: '🔥 最新院线热播', icon: '🔥', badge: 'NOW PLAYING', tag: '最新', doubanType: 'movie', viewAll: '/movie?genre=最新' },
+        { title: '🔥 最新院线热播', icon: '🔥', badge: 'NOW PLAYING', tag: '最新', doubanType: 'movie', viewAll: '/movie?genre=最新', prebakedOnly: true },
         { title: '⭐ 豆瓣 8.5+ 影史殿堂神作', icon: '⭐', badge: '豆瓣 9.0+', tag: '豆瓣高分', doubanType: 'movie', viewAll: '/movie?genre=豆瓣高分' },
         { title: '🏮 华语经典 & 港影黄金时代', icon: '🏮', badge: 'CLASSIC', tag: '华语', doubanType: 'movie', viewAll: '/movie?region=华语' },
         { title: '🚀 好莱坞震撼视效 & 科幻动作巅峰', icon: '🚀', badge: 'SUPER HIT', tag: '欧美', doubanType: 'movie', viewAll: '/movie?region=欧美' },
@@ -173,15 +173,15 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   const [weeklyLoading, setWeeklyLoading] = useState<boolean>(false);
   const top10Info = useMemo(() => getTop10Info(top10Category), [top10Category]);
 
-  // 🏛️ 首页大厅固定为全网全品类综合精选货架（保持大厅核心内容稳定呈现，免受分类标签抖动切换影响）
-  const prebakedShelves = PREBAKED_HOME_DATA.all;
-  const initialShelvesCache = typeof window !== 'undefined' ? getLocalShelves('all') : null;
+  // 🏛️ 首页大厅精选货架：恢复为经典的 2026 最新院线与影史殿堂货架（以 movie 为基础）
+  const prebakedShelves = PREBAKED_HOME_DATA.movie;
+  const initialShelvesCache = typeof window !== 'undefined' ? getLocalShelves('movie') : null;
   const [shelf1Movies, setShelf1Movies] = useState<any[]>(() => initialShelvesCache?.s1 || prebakedShelves.s1);
   const [shelf2Movies, setShelf2Movies] = useState<any[]>(() => initialShelvesCache?.s2 || prebakedShelves.s2);
   const [shelf3Movies, setShelf3Movies] = useState<any[]>(() => initialShelvesCache?.s3 || prebakedShelves.s3);
   const [shelf4Movies, setShelf4Movies] = useState<any[]>(() => initialShelvesCache?.s4 || prebakedShelves.s4);
   const [loadingShelves, setLoadingShelves] = useState<boolean>(false);
-  const shelvesMeta = useMemo(() => getShelvesMeta('all'), []);
+  const shelvesMeta = useMemo(() => getShelvesMeta('movie'), []);
 
   // ── 口碑榜：仅当 top10Category 变化时更新口碑榜数据 ──────────────────
   useEffect(() => {
@@ -226,7 +226,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   // ── 首页综合货架：后台异步静默拉取综合大厅货架数据（只在初次加载拉取一次） ──────────────────
   useEffect(() => {
     let isMounted = true;
-    const cache = getLocalShelves('all');
+    const cache = getLocalShelves('movie');
 
     const isSameList = (a: any[], b: any[]) => {
       if (!a || !b || a.length !== b.length) return false;
@@ -280,7 +280,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
           }
 
           if (s1.length || s2.length) {
-            setLocalShelves('all', {
+            setLocalShelves('movie', {
               s1: latestS1,
               s2: latestS2,
               s3: latestS3,
@@ -314,7 +314,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
             setShelf4Movies(prev => isSameList(prev, s4) ? prev : s4);
           }
 
-          setLocalShelves('all', {
+          setLocalShelves('movie', {
             s1: latestS1,
             s2: latestS2,
             s3: latestS3,
