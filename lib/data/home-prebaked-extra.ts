@@ -37,11 +37,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "沧元图",
-        "updateBadge": ""
+        "title": "武神主宰",
+        "updateBadge": "1"
     },
     {
-        "title": "择日飞升",
+        "title": "沧元图",
         "updateBadge": ""
     },
     {
@@ -49,11 +49,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "都市古仙医",
-        "updateBadge": "1"
+        "title": "择日飞升",
+        "updateBadge": ""
     },
     {
-        "title": "遮天",
+        "title": "吞噬星空",
         "updateBadge": ""
     }
   ],
@@ -644,7 +644,11 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "披荆斩棘2026",
-        "updateBadge": ""
+        "updateBadge": "1"
+    },
+    {
+        "title": "我家那闺女2026",
+        "updateBadge": "2"
     },
     {
         "title": "一饭封神第2季",
@@ -655,27 +659,23 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "我家那闺女2026",
-        "updateBadge": "2"
-    },
-    {
         "title": "地球超新鲜第2季",
         "updateBadge": "1"
-    },
-    {
-        "title": "大哥小助理",
-        "updateBadge": ""
     },
     {
         "title": "密室大逃脱第8季",
         "updateBadge": ""
     },
     {
-        "title": "脱口秀和Ta的朋友们第3季",
+        "title": "大哥小助理",
         "updateBadge": ""
     },
     {
-        "title": "姐姐当家第2季",
+        "title": "喜剧之王单口季第3季",
+        "updateBadge": ""
+    },
+    {
+        "title": "脱口秀和Ta的朋友们第3季",
         "updateBadge": ""
     }
   ],
@@ -811,7 +811,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260906",
+        "episodes_info": "更新至20260913",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1786,12 +1786,12 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "牧神记",
-        "updateBadge": "1"
-    },
-    {
         "title": "交锋",
         "updateBadge": ""
+    },
+    {
+        "title": "牧神记",
+        "updateBadge": "1"
     },
     {
         "title": "飞到我心上",
@@ -1866,7 +1866,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     {
         "id": "iyf_hero_movie_3",
         "title": "玩具总动员5",
-        "rate": "8.3",
+        "rate": "8.4",
         "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
         "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
         "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
@@ -2399,11 +2399,23 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "克拉克森的农场第4季",
+        "updateBadge": ""
+    },
+    {
         "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
     {
+        "title": "史前星球",
+        "updateBadge": ""
+    },
+    {
         "title": "克拉克森的农场第3季",
+        "updateBadge": ""
+    },
+    {
+        "title": "味起台州",
         "updateBadge": ""
     },
     {
@@ -2415,27 +2427,15 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "寻色中国",
+        "updateBadge": ""
+    },
+    {
         "title": "若泽·穆里尼奥：特立之道",
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第4季",
-        "updateBadge": ""
-    },
-    {
-        "title": "史前星球",
-        "updateBadge": ""
-    },
-    {
-        "title": "风味人间第5季",
-        "updateBadge": ""
-    },
-    {
-        "title": "风味原产地·潮汕",
-        "updateBadge": ""
-    },
-    {
-        "title": "风味人间",
+        "title": "但是还有书籍第2季",
         "updateBadge": ""
     }
   ],
