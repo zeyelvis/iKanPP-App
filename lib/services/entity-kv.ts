@@ -1,5 +1,5 @@
 import { TitleEntity } from '@/lib/types/entity';
-import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie } from '@/lib/data/entities/entity-utils';
+import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie, hasTitleOverlap } from '@/lib/data/entities/entity-utils';
 import { PREBAKED_HOME_DATA, PrebakedSubject } from '@/lib/data/home-prebaked';
 import { POPULAR_DIRECTORS, POPULAR_ACTORS } from '@/lib/data/popular-people';
 import { PEOPLE_PREBAKED_ENTITIES } from '@/lib/data/people-prebaked';
@@ -282,7 +282,20 @@ export async function getEntityBySlug(slugKey: string): Promise<TitleEntity | nu
   }
 
   if (targetId) {
-    return getEntityById(targetId);
+    const ent = await getEntityById(targetId);
+    if (ent) {
+      // 🌟 强一致防线：如果 slugKey 带有标题部分（例如 ik002001-仙逆剧场版-弑仙之战），
+      // 必须严格校验取出的实体标题是否与 URL 中的标题一致，防止 ID 冲突导致张冠李戴
+      const parts = cleanKey.split('-');
+      if (parts.length > 1) {
+        const urlTitlePart = parts.slice(1).join('-');
+        if (urlTitlePart && !hasTitleOverlap(ent.title, urlTitlePart)) {
+          console.warn(`[getEntityBySlug Mismatch Discarded]: URL part="${urlTitlePart}" does not match entity.title="${ent.title}" (targetId=${targetId})`);
+          return null;
+        }
+      }
+      return ent;
+    }
   }
 
   return null;

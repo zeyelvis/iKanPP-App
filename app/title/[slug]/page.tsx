@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Star, Clock, Calendar, Film, ArrowLeft, Clapperboard, User, Sparkles, CheckCircle2, Play } from 'lucide-react';
 import { getEntityBySlug, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity } from '@/lib/services/entity-kv';
 import { getGenreBySlug } from '@/lib/data/genres';
-import { parseEntitySlug } from '@/lib/data/entities/entity-utils';
+import { parseEntitySlug, normalizeTitle } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, fetchTMDBDetails, fetchTMDBAiredEpisodeCount, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
 import { getPersonAvatars } from '@/lib/services/person-avatar';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
@@ -81,8 +81,34 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
     decodedSlug = decodeURIComponent(decodedSlug).trim();
   } catch {}
 
-  // 1. 尝试直接根据 slug 取实体（支持 ik000001-slug, ik000001 等）
+  // 1. 解析 slug，分离 entityId 与 cleanTitle
+  const { entityId, slug: innerSlug } = parseEntitySlug(decodedSlug);
+  let cleanTitle = innerSlug || (entityId ? '' : decodedSlug);
+  cleanTitle = cleanTitle.replace(/^[-\s]+|[-\s]+$/g, '');
+
+  // 🌟 优先级 1：若存在明确纯净标题，优先尝试 100% 精准标题匹配（最高安全级别，杜绝任何 ID 冲突）
+  if (cleanTitle) {
+    const titleMatch = await getEntityByTitle(cleanTitle);
+    if (titleMatch && titleMatch.cover && normalizeTitle(titleMatch.title) === normalizeTitle(cleanTitle)) {
+      return enrichEpisodeCount(titleMatch);
+    }
+  }
+
+  // 2. 尝试根据 slug 或 ID 取实体
   let entity = await getEntityBySlug(decodedSlug);
+
+  // 🌟 核心防线：严格校验取出的实体标题是否与 URL 中的 cleanTitle 匹配！
+  // 杜绝因动态序号冲突、冷启动重置或历史脏缓存把无关影片（如将仙逆错配成东京出租车）返回出来
+  if (entity && cleanTitle) {
+    const normEntity = normalizeTitle(entity.title);
+    const normClean = normalizeTitle(cleanTitle);
+    const isOverExtended = normEntity.length > normClean.length + 2 && (normEntity.includes('剧场版') || normEntity.includes('电影版') || normEntity.includes('特别篇') || normEntity.includes('番外'));
+    if (!hasTitleOverlap(entity.title, cleanTitle) || isOverExtended) {
+      console.warn(`[resolveEntity Mismatch Discarded]: URL cleanTitle="${cleanTitle}" but found entity="${entity.title}" (id=${entity.entityId})`);
+      entity = null;
+    }
+  }
+
   if (entity) {
     if (!entity.cover || entity.cover.trim() === '') {
       const healed = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
@@ -91,17 +117,10 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
     return enrichEpisodeCount(entity);
   }
 
-  // 2. 解析 slug，分离 entityId 与 cleanTitle
-  const { entityId, slug: innerSlug } = parseEntitySlug(decodedSlug);
-
-  // 提取纯净标题（剔除 ik00xxxx- 前缀后的纯标题）
-  let cleanTitle = innerSlug || (entityId ? '' : decodedSlug);
-  cleanTitle = cleanTitle.replace(/^[-\s]+|[-\s]+$/g, '');
-
   // 3. 如果有纯净标题，尝试在本地按标题反向索引查找
   if (cleanTitle) {
     entity = await getEntityByTitle(cleanTitle);
-    if (entity) {
+    if (entity && hasTitleOverlap(entity.title, cleanTitle)) {
       if (!entity.cover || entity.cover.trim() === '') {
         const healed = await searchAndEnrichFromTMDB(cleanTitle, entity.type, entity.year, true);
         if (healed && healed.cover) return enrichEpisodeCount(healed);

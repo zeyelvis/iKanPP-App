@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Icons } from '@/components/ui/Icon';
 import { TitleEntity } from '@/lib/types/entity';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 interface SearchKnowledgePanelProps {
   query?: string;
@@ -83,7 +84,8 @@ const KnowledgeCard = memo(function KnowledgeCard({
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  const detailUrl = `/title/${entity.entityId}-${entity.slug}`;
+  // 统一使用全局规范的纯净 slug 地址，彻底消除易撞车的动态 ID 导致的历史脏缓存张冠李戴
+  const detailUrl = `/title/${generateSlug(entity.title)}`;
   const posterUrl = getOptimizedImageUrl(entity.cover);
   const backdropUrl = entity.backdrop ? getOptimizedImageUrl(entity.backdrop) : '';
 
@@ -93,6 +95,12 @@ const KnowledgeCard = memo(function KnowledgeCard({
       ? `更新至 ${entity.numberOfEpisodes} 集`
       : '连载剧集'
     : '高清电影';
+
+  const playUrl = `/player?${new URLSearchParams({
+    title: entity.title,
+    type: isSeries ? 'tv' : 'movie',
+    episode: '1',
+  }).toString()}`;
 
   return (
     <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-neutral-950/80 backdrop-blur-xl group transition-all duration-300 hover:border-white/20 flex flex-col justify-between h-full">
@@ -125,34 +133,38 @@ const KnowledgeCard = memo(function KnowledgeCard({
       {/* 卡片核心主体 */}
       <div className="relative z-10 p-4 sm:p-5 flex flex-row gap-3.5 sm:gap-5 flex-1">
         {/* 左侧海报 */}
-        <Link
-          href={detailUrl}
-          className="relative w-24 sm:w-32 md:w-36 aspect-2/3 rounded-xl sm:rounded-2xl overflow-hidden shrink-0 shadow-xl ring-1 ring-white/10 group-hover:ring-white/20 transition-all duration-300 group/poster block self-start"
-        >
-          {!imageLoaded && (
-            <div className="absolute inset-0 bg-neutral-800 animate-pulse" />
-          )}
-          <Image
-            src={posterUrl}
-            alt={entity.title}
-            fill
-            sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, 144px"
-            className={`object-cover transition-all duration-500 group-hover/poster:scale-105 ${
-              imageLoaded ? 'opacity-100' : 'opacity-0'
-            }`}
-            onLoad={() => setImageLoaded(true)}
-            priority
-          />
+        <div className="relative w-24 sm:w-32 md:w-36 aspect-2/3 rounded-xl sm:rounded-2xl overflow-hidden shrink-0 shadow-xl ring-1 ring-white/10 group-hover:ring-white/20 transition-all duration-300 group/poster block self-start">
+          <Link href={detailUrl} className="absolute inset-0 z-0">
+            {!imageLoaded && (
+              <div className="absolute inset-0 bg-neutral-800 animate-pulse" />
+            )}
+            <Image
+              src={posterUrl}
+              alt={entity.title}
+              fill
+              sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, 144px"
+              className={`object-cover transition-all duration-500 group-hover/poster:scale-105 ${
+                imageLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
+              onLoad={() => setImageLoaded(true)}
+              priority
+            />
+          </Link>
           {/* 集数/更新角标 */}
-          <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md text-[10px] font-medium bg-black/80 backdrop-blur-md text-amber-300 border border-amber-500/30 shadow-md">
+          <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md text-[10px] font-medium bg-black/80 backdrop-blur-md text-amber-300 border border-amber-500/30 shadow-md pointer-events-none z-10">
             {episodeBadge}
           </div>
-          <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/poster:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <div className="w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg transform scale-90 group-hover/poster:scale-100 transition-transform">
-              <Icons.Play size={16} className="fill-current ml-0.5" />
+          {/* 海报浮动秒播按钮 */}
+          <Link
+            href={playUrl}
+            className="absolute inset-0 bg-black/30 opacity-0 group-hover/poster:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10"
+            title={`立即播放《${entity.title}》`}
+          >
+            <div className="w-10 h-10 rounded-full bg-red-600 hover:bg-red-500 text-white flex items-center justify-center shadow-lg shadow-red-600/40 transform scale-90 group-hover/poster:scale-100 transition-transform">
+              <Icons.Play size={18} className="fill-current ml-0.5" />
             </div>
-          </div>
-        </Link>
+          </Link>
+        </div>
 
         {/* 右侧详细图谱与信息 */}
         <div className="flex-1 flex flex-col justify-between min-w-0">
@@ -237,7 +249,7 @@ const KnowledgeCard = memo(function KnowledgeCard({
           {/* 底部行动号召 (CTA) 区域 */}
           <div className="pt-2 flex flex-wrap items-center gap-2 border-t border-white/10 mt-auto">
             <Link
-              href={detailUrl}
+              href={playUrl}
               className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-red-600 hover:bg-red-500 text-white shadow-md shadow-red-600/30 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
             >
               <Icons.Play size={14} className="fill-white" />

@@ -97,3 +97,22 @@ export function isInvalidDramaOrMovie(entity: {
 
   return false;
 }
+
+/**
+ * 标题相似度与相关性交集检测
+ * 用于校验 URL 中的 slug 与取出的实体标题是否属于同一部作品，严防 ID 错配与脏缓存污染
+ */
+export function hasTitleOverlap(a: string, b: string): boolean {
+  if (!a || !b) return false;
+  const chineseA = a.match(/[\u4e00-\u9fff]/g);
+  const chineseB = b.match(/[\u4e00-\u9fff]/g);
+
+  if (chineseA && chineseA.length > 0 && chineseB && chineseB.length > 0) {
+    const setB = new Set(chineseB);
+    return chineseA.some(ch => setB.has(ch));
+  }
+
+  const la = a.toLowerCase();
+  const lb = b.toLowerCase();
+  return la.includes(lb) || lb.includes(la);
+}
