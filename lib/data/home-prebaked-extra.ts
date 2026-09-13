@@ -9,7 +9,7 @@ import type { PrebakedSubject, PrebakedHomeCategory } from './home-prebaked';
 export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "斗破苍穹年番",
+        "title": "牧神记",
         "updateBadge": "1"
     },
     {
@@ -17,7 +17,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "光阴之外",
+        "title": "斗破苍穹年番",
         "updateBadge": ""
     },
     {
@@ -25,11 +25,15 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "死神：千年血战篇第4季",
-        "updateBadge": "1"
+        "title": "光阴之外",
+        "updateBadge": ""
     },
     {
         "title": "海贼王",
+        "updateBadge": ""
+    },
+    {
+        "title": "死神：千年血战篇第4季",
         "updateBadge": ""
     },
     {
@@ -41,19 +45,15 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "牧神记",
-        "updateBadge": ""
-    },
-    {
-        "title": "吞噬星空",
-        "updateBadge": ""
-    },
-    {
-        "title": "黄泉的使者",
+        "title": "财神窦占龙",
         "updateBadge": "1"
     },
     {
-        "title": "灵境行者",
+        "title": "都市古仙医",
+        "updateBadge": "1"
+    },
+    {
+        "title": "遮天",
         "updateBadge": ""
     }
   ],
@@ -631,24 +631,24 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
 export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "说唱巅峰对决2026",
-        "updateBadge": "6"
+        "title": "花儿与少年第8季",
+        "updateBadge": "1"
     },
     {
-        "title": "花儿与少年第8季",
-        "updateBadge": ""
+        "title": "心动的信号第9季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "说唱巅峰对决2026",
+        "updateBadge": "6"
     },
     {
         "title": "披荆斩棘2026",
         "updateBadge": ""
     },
     {
-        "title": "心动的信号第9季",
-        "updateBadge": ""
-    },
-    {
         "title": "一饭封神第2季",
-        "updateBadge": ""
+        "updateBadge": "2"
     },
     {
         "title": "你好星期六",
@@ -656,26 +656,26 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "我家那闺女2026",
-        "updateBadge": ""
+        "updateBadge": "2"
+    },
+    {
+        "title": "地球超新鲜第2季",
+        "updateBadge": "1"
     },
     {
         "title": "大哥小助理",
         "updateBadge": ""
     },
     {
-        "title": "姐姐当家第2季",
-        "updateBadge": ""
-    },
-    {
-        "title": "喜剧之王单口季第3季",
-        "updateBadge": ""
-    },
-    {
-        "title": "地球超新鲜第2季",
+        "title": "密室大逃脱第8季",
         "updateBadge": ""
     },
     {
         "title": "脱口秀和Ta的朋友们第3季",
+        "updateBadge": ""
+    },
+    {
+        "title": "姐姐当家第2季",
         "updateBadge": ""
     }
   ],
@@ -686,13 +686,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609111636583635663.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111853405324148.jpg",
-        "description": "《打歌2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260911(第1期纯享)。",
+        "description": "《打歌2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260913(上班直播第1期)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260911(第1期纯享)",
+        "episodes_info": "更新至20260913(上班直播第1期)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -703,13 +703,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608271524382431872.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111844144414888.jpg",
-        "description": "《我家那闺女2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260912(超前营业)。",
+        "description": "《我家那闺女2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260913(第3期下)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260912(超前营业)",
+        "episodes_info": "更新至20260913(第3期下)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -720,13 +720,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609041706270661205.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111843274326403.jpg",
-        "description": "《花儿与少年第8季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260911(第1期下)。",
+        "description": "《花儿与少年第8季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260913(加更版)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260911(第1期下)",
+        "episodes_info": "更新至20260913(加更版)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -754,13 +754,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608102124022465304.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202608261125002570740.jpg",
-        "description": "《披荆斩棘2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260912(第5期下)。",
+        "description": "《披荆斩棘2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260913(加更版)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260912(第5期下)",
+        "episodes_info": "更新至20260913(加更版)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -771,13 +771,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607311122522270150.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202608031821302167723.jpg",
-        "description": "《心动的信号第9季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260911(第6期陪看下)。",
+        "description": "《心动的信号第9季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260913(花絮特辑)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260911(第6期陪看下)",
+        "episodes_info": "更新至20260913(花絮特辑)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -788,13 +788,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607231303450351514.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202607271339373917253.jpg",
-        "description": "《一饭封神第2季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260912(一饭小馆第7期)。",
+        "description": "《一饭封神第2季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260913(一饭家常菜第7期)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260912(一饭小馆第7期)",
+        "episodes_info": "更新至20260913(一饭家常菜第7期)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1779,30 +1779,34 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "兰香如故",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "早春晴朗",
         "updateBadge": ""
     },
     {
+        "title": "牧神记",
+        "updateBadge": "1"
+    },
+    {
         "title": "交锋",
-        "updateBadge": "2"
-    },
-    {
-        "title": "冬城猎凶",
-        "updateBadge": "2"
-    },
-    {
-        "title": "深渊无间",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "飞到我心上",
         "updateBadge": ""
     },
     {
-        "title": "斗破苍穹年番",
+        "title": "深渊无间",
+        "updateBadge": ""
+    },
+    {
+        "title": "冬城猎凶",
+        "updateBadge": ""
+    },
+    {
+        "title": "杀手妈咪",
         "updateBadge": "1"
     },
     {
@@ -1811,19 +1815,15 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "生逢其时",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
-        "title": "说唱巅峰对决2026",
-        "updateBadge": "6"
+        "title": "斗破苍穹年番",
+        "updateBadge": ""
     },
     {
         "title": "花儿与少年第8季",
-        "updateBadge": ""
-    },
-    {
-        "title": "欢迎来龙餐馆",
-        "updateBadge": ""
+        "updateBadge": "1"
     }
   ],
   hero: [
@@ -1902,7 +1902,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     {
         "id": "iyf_hero_tv_5",
         "title": "兰香如故",
-        "rate": "9.0",
+        "rate": "5.0",
         "cover": "https://image.tmdb.org/t/p/w500/kfurXRMH1ZkUoyT5HN72zLTQxzZ.jpg",
         "backdrop": "https://image.tmdb.org/t/p/w1280/mZSewqVlY4F2F2Axm7hiG6KBOBp.jpg",
         "description": "大学士府长孙女沈嘉兰与吏部尚书林家的长孙林锦岐订下婚约，然而朝堂风云突变，祖父沈大学士被判谋逆之罪，沈家惨遭灭门。林家为了自保，与沈家退婚，另与御前新贵赵家结亲。沈嘉兰母亲崔氏曾接济过的林家家奴许万全夫妇用刚病亡的女儿许兰香替下嘉兰。嘉兰从此顶着许兰香的身份，成为林府的一名三等丫鬟。在艰难的境遇中，兰香没有向命运低头，始终为自己和家人的幸福生活努力着，反抗一切不公与压迫。最终，兰香凭借自己的善良与聪慧，突破阶级身份的束缚，赢得林锦岐倾心的同时也获得了林家上下的信服与尊重，成为林家的当家人，将命运牢牢掌控在自己的手中，为沈家洗刷冤屈讨回公道。",
@@ -2399,19 +2399,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第4季",
+        "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
     {
         "title": "克拉克森的农场第3季",
-        "updateBadge": ""
-    },
-    {
-        "title": "若泽·穆里尼奥：特立之道",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
     {
@@ -2423,19 +2415,27 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "守护解放西第5季",
+        "title": "若泽·穆里尼奥：特立之道",
         "updateBadge": ""
     },
     {
-        "title": "大明帝国",
+        "title": "克拉克森的农场第4季",
         "updateBadge": ""
     },
     {
-        "title": "守护解放西",
+        "title": "史前星球",
         "updateBadge": ""
     },
     {
-        "title": "寻色中国",
+        "title": "风味人间第5季",
+        "updateBadge": ""
+    },
+    {
+        "title": "风味原产地·潮汕",
+        "updateBadge": ""
+    },
+    {
+        "title": "风味人间",
         "updateBadge": ""
     }
   ],
@@ -2444,10 +2444,10 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "id": "iyf_hero_documentary_1",
         "title": "欢迎来地球",
         "rate": "7.6",
-        "cover": "https://image.tmdb.org/t/p/w500/A4Ghyg12eHMhYmhL6eDFhXSTYcX.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/qulWYG9FmT2Vtc7wxkGKkAN5yiR.jpg",
-        "description": "梅丽尔·斯特里普、克里斯·奥多德、雅各布·特伦布莱、鲁丝·内伽将为AppleTV+独家制作的地球日动画短片[我们在这里：生活在地球上的注意事项](Here We Are: Notes for Living on Planet Earth，暂译)献声。故事讲述一个早熟的7岁男孩在地球日当天，从他的父母和一个神秘的展览上学到了地球的奇迹。斯特里普担任旁白。这部36分钟的短片根据作家奥利弗·杰弗斯2017年的畅销书改编，由导演菲利普·亨特([阿普克])和Luke Mathen撰写剧本，将于4月17日首播。",
-        "year": "2020",
+        "cover": "https://image.tmdb.org/t/p/w500/8QxetEwQbBqKdue2SlhZO2fKPUO.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/be8s04cLyXXEqjBT24YPYdDSZKB.jpg",
+        "description": "　　威尔·史密斯将在精英探险家的带领下踏上令人惊叹的旅程，近距离接触地球上一些最激动人心的奇观——从无声咆哮的火山到超越我们感知的沙漠，再到拥有自己思想的动物群。\n\n　　火山，深海，草原，海岛，沙漠，冰川河流，史密斯带领大家以观众的视角从活火山到深海探险地球的最末端，领略地球最美的风景。这部大片系列将令人惊叹的摄影与威尔无限的好奇心和热情相结合，是一次穿越地球的激动人心的多感官之旅。",
+        "year": "2021",
         "types": [
             "纪录片",
             "自然",
@@ -2479,11 +2479,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
     {
         "id": "iyf_hero_documentary_3",
         "title": "内马尔：不完美的完美球星",
-        "rate": "7.0",
-        "cover": "https://image.tmdb.org/t/p/w500/nFYf3g3CObjx9ri3PMWkK1lWFhr.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/kGpaa9ufi6gFJqLdDtl9mTOEIXj.jpg",
-        "description": "印度第一位元帅萨姆·马内克肖的生平传记，他是波斯裔拜火教徒，出生于英属印度旁遮普邦的一个医生世家，父亲和两个哥哥都是医生，他却出于叛逆选择从军，并考入英属印度军事学院。在二战期间，曾在缅甸与日军作战并立下战功，身受重伤，后获得准将军衔，派往澳大利亚。然而印度独立后，他回国加入印军，历任军事技术总监、军事参谋学院院长、总参谋长等职务，1973年1月1日成为印度第一位元帅。",
-        "year": "2023",
+        "rate": "7.3",
+        "cover": "https://image.tmdb.org/t/p/w500/aMKNSwbkuCE3VoT3BfwVjQgrdmX.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/n5sd00C93RHi8qxvcFntCVpR1D8.jpg",
+        "description": "内马尔红遍全球，但也不断招来批评与非议。本片中，他分享了个人生活和辉煌足球生涯中的高低起伏。",
+        "year": "2022",
         "types": [
             "纪录片",
             "自然",
@@ -2515,11 +2515,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
     {
         "id": "iyf_hero_documentary_5",
         "title": "史前星球",
-        "rate": "6.5",
-        "cover": "https://image.tmdb.org/t/p/w500/xnOx9FgT9t2yXD8psHqHRko88db.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/1j8EHsYcIXtTXRv4tGSePv4akYn.jpg",
-        "description": "在这段穿越四季的旅程中，你将体验数百种植食性恐龙一年的生活。从破壳而出的那一刻起，这些史前巨兽便面临着自然灾害与凶猛掠食者的威胁，同时还要进行捕猎、进食、嬉戏和史诗般的迁徙。依托科学数据，这些数字恐龙在现代阿拉斯加的背景下栩栩如生地复活了。",
-        "year": "2014",
+        "rate": "8.3",
+        "cover": "https://image.tmdb.org/t/p/w500/kaP2okqRlLJscmw7rMvoykh82dJ.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/6EmuYBkQnCcf5dB9iuz0SmjEt5s.jpg",
+        "description": "在这部由乔恩·费儒和《地球脉动》制片团队联合制作的史诗级纪录片中，观众将以前所未有的方式体验这世界的奇观，回到那雄伟的恐龙和非凡的生物在陆地、海洋和天空中漫游的时期。",
+        "year": "2022",
         "types": [
             "纪录片",
             "自然",
@@ -2533,11 +2533,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
     {
         "id": "iyf_hero_documentary_6",
         "title": "王朝第2季",
-        "rate": "8.8",
-        "cover": "https://static.iyf.tv/upload/video/202205281424242448350s.gif",
-        "backdrop": "https://static.iyf.tv/upload/user/202206021338273860323.jpg",
-        "description": "《王朝第2季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至05。",
-        "year": "2026",
+        "rate": "8.3",
+        "cover": "https://image.tmdb.org/t/p/w500/zqfwHwSs0vSRplFmFMeWddgha0x.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/cfeKMz1ABlB9GpPFS1hpBP2X0O1.jpg",
+        "description": "王朝是一个新的具有里程碑意义的系列。这个系列将记录世界上最具标志性的动物的故事，在世界最知名的地点，他们为了维系自己的王朝而努力奋斗着。在每一集里面，他们每个个体的故事都会通过激烈的、引人入胜的戏剧情节展开。",
+        "year": "2018",
         "types": [
             "纪录片",
             "自然",
@@ -2551,11 +2551,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
     {
         "id": "iyf_hero_documentary_7",
         "title": "漫威616",
-        "rate": "8.8",
-        "cover": "https://static.iyf.tv/upload/video/202210052004260422621s.gif",
-        "backdrop": "https://static.iyf.tv/upload/user/202210111143344353824.jpg",
-        "description": "《漫威616》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至08。",
-        "year": "2026",
+        "rate": "7.4",
+        "cover": "https://image.tmdb.org/t/p/w500/wBOIVb6zgsnfRhvCgdX04pLaYXQ.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/f7PJT5Vvc99vjEmo6JyfDs3p3ei.jpg",
+        "description": "这是一部系列纪录片合集，探索漫威宇宙的文化、社会和历史影响，以及它与日常生活的交集。该系列中的每部影片都单独讲述了一个引人入胜的故事，将电影制作者的愿景展现得淋漓尽致。从整体上看，这些富有创意的影片编织成了一幅美丽的画卷，详细介绍了漫威如何持续影响我们的生活。",
+        "year": "2020",
         "types": [
             "纪录片",
             "自然",
@@ -2569,11 +2569,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
     {
         "id": "iyf_hero_documentary_8",
         "title": "欢迎来到雷克斯汉姆",
-        "rate": "8.8",
-        "cover": "https://static.iyf.tv/upload/video/202210052042294253562s.gif",
-        "backdrop": "https://static.iyf.tv/upload/user/202210111143484364636.jpg",
-        "description": "《欢迎来到雷克斯汉姆》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至18。",
-        "year": "2026",
+        "rate": "7.8",
+        "cover": "https://image.tmdb.org/t/p/w500/1efnHJwRpHtYqvS2riXFDXcL4Vi.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/t0k2nlqfVMceFJFsKukPRm7ZKm3.jpg",
+        "description": "在《小球会大明星》中，罗布·麦克亨尼和瑞安·雷诺兹学习如何经营世界上第三古老的职业足球俱乐部。2020年，罗布和瑞安联手买下了有资格参加英格兰足球联赛系统第五级的英格兰足球议会全国联赛的的雷克斯汉姆足球俱乐部（绰号“红龙”），希望创造一个弱者逆袭的励志故事。令罗布和瑞安担心的是二人在球队运营方面没有经验，之前也没有相互合作过。我们跟随镜头一路从好莱坞来到了威尔士，从球场到更衣室，从办公室到酒吧，深入了解罗布和瑞安如何运营俱乐部以及球队和所在城镇相辅相成的命运。所有人都指望这两位演员能够给这里带来希望和真正的变化。",
+        "year": "2022",
         "types": [
             "纪录片",
             "自然",

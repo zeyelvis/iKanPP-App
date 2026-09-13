@@ -20,7 +20,56 @@ import path from 'path';
 const TMDB_API_KEY = '82eaf0e14803590730e45c2123c90957';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 
+/**
+ * 精准映射表：针对容易被 TMDB 模糊匹配误杀或由于剧集/电影分类歧义而配错的纪录片与特定影视建立官方基线
+ */
+const EXACT_TMDB_MAPPING = {
+  // ── 🌍 爱壹帆纪录片频道 8 席顶级轮播精准锁定 ──
+  '欢迎来地球': { id: 127700, type: 'tv', title: '欢迎来地球', customTypes: ['纪录片', '自然', '探索'] },
+  '带你探索地球': { id: 127700, type: 'tv', title: '欢迎来地球', customTypes: ['纪录片', '自然', '探索'] },
+  '泰国洞穴救援': { id: 680058, type: 'movie', title: '泰国洞穴救援', customTypes: ['纪录片', '自然', '探索'] },
+  '内马尔：不完美的完美球星': { id: 153519, type: 'tv', title: '内马尔：不完美的完美球星', customTypes: ['纪录片', '人物', '体育'] },
+  '屏住呼吸：挑战冰潜记录': { id: 958080, type: 'movie', title: '屏住呼吸：挑战冰潜记录', customTypes: ['纪录片', '极限', '体育'] },
+  '史前星球': { id: 95171, type: 'tv', title: '史前星球', customTypes: ['纪录片', '自然', '探索'] },
+  '王朝第2季': { id: 82953, type: 'tv', title: '王朝第2季', customTypes: ['纪录片', '自然', '野生动物'] },
+  '王朝 第二季': { id: 82953, type: 'tv', title: '王朝第2季', customTypes: ['纪录片', '自然', '野生动物'] },
+  '漫威616': { id: 102693, type: 'tv', title: '漫威616', customTypes: ['纪录片', '文化', '影视'] },
+  '欢迎来到雷克斯汉姆': { id: 126929, type: 'tv', title: '欢迎来到雷克斯汉姆', customTypes: ['纪录片', '体育', '励志'] },
+  '小球会大明星': { id: 126929, type: 'tv', title: '欢迎来到雷克斯汉姆', customTypes: ['纪录片', '体育', '励志'] },
+  // ── 🌍 纪录片经典备选神作 ──
+  '地球脉动': { id: 106379, type: 'tv', title: '地球脉动' },
+  '蓝色星球': { id: 74313, type: 'tv', title: '蓝色星球' },
+  '七个世界，一个星球': { id: 94665, type: 'tv', title: '七个世界，一个星球' },
+};
+
+async function fetchTMDBById(id, type = 'movie') {
+  const url = `${TMDB_BASE}/${type}/${id}?api_key=${TMDB_API_KEY}&language=zh-CN`;
+  try {
+    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (!res.ok) return null;
+    const match = await res.json();
+    return {
+      title: match.title || match.name,
+      overview: match.overview || '',
+      poster: match.poster_path ? `https://image.tmdb.org/t/p/w500${match.poster_path}` : '',
+      backdrop: match.backdrop_path ? `https://image.tmdb.org/t/p/w1280${match.backdrop_path}` : '',
+      rate: (match.vote_average && match.vote_average > 0) ? match.vote_average.toFixed(1) : '8.5',
+      year: (match.release_date || match.first_air_date || '2026').slice(0, 4)
+    };
+  } catch {
+    return null;
+  }
+}
+
 async function fetchTMDB(query, type = 'movie') {
+  const cleanKey = query.trim();
+  // 1. 优先查阅精准映射字典，杜绝张冠李戴（修仙动画、印度军官电影等）
+  if (EXACT_TMDB_MAPPING[cleanKey]) {
+    const exact = EXACT_TMDB_MAPPING[cleanKey];
+    const directData = await fetchTMDBById(exact.id, exact.type);
+    if (directData) return directData;
+  }
+
   const endpoint = type === 'tv' ? 'search/tv' : 'search/movie';
   const url = `${TMDB_BASE}/${endpoint}?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(query)}`;
   try {
