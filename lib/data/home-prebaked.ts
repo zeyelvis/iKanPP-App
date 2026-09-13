@@ -77,11 +77,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "百分之十",
-                "updateBadge": ""
-        },
-        {
-                "title": "怒之杀(听译)",
+                "title": "求救信号",
                 "updateBadge": ""
         },
         {
@@ -89,11 +85,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "求救信号",
+                "title": "怒之杀(听译)",
                 "updateBadge": ""
         },
         {
-                "title": "玩具总动员5",
+                "title": "百分之十",
+                "updateBadge": ""
+        },
+        {
+                "title": "抓特务",
                 "updateBadge": ""
         },
         {
@@ -1798,19 +1798,19 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "生逢其时",
-                "updateBadge": "1"
-        },
-        {
                 "title": "冬城猎凶",
                 "updateBadge": "1"
         },
         {
-                "title": "杀手妈咪",
-                "updateBadge": ""
+                "title": "生逢其时",
+                "updateBadge": "1"
         },
         {
                 "title": "花开锦绣",
+                "updateBadge": ""
+        },
+        {
+                "title": "杀手妈咪",
                 "updateBadge": ""
         },
         {
@@ -1818,11 +1818,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "百花杀",
-                "updateBadge": ""
+                "title": "不是你的恋爱",
+                "updateBadge": "1"
         },
         {
-                "title": "不是你的恋爱",
+                "title": "百花杀",
                 "updateBadge": ""
         }
       ],

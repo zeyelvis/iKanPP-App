@@ -14,19 +14,23 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "牧神记",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "凡人修仙传",
         "updateBadge": ""
     },
     {
+        "title": "海贼王",
+        "updateBadge": "1"
+    },
+    {
         "title": "斗破苍穹年番",
         "updateBadge": ""
     },
     {
-        "title": "海贼王",
-        "updateBadge": ""
+        "title": "无职转生到了异世界就拿出真本事第3季",
+        "updateBadge": "1"
     },
     {
         "title": "光阴之外",
@@ -34,10 +38,6 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "沧元图",
-        "updateBadge": ""
-    },
-    {
-        "title": "死神：千年血战篇第4季",
         "updateBadge": ""
     }
   ],
@@ -615,12 +615,12 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
 export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "心动的信号第9季",
-        "updateBadge": "1"
+        "title": "花儿与少年第8季",
+        "updateBadge": ""
     },
     {
-        "title": "花儿与少年第8季",
-        "updateBadge": "1"
+        "title": "心动的信号第9季",
+        "updateBadge": ""
     },
     {
         "title": "说唱巅峰对决2026",
@@ -628,23 +628,23 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "披荆斩棘2026",
-        "updateBadge": "1"
-    },
-    {
-        "title": "我家那闺女2026",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "一饭封神第2季",
-        "updateBadge": "2"
+        "updateBadge": ""
+    },
+    {
+        "title": "我家那闺女2026",
+        "updateBadge": ""
     },
     {
         "title": "你好星期六",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "地球超新鲜第2季",
-        "updateBadge": "1"
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -1770,19 +1770,15 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "生逢其时",
-        "updateBadge": "1"
-    },
-    {
         "title": "冬城猎凶",
         "updateBadge": "1"
     },
     {
-        "title": "牧神记",
+        "title": "生逢其时",
         "updateBadge": "1"
     },
     {
-        "title": "杀手妈咪",
+        "title": "牧神记",
         "updateBadge": ""
     },
     {
@@ -1790,7 +1786,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "花开锦绣",
+        "title": "海贼王",
+        "updateBadge": "1"
+    },
+    {
+        "title": "花儿与少年第8季",
         "updateBadge": ""
     }
   ],
@@ -2359,6 +2359,10 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
 export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
+        "title": "河中巨怪第1-9季",
+        "updateBadge": ""
+    },
+    {
         "title": "克拉克森的农场第1季",
         "updateBadge": ""
     },
@@ -2367,11 +2371,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "若泽·穆里尼奥：特立之道",
+        "title": "克拉克森的农场第4季",
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第2季",
+        "title": "若泽·穆里尼奥：特立之道",
         "updateBadge": ""
     },
     {
@@ -2379,15 +2383,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第4季",
-        "updateBadge": ""
-    },
-    {
         "title": "守护解放西第6季",
         "updateBadge": ""
     },
     {
-        "title": "史前星球",
+        "title": "一级方程式：疾速争胜第1季",
         "updateBadge": ""
     }
   ],
