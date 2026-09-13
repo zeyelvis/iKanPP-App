@@ -26,6 +26,8 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
   const [lastEpisode, setLastEpisode] = useState<number>(1);
   const [hasHistory, setHasHistory] = useState(false);
   const [historyPercent, setHistoryPercent] = useState<number>(0);
+  const [historySource, setHistorySource] = useState<string | null>(null);
+  const [historyVodId, setHistoryVodId] = useState<string | number | null>(null);
 
   useEffect(() => {
     // 检查收藏状态 (以 entityId 作为 videoId)
@@ -39,6 +41,8 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
       setHasHistory(true);
       const ep = (historyItem.episodeIndex ?? 0) + 1;
       setLastEpisode(ep);
+      if (historyItem.source) setHistorySource(historyItem.source);
+      if (historyItem.videoId) setHistoryVodId(historyItem.videoId);
       if (historyItem.duration && historyItem.duration > 0) {
         const pct = Math.min(100, Math.round((historyItem.playbackPosition / historyItem.duration) * 100));
         setHistoryPercent(pct);
@@ -54,6 +58,8 @@ export function TitleActionsBar({ entity }: TitleActionsBarProps) {
         type: entity.type === 'tv' ? 'tv' : 'movie',
         episode: String(ep),
       });
+      if (historyVodId) params.set('id', String(historyVodId));
+      if (historySource) params.set('source', historySource);
       router.push(`/player?${params.toString()}`);
     });
   };

@@ -238,14 +238,23 @@ export function IkanPPPlayerContainer() {
                   if (episodeParam && isSeriesItem) {
                     const reqEpNum = parseInt(episodeParam, 10);
                     if (!isNaN(reqEpNum) && reqEpNum > 0) {
-                      const remarksNumMatch = remarks.match(/(?:第|更新至|更新到|全)\s*(\d+)\s*集?/);
+                      let maxEpInSource: number | null = null;
+                      const epMatch = remarks.match(/(?:更新至|更新到|连载至|连载到|全|共|ep)\s*(?:第)?\s*(\d+)\s*(?:集|话|期)?/i) ||
+                                      remarks.match(/第\s*(\d+)\s*(?:集|话|期)/i) ||
+                                      remarks.match(/(\d+)\s*(?:集|话)/i);
+                      if (epMatch) {
+                        const parsed = parseInt(epMatch[1], 10);
+                        if (!isNaN(parsed) && parsed > 0 && parsed < 2000) {
+                          maxEpInSource = parsed;
+                        }
+                      }
+
                       const isCompleted = remarks.includes('完结') || remarks.includes('全集');
-                      if (remarksNumMatch) {
-                        const maxEpInSource = parseInt(remarksNumMatch[1], 10);
+                      if (maxEpInSource !== null) {
                         if (maxEpInSource >= reqEpNum) {
-                          episodeScore += 100;
+                          episodeScore += 120;
                         } else {
-                          episodeScore -= 300;
+                          episodeScore -= 400;
                           isEpisodeInsufficient = true;
                         }
                       } else if (isCompleted) {

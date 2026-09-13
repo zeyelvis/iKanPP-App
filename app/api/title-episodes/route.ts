@@ -73,6 +73,7 @@ export async function GET(request: NextRequest) {
         }
 
         return {
+          id: matched.vod_id,
           source: src.id,
           totalEpisodes: bestEpisodes.length,
           episodes: bestEpisodes,
@@ -100,6 +101,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       title,
+      id: best.id,
+      source: best.source,
       totalEpisodes: best.totalEpisodes,
       remarks: best.remarks,
       episodes: best.episodes,

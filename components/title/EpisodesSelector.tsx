@@ -24,6 +24,8 @@ export function EpisodesSelector({
   // 动态真实集数状态（初始以传入的 totalEpisodes 兜底，探测到真实源后自动精确对齐）
   const [realTotalEpisodes, setRealTotalEpisodes] = useState<number | null>(null);
   const [realEpisodeNames, setRealEpisodeNames] = useState<Record<number, string>>({});
+  const [realSource, setRealSource] = useState<string | null>(null);
+  const [realVodId, setRealVodId] = useState<string | number | null>(null);
 
   const count = Math.max(1, realTotalEpisodes ?? totalEpisodes ?? (type === 'tv' ? 24 : 1));
 
@@ -46,6 +48,8 @@ export function EpisodesSelector({
 
     if (historyItem?.episodes && historyItem.episodes.length > 0) {
       setRealTotalEpisodes(historyItem.episodes.length);
+      if (historyItem.source) setRealSource(historyItem.source);
+      if (historyItem.videoId) setRealVodId(historyItem.videoId);
       const nameMap: Record<number, string> = {};
       historyItem.episodes.forEach((ep, i) => {
         if (ep.name) nameMap[i + 1] = ep.name;
@@ -60,6 +64,8 @@ export function EpisodesSelector({
         if (cancelled) return;
         if (data.success && data.totalEpisodes && data.totalEpisodes > 0) {
           setRealTotalEpisodes(data.totalEpisodes);
+          if (data.source) setRealSource(data.source);
+          if (data.id) setRealVodId(data.id);
           if (Array.isArray(data.episodes)) {
             const nameMap: Record<number, string> = {};
             data.episodes.forEach((ep: any, i: number) => {
@@ -106,6 +112,8 @@ export function EpisodesSelector({
       type: type === 'tv' ? 'tv' : 'movie',
       episode: String(ep),
     });
+    if (realVodId) params.set('id', String(realVodId));
+    if (realSource) params.set('source', realSource);
     router.push(`/player?${params.toString()}`);
   };
 
