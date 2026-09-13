@@ -128,7 +128,24 @@ export function middleware(request: NextRequest) {
         }
     }
 
-    return NextResponse.next();
+    const response = NextResponse.next();
+
+    // ── 3. 边缘地域感知（Edge Geo Injection）──
+    // Cloudflare 在边缘层提供访客国家代码 (cf-ipcountry)，毫秒级注入 Cookie
+    const country = request.headers.get('cf-ipcountry');
+    if (country) {
+        const existingCookie = request.cookies.get('geo-region')?.value;
+        if (existingCookie !== country) {
+            response.cookies.set('geo-region', country, {
+                maxAge: 86400 * 7, // 7天有效
+                path: '/',
+                sameSite: 'lax',
+                httpOnly: false, // 允许客户端 JS 同步读取，实现 0 闪烁分流
+            });
+        }
+    }
+
+    return response;
 }
 
 // 仅匹配页面路由，排除静态资源和 API

@@ -10,6 +10,7 @@ import { TVProvider } from "@/lib/contexts/TVContext";
 import { TVNavigationInitializer } from "@/components/TVNavigationInitializer";
 
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
+import { ImagePrefetchObserver } from "@/components/common/ImagePrefetchObserver";
 
 import { AdKeywordsInjector } from "@/components/AdKeywordsInjector";
 import { BackToTop } from "@/components/ui/BackToTop";
@@ -120,7 +121,9 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" className="dark" suppressHydrationWarning>
       <head>
-        {/* 🚀 外部图片 CDN 预连接 — 消除 DNS+TLS 延迟，直接提升 LCP */}
+        {/* 🚀 外部与自建图片 CDN 预连接 — 消除 DNS+TLS 延迟，直接提升 LCP */}
+        <link rel="preconnect" href="https://img.ikanpp.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://img.ikanpp.com" />
         <link rel="preconnect" href="https://image.tmdb.org" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://img2.doubanio.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://img9.doubanio.com" crossOrigin="anonymous" />
@@ -154,6 +157,7 @@ export default function RootLayout({
           </TVProvider>
 
           <ServiceWorkerRegister />
+          <ImagePrefetchObserver />
         </ThemeProvider>
 
         {/* ARIA Live Region for Screen Reader Announcements */}

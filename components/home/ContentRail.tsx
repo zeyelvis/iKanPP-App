@@ -38,7 +38,7 @@ function RailPosterItem({
   onMovieClick: (movie: RailMovie) => void;
 }) {
   const [imageError, setImageError] = useState(false);
-  const proxiedCover = getOptimizedImageUrl(movie.cover);
+  const proxiedCover = getOptimizedImageUrl(movie.cover, { variant: 'poster' });
 
   useEffect(() => {
     setImageError(false);
@@ -48,6 +48,7 @@ function RailPosterItem({
     <div
       onClick={() => onMovieClick(movie)}
       className="cinema-poster-card shrink-0 w-[118px] sm:w-40 lg:w-46 cursor-pointer group/card select-none"
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '160px 240px' }}
     >
       {/* 海报卡片 */}
       <div className="relative aspect-2/3 rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.35)] group-hover/card:border-(--accent-color)/50 transition-all duration-300">

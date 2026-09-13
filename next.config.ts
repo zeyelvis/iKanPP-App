@@ -63,6 +63,11 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'img9.doubanio.com',
       },
+      // Cloudflare R2 自建图片 CDN
+      {
+        protocol: 'https',
+        hostname: 'img.ikanpp.com',
+      },
       // Video source images - allow all subdomains with wildcards
       {
         protocol: 'http',

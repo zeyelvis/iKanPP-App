@@ -47,35 +47,30 @@ self.addEventListener('fetch', (event) => {
     // 跳过视频流代理
     if (url.pathname.startsWith('/api/proxy')) return;
 
-    // === 1. 图片代理缓存（Cache-First）===
-    if (url.pathname.startsWith('/api/img-proxy')) {
+    // === 1. 全球/大陆影视海报全能极速缓存（Cache-First 0ms 响应）===
+    const isOptimizedImage =
+        url.pathname.startsWith('/api/img-proxy') ||
+        url.hostname === 'img.ikanpp.com' ||
+        url.hostname.includes('tmdb.org') ||
+        url.hostname.includes('doubanio.com') ||
+        url.pathname.match(/\.(webp|avif|jpg|jpeg|png)$/i);
+
+    if (isOptimizedImage && !url.pathname.startsWith('/api/proxy')) {
         event.respondWith(
             caches.open(IMG_CACHE).then(async (cache) => {
                 const cached = await cache.match(event.request);
                 if (cached) {
-                    // 检查是否过期（通过自定义 header）
-                    const cachedTime = cached.headers.get('x-sw-cached-at');
-                    if (cachedTime && (Date.now() - parseInt(cachedTime)) < IMG_MAX_AGE) {
-                        return cached;
-                    }
+                    // 海报图片具备天然不可变性，直接 0ms 极速输出！
+                    return cached;
                 }
-                // 未命中或过期：网络请求
+                // 未命中：网络请求后存入本地持久缓存
                 try {
                     const response = await fetch(event.request);
                     if (response.ok) {
-                        // 克隆并加入缓存时间戳
-                        const headers = new Headers(response.headers);
-                        headers.set('x-sw-cached-at', Date.now().toString());
-                        const timedResponse = new Response(await response.clone().arrayBuffer(), {
-                            status: response.status,
-                            statusText: response.statusText,
-                            headers: headers,
-                        });
-                        cache.put(event.request, timedResponse);
+                        cache.put(event.request, response.clone());
                     }
                     return response;
                 } catch {
-                    // 网络失败，返回过期缓存（如有）
                     return cached || new Response('Image unavailable', { status: 503 });
                 }
             })

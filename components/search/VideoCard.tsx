@@ -33,11 +33,12 @@ export const VideoCard = memo<VideoCardProps>(({
 }) => {
   const [imgError, setImgError] = useState(false);
   const displayLatency = latencies[video.source] ?? video.latency;
-  const proxiedPic = getOptimizedImageUrl(video.vod_pic);
+  const proxiedPic = getOptimizedImageUrl(video.vod_pic, { variant: 'poster' });
 
   return (
     <div
       className="relative select-none"
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '160px 240px' }}
       onMouseEnter={(e) => (e.currentTarget.style.zIndex = '100')}
       onMouseLeave={(e) => (e.currentTarget.style.zIndex = '1')}
     >

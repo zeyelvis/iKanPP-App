@@ -59,6 +59,7 @@ function PosterImage({ src, alt, className = '', style, sizes = '100vw', priorit
         alt={alt}
         fill
         priority={priority}
+        decoding="async"
         className={`${className} ${loaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
         style={style}
         sizes={sizes}
@@ -91,14 +92,14 @@ function HeroBackdrop({
   const candidates = useMemo(() => {
     const list: string[] = [];
     if (backdrop) {
-      const optBackdrop = getOptimizedImageUrl(backdrop, { noFallback: true });
+      const optBackdrop = getOptimizedImageUrl(backdrop, { variant: 'backdrop', noFallback: true });
       list.push(optBackdrop);
       if (backdrop !== optBackdrop && backdrop.startsWith('http')) {
         list.push(backdrop);
       }
     }
     if (cover) {
-      const optCover = getOptimizedImageUrl(cover, { noFallback: true });
+      const optCover = getOptimizedImageUrl(cover, { variant: 'poster', noFallback: true });
       if (!list.includes(optCover)) list.push(optCover);
       if (cover !== optCover && cover.startsWith('http') && !list.includes(cover)) {
         list.push(cover);

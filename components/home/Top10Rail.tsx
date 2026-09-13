@@ -34,13 +34,14 @@ function Top10Item({
   onMovieClick: (movie: Top10Movie) => void;
 }) {
   const [imageError, setImageError] = useState(false);
-  const proxiedCover = getOptimizedImageUrl(movie.cover);
+  const proxiedCover = getOptimizedImageUrl(movie.cover, { variant: 'thumb' });
   const isDoubleDigit = idx + 1 >= 10;
 
   return (
     <div
       onClick={() => onMovieClick(movie)}
       className="shrink-0 flex items-center cursor-pointer group select-none relative pr-2 sm:pr-4"
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '185px 280px' }}
     >
       {/* Netflix 风格超大立体镂空描边排名数字 */}
       <div
@@ -63,7 +64,9 @@ function Top10Item({
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-110"
             sizes="180px"
-            loading={idx < 4 ? 'eager' : 'lazy'}
+            loading={idx < 3 ? 'eager' : 'lazy'}
+            priority={idx < 1}
+            decoding="async"
             unoptimized
             referrerPolicy="no-referrer"
             onError={() => setImageError(true)}

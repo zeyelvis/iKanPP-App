@@ -31,8 +31,8 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
   const [fallbackError, setFallbackError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // 智能图片直连加速（TMDB 直接高速直连，豆瓣按需走防盗链代理）
-  const proxiedCover = getOptimizedImageUrl(movie.cover);
+  // 智能图片精准物理尺寸与地域路由（海报卡片统一规范为 poster/342 尺寸）
+  const proxiedCover = getOptimizedImageUrl(movie.cover, { variant: 'poster' });
 
   return (
     <Link
@@ -49,7 +49,8 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
       style={{
         position: 'relative',
         zIndex: 1,
-        contentVisibility: 'visible',
+        contentVisibility: 'auto',
+        containIntrinsicSize: 'auto 300px',
         contain: 'layout style paint'
       }}
       onMouseEnter={(e) => (e.currentTarget.style.zIndex = '100')}
@@ -68,7 +69,9 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
               fill
               className={`object-cover transition-transform duration-500 group-hover:scale-105 rounded-2xl ${imageLoaded ? 'img-fade-in' : 'opacity-0'}`}
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, (max-width: 1600px) 16vw, 12vw"
-              loading={index < 8 ? 'eager' : 'lazy'}
+              loading={index < 4 ? 'eager' : 'lazy'}
+              priority={index < 2}
+              decoding="async"
               unoptimized
               referrerPolicy="no-referrer"
               onLoad={() => setImageLoaded(true)}
