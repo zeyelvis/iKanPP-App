@@ -184,14 +184,14 @@ async function enrichMovieData(slideItem, index, forceType = null) {
 }
 
 /**
- * 动态拉取爱壹帆指定板块 (CID) 官方原生二级速报推荐标签矩阵 (nav-second-links 12 席)
- * 对应爱壹帆底层原生接口：/v3/list/getHotVideoTop?cinema=1&cid=${cid}&pageSize=12
- * 包含电影、电视剧、综艺、动漫、纪录片等专属推荐片名及实时更新角标
+ * 动态拉取爱壹帆指定板块 (CID) 官方原生二级速报推荐标签矩阵 (nav-second-links 8 席，4+4 黄金矩阵)
+ * 对应爱壹帆底层原生接口：/v3/list/getHotVideoTop?cinema=1&cid=${cid}&pageSize=8
+ * 包含电影、电视剧、综艺、动漫、纪录片等专属推荐片名及实时更新角标，严禁擅自拼凑多余标签
  */
 async function fetchChannelTrendingNav(cid, channelName, defaultBaselines = []) {
-  console.log(`[iyf-sync] 正在向爱壹帆拉取【${channelName}】(cid=${cid}) 官方专属 12 席热门推荐标签 (getHotVideoTop)...`);
+  console.log(`[iyf-sync] 正在向爱壹帆拉取【${channelName}】(cid=${cid}) 官方原生 8 席热门推荐标签 (getHotVideoTop)...`);
   try {
-    const res = await fetch(`https://m10.iyf.tv/v3/list/getHotVideoTop?cinema=1&cid=${cid}&pageSize=12`, {
+    const res = await fetch(`https://m10.iyf.tv/v3/list/getHotVideoTop?cinema=1&cid=${cid}&pageSize=8`, {
       headers: { "User-Agent": "Mozilla/5.0" },
       signal: AbortSignal.timeout(6000)
     });
@@ -208,30 +208,30 @@ async function fetchChannelTrendingNav(cid, channelName, defaultBaselines = []) 
       if (!seen.has(title)) {
         seen.add(title);
         let updateBadge = "";
-        if (item.notifications && String(item.notifications).trim()) {
-          updateBadge = String(item.notifications).trim();
-        } else if (item.updateNumber && Number(item.updateNumber) > 0) {
+        if (item.updateNumber && Number(item.updateNumber) > 0) {
           updateBadge = String(item.updateNumber);
+        } else if (item.notifications && String(item.notifications).trim()) {
+          updateBadge = String(item.notifications).trim();
         }
         items.push({ title, updateBadge });
       }
-      if (items.length >= 12) break;
+      if (items.length >= 8) break;
     }
 
-    // 若接口条数不足 12 席，使用兜底精选补齐
+    // 若接口条数不足 8 席，使用官方基准兜底
     for (const fb of defaultBaselines) {
       if (!seen.has(fb.title)) {
         seen.add(fb.title);
         items.push(fb);
       }
-      if (items.length >= 12) break;
+      if (items.length >= 8) break;
     }
 
-    console.log(`[iyf-sync] 成功获取【${channelName}】${items.length} 席动态速报:`, items.map(i => `${i.title}${i.updateBadge ? `[${i.updateBadge}]` : ''}`));
-    return items.slice(0, 12);
+    console.log(`[iyf-sync] 成功获取【${channelName}】${items.length} 席动态原生速报:`, items.map(i => `${i.title}${i.updateBadge ? `[${i.updateBadge}]` : ''}`));
+    return items.slice(0, 8);
   } catch (err) {
     console.warn(`[iyf-sync] 抓取【${channelName}】速报异常，使用兜底数据:`, err.message);
-    return defaultBaselines.slice(0, 12);
+    return defaultBaselines.slice(0, 8);
   }
 }
 

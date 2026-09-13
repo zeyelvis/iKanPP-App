@@ -452,12 +452,11 @@ export function HeroSlideshow({
               </button>
             </div>
 
-            {/* 2. 中栏：全板块统一严格 6+6 黄金对称排布，充分均衡利用左右两侧开阔空间 */}
+            {/* 2. 中栏：100% 对齐爱壹帆官方原生二级速报 8 席标签（第一行 4 席，第二行 4 席，黄金对称，空间充裕宽阔） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (() => {
-              // 全站所有专区（电影、电视剧、综艺、动漫、纪录片、首页）严格执行 6+6 黄金对称切分，杜绝单行过长凸出挤撞海报
-              const splitIdx = 6;
-              const line1 = activeTrendingNav.slice(0, splitIdx);
-              const line2 = activeTrendingNav.slice(splitIdx, 12);
+              // 严格 100% 对齐爱壹帆官方原生：每行 4 席，两行共 8 席，绝不乱加多余标签，留白从容优雅
+              const line1 = activeTrendingNav.slice(0, 4);
+              const line2 = activeTrendingNav.slice(4, 8);
               const renderItem = (item: TrendingNavItem, idx: number) => (
                 <button
                   key={idx}
@@ -466,11 +465,11 @@ export function HeroSlideshow({
                   className="group flex items-center justify-start text-left cursor-pointer text-white/90 hover:text-white hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.75)] hover:scale-103 transition-all duration-200 select-none shrink-0"
                   title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                 >
-                  <span className="text-[13px] lg:text-[14px] xl:text-[15px] 2xl:text-[16px] font-bold tracking-tight whitespace-nowrap leading-snug max-w-[110px] lg:max-w-[130px] xl:max-w-[155px] 2xl:max-w-[175px] truncate">
+                  <span className="text-[13px] lg:text-[14px] xl:text-[15px] 2xl:text-[16px] font-bold tracking-tight whitespace-nowrap leading-snug max-w-[140px] lg:max-w-[170px] xl:max-w-[200px] 2xl:max-w-[220px] truncate">
                     {item.title}
                   </span>
                   {item.updateBadge ? (
-                    <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9px] xl:text-[10px] 2xl:text-[10.5px] font-black rounded-xs px-1.5 py-0.2 min-w-4 h-4 leading-none ml-1 shrink-0 shadow-md">
+                    <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9px] xl:text-[10px] 2xl:text-[10.5px] font-black rounded-xs px-1.5 py-0.2 min-w-4 h-4 leading-none ml-1.5 shrink-0 shadow-md">
                       {item.updateBadge}
                     </span>
                   ) : null}
@@ -478,13 +477,13 @@ export function HeroSlideshow({
               );
 
               return (
-                <div className="hidden lg:flex flex-1 min-w-0 flex-col items-center justify-end px-3 xl:px-6 pb-1">
+                <div className="hidden lg:flex flex-1 min-w-0 flex-col items-center justify-end px-4 xl:px-8 pb-1">
                   <div className="flex flex-col items-center gap-y-2.5 xl:gap-y-3.5 w-full max-w-fit">
-                    <div className="flex items-center justify-center gap-x-4 lg:gap-x-5 xl:gap-x-7 2xl:gap-x-8 whitespace-nowrap">
+                    <div className="flex items-center justify-center gap-x-5 lg:gap-x-7 xl:gap-x-9 2xl:gap-x-11 whitespace-nowrap">
                       {line1.map(renderItem)}
                     </div>
-                    <div className="flex items-center justify-center gap-x-4 lg:gap-x-5 xl:gap-x-7 2xl:gap-x-8 whitespace-nowrap">
-                      {line2.map((item: TrendingNavItem, idx: number) => renderItem(item, idx + splitIdx))}
+                    <div className="flex items-center justify-center gap-x-5 lg:gap-x-7 xl:gap-x-9 2xl:gap-x-11 whitespace-nowrap">
+                      {line2.map((item: TrendingNavItem, idx: number) => renderItem(item, idx + 4))}
                     </div>
                   </div>
                 </div>

@@ -57,11 +57,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "给阿嬷的情书",
+                "title": "蜂鸟行动",
                 "updateBadge": ""
         },
         {
-                "title": "蜂鸟行动",
+                "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
         {
@@ -73,34 +73,18 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "百分之十",
-                "updateBadge": ""
-        },
-        {
                 "title": "海洋奇缘：启航",
                 "updateBadge": ""
         },
         {
-                "title": "夜王",
+                "title": "百分之十",
                 "updateBadge": ""
         },
         {
                 "title": "求救信号",
                 "updateBadge": ""
-        },
-        {
-                "title": "怒之杀(听译)",
-                "updateBadge": ""
-        },
-        {
-                "title": "不成功穿越指南",
-                "updateBadge": ""
-        },
-        {
-                "title": "玩具总动员5",
-                "updateBadge": ""
         }
-      ],
+],
     "hero": [
         {
                 "id": "iyf_hero_movie_1",
@@ -1779,7 +1763,7 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": ""
+                "updateBadge": "2"
         },
         {
                 "title": "早春晴朗",
@@ -1787,45 +1771,29 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "交锋",
-                "updateBadge": ""
+                "updateBadge": "2"
+        },
+        {
+                "title": "深渊无间",
+                "updateBadge": "5"
         },
         {
                 "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
-                "title": "深渊无间",
-                "updateBadge": ""
-        },
-        {
                 "title": "冬城猎凶",
-                "updateBadge": ""
-        },
-        {
-                "title": "杀手妈咪",
                 "updateBadge": "1"
         },
         {
                 "title": "生逢其时",
-                "updateBadge": ""
+                "updateBadge": "1"
         },
         {
-                "title": "花开锦绣",
-                "updateBadge": ""
-        },
-        {
-                "title": "死有对证",
-                "updateBadge": ""
-        },
-        {
-                "title": "百花杀",
-                "updateBadge": ""
-        },
-        {
-                "title": "九门",
-                "updateBadge": ""
+                "title": "杀手妈咪",
+                "updateBadge": "1"
         }
-      ],
+],
     "hero": [
         {
                 "id": "iyf_hero_tv_1",

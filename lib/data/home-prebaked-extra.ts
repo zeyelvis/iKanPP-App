@@ -9,6 +9,10 @@ import type { PrebakedSubject, PrebakedHomeCategory } from './home-prebaked';
 export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
+        "title": "仙逆",
+        "updateBadge": "1"
+    },
+    {
         "title": "牧神记",
         "updateBadge": "1"
     },
@@ -21,7 +25,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "仙逆",
+        "title": "海贼王",
         "updateBadge": ""
     },
     {
@@ -29,34 +33,14 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "海贼王",
+        "title": "沧元图",
         "updateBadge": ""
     },
     {
         "title": "死神：千年血战篇第4季",
         "updateBadge": ""
-    },
-    {
-        "title": "武神主宰",
-        "updateBadge": "1"
-    },
-    {
-        "title": "沧元图",
-        "updateBadge": ""
-    },
-    {
-        "title": "财神窦占龙",
-        "updateBadge": "1"
-    },
-    {
-        "title": "择日飞升",
-        "updateBadge": ""
-    },
-    {
-        "title": "吞噬星空",
-        "updateBadge": ""
     }
-  ],
+],
   hero: [
     {
         "id": "iyf_hero_tv_1",
@@ -640,45 +624,29 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "说唱巅峰对决2026",
-        "updateBadge": "6"
+        "updateBadge": ""
     },
     {
         "title": "披荆斩棘2026",
         "updateBadge": "1"
     },
     {
-        "title": "我家那闺女2026",
-        "updateBadge": "2"
-    },
-    {
         "title": "一饭封神第2季",
         "updateBadge": "2"
     },
     {
-        "title": "你好星期六",
-        "updateBadge": "1"
+        "title": "我家那闺女2026",
+        "updateBadge": "2"
     },
     {
         "title": "地球超新鲜第2季",
         "updateBadge": "1"
     },
     {
-        "title": "密室大逃脱第8季",
-        "updateBadge": ""
-    },
-    {
-        "title": "大哥小助理",
-        "updateBadge": ""
-    },
-    {
-        "title": "喜剧之王单口季第3季",
-        "updateBadge": ""
-    },
-    {
-        "title": "脱口秀和Ta的朋友们第3季",
-        "updateBadge": ""
+        "title": "你好星期六",
+        "updateBadge": "1"
     }
-  ],
+],
   hero: [
     {
         "id": "iyf_hero_tv_1",
@@ -1779,7 +1747,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "兰香如故",
-        "updateBadge": ""
+        "updateBadge": "2"
+    },
+    {
+        "title": "仙逆",
+        "updateBadge": "1"
     },
     {
         "title": "早春晴朗",
@@ -1787,45 +1759,25 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "交锋",
-        "updateBadge": ""
+        "updateBadge": "2"
     },
     {
-        "title": "牧神记",
-        "updateBadge": "1"
+        "title": "深渊无间",
+        "updateBadge": "5"
     },
     {
         "title": "飞到我心上",
         "updateBadge": ""
     },
     {
-        "title": "深渊无间",
-        "updateBadge": ""
-    },
-    {
         "title": "冬城猎凶",
-        "updateBadge": ""
-    },
-    {
-        "title": "杀手妈咪",
         "updateBadge": "1"
     },
     {
-        "title": "凡人修仙传",
-        "updateBadge": ""
-    },
-    {
-        "title": "生逢其时",
-        "updateBadge": ""
-    },
-    {
-        "title": "斗破苍穹年番",
-        "updateBadge": ""
-    },
-    {
-        "title": "花儿与少年第8季",
+        "title": "牧神记",
         "updateBadge": "1"
     }
-  ],
+],
   hero: [
     {
         "id": "iyf_hero_movie_1",
@@ -2399,27 +2351,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第4季",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第2季",
-        "updateBadge": ""
-    },
-    {
-        "title": "史前星球",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第3季",
-        "updateBadge": ""
-    },
-    {
-        "title": "味起台州",
-        "updateBadge": ""
-    },
-    {
-        "title": "转折点：911与反恐战争",
         "updateBadge": ""
     },
     {
@@ -2427,7 +2359,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "寻色中国",
+        "title": "克拉克森的农场第4季",
         "updateBadge": ""
     },
     {
@@ -2435,10 +2367,14 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "但是还有书籍第2季",
+        "title": "守护解放西第5季",
+        "updateBadge": ""
+    },
+    {
+        "title": "克拉克森的农场第2季",
         "updateBadge": ""
     }
-  ],
+],
   hero: [
     {
         "id": "iyf_hero_documentary_1",
