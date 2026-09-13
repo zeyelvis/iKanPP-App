@@ -77,3 +77,27 @@ export async function getPersonAvatars(names: string[]): Promise<Record<string, 
 
   return result;
 }
+
+/**
+ * 0ms 同步极速获取预置或已缓存人物肖像字典（服务端渲染专用，绝不阻塞网络）
+ */
+export function getFastPersonAvatars(names: string[]): Record<string, string> {
+  if (!names || names.length === 0) return {};
+
+  const uniqueNames = Array.from(new Set(names.map(n => n.trim()).filter(Boolean)));
+  const result: Record<string, string> = {};
+
+  for (const name of uniqueNames) {
+    if (PREBAKED_AVATARS[name]) {
+      result[name] = getOptimizedImageUrl(PREBAKED_AVATARS[name], { variant: 'avatar' });
+    } else if (avatarMemoryCache.has(name)) {
+      const cached = avatarMemoryCache.get(name);
+      if (cached) {
+        result[name] = cached;
+      }
+    }
+  }
+
+  return result;
+}
+

@@ -8,13 +8,14 @@ import { getEntityBySlug, getEntityByTitle, getEntitiesByGenre, getEntitiesByDir
 import { getGenreBySlug } from '@/lib/data/genres';
 import { parseEntitySlug, normalizeTitle } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, fetchTMDBDetails, fetchTMDBAiredEpisodeCount, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
-import { getPersonAvatars } from '@/lib/services/person-avatar';
+import { getFastPersonAvatars } from '@/lib/services/person-avatar';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { TitleEntity } from '@/lib/types/entity';
 import { TitleJsonLd } from '@/components/seo/TitleJsonLd';
 import { TitleActionsBar } from '@/components/title/TitleActionsBar';
 import { EpisodesSelector } from '@/components/title/EpisodesSelector';
 import { StickyBottomPlayCTA } from '@/components/title/StickyBottomPlayCTA';
+import { CastRail } from '@/components/title/CastRail';
 import { Navbar } from '@/components/layout/Navbar';
 import { normalizeVideoType } from '@/lib/utils/taxonomy';
 import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
@@ -479,17 +480,13 @@ export default async function TitlePage({ params }: Props) {
   const primaryActor = validActors[0];
 
   const allPeopleNames = [...validDirectors, ...validActors];
-  // 头像获取增加 350ms 超时回退，杜绝外部 API 拖慢整个首屏渲染
-  const avatarsPromise = Promise.race([
-    getPersonAvatars(allPeopleNames),
-    new Promise<Record<string, string>>((resolve) => setTimeout(() => resolve({}), 350)),
-  ]);
+  // 0ms 同步获取预置/内存缓存人物肖像（首屏秒开直出，绝不阻塞网络）
+  const peopleAvatars = getFastPersonAvatars(allPeopleNames);
 
-  const [genreRelated, directorRelated, actorRelated, peopleAvatars] = await Promise.all([
+  const [genreRelated, directorRelated, actorRelated] = await Promise.all([
     getEntitiesByGenre(primaryGenre, 8),
     primaryDirector ? getEntitiesByDirector(primaryDirector, 6) : Promise.resolve([]),
     primaryActor ? getEntitiesByActor(primaryActor, 6) : Promise.resolve([]),
-    avatarsPromise,
   ]);
 
   // 过滤自身
@@ -807,78 +804,13 @@ export default async function TitlePage({ params }: Props) {
           </section>
         )}
 
-        {/* 演职员圆形名牌滑轨 (Cast & Crew Rail) */}
+        {/* 演职员圆形名牌滑轨 (Cast & Crew Rail) - 客户端自愈补全组件 */}
         {(validDirectors.length > 0 || validActors.length > 0) && (
-          <section className="mb-14">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-5 flex items-center gap-2">
-              <Clapperboard className="w-5 h-5 text-red-500" />
-              <span>演职员专栏</span>
-            </h2>
-
-            <div className="flex items-center gap-3.5 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-              {/* 导演卡片 */}
-              {validDirectors.map(d => (
-                <Link
-                  key={d}
-                  href={`/director/${encodeURIComponent(d)}`}
-                  className="group shrink-0 flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-red-500/40 transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-lg hover:shadow-red-950/30"
-                >
-                  {peopleAvatars[d] ? (
-                    <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-red-500/40 group-hover:border-red-500 shrink-0 shadow-md group-hover:scale-105 transition-all">
-                      <Image
-                        src={getOptimizedImageUrl(peopleAvatars[d], { variant: 'avatar' })}
-                        alt={d}
-                        fill
-                        sizes="48px"
-                        className="object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-red-600/10 border border-red-500/20 text-red-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform font-bold text-sm">
-                      {d.slice(0, 1)}
-                    </div>
-                  )}
-                  <div>
-                    <div className="font-bold text-sm text-white group-hover:text-red-400 transition-colors">
-                      {d}
-                    </div>
-                    <div className="text-[11px] text-white/40 mt-0.5">导演</div>
-                  </div>
-                </Link>
-              ))}
-
-              {/* 演员卡片 */}
-              {validActors.map(a => (
-                <Link
-                  key={a}
-                  href={`/actor/${encodeURIComponent(a)}`}
-                  className="group shrink-0 flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-500/40 transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-lg hover:shadow-amber-950/30"
-                >
-                  {peopleAvatars[a] ? (
-                    <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-amber-500/40 group-hover:border-amber-500 shrink-0 shadow-md group-hover:scale-105 transition-all">
-                      <Image
-                        src={getOptimizedImageUrl(peopleAvatars[a], { variant: 'avatar' })}
-                        alt={a}
-                        fill
-                        sizes="48px"
-                        className="object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform font-bold text-sm">
-                      {a.slice(0, 1)}
-                    </div>
-                  )}
-                  <div>
-                    <div className="font-bold text-sm text-white group-hover:text-amber-400 transition-colors">
-                      {a}
-                    </div>
-                    <div className="text-[11px] text-white/40 mt-0.5">实力主演</div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
+          <CastRail
+            directors={validDirectors}
+            actors={validActors}
+            initialAvatars={peopleAvatars}
+          />
         )}
 
         {/* Netflix 标志性“更多类似推荐”（More Like This） */}
