@@ -184,14 +184,14 @@ async function enrichMovieData(slideItem, index, forceType = null) {
 }
 
 /**
- * 动态拉取爱壹帆指定板块 (CID) 官方原生二级速报推荐标签矩阵 (nav-second-links 8 席，4+4 黄金矩阵)
- * 对应爱壹帆底层原生接口：/v3/list/getHotVideoTop?cinema=1&cid=${cid}&pageSize=8
- * 包含电影、电视剧、综艺、动漫、纪录片等专属推荐片名及实时更新角标，严禁擅自拼凑多余标签
+ * 动态拉取爱壹帆指定板块 (CID) 官方原生二级速报推荐标签矩阵
+ * 对应爱壹帆底层原生接口：/v3/list/getHotVideoTop?cinema=1&cid=${cid}&pageSize=${targetCount}
+ * 包含电影(12席)、电视剧(11席)、首页(11席)、综艺(8席)、动漫(8席)、纪录片(8席)等专区专属原生排布
  */
-async function fetchChannelTrendingNav(cid, channelName, defaultBaselines = []) {
-  console.log(`[iyf-sync] 正在向爱壹帆拉取【${channelName}】(cid=${cid}) 官方原生 8 席热门推荐标签 (getHotVideoTop)...`);
+async function fetchChannelTrendingNav(cid, channelName, defaultBaselines = [], targetCount = 8) {
+  console.log(`[iyf-sync] 正在向爱壹帆拉取【${channelName}】(cid=${cid}) 官方原生 ${targetCount} 席热门推荐标签 (getHotVideoTop)...`);
   try {
-    const res = await fetch(`https://m10.iyf.tv/v3/list/getHotVideoTop?cinema=1&cid=${cid}&pageSize=8`, {
+    const res = await fetch(`https://m10.iyf.tv/v3/list/getHotVideoTop?cinema=1&cid=${cid}&pageSize=${Math.max(12, targetCount)}`, {
       headers: { "User-Agent": "Mozilla/5.0" },
       signal: AbortSignal.timeout(6000)
     });
@@ -215,23 +215,23 @@ async function fetchChannelTrendingNav(cid, channelName, defaultBaselines = []) 
         }
         items.push({ title, updateBadge });
       }
-      if (items.length >= 8) break;
+      if (items.length >= targetCount) break;
     }
 
-    // 若接口条数不足 8 席，使用官方基准兜底
+    // 若接口条数不足 targetCount 席，使用官方基准兜底
     for (const fb of defaultBaselines) {
       if (!seen.has(fb.title)) {
         seen.add(fb.title);
         items.push(fb);
       }
-      if (items.length >= 8) break;
+      if (items.length >= targetCount) break;
     }
 
     console.log(`[iyf-sync] 成功获取【${channelName}】${items.length} 席动态原生速报:`, items.map(i => `${i.title}${i.updateBadge ? `[${i.updateBadge}]` : ''}`));
-    return items.slice(0, 8);
+    return items.slice(0, targetCount);
   } catch (err) {
     console.warn(`[iyf-sync] 抓取【${channelName}】速报异常，使用兜底数据:`, err.message);
-    return defaultBaselines.slice(0, 8);
+    return defaultBaselines.slice(0, targetCount);
   }
 }
 
@@ -265,7 +265,7 @@ async function syncHomeAll() {
     { title: '死有对证', updateBadge: '' },
   ];
 
-  const trendingNavItems = await fetchChannelTrendingNav('0,1', '全站精选', defaultHomeTrending);
+  const trendingNavItems = await fetchChannelTrendingNav('0,1', '全站精选', defaultHomeTrending, 11);
 
   const extraPath = path.resolve(process.cwd(), 'lib/data/home-prebaked-extra.ts');
   if (fs.existsSync(extraPath)) {
@@ -330,7 +330,7 @@ async function syncMovieChannel() {
     { title: '不成功穿越指南', updateBadge: '' },
   ];
 
-  const movieTrendingNav = await fetchChannelTrendingNav('0,1,3', '电影频道', defaultMovieTrending);
+  const movieTrendingNav = await fetchChannelTrendingNav('0,1,3', '电影频道', defaultMovieTrending, 12);
 
   const prebakedPath = path.resolve(process.cwd(), 'lib/data/home-prebaked.ts');
   if (fs.existsSync(prebakedPath)) {
@@ -377,23 +377,22 @@ async function syncTvChannel() {
     tvHeroItems.push(item);
   }
 
-  // 100% 对齐爱壹帆电视剧官方 getHotVideoTop 专属 12 席黄金档推荐标签
+  // 100% 对齐爱壹帆电视剧官方 getHotVideoTop 专属 11 席黄金档推荐标签
   const defaultTvTrending = [
     { title: '兰香如故', updateBadge: '2' },
     { title: '早春晴朗', updateBadge: '' },
     { title: '交锋', updateBadge: '2' },
+    { title: '深渊无间', updateBadge: '5' },
     { title: '飞到我心上', updateBadge: '' },
+    { title: '冬城猎凶', updateBadge: '1' },
     { title: '生逢其时', updateBadge: '1' },
-    { title: '冬城猎凶', updateBadge: '2' },
-    { title: '深渊无间', updateBadge: '2' },
     { title: '杀手妈咪', updateBadge: '1' },
-    { title: '死有对证', updateBadge: '' },
     { title: '花开锦绣', updateBadge: '' },
-    { title: '百花杀', updateBadge: '' },
-    { title: '九门', updateBadge: '' },
+    { title: '死有对证', updateBadge: '' },
+    { title: '百花杀', updateBadge: '' }
   ];
 
-  const tvTrendingNav = await fetchChannelTrendingNav('0,1,4', '电视剧频道', defaultTvTrending);
+  const tvTrendingNav = await fetchChannelTrendingNav('0,1,4', '电视剧频道', defaultTvTrending, 11);
 
   const prebakedPath = path.resolve(process.cwd(), 'lib/data/home-prebaked.ts');
   if (fs.existsSync(prebakedPath)) {
@@ -440,23 +439,19 @@ async function syncAnimeChannel() {
     animeHeroItems.push(item);
   }
 
-  // 100% 对齐爱壹帆动漫官方 getHotVideoTop 专属 12 席新番推荐标签
+  // 100% 对齐爱壹帆动漫官方 getHotVideoTop 专属 8 席新番推荐标签
   const defaultAnimeTrending = [
-    { title: '斗破苍穹年番', updateBadge: '1' },
-    { title: '凡人修仙传', updateBadge: '1' },
-    { title: '光阴之外', updateBadge: '1' },
-    { title: '仙逆', updateBadge: '' },
-    { title: '择日飞升', updateBadge: '' },
+    { title: '仙逆', updateBadge: '1' },
+    { title: '牧神记', updateBadge: '1' },
+    { title: '凡人修仙传', updateBadge: '' },
+    { title: '斗破苍穹年番', updateBadge: '' },
     { title: '海贼王', updateBadge: '' },
+    { title: '光阴之外', updateBadge: '' },
     { title: '沧元图', updateBadge: '' },
-    { title: '牧神记', updateBadge: '' },
-    { title: '炼气十万年', updateBadge: '1' },
-    { title: '遮天', updateBadge: '' },
-    { title: '万界独尊', updateBadge: '1' },
-    { title: '关于我转生变成史莱姆这档事第4季', updateBadge: '' },
+    { title: '死神：千年血战篇第4季', updateBadge: '' },
   ];
 
-  const animeTrendingNav = await fetchChannelTrendingNav('0,1,6', '动漫频道', defaultAnimeTrending);
+  const animeTrendingNav = await fetchChannelTrendingNav('0,1,6', '动漫频道', defaultAnimeTrending, 8);
 
   const extraPath = path.resolve(process.cwd(), 'lib/data/home-prebaked-extra.ts');
   if (fs.existsSync(extraPath)) {
@@ -503,23 +498,19 @@ async function syncVarietyChannel() {
     varietyHeroItems.push(item);
   }
 
-  // 100% 对齐爱壹帆综艺官方 getHotVideoTop 专属 12 席爆款推荐标签
+  // 100% 对齐爱壹帆综艺官方 getHotVideoTop 专属 8 席爆款推荐标签
   const defaultVarietyTrending = [
-    { title: '说唱巅峰对决2026', updateBadge: '2' },
-    { title: '花儿与少年第8季', updateBadge: '' },
-    { title: '心动的信号第9季', updateBadge: '' },
+    { title: '花儿与少年第8季', updateBadge: '1' },
+    { title: '心动的信号第9季', updateBadge: '1' },
+    { title: '说唱巅峰对决2026', updateBadge: '' },
     { title: '披荆斩棘2026', updateBadge: '1' },
-    { title: '一饭封神第2季', updateBadge: '1' },
-    { title: '你好星期六', updateBadge: '1' },
+    { title: '一饭封神第2季', updateBadge: '2' },
+    { title: '我家那闺女2026', updateBadge: '2' },
     { title: '地球超新鲜第2季', updateBadge: '1' },
-    { title: '我家那闺女2026', updateBadge: '1' },
-    { title: '大哥小助理', updateBadge: '1' },
-    { title: '密室大逃脱第8季', updateBadge: '' },
-    { title: '姐姐当家第2季', updateBadge: '3' },
-    { title: '喜剧之王单口季第3季', updateBadge: '' },
+    { title: '你好星期六', updateBadge: '1' }
   ];
 
-  const varietyTrendingNav = await fetchChannelTrendingNav('0,1,5', '综艺频道', defaultVarietyTrending);
+  const varietyTrendingNav = await fetchChannelTrendingNav('0,1,5', '综艺频道', defaultVarietyTrending, 8);
 
   const extraPath = path.resolve(process.cwd(), 'lib/data/home-prebaked-extra.ts');
   if (fs.existsSync(extraPath)) {
@@ -626,23 +617,19 @@ async function syncDocumentaryChannel() {
     });
   }
 
-  // 100% 对齐爱壹帆纪录片官方 getHotVideoTop 专属 12 席口碑推荐标签
+  // 100% 对齐爱壹帆纪录片官方 getHotVideoTop 专属 8 席口碑推荐标签
   const defaultDocTrending = [
     { title: '克拉克森的农场第1季', updateBadge: '' },
     { title: '克拉克森的农场第5季', updateBadge: '' },
     { title: '克拉克森的农场第3季', updateBadge: '' },
+    { title: '守护解放西第6季', updateBadge: '' },
     { title: '克拉克森的农场第4季', updateBadge: '' },
     { title: '若泽·穆里尼奥：特立之道', updateBadge: '' },
-    { title: '克拉克森的农场第2季', updateBadge: '' },
-    { title: '恐龙时代：你不知道的故事', updateBadge: '' },
-    { title: '史前星球', updateBadge: '' },
-    { title: '守护解放西第6季', updateBadge: '' },
-    { title: '欢迎来到雷克斯汉姆', updateBadge: '' },
-    { title: '中国通史', updateBadge: '' },
-    { title: '爱达荷州血案：大学梦魇', updateBadge: '' },
+    { title: '守护解放西第5季', updateBadge: '' },
+    { title: '克拉克森的农场第2季', updateBadge: '' }
   ];
 
-  const docTrendingNav = await fetchChannelTrendingNav('0,1,7', '纪录片频道', defaultDocTrending);
+  const docTrendingNav = await fetchChannelTrendingNav('0,1,7', '纪录片频道', defaultDocTrending, 8);
 
   const extraPath = path.resolve(process.cwd(), 'lib/data/home-prebaked-extra.ts');
   if (fs.existsSync(extraPath)) {

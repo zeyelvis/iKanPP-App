@@ -83,6 +83,22 @@ export const PREBAKED_HOME_DATA: {
         {
                 "title": "求救信号",
                 "updateBadge": ""
+        },
+        {
+                "title": "夜王",
+                "updateBadge": ""
+        },
+        {
+                "title": "怒之杀(听译)",
+                "updateBadge": ""
+        },
+        {
+                "title": "玩具总动员5",
+                "updateBadge": ""
+        },
+        {
+                "title": "抓特务",
+                "updateBadge": ""
         }
       ],
     "hero": [
@@ -1792,6 +1808,18 @@ export const PREBAKED_HOME_DATA: {
         {
                 "title": "杀手妈咪",
                 "updateBadge": "1"
+        },
+        {
+                "title": "花开锦绣",
+                "updateBadge": ""
+        },
+        {
+                "title": "死有对证",
+                "updateBadge": ""
+        },
+        {
+                "title": "百花杀",
+                "updateBadge": ""
         }
       ],
     "hero": [

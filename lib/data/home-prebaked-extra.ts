@@ -1776,6 +1776,18 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     {
         "title": "牧神记",
         "updateBadge": "1"
+    },
+    {
+        "title": "生逢其时",
+        "updateBadge": "1"
+    },
+    {
+        "title": "杀手妈咪",
+        "updateBadge": "1"
+    },
+    {
+        "title": "凡人修仙传",
+        "updateBadge": ""
     }
   ],
   hero: [
