@@ -68,6 +68,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'img.ikanpp.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'pub-e83e5b0b8f9348079dd0676e6c0c0563.r2.dev',
+      },
       // Video source images - allow all subdomains with wildcards
       {
         protocol: 'http',

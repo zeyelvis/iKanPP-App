@@ -11,7 +11,8 @@ const CF_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfef
 const CF_AUTH_EMAIL = process.env.CLOUDFLARE_AUTH_EMAIL || 'zeyelvis@gmail.com';
 const CF_AUTH_KEY = process.env.CLOUDFLARE_AUTH_KEY || 'cfk_L8MzQDjTswTK4jBtvJjmcKjEnxTQ1dKNhzNyn4dQa33221aa';
 const R2_BUCKET = process.env.R2_BUCKET_NAME || 'ikanpp-images';
-const R2_PUBLIC_BASE = (process.env.NEXT_PUBLIC_R2_DOMAIN || 'https://img.ikanpp.com').replace(/\/+$/, '');
+// 优先使用 R2 亚太专属托管 CDN 域名，确保 100% 畅通直出
+const R2_PUBLIC_BASE = (process.env.NEXT_PUBLIC_R2_DOMAIN || 'https://pub-e83e5b0b8f9348079dd0676e6c0c0563.r2.dev').replace(/\/+$/, '');
 
 /**
  * 根据外部原始图片 URL 计算出规范的 R2 存储 Key
@@ -23,7 +24,6 @@ export function getR2KeyFromUrl(rawUrl: string, requestedWidth: number = 342): s
 
     // 1. TMDB 图片
     if (parsed.hostname.includes('tmdb.org')) {
-      // 提取 TMDB 路径，例如 /t/p/w500/abc.jpg -> abc.jpg
       const match = parsed.pathname.match(/\/([^/]+\.(jpg|jpeg|png|webp|avif))$/i);
       const filename = match ? match[1] : parsed.pathname.split('/').pop() || 'poster.jpg';
       const widthPrefix = requestedWidth > 0 ? `w${requestedWidth}` : 'original';
@@ -38,7 +38,7 @@ export function getR2KeyFromUrl(rawUrl: string, requestedWidth: number = 342): s
       return `douban/${widthPrefix}/${filename}`;
     }
 
-    // 3. 其它合法外部源（通过简单 hash/clean path 归类）
+    // 3. 其它合法外部源
     const cleanPath = parsed.pathname.replace(/[^a-zA-Z0-9_.-]/g, '_').slice(-64);
     return `misc/w${requestedWidth}/${cleanPath}`;
   } catch {
@@ -55,13 +55,13 @@ export function getR2PublicUrl(key: string): string {
 
 /**
  * 尝试从 R2 / CDN 获取已缓存的图片
- * 命中返回 Response，未命中（404 或网络波动）返回 null
+ * 命中返回 Response，未命中返回 null
  */
 export async function fetchFromR2(key: string): Promise<Response | null> {
   try {
     const publicUrl = getR2PublicUrl(key);
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 2500); // 2.5s 极速探测
+    const timeout = setTimeout(() => controller.abort(), 2500);
 
     const res = await fetch(publicUrl, {
       method: 'GET',
@@ -73,7 +73,7 @@ export async function fetchFromR2(key: string): Promise<Response | null> {
 
     clearTimeout(timeout);
 
-    if (res.ok) {
+    if (res.ok && res.status === 200) {
       return res;
     }
     return null;
@@ -83,14 +83,15 @@ export async function fetchFromR2(key: string): Promise<Response | null> {
 }
 
 /**
- * 异步将图片二进制持久化写入 Cloudflare R2
- * （非阻塞执行，即使上传异常也不影响用户正常看图）
+ * 将图片二进制持久化写入 Cloudflare R2
+ * 修复：对路径各级目录分别编码，保留路径斜杠 /，确保 R2 能够正确分级存储
  */
-export async function saveToR2Async(key: string, data: ArrayBuffer, contentType: string): Promise<void> {
+export async function saveToR2Async(key: string, data: ArrayBuffer, contentType: string): Promise<boolean> {
   try {
-    const endpoint = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/r2/buckets/${R2_BUCKET}/objects/${encodeURIComponent(key)}`;
+    const encodedKeyPath = key.split('/').map(encodeURIComponent).join('/');
+    const endpoint = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/r2/buckets/${R2_BUCKET}/objects/${encodedKeyPath}`;
 
-    await fetch(endpoint, {
+    const res = await fetch(endpoint, {
       method: 'PUT',
       headers: {
         'X-Auth-Email': CF_AUTH_EMAIL,
@@ -99,7 +100,11 @@ export async function saveToR2Async(key: string, data: ArrayBuffer, contentType:
       },
       body: data,
     });
+
+    return res.ok;
   } catch (err) {
     console.warn('[R2 Write-Through Warning]', err);
+    return false;
   }
 }
+

@@ -122,10 +122,15 @@ export async function GET(request: NextRequest) {
 
             const imageData = await response.arrayBuffer();
 
-            // 4. 【全自动后台透写写入 R2】：非阻塞异步写入，不让首个用户多等待一毫秒
-            saveToR2Async(r2Key, imageData, contentType).catch((err) => {
+            // 4. 【全自动透写写入 R2】：在 Edge 运行时安全写入落盘（带 1200ms 熔断保护，通常仅耗时 30~50ms）
+            try {
+                await Promise.race([
+                    saveToR2Async(r2Key, imageData, contentType),
+                    new Promise((resolve) => setTimeout(resolve, 1200)),
+                ]);
+            } catch (err) {
                 console.warn('[R2 Sync Worker Warning]', err);
-            });
+            }
 
             // 5. 立即返回给当前用户
             return new NextResponse(imageData, {

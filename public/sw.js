@@ -51,6 +51,7 @@ self.addEventListener('fetch', (event) => {
     const isOptimizedImage =
         url.pathname.startsWith('/api/img-proxy') ||
         url.hostname === 'img.ikanpp.com' ||
+        url.hostname.includes('r2.dev') ||
         url.hostname.includes('tmdb.org') ||
         url.hostname.includes('doubanio.com') ||
         url.pathname.match(/\.(webp|avif|jpg|jpeg|png)$/i);
