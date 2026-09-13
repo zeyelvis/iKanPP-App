@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { settingsStore } from '@/lib/store/settings-store';
+import { resolveEpisodeIndex } from '@/lib/utils/episode-resolver';
 
 interface VideoData {
   vod_id: string;
@@ -149,8 +150,9 @@ export function useVideoPlayer(
             }
           }
 
-          const episodeIndex = latestEpisodeParam ? parseInt(latestEpisodeParam, 10) : defaultIndex;
-          const validIndex = (episodeIndex >= 0 && episodeIndex < episodes.length) ? episodeIndex : defaultIndex;
+          const validIndex = latestEpisodeParam
+            ? resolveEpisodeIndex(episodes, latestEpisodeParam, defaultIndex)
+            : defaultIndex;
 
           const episodeUrl = episodes[validIndex].url;
           setCurrentEpisode(validIndex);
@@ -202,12 +204,10 @@ export function useVideoPlayer(
   // Sync state from params if they change externally (e.g. back/forward navigation)
   useEffect(() => {
     if (videoData?.episodes && episodeParam !== null) {
-      const index = parseInt(episodeParam, 10);
-      if (!isNaN(index) && index >= 0 && index < videoData.episodes.length) {
-        if (index !== currentEpisode) {
-          setCurrentEpisode(index);
-          setPlayUrl(videoData.episodes[index].url);
-        }
+      const index = resolveEpisodeIndex(videoData.episodes, episodeParam, currentEpisode);
+      if (index !== currentEpisode && videoData.episodes[index]) {
+        setCurrentEpisode(index);
+        setPlayUrl(videoData.episodes[index].url);
       }
     }
   }, [episodeParam, videoData, currentEpisode]);

@@ -21,8 +21,11 @@ export function EpisodesSelector({
   const router = useRouter();
   const { viewingHistory } = useHistoryStore();
 
-  // 默认集数保障（至少 1 集，支持超长连载年番动漫如斗罗大陆 300+ 集、名侦探柯南 1100+ 集）
-  const count = Math.max(1, totalEpisodes || (type === 'tv' ? 24 : 1));
+  // 动态真实集数状态（初始以传入的 totalEpisodes 兜底，探测到真实源后自动精确对齐）
+  const [realTotalEpisodes, setRealTotalEpisodes] = useState<number | null>(null);
+  const [realEpisodeNames, setRealEpisodeNames] = useState<Record<number, string>>({});
+
+  const count = Math.max(1, realTotalEpisodes ?? totalEpisodes ?? (type === 'tv' ? 24 : 1));
 
   const [currentEpisode, setCurrentEpisode] = useState<number>(1);
   const [watchedEpisodes, setWatchedEpisodes] = useState<Set<number>>(new Set());
@@ -32,6 +35,47 @@ export function EpisodesSelector({
   const GROUP_SIZE = count <= 50 ? count : count <= 200 ? 50 : 100;
   const groupsCount = Math.ceil(count / GROUP_SIZE);
 
+  // 异步探测全网片源的真实可播集数（彻底解决 TMDB 预告排期与采集站实际切片不一致的问题）
+  useEffect(() => {
+    let cancelled = false;
+
+    // 1. 本地播放历史优先快速填充
+    const historyItem = viewingHistory.find(
+      h => h.title?.trim().toLowerCase() === title.trim().toLowerCase()
+    );
+
+    if (historyItem?.episodes && historyItem.episodes.length > 0) {
+      setRealTotalEpisodes(historyItem.episodes.length);
+      const nameMap: Record<number, string> = {};
+      historyItem.episodes.forEach((ep, i) => {
+        if (ep.name) nameMap[i + 1] = ep.name;
+      });
+      setRealEpisodeNames(nameMap);
+    }
+
+    // 2. 异步毫秒级探测骨干源最新收录切片集数
+    fetch(`/api/title-episodes?title=${encodeURIComponent(title)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (cancelled) return;
+        if (data.success && data.totalEpisodes && data.totalEpisodes > 0) {
+          setRealTotalEpisodes(data.totalEpisodes);
+          if (Array.isArray(data.episodes)) {
+            const nameMap: Record<number, string> = {};
+            data.episodes.forEach((ep: any, i: number) => {
+              if (ep.name) nameMap[i + 1] = ep.name;
+            });
+            setRealEpisodeNames(nameMap);
+          }
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [title, viewingHistory]);
+
   useEffect(() => {
     // 从播放历史中定位该影视的观看集数
     const historyItem = viewingHistory.find(
@@ -39,20 +83,21 @@ export function EpisodesSelector({
     );
 
     if (historyItem) {
-      const ep = (historyItem.episodeIndex ?? 0) + 1;
+      const rawEp = (historyItem.episodeIndex ?? 0) + 1;
+      const ep = Math.min(count, Math.max(1, rawEp));
       setCurrentEpisode(ep);
       // 将所在的组设为活动组
       const groupIdx = Math.floor((ep - 1) / GROUP_SIZE);
       setActiveTab(groupIdx);
 
-      // 将小于当前集数的记为已看
+      // 将小于等于当前集数的记为已看
       const set = new Set<number>();
       for (let i = 1; i <= ep; i++) {
         set.add(i);
       }
       setWatchedEpisodes(set);
     }
-  }, [title, viewingHistory]);
+  }, [title, viewingHistory, count, GROUP_SIZE]);
 
   const handleSelectEpisode = (ep: number) => {
     const params = new URLSearchParams({
@@ -128,7 +173,7 @@ export function EpisodesSelector({
                   ? 'bg-red-600/20 border-red-500 text-white font-black shadow-lg shadow-red-500/10 hover:bg-red-600/30 scale-[1.02]'
                   : 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20 text-white/80 hover:text-white'
               }`}
-              title={`播放第 ${ep} 集`}
+              title={realEpisodeNames[ep] ? `播放 ${realEpisodeNames[ep]}` : `播放第 ${ep} 集`}
             >
               {/* 集数编号 */}
               <span className="text-sm sm:text-base font-bold tracking-tight">

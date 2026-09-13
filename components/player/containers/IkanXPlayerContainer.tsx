@@ -276,7 +276,8 @@ export function IkanXPlayerContainer() {
     setPlayUrl(episode.url);
     setVideoError('');
     const params = new URLSearchParams(searchParams.toString());
-    params.set('episode', index.toString());
+    const epDisplayNum = episode?.name?.match(/(?:第|ep)?\s*(\d+)\s*(?:集|话)?/i)?.[1] || (index + 1).toString();
+    params.set('episode', epDisplayNum);
     router.replace(`/player?${params.toString()}`, { scroll: false });
   }, [searchParams, router, setCurrentEpisode, setPlayUrl, setVideoError]);
 

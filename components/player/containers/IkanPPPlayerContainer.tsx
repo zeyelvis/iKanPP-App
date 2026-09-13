@@ -233,12 +233,30 @@ export function IkanPPPlayerContainer() {
                   if (remarks.includes('1080') || remarks.includes('hd') || remarks.includes('正片')) qualityScore += 20;
                   if (isTrailer || isCommentary) qualityScore -= 500;
                   if (isMusical) qualityScore -= 400;
-                  if (typeName.includes('动画') || typeName.includes('动漫')) qualityScore += 60;
-                  if (v.source === 'guangsu' || v.source === 'wujin' || v.source === 'zuida') qualityScore += 80;
+                  let episodeScore = 0;
+                  let isEpisodeInsufficient = false;
+                  if (episodeParam && isSeriesItem) {
+                    const reqEpNum = parseInt(episodeParam, 10);
+                    if (!isNaN(reqEpNum) && reqEpNum > 0) {
+                      const remarksNumMatch = remarks.match(/(?:第|更新至|更新到|全)\s*(\d+)\s*集?/);
+                      const isCompleted = remarks.includes('完结') || remarks.includes('全集');
+                      if (remarksNumMatch) {
+                        const maxEpInSource = parseInt(remarksNumMatch[1], 10);
+                        if (maxEpInSource >= reqEpNum) {
+                          episodeScore += 100;
+                        } else {
+                          episodeScore -= 300;
+                          isEpisodeInsufficient = true;
+                        }
+                      } else if (isCompleted) {
+                        episodeScore += 50;
+                      }
+                    }
+                  }
 
-                  const totalScore = nameScore + yearScore + qualityScore;
+                  const totalScore = nameScore + yearScore + qualityScore + episodeScore;
 
-                  const isStrictCandidate = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isExactName && 
+                  const isStrictCandidate = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isExactName && !isEpisodeInsufficient &&
                     (isSeriesItem || !targetYear || !candYear || Math.abs(candYear - targetYear) <= 1);
 
                   if (isStrictCandidate) {
@@ -262,8 +280,8 @@ export function IkanPPPlayerContainer() {
                     }
                   }
 
-                  // 极速秒播裁决：一旦命中合法正片片源，立即秒跳！绝不阻塞！
-                  const isQualified = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isExactName && totalScore >= 80;
+                  // 极速秒播裁决：一旦命中合法正片片源且满足集数需求，立即秒跳！绝不阻塞！
+                  const isQualified = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isExactName && !isEpisodeInsufficient && totalScore >= 80;
                   if (isQualified && !redirected && !cancelled) {
                     const isTopTarget = 
                       (isSeriesItem && (targetAnalysis.seasonNumber !== null ? candAnalysis.seasonNumber === targetAnalysis.seasonNumber : (candAnalysis.seasonNumber === 1 || candAnalysis.seasonNumber === null))) ||
@@ -540,7 +558,9 @@ export function IkanPPPlayerContainer() {
       if (entityParam) params.set('entity', entityParam);
       if (expectedType) params.set('type', expectedType);
       if (expectedYear) params.set('year', expectedYear);
-      params.set('episode', currentEpisode.toString());
+      const currentEpName = videoData?.episodes?.[currentEpisode]?.name;
+      const curDisplayNum = currentEpName?.match(/(?:第|ep)?\s*(\d+)\s*(?:集|话)?/i)?.[1] || (currentEpisode + 1).toString();
+      params.set('episode', curDisplayNum);
       if (playerTimeRef.current > 1) {
         params.set('t', Math.floor(playerTimeRef.current).toString());
       }
@@ -553,7 +573,7 @@ export function IkanPPPlayerContainer() {
       return true;
     }
     return false;
-  }, [currentSourceId, source, groupedSources, title, expectedType, expectedYear, currentEpisode, router]);
+  }, [currentSourceId, source, groupedSources, title, expectedType, expectedYear, currentEpisode, videoData?.episodes, router]);
 
   // 历史记录记录
   useEffect(() => {
@@ -584,7 +604,8 @@ export function IkanPPPlayerContainer() {
     setPlayUrl(episode.url);
     setVideoError('');
     const params = new URLSearchParams(searchParams.toString());
-    params.set('episode', index.toString());
+    const epDisplayNum = episode?.name?.match(/(?:第|ep)?\s*(\d+)\s*(?:集|话)?/i)?.[1] || (index + 1).toString();
+    params.set('episode', epDisplayNum);
     router.replace(`/player?${params.toString()}`, { scroll: false });
   }, [searchParams, router, setCurrentEpisode, setPlayUrl, setVideoError]);
 
@@ -619,7 +640,9 @@ export function IkanPPPlayerContainer() {
     if (entityParam) params.set('entity', entityParam);
     if (expectedType) params.set('type', expectedType);
     if (expectedYear) params.set('year', expectedYear);
-    params.set('episode', currentEpisode.toString());
+    const currentEpName = videoData?.episodes?.[currentEpisode]?.name;
+    const curDisplayNum = currentEpName?.match(/(?:第|ep)?\s*(\d+)\s*(?:集|话)?/i)?.[1] || (currentEpisode + 1).toString();
+    params.set('episode', curDisplayNum);
     if (playerTimeRef.current > 1) {
       params.set('t', Math.floor(playerTimeRef.current).toString());
     }
@@ -629,7 +652,7 @@ export function IkanPPPlayerContainer() {
     }
     setCurrentSourceId(newSource.source);
     router.replace(`/player?${params.toString()}`, { scroll: false });
-  }, [title, entityParam, expectedType, expectedYear, currentEpisode, groupedSources, router]);
+  }, [title, entityParam, expectedType, expectedYear, currentEpisode, videoData?.episodes, groupedSources, router]);
 
   // 影院巨幕模式 (Cinema Stage Mode)
   const [isCinemaMode, setIsCinemaMode] = useState(false);

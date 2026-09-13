@@ -283,6 +283,21 @@ export function EpisodeList({
     setEpisodePage(Math.min(Math.max(0, page), Math.max(0, Math.ceil(episodes.length / EPISODES_PER_PAGE) - 1)));
   }, [currentEpisode, episodes, isReversed, episodeLayout]);
 
+  // 自动平滑滚动到当前选中的集数
+  useEffect(() => {
+    if (!episodes || episodes.length === 0) return;
+    const targetDisplayIdx = isReversed
+      ? episodes.length - 1 - currentEpisode
+      : currentEpisode;
+    const timer = setTimeout(() => {
+      buttonRefs.current[targetDisplayIdx]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [currentEpisode, episodes, isReversed, episodePage]);
+
   const pagedEpisodes = useMemo(() => {
     if (!displayEpisodes) return null;
     if (episodeLayout === 'list' || displayEpisodes.length <= EPISODES_PER_PAGE) {
