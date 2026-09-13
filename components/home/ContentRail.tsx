@@ -2,8 +2,10 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 export interface RailMovie {
   id: string;
@@ -22,7 +24,7 @@ interface ContentRailProps {
   movies: RailMovie[];
   loading?: boolean;
   isPriority?: boolean;
-  onMovieClick: (movie: RailMovie) => void;
+  onMovieClick?: (movie: RailMovie) => void;
   onViewAll?: () => void;
 }
 
@@ -35,7 +37,7 @@ function RailPosterItem({
   movie: RailMovie;
   idx: number;
   isPriority: boolean;
-  onMovieClick: (movie: RailMovie) => void;
+  onMovieClick?: (movie: RailMovie) => void;
 }) {
   const [imageError, setImageError] = useState(false);
   const proxiedCover = getOptimizedImageUrl(movie.cover, { variant: 'poster' });
@@ -44,10 +46,21 @@ function RailPosterItem({
     setImageError(false);
   }, [movie.cover]);
 
+  const isShortDrama = Boolean(movie.url?.includes('short') || (movie.types && movie.types.includes('短剧')));
+  const targetHref = isShortDrama
+    ? `/short/player?${new URLSearchParams({
+        title: movie.title || '',
+        url: movie.url || '',
+        poster: movie.cover || '',
+        ...(movie.id ? { id: String(movie.id) } : {})
+      }).toString()}`
+    : `/title/${generateSlug(movie.title)}`;
+
   return (
-    <div
-      onClick={() => onMovieClick(movie)}
-      className="cinema-poster-card shrink-0 w-[118px] sm:w-40 lg:w-46 cursor-pointer group/card select-none"
+    <Link
+      href={targetHref}
+      prefetch={isPriority && idx < 6}
+      className="cinema-poster-card shrink-0 w-[118px] sm:w-40 lg:w-46 cursor-pointer group/card select-none block"
       style={{ contentVisibility: 'auto', containIntrinsicSize: '160px 240px' }}
     >
       {/* 海报卡片 */}
@@ -132,7 +145,7 @@ function RailPosterItem({
           </p>
         )}
       </div>
-    </div>
+    </Link>
   );
 }
 

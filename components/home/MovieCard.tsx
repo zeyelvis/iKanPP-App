@@ -34,15 +34,26 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
   // 智能图片精准物理尺寸与地域路由（海报卡片统一规范为 poster/342 尺寸）
   const proxiedCover = getOptimizedImageUrl(movie.cover, { variant: 'poster' });
 
+  // 智能短剧与正片动态目标路由
+  const isShortDrama = Boolean((movie as any).play_url || (movie as any).playUrl || (movie as any).firstPlayUrl || ((movie as any).types && (movie as any).types.includes('短剧')));
+  const playUrl = (movie as any).play_url || (movie as any).playUrl || (movie as any).url || (movie as any).firstPlayUrl || '';
+  const targetHref = isShortDrama
+    ? `/short/player?${new URLSearchParams({
+        title: movie.title || '',
+        url: playUrl,
+        poster: movie.cover || (movie as any).poster || '',
+        ...((movie as any).id ? { id: String((movie as any).id) } : {})
+      }).toString()}`
+    : `/title/${generateSlug(movie.title)}`;
+
   return (
     <Link
-      href={`/title/${generateSlug(movie.title)}`}
+      href={targetHref}
+      prefetch={index < 8}
       onClick={(e) => {
         // Allow default behavior for modifier keys (new tab, etc.)
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-
-        e.preventDefault();
-        onMovieClick(movie);
+        // 不拦截原生 Link 导航，确保 Viewport Prefetch 与 RSC 预加载完全生效
       }}
       data-focusable
       className="group cursor-pointer movie-card-hover"

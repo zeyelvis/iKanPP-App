@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRankingData } from './hooks/useRankingData';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 
@@ -122,9 +123,10 @@ export function RankingCarousel({ contentType }: RankingCarouselProps) {
             <div className="hidden sm:flex gap-3 h-[260px]">
 
                 {/* 左侧 Hero 区域 */}
-                <div
-                    className="relative w-[38%] min-w-[280px] rounded-2xl overflow-hidden cursor-pointer group"
-                    onClick={() => handleMovieClick(active)}
+                <Link
+                    href={`/title/${generateSlug(active.title)}`}
+                    prefetch={true}
+                    className="relative w-[38%] min-w-[280px] rounded-2xl overflow-hidden cursor-pointer group block"
                     style={{ isolation: 'isolate' }}
                 >
                     {/* 模糊背景 */}
@@ -223,20 +225,16 @@ export function RankingCarousel({ contentType }: RankingCarouselProps) {
                         </div>
 
                         {/* 播放按钮 */}
-                        <button
-                            className="w-full py-2 bg-[var(--accent-color)] text-white rounded-full text-sm font-semibold flex items-center justify-center gap-2 hover:brightness-110 transition-all shadow-lg cursor-pointer active:scale-[0.98]"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleMovieClick(active);
-                            }}
+                        <div
+                            className="w-full py-2 bg-[var(--accent-color)] text-white rounded-full text-sm font-semibold flex items-center justify-center gap-2 hover:brightness-110 transition-all shadow-lg active:scale-[0.98]"
                         >
                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M8 5v14l11-7z" />
                             </svg>
                             立即播放
-                        </button>
+                        </div>
                     </div>
-                </div>
+                </Link>
 
                 {/* 右侧卡片列表 */}
                 <div className="flex-1 relative min-w-0 group/list">
@@ -282,14 +280,15 @@ export function RankingCarousel({ contentType }: RankingCarouselProps) {
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
                         {currentData.map((movie, idx) => (
-                            <div
+                            <Link
                                 key={movie.id || idx}
-                                className={`relative shrink-0 w-[130px] lg:w-[145px] rounded-xl overflow-hidden cursor-pointer group/card transition-all duration-300 ${idx === activeIndex
+                                href={`/title/${generateSlug(movie.title)}`}
+                                prefetch={idx < 4}
+                                className={`relative shrink-0 w-[130px] lg:w-[145px] rounded-xl overflow-hidden cursor-pointer group/card transition-all duration-300 block ${idx === activeIndex
                                         ? 'ring-2 ring-[var(--accent-color)] shadow-lg shadow-[var(--accent-color)]/20'
                                         : 'ring-1 ring-white/10 hover:ring-white/25'
                                     }`}
                                 onMouseEnter={() => setActiveIndex(idx)}
-                                onClick={() => handleMovieClick(movie)}
                             >
                                 {/* 海报 */}
                                 <Image
@@ -340,7 +339,7 @@ export function RankingCarousel({ contentType }: RankingCarouselProps) {
                                         </svg>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </div>
@@ -361,10 +360,11 @@ export function RankingCarousel({ contentType }: RankingCarouselProps) {
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
                     {currentData.map((movie, idx) => (
-                        <div
+                        <Link
                             key={movie.id || idx}
-                            className="relative shrink-0 w-[120px] h-[180px] rounded-xl overflow-hidden cursor-pointer group/mcard"
-                            onClick={() => handleMovieClick(movie)}
+                            href={`/title/${generateSlug(movie.title)}`}
+                            prefetch={idx < 3}
+                            className="relative shrink-0 w-[120px] h-[180px] rounded-xl overflow-hidden cursor-pointer group/mcard block"
                         >
                             {/* 海报 */}
                             <Image
@@ -404,7 +404,7 @@ export function RankingCarousel({ contentType }: RankingCarouselProps) {
                                     {movie.title}
                                 </p>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>

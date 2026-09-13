@@ -63,7 +63,7 @@ function resolveEntityChannel(entity: TitleEntity): { category: string; path: st
 }
 
 export const runtime = 'edge';
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 
@@ -100,7 +100,6 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
   let entity = await getEntityBySlug(decodedSlug);
 
   // 🌟 核心防线：严格校验取出的实体标题是否与 URL 中的 cleanTitle 匹配！
-  // 杜绝因动态序号冲突、冷启动重置或历史脏缓存把无关影片（如将仙逆错配成东京出租车）返回出来
   if (entity && cleanTitle) {
     const normEntity = normalizeTitle(entity.title);
     const normClean = normalizeTitle(cleanTitle);
@@ -131,12 +130,12 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
     }
   }
 
-  // 4. 若本地/预置库未命中，使用纯净标题到 TMDB 搜索并自愈入库
+  // 4. 若本地/预置库未命中，使用纯净标题到 TMDB 搜索并自愈入库（仅全新冷门词条触发）
   const queryTitle = cleanTitle || decodedSlug;
   if (queryTitle && !/^ik\d{6}$/i.test(queryTitle)) {
     entity = await searchAndEnrichFromTMDB(queryTitle);
     if (entity) {
-      return enrichEpisodeCount(entity); // 双保险：确保精确集数统计已执行
+      return enrichEpisodeCount(entity);
     }
   }
 
@@ -144,16 +143,11 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
 }
 
 /**
- * TMDB 集数精确补全器（含 tmdbId 自愈）
+ * TMDB 集数精确补全器（0ms 秒开守卫）
  *
  * 核心逻辑：
- * 1. 用现有 tmdbId 查询 TMDB TV 详情 → 成功则按 air_date 精确统计已播出集数
- * 2. 若 tmdbId 无效或详情查询失败 → 自动重新搜索标题修正 tmdbId → 再次精确统计
- *
- * tmdbId 自愈场景（根因修复）：
- * - 仙逆：KV 中缓存了错误的 tmdbId '900118'（一部无关纪录片），
- *   导致 TV 详情查询返回 null，集数无法补全。
- *   自愈后重新匹配到正确的 ID 223911（200 集连载动漫），精确统计已播出 158 集。
+ * 1. 只要当前实体具备集数或为电影，直接 0ms 返回渲染
+ * 2. 若集数需要刷新或补全，一律转入后台非阻塞异步执行，绝不阻塞用户首屏关键路径
  */
 async function enrichEpisodeCount(entity: TitleEntity): Promise<TitleEntity> {
   // 仅对剧集类型触发
@@ -165,7 +159,6 @@ async function enrichEpisodeCount(entity: TitleEntity): Promise<TitleEntity> {
     const now = Date.now();
     const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
-    // 24小时内的新鲜数据直接返回
     if (now - lastUpdated < ONE_DAY_MS) {
       return entity;
     }
@@ -175,26 +168,8 @@ async function enrichEpisodeCount(entity: TitleEntity): Promise<TitleEntity> {
     return entity;
   }
 
-  const tmdbId = entity.tmdbId;
-
-  // ====== 尝试用现有 tmdbId 精确统计 ======
-  if (tmdbId && /^\d{4,}$/.test(tmdbId)) {
-    const result = await tryEnrichFromTMDB(entity, tmdbId);
-    if (result) return result;
-  }
-
-  // ====== tmdbId 自愈：现有 tmdbId 失效，重新搜索正确的 TMDB 条目 ======
-  try {
-    const healed = await searchAndEnrichFromTMDB(entity.title, 'tv', entity.year, true);
-    if (healed && healed.tmdbId && healed.tmdbId !== tmdbId) {
-      // 用修正后的 tmdbId 再次精确统计
-      const result = await tryEnrichFromTMDB(healed, healed.tmdbId);
-      if (result) return result;
-      // 即使精确统计失败，修正后的 entity 也比旧的好
-      return healed;
-    }
-  } catch {}
-
+  // 尚未精确统计过集数：立即返回当前实体保障首屏秒开，后台异步补全并持久化
+  refreshEpisodeCountInBackground(entity);
   return entity;
 }
 
@@ -202,19 +177,99 @@ async function enrichEpisodeCount(entity: TitleEntity): Promise<TitleEntity> {
  * 后台非阻塞刷新剧集已播出集数与季数
  */
 function refreshEpisodeCountInBackground(entity: TitleEntity) {
-  if (!entity.tmdbId || !/^\d{4,}$/.test(entity.tmdbId)) return;
   (async () => {
     try {
-      await tryEnrichFromTMDB(entity, entity.tmdbId);
+      const tmdbId = entity.tmdbId;
+      if (tmdbId && /^\d{4,}$/.test(tmdbId)) {
+        await tryEnrichFromTMDB(entity, tmdbId);
+        return;
+      }
+      // tmdbId 无效或缺失，异步通过标题匹配自愈
+      const healed = await searchAndEnrichFromTMDB(entity.title, 'tv', entity.year, true);
+      if (healed && healed.tmdbId && /^\d{4,}$/.test(healed.tmdbId)) {
+        await tryEnrichFromTMDB(healed, healed.tmdbId);
+      }
     } catch {}
+  })();
+}
+
+/**
+ * 后台非阻塞丰润演职员质量与一致性
+ */
+function healCreditsInBackground(entity: TitleEntity) {
+  (async () => {
+    try {
+      const tmdbMediaType: 'movie' | 'tv' = entity.type === 'movie' ? 'movie' : 'tv';
+      let isMismatch = false;
+
+      // 1. 若已有 tmdbId，深度校验该 tmdbId 对应的标题是否与本片一致
+      if (entity.tmdbId && /^\d+$/.test(entity.tmdbId)) {
+        const detail = await fetchTMDBDetails(entity.tmdbId, tmdbMediaType);
+        if (detail) {
+          const fetchedTitle = (detail.title || detail.name || '').trim().toLowerCase();
+          const origTitle = (detail.original_title || detail.original_name || '').trim().toLowerCase();
+          const myTitle = entity.title.trim().toLowerCase();
+          if (fetchedTitle && !fetchedTitle.includes(myTitle) && !myTitle.includes(fetchedTitle) && !origTitle.includes(myTitle) && !myTitle.includes(origTitle)) {
+            isMismatch = true;
+            entity.tmdbId = '';
+            entity.directors = [];
+            entity.actors = [];
+          } else if (detail.credits) {
+            const realDirs = (detail.credits.crew || []).filter((c: any) => c.job === 'Director').map((c: any) => c.name).filter(Boolean);
+            const realActs = (detail.credits.cast || []).slice(0, 8).map((c: any) => c.name).filter(Boolean);
+            if (realDirs.length > 0) entity.directors = realDirs;
+            if (realActs.length > 0) entity.actors = realActs;
+            await saveEntity(entity);
+            return;
+          }
+        }
+      }
+
+      // 2. 若发现错配，或演职员仍为空，以影片真实标题触发在线精准重丰润自愈
+      if (isMismatch || (!entity.directors?.length && !entity.actors?.length)) {
+        const enriched = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
+        if (enriched) {
+          entity.tmdbId = enriched.tmdbId;
+          entity.directors = enriched.directors;
+          entity.actors = enriched.actors;
+          if (enriched.cover && (!entity.cover || entity.cover.includes('douban'))) entity.cover = enriched.cover;
+          if (enriched.backdrop && (!entity.backdrop || entity.backdrop.includes('douban'))) entity.backdrop = enriched.backdrop;
+          await saveEntity(entity);
+        }
+      }
+    } catch (err) {
+      console.warn('[healCreditsInBackground fail]:', err);
+    }
+  })();
+}
+
+/**
+ * 后台非阻塞补全真实的 16:9 横版剧照
+ */
+function healBackdropInBackground(entity: TitleEntity) {
+  (async () => {
+    try {
+      const realBackdrop = await resolveRealBackdrop(
+        entity.title,
+        entity.backdrop,
+        entity.cover,
+        entity.tmdbId,
+        entity.type,
+        entity.year
+      );
+      if (realBackdrop && realBackdrop !== entity.backdrop) {
+        entity.backdrop = realBackdrop;
+        await saveEntity(entity);
+      }
+    } catch (err) {
+      console.warn('[healBackdropInBackground fail]:', err);
+    }
   })();
 }
 
 /**
  * 内部辅助函数：用指定的 tmdbId 尝试从 TMDB 精确统计已播出集数
  * 成功返回更新后的 entity，失败返回 null
- *
- * 防线：增加标题相似度校验，防止 tmdbId 指向一个有效但完全无关的 TV 剧集时静默通过
  */
 async function tryEnrichFromTMDB(entity: TitleEntity, tmdbId: string): Promise<TitleEntity | null> {
   try {
@@ -222,41 +277,35 @@ async function tryEnrichFromTMDB(entity: TitleEntity, tmdbId: string): Promise<T
     if (!detail || !detail.number_of_seasons) return null;
 
     // ====== 标题相似度防线 ======
-    // 校验 TMDB 返回的名称是否与 entity 标题有交集
-    // 防止 tmdbId 指向一个有效但完全无关的外文剧集（如仙逆 → "Intimate Portrait"）
     const tmdbName = (detail.name || detail.original_name || '').trim();
     const entityTitle = (entity.title || '').trim();
     if (tmdbName && entityTitle && !hasTitleOverlap(entityTitle, tmdbName)) {
-      // TMDB 名称与标题完全不相关，视为错误匹配
       return null;
     }
 
     const totalSeasons = detail.number_of_seasons;
 
-    // 补全可能缺失的 genres
     if (detail.genres?.length && (!entity.genres || entity.genres.length <= 1)) {
       entity.genres = detail.genres.map((g: any) => g.name).filter(Boolean);
     }
 
-    // 精确统计已播出集数（通过季详情 API 的 air_date 过滤）
     const airedCount = await fetchTMDBAiredEpisodeCount(tmdbId, totalSeasons);
 
     if (airedCount && airedCount > 0) {
       entity.numberOfEpisodes = airedCount;
       entity.numberOfSeasons = totalSeasons;
-      entity.tmdbId = tmdbId; // 确保 tmdbId 已修正
+      entity.tmdbId = tmdbId;
       entity.updatedAt = new Date().toISOString();
-      saveEntity(entity).catch(() => {});
+      await saveEntity(entity);
       return entity;
     }
 
-    // 季详情 API 失败时，回退到总集数
     if (detail.number_of_episodes) {
       entity.numberOfEpisodes = detail.number_of_episodes;
       entity.numberOfSeasons = totalSeasons;
       entity.tmdbId = tmdbId;
       entity.updatedAt = new Date().toISOString();
-      saveEntity(entity).catch(() => {});
+      await saveEntity(entity);
       return entity;
     }
   } catch {}
@@ -335,18 +384,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonicalUrl = `${BASE_URL}/title/${entity.entityId}-${entity.slug}`;
   let resolvedBackdrop = entity.backdrop;
   if (isFakeBackdrop(entity.backdrop, entity.cover)) {
-    const realBackdrop = await resolveRealBackdrop(
-      entity.title,
-      entity.backdrop,
-      entity.cover,
-      entity.tmdbId,
-      entity.type,
-      entity.year
-    );
-    if (realBackdrop) {
-      resolvedBackdrop = realBackdrop;
-      entity.backdrop = realBackdrop; // 写入 cached entity 对象供后续 TitlePage 复用
-    }
+    healBackdropInBackground(entity);
   }
   const ogImage = resolvedBackdrop || entity.cover;
 
@@ -430,60 +468,9 @@ export default async function TitlePage({ params }: Props) {
   let validDirectors = filterFakePeople(entity.directors);
   let validActors = filterFakePeople(entity.actors);
 
-  // 演职员质量与一致性智能校验（仅在演职员确实缺失时触发自愈，避免无谓阻塞主渲染路径）
+  // 演职员质量与一致性智能校验（转入非阻塞后台自愈，杜绝阻塞主渲染路径）
   if (validDirectors.length === 0 || validActors.length === 0) {
-    try {
-      const tmdbMediaType: 'movie' | 'tv' = entity.type === 'movie' ? 'movie' : 'tv';
-      let isMismatch = false;
-
-      // 1. 若已有 tmdbId，深度校验该 tmdbId 对应的标题是否与本片一致（防槽位 ID 污染）
-      if (entity.tmdbId && /^\d+$/.test(entity.tmdbId)) {
-        const detail = await fetchTMDBDetails(entity.tmdbId, tmdbMediaType);
-        if (detail) {
-          const fetchedTitle = (detail.title || detail.name || '').trim().toLowerCase();
-          const origTitle = (detail.original_title || detail.original_name || '').trim().toLowerCase();
-          const myTitle = entity.title.trim().toLowerCase();
-          // 标题完全不包含且不相符，判定为历史错配垃圾 ID
-          if (fetchedTitle && !fetchedTitle.includes(myTitle) && !myTitle.includes(fetchedTitle) && !origTitle.includes(myTitle) && !myTitle.includes(origTitle)) {
-            isMismatch = true;
-            entity.tmdbId = '';
-            entity.directors = [];
-            entity.actors = [];
-            validDirectors = [];
-            validActors = [];
-          } else if ((validDirectors.length === 0 || validActors.length === 0) && detail.credits) {
-            const realDirs = (detail.credits.crew || []).filter(c => c.job === 'Director').map(c => c.name).filter(Boolean);
-            const realActs = (detail.credits.cast || []).slice(0, 8).map(c => c.name).filter(Boolean);
-            if (realDirs.length > 0) {
-              entity.directors = realDirs;
-              validDirectors = realDirs;
-            }
-            if (realActs.length > 0) {
-              entity.actors = realActs;
-              validActors = realActs;
-            }
-            saveEntity(entity).catch(() => {});
-          }
-        }
-      }
-
-      // 2. 若发现错配，或演职员仍为空，以影片真实标题触发在线精准重丰润自愈
-      if (isMismatch || validDirectors.length === 0 || validActors.length === 0) {
-        const enriched = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
-        if (enriched) {
-          entity.tmdbId = enriched.tmdbId;
-          entity.directors = enriched.directors;
-          entity.actors = enriched.actors;
-          if (enriched.cover && (!entity.cover || entity.cover.includes('douban'))) entity.cover = enriched.cover;
-          if (enriched.backdrop && (!entity.backdrop || entity.backdrop.includes('douban'))) entity.backdrop = enriched.backdrop;
-          validDirectors = filterFakePeople(entity.directors);
-          validActors = filterFakePeople(entity.actors);
-          saveEntity(entity).catch(() => {});
-        }
-      }
-    } catch (err) {
-      console.warn('[Enrich credits fail]:', err);
-    }
+    healCreditsInBackground(entity);
   }
 
   // 获取同题材、同导演与同主演相关推荐影片（构建站内强内链拓扑）
@@ -527,23 +514,10 @@ export default async function TitlePage({ params }: Props) {
   // isTv 语义：是否有剧集列表（电视剧 + 动漫均有，电影没有）
   const isTv = entity.type === 'tv' || entity.type === 'anime' || resolvedChannel.category === 'anime' || resolvedChannel.category === 'tv';
 
-  // 智能识别并自动丰润 TMDB 真实 16:9 横版电影大画幅剧照
+  // 智能识别并自动丰润 TMDB 真实 16:9 横版电影大画幅剧照（转入非阻塞后台自愈）
   let resolvedBackdrop = entity.backdrop;
   if (isFakeBackdrop(entity.backdrop, entity.cover)) {
-    const realBackdrop = await resolveRealBackdrop(
-      entity.title,
-      entity.backdrop,
-      entity.cover,
-      entity.tmdbId,
-      entity.type,
-      entity.year
-    );
-    if (realBackdrop) {
-      entity.backdrop = realBackdrop;
-      resolvedBackdrop = realBackdrop;
-      // 异步持久化入库，下次访问直接极速秒开
-      saveEntity(entity).catch(() => {});
-    }
+    healBackdropInBackground(entity);
   }
 
   // 是否为纯正的 16:9 横版电影剧照大图，并接入物理尺寸精准降维与双轨加速

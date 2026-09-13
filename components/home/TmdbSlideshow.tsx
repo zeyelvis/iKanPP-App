@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { PREBAKED_HOME_DATA, type PrebakedSubject, type TrendingNavItem } from '@/lib/data/home-prebaked';
@@ -443,14 +444,14 @@ export function HeroSlideshow({
               </div>
 
                   {/* 下方：放大后的流媒体播放大按钮（高度约 50-52px，位置与底线恒定） */}
-                  <button
-                    type="button"
-                    onClick={() => handleMovieClick(active)}
+                  <Link
+                    href={`/title/${generateSlug(active.title)}`}
+                    prefetch={true}
                     className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-base sm:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102 shrink-0"
                   >
                     <span>立即播放</span>
                     <span className="text-sm sm:text-base">▷</span>
-                  </button>
+                  </Link>
                 </div>
 
             {/* 2. 中栏：100% 绝对对齐爱壹帆官方各专区原生速报排布（电影6+6/首页与剧集6+5/综艺与动漫纪录片4+4） */}
@@ -465,10 +466,10 @@ export function HeroSlideshow({
               const line2 = activeTrendingNav.slice(splitIdx);
 
               const renderItem = (item: TrendingNavItem, idx: number) => (
-                <button
+                <Link
                   key={idx}
-                  type="button"
-                  onClick={() => handleTrendingClick(item)}
+                  href={`/title/${generateSlug(item.title)}`}
+                  prefetch={idx < 6}
                   className="group flex items-center justify-start text-left cursor-pointer text-white/90 hover:text-white hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.75)] hover:scale-103 transition-all duration-200 select-none shrink-0"
                   title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                 >
@@ -484,7 +485,7 @@ export function HeroSlideshow({
                       {item.updateBadge}
                     </span>
                   ) : null}
-                </button>
+                </Link>
               );
 
               return (

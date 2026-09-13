@@ -12,6 +12,7 @@ import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { Navbar } from '@/components/layout/Navbar';
 
 export const runtime = 'edge';
+export const revalidate = 86400;
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 
@@ -72,8 +73,20 @@ export default async function ActorPage({ params }: Props) {
   // 2. 检查是否已对该影人进行过全量代表作深度扩充
   const alreadyEnriched = await isPersonEnriched('actor', actorName);
 
-  // 3. 如果作品为空、作品数过少且未深度扩充（< 8部），或包含脏数据，主动触发高质量 TMDB 代表作自愈与覆写
-  if ((!alreadyEnriched && cleanEntities.length < 8) || cleanEntities.length === 0 || cleanEntities.length < entities.length) {
+  // 3. 高质量 TMDB 代表作自愈：已有作品则 0ms 秒开渲染，后台异步扩充；仅无作品时前台兜底
+  if (cleanEntities.length > 0) {
+    entities = cleanEntities;
+    if (!alreadyEnriched && cleanEntities.length < 8) {
+      (async () => {
+        try {
+          const enriched = await searchAndEnrichPersonCredits(actorName, 'actor', 36);
+          if (enriched.length === 0) {
+            await markPersonEnriched('actor', actorName);
+          }
+        } catch {}
+      })();
+    }
+  } else if (!alreadyEnriched) {
     try {
       const enriched = await searchAndEnrichPersonCredits(actorName, 'actor', 36);
       if (enriched.length > 0) {

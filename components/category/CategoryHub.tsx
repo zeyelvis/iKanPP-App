@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
@@ -453,15 +454,24 @@ function isSameList(a: any[], b: any[]): boolean {
               </h2>
 
               <div className="flex items-center gap-2.5 sm:gap-3">
-                <button
-                  onClick={() => handleMovieClick(heroMovie)}
+                <Link
+                  href={shortDramaMode
+                    ? `/short/player?${new URLSearchParams({
+                        title: heroMovie.title || '',
+                        url: (heroMovie as any).play_url || (heroMovie as any).playUrl || heroMovie.url || (heroMovie as any).firstPlayUrl || '',
+                        poster: heroMovie.cover || (heroMovie as any).poster || '',
+                        ...((heroMovie as any).id ? { id: String((heroMovie as any).id) } : {})
+                      }).toString()}`
+                    : `/title/${generateSlug(heroMovie.title)}`
+                  }
+                  prefetch={true}
                   className="flex-1 sm:flex-none justify-center px-5 sm:px-7 py-2.5 sm:py-3 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-1.5 sm:gap-2 shadow-2xl transition-all cursor-pointer"
                 >
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
                   </svg>
                   立即播放
-                </button>
+                </Link>
                 <button
                   onClick={() => handleSearch(heroMovie.title)}
                   className="flex-1 sm:flex-none justify-center px-4 sm:px-5 py-2.5 sm:py-3 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-xl text-white rounded-xl sm:rounded-2xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 sm:gap-2 border border-white/15 transition-all cursor-pointer"

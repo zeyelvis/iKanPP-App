@@ -38,7 +38,7 @@ async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number,
     if (data && Array.isArray(data.subjects) && data.subjects.length > 0) {
       return data.subjects.map((item: any) => ({
         ...item,
-        cover: item.cover ? `/api/douban/image?url=${encodeURIComponent(item.cover)}` : item.cover,
+        cover: item.cover,
       }));
     }
     return [];
@@ -161,7 +161,7 @@ async function fetchDoubanDomesticNowPlaying(): Promise<any[]> {
       seenTitles.add(title);
 
       const rawCover = match[9];
-      const cover = rawCover ? `/api/douban/image?url=${encodeURIComponent(rawCover)}` : '';
+      const cover = rawCover || '';
       const year = match[4] || '2026';
       const votecount = parseInt(match[8] || '0', 10);
 
@@ -325,9 +325,7 @@ export async function GET(request: Request) {
 
     const paged = list.slice(pageStart, pageStart + pageLimit).map(item => ({
       ...item,
-      cover: item.cover?.includes('doubanio.com')
-        ? `/api/douban/image?url=${encodeURIComponent(item.cover)}`
-        : item.cover,
+      cover: item.cover,
       playable: true,
       is_new: item.year === '2024' || item.year === '2025' || item.year === '2026',
     }));
@@ -383,9 +381,7 @@ export async function GET(request: Request) {
       }
       const paged = filtered.slice(pageStart, pageStart + pageLimit).map(item => ({
         ...item,
-        cover: item.cover?.includes('doubanio.com')
-          ? `/api/douban/image?url=${encodeURIComponent(item.cover)}`
-          : item.cover,
+        cover: item.cover,
         playable: true,
       }));
 
@@ -410,9 +406,7 @@ export async function GET(request: Request) {
       const doubanDocs = await fetchDoubanSubjects('tv', '纪录片', pageLimit, pageStart);
       const finalSubjects = doubanDocs.length > 0 ? doubanDocs : DOCUMENTARY_DATASET.slice(pageStart, pageStart + pageLimit).map(item => ({
         ...item,
-        cover: item.cover?.includes('doubanio.com')
-          ? `/api/douban/image?url=${encodeURIComponent(item.cover)}`
-          : item.cover,
+        cover: item.cover,
         playable: true,
       }));
 
@@ -433,9 +427,7 @@ export async function GET(request: Request) {
     } catch {
       const fallbackList = DOCUMENTARY_DATASET.slice(pageStart, pageStart + pageLimit).map(item => ({
         ...item,
-        cover: item.cover?.includes('doubanio.com')
-          ? `/api/douban/image?url=${encodeURIComponent(item.cover)}`
-          : item.cover,
+        cover: item.cover,
         playable: true,
       }));
       return NextResponse.json({

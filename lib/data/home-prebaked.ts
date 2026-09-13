@@ -4,6 +4,7 @@
 
 export interface PrebakedSubject {
   id: string;
+  tmdbId?: string;
   title: string;
   rate: string;
   cover: string;
@@ -250,10 +251,11 @@ export const PREBAKED_HOME_DATA: {
     "top10": [
       {
         "id": "pb_m_top10_1",
+        "tmdbId": "1368337",
         "title": "奥德赛",
         "rate": "8.6",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2933569626.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2933569626.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/m_ratio_poster/public/p2933569626.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/RMXG8myu1aGlNUsRjtxzmpdMK0.jpg",
         "description": "豆瓣一周电影口碑榜 TOP 1。荷马史诗震撼重现，克里斯托弗·诺兰执导，马特·达蒙主演，登顶本周口碑榜榜首。",
         "year": "2026",
         "types": [
@@ -276,9 +278,10 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_top10_2",
+        "tmdbId": "1391021",
         "title": "欢迎来龙餐馆",
         "rate": "8.7",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2935109312.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/m_ratio_poster/public/p2935109312.jpg",
         "backdrop": "https://image.tmdb.org/t/p/w1280/zr7om0GOLOcLo7SXMmNEG5rz6de.jpg",
         "description": "豆瓣一周电影口碑榜 TOP 2。动荡时代下人间烟火与人性温暖的细腻交织，全网极高赞誉与感动。",
         "year": "2026",
@@ -301,10 +304,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_top10_3",
+        "tmdbId": "1305672",
         "title": "抓特务",
         "rate": "7.4",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2933198755.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2933198755.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/m_ratio_poster/public/p2933198755.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/mkdgT692DYjFKC0BI1HqLfHxI1t.jpg",
         "description": "豆瓣一周电影口碑榜 TOP 3。高能谍战智斗，悬念丛生，层层反转扣人心弦。",
         "year": "2026",
         "types": [
@@ -326,10 +330,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_top10_4",
+        "tmdbId": "950028",
         "title": "激情邀约",
         "rate": "7.4",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2932993239.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2932993239.jpg",
+        "cover": "https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2932993239.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/lEwqBGNR65KZv6Ej5ufcmhZu2y2.jpg",
         "description": "豆瓣一周电影口碑榜 TOP 4。浪漫喜剧年度黑马，诙谐幽默中深入探讨当代两性情感与信任。",
         "year": "2026",
         "types": [
@@ -351,10 +356,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_top10_5",
+        "tmdbId": "1433601",
         "title": "无界之环",
         "rate": "7.9",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2934876803.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2934876803.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/m_ratio_poster/public/p2934876803.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/cX7F226WqkQ7Ly2GHEdIuGaai0u.jpg",
         "description": "豆瓣一周电影口碑榜 TOP 5。脑洞大开的奇幻轻喜剧，天马行空的视觉构想与独特视听表达。",
         "year": "2025",
         "types": [
@@ -376,10 +382,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_top10_6",
+        "tmdbId": "1472813",
         "title": "女仆日记",
         "rate": "7.3",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2934910303.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2934910303.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/m_ratio_poster/public/p2934910303.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/bYaiKiCmTOnd2EW0yuzA4vno8g.jpg",
         "description": "豆瓣一周电影口碑榜 TOP 6。冷静剖析上流社会的虚伪面具，撕开华丽表面下的人性裂痕。",
         "year": "2026",
         "types": [
@@ -401,10 +408,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_top10_7",
+        "tmdbId": "1294972",
         "title": "凤仙花",
         "rate": "7.3",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg2.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2923172271.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg2.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2923172271.jpg",
+        "cover": "https://img2.doubanio.com/view/photo/m_ratio_poster/public/p2923172271.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/q9BznLtUUuHfHzyT3NOKzqM6oxz.jpg",
         "description": "豆瓣一周电影口碑榜 TOP 7。诗意盎然的情感治愈力作，以温暖笔触描摹时光流转中的生命之美。",
         "year": "2025",
         "types": [
@@ -426,10 +434,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_top10_8",
+        "tmdbId": "1376415",
         "title": "伪钞之王",
         "rate": "7.2",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2926256257.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2926256257.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/m_ratio_poster/public/p2926256257.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/hKC8k08rgIyXFVQXrp1izEAWwL1.jpg",
         "description": "豆瓣一周电影口碑榜 TOP 8。跌宕起伏的金融犯罪风云，瞒天过海的惊天骗局步步惊心。",
         "year": "2025",
         "types": [
@@ -451,10 +460,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_top10_9",
+        "tmdbId": "1318335",
         "title": "荣光与暗影",
         "rate": "7.4",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2931227654.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2931227654.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/m_ratio_poster/public/p2931227654.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/6LpnsToxRww4wsFDX4HUcNKTNF4.jpg",
         "description": "豆瓣一周电影口碑榜 TOP 9。波澜壮阔的历史篇章，时代洪流中无名个体的命运抉择。",
         "year": "2026",
         "types": [
@@ -476,10 +486,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_top10_10",
+        "tmdbId": "1119548",
         "title": "一切从头来过",
         "rate": "7.1",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2926570640.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2926570640.jpg",
+        "cover": "https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2926570640.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/sq4KQ8CXOFr02KI2XWIZvkpJXui.jpg",
         "description": "豆瓣一周电影口碑榜 TOP 10。真挚感人的家庭大作，在生活的困局中重新燃起希望之火。",
         "year": "2025",
         "types": [
@@ -530,7 +541,7 @@ export const PREBAKED_HOME_DATA: {
         "id": "35811064",
         "title": "欢迎来龙餐馆",
         "rate": "8.7",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2935109312.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2935109312.jpg",
         "backdrop": "https://image.tmdb.org/t/p/w1280/zr7om0GOLOcLo7SXMmNEG5rz6de.jpg",
         "description": "2026 院线热播巨制。由文牧野执导，沈腾 / 蒋奇明 / 奥马尔·谢里夫联袂呈现。",
         "year": "2026",
@@ -556,8 +567,8 @@ export const PREBAKED_HOME_DATA: {
         "id": "36808876",
         "title": "奥德赛",
         "rate": "8.6",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933569626.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933569626.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2933569626.jpg",
+        "backdrop": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2933569626.jpg",
         "description": "2026 院线热播巨制。由克里斯托弗·诺兰执导，马特·达蒙 / 汤姆·霍兰德 / 安妮·海瑟薇联袂呈现。",
         "year": "2026",
         "types": [
@@ -582,8 +593,8 @@ export const PREBAKED_HOME_DATA: {
         "id": "36882191",
         "title": "八仙！",
         "rate": "8.2",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934074566.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934074566.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2934074566.jpg",
+        "backdrop": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2934074566.jpg",
         "description": "2026 院线热播巨制。由牟正洋执导，陈浩 / 李绍哲 / 立冬联袂呈现。",
         "year": "2026",
         "types": [
@@ -608,7 +619,7 @@ export const PREBAKED_HOME_DATA: {
         "id": "36246195",
         "title": "蜘蛛侠：崭新之日",
         "rate": "7.8",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934276912.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2934276912.jpg",
         "backdrop": "https://image.tmdb.org/t/p/w1280/qeQJx07rK2xm8SD2sJxFKhE7gs0.jpg",
         "description": "2026 院线热播巨制。由德斯汀·丹尼尔·克雷顿执导，汤姆·霍兰德 / 赞达亚 / 萨迪·辛克联袂呈现。",
         "year": "2026",
@@ -634,8 +645,8 @@ export const PREBAKED_HOME_DATA: {
         "id": "36452545",
         "title": "功夫女足",
         "rate": "6.3",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933860063.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933860063.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933860063.jpg",
+        "backdrop": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933860063.jpg",
         "description": "2026 院线热播巨制。由周星驰执导，张小斐 / 迪丽热巴 / 张艺兴联袂呈现。",
         "year": "2026",
         "types": [
@@ -660,8 +671,8 @@ export const PREBAKED_HOME_DATA: {
         "id": "37450627",
         "title": "痴迷",
         "rate": "7.6",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934049524.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934049524.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2934049524.jpg",
+        "backdrop": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2934049524.jpg",
         "description": "2025 院线热播惊悚力作。由库里·巴克执导，迈克尔·约翰斯顿 / 印达·纳瓦雷特联袂呈现。",
         "year": "2025",
         "types": [
@@ -686,8 +697,8 @@ export const PREBAKED_HOME_DATA: {
         "id": "36235977",
         "title": "后室",
         "rate": "6.6",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933327977.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933327977.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933327977.jpg",
+        "backdrop": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933327977.jpg",
         "description": "2026 院线热播科幻巨制。由凯恩·帕森斯执导，切瓦特·埃加福 / 雷娜特·赖因斯夫 / 芬恩·本尼特联袂呈现。",
         "year": "2026",
         "types": [
@@ -712,8 +723,8 @@ export const PREBAKED_HOME_DATA: {
         "id": "36238849",
         "title": "玩具总动员5",
         "rate": "8.0",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933391462.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933391462.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933391462.jpg",
+        "backdrop": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933391462.jpg",
         "description": "2026 迪士尼皮克斯动画巨制。由安德鲁·斯坦顿 麦肯纳·哈里斯执导，汤姆·汉克斯 / 蒂姆·艾伦 / 琼·库萨克联袂呈现。",
         "year": "2026",
         "types": [
@@ -738,8 +749,8 @@ export const PREBAKED_HOME_DATA: {
         "id": "36812879",
         "title": "抓特务",
         "rate": "7.4",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933198755.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933198755.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2933198755.jpg",
+        "backdrop": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2933198755.jpg",
         "description": "2026 院线热播巨制。由冯小刚执导，雷佳音 / 胡歌 / 啜妮联袂呈现。",
         "year": "2026",
         "types": [
@@ -764,8 +775,8 @@ export const PREBAKED_HOME_DATA: {
         "id": "37508847",
         "title": "空枪",
         "rate": "7.2",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934946788.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934946788.jpg",
+        "cover": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2934946788.jpg",
+        "backdrop": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2934946788.jpg",
         "description": "2026 院线热播悬疑巨制。由韩延执导，朱一龙 / 檀健次 / 梁家辉联袂呈现。",
         "year": "2026",
         "types": [
@@ -790,8 +801,8 @@ export const PREBAKED_HOME_DATA: {
         "id": "36850814",
         "title": "年会不能停！2",
         "rate": "6.6",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934583425.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934583425.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2934583425.jpg",
+        "backdrop": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2934583425.jpg",
         "description": "2026 院线爆笑喜剧。由董润年执导，张若昀 / 白客 / 高叶联袂呈现。",
         "year": "2026",
         "types": [
@@ -816,8 +827,8 @@ export const PREBAKED_HOME_DATA: {
         "id": "36953973",
         "title": "特立独行",
         "rate": "6.7",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933638302.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933638302.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933638302.jpg",
+        "backdrop": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933638302.jpg",
         "description": "2026 院线热播巨制。由邢文雄执导，白敬亭 / 魏翔 / 张国强联袂呈现。",
         "year": "2026",
         "types": [
@@ -842,8 +853,8 @@ export const PREBAKED_HOME_DATA: {
         "id": "36962219",
         "title": "小黄人与大怪兽",
         "rate": "6.6",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933539994.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2933539994.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2933539994.jpg",
+        "backdrop": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2933539994.jpg",
         "description": "2026 照明娱乐合家欢动画巨制。由皮埃尔·柯芬执导。",
         "year": "2026",
         "types": [
@@ -868,8 +879,8 @@ export const PREBAKED_HOME_DATA: {
         "id": "37191746",
         "title": "四渡",
         "rate": "7.5",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2931635664.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2931635664.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2931635664.jpg",
+        "backdrop": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2931635664.jpg",
         "description": "2026 历史战争史诗巨制。由徐展雄执导，刘烨 / 王雷 / 于适联袂呈现。",
         "year": "2026",
         "types": [
@@ -894,8 +905,8 @@ export const PREBAKED_HOME_DATA: {
         "id": "38581618",
         "title": "牛来",
         "rate": "6.0",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934945600.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934945600.jpg",
+        "cover": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2934945600.jpg",
+        "backdrop": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2934945600.jpg",
         "description": "2026 院线温情治愈力作。由信雨萌执导。",
         "year": "2026",
         "types": [
@@ -917,8 +928,8 @@ export const PREBAKED_HOME_DATA: {
         "id": "35275131",
         "title": "去你的岛",
         "rate": "7.6",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934742318.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2934742318.jpg",
+        "cover": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2934742318.jpg",
+        "backdrop": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2934742318.jpg",
         "description": "2026 院线治愈系动画电影。由周浩然执导，杨茜云 / 张福正 / 孙婉瑜联袂献声。",
         "year": "2026",
         "types": [
@@ -938,10 +949,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s1_fall2",
+        "tmdbId": "1101412",
         "title": "坠落2：死点",
         "rate": "5.5",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2935283013.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2935283013.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2935283013.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/yBDxqDB29kpH9VojTytjGWBgmdJ.jpg",
         "description": "2026 院线热播惊悚巨制。由迈克尔·斯派瑞 彼得·斯派瑞执导，哈丽特·斯莱特 / 阿塞玛·托马斯 / 汤姆·布里特尼联袂呈现。",
         "year": "2026",
         "types": [
@@ -965,10 +977,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s1_wrath",
+        "tmdbId": "1288445",
         "title": "怒之杀",
         "rate": "5.8",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2935069903.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2935069903.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2935069903.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/e2QAGrEmbpmZpMymDRkDisJkvg9.jpg",
         "description": "2026 院线热播巨制。由让-弗朗索瓦·雷切执导，杰森·斯坦森 / 钱尼尔·库勒 / 拉蒙·蒂卡拉姆联袂呈现。",
         "year": "2026",
         "types": [
@@ -991,10 +1004,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s1_burn",
+        "tmdbId": "1444590",
         "title": "燃烧吧！爸爸",
         "rate": "6.8",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2935535832.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fs_ratio_poster%2Fpublic%2Fp2935535832.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2935535832.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/oOI3KNLmMSaHpDukSQN4cSLn4tb.jpg",
         "description": "2026 院线热播巨制。由刘潇阳执导，文淇 / 倪虹洁 / 喻恩泰联袂呈现。",
         "year": "2026",
         "types": [
@@ -1019,6 +1033,7 @@ export const PREBAKED_HOME_DATA: {
     "s2": [
       {
         "id": "pb_m_s2_1",
+        "tmdbId": "278",
         "title": "肖申克的救赎",
         "rate": "8.7",
         "cover": "https://image.tmdb.org/t/p/w500/iKZev9OgfklidO8AvdrYlwung2o.jpg",
@@ -1044,6 +1059,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s2_2",
+        "tmdbId": "10997",
         "title": "霸王别姬",
         "rate": "7.9",
         "cover": "https://image.tmdb.org/t/p/w500/vOEkLofQ8N1OdbGs5L87m7Plpw2.jpg",
@@ -1069,6 +1085,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s2_3",
+        "tmdbId": "13",
         "title": "阿甘正传",
         "rate": "8.5",
         "cover": "https://image.tmdb.org/t/p/w500/pplybKImR7LKzSVzRylK6Cl4dzm.jpg",
@@ -1094,6 +1111,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s2_4",
+        "tmdbId": "157336",
         "title": "星际穿越",
         "rate": "8.5",
         "cover": "https://image.tmdb.org/t/p/w500/spQm5r317XPNHK1941ChWmqzkZs.jpg",
@@ -1119,6 +1137,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s2_5",
+        "tmdbId": "27205",
         "title": "盗梦空间",
         "rate": "8.4",
         "cover": "https://image.tmdb.org/t/p/w500/89W962aAnPS3N3BdKgy2BvUhnCh.jpg",
@@ -1144,6 +1163,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s2_6",
+        "tmdbId": "129",
         "title": "千与千寻",
         "rate": "8.5",
         "cover": "https://image.tmdb.org/t/p/w500/dnwMqbndJpOEhoVqjlMU9U7LFle.jpg",
@@ -1169,6 +1189,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s2_7",
+        "tmdbId": "101",
         "title": "这个杀手不太冷",
         "rate": "8.3",
         "cover": "https://image.tmdb.org/t/p/w500/wT9bYGpoFnJGiRaRF9DErVjZ7qo.jpg",
@@ -1194,6 +1215,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s2_8",
+        "tmdbId": "597",
         "title": "泰坦尼克号",
         "rate": "7.9",
         "cover": "https://image.tmdb.org/t/p/w500/lFYUkUPcFXDzZzSfkiCDsvHIJxj.jpg",
@@ -1219,6 +1241,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s2_9",
+        "tmdbId": "637",
         "title": "美丽人生",
         "rate": "8.4",
         "cover": "https://image.tmdb.org/t/p/w500/84PPFpTTMO83bPy19v7JgdNklDp.jpg",
@@ -1244,6 +1267,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s2_10",
+        "tmdbId": "37165",
         "title": "楚门的世界",
         "rate": "8.2",
         "cover": "https://image.tmdb.org/t/p/w500/nAnzFcqORitpwvRQPceIt4mcm8G.jpg",
@@ -1271,6 +1295,7 @@ export const PREBAKED_HOME_DATA: {
     "s3": [
       {
         "id": "pb_m_s3_1",
+        "tmdbId": "51533",
         "title": "让子弹飞",
         "rate": "7.8",
         "cover": "https://image.tmdb.org/t/p/w500/p5KiZq5MtGExUhmgPbpwiGFzALt.jpg",
@@ -1296,6 +1321,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s3_2",
+        "tmdbId": "1422",
         "title": "无间道",
         "rate": "8.2",
         "cover": "https://image.tmdb.org/t/p/w500/rF7oZ54CFBMDHTBQPm0ptIPk1hP.jpg",
@@ -1321,6 +1347,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s3_3",
+        "tmdbId": "13345",
         "title": "大话西游之月光宝盒",
         "rate": "7.5",
         "cover": "https://image.tmdb.org/t/p/w500/2dka8szEqgKWbqwhYbaT0ssAtrK.jpg",
@@ -1346,6 +1373,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s3_4",
+        "tmdbId": "11471",
         "title": "英雄本色",
         "rate": "7.4",
         "cover": "https://image.tmdb.org/t/p/w500/qvdvGB9d58zjberXoCX5RihD5PY.jpg",
@@ -1371,6 +1399,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s3_5",
+        "tmdbId": "39915",
         "title": "青蛇",
         "rate": "7.3",
         "cover": "https://image.tmdb.org/t/p/w500/4PIXqxN9BIYhhNIRwACgkrwPvH7.jpg",
@@ -1396,6 +1425,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s3_6",
+        "tmdbId": "47423",
         "title": "纵横四海",
         "rate": "6.8",
         "cover": "https://image.tmdb.org/t/p/w500/5RY3c5m7lElGAWHUbkJJXQtgKEQ.jpg",
@@ -1421,6 +1451,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s3_7",
+        "tmdbId": "9470",
         "title": "功夫",
         "rate": "7.5",
         "cover": "https://image.tmdb.org/t/p/w500/wv91QM70K9KzF9usPOebYX3LKkp.jpg",
@@ -1446,6 +1477,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s3_8",
+        "tmdbId": "146",
         "title": "卧虎藏龙",
         "rate": "7.4",
         "cover": "https://image.tmdb.org/t/p/w500/28FX5rCNo6p602DzgPOTNZjyMPh.jpg",
@@ -1471,6 +1503,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s3_9",
+        "tmdbId": "40751",
         "title": "东邪西毒",
         "rate": "7.7",
         "cover": "https://image.tmdb.org/t/p/w500/oJiwnFSwNmBLShTVqi7eY8qGMwS.jpg",
@@ -1496,6 +1529,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s3_10",
+        "tmdbId": "11104",
         "title": "重庆森林",
         "rate": "8.0",
         "cover": "https://image.tmdb.org/t/p/w500/ejkczWHjQoNAPUmTU26tU3aRkr8.jpg",
@@ -1523,6 +1557,7 @@ export const PREBAKED_HOME_DATA: {
     "s4": [
       {
         "id": "pb_m_s4_1",
+        "tmdbId": "603",
         "title": "黑客帝国",
         "rate": "8.3",
         "cover": "https://image.tmdb.org/t/p/w500/eMurN09rDC2qeEv3npkUbcJfIXN.jpg",
@@ -1549,6 +1584,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s4_2",
+        "tmdbId": "76600",
         "title": "阿凡达：水之道",
         "rate": "7.6",
         "cover": "https://image.tmdb.org/t/p/w500/az6FndKaR11uuxnRQucKJ2mmglg.jpg",
@@ -1574,6 +1610,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s4_3",
+        "tmdbId": "299534",
         "title": "复仇者联盟4：终局之战",
         "rate": "8.2",
         "cover": "https://image.tmdb.org/t/p/w500/wXyZYO6BKDh8Evf80DF80VzKcz3.jpg",
@@ -1600,6 +1637,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s4_4",
+        "tmdbId": "333339",
         "title": "头号玩家",
         "rate": "7.6",
         "cover": "https://image.tmdb.org/t/p/w500/546MvE18yfLXEBwWWsxE0f4xuMy.jpg",
@@ -1625,6 +1663,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s4_5",
+        "tmdbId": "335984",
         "title": "银翼杀手2049",
         "rate": "7.6",
         "cover": "https://image.tmdb.org/t/p/w500/sxA89XGotN9c5u5O1GWpbYYX3Ks.jpg",
@@ -1650,6 +1689,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s4_6",
+        "tmdbId": "155",
         "title": "蝙蝠侠：黑暗骑士",
         "rate": "8.5",
         "cover": "https://image.tmdb.org/t/p/w500/qYB7QqwT1NtTW9aCwtopGy80rmA.jpg",
@@ -1700,6 +1740,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s4_8",
+        "tmdbId": "698687",
         "title": "变形金刚",
         "rate": "8.0",
         "cover": "https://image.tmdb.org/t/p/w500/pGbVQL0oEHLM6tC8OQqbWotXr3w.jpg",
@@ -1725,6 +1766,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s4_9",
+        "tmdbId": "68726",
         "title": "环太平洋",
         "rate": "6.9",
         "cover": "https://image.tmdb.org/t/p/w500/zZdNPXlOi6uMH0h1ZVPuJ2S19Zb.jpg",
@@ -1750,6 +1792,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_m_s4_10",
+        "tmdbId": "135397",
         "title": "侏罗纪世界",
         "rate": "6.3",
         "cover": "https://image.tmdb.org/t/p/w500/gKG56CEsncQSr7kmMLmclosXPPa.jpg",
@@ -1967,10 +2010,11 @@ export const PREBAKED_HOME_DATA: {
     "top10": [
       {
         "id": "pb_t_top10_1",
+        "tmdbId": "309663",
         "title": "开庭",
         "rate": "8.6",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2932548406.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2932548406.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/m_ratio_poster/public/p2932548406.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/fGOfVu7YjBEBxPZH7fwkufZ47Lu.jpg",
         "description": "豆瓣一周华语口碑剧集榜 TOP 1。硬核律政交锋，现实主义笔触直击社会复杂痛点，引爆全网热议。",
         "year": "2026",
         "types": [
@@ -1982,10 +2026,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_top10_2",
+        "tmdbId": "291856",
         "title": "重器",
         "rate": "7.3",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2934828709.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2934828709.jpg",
+        "cover": "https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2934828709.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/sUTK5UjUNud0d5hcEbhOk4RTqII.jpg",
         "description": "豆瓣一周华语口碑剧集榜 TOP 2。大国重工与时代脉动，老一辈工匠的坚定信念与薪火相传。",
         "year": "2026",
         "types": [
@@ -2007,10 +2052,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_top10_3",
+        "tmdbId": "273114",
         "title": "悬案",
         "rate": "7.6",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2933759962.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2933759962.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/m_ratio_poster/public/p2933759962.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/hMAew4hKxZJeqqvYljhLpvS4OZA.jpg",
         "description": "豆瓣一周华语口碑剧集榜 TOP 3。跨越数十载的尘封大案，抽丝剥茧探寻真相与正义之光。",
         "year": "2026",
         "types": [
@@ -2032,10 +2078,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_top10_4",
+        "tmdbId": "306672",
         "title": "日落下的彩虹",
         "rate": "8.5",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2934077326.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2934077326.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/m_ratio_poster/public/p2934077326.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/oLG0Smu4GB4OBVmydd2qxejDF82.jpg",
         "description": "豆瓣一周华语口碑剧集榜 TOP 4。平凡生活中的诗意与温情，以细腻真挚的人间情感打动千万观众。",
         "year": "2026",
         "types": [
@@ -2054,10 +2101,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_top10_5",
+        "tmdbId": "287496",
         "title": "花开锦绣",
         "rate": "7.1",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2934718593.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2934718593.jpg",
+        "cover": "https://img3.doubanio.com/view/photo/m_ratio_poster/public/p2934718593.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/zyAFGC97834c2Ld4xPY02uacdQk.jpg",
         "description": "豆瓣一周华语口碑剧集榜 TOP 5。匠心雕琢的东方美学画卷，女子在逆境中昂首突围的励志传奇。",
         "year": "2026",
         "types": [
@@ -2075,10 +2123,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_top10_6",
+        "tmdbId": "280133",
         "title": "藏锋",
         "rate": "6.7",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2935209228.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2935209228.jpg",
+        "cover": "https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2935209228.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/iHShzy0Fa1WDbjFMJqxZV5nLwOQ.jpg",
         "description": "豆瓣一周华语口碑剧集榜 TOP 6。暗夜潜伏的无声较量，生死抉择间的坚守与信仰。",
         "year": "2026",
         "types": [
@@ -2100,10 +2149,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_top10_7",
+        "tmdbId": "233076",
         "title": "问心2",
         "rate": "7.5",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2933401946.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2933401946.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/m_ratio_poster/public/p2933401946.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/xBI8m2aYsr9o4vtgbnI7wsewGc6.jpg",
         "description": "豆瓣一周华语口碑剧集榜 TOP 7。医疗职场经典口碑续作，白衣执甲以心护命。",
         "year": "2026",
         "types": [
@@ -2125,10 +2175,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_top10_8",
+        "tmdbId": "295558",
         "title": "雀骨",
         "rate": "6.9",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2931739796.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2931739796.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/m_ratio_poster/public/p2931739796.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/eZTq2kkhZ9AQtQ1H5SD7h1Q0PIc.jpg",
         "description": "豆瓣一周华语口碑剧集榜 TOP 8。权谋与江湖的风云交汇，宿命纠葛中的快意恩仇。",
         "year": "2026",
         "types": [
@@ -2150,10 +2201,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_top10_9",
+        "tmdbId": "271016",
         "title": "九门",
         "rate": "6.7",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2934488566.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg9.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2934488566.jpg",
+        "cover": "https://img9.doubanio.com/view/photo/m_ratio_poster/public/p2934488566.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/paF9IoqXN3inVb5eR9rxElbpYyb.jpg",
         "description": "豆瓣一周华语口碑剧集榜 TOP 9。民国神秘探险传奇，地底奇观与家族谜团步步惊心。",
         "year": "2026",
         "types": [
@@ -2175,10 +2227,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_top10_10",
+        "tmdbId": "327916",
         "title": "凛冬下的罪恶",
         "rate": "6.9",
-        "cover": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2934675359.jpg",
-        "backdrop": "/api/douban/image?url=https%3A%2F%2Fimg1.doubanio.com%2Fview%2Fphoto%2Fm_ratio_poster%2Fpublic%2Fp2934675359.jpg",
+        "cover": "https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2934675359.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/gN3vSMrarrirco31Af8bUsSHBYZ.jpg",
         "description": "豆瓣一周华语口碑剧集榜 TOP 10。极寒林海雪原中的冷峻追凶，直面罪恶与人性救赎。",
         "year": "2026",
         "types": [
@@ -2199,6 +2252,7 @@ export const PREBAKED_HOME_DATA: {
     "s1": [
       {
         "id": "pb_t_s1_1",
+        "tmdbId": "230835",
         "title": "莲花楼",
         "rate": "7.3",
         "cover": "https://image.tmdb.org/t/p/w500/h8DteNYVPnGn6ZgCjIlQXW5KFUb.jpg",
@@ -2225,6 +2279,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s1_2",
+        "tmdbId": "210524",
         "title": "长相思",
         "rate": "7.1",
         "cover": "https://image.tmdb.org/t/p/w500/sIWIB7Q6vsU3b4ULoa6a1kq7SXg.jpg",
@@ -2251,6 +2306,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s1_3",
+        "tmdbId": "207668",
         "title": "与凤行",
         "rate": "8.5",
         "cover": "https://image.tmdb.org/t/p/w500/zW1YdedNH24xVCMrWHOZHxpJC39.jpg",
@@ -2276,6 +2332,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s1_4",
+        "tmdbId": "229202",
         "title": "玫瑰的故事",
         "rate": "7.4",
         "cover": "https://image.tmdb.org/t/p/w500/stxOoW8qTj3JdSX8ENlN6daaCSo.jpg",
@@ -2301,6 +2358,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s1_5",
+        "tmdbId": "216943",
         "title": "少年歌行",
         "rate": "8.0",
         "cover": "https://image.tmdb.org/t/p/w500/hauiCvGKenZEeVasznun04jETVA.jpg",
@@ -2326,6 +2384,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s1_6",
+        "tmdbId": "210191",
         "title": "一念关山",
         "rate": "7.5",
         "cover": "https://image.tmdb.org/t/p/w500/6zOT4e0VWsG4xQkqydsCY5FKu8b.jpg",
@@ -2351,6 +2410,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s1_7",
+        "tmdbId": "138289",
         "title": "风吹半夏",
         "rate": "7.3",
         "cover": "https://image.tmdb.org/t/p/w500/4PzNozYxVKlFI4KrXm3gQTCNt0Z.jpg",
@@ -2377,6 +2437,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s1_7",
+        "tmdbId": "203042",
         "title": "警察荣誉",
         "rate": "8.2",
         "cover": "https://image.tmdb.org/t/p/w500/2FFZ6BKObmieClCogTrPSezyjLd.jpg",
@@ -2404,6 +2465,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s1_8",
+        "tmdbId": "155441",
         "title": "开端",
         "rate": "8.1",
         "cover": "https://image.tmdb.org/t/p/w500/3vbovxhpmrHbz3Ot9AhzLziaxTO.jpg",
@@ -2431,6 +2493,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s1_9",
+        "tmdbId": "202876",
         "title": "梦华录",
         "rate": "6.5",
         "cover": "https://image.tmdb.org/t/p/w500/4mCQBKQ3w9adnengQSm2GCZpGr6.jpg",
@@ -2458,6 +2521,7 @@ export const PREBAKED_HOME_DATA: {
     "s2": [
       {
         "id": "pb_t_s2_1",
+        "tmdbId": "1396",
         "title": "绝命毒师",
         "rate": "9.0",
         "cover": "https://image.tmdb.org/t/p/w500/rqliuvX7NdknSHu5qaSDfESplQi.jpg",
@@ -2480,6 +2544,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s2_2",
+        "tmdbId": "60059",
         "title": "风骚律师",
         "rate": "8.7",
         "cover": "https://image.tmdb.org/t/p/w500/ceybevjR1WAC4wqiHEEAhrW1U9L.jpg",
@@ -2502,6 +2567,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s2_3",
+        "tmdbId": "66732",
         "title": "怪奇物语",
         "rate": "8.6",
         "cover": "https://image.tmdb.org/t/p/w500/iTvTODru3s8A4eGqVZzALcipIft.jpg",
@@ -2524,6 +2590,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s2_4",
+        "tmdbId": "60573",
         "title": "硅谷",
         "rate": "8.1",
         "cover": "https://image.tmdb.org/t/p/w500/qpN9Sl35iNcOUTJdQYPObvdRQXt.jpg",
@@ -2546,6 +2613,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s2_5",
+        "tmdbId": "1425",
         "title": "纸牌屋",
         "rate": "8.0",
         "cover": "https://image.tmdb.org/t/p/w500/hdgLe0YDvk1tPOliWM5fOoNE6qG.jpg",
@@ -2568,6 +2636,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s2_6",
+        "tmdbId": "63247",
         "title": "西部世界",
         "rate": "8.0",
         "cover": "https://image.tmdb.org/t/p/w500/kgCNunp2VbUv6o5As5viHvkAsWv.jpg",
@@ -2590,6 +2659,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s2_7",
+        "tmdbId": "46648",
         "title": "真探",
         "rate": "8.3",
         "cover": "https://image.tmdb.org/t/p/w500/203aK2bjFALUoATyPOF5izNQjpU.jpg",
@@ -2612,6 +2682,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s2_8",
+        "tmdbId": "87108",
         "title": "切尔诺贝利",
         "rate": "8.7",
         "cover": "https://image.tmdb.org/t/p/w500/2kjMfJSwwQqOq4o4idiZxbNxoYz.jpg",
@@ -2656,6 +2727,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s2_10",
+        "tmdbId": "76331",
         "title": "继承之战",
         "rate": "8.3",
         "cover": "https://image.tmdb.org/t/p/w500/tgImKD6CdMWAyCT8AVEx0eelfBD.jpg",
@@ -2680,6 +2752,7 @@ export const PREBAKED_HOME_DATA: {
     "s3": [
       {
         "id": "pb_t_s3_1",
+        "tmdbId": "96102",
         "title": "机智的医生生活",
         "rate": "8.6",
         "cover": "https://image.tmdb.org/t/p/w500/zYBo8ASGhGtkF6fTY0zrJzOQtLt.jpg",
@@ -2702,6 +2775,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s3_2",
+        "tmdbId": "94796",
         "title": "爱的迫降",
         "rate": "8.5",
         "cover": "https://image.tmdb.org/t/p/w500/976e81HXfGk5aJhYyHsD1oSmQXe.jpg",
@@ -2727,6 +2801,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s3_3",
+        "tmdbId": "65143",
         "title": "太阳的后裔",
         "rate": "8.3",
         "cover": "https://image.tmdb.org/t/p/w500/21FrxeG8sGu4zKQcnuIR7F9XrYi.jpg",
@@ -2754,6 +2829,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s3_4",
+        "tmdbId": "103147",
         "title": "信号",
         "rate": "6.1",
         "cover": "https://image.tmdb.org/t/p/w500/qFplFFQy6zMMplHItcrMAtBEseO.jpg",
@@ -2776,6 +2852,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s3_5",
+        "tmdbId": "67915",
         "title": "孤单又灿烂的神：鬼怪",
         "rate": "8.6",
         "cover": "https://image.tmdb.org/t/p/w500/9VqVphrJ7k9k2atBMfNZ0cg5Rdp.jpg",
@@ -2803,6 +2880,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s3_6",
+        "tmdbId": "75701",
         "title": "非自然死亡",
         "rate": "8.4",
         "cover": "https://image.tmdb.org/t/p/w500/xqmRCfHB7s5np5TyDa02ZXQd2Wc.jpg",
@@ -2830,6 +2908,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s3_7",
+        "tmdbId": "55925",
         "title": "半泽直树",
         "rate": "8.3",
         "cover": "https://image.tmdb.org/t/p/w500/m5kpwUaZH1EpClrBbkruvzCsNU9.jpg",
@@ -2852,6 +2931,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s3_8",
+        "tmdbId": "215197",
         "title": "重启人生",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/uaZXNusiStCwGMyUun97bysK774.jpg",
@@ -2876,6 +2956,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s3_9",
+        "tmdbId": "46234",
         "title": "胜者即是正义",
         "rate": "8.5",
         "cover": "https://image.tmdb.org/t/p/w500/8h56NWBnJspZrsRb2yaAaoWlp0m.jpg",
@@ -2903,6 +2984,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s3_10",
+        "tmdbId": "95718",
         "title": "东京大饭店",
         "rate": "8.4",
         "cover": "https://image.tmdb.org/t/p/w500/qbmilxpotzMShI02qgswlKQOxGy.jpg",
@@ -2927,6 +3009,7 @@ export const PREBAKED_HOME_DATA: {
     "s4": [
       {
         "id": "pb_t_s4_1",
+        "tmdbId": "106449",
         "title": "凡人修仙传",
         "rate": "8.5",
         "cover": "https://image.tmdb.org/t/p/w500/u1VRjvvCIVwb1MUhoxSAUimhoKZ.jpg",
@@ -2949,6 +3032,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s4_2",
+        "tmdbId": "124003",
         "title": "完美世界",
         "rate": "8.2",
         "cover": "https://image.tmdb.org/t/p/w500/mNJPCv2dLADVVSgLlzsMJoXdTmb.jpg",
@@ -2974,6 +3058,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s4_3",
+        "tmdbId": "224839",
         "title": "遮天",
         "rate": "8.9",
         "cover": "https://image.tmdb.org/t/p/w500/z9JNGlJ8eGy6S6SOlBhpmxjjXGT.jpg",
@@ -2996,6 +3081,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s4_4",
+        "tmdbId": "79481",
         "title": "斗破苍穹 年番",
         "rate": "7.9",
         "cover": "https://image.tmdb.org/t/p/w500/oyoahIcdamTXwjIaL3CqZ1v5CLl.jpg",
@@ -3022,6 +3108,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s4_5",
+        "tmdbId": "101172",
         "title": "吞噬星空",
         "rate": "8.5",
         "cover": "https://image.tmdb.org/t/p/w500/dShQsQFLSivwCIRjC7crsnznPXY.jpg",
@@ -3048,6 +3135,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s4_6",
+        "tmdbId": "223911",
         "title": "仙逆",
         "rate": "8.2",
         "cover": "https://image.tmdb.org/t/p/w500/mCt5qgkOYEvuHSiSwNByMv6LMoB.jpg",
@@ -3074,6 +3162,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s4_7",
+        "tmdbId": "209867",
         "title": "葬送的芙莉莲",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/1TtrtRIwXz5BB0gXEl8zgBypl9c.jpg",
@@ -3096,6 +3185,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s4_8",
+        "tmdbId": "95479",
         "title": "咒术回战 第二季",
         "rate": "8.6",
         "cover": "https://image.tmdb.org/t/p/w500/kdE1ALF5G6DFMyDU67AyyUklEtn.jpg",
@@ -3125,6 +3215,7 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "pb_t_s4_10",
+        "tmdbId": "313028",
         "title": "进击的巨人 最终季",
         "rate": "8.5",
         "cover": "https://image.tmdb.org/t/p/w500/5gaf9yFJHJTkg6KtLc7enqBY6UK.jpg",

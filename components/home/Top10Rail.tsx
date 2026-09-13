@@ -2,8 +2,10 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 interface Top10Movie {
   id: string;
@@ -13,6 +15,10 @@ interface Top10Movie {
   year?: string;
   types?: string[];
   description?: string;
+  url?: string;
+  play_url?: string;
+  playUrl?: string;
+  firstPlayUrl?: string;
 }
 
 interface Top10RailProps {
@@ -20,7 +26,7 @@ interface Top10RailProps {
   badge?: string;
   movies: Top10Movie[];
   loading?: boolean;
-  onMovieClick: (movie: Top10Movie) => void;
+  onMovieClick?: (movie: Top10Movie) => void;
   contentType?: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'short' | string;
 }
 
@@ -31,15 +37,27 @@ function Top10Item({
 }: {
   movie: Top10Movie;
   idx: number;
-  onMovieClick: (movie: Top10Movie) => void;
+  onMovieClick?: (movie: Top10Movie) => void;
 }) {
   const [imageError, setImageError] = useState(false);
   const proxiedCover = getOptimizedImageUrl(movie.cover, { variant: 'thumb' });
   const isDoubleDigit = idx + 1 >= 10;
 
+  const isShortDrama = Boolean(movie.play_url || movie.playUrl || movie.firstPlayUrl || (movie.types && movie.types.includes('短剧')));
+  const playUrl = movie.play_url || movie.playUrl || movie.url || movie.firstPlayUrl || '';
+  const targetHref = isShortDrama
+    ? `/short/player?${new URLSearchParams({
+        title: movie.title || '',
+        url: playUrl,
+        poster: movie.cover || '',
+        ...(movie.id ? { id: String(movie.id) } : {})
+      }).toString()}`
+    : `/title/${generateSlug(movie.title)}`;
+
   return (
-    <div
-      onClick={() => onMovieClick(movie)}
+    <Link
+      href={targetHref}
+      prefetch={idx < 5}
       className="shrink-0 flex items-center cursor-pointer group select-none relative pr-2 sm:pr-4"
       style={{ contentVisibility: 'auto', containIntrinsicSize: '185px 280px' }}
     >
@@ -124,15 +142,15 @@ function Top10Item({
           <p className="text-xs font-bold text-white line-clamp-1 mb-2">
             {movie.title}
           </p>
-          <button className="w-full py-1.5 bg-(--accent-color) hover:brightness-110 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1 shadow-md cursor-pointer pointer-events-auto">
+          <div className="absolute bottom-2.5 inset-x-2.5 z-20 py-1.5 px-2 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1 shadow-lg opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
               <path d="M8 5v14l11-7z" />
             </svg>
             立即播放
-          </button>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
