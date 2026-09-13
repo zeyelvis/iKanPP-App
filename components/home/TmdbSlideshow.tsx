@@ -426,11 +426,11 @@ export function HeroSlideshow({
         <div className="fluid-container relative">
           <div className="iyf-hero-bar pointer-events-auto relative">
             
-            {/* 1. 左栏：大气沉浸的大片标题与流媒体 CTA 播放大按钮 */}
-            <div className="shrink-0 w-full max-w-[280px] lg:w-[280px] xl:w-[310px] flex flex-col items-start justify-end">
+            {/* 1. 左栏：大气沉浸的大片标题与流媒体 CTA 播放大按钮（紧凑黄金宽度，避免右侧留出大黑洞） */}
+            <div className="shrink-0 w-full max-w-[220px] lg:w-[200px] xl:w-[230px] flex flex-col items-start justify-end">
               {/* 上方：固定高度弹性底对齐，大字号片名气势恢宏，底对齐恒定绝不拉扯整栏高度 */}
               <div className="mb-3 sm:mb-4 w-full h-[76px] sm:h-[88px] lg:h-[96px] flex flex-col justify-end">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[36px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1 leading-tight line-clamp-2 break-words">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[34px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1 leading-tight line-clamp-2 break-words">
                   {active.title}
                 </h2>
                 <div className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] h-6">
@@ -445,17 +445,17 @@ export function HeroSlideshow({
               <button
                 type="button"
                 onClick={() => handleMovieClick(active)}
-                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 sm:px-7 sm:py-3 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-base sm:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102 shrink-0"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-base sm:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102 shrink-0"
               >
                 <span>立即播放</span>
                 <span className="text-sm sm:text-base">▷</span>
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（大字号 + 宽阔间距，充分利用中间大舞台空间，视觉饱满舒展） */}
+            {/* 2. 中栏：全板块统一严格 6+6 黄金对称排布，充分均衡利用左右两侧开阔空间 */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (() => {
-              // 唯有动漫频道官方规范因《死神》长片名自然拆为 5+7，其余全板块（纪录片、综艺、电影、电视剧、首页）均为严格 6+6 黄金对称
-              const splitIdx = contentType === 'anime' ? 5 : 6;
+              // 全站所有专区（电影、电视剧、综艺、动漫、纪录片、首页）严格执行 6+6 黄金对称切分，杜绝单行过长凸出挤撞海报
+              const splitIdx = 6;
               const line1 = activeTrendingNav.slice(0, splitIdx);
               const line2 = activeTrendingNav.slice(splitIdx, 12);
               const renderItem = (item: TrendingNavItem, idx: number) => (
@@ -478,7 +478,7 @@ export function HeroSlideshow({
               );
 
               return (
-                <div className="hidden lg:flex flex-1 min-w-0 flex-col items-center justify-end px-2 xl:px-4 pb-1">
+                <div className="hidden lg:flex flex-1 min-w-0 flex-col items-center justify-end px-3 xl:px-6 pb-1">
                   <div className="flex flex-col items-center gap-y-2.5 xl:gap-y-3.5 w-full max-w-fit">
                     <div className="flex items-center justify-center gap-x-4 lg:gap-x-5 xl:gap-x-7 2xl:gap-x-8 whitespace-nowrap">
                       {line1.map(renderItem)}
