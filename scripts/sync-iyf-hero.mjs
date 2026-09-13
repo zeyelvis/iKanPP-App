@@ -265,7 +265,7 @@ async function syncHomeAll() {
     { title: '死有对证', updateBadge: '' },
   ];
 
-  const trendingNavItems = await fetchChannelTrendingNav('0,1', '全站精选', defaultHomeTrending, 11);
+  const trendingNavItems = await fetchChannelTrendingNav('0,1', '全站精选', defaultHomeTrending, 12);
 
   const extraPath = path.resolve(process.cwd(), 'lib/data/home-prebaked-extra.ts');
   if (fs.existsSync(extraPath)) {
@@ -389,10 +389,11 @@ async function syncTvChannel() {
     { title: '杀手妈咪', updateBadge: '1' },
     { title: '花开锦绣', updateBadge: '' },
     { title: '死有对证', updateBadge: '' },
-    { title: '百花杀', updateBadge: '' }
+    { title: '百花杀', updateBadge: '' },
+    { title: '不是你的恋爱', updateBadge: '' }
   ];
 
-  const tvTrendingNav = await fetchChannelTrendingNav('0,1,4', '电视剧频道', defaultTvTrending, 11);
+  const tvTrendingNav = await fetchChannelTrendingNav('0,1,4', '电视剧频道', defaultTvTrending, 12);
 
   const prebakedPath = path.resolve(process.cwd(), 'lib/data/home-prebaked.ts');
   if (fs.existsSync(prebakedPath)) {
