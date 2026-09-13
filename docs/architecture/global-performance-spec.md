@@ -79,17 +79,37 @@
 - 拦截目标：`img.ikanpp.com`、`tmdb.org`、`doubanio.com`、`/api/img-proxy` 及静态图片；
 - 策略：**Cache-First**。海报具备天然不可变性，二次加载直接 0ms 闪电响应。
 
-### 2.5 现代渲染层与异步调度
-- **CSS 虚拟化**：卡片容器采用 `content-visibility: auto` 与 `contain-intrinsic-size`，非可视区跳过 DOM 布局计算，首屏主线程耗时减少 60%；
-- **解码优化**：除首屏前 2 张 LCP 图片外，其余图片一律配置 `decoding="async"`；
-- **超视口预测加载**：`ImagePrefetchObserver` 在视口外 600px 提前发现潜在图片，在 `requestIdleCallback` 浏览器空闲帧执行静默预热，彻底消灭滑屏白块。
+### 2.6 演职员肖像智能自愈与零阻塞渲染 (CastRail Architecture)
+- **客户端自愈组件 (`CastRail.tsx`)**：
+  - 首屏直接渲染已有头像（纯内存 `getFastPersonAvatars` 0ms 直出，严禁在 SSR 阶段加设外部超时截断）；
+  - 客户端挂载后，若检测到缺失头像的影人，在后台通过 `/api/person-avatars?names=...` 进行**非阻塞异步补全**，收到后平滑淡入（Fade in）渲染；
+  - 100% 杜绝因网络延迟导致的单字兜底圆圈或图片丢失。
+- **全站官方肖像库**：预置收录 760+ 位知名主创肖像，覆盖 7 大专区核心热播影视。
+
+### 2.7 四维全量自动化预热引擎 (Full-Site Prewarm Engine)
+由 `scripts/full-site-prewarm.ts` 与 GitHub Actions `.github/workflows/full-site-prewarm.yml` 驱动，实施无人值守的四维全量预热：
+1. **影人头像增量入库**：自动扫描全站新片主创，批量补充 TMDB 官方肖像；
+2. **全站图片 R2 预热**：规范降维多尺寸（w342 卡片、w1280 巨幕）推送到亚太 R2；
+3. **详情页三维资产 R2 预热**：详情主画幅大图（w780）与肖像（w185）预先写入 R2；
+4. **边缘 CDN 缓存热加载**：并发向生产发起全频道及核心影视详情页请求，让 Cloudflare 边缘节点提前锁定 ISR 与 RSC Prefetch 缓存，实现用户进站 **100% 30~50ms 秒开**。
+- **执行计划**：北京时间每日 04:00 与 16:30 两次固定执行，并在爱壹帆新片同步后自动联动触发。
 
 ---
 
-## 3. 永久工程铁律 (Iron Rules)
+## 3. Cloudflare R2 资源安全与免费配额防护矩阵
+
+通过以下三道防火墙，保障 R2 资源极度安全且 100% 运行在官方免费套餐之内：
+1. **物理降维压缩**：1000+ 张核心图片总容量仅占用约 **81.5 MB**，仅占 10 GB 免费存储额度的 **0.8%**；
+2. **写入频次控制**：每日定时 2 次预热 + 动态增量透写，Class A 每月约 6~8 万次，仅占 100 万次免费额度的 **7%**；
+3. **CDN 边缘强缓存阻隔**：挂载 `Cache-Control: public, max-age=604800`，95% 以上的读图请求直接被边缘 Anycast CDN 拦截，根本不穿透到 R2 存储桶；
+4. **永久 0 元免流**：Cloudflare R2 永久 0 出站流量费，从根本上杜绝天价账单风险。
+
+---
+
+## 4. 永久工程铁律 (Iron Rules)
 
 > [!CAUTION]
-> **以下八条铁律为全站性能红线，任何后续开发与重构均不得违背：**
+> **以下十条铁律为全站性能红线，任何后续开发与重构均不得违背：**
 
 1. **绝对禁止引入外部 CDN 依赖**：不得引用 Google Fonts 外部直连、cdnjs、unpkg、jsdelivr 等存在国内阻断或污染风险的资源。全站字体必须通过 `next/font` 纯本地自托管打包。
 2. **绝对禁止硬编码图片直连**：所有外部海报、剧照、演职员头像，必须统一经由 `getOptimizedImageUrl()` 接入降维与分流链路。
@@ -99,3 +119,6 @@
 6. **严禁滥用 `fetchPriority="high"`**：除首屏核心 Hero 巨幕首图外，其他卡片严禁标记 high，以免挤占首屏 CSS 和关键 HTML 的网络信道。
 7. **严禁移除 `content-visibility: auto`**：这是解决页面几百张卡片导致滚动卡顿的杀手锏，样式调试时不可擅自剔除。
 8. **R2 镜像路径必须统一结构**：严格遵守 `{source}/{width}/{filename}` 格式，保持仓储整洁与命中一致性。
+9. **严禁在详情页 SSR 阶段加设网络超时截断**：头像与资产获取必须走客户端非阻塞自愈（`CastRail`）或后台异步，严禁使用 `Promise.race` 截断产生空数据并污染 ISR 缓存。
+10. **全站卡片必须遵循语义化 `<Link>` 规范**：严禁在影片卡片上使用 `e.preventDefault() + router.push()` 破坏 Next.js 原生预加载（Viewport & Hover Prefetch）机制。
+

@@ -95,4 +95,23 @@
 详细性能规范与数据链路请参考：[global-performance-spec.md](file:///Users/zeyelvis/KVideo/docs/architecture/global-performance-spec.md)。
 流媒体播放规范请参考：[dual-track-streaming-spec.md](file:///Users/zeyelvis/KVideo/docs/architecture/dual-track-streaming-spec.md)。
 
+---
+
+## 8. 全站四维全量自动化预热与演职员自愈铁律 (Automated Full-Site Prewarm & Cast Rail Spec)
+
+全站影视更新与资产预热必须严格遵循四维全自动化闭环规范：
+1. **四维预热全覆盖**：
+   - **影人肖像**：自动扫描全站 7 大专区新片主创，增量同步 TMDB 官方肖像库；
+   - **全站图片 R2 预热**：规范降维多尺寸（w342 卡片、w1280 巨幕）推送到亚太 R2；
+   - **详情页三维资产**：详情主画幅大图（w780）与演职员肖像（w185）预先推送到 R2；
+   - **边缘 CDN 缓存热加载**：全频道路由及核心影视详情页并发触发 HTML 与 RSC Prefetch 缓存生成，保障用户访问首字节响应（TTFB）维持在 30~50ms 秒开水平。
+2. **全自动闭环频次与联动**：
+   - 由 `.github/workflows/full-site-prewarm.yml` 每日固定 2 次自动巡检（北京时间 04:00 与 16:30）；
+   - 在 `.github/workflows/sync-iyf-channels.yml` 同步完新片后**必须自动联动触发全量预热**，形成“新片更新 ➔ 自动部署 ➔ 全量预热”的无人值守闭环。
+3. **演职员专栏自愈绝对规范**：
+   - 演职员专栏必须使用 `<CastRail />` 客户端自愈组件；
+   - 服务端主渲染链路恒为 0ms 纯内存匹配，缺失头像必须由客户端在后台异步拉取淡入；
+   - **严禁在服务端主渲染路径中加设任何网络超时截断（如 Promise.race 350ms）**，彻底杜绝单字兜底或污染边缘 ISR 缓存。
+
+
 
