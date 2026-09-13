@@ -546,10 +546,10 @@ export default async function TitlePage({ params }: Props) {
     }
   }
 
-  // 是否为纯正的 16:9 横版电影剧照大图
+  // 是否为纯正的 16:9 横版电影剧照大图，并接入物理尺寸精准降维与双轨加速
   const isTrueBackdrop = !isFakeBackdrop(resolvedBackdrop, entity.cover);
-  const heroBackdrop = getOptimizedImageUrl(resolvedBackdrop || entity.cover);
-  const entityCover = getOptimizedImageUrl(entity.cover);
+  const heroBackdrop = getOptimizedImageUrl(resolvedBackdrop || entity.cover, { variant: 'backdrop' });
+  const entityCover = getOptimizedImageUrl(entity.cover, { variant: 'detail' });
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white selection:bg-red-600 selection:text-white relative">
@@ -852,7 +852,7 @@ export default async function TitlePage({ params }: Props) {
                   {peopleAvatars[d] ? (
                     <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-red-500/40 group-hover:border-red-500 shrink-0 shadow-md group-hover:scale-105 transition-all">
                       <Image
-                        src={getOptimizedImageUrl(peopleAvatars[d])}
+                        src={getOptimizedImageUrl(peopleAvatars[d], { variant: 'avatar' })}
                         alt={d}
                         fill
                         sizes="48px"
@@ -883,7 +883,7 @@ export default async function TitlePage({ params }: Props) {
                   {peopleAvatars[a] ? (
                     <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-amber-500/40 group-hover:border-amber-500 shrink-0 shadow-md group-hover:scale-105 transition-all">
                       <Image
-                        src={getOptimizedImageUrl(peopleAvatars[a])}
+                        src={getOptimizedImageUrl(peopleAvatars[a], { variant: 'avatar' })}
                         alt={a}
                         fill
                         sizes="48px"
@@ -921,11 +921,12 @@ export default async function TitlePage({ params }: Props) {
                   key={rel.entityId}
                   href={`/title/${rel.entityId}-${rel.slug}`}
                   className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-black"
+                  style={{ contentVisibility: 'auto', containIntrinsicSize: '160px 240px' }}
                 >
                   <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
                     {rel.cover ? (
                       <Image
-                        src={getOptimizedImageUrl(rel.cover)}
+                        src={getOptimizedImageUrl(rel.cover, { variant: 'poster' })}
                         alt={rel.title}
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
