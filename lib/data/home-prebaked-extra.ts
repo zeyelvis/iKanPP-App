@@ -2595,8 +2595,37 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
     { id: 'pb_doc_top_7', title: '徒手攀岩', rate: '8.8', cover: 'https://image.tmdb.org/t/p/w500/8GbmgGz77b5FlX7qD8qJwOFR6jS.jpg', year: '2018', types: ['极限'], is_new: false, playable: true },
     { id: 'pb_doc_top_8', title: '航拍中国', rate: '9.2', cover: 'https://image.tmdb.org/t/p/w500/kBUN0bTRjV3gkXicvQVrWrTCoLL.jpg', year: '2022', types: ['航拍'], is_new: true, playable: true }
   ],
-  s1: [],
-  s2: [],
-  s3: [],
-  s4: []
+  s1: [
+    { id: 'doc_planet_earth_3', title: '地球脉动 第三季', cover: 'https://image.tmdb.org/t/p/w500/4s99Pl4sFEFwTUzWDunD1uD3pzj.jpg', rate: '9.7', year: '2023', types: ['自然', '生态'], episodes_info: 'BBC 4K 全8集', is_new: true, playable: true },
+    { id: 'doc_planet_earth_2', title: '地球脉动 第二季', cover: 'https://image.tmdb.org/t/p/w500/czCQePpTtnEVO0WlTLtR4zUYKdI.jpg', rate: '9.9', year: '2016', types: ['自然', '生态'], episodes_info: '豆瓣 9.9 封神', playable: true },
+    { id: 'doc_blue_planet_2', title: '蓝色星球 第二季', cover: 'https://image.tmdb.org/t/p/w500/ijIhsxlc8Sd1L6vdFy73iYws5TW.jpg', rate: '9.8', year: '2017', types: ['自然', '海洋'], episodes_info: '深海奇迹 全7集', playable: true },
+    { id: 'doc_seven_worlds', title: '七个世界，一个星球', cover: 'https://image.tmdb.org/t/p/w500/rpXcRlP0m72rw4rJYXBnYXcsnJQ.jpg', rate: '9.7', year: '2019', types: ['自然', '地理'], episodes_info: '大卫·爱登堡解说', playable: true },
+    { id: 'doc_green_planet', title: '绿色星球', cover: 'https://image.tmdb.org/t/p/w500/ghvd73CeFrEk9k9x7Ht54b8daMw.jpg', rate: '9.7', year: '2022', types: ['自然', '生态'], episodes_info: '植物王国的隐秘生活', playable: true },
+    { id: 'doc_frozen_planet_2', title: '冰冻星球 第二季', cover: 'https://image.tmdb.org/t/p/w500/p3hSdvuPfx7AXgOk7Ut1Spin6FJ.jpg', rate: '9.7', year: '2022', types: ['自然', '极地'], episodes_info: '极地冰原史诗', playable: true },
+    { id: 'doc_dynasties', title: '王朝 第一季', cover: 'https://image.tmdb.org/t/p/w500/zqfwHwSs0vSRplFmFMeWddgha0x.jpg', rate: '9.5', year: '2018', types: ['自然', '动物'], episodes_info: '动物家族权力游戏', playable: true },
+    { id: 'doc_aerial_china', title: '航拍中国 第四季', cover: 'https://image.tmdb.org/t/p/w500/kBUN0bTRjV3gkXicvQVrWrTCoLL.jpg', rate: '8.8', year: '2022', types: ['自然', '华夏'], episodes_info: '云端俯瞰大美中国', playable: true },
+  ],
+  s2: [
+    { id: 'doc_bite_of_china_1', title: '舌尖上的中国 第一季', cover: 'https://image.tmdb.org/t/p/w500/3CfTedC6JGAtgEdJzgel1cRFhs4.jpg', rate: '9.4', year: '2012', types: ['美食', '人文'], episodes_info: '华语美食里程碑', playable: true },
+    { id: 'doc_fengwei_renjian_1', title: '风味人间 第一季', cover: 'https://image.tmdb.org/t/p/w500/d6plBmVJfWLA5UD8tcIvI2QUrTN.jpg', rate: '9.1', year: '2018', types: ['美食', '风味'], episodes_info: '陈晓卿团队倾力打造', playable: true },
+    { id: 'doc_rensheng_yichuan_1', title: '人生一串 第一季', cover: 'https://image.tmdb.org/t/p/w500/sxTIGMnQ4YFxp9FGAQfcnNi9Cm0.jpg', rate: '9.0', year: '2018', types: ['美食', '市井'], episodes_info: '致我们七荤八素的生活', playable: true },
+    { id: 'doc_xunwei_shunde', title: '寻味顺德', cover: 'https://image.tmdb.org/t/p/w500/rcwUOf8dK5zXEq96sWW1k81tbFo.jpg', rate: '9.0', year: '2016', types: ['美食', '粤菜'], episodes_info: '厨出凤城 美食之都', playable: true },
+    { id: 'doc_breakfast_china', title: '早餐中国 第一季', cover: 'https://image.tmdb.org/t/p/w500/mZKlMrdl7rOIYQTbN9CFWQyDm38.jpg', rate: '8.9', year: '2019', types: ['美食', '烟火'], episodes_info: '百般滋味 都是生活', playable: true },
+    { id: 'doc_feiteng_huoguo', title: '沸腾吧火锅 第一季', cover: 'https://image.tmdb.org/t/p/w500/zil4Rx5KT0aQrhS7bHyT0as3wgM.jpg', rate: '8.1', year: '2020', types: ['美食', '市井'], episodes_info: '咕嘟咕嘟的中国热气', playable: true },
+  ],
+  s3: [
+    { id: 'doc_hexizoulang', title: '河西走廊', cover: 'https://image.tmdb.org/t/p/w500/dNNUkE2RKGHQlEPRaffxfa2EfzQ.jpg', rate: '9.7', year: '2015', types: ['历史', '华夏'], episodes_info: '华夏史诗神作 全10集', playable: true },
+    { id: 'doc_guobao_speak', title: '如果国宝会说话 第三季', cover: 'https://image.tmdb.org/t/p/w500/yMl0RrsT3crzm1y9kyokY9sFNeq.jpg', rate: '9.5', year: '2020', types: ['历史', '文物'], episodes_info: '央视国宝文物微纪录', playable: true },
+    { id: 'doc_china_history', title: '中国通史', cover: 'https://image.tmdb.org/t/p/w500/ryV0N1mCAXRseheuAfNljlnKV10.jpg', rate: '9.2', year: '2016', types: ['历史', '通史'], episodes_info: '百集壮丽通史巨著', playable: true },
+    { id: 'doc_gugong_xiu', title: '我在故宫修文物', cover: 'https://image.tmdb.org/t/p/w500/o9ZT8hCxnL0RXnWEQz3fByAXu63.jpg', rate: '9.4', year: '2016', types: ['历史', '工匠'], episodes_info: '跨越千年的匠心温情', playable: true },
+    { id: 'doc_daminggong', title: '大明宫', cover: 'https://image.tmdb.org/t/p/w500/dO6gPZZc4NpSAU4URRZn45wVoLp.jpg', rate: '9.1', year: '2009', types: ['历史', '大唐'], episodes_info: '盛唐气象 梦回长安', playable: true },
+    { id: 'doc_dunhuang', title: '敦煌', cover: 'https://image.tmdb.org/t/p/w500/rdUPCct058rUSHD2qL8I1EhEKrO.jpg', rate: '9.3', year: '2010', types: ['历史', '丝路'], episodes_info: '丝路咽喉 千佛秘境', playable: true },
+  ],
+  s4: [
+    { id: 'doc_wonders_of_universe', title: '宇宙的奇迹', cover: 'https://image.tmdb.org/t/p/w500/yTgMEZrPWYmXKnnuHLPhIqojQ84.jpg', rate: '9.5', year: '2011', types: ['科学', '宇宙'], episodes_info: 'BBC 考克斯教授 4K', playable: true },
+    { id: 'doc_cosmos_spacetime', title: '宇宙时空之旅', cover: 'https://image.tmdb.org/t/p/w500/yokiSPJBSg2l9w7hOdf96Co4MSp.jpg', rate: '9.7', year: '2014', types: ['科学', '探索'], episodes_info: '国家地理浩瀚史诗', playable: true },
+    { id: 'doc_the_planets', title: '行星', cover: 'https://image.tmdb.org/t/p/w500/jDnF3et1o8PN8Zg0SkJCclobFh3.jpg', rate: '9.6', year: '2019', types: ['科学', '太阳系'], episodes_info: '太阳系四十五亿年史诗', playable: true },
+    { id: 'doc_journey_edge_universe', title: '旅行到宇宙边缘', cover: 'https://image.tmdb.org/t/p/w500/3lMNvqX1Q1I1J9uLbSMd1b2PHUe.jpg', rate: '9.3', year: '2008', types: ['科学', '天文'], episodes_info: '百亿光年的终极漂流', playable: true },
+    { id: 'doc_free_solo', title: '徒手攀岩', cover: 'https://image.tmdb.org/t/p/w500/8GbmgGz77b5FlX7qD8qJwOFR6jS.jpg', rate: '8.8', year: '2018', types: ['冒险', '极限'], episodes_info: '奥斯卡最佳纪录长片', playable: true },
+  ]
 };

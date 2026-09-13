@@ -14,7 +14,7 @@ import { ExploreHubFooterBanner } from './ExploreHubFooterBanner';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 
-export type HomeContentType = 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'short';
+export type HomeContentType = 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | 'short';
 
 interface PopularFeaturesProps {
   onSearch?: (query: string) => void;
@@ -113,6 +113,13 @@ function getShelvesMeta(contentType: HomeContentType): [ShelfMeta, ShelfMeta, Sh
         { title: '🎵 顶级音乐竞演现场', icon: '🎵', badge: 'MUSIC', tag: '综艺', doubanType: 'tv', viewAll: '/variety?genre=音乐' },
         { title: '🌿 慢生活治愈与美食旅行', icon: '🌿', badge: 'SLOW LIFE', tag: '综艺', doubanType: 'tv', viewAll: '/variety?genre=美食' },
       ];
+    case 'documentary':
+      return [
+        { title: '🌍 BBC 史诗级自然与浩瀚宇宙', icon: '🌍', badge: 'BBC 4K', tag: '自然', doubanType: 'tv', viewAll: '/documentary?genre=自然' },
+        { title: '🍲 人间烟火 · 顶级华语美食图鉴', icon: '🍲', badge: 'FOOD', tag: '美食', doubanType: 'tv', viewAll: '/documentary?genre=美食' },
+        { title: '🏺 华夏光影 · 历史人文与国宝探寻', icon: '🏺', badge: 'HISTORY', tag: '历史', doubanType: 'tv', viewAll: '/documentary?genre=历史' },
+        { title: '🏆 影史殿堂 · 豆瓣 9.5+ 极致口碑神作', icon: '⭐', badge: 'TOP 9.5+', tag: '纪录片', doubanType: 'tv', viewAll: '/documentary?genre=经典高分' },
+      ];
     case 'short':
       return [
         { title: '⚡ 战神归来 · 逆袭打脸爽剧', icon: '⚡', badge: 'GOD OF WAR', tag: '战神', doubanType: 'tv', viewAll: '/short?genre=战神', prebakedOnly: true },
@@ -135,6 +142,8 @@ function getTop10Info(contentType: HomeContentType): { title: string; badge: str
       return { title: '年度动漫新番热播榜 TOP 10', badge: '番剧高分榜 · 每日自动更新' };
     case 'variety':
       return { title: '热门爆款综艺口碑榜 TOP 10', badge: '全民热度榜 · 每日自动更新' };
+    case 'documentary':
+      return { title: '豆瓣高分纪录片口碑榜 TOP 10', badge: '殿堂神作榜 · 每日自动更新' };
     case 'short':
       return { title: '精品微短剧热度 TOP 10', badge: '爆款爽剧榜 · 每日自动更新' };
   }
@@ -145,6 +154,7 @@ const TABS: Array<{ id: HomeContentType | 'iptv'; label: string; isRoute?: boole
   { id: 'tv', label: '📺 电视剧' },
   { id: 'anime', label: '🏮 动漫' },
   { id: 'variety', label: '🎤 综艺' },
+  { id: 'documentary', label: '🎥 纪录片' },
   { id: 'short', label: '⚡ 短剧' },
   { id: 'iptv', label: '📡 直播', isRoute: true, href: '/iptv' },
 ];
