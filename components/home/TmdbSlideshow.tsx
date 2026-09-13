@@ -426,33 +426,33 @@ export function HeroSlideshow({
         <div className="fluid-container relative">
           <div className="iyf-hero-bar pointer-events-auto relative">
             
-            {/* 1. 左栏：固定紧凑宽度保障水平零推移，固定标题高度保障按钮垂直零位移 */}
-            <div className="shrink-0 w-full max-w-[260px] lg:w-[260px] xl:w-[280px] flex flex-col items-start justify-end">
-              {/* 上方：固定高度弹性底对齐，无论1行还是2行片名，高度恒定，绝不拉扯整栏高度 */}
-              <div className="mb-2.5 sm:mb-3.5 w-full h-[66px] sm:h-[76px] lg:h-[84px] flex flex-col justify-end">
-                <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-[32px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1 leading-tight line-clamp-2 break-words">
+            {/* 1. 左栏：大气沉浸的大片标题与流媒体 CTA 播放大按钮 */}
+            <div className="shrink-0 w-full max-w-[280px] lg:w-[280px] xl:w-[310px] flex flex-col items-start justify-end">
+              {/* 上方：固定高度弹性底对齐，大字号片名气势恢宏，底对齐恒定绝不拉扯整栏高度 */}
+              <div className="mb-3 sm:mb-4 w-full h-[76px] sm:h-[88px] lg:h-[96px] flex flex-col justify-end">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[36px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1 leading-tight line-clamp-2 break-words">
                   {active.title}
                 </h2>
-                <div className="text-white/90 text-xs sm:text-sm font-medium flex items-center gap-2 whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] h-5">
+                <div className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] h-6">
                   <span className="truncate">{active.episodes_info || (active.types && active.types.length > 0 ? active.types.join(' · ') : '电影 · 剧情')}</span>
                   {active.rate && parseFloat(active.rate) > 0 && (
-                    <span className="text-amber-400 font-bold text-xs sm:text-sm flex items-center gap-0.5 shrink-0">★ {active.rate}</span>
+                    <span className="text-amber-400 font-bold text-sm sm:text-base flex items-center gap-0.5 shrink-0">★ {active.rate}</span>
                   )}
                 </div>
               </div>
 
-              {/* 下方：放大后的流媒体播放大按钮（高度约 46-48px，位置与底线恒定） */}
+              {/* 下方：放大后的流媒体播放大按钮（高度约 50-52px，位置与底线恒定） */}
               <button
                 type="button"
                 onClick={() => handleMovieClick(active)}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2 sm:px-5.5 sm:py-2.5 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-sm sm:text-base font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102 shrink-0"
+                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 sm:px-7 sm:py-3 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-base sm:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102 shrink-0"
               >
                 <span>立即播放</span>
-                <span className="text-xs sm:text-sm">▷</span>
+                <span className="text-sm sm:text-base">▷</span>
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（Flex 智能居中 + 强物理安全间距 + 超长文字自适应优雅截断，绝不挤压或靠近海报） */}
+            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（大屏标准清晰规格，舒展饱满，间距从容） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (() => {
               // 唯有动漫频道官方规范因《死神》长片名自然拆为 5+7，其余全板块（纪录片、综艺、电影、电视剧、首页）均为严格 6+6 黄金对称
               const splitIdx = contentType === 'anime' ? 5 : 6;
@@ -463,14 +463,14 @@ export function HeroSlideshow({
                   key={idx}
                   type="button"
                   onClick={() => handleTrendingClick(item)}
-                  className="group flex items-center justify-start text-left cursor-pointer text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-colors duration-200 select-none shrink-0"
+                  className="group flex items-center justify-start text-left cursor-pointer text-white/85 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.6)] transition-colors duration-200 select-none shrink-0"
                   title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                 >
-                  <span className="text-[11px] lg:text-[11px] xl:text-[11.5px] 2xl:text-[12px] font-medium tracking-tight whitespace-nowrap leading-snug max-w-[80px] lg:max-w-[90px] xl:max-w-[108px] 2xl:max-w-[125px] truncate">
+                  <span className="text-xs lg:text-[12.5px] xl:text-[13.5px] 2xl:text-[14px] font-semibold tracking-tight whitespace-nowrap leading-snug max-w-[90px] lg:max-w-[105px] xl:max-w-[125px] 2xl:max-w-[145px] truncate">
                     {item.title}
                   </span>
                   {item.updateBadge ? (
-                    <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[8px] xl:text-[8.5px] font-bold rounded-xs px-0.5 py-0.2 min-w-3 h-3 leading-none ml-1 shrink-0 shadow-xs">
+                    <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[8.5px] xl:text-[9px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0 shadow-xs">
                       {item.updateBadge}
                     </span>
                   ) : null}
@@ -478,12 +478,12 @@ export function HeroSlideshow({
               );
 
               return (
-                <div className="hidden lg:flex flex-1 min-w-0 flex-col items-center justify-end px-4 xl:px-8 pb-1">
-                  <div className="flex flex-col items-center gap-y-1.5 xl:gap-y-2 w-full max-w-fit">
-                    <div className="flex items-center justify-center gap-x-2 xl:gap-x-2.5 2xl:gap-x-3.5 whitespace-nowrap">
+                <div className="hidden lg:flex flex-1 min-w-0 flex-col items-center justify-end px-3 xl:px-6 pb-1">
+                  <div className="flex flex-col items-center gap-y-2 xl:gap-y-2.5 w-full max-w-fit">
+                    <div className="flex items-center justify-center gap-x-2.5 xl:gap-x-3.5 2xl:gap-x-4 whitespace-nowrap">
                       {line1.map(renderItem)}
                     </div>
-                    <div className="flex items-center justify-center gap-x-2 xl:gap-x-2.5 2xl:gap-x-3.5 whitespace-nowrap">
+                    <div className="flex items-center justify-center gap-x-2.5 xl:gap-x-3.5 2xl:gap-x-4 whitespace-nowrap">
                       {line2.map((item: TrendingNavItem, idx: number) => renderItem(item, idx + splitIdx))}
                     </div>
                   </div>
@@ -492,13 +492,13 @@ export function HeroSlideshow({
             })()}
 
 
-            {/* 3. 右栏：爱壹帆同款完整轮播大片缩略海报卡片列表（精致化黄金比例，给中间速报腾出充裕呼吸留白） */}
+            {/* 3. 右栏：爱壹帆同款完整轮播大片缩略海报卡片列表（黄金比例尺寸，视觉精致饱满） */}
             <div className="hidden md:flex items-center gap-1 xl:gap-1.5 shrink-0 self-end p-1.5 rounded-xl bg-black/25 backdrop-blur-xs border border-white/10 ml-auto lg:ml-0">
               {currentData.slice(0, 8).map((item, idx) => {
                 const isSelected = idx === activeIndex;
                 const cardSizeClass = currentData.length > 7
-                  ? 'w-[36px] h-[52px] sm:w-[40px] sm:h-[58px] lg:w-[42px] lg:h-[60px] xl:w-[48px] xl:h-[68px]'
-                  : 'w-[40px] h-[58px] sm:w-[44px] sm:h-[64px] lg:w-[46px] lg:h-[66px] xl:w-[52px] xl:h-[74px]';
+                  ? 'w-[40px] h-[58px] sm:w-[44px] sm:h-[64px] lg:w-[46px] lg:h-[66px] xl:w-[50px] xl:h-[72px] 2xl:w-[54px] 2xl:h-[78px]'
+                  : 'w-[44px] h-[64px] sm:w-[48px] sm:h-[70px] lg:w-[50px] lg:h-[72px] xl:w-[56px] xl:h-[80px] 2xl:w-[60px] 2xl:h-[86px]';
                 return (
                   <button
                     key={item.title ? `hero-thumb-${item.title}` : (item.id || idx)}
@@ -529,8 +529,8 @@ export function HeroSlideshow({
                         <p
                           className={`${
                             (item.title || '').length > 8
-                              ? 'text-[7.5px] sm:text-[8px] lg:text-[8.5px] xl:text-[9px] leading-[1.06]'
-                              : 'text-[8px] sm:text-[8.5px] lg:text-[9px] xl:text-[9.5px] leading-[1.12]'
+                              ? 'text-[8px] sm:text-[8.5px] lg:text-[9px] xl:text-[9.5px] leading-[1.06]'
+                              : 'text-[8.5px] sm:text-[9px] lg:text-[9.5px] xl:text-[10px] leading-[1.12]'
                           } text-white/95 text-center font-medium tracking-tighter break-all w-full`}
                         >
                           {item.title}
