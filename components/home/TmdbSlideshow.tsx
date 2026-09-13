@@ -589,32 +589,7 @@ export function HeroSlideshow({
         </>
       )}
 
-      {/* 5. 移动端精美胶囊轮播指示条（支持点击快速切图与当前页码指示） */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex md:hidden items-center gap-0.5 bg-black/60 backdrop-blur-xl px-2 py-0.5 rounded-full border border-white/15 shadow-2xl">
-        {displayItems.map((_, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setActiveIndex(idx);
-            }}
-            className="p-1.5 flex items-center justify-center cursor-pointer active:scale-95 transition-transform"
-            aria-label={`切换到第 ${idx + 1} 张`}
-          >
-            <span
-              className={`block h-1.5 rounded-full transition-all duration-300 ${
-                idx === activeIndex
-                  ? 'w-5 bg-(--accent-color) shadow-[0_0_8px_rgba(229,9,20,0.9)]'
-                  : 'w-1.5 bg-white/35 hover:bg-white/70'
-              }`}
-            />
-          </button>
-        ))}
-        <span className="text-[10px] font-bold text-white/50 pl-1 pr-1 select-none font-mono">
-          {activeIndex + 1}/{displayItems.length}
-        </span>
-      </div>
+
     </div>
   );
 }
