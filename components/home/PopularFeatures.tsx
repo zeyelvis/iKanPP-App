@@ -21,7 +21,7 @@ interface PopularFeaturesProps {
 }
 
 // ── SWR 货架本地瞬间缓存 ──────────────────────────
-const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v9-';
+const SHELVES_CACHE_KEY = 'kvideo-home-shelves-v10-';
 
 function getLocalShelves(type: HomeContentType) {
   if (typeof window === 'undefined') return null;
@@ -44,7 +44,7 @@ function setLocalShelves(type: HomeContentType, data: { s1: any[]; s2: any[]; s3
 }
 
 // ── 豆瓣/平台一周口碑榜 SWR 本地秒开缓存 ──────────────────────────
-const WEEKLY_CHART_CACHE_KEY = 'kvideo-weekly-douban-chart-v4-';
+const WEEKLY_CHART_CACHE_KEY = 'kvideo-weekly-douban-chart-v5-';
 
 function getLocalWeeklyChart(type: HomeContentType) {
   if (typeof window === 'undefined') return null;
@@ -161,46 +161,73 @@ const TABS: Array<{ id: HomeContentType | 'iptv'; label: string; isRoute?: boole
 
 export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   const router = useRouter();
-  // 默认 Tab 设为 🎬 电影 (movie)
-  const [contentType, setContentType] = useState<HomeContentType>('movie');
 
-  // 主题货架分片数据获取（SWR: 优先使用本地缓存，新用户首次访问直接秒级呈现预烘焙高清精选数据，0ms 瞬间秒开）
-  const prebaked = useMemo(() => PREBAKED_HOME_DATA[contentType] || PREBAKED_HOME_DATA.all, [contentType]);
-  const initialCache = typeof window !== 'undefined' ? getLocalShelves(contentType) : null;
-
-  // 一周口碑榜 TOP 10（首屏 0ms 瞬间秒出，后台静默自动每日同步）
-  const initialWeeklyCache = typeof window !== 'undefined' ? getLocalWeeklyChart(contentType) : null;
-  const [weeklyMovies, setWeeklyMovies] = useState<any[]>(() => initialWeeklyCache || prebaked.top10);
+  // 🌟 排行榜分类独立状态：点击仅驱动紧随其后的 Top 10 口碑榜联动，不干扰整页其他货架
+  const [top10Category, setTop10Category] = useState<HomeContentType>('movie');
+  const prebakedTop10 = useMemo(
+    () => PREBAKED_HOME_DATA[top10Category]?.top10 || PREBAKED_HOME_DATA.movie.top10,
+    [top10Category]
+  );
+  const initialWeeklyCache = typeof window !== 'undefined' ? getLocalWeeklyChart(top10Category) : null;
+  const [weeklyMovies, setWeeklyMovies] = useState<any[]>(() => initialWeeklyCache || (PREBAKED_HOME_DATA.movie.top10));
   const [weeklyLoading, setWeeklyLoading] = useState<boolean>(false);
+  const top10Info = useMemo(() => getTop10Info(top10Category), [top10Category]);
 
-  const [shelf1Movies, setShelf1Movies] = useState<any[]>(() => initialCache?.s1 || prebaked.s1);
-  const [shelf2Movies, setShelf2Movies] = useState<any[]>(() => initialCache?.s2 || prebaked.s2);
-  const [shelf3Movies, setShelf3Movies] = useState<any[]>(() => initialCache?.s3 || prebaked.s3);
-  const [shelf4Movies, setShelf4Movies] = useState<any[]>(() => initialCache?.s4 || prebaked.s4);
+  // 🏛️ 首页大厅固定为全网全品类综合精选货架（保持大厅核心内容稳定呈现，免受分类标签抖动切换影响）
+  const prebakedShelves = PREBAKED_HOME_DATA.all;
+  const initialShelvesCache = typeof window !== 'undefined' ? getLocalShelves('all') : null;
+  const [shelf1Movies, setShelf1Movies] = useState<any[]>(() => initialShelvesCache?.s1 || prebakedShelves.s1);
+  const [shelf2Movies, setShelf2Movies] = useState<any[]>(() => initialShelvesCache?.s2 || prebakedShelves.s2);
+  const [shelf3Movies, setShelf3Movies] = useState<any[]>(() => initialShelvesCache?.s3 || prebakedShelves.s3);
+  const [shelf4Movies, setShelf4Movies] = useState<any[]>(() => initialShelvesCache?.s4 || prebakedShelves.s4);
   const [loadingShelves, setLoadingShelves] = useState<boolean>(false);
+  const shelvesMeta = useMemo(() => getShelvesMeta('all'), []);
 
-  const shelvesMeta = useMemo(() => getShelvesMeta(contentType), [contentType]);
-  const top10Info = useMemo(() => getTop10Info(contentType), [contentType]);
-
-  // 切换品类时，瞬间同步本地缓存或预烘焙数据
-  useEffect(() => {
-    const cache = getLocalShelves(contentType);
-    const pb = PREBAKED_HOME_DATA[contentType] || PREBAKED_HOME_DATA.all;
-    setShelf1Movies(cache?.s1 || pb.s1);
-    setShelf2Movies(cache?.s2 || pb.s2);
-    setShelf3Movies(cache?.s3 || pb.s3);
-    setShelf4Movies(cache?.s4 || pb.s4);
-
-    const weeklyCache = getLocalWeeklyChart(contentType);
-    setWeeklyMovies(weeklyCache || pb.top10);
-  }, [contentType]);
-
-  // 后台异步静默拉取货架数据（带 SWR 智能防抖与局部刷新）
+  // ── 口碑榜：仅当 top10Category 变化时更新口碑榜数据 ──────────────────
   useEffect(() => {
     let isMounted = true;
-    const cache = getLocalShelves(contentType);
+    const cache = getLocalWeeklyChart(top10Category);
+    const pb = PREBAKED_HOME_DATA[top10Category]?.top10 || PREBAKED_HOME_DATA.movie.top10;
+    setWeeklyMovies(cache && cache.length > 0 ? cache : pb);
 
-    // 智能比对两个影片序列是否相同（按 title 比对），杜绝相同列表触发无谓的重新渲染和 DOM 抖动
+    // 仅当为电影或剧集时走豆瓣官方周榜 API，其余品类（全部/动漫/综艺/纪录片/短剧）直接使用高清预烘焙精选榜单
+    if (top10Category !== 'movie' && top10Category !== 'tv') {
+      return;
+    }
+
+    const fetchWeekly = async () => {
+      try {
+        setWeeklyLoading(true);
+        const res = await fetch(`/api/douban/weekly-chart?type=${top10Category}`, {
+          signal: AbortSignal.timeout(4000),
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (isMounted && data.subjects && Array.isArray(data.subjects) && data.subjects.length > 0) {
+          setWeeklyMovies(prev => {
+            const isSame = prev.length === data.subjects.length && prev.every((m, i) => (m?.title || m?.id) === (data.subjects[i]?.title || data.subjects[i]?.id));
+            return isSame ? prev : data.subjects;
+          });
+          setLocalWeeklyChart(top10Category, data.subjects);
+        }
+      } catch {
+        // 网络超时或失败时平滑兜底当前缓存或预烘焙口碑榜
+      } finally {
+        if (isMounted) setWeeklyLoading(false);
+      }
+    };
+
+    fetchWeekly();
+    return () => {
+      isMounted = false;
+    };
+  }, [top10Category]);
+
+  // ── 首页综合货架：后台异步静默拉取综合大厅货架数据（只在初次加载拉取一次） ──────────────────
+  useEffect(() => {
+    let isMounted = true;
+    const cache = getLocalShelves('all');
+
     const isSameList = (a: any[], b: any[]) => {
       if (!a || !b || a.length !== b.length) return false;
       return a.every((item, i) => (item?.title || item?.id) === (b[i]?.title || b[i]?.id));
@@ -222,20 +249,19 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       };
 
       try {
-        let latestS1: any[] = cache?.s1 || prebaked.s1 || [];
-        let latestS2: any[] = cache?.s2 || prebaked.s2 || [];
-        let latestS3: any[] = cache?.s3 || prebaked.s3 || [];
-        let latestS4: any[] = cache?.s4 || prebaked.s4 || [];
+        let latestS1: any[] = cache?.s1 || prebakedShelves.s1 || [];
+        let latestS2: any[] = cache?.s2 || prebakedShelves.s2 || [];
+        let latestS3: any[] = cache?.s3 || prebakedShelves.s3 || [];
+        let latestS4: any[] = cache?.s4 || prebakedShelves.s4 || [];
 
         const [m1, m2, m3, m4] = shelvesMeta;
 
-        // 第一阶段：优先拉取前 2 个首屏高光货架（跳过纯预烘焙货架）
         const p1 = m1.prebakedOnly
-          ? Promise.resolve({ subjects: prebaked.s1 })
+          ? Promise.resolve({ subjects: prebakedShelves.s1 })
           : fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(m1.tag)}&type=${m1.doubanType}&page_limit=14&page_start=0`);
 
         const p2 = m2.prebakedOnly
-          ? Promise.resolve({ subjects: prebaked.s2 })
+          ? Promise.resolve({ subjects: prebakedShelves.s2 })
           : fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(m2.tag)}&type=${m2.doubanType}&page_limit=14&page_start=0`);
 
         const [res1, res2] = await Promise.allSettled([p1, p2]);
@@ -254,7 +280,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
           }
 
           if (s1.length || s2.length) {
-            setLocalShelves(contentType, {
+            setLocalShelves('all', {
               s1: latestS1,
               s2: latestS2,
               s3: latestS3,
@@ -263,16 +289,15 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
           }
         }
 
-        // 第二阶段：轻量延迟 1 秒后拉取后 2 个货架，彻底释放网络并发通道
         await new Promise(r => setTimeout(r, 1000));
         if (!isMounted) return;
 
         const p3 = m3.prebakedOnly
-          ? Promise.resolve({ subjects: prebaked.s3 })
+          ? Promise.resolve({ subjects: prebakedShelves.s3 })
           : fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(m3.tag)}&type=${m3.doubanType}&page_limit=14&page_start=0`);
 
         const p4 = m4.prebakedOnly
-          ? Promise.resolve({ subjects: prebaked.s4 })
+          ? Promise.resolve({ subjects: prebakedShelves.s4 })
           : fetchWithTimeout(`/api/douban/recommend?tag=${encodeURIComponent(m4.tag)}&type=${m4.doubanType}&page_limit=14&page_start=0`);
 
         const [res3, res4] = await Promise.allSettled([p3, p4]);
@@ -289,7 +314,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
             setShelf4Movies(prev => isSameList(prev, s4) ? prev : s4);
           }
 
-          setLocalShelves(contentType, {
+          setLocalShelves('all', {
             s1: latestS1,
             s2: latestS2,
             s3: latestS3,
@@ -307,49 +332,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
     return () => {
       isMounted = false;
     };
-  }, [contentType, shelvesMeta, prebaked]);
-
-  // ── 口碑榜：后台静默每日自动更新 ──────────────────
-  useEffect(() => {
-    let isMounted = true;
-    const cache = getLocalWeeklyChart(contentType);
-    if (cache && cache.length > 0) {
-      setWeeklyMovies(cache);
-    } else if (prebaked.top10) {
-      setWeeklyMovies(prebaked.top10);
-    }
-
-    // 仅当为电影或剧集时走豆瓣官方周榜 API，其余品类（全部/动漫/综艺/短剧）直接使用高清预烘焙精选榜单
-    if (contentType !== 'movie' && contentType !== 'tv') {
-      return;
-    }
-
-    const fetchWeekly = async () => {
-      try {
-        const res = await fetch(`/api/douban/weekly-chart?type=${contentType}`, {
-          signal: AbortSignal.timeout(4000),
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (isMounted && data.subjects && Array.isArray(data.subjects) && data.subjects.length > 0) {
-          setWeeklyMovies(prev => {
-            const isSame = prev.length === data.subjects.length && prev.every((m, i) => (m?.title || m?.id) === (data.subjects[i]?.title || data.subjects[i]?.id));
-            return isSame ? prev : data.subjects;
-          });
-          setLocalWeeklyChart(contentType, data.subjects);
-        }
-      } catch {
-        // 网络超时或失败时平滑兜底当前缓存或预烘焙口碑榜
-      } finally {
-        if (isMounted) setWeeklyLoading(false);
-      }
-    };
-
-    fetchWeekly();
-    return () => {
-      isMounted = false;
-    };
-  }, [contentType, prebaked]);
+  }, [shelvesMeta, prebakedShelves]);
 
   // ── 全局流媒体防重管道（Deduplication Funnel） ──────────────────
   const deduplicatedContent = useMemo(() => {
@@ -363,7 +346,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         .trim()
         .toLowerCase();
 
-    // 1. Hero 巨幕专属大片（常驻独立：固定展示爱壹帆每日定时同步的 7 席正片巨幕，与下方 Tab 解耦）
+    // 1. Hero 巨幕专属大片（常驻独立：固定展示爱壹帆每日定时同步的 7 席正片巨幕）
     const heroPool = PREBAKED_HOME_DATA.all.hero || [];
     const heroList: any[] = [];
     for (const item of heroPool) {
@@ -374,8 +357,8 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       }
     }
 
-    // 2. 一周口碑榜 TOP 10
-    const top10Source = (weeklyMovies && weeklyMovies.length > 0) ? weeklyMovies : (prebaked.top10 || []);
+    // 2. 一周口碑榜 TOP 10（随 top10Category 联动）
+    const top10Source = (weeklyMovies && weeklyMovies.length > 0) ? weeklyMovies : (prebakedTop10 || []);
     const top10List: any[] = [];
     for (const item of top10Source) {
       if (top10List.length >= 10) break;
@@ -385,8 +368,8 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         top10List.push(item);
       }
     }
-    if (top10List.length < 10 && prebaked.top10) {
-      for (const item of prebaked.top10) {
+    if (top10List.length < 10 && prebakedTop10) {
+      for (const item of prebakedTop10) {
         if (top10List.length >= 10) break;
         const key = normalize(item.title);
         if (key && !seen.has(key)) {
@@ -396,7 +379,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       }
     }
 
-    // 3. 通用货架过滤填充器
+    // 3. 通用货架过滤填充器（固定综合大厅精选货架）
     const filterAndFill = (current: any[], fallback: any[], minCount = 10) => {
       const result: any[] = [];
       for (const m of (current || [])) {
@@ -420,16 +403,16 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       return result;
     };
 
-    const s1 = filterAndFill(shelf1Movies, prebaked.s1);
-    const s2 = filterAndFill(shelf2Movies, prebaked.s2);
-    const s3 = filterAndFill(shelf3Movies, prebaked.s3);
-    const s4 = filterAndFill(shelf4Movies, prebaked.s4);
+    const s1 = filterAndFill(shelf1Movies, prebakedShelves.s1);
+    const s2 = filterAndFill(shelf2Movies, prebakedShelves.s2);
+    const s3 = filterAndFill(shelf3Movies, prebakedShelves.s3);
+    const s4 = filterAndFill(shelf4Movies, prebakedShelves.s4);
 
     return { heroList, top10List, s1, s2, s3, s4, seenSnapshot: new Set(seen) };
-  }, [prebaked, weeklyMovies, shelf1Movies, shelf2Movies, shelf3Movies, shelf4Movies]);
+  }, [weeklyMovies, prebakedTop10, shelf1Movies, shelf2Movies, shelf3Movies, shelf4Movies, prebakedShelves]);
 
   const handleMovieClick = (movie: any) => {
-    if (contentType === 'short' || movie.play_url || movie.playUrl || movie.firstPlayUrl || (movie.types && movie.types.includes('短剧'))) {
+    if (top10Category === 'short' || movie.play_url || movie.playUrl || movie.firstPlayUrl || (movie.types && movie.types.includes('短剧'))) {
       const playUrl = movie.play_url || movie.playUrl || movie.url || movie.firstPlayUrl || '';
       const query = new URLSearchParams();
       if (movie.title) query.set('title', movie.title);
@@ -458,11 +441,11 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         {/* 🎬 断点续播 / 最近观看记录横轨 */}
         <ContinueWatchingRail />
 
-        {/* 🌟 流媒体 7 大核心品类导航条（支持移动端横向滑动手势） */}
+        {/* 🌟 口碑榜专用品类切换胶囊条（仅联动下方 Top 10 口碑榜） */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 px-0.5 -mx-0.5">
           {TABS.map((tab) => {
-            const isActive = contentType === tab.id;
+            const isActive = top10Category === tab.id;
             return (
               <button
                 key={tab.id}
@@ -470,7 +453,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
                   if (tab.isRoute && tab.href) {
                     router.push(tab.href);
                   } else {
-                    setContentType(tab.id as HomeContentType);
+                    setTop10Category(tab.id as HomeContentType);
                   }
                 }}
                 className={`shrink-0 whitespace-nowrap px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
@@ -486,24 +469,24 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         </div>
 
         <span className="text-xs text-white/40 font-medium hidden lg:inline">
-          全品类 0 延时秒播 · 4K 官方高清聚合 · 智能无重复货架
+          权威榜单 · 每日定时自动同步 · 0 延时瞬开
         </span>
       </div>
 
-      {/* 4. 🥇 口碑榜 TOP 10（每日定时自动更新） */}
+      {/* 4. 🥇 口碑榜 TOP 10（随上方品类胶囊即时联动） */}
       <Top10Rail
         title={top10Info.title}
         badge={top10Info.badge}
         movies={deduplicatedContent.top10List}
         loading={weeklyLoading && deduplicatedContent.top10List.length === 0}
         onMovieClick={handleMovieClick}
-        contentType={contentType}
+        contentType={top10Category}
       />
 
-      {/* 5. 🎯 猜你喜欢 · 智能定制推荐 */}
+      {/* 5. 🎯 猜你喜欢 · 智能定制推荐（全站综合推荐，不受上方排行榜切换影响） */}
       <PersonalizedForYouRail
         onMovieClick={handleMovieClick}
-        contentType={contentType === 'all' ? 'movie' : contentType}
+        contentType="movie"
         excludeTitles={deduplicatedContent.seenSnapshot}
       />
 

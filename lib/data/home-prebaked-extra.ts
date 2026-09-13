@@ -1976,7 +1976,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
       id: 'pb_all_top_3',
       title: '庆余年 第二季',
       rate: '7.3',
-      cover: 'https://image.tmdb.org/t/p/w500/3r46wGgU4f7v5g7qV1G2yZ3H4.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/zp6xQY6erziGoqqQ4L7sfDMjzCY.jpg',
       year: '2024',
       types: ['古装', '权谋'],
       is_new: true,
@@ -2089,7 +2089,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
       id: 'pb_all_s1_4',
       title: '庆余年 第二季',
       rate: '7.3',
-      cover: 'https://image.tmdb.org/t/p/w500/3r46wGgU4f7v5g7qV1G2yZ3H4.jpg',
+      cover: 'https://image.tmdb.org/t/p/w500/zp6xQY6erziGoqqQ4L7sfDMjzCY.jpg',
       year: '2024',
       types: ['古装', '权谋'],
       is_new: true,
@@ -2586,7 +2586,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
     }
   ],
   top10: [
-    { id: 'pb_doc_top_1', title: '地球脉动', rate: '9.9', cover: 'https://image.tmdb.org/t/p/w500/uha47P74pT26bC2q5U0k9dJ19sO.jpg', year: '2023', types: ['自然'], is_new: true, playable: true },
+    { id: 'pb_doc_top_1', title: '地球脉动', rate: '9.9', cover: 'https://image.tmdb.org/t/p/w500/dpmMKs2nvvtB7QA92mtuMC9MEzm.jpg', year: '2023', types: ['自然'], is_new: true, playable: true },
     { id: 'pb_doc_top_2', title: '蓝色星球', rate: '9.8', cover: 'https://image.tmdb.org/t/p/w500/9pUMo06RhIR7R5Vjn7tIziyrH51.jpg', year: '2017', types: ['海洋'], is_new: true, playable: true },
     { id: 'pb_doc_top_3', title: '河西走廊', rate: '9.7', cover: 'https://image.tmdb.org/t/p/w500/dNNUkE2RKGHQlEPRaffxfa2EfzQ.jpg', year: '2015', types: ['历史'], is_new: false, playable: true },
     { id: 'pb_doc_top_4', title: '风味人间', rate: '9.1', cover: 'https://image.tmdb.org/t/p/w500/d6plBmVJfWLA5UD8tcIvI2QUrTN.jpg', year: '2020', types: ['美食'], is_new: true, playable: true },
