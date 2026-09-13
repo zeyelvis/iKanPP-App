@@ -452,7 +452,7 @@ export function HeroSlideshow({
               </button>
             </div>
 
-            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（大屏标准清晰规格，舒展饱满，间距从容） */}
+            {/* 2. 中栏：爱壹帆同款高频热播追更速报列表（大字号 + 宽阔间距，充分利用中间大舞台空间，视觉饱满舒展） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (() => {
               // 唯有动漫频道官方规范因《死神》长片名自然拆为 5+7，其余全板块（纪录片、综艺、电影、电视剧、首页）均为严格 6+6 黄金对称
               const splitIdx = contentType === 'anime' ? 5 : 6;
@@ -463,14 +463,14 @@ export function HeroSlideshow({
                   key={idx}
                   type="button"
                   onClick={() => handleTrendingClick(item)}
-                  className="group flex items-center justify-start text-left cursor-pointer text-white/85 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.6)] transition-colors duration-200 select-none shrink-0"
+                  className="group flex items-center justify-start text-left cursor-pointer text-white/90 hover:text-white hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.75)] hover:scale-103 transition-all duration-200 select-none shrink-0"
                   title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                 >
-                  <span className="text-xs lg:text-[12.5px] xl:text-[13.5px] 2xl:text-[14px] font-semibold tracking-tight whitespace-nowrap leading-snug max-w-[90px] lg:max-w-[105px] xl:max-w-[125px] 2xl:max-w-[145px] truncate">
+                  <span className="text-[13px] lg:text-[14px] xl:text-[15px] 2xl:text-[16px] font-bold tracking-tight whitespace-nowrap leading-snug max-w-[110px] lg:max-w-[130px] xl:max-w-[155px] 2xl:max-w-[175px] truncate">
                     {item.title}
                   </span>
                   {item.updateBadge ? (
-                    <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[8.5px] xl:text-[9px] font-bold rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0 shadow-xs">
+                    <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9px] xl:text-[10px] 2xl:text-[10.5px] font-black rounded-xs px-1.5 py-0.2 min-w-4 h-4 leading-none ml-1 shrink-0 shadow-md">
                       {item.updateBadge}
                     </span>
                   ) : null}
@@ -478,12 +478,12 @@ export function HeroSlideshow({
               );
 
               return (
-                <div className="hidden lg:flex flex-1 min-w-0 flex-col items-center justify-end px-3 xl:px-6 pb-1">
-                  <div className="flex flex-col items-center gap-y-2 xl:gap-y-2.5 w-full max-w-fit">
-                    <div className="flex items-center justify-center gap-x-2.5 xl:gap-x-3.5 2xl:gap-x-4 whitespace-nowrap">
+                <div className="hidden lg:flex flex-1 min-w-0 flex-col items-center justify-end px-2 xl:px-4 pb-1">
+                  <div className="flex flex-col items-center gap-y-2.5 xl:gap-y-3.5 w-full max-w-fit">
+                    <div className="flex items-center justify-center gap-x-4 lg:gap-x-5 xl:gap-x-7 2xl:gap-x-8 whitespace-nowrap">
                       {line1.map(renderItem)}
                     </div>
-                    <div className="flex items-center justify-center gap-x-2.5 xl:gap-x-3.5 2xl:gap-x-4 whitespace-nowrap">
+                    <div className="flex items-center justify-center gap-x-4 lg:gap-x-5 xl:gap-x-7 2xl:gap-x-8 whitespace-nowrap">
                       {line2.map((item: TrendingNavItem, idx: number) => renderItem(item, idx + splitIdx))}
                     </div>
                   </div>
