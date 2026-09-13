@@ -84,7 +84,7 @@ export const PREBAKED_HOME_DATA: {
                 "title": "求救信号",
                 "updateBadge": ""
         }
-],
+      ],
     "hero": [
         {
                 "id": "iyf_hero_movie_1",
@@ -1793,7 +1793,7 @@ export const PREBAKED_HOME_DATA: {
                 "title": "杀手妈咪",
                 "updateBadge": "1"
         }
-],
+      ],
     "hero": [
         {
                 "id": "iyf_hero_tv_1",
@@ -1807,7 +1807,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至06集 | 共47集",
+                "episodes_info": "更新至08集 | 共47集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1824,7 +1824,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至08集 | 共18集",
+                "episodes_info": "更新至09集 | 共18集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1841,7 +1841,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至11集 | 共16集",
+                "episodes_info": "更新至13集 | 共16集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1858,7 +1858,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至16集 | 共40集",
+                "episodes_info": "更新至18集 | 共40集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1875,7 +1875,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至14集 | 共26集",
+                "episodes_info": "更新至15集 | 共26集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true

@@ -40,7 +40,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "title": "死神：千年血战篇第4季",
         "updateBadge": ""
     }
-],
+  ],
   hero: [
     {
         "id": "iyf_hero_tv_1",
@@ -646,7 +646,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "title": "你好星期六",
         "updateBadge": "1"
     }
-],
+  ],
   hero: [
     {
         "id": "iyf_hero_tv_1",
@@ -1777,7 +1777,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "title": "牧神记",
         "updateBadge": "1"
     }
-],
+  ],
   hero: [
     {
         "id": "iyf_hero_movie_1",
@@ -1863,7 +1863,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至06集 | 共47集",
+        "episodes_info": "更新至08集 | 共47集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1880,7 +1880,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至08集 | 共18集",
+        "episodes_info": "更新至09集 | 共18集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1897,7 +1897,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至11集 | 共16集",
+        "episodes_info": "更新至13集 | 共16集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -2374,7 +2374,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "title": "克拉克森的农场第2季",
         "updateBadge": ""
     }
-],
+  ],
   hero: [
     {
         "id": "iyf_hero_documentary_1",
