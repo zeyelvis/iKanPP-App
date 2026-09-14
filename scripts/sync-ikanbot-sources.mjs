@@ -212,8 +212,19 @@ async function main() {
     return { ...source, health };
   }));
 
-  const activeSources = healthResults.filter(s => s.health.ok);
+  let activeSources = healthResults.filter(s => s.health.ok);
   console.log(`\n=== 健康检查结果: ${activeSources.length}/${candidateSources.length} 存活 ===`);
+
+  // 保持黄金骨干第一梯队的绝对优先度（光速、极速、新浪优先，杜绝防盗链/限流源占领默认首选源）
+  const PINNED_LEADERS = ['guangsu', 'jisu', 'xinlang', 'baofeng', 'dytt', 'json1080'];
+  activeSources.sort((a, b) => {
+    const aIdx = PINNED_LEADERS.indexOf(a.id);
+    const bIdx = PINNED_LEADERS.indexOf(b.id);
+    if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+    if (aIdx !== -1) return -1;
+    if (bIdx !== -1) return 1;
+    return 0;
+  });
 
   activeSources.forEach((s, idx) => {
     console.log(`  ${idx + 1}. [${s.id.padEnd(10)}] ${s.name.padEnd(8)} | 耗时: ${s.health.duration}ms | 命中数: ${s.health.count}`);

@@ -17,7 +17,6 @@ import { settingsStore } from '@/lib/store/settings-store';
 import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
 import { getSourceName } from '@/lib/utils/source-names';
 import { storeGroupedSources, retrieveGroupedSources } from '@/lib/utils/grouped-sources-cache';
-import { getCleanSourceKey } from '@/components/player/SourceSelector';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -388,7 +387,7 @@ export function IkanPPPlayerContainer() {
     setPlayUrl,
     setVideoError,
     fetchVideoDetails,
-  } = useVideoPlayer(videoId || '', currentSourceId || source || '', episodeParam, isReversed, handleSourceUnavailable, title);
+  } = useVideoPlayer(videoId || '', source || '', episodeParam, isReversed, handleSourceUnavailable, title);
 
   const [discoveredSources, setDiscoveredSources] = useState<SourceInfo[]>([]);
 
@@ -553,27 +552,14 @@ export function IkanPPPlayerContainer() {
       (s) => s.source && s.source !== currentActiveSource && !failedSourcesRef.current.has(s.source)
     );
     const candidate = validCandidates.sort((a, b) => {
-      const TOP_ORDER: Record<string, number> = {
-        wujin: 1,      // 无尽资源 (443纯净源，老片/动画秒播首选)
-        zuida: 2,      // 最大资源 (443纯净源，海量经典)
-        guangsu: 3,    // 光速资源 (海量新热)
-        jisu: 4,       // 极速资源
-        xinlang: 5,    // 新浪资源
-        json1080: 6,   // 1080JSON
-        feifan: 7,     // 非凡资源
-        modu: 8,       // 魔都资源
-        zy360: 9,      // 360资源
-      };
-      const cleanA = getCleanSourceKey(a.source);
-      const cleanB = getCleanSourceKey(b.source);
-      const aOrder = TOP_ORDER[cleanA] ?? 99;
-      const bOrder = TOP_ORDER[cleanB] ?? 99;
+      const TOP_ORDER: Record<string, number> = { guangsu: 1, wujin: 2, zuida: 3, jisu: 4, xinlang: 5, modu: 6, zy360: 7 };
+      const aOrder = TOP_ORDER[a.source] ?? 99;
+      const bOrder = TOP_ORDER[b.source] ?? 99;
       if (aOrder !== bOrder) return aOrder - bOrder;
       return 0;
     })[0];
 
     if (candidate) {
-      console.info(`[Self-Healing] 线路 ${currentActiveSource} 异常，已自动平滑自愈切入优质备选源: ${candidate.source}`);
       const params = new URLSearchParams();
       params.set('id', String(candidate.id));
       params.set('source', candidate.source);
