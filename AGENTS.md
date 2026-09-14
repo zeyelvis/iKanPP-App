@@ -85,12 +85,12 @@
 
 ## 7. 全站极速加载与全球/大陆双轨性能架构铁律 (Global Performance Spec)
 
-全站所有海报图片、静态资源加载与首屏性能，必须严格遵循双轨分流与极速降维规范：
-1. **海外用户 (≠CN)**：TMDB 图片 100% 直连官方 Anycast CDN，零代理延时，零服务器成本。
-2. **中国大陆用户 (CN)**：通过 `/api/img-proxy` 接入自建 Cloudflare R2 (`img.ikanpp.com`) 持久化镜像，自动透写（Write-Through），实现国内同域 CDN 高速秒开。
-3. **物理尺寸精准降维**：列表卡片必须严格限定为 `w185` (thumb) 或 `w342` (poster)，严禁直接拉取原图或未降维尺寸。
-4. **恪守正片与图片隔离**：R2 仅用于持久缓存静态图片，严禁存储或转码任何正片视频。
-5. **本地 0ms 体验**：全域海报通过 Service Worker 执行 Cache-First 0ms 读取。
+1. **普通海外用户**：TMDB 图片直连官方 Anycast CDN，零代理延时，零服务器成本。
+2. **受限国家与地区用户（CN 大陆、MM 缅甸、RU 俄罗斯、IR 伊朗、BY 白俄罗斯、KP 朝鲜、SY 叙利亚、CU 古巴、VE 委内瑞拉、VN 越南、ID 印尼、TM 土库曼斯坦等）**：通过 `/api/img-proxy` 接入自建 Cloudflare R2 (`img.ikanpp.com`) 持久化镜像，自动透写（Write-Through），实现受限网络环境下同域 CDN 高速秒开与 100% 防裂图。
+3. **客户端双轨弹性自愈**：全域海报组件若直连遭遇局部网络封锁或丢包（`onError`），自动毫秒级静默切换为 `/api/img-proxy` R2 镜像重试，杜绝裂图与碎图。
+4. **物理尺寸精准降维**：列表卡片必须严格限定为 `w185` (thumb) 或 `w342` (poster)，严禁直接拉取原图或未降维尺寸。
+5. **恪守正片与图片隔离**：R2 仅用于持久缓存静态图片，严禁存储或转码任何正片视频。
+6. **本地 0ms 体验**：全域海报通过 Service Worker 执行 Cache-First 0ms 读取。
 
 详细性能规范与数据链路请参考：[global-performance-spec.md](file:///Users/zeyelvis/KVideo/docs/architecture/global-performance-spec.md)。
 流媒体播放规范请参考：[dual-track-streaming-spec.md](file:///Users/zeyelvis/KVideo/docs/architecture/dual-track-streaming-spec.md)。

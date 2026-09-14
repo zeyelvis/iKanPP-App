@@ -8,7 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Icons } from '@/components/ui/Icon';
-import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { getOptimizedImageUrl, getFallbackProxiedImageUrl } from '@/lib/utils/image-utils';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 interface DoubanMovie {
@@ -30,9 +30,22 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
   const [imageError, setImageError] = useState(false);
   const [fallbackError, setFallbackError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [useProxyFallback, setUseProxyFallback] = useState(false);
 
   // 智能图片精准物理尺寸与地域路由（海报卡片统一规范为 poster/342 尺寸）
-  const proxiedCover = getOptimizedImageUrl(movie.cover, { variant: 'poster' });
+  const initialCover = getOptimizedImageUrl(movie.cover, { variant: 'poster' });
+  const proxiedCover = useProxyFallback
+    ? getFallbackProxiedImageUrl(movie.cover, { variant: 'poster' })
+    : initialCover;
+
+  const handleImageError = () => {
+    // 弹性自愈：若当前直连外链加载失败（如海外局部网络审查阻断 Fastly），自动秒切 /api/img-proxy R2 镜像重试
+    if (!useProxyFallback && movie.cover?.startsWith('http') && !initialCover.includes('/api/img-proxy')) {
+      setUseProxyFallback(true);
+    } else {
+      setImageError(true);
+    }
+  };
 
   // 智能短剧与正片动态目标路由
   const isShortDrama = Boolean((movie as any).play_url || (movie as any).playUrl || (movie as any).firstPlayUrl || ((movie as any).types && (movie as any).types.includes('短剧')));
@@ -86,7 +99,7 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
               unoptimized
               referrerPolicy="no-referrer"
               onLoad={() => setImageLoaded(true)}
-              onError={() => setImageError(true)}
+              onError={handleImageError}
             />
           ) : !fallbackError ? (
             <Image

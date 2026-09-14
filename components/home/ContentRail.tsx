@@ -4,17 +4,18 @@ import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Icons } from '@/components/ui/Icon';
-import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { getOptimizedImageUrl, getFallbackProxiedImageUrl } from '@/lib/utils/image-utils';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 export interface RailMovie {
   id: string;
   title: string;
   cover: string;
-  rate?: string;
+  rate: string;
   year?: string;
-  types?: string[];
   url?: string;
+  types?: string[];
+  is_new?: boolean;
 }
 
 interface ContentRailProps {
@@ -40,11 +41,25 @@ function RailPosterItem({
   onMovieClick?: (movie: RailMovie) => void;
 }) {
   const [imageError, setImageError] = useState(false);
-  const proxiedCover = getOptimizedImageUrl(movie.cover, { variant: 'poster' });
+  const [useProxyFallback, setUseProxyFallback] = useState(false);
+
+  const initialCover = getOptimizedImageUrl(movie.cover, { variant: 'poster' });
+  const proxiedCover = useProxyFallback
+    ? getFallbackProxiedImageUrl(movie.cover, { variant: 'poster' })
+    : initialCover;
 
   useEffect(() => {
     setImageError(false);
+    setUseProxyFallback(false);
   }, [movie.cover]);
+
+  const handleImageError = () => {
+    if (!useProxyFallback && movie.cover?.startsWith('http') && !initialCover.includes('/api/img-proxy')) {
+      setUseProxyFallback(true);
+    } else {
+      setImageError(true);
+    }
+  };
 
   const isShortDrama = Boolean(movie.url?.includes('short') || (movie.types && movie.types.includes('短剧')));
   const targetHref = isShortDrama
@@ -76,7 +91,7 @@ function RailPosterItem({
             decoding="async"
             unoptimized
             referrerPolicy="no-referrer"
-            onError={() => setImageError(true)}
+            onError={handleImageError}
           />
         ) : (
           /* 极致艺术电影原木/胶片风定制封套：原图失效或反盗链时的优雅兜底，杜绝破裂碎图 */

@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Icons } from '@/components/ui/Icon';
-import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { getOptimizedImageUrl, getFallbackProxiedImageUrl } from '@/lib/utils/image-utils';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 interface Top10Movie {
@@ -40,7 +40,26 @@ function Top10Item({
   onMovieClick?: (movie: Top10Movie) => void;
 }) {
   const [imageError, setImageError] = useState(false);
-  const proxiedCover = getOptimizedImageUrl(movie.cover, { variant: 'thumb' });
+  const [useProxyFallback, setUseProxyFallback] = useState(false);
+
+  const initialCover = getOptimizedImageUrl(movie.cover, { variant: 'thumb' });
+  const proxiedCover = useProxyFallback
+    ? getFallbackProxiedImageUrl(movie.cover, { variant: 'thumb' })
+    : initialCover;
+
+  useEffect(() => {
+    setImageError(false);
+    setUseProxyFallback(false);
+  }, [movie.cover]);
+
+  const handleImageError = () => {
+    if (!useProxyFallback && movie.cover?.startsWith('http') && !initialCover.includes('/api/img-proxy')) {
+      setUseProxyFallback(true);
+    } else {
+      setImageError(true);
+    }
+  };
+
   const isDoubleDigit = idx + 1 >= 10;
 
   const isShortDrama = Boolean(movie.play_url || movie.playUrl || movie.firstPlayUrl || (movie.types && movie.types.includes('短剧')));
@@ -87,7 +106,7 @@ function Top10Item({
             decoding="async"
             unoptimized
             referrerPolicy="no-referrer"
-            onError={() => setImageError(true)}
+            onError={handleImageError}
           />
         ) : (
           /* 定制艺术电影原木/胶片风封套：兜底杜绝破裂碎图 */

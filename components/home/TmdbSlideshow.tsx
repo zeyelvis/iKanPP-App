@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { getOptimizedImageUrl, getFallbackProxiedImageUrl } from '@/lib/utils/image-utils';
 import { PREBAKED_HOME_DATA, type PrebakedSubject, type TrendingNavItem } from '@/lib/data/home-prebaked';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 
@@ -21,23 +21,26 @@ interface PosterImageProps {
  * 缩略图海报组件（支持代理与直连双通道容灾）
  */
 function PosterImage({ src, alt, className = '', style, sizes = '100vw', priority = false }: PosterImageProps) {
-  const [useDirect, setUseDirect] = useState(false);
+  const [useFallback, setUseFallback] = useState(false);
   const [error, setError] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    setUseDirect(false);
+    setUseFallback(false);
     setError(false);
     setLoaded(false);
   }, [src]);
 
   const proxiedSrc = getOptimizedImageUrl(src, { noFallback: true });
-  const activeSrc = useDirect ? src : proxiedSrc;
+  const fallbackSrc = proxiedSrc.includes('/api/img-proxy')
+    ? (src.startsWith('http') ? src : proxiedSrc)
+    : getFallbackProxiedImageUrl(src, { variant: 'thumb' });
+  const activeSrc = useFallback ? fallbackSrc : proxiedSrc;
 
   const handleImgError = () => {
-    if (!useDirect && src && src.startsWith('http') && src !== proxiedSrc) {
-      // 代理节点故障或超时，自动无缝重试原链接直连
-      setUseDirect(true);
+    if (!useFallback && activeSrc !== fallbackSrc) {
+      // 当前通道失败（如海外局部防火墙阻断 Fastly 直连），自动无缝切入备用通道
+      setUseFallback(true);
     } else {
       setError(true);
     }
@@ -86,22 +89,27 @@ function HeroBackdrop({
   title: string;
 }) {
   // 构建候选重试容灾链：
-  // 1. 代理优化版 Backdrop（高清横图）
-  // 2. 原生 Backdrop 直连（避免边缘代理抖动）
-  // 3. 代理优化版 Cover（海报大图降级）
-  // 4. 原生 Cover 直连
+  // 1. 优化版 Backdrop（自适应地域路由）
+  // 2. 强制 R2 镜像代理版 Backdrop（避开海外局部防火墙阻断）
+  // 3. 原生 Backdrop 直连
+  // 4. 优化版 Cover（海报大图降级）
+  // 5. 强制 R2 镜像代理版 Cover
   const candidates = useMemo(() => {
     const list: string[] = [];
     if (backdrop) {
       const optBackdrop = getOptimizedImageUrl(backdrop, { variant: 'backdrop', noFallback: true });
       list.push(optBackdrop);
-      if (backdrop !== optBackdrop && backdrop.startsWith('http')) {
+      const fallbackProxy = getFallbackProxiedImageUrl(backdrop, { variant: 'backdrop' });
+      if (!list.includes(fallbackProxy)) list.push(fallbackProxy);
+      if (backdrop !== optBackdrop && backdrop.startsWith('http') && !list.includes(backdrop)) {
         list.push(backdrop);
       }
     }
     if (cover) {
       const optCover = getOptimizedImageUrl(cover, { variant: 'poster', noFallback: true });
       if (!list.includes(optCover)) list.push(optCover);
+      const fallbackProxyCover = getFallbackProxiedImageUrl(cover, { variant: 'poster' });
+      if (!list.includes(fallbackProxyCover)) list.push(fallbackProxyCover);
       if (cover !== optCover && cover.startsWith('http') && !list.includes(cover)) {
         list.push(cover);
       }

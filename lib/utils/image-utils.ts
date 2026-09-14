@@ -28,14 +28,37 @@ export interface ImageOptimizationOptions {
 }
 
 /**
+ * 常见受到国家级防火墙封锁、OFAC 制裁限制或 Fastly CDN/TMDB 严重阻断的国家与地区列表
+ */
+export const RESTRICTED_GEO_REGIONS = new Set([
+  'CN', // 中国大陆
+  'MM', // 缅甸
+  'RU', // 俄罗斯
+  'IR', // 伊朗
+  'BY', // 白俄罗斯
+  'KP', // 朝鲜
+  'SY', // 叙利亚
+  'CU', // 古巴
+  'VE', // 委内瑞拉
+  'VN', // 越南
+  'ID', // 印度尼西亚
+  'TM', // 土库曼斯坦
+]);
+
+export function isRestrictedRegion(countryCode?: string | null): boolean {
+  if (!countryCode) return false;
+  return RESTRICTED_GEO_REGIONS.has(countryCode.trim().toUpperCase());
+}
+
+/**
  * 客户端轻量同步获取地域标记 (从 Middleware 写入的 Cookie 读取)
  */
-function getClientGeoRegion(): boolean {
+function isClientRestrictedRegion(): boolean {
   if (typeof document === 'undefined') return false;
   try {
     const match = document.cookie.match(/(?:^|;\s*)geo-region=([^;]*)/);
     if (match && match[1]) {
-      return match[1].toUpperCase() === 'CN';
+      return isRestrictedRegion(match[1]);
     }
   } catch {
     // 忽略异常
@@ -61,10 +84,10 @@ export function getOptimizedImageUrl(
     targetWidth = SIZE_CONFIG[options.variant].width;
   }
 
-  // 2. 确定访客地域（options 指定优先，其次客户端 Cookie，默认海外）
-  const isChina = options?.isChinaMainland !== undefined
+  // 2. 确定访客地域（options 指定优先，其次客户端 Cookie，受限国家走镜像代理）
+  const shouldUseProxy = options?.isChinaMainland !== undefined
     ? options.isChinaMainland
-    : getClientGeoRegion();
+    : isClientRestrictedRegion();
 
   const isTmdb = url.includes('image.tmdb.org') || url.includes('tmdb.org');
   const isDouban = url.includes('doubanio.com') || url.includes('douban.com');
@@ -75,13 +98,13 @@ export function getOptimizedImageUrl(
     const resizedTmdbUrl = url
       .replace(/\/t\/p\/(w\d+|original)\//, `/t/p/w${targetWidth}/`);
 
-    if (isChina) {
-      // 大陆用户：走 /api/img-proxy 接入 R2 镜像与 Cloudflare 边缘加速
+    if (shouldUseProxy) {
+      // 受限国家（CN、MM、RU、IR等）：走 /api/img-proxy 接入 R2 镜像与 Cloudflare 边缘加速
       const noFallbackQuery = options?.noFallback ? '&nofallback=1' : '';
       return `/api/img-proxy?url=${encodeURIComponent(resizedTmdbUrl)}&w=${targetWidth}${noFallbackQuery}`;
     }
 
-    // 海外用户：直连 TMDB 官方 CDN (Anycast 全球极速直出)
+    // 普通海外用户：直连 TMDB 官方 CDN (Anycast 全球极速直出)
     return resizedTmdbUrl;
   }
 
@@ -93,4 +116,23 @@ export function getOptimizedImageUrl(
 
   // 5. 其它通用外链：保持原链直出
   return url;
+}
+
+/**
+ * 客户端自愈降级工具：当任意图片在客户端直连加载失败（如海外局部网络抖动或封锁）时，
+ * 强制转换为走 /api/img-proxy + Cloudflare R2 镜像，实现 100% 自动自愈
+ */
+export function getFallbackProxiedImageUrl(
+  url?: string | null,
+  options?: ImageOptimizationOptions
+): string {
+  if (!url || !url.startsWith('http')) return url || '/placeholder-poster.svg';
+  let targetWidth = 342;
+  if (options?.width && options.width > 0) {
+    targetWidth = options.width;
+  } else if (options?.variant && SIZE_CONFIG[options.variant]) {
+    targetWidth = SIZE_CONFIG[options.variant].width;
+  }
+  const cleanUrl = url.replace(/\/t\/p\/(w\d+|original)\//, `/t/p/w${targetWidth}/`);
+  return `/api/img-proxy?url=${encodeURIComponent(cleanUrl)}&w=${targetWidth}`;
 }
