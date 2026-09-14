@@ -11,6 +11,7 @@ const STATIC_ROUTES = [
     { path: '/tv', priority: '0.95', changefreq: 'daily' },
     { path: '/anime', priority: '0.95', changefreq: 'daily' },
     { path: '/variety', priority: '0.95', changefreq: 'daily' },
+    { path: '/documentary', priority: '0.95', changefreq: 'daily' },
     { path: '/short', priority: '0.95', changefreq: 'daily' },
     { path: '/ranking', priority: '0.95', changefreq: 'daily' },
     { path: '/iptv', priority: '0.85', changefreq: 'daily' },

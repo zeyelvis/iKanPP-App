@@ -45,6 +45,11 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
       worstRating: '1',
       ratingCount: 1520,
     },
+    countryOfOrigin: entity.region ? {
+      '@type': 'Country',
+      name: entity.region,
+    } : undefined,
+    duration: entity.runtime ? `PT${entity.runtime}M` : undefined,
     inLanguage: 'zh-CN',
   };
 
@@ -82,7 +87,7 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
   };
 
   // 3. VideoObject 结构化数据 (Google 视频富媒体卡片 & 立即观看动作)
-  const videoObjectSchema = {
+  const videoObjectSchema: Record<string, any> = {
     '@context': 'https://schema.org',
     '@type': 'VideoObject',
     name: `${entity.title} 免费高清在线观看`,
@@ -92,6 +97,7 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
     ],
     uploadDate: entity.createdAt || `${entity.year}-01-01T00:00:00Z`,
     embedUrl: `${siteUrl}/player?entity=${entity.entityId}`,
+    duration: entity.runtime ? `PT${entity.runtime}M` : undefined,
     potentialAction: {
       '@type': 'WatchAction',
       target: {

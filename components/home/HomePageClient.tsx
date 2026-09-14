@@ -6,7 +6,6 @@ import { PopularFeatures } from '@/components/home/PopularFeatures';
 import { Navbar } from '@/components/layout/Navbar';
 import { useHomePage } from '@/lib/hooks/useHomePage';
 import { useLatencyPing } from '@/lib/hooks/useLatencyPing';
-import { MainSiteJsonLd } from '@/components/seo/MainSiteJsonLd';
 
 // 🚀 八层极速秒开架构：次级交互组件（侧边栏抽屉/搜索结果/断点气泡）按需延迟加载
 const SearchLoadingAnimation = dynamic(
@@ -70,9 +69,6 @@ export function HomePageClient() {
 
   return (
     <div className="min-h-screen">
-      {/* 仅在主站首页注入官方 Schema 结构化数据，严密隔绝成人站 */}
-      <MainSiteJsonLd />
-
       {/* Glass Navbar with integrated search */}
       <Navbar
         onReset={handleReset}
