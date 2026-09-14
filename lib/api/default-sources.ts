@@ -3,8 +3,8 @@ import type { VideoSource } from '@/lib/types';
 // 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-14T08:11:44.506Z）
 export const DEFAULT_SOURCES: VideoSource[] = [
   {
-    id: 'ole_vip',
-    name: '超清专线',
+    id: 'ole_hd',
+    name: '高清专线',
     baseUrl: 'https://api.olelive.com',
     searchPath: '',
     detailPath: '',
@@ -21,6 +21,16 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     group: 'normal',
     enabled: true,
     priority: 1,
+  },
+  {
+    id: 'ole_vip',
+    name: '超清专线',
+    baseUrl: 'https://api.olelive.com',
+    searchPath: '',
+    detailPath: '',
+    group: 'normal',
+    enabled: true,
+    priority: 2,
   },
   {
     id: 'jisu',

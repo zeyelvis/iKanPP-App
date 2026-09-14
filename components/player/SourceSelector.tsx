@@ -46,28 +46,33 @@ const HD_BLURAY_SOURCES = new Set([
 
 // 黄金线路优先级权重（严格按金字塔梯队分级，对齐全站最新健康骨干源标准）
 const GOLDEN_PRIORITY_MAP: Record<string, number> = {
-    // === 第零梯队：1080P 4.91Mbps 超清原画专线（原画秒播首选） ===
-    'ole_vip': 0,   // 超清专线 (1080P 4.91Mbps 原画第一首选)
+    // === 第零梯队：720P 极速秒开专线（全站默认主力首选） ===
+    'ole_hd': 0,    // 高清专线 (720P 2.51Mbps 极速秒开第一首选)
 
     // === 第一梯队：全量 443 端口纯净切片与数百万海量热播大源（CORS 100% 开放，秒播首选） ===
     'guangsu': 1,   // 光速资源 (数百万海量新热影视第一大站，降级首选)
-    'wujin': 2,     // 无尽资源 (443纯净源，老片/动画秒播首选)
-    'zuida': 3,     // 最大资源 (443纯净源，经典/新剧兼备)
-    'jisu': 4,      // 极速资源 (443纯净源)
-    'xinlang': 5,   // 新浪资源 (443纯净源)
-    'modu': 6,      // 魔都资源 (热播大站)
-    'zy360': 7,     // 360资源 (独播大站)
 
-    // === 第二梯队：优质主流高码率专线（1080P/4K，部分节点有防盗链策略） ===
-    'json1080': 8,  // 1080JSON
-    'feifan': 9,    // 非凡资源
-    'baofeng': 10,  // 暴风资源 (4K/蓝光)
-    'dytt': 11,     // 电影天堂
-    'liangzi': 12,  // 量子资源
-    'hongniu': 13,  // 红牛资源 (4K)
-    'huya': 14,     // 虎牙资源
-    'haitun': 15,   // 海豚资源
-    'lezi': 16,     // 乐子资源
+    // === 第二梯队：1080P 4.91Mbps 超清原画专线（大屏画质专享） ===
+    'ole_vip': 2,   // 超清专线 (1080P 4.91Mbps 原画顶级专享)
+
+    // === 第三梯队：优质骨干主流源 ===
+    'wujin': 3,     // 无尽资源 (443纯净源，老片/动画秒播首选)
+    'zuida': 4,     // 最大资源 (443纯净源，经典/新剧兼备)
+    'jisu': 5,      // 极速资源 (443纯净源)
+    'xinlang': 6,   // 新浪资源 (443纯净源)
+    'modu': 7,      // 魔都资源 (热播大站)
+    'zy360': 8,     // 360资源 (独播大站)
+
+    // === 第四梯队：优质主流高码率专线（1080P/4K，部分节点有防盗链策略） ===
+    'json1080': 9,  // 1080JSON
+    'feifan': 10,   // 非凡资源
+    'baofeng': 11,  // 暴风资源 (4K/蓝光)
+    'dytt': 12,     // 电影天堂
+    'liangzi': 13,  // 量子资源
+    'hongniu': 14,  // 红牛资源 (4K)
+    'huya': 15,     // 虎牙资源
+    'haitun': 16,   // 海豚资源
+    'lezi': 17,     // 乐子资源
     'ruyi': 17,     // 如意资源
     'modu_dm': 18,  // 魔都动漫
     'moduys': 19,   // 魔都影视
@@ -162,19 +167,19 @@ export function SourceSelector({
         });
     }, [sources]);
 
-    // 默认展示数量（精选前 2 条黄金线路，刚好排满 1 行极度省空间）
-    const DEFAULT_VISIBLE_COUNT = 2;
+    // 默认展示数量（精选前 3 条黄金线路：高清专线 720P、光速资源 蓝光、超清专线 1080P）
+    const DEFAULT_VISIBLE_COUNT = 3;
     const shouldShowExpandButton = sortedSources.length > DEFAULT_VISIBLE_COUNT;
 
-    // 当前可见线路：若已展开显示全部；未展开时严格保持 2 条精选线路（第 1 位永远是当前正在播放的线路，第 2 位是推荐备选线路）
+    // 当前可见线路：若已展开显示全部；未展开时严格保持 3 条精选线路（第 1 位永远是当前正在播放的线路，后续为推荐备选线路）
     const visibleSources = useMemo(() => {
         if (isExpanded || !shouldShowExpandButton) {
             return sortedSources;
         }
         const currentItem = sortedSources.find(s => s.source === currentSource) || sortedSources[0];
-        const alternateItem = sortedSources.find(s => s.source !== currentItem.source) || sortedSources[1];
+        const remaining = sortedSources.filter(s => s.source !== currentItem.source);
         
-        return [currentItem, alternateItem].filter(Boolean);
+        return [currentItem, ...remaining.slice(0, DEFAULT_VISIBLE_COUNT - 1)].filter(Boolean);
     }, [sortedSources, isExpanded, shouldShowExpandButton, currentSource]);
 
     if (sortedSources.length <= 1) {
@@ -256,9 +261,17 @@ export function SourceSelector({
                                 </span>
                             </div>
 
-                            {/* 右侧徽章（4K / 蓝光 / 备用 / 首选） */}
+                            {/* 右侧徽章（720P / 1080P / 4K / 蓝光 / 备用 / 首选） */}
                             <div className="flex items-center gap-1 shrink-0 ml-1">
-                                {is4K ? (
+                                {cleanKey === 'ole_vip' ? (
+                                    <span className="text-[9px] font-black px-1.5 py-0.2 bg-purple-500/20 text-purple-300 border border-purple-400/50 rounded shadow-xs">
+                                        1080P
+                                    </span>
+                                ) : cleanKey === 'ole_hd' ? (
+                                    <span className="text-[9px] font-black px-1.5 py-0.2 bg-blue-500/20 text-blue-300 border border-blue-400/50 rounded shadow-xs">
+                                        720P
+                                    </span>
+                                ) : is4K ? (
                                     <span className="text-[9px] font-black px-1.5 py-0.2 bg-amber-400 text-black rounded shadow-xs">
                                         4K
                                     </span>

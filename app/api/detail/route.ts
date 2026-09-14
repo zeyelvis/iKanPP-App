@@ -193,11 +193,41 @@ async function handleDetailRequest(id: string | null, source: any, method: strin
     }
   }
 
-  // 3. 专属支持 Olevod 超清专线 (1080P 4.91Mbps 原画) 直解
+  // 3. 专属支持 Olevod 高清专线 (720P 极速秒开) 直解
+  if (sourceId === 'ole_hd') {
+    try {
+      const searchTitle = titleParam || id;
+      const detail = await fetchOlevodDetailByTitle(searchTitle, id, '720p');
+      if (detail && detail.episodes.length > 0) {
+        return NextResponse.json({
+          success: true,
+          data: {
+            vod_id: detail.vod_id,
+            vod_name: detail.vod_name,
+            vod_pic: detail.vod_pic,
+            vod_year: detail.vod_year,
+            vod_content: detail.vod_content,
+            vod_actor: detail.vod_actor,
+            vod_director: detail.vod_director,
+            type_name: detail.type_name,
+            episodes: detail.episodes,
+          }
+        });
+      }
+    } catch (e) {
+      console.error('[DetailAPI] Olevod 720P resolve error:', e);
+    }
+    return NextResponse.json({
+      success: false,
+      error: '高清专线暂未收录该影片，正在自动为您切换至下一条线路...',
+    }, { status: 404 });
+  }
+
+  // 4. 专属支持 Olevod 超清专线 (1080P 4.91Mbps 原画) 直解
   if (sourceId === 'ole_vip') {
     try {
       const searchTitle = titleParam || id;
-      const detail = await fetchOlevodDetailByTitle(searchTitle, id);
+      const detail = await fetchOlevodDetailByTitle(searchTitle, id, '1080p');
       if (detail && detail.episodes.length > 0) {
         return NextResponse.json({
           success: true,

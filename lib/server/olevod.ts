@@ -257,9 +257,12 @@ export async function searchOlevod(
 }
 
 /**
- * 根据 Olevod ID 获取全集数 1080P VIP 视频流
+ * 根据 Olevod ID 获取全集数视频流 (支持 720P 高清与 1080P 原画)
  */
-export async function getOlevodDetail(id: number | string): Promise<OlevodDetailResult | null> {
+export async function getOlevodDetail(
+  id: number | string,
+  quality: '720p' | '1080p' = '720p'
+): Promise<OlevodDetailResult | null> {
   try {
     const vv = generateOlevodSignature();
     const url = `https://api.olelive.com/v1/pub/vod/detail/${id}/true?_vv=${vv}`;
@@ -278,9 +281,9 @@ export async function getOlevodDetail(id: number | string): Promise<OlevodDetail
     const rawUrls = Array.isArray(d.urls) ? d.urls : [];
 
     const episodes: OlevodEpisode[] = rawUrls.map((item: any, idx: number) => {
-      // 优先提取 1080P VIP 原画切片，若无则使用标准切片
+      // 720P 使用标准转码切片(秒开); 1080P 使用 vip_urls 原画切片
       let bestUrl = item.url;
-      if (Array.isArray(item.vip_urls) && item.vip_urls.length > 0 && item.vip_urls[0].url) {
+      if (quality === '1080p' && Array.isArray(item.vip_urls) && item.vip_urls.length > 0 && item.vip_urls[0].url) {
         bestUrl = item.vip_urls[0].url;
       }
 
@@ -309,16 +312,18 @@ export async function getOlevodDetail(id: number | string): Promise<OlevodDetail
 }
 
 /**
- * 根据片名自动查找并返回 1080P 全集列表（带 24 小时削峰缓存）
+ * 根据片名自动查找并返回全集列表（带 24 小时削峰缓存，支持 720P / 1080P）
  */
 export async function fetchOlevodDetailByTitle(
   title: string,
-  idOrExpectedYear?: string | number
+  idOrExpectedYear?: string | number,
+  quality: '720p' | '1080p' = '720p'
 ): Promise<OlevodDetailResult | null> {
   const cleanTitle = cleanSearchTitle(title);
   if (!cleanTitle && !idOrExpectedYear) return null;
 
-  const cacheKey = cleanTitle ? cleanTitle.toLowerCase() : `id:${idOrExpectedYear}`;
+  const baseKey = cleanTitle ? cleanTitle.toLowerCase() : `id:${idOrExpectedYear}`;
+  const cacheKey = `${baseKey}:${quality}`;
   const now = Date.now();
 
   const cached = detailCache.get(cacheKey);
@@ -328,7 +333,7 @@ export async function fetchOlevodDetailByTitle(
 
   // 1. 若入参直接提供了纯数字 ID，直接抓取详情
   if (typeof idOrExpectedYear === 'string' && /^\d+$/.test(idOrExpectedYear)) {
-    const detail = await getOlevodDetail(idOrExpectedYear);
+    const detail = await getOlevodDetail(idOrExpectedYear, quality);
     if (detail && detail.episodes.length > 0) {
       detailCache.set(cacheKey, { data: detail, expireAt: now + CACHE_TTL_SUCCESS });
       return detail;
@@ -347,8 +352,8 @@ export async function fetchOlevodDetailByTitle(
     return null;
   }
 
-  // 3. 抓取完整 1080P 详情
-  const detail = await getOlevodDetail(searchMatch.id);
+  // 3. 抓取完整详情
+  const detail = await getOlevodDetail(searchMatch.id, quality);
   if (detail && detail.episodes.length > 0) {
     detailCache.set(cacheKey, { data: detail, expireAt: now + CACHE_TTL_SUCCESS });
     return detail;

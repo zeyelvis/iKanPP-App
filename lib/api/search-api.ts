@@ -16,7 +16,7 @@ async function searchVideosBySource(
 ): Promise<{ results: VideoItem[]; source: string; responseTime: number; pagecount: number }> {
     const startTime = Date.now();
 
-    if (source.id === 'ole_vip') {
+    if (source.id === 'ole_vip' || source.id === 'ole_hd') {
         try {
             const match = await searchOlevod(query);
             if (match) {
@@ -26,24 +26,24 @@ async function searchVideosBySource(
                         vod_name: match.name,
                         vod_pic: match.pic,
                         vod_year: match.year ? String(match.year) : undefined,
-                        vod_remarks: '1080P超清原画',
-                        source: 'ole_vip',
+                        vod_remarks: source.id === 'ole_hd' ? '720P高清' : '1080P超清原画',
+                        source: source.id,
                     }],
-                    source: 'ole_vip',
+                    source: source.id,
                     responseTime: Date.now() - startTime,
                     pagecount: 1,
                 };
             }
             return {
                 results: [],
-                source: 'ole_vip',
+                source: source.id,
                 responseTime: Date.now() - startTime,
                 pagecount: 1,
             };
         } catch {
             return {
                 results: [],
-                source: 'ole_vip',
+                source: source.id,
                 responseTime: Date.now() - startTime,
                 pagecount: 1,
             };

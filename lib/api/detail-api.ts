@@ -14,9 +14,10 @@ export async function getVideoDetail(
     id: string | number,
     source: VideoSource
 ): Promise<VideoDetail> {
-    if (source.id === 'ole_vip') {
-        const detail = await getOlevodDetail(id);
-        if (!detail) throw new Error('Video not found in Olevod');
+    if (source.id === 'ole_vip' || source.id === 'ole_hd') {
+        const quality = source.id === 'ole_vip' ? '1080p' : '720p';
+        const detail = await getOlevodDetail(id, quality);
+        if (!detail) throw new Error(`Video not found in Olevod (${quality})`);
         return {
             vod_id: detail.vod_id,
             vod_name: detail.vod_name,
@@ -27,8 +28,8 @@ export async function getVideoDetail(
             vod_director: detail.vod_director,
             type_name: detail.type_name,
             episodes: detail.episodes,
-            source: 'ole_vip',
-            source_code: 'ole_vip',
+            source: source.id,
+            source_code: source.id,
         };
     }
 
