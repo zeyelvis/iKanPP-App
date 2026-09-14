@@ -9,19 +9,15 @@ import type { PrebakedSubject, PrebakedHomeCategory } from './home-prebaked';
 export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "吞噬星空",
-        "updateBadge": "1"
-    },
-    {
         "title": "仙逆",
         "updateBadge": ""
     },
     {
-        "title": "凡人修仙传",
-        "updateBadge": ""
+        "title": "吞噬星空",
+        "updateBadge": "1"
     },
     {
-        "title": "海贼王",
+        "title": "凡人修仙传",
         "updateBadge": ""
     },
     {
@@ -29,12 +25,12 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "斗破苍穹年番",
+        "title": "海贼王",
         "updateBadge": ""
     },
     {
-        "title": "逆天至尊",
-        "updateBadge": "1"
+        "title": "斗破苍穹年番",
+        "updateBadge": ""
     },
     {
         "title": "光阴之外",
@@ -45,16 +41,20 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "无上神帝",
-        "updateBadge": "1"
-    },
-    {
         "title": "遮天",
         "updateBadge": ""
     },
     {
-        "title": "灵武大陆",
-        "updateBadge": "1"
+        "title": "死神：千年血战篇第4季",
+        "updateBadge": ""
+    },
+    {
+        "title": "一斩苍穹",
+        "updateBadge": ""
+    },
+    {
+        "title": "名侦探柯南",
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -632,34 +632,34 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "心动的信号第9季",
-        "updateBadge": "4"
+        "updateBadge": ""
     },
     {
         "title": "花儿与少年第8季",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "一饭封神第2季",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "披荆斩棘2026",
         "updateBadge": ""
     },
     {
+        "title": "我家那闺女2026",
+        "updateBadge": ""
+    },
+    {
+        "title": "大哥小助理",
+        "updateBadge": "1"
+    },
+    {
         "title": "说唱巅峰对决2026",
         "updateBadge": ""
     },
     {
-        "title": "Running Man",
-        "updateBadge": ""
-    },
-    {
-        "title": "我家那闺女2026",
-        "updateBadge": "1"
-    },
-    {
-        "title": "地球超新鲜第2季",
+        "title": "脱口秀和Ta的朋友们第3季",
         "updateBadge": ""
     }
   ],
@@ -1774,23 +1774,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "2"
     },
     {
-        "title": "生逢其时",
-        "updateBadge": "1"
-    },
-    {
-        "title": "心动的信号第9季",
-        "updateBadge": "4"
-    },
-    {
-        "title": "飞到我心上",
-        "updateBadge": ""
-    },
-    {
         "title": "冬城猎凶",
-        "updateBadge": "1"
-    },
-    {
-        "title": "吞噬星空",
         "updateBadge": "1"
     },
     {
@@ -1798,7 +1782,15 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "仙逆",
+        "title": "生逢其时",
+        "updateBadge": "1"
+    },
+    {
+        "title": "心动的信号第9季",
+        "updateBadge": ""
+    },
+    {
+        "title": "飞到我心上",
         "updateBadge": ""
     },
     {
@@ -1807,7 +1799,15 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "云雀叫天录",
-        "updateBadge": "5"
+        "updateBadge": ""
+    },
+    {
+        "title": "仙逆",
+        "updateBadge": ""
+    },
+    {
+        "title": "吞噬星空",
+        "updateBadge": "1"
     }
   ],
   hero: [
@@ -1886,7 +1886,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     {
         "id": "iyf_hero_tv_5",
         "title": "兰香如故",
-        "rate": "5.0",
+        "rate": "6.7",
         "cover": "https://image.tmdb.org/t/p/w500/kfurXRMH1ZkUoyT5HN72zLTQxzZ.jpg",
         "backdrop": "https://image.tmdb.org/t/p/w1280/mZSewqVlY4F2F2Axm7hiG6KBOBp.jpg",
         "description": "大学士府长孙女沈嘉兰与吏部尚书林家的长孙林锦岐订下婚约，然而朝堂风云突变，祖父沈大学士被判谋逆之罪，沈家惨遭灭门。林家为了自保，与沈家退婚，另与御前新贵赵家结亲。沈嘉兰母亲崔氏曾接济过的林家家奴许万全夫妇用刚病亡的女儿许兰香替下嘉兰。嘉兰从此顶着许兰香的身份，成为林府的一名三等丫鬟。在艰难的境遇中，兰香没有向命运低头，始终为自己和家人的幸福生活努力着，反抗一切不公与压迫。最终，兰香凭借自己的善良与聪慧，突破阶级身份的束缚，赢得林锦岐倾心的同时也获得了林家上下的信服与尊重，成为林家的当家人，将命运牢牢掌控在自己的手中，为沈家洗刷冤屈讨回公道。",
@@ -2375,11 +2375,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
 export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "克拉克森的农场第1季",
+        "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第5季",
+        "title": "克拉克森的农场第1季",
         "updateBadge": ""
     },
     {
@@ -2387,7 +2387,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "蓝色星球",
+        "title": "克拉克森的农场第4季",
         "updateBadge": ""
     },
     {
@@ -2395,15 +2395,15 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第4季",
+        "title": "早餐中国",
         "updateBadge": ""
     },
     {
-        "title": "寻色中国",
+        "title": "中国通史",
         "updateBadge": ""
     },
     {
-        "title": "空中浩劫第八季",
+        "title": "守护解放西第6季",
         "updateBadge": ""
     }
   ],
