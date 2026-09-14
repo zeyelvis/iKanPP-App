@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { listRecentEntities, getAllEntityIds, getEntityById } from '@/lib/services/entity-kv';
+import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 export const runtime = 'edge';
 
@@ -37,7 +39,7 @@ export async function GET() {
     const seenUrls = new Set<string>();
     const urlElements: string[] = [];
 
-    // 静态主频道与公开索引页
+    // 1. 静态主频道与公开索引页
     for (const route of STATIC_ROUTES) {
         const fullUrl = `${BASE_URL}${route.path}`;
         if (seenUrls.has(fullUrl)) continue;
@@ -51,6 +53,54 @@ export async function GET() {
   </url>`);
     }
 
+    // 2. 动态增量收录影视落地页（最新增量入库条目）
+    try {
+        const recentEntities = await listRecentEntities(60);
+        for (const item of recentEntities) {
+            const slug = item.slug || generateSlug(item.title);
+            const fullUrl = `${BASE_URL}/title/${item.entityId}-${slug}`;
+            if (seenUrls.has(fullUrl)) continue;
+            seenUrls.add(fullUrl);
+
+            const modDate = item.createdAt ? item.createdAt.split('T')[0] : lastModDate;
+
+            urlElements.push(`  <url>
+    <loc>${escapeXml(fullUrl)}</loc>
+    <lastmod>${modDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>`);
+        }
+
+        // 3. 追加全量已入库实体（前 150 部核心影片）
+        const allIds = await getAllEntityIds();
+        const candidateIds = allIds.slice(0, 150);
+        const moreEntities = await Promise.all(
+            candidateIds.map(id => getEntityById(id))
+        );
+
+        for (const ent of moreEntities) {
+            if (!ent || !ent.title) continue;
+            const slug = ent.slug || generateSlug(ent.title);
+            const fullUrl = `${BASE_URL}/title/${ent.entityId}-${slug}`;
+            if (seenUrls.has(fullUrl)) continue;
+            seenUrls.add(fullUrl);
+
+            const modDate = ent.updatedAt
+                ? ent.updatedAt.split('T')[0]
+                : (ent.createdAt ? ent.createdAt.split('T')[0] : lastModDate);
+
+            urlElements.push(`  <url>
+    <loc>${escapeXml(fullUrl)}</loc>
+    <lastmod>${modDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>`);
+        }
+    } catch (e) {
+        console.warn('[sitemap.xml] dynamic entity injection warning:', e);
+    }
+
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urlElements.join('\n')}
@@ -60,7 +110,8 @@ ${urlElements.join('\n')}
         status: 200,
         headers: {
             'Content-Type': 'application/xml; charset=utf-8',
-            'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400',
+            'Cache-Control': 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400',
         },
     });
 }
+

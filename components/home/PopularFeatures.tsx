@@ -31,6 +31,10 @@ const ExploreHubFooterBanner = dynamic(
   () => import('./ExploreHubFooterBanner').then((m) => m.ExploreHubFooterBanner),
   { loading: () => <div className="h-36 rounded-2xl bg-white/5 animate-pulse border border-white/5" /> }
 );
+const LatestTitlesRail = dynamic(
+  () => import('./LatestTitlesRail'),
+  { loading: () => <div className="h-56 rounded-2xl bg-white/5 animate-pulse border border-white/5" /> }
+);
 
 export type HomeContentType = 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | 'short';
 
@@ -458,6 +462,9 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       <div className="fluid-container space-y-6 sm:space-y-8 mt-2 sm:mt-4 relative z-20">
         {/* 🎬 断点续播 / 最近观看记录横轨 */}
         <ContinueWatchingRail />
+
+        {/* 🆕 最新上线 · 实时收录横轨（TMDB 自动化飞轮全自动增量入库） */}
+        <LatestTitlesRail />
 
         {/* 🌟 口碑榜专用品类切换胶囊条（仅联动下方 Top 10 口碑榜） */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">

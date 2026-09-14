@@ -24,6 +24,10 @@ const WatchHistorySidebar = dynamic(
   () => import('@/components/history/WatchHistorySidebar').then((m) => m.WatchHistorySidebar),
   { ssr: false }
 );
+const LatestTitlesRail = dynamic(
+  () => import('@/components/home/LatestTitlesRail'),
+  { ssr: false }
+);
 
 export interface FilterOption {
   label: string;
@@ -495,6 +499,13 @@ function isSameList(a: any[], b: any[]): boolean {
 
         {/* 顶部自定义专属推荐与热度榜等 */}
         {topCustomRails}
+
+        {/* 🆕 专区最新增量入库横轨（TMDB 自动化飞轮定时巡检） */}
+        <LatestTitlesRail
+          type={doubanType}
+          title={`🆕 ${categoryTitle} · 最新上线`}
+          subtitle="全自动增量收录 · 实时更新"
+        />
 
         {/* 2. 专属垂直特色片单滑轨 */}
         <div className="space-y-4">

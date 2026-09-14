@@ -141,7 +141,7 @@ export async function GET(request: Request) {
     }
   }
 
-  // 若有新入库实体，异步触发 IndexNow 推送 Bing / Yandex
+  // 若有新入库实体，异步触发 IndexNow 推送 Bing / Yandex，并主动通知搜索引擎 Sitemap 更新
   if (newUrls.length > 0) {
     try {
       fetch(`${BASE_URL}/api/seo/indexnow`, {
@@ -149,15 +149,25 @@ export async function GET(request: Request) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ urls: newUrls }),
       }).catch(() => {});
+
+      // 异步尝试通知搜索引擎抓取更新后的 Sitemap
+      const sitemapUrl = encodeURIComponent(`${BASE_URL}/sitemap.xml`);
+      fetch(`https://www.google.com/ping?sitemap=${sitemapUrl}`).catch(() => {});
+      fetch(`https://www.bing.com/ping?sitemap=${sitemapUrl}`).catch(() => {});
     } catch {
       // 忽略推送静默异常
     }
   }
+
+  console.log(`[EntityPipeline] Processed ${candidateItems.length} candidates, successfully saved ${newAddedCount} new entities.`);
 
   return NextResponse.json({
     success: true,
     candidatesProcessed: candidateItems.length,
     newAdded: newAddedCount,
     newUrls,
+    sitemapUrl: `${BASE_URL}/sitemap.xml`,
+    feedUrl: `${BASE_URL}/feed.xml`,
   });
 }
+

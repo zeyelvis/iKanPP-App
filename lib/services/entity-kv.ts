@@ -4,6 +4,22 @@ import { PREBAKED_HOME_DATA, PrebakedSubject } from '@/lib/data/home-prebaked';
 import { POPULAR_DIRECTORS, POPULAR_ACTORS } from '@/lib/data/popular-people';
 import { PEOPLE_PREBAKED_ENTITIES } from '@/lib/data/people-prebaked';
 
+/**
+ * 影视实体精简卡片项（用于「最新上线」货架与 RSS Feed 0ms 瞬间直出）
+ */
+export interface RecentTitleItem {
+  entityId: string;
+  title: string;
+  slug: string;
+  cover: string;
+  backdrop?: string;
+  rate: string;
+  year: string;
+  type: 'movie' | 'tv' | 'anime' | string;
+  genres?: string[];
+  createdAt: string;
+}
+
 // 内存预烘焙回退字典（确保本地开发、静态构建与边缘冷启动时 0ms 秒开且具备首批 110+ 核心经典影视）
 const memoryStore = new Map<string, string>();
 let isPrebakedSeeded = false;
@@ -35,6 +51,10 @@ function seedPrebakedData() {
 
   const seenTitles = new Set<string>();
   let seq = 1;
+  const recentAllList: RecentTitleItem[] = [];
+  const recentMovieList: RecentTitleItem[] = [];
+  const recentTvList: RecentTitleItem[] = [];
+  const now = Date.now();
 
   for (const item of allPrebaked) {
     const s = item.subject;
@@ -50,6 +70,9 @@ function seedPrebakedData() {
       ? s.tmdbId.trim()
       : ((s.id && /^\d{4,}$/.test(s.id.trim())) ? s.id.trim() : String(seq + 900000));
 
+    // 计算一个递减的新鲜度时间戳（模拟每小时入库一部），确保冷启动时有自然的时间梯度
+    const simulatedDate = new Date(now - (seq - 1) * 3600000).toISOString();
+
     const entity: TitleEntity = {
       entityId,
       slug,
@@ -57,7 +80,7 @@ function seedPrebakedData() {
       tmdbType: item.type,
       title: s.title,
       type: item.type,
-      year: s.year || '2024',
+      year: s.year || '2026',
       description: s.description || `${s.title} 是一部精彩的${item.type === 'movie' ? '电影' : '连续剧'}，评分 ${s.rate || '9.0'}，支持在 iKanPP 免费在线观看完整版高清视频。`,
       cover: s.cover,
       backdrop: s.backdrop || s.cover,
@@ -65,8 +88,8 @@ function seedPrebakedData() {
       genres: s.types || [item.type === 'movie' ? '电影' : '电视剧'],
       directors: (s.directors || []).filter(d => d && d !== '知名导演'),
       actors: (s.actors || []).filter(a => a && a !== '实力主演'),
-      createdAt: '2026-09-01T00:00:00Z',
-      updatedAt: '2026-09-01T00:00:00Z',
+      createdAt: simulatedDate,
+      updatedAt: simulatedDate,
     };
 
     memoryStore.set(`entity:${entityId}`, JSON.stringify(entity));
@@ -74,6 +97,23 @@ function seedPrebakedData() {
     memoryStore.set(`slug:${entityId}`, entityId);
     memoryStore.set(`tmdb:${entity.tmdbType}:${entity.tmdbId}`, entityId);
     memoryStore.set(`title:${norm}`, entityId);
+
+    // 收集初始 recent 项
+    const rItem: RecentTitleItem = {
+      entityId,
+      title: entity.title,
+      slug: entity.slug,
+      cover: entity.cover,
+      backdrop: entity.backdrop,
+      rate: entity.rate,
+      year: entity.year,
+      type: entity.type,
+      genres: entity.genres,
+      createdAt: simulatedDate,
+    };
+    if (recentAllList.length < 50) recentAllList.push(rItem);
+    if (item.type === 'movie' && recentMovieList.length < 50) recentMovieList.push(rItem);
+    if (item.type === 'tv' && recentTvList.length < 50) recentTvList.push(rItem);
 
     // 索引分类
     for (const g of entity.genres) {
@@ -182,6 +222,11 @@ function seedPrebakedData() {
   const allIds = Array.from(seenTitles).map((_, i) => formatEntityId(i + 1));
   memoryStore.set('index:all', JSON.stringify(allIds));
   memoryStore.set('counter:next_id', String(Math.max(seq, 2000)));
+
+  // 初始化最近入库有序索引（冷启动与本地测试兜底）
+  memoryStore.set('recent:all', JSON.stringify(recentAllList));
+  memoryStore.set('recent:movie', JSON.stringify(recentMovieList));
+  memoryStore.set('recent:tv', JSON.stringify(recentTvList));
 }
 
 // 获取 Cloudflare KV 实例（如果在 Cloudflare Pages / Worker 环境）
@@ -399,6 +444,95 @@ export async function saveEntity(entity: TitleEntity): Promise<void> {
       }
     }
   }
+
+  // 9. 原子维护最近入库有序索引 (recent:all 与 recent:${entity.type})
+  const recentItem: RecentTitleItem = {
+    entityId: id,
+    title: entity.title,
+    slug: entity.slug,
+    cover: entity.cover,
+    backdrop: entity.backdrop || entity.cover,
+    rate: entity.rate || '8.8',
+    year: entity.year || '2026',
+    type: entity.type,
+    genres: entity.genres || [],
+    createdAt: entity.createdAt || new Date().toISOString(),
+  };
+
+  const updateRecentList = async (key: string) => {
+    try {
+      const rawList = await kvGet(key);
+      let list: RecentTitleItem[] = rawList ? JSON.parse(rawList) : [];
+      // 排重同 id 或归一化同名实体
+      list = list.filter(item => item.entityId !== id && normalizeTitle(item.title) !== normTitle);
+      list.unshift(recentItem);
+      if (list.length > 60) list = list.slice(0, 60);
+      await kvPut(key, JSON.stringify(list));
+    } catch (e) {
+      console.warn(`[saveEntity] updateRecentList failed for ${key}:`, e);
+    }
+  };
+
+  await updateRecentList('recent:all');
+  if (entity.type === 'movie' || entity.type === 'tv') {
+    await updateRecentList(`recent:${entity.type}`);
+  }
+}
+
+/**
+ * 获取最新入库的影视条目（用于首页及频道专区「最新上线」货架、RSS Feed 等）
+ * @param limit 获取数量限制（默认 20，上限 60）
+ * @param type 可选 'movie' | 'tv' 筛选
+ */
+export async function listRecentEntities(limit = 20, type?: 'movie' | 'tv' | string): Promise<RecentTitleItem[]> {
+  const cleanType = (type === 'movie' || type === 'tv') ? type : undefined;
+  const targetKey = cleanType ? `recent:${cleanType}` : 'recent:all';
+
+  const raw = await kvGet(targetKey);
+  if (raw) {
+    try {
+      const items = JSON.parse(raw) as RecentTitleItem[];
+      if (Array.isArray(items) && items.length > 0) {
+        return items.slice(0, limit);
+      }
+    } catch (e) {
+      console.warn(`[listRecentEntities] parse error for ${targetKey}:`, e);
+    }
+  }
+
+  // 兜底：若 KV 暂无或处于冷启动，从预烘焙核心影片中提取并赋予自然递减时间戳，确保永不为空
+  seedPrebakedData();
+  const fallbackList: RecentTitleItem[] = [];
+  const now = Date.now();
+  const seen = new Set<string>();
+
+  for (const [k, v] of memoryStore.entries()) {
+    if (k.startsWith('entity:')) {
+      try {
+        const ent = JSON.parse(v) as TitleEntity;
+        if (cleanType && ent.type !== cleanType) continue;
+        const norm = normalizeTitle(ent.title);
+        if (seen.has(norm)) continue;
+        seen.add(norm);
+
+        fallbackList.push({
+          entityId: ent.entityId,
+          title: ent.title,
+          slug: ent.slug,
+          cover: ent.cover,
+          backdrop: ent.backdrop,
+          rate: ent.rate,
+          year: ent.year,
+          type: ent.type,
+          genres: ent.genres,
+          createdAt: ent.createdAt || new Date(now - fallbackList.length * 3600000).toISOString(),
+        });
+        if (fallbackList.length >= limit) break;
+      } catch {}
+    }
+  }
+
+  return fallbackList.slice(0, limit);
 }
 
 /**
