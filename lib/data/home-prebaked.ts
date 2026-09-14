@@ -54,6 +54,10 @@ export const PREBAKED_HOME_DATA: {
   "movie": {
     "trendingNav": [
         {
+                "title": "逃出绝命街",
+                "updateBadge": ""
+        },
+        {
                 "title": "欢迎来龙餐馆",
                 "updateBadge": ""
         },
@@ -62,15 +66,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "特立独行",
+                "updateBadge": ""
+        },
+        {
                 "title": "蜂鸟行动",
                 "updateBadge": ""
         },
         {
                 "title": "出入平安",
-                "updateBadge": ""
-        },
-        {
-                "title": "特立独行",
                 "updateBadge": ""
         },
         {
@@ -83,10 +87,6 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "求救信号",
-                "updateBadge": ""
-        },
-        {
-                "title": "不成功穿越指南",
                 "updateBadge": ""
         },
         {
@@ -1825,7 +1825,7 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": ""
+                "updateBadge": "2"
         },
         {
                 "title": "早春晴朗",
@@ -1833,11 +1833,11 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "交锋",
-                "updateBadge": ""
+                "updateBadge": "2"
         },
         {
-                "title": "深渊无间",
-                "updateBadge": ""
+                "title": "生逢其时",
+                "updateBadge": "1"
         },
         {
                 "title": "飞到我心上",
@@ -1845,15 +1845,19 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "冬城猎凶",
-                "updateBadge": ""
+                "updateBadge": "1"
         },
         {
-                "title": "生逢其时",
+                "title": "深渊无间",
                 "updateBadge": ""
         },
         {
                 "title": "死有对证",
-                "updateBadge": ""
+                "updateBadge": "1"
+        },
+        {
+                "title": "云雀叫天录",
+                "updateBadge": "5"
         },
         {
                 "title": "花开锦绣",
@@ -1861,10 +1865,6 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "杀手妈咪",
-                "updateBadge": ""
-        },
-        {
-                "title": "不是你的恋爱",
                 "updateBadge": ""
         },
         {
@@ -1885,7 +1885,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至08集 | 共47集",
+                "episodes_info": "更新至10集 | 共47集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1895,14 +1895,14 @@ export const PREBAKED_HOME_DATA: {
                 "title": "冬城猎凶",
                 "rate": "8.0",
                 "cover": "https://image.tmdb.org/t/p/w500/64NVbdSuNgrK90wqhtnlR2S4sPK.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/oI2XgjWXeXdYG325ZLHvdxzLD5L.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/28u4q3fPzXmbyf3BoiWweUOuuzj.jpg",
                 "description": "银行大劫案，搅动大城风云；儿童拐卖案，重起罪恶迷雾。双时空、案中案，极致追凶。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至09集 | 共18集",
+                "episodes_info": "更新至10集 | 共18集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1936,7 +1936,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至18集 | 共40集",
+                "episodes_info": "更新至20集 | 共40集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1953,7 +1953,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至15集 | 共26集",
+                "episodes_info": "更新至16集 | 共26集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true

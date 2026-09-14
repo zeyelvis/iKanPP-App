@@ -2,10 +2,8 @@ name: Auto Sync IYF Channels & Drama Hero Slides
 
 on:
   schedule:
-    # 每天 3 次自动同步（北京时间早 10:00、下午 16:00、晚 22:00 黄金档更新）
-    - cron: '0 2 * * *'
-    - cron: '0 8 * * *'
-    - cron: '0 14 * * *'
+    # 全站每小时整点全自动巡检同步（电视剧、新番等快节奏连载实施小时级极速感知）
+    - cron: '0 * * * *'
   workflow_dispatch:
     inputs:
       channel:

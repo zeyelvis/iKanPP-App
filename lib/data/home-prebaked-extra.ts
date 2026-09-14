@@ -9,6 +9,10 @@ import type { PrebakedSubject, PrebakedHomeCategory } from './home-prebaked';
 export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
+        "title": "吞噬星空",
+        "updateBadge": "1"
+    },
+    {
         "title": "仙逆",
         "updateBadge": ""
     },
@@ -17,11 +21,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "牧神记",
+        "title": "海贼王",
         "updateBadge": ""
     },
     {
-        "title": "海贼王",
+        "title": "牧神记",
         "updateBadge": ""
     },
     {
@@ -29,15 +33,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "逆天至尊",
+        "updateBadge": "1"
+    },
+    {
         "title": "光阴之外",
-        "updateBadge": ""
-    },
-    {
-        "title": "吞噬星空",
-        "updateBadge": ""
-    },
-    {
-        "title": "沧元图",
         "updateBadge": ""
     }
   ],
@@ -623,27 +623,27 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "说唱巅峰对决2026",
-        "updateBadge": ""
+        "title": "一饭封神第2季",
+        "updateBadge": "1"
     },
     {
         "title": "披荆斩棘2026",
         "updateBadge": ""
     },
     {
-        "title": "一饭封神第2季",
-        "updateBadge": "1"
+        "title": "说唱巅峰对决2026",
+        "updateBadge": ""
+    },
+    {
+        "title": "Running Man",
+        "updateBadge": ""
     },
     {
         "title": "我家那闺女2026",
         "updateBadge": "1"
     },
     {
-        "title": "大哥小助理",
-        "updateBadge": "1"
-    },
-    {
-        "title": "Running Man",
+        "title": "地球超新鲜第2季",
         "updateBadge": ""
     }
   ],
@@ -1747,23 +1747,23 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "兰香如故",
-        "updateBadge": ""
+        "updateBadge": "2"
     },
     {
         "title": "早春晴朗",
         "updateBadge": ""
     },
     {
+        "title": "交锋",
+        "updateBadge": "2"
+    },
+    {
+        "title": "生逢其时",
+        "updateBadge": "1"
+    },
+    {
         "title": "心动的信号第9季",
         "updateBadge": "4"
-    },
-    {
-        "title": "交锋",
-        "updateBadge": ""
-    },
-    {
-        "title": "深渊无间",
-        "updateBadge": ""
     },
     {
         "title": "飞到我心上",
@@ -1771,6 +1771,14 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "冬城猎凶",
+        "updateBadge": "1"
+    },
+    {
+        "title": "吞噬星空",
+        "updateBadge": "1"
+    },
+    {
+        "title": "深渊无间",
         "updateBadge": ""
     },
     {
@@ -1778,20 +1786,12 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "生逢其时",
-        "updateBadge": ""
-    },
-    {
         "title": "死有对证",
-        "updateBadge": ""
-    },
-    {
-        "title": "花开锦绣",
-        "updateBadge": ""
-    },
-    {
-        "title": "花儿与少年第8季",
         "updateBadge": "1"
+    },
+    {
+        "title": "云雀叫天录",
+        "updateBadge": "5"
     }
   ],
   hero: [
@@ -1879,7 +1879,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至08集 | 共47集",
+        "episodes_info": "更新至10集 | 共47集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1889,14 +1889,14 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "title": "冬城猎凶",
         "rate": "8.0",
         "cover": "https://image.tmdb.org/t/p/w500/64NVbdSuNgrK90wqhtnlR2S4sPK.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/oI2XgjWXeXdYG325ZLHvdxzLD5L.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/28u4q3fPzXmbyf3BoiWweUOuuzj.jpg",
         "description": "银行大劫案，搅动大城风云；儿童拐卖案，重起罪恶迷雾。双时空、案中案，极致追凶。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至09集 | 共18集",
+        "episodes_info": "更新至10集 | 共18集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -2363,31 +2363,31 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第2季",
-        "updateBadge": ""
-    },
-    {
-        "title": "早餐中国",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
-        "title": "闪闪的儿科医生第2季",
+        "title": "克拉克森的农场第3季",
         "updateBadge": ""
     },
     {
-        "title": "爱达荷州血案：大学梦魇",
+        "title": "蓝色星球",
         "updateBadge": ""
     },
     {
-        "title": "最后之舞",
+        "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
     {
-        "title": "早餐中国第2季",
+        "title": "克拉克森的农场第4季",
+        "updateBadge": ""
+    },
+    {
+        "title": "寻色中国",
+        "updateBadge": ""
+    },
+    {
+        "title": "空中浩劫第八季",
         "updateBadge": ""
     }
   ],

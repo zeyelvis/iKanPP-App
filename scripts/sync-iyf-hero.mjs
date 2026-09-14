@@ -377,20 +377,20 @@ async function syncTvChannel() {
     tvHeroItems.push(item);
   }
 
-  // 100% 对齐爱壹帆电视剧官方 getHotVideoTop 专属 11 席黄金档推荐标签
+  // 100% 对齐爱壹帆电视剧官方 getHotVideoTop 专属 12 席黄金档推荐标签 (6+6 黄金排布)
   const defaultTvTrending = [
     { title: '兰香如故', updateBadge: '2' },
     { title: '早春晴朗', updateBadge: '' },
     { title: '交锋', updateBadge: '2' },
-    { title: '深渊无间', updateBadge: '5' },
+    { title: '生逢其时', updateBadge: '1' },
     { title: '飞到我心上', updateBadge: '' },
     { title: '冬城猎凶', updateBadge: '1' },
-    { title: '生逢其时', updateBadge: '1' },
-    { title: '杀手妈咪', updateBadge: '1' },
+    { title: '深渊无间', updateBadge: '' },
+    { title: '死有对证', updateBadge: '1' },
+    { title: '云雀叫天录', updateBadge: '5' },
     { title: '花开锦绣', updateBadge: '' },
-    { title: '死有对证', updateBadge: '' },
-    { title: '百花杀', updateBadge: '' },
-    { title: '不是你的恋爱', updateBadge: '' }
+    { title: '杀手妈咪', updateBadge: '' },
+    { title: '百花杀', updateBadge: '' }
   ];
 
   const tvTrendingNav = await fetchChannelTrendingNav('0,1,4', '电视剧频道', defaultTvTrending, 12);
