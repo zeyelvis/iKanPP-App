@@ -39,6 +39,22 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     {
         "title": "光阴之外",
         "updateBadge": ""
+    },
+    {
+        "title": "沧元图",
+        "updateBadge": ""
+    },
+    {
+        "title": "无上神帝",
+        "updateBadge": "1"
+    },
+    {
+        "title": "遮天",
+        "updateBadge": ""
+    },
+    {
+        "title": "灵武大陆",
+        "updateBadge": "1"
     }
   ],
   hero: [

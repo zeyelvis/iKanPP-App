@@ -440,19 +440,23 @@ async function syncAnimeChannel() {
     animeHeroItems.push(item);
   }
 
-  // 100% 对齐爱壹帆动漫官方 getHotVideoTop 专属 8 席新番推荐标签
+  // 100% 对齐爱壹帆动漫官方 getHotVideoTop 专属 12 席新番推荐标签 (6+6 黄金对称排布)
   const defaultAnimeTrending = [
-    { title: '仙逆', updateBadge: '1' },
-    { title: '牧神记', updateBadge: '1' },
+    { title: '吞噬星空', updateBadge: '1' },
+    { title: '仙逆', updateBadge: '' },
     { title: '凡人修仙传', updateBadge: '' },
-    { title: '斗破苍穹年番', updateBadge: '' },
     { title: '海贼王', updateBadge: '' },
+    { title: '牧神记', updateBadge: '' },
+    { title: '斗破苍穹年番', updateBadge: '' },
+    { title: '逆天至尊', updateBadge: '1' },
     { title: '光阴之外', updateBadge: '' },
     { title: '沧元图', updateBadge: '' },
-    { title: '死神：千年血战篇第4季', updateBadge: '' },
+    { title: '无上神帝', updateBadge: '1' },
+    { title: '遮天', updateBadge: '' },
+    { title: '灵武大陆', updateBadge: '1' },
   ];
 
-  const animeTrendingNav = await fetchChannelTrendingNav('0,1,6', '动漫频道', defaultAnimeTrending, 8);
+  const animeTrendingNav = await fetchChannelTrendingNav('0,1,6', '动漫频道', defaultAnimeTrending, 12);
 
   const extraPath = path.resolve(process.cwd(), 'lib/data/home-prebaked-extra.ts');
   if (fs.existsSync(extraPath)) {

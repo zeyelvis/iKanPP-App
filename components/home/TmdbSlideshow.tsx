@@ -465,10 +465,9 @@ export function HeroSlideshow({
             {/* 2. 中栏：100% 绝对对齐爱壹帆官方各专区原生速报排布（电影6+6/首页与剧集6+5/综艺与动漫纪录片4+4） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (() => {
               // 根据爱壹帆官方各板块原生实际排版绝对对齐：
-              // - 电影专区 (movie): 12 席 (6 + 6 黄金对称)
-              // - 首页大厅 (all) 与 电视剧 (tv): 11 席 (6 + 5 原生排布)
-              // - 综艺 (variety)、动漫 (anime)、纪录片 (documentary): 8 席 (4 + 4 黄金对称，长片名从容呼吸)
-              const isWide4 = contentType === 'variety' || contentType === 'anime' || contentType === 'documentary';
+              // - 电影专区 (movie)、首页大厅 (all)、电视剧 (tv)、动漫频道 (anime): 12 席 (6 + 6 黄金对称)
+              // - 综艺 (variety)、纪录片 (documentary): 8 席 (4 + 4 黄金对称，长片名从容呼吸)
+              const isWide4 = contentType === 'variety' || contentType === 'documentary';
               const splitIdx = isWide4 ? 4 : 6;
               const line1 = activeTrendingNav.slice(0, splitIdx);
               const line2 = activeTrendingNav.slice(splitIdx);

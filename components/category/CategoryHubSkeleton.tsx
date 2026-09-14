@@ -100,9 +100,9 @@ export function CategoryHubSkeleton({
                 </div>
               </div>
 
-              {/* 中栏：TrendingNav 速报标签栏 (爱壹帆专区专属：综艺/动漫/纪录片 4+4，电影/剧集 6+6) */}
+              {/* 中栏：TrendingNav 速报标签栏 (爱壹帆专区专属：电影/剧集/动漫 6+6，综艺/纪录片 4+4) */}
               {trendingNav.length > 0 && (() => {
-                const isWide4 = channelKey === 'variety' || channelKey === 'anime' || channelKey === 'documentary';
+                const isWide4 = channelKey === 'variety' || channelKey === 'documentary';
                 const splitIdx = isWide4 ? 4 : 6;
                 const line1 = trendingNav.slice(0, splitIdx);
                 const line2 = trendingNav.slice(splitIdx, splitIdx * 2);
