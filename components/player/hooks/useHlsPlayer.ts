@@ -208,7 +208,20 @@ export function useHlsPlayer({
                 hls.on(Hls.Events.ERROR, (event, data) => {
                     if (data.fatal) {
                         switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
+                            case Hls.ErrorTypes.NETWORK_ERROR: {
+                                const isFatalManifestError = 
+                                    data.details === 'manifestLoadError' || 
+                                    data.details === 'manifestParsingError' || 
+                                    data.details === 'manifestLoadTimeOut' ||
+                                    (data.response && (data.response.code === 404 || data.response.code === 403));
+
+                                if (isFatalManifestError) {
+                                    console.warn('[HLS] Manifest blocked or dead link (404/403), triggering immediate self-healing:', data.details);
+                                    onErrorRef.current?.('网络错误：视频源当前不可用');
+                                    hls?.destroy();
+                                    break;
+                                }
+
                                 networkErrorRetries++;
                                 if (networkErrorRetries <= MAX_RETRIES) {
                                     hls?.startLoad();
@@ -217,6 +230,7 @@ export function useHlsPlayer({
                                     hls?.destroy();
                                 }
                                 break;
+                            }
                             case Hls.ErrorTypes.MEDIA_ERROR:
                                 mediaErrorRetries++;
                                 if (mediaErrorRetries <= MAX_RETRIES) {
