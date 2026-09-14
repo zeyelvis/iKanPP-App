@@ -25,11 +25,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "海贼王",
+        "title": "斗破苍穹年番",
         "updateBadge": ""
     },
     {
-        "title": "斗破苍穹年番",
+        "title": "海贼王",
         "updateBadge": ""
     },
     {
@@ -45,15 +45,15 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "死神：千年血战篇第4季",
+        "title": "无职转生到了异世界就拿出真本事第3季",
+        "updateBadge": ""
+    },
+    {
+        "title": "择日飞升",
         "updateBadge": ""
     },
     {
         "title": "一斩苍穹",
-        "updateBadge": ""
-    },
-    {
-        "title": "名侦探柯南",
         "updateBadge": ""
     }
   ],
@@ -639,11 +639,11 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "一饭封神第2季",
+        "title": "披荆斩棘2026",
         "updateBadge": ""
     },
     {
-        "title": "披荆斩棘2026",
+        "title": "一饭封神第2季",
         "updateBadge": ""
     },
     {
@@ -655,11 +655,11 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "说唱巅峰对决2026",
+        "title": "喜剧之王单口季第3季",
         "updateBadge": ""
     },
     {
-        "title": "脱口秀和Ta的朋友们第3季",
+        "title": "说唱巅峰对决2026",
         "updateBadge": ""
     }
   ],
@@ -1775,7 +1775,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "冬城猎凶",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "深渊无间",
@@ -1783,6 +1783,10 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "生逢其时",
+        "updateBadge": "1"
+    },
+    {
+        "title": "死有对证",
         "updateBadge": "1"
     },
     {
@@ -1794,10 +1798,6 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "死有对证",
-        "updateBadge": "1"
-    },
-    {
         "title": "云雀叫天录",
         "updateBadge": ""
     },
@@ -1806,15 +1806,15 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "吞噬星空",
-        "updateBadge": "1"
+        "title": "花开锦绣",
+        "updateBadge": ""
     }
   ],
   hero: [
     {
         "id": "iyf_hero_movie_1",
         "title": "特立独行",
-        "rate": "6.4",
+        "rate": "6.6",
         "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
         "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
         "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
@@ -2375,15 +2375,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
 export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "克拉克森的农场第5季",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第1季",
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第3季",
+        "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
@@ -2395,15 +2391,19 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "早餐中国",
-        "updateBadge": ""
-    },
-    {
         "title": "中国通史",
         "updateBadge": ""
     },
     {
-        "title": "守护解放西第6季",
+        "title": "克拉克森的农场第3季",
+        "updateBadge": ""
+    },
+    {
+        "title": "闪闪的儿科医生第2季",
+        "updateBadge": ""
+    },
+    {
+        "title": "蚂蚁星球",
         "updateBadge": ""
     }
   ],

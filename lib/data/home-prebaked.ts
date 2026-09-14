@@ -78,7 +78,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "海洋奇缘：启航",
+                "title": "夜王",
                 "updateBadge": ""
         },
         {
@@ -86,7 +86,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "夜王",
+                "title": "海洋奇缘：启航",
+                "updateBadge": ""
+        },
+        {
+                "title": "不成功穿越指南",
                 "updateBadge": ""
         },
         {
@@ -94,11 +98,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "抓特务",
-                "updateBadge": ""
-        },
-        {
-                "title": "不成功穿越指南",
+                "title": "寒战1994",
                 "updateBadge": ""
         }
       ],
@@ -106,7 +106,7 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_movie_1",
                 "title": "特立独行",
-                "rate": "6.4",
+                "rate": "6.6",
                 "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
                 "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
@@ -1837,7 +1837,7 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "冬城猎凶",
-                "updateBadge": "1"
+                "updateBadge": ""
         },
         {
                 "title": "深渊无间",
@@ -1848,12 +1848,12 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "1"
         },
         {
-                "title": "飞到我心上",
-                "updateBadge": ""
-        },
-        {
                 "title": "死有对证",
                 "updateBadge": "1"
+        },
+        {
+                "title": "飞到我心上",
+                "updateBadge": ""
         },
         {
                 "title": "云雀叫天录",
@@ -1868,7 +1868,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "百花杀",
+                "title": "九门",
                 "updateBadge": ""
         }
       ],
