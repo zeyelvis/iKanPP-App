@@ -60,8 +60,17 @@ export function useStallDetection({
             const currentTime = videoRef.current.currentTime;
             const now = Date.now();
 
-            // 如果正在拖动进度条、刚 seek 后的 1.5 秒缓冲期内、或正在切换集数，均处于合法缓冲保护期
-            const isSeekGracePeriod = isSeekingRef.current || (now - lastSeekTimeRef.current < 1500);
+            // 针对移动端极端网络可能发生的 seeking 状态假死看门狗（超过 4.5 秒自动重置标记并尝试唤醒播放）
+            if (isSeekingRef.current && (now - lastSeekTimeRef.current > 4500)) {
+                isSeekingRef.current = false;
+                lastSeekTimeRef.current = now;
+                if (isPlaying && isVideoPaused) {
+                    videoRef.current.play().catch(() => {});
+                }
+            }
+
+            // 如果正在拖动进度条、刚 seek 后的 3.5 秒缓冲期内、或正在切换集数，均处于合法缓冲保护期（给移动端跨国切片拉取更充裕的时间）
+            const isSeekGracePeriod = isSeekingRef.current || (now - lastSeekTimeRef.current < 3500);
 
             if (isPlaying && !isVideoPaused && !isDraggingProgressRef.current && !isSeekGracePeriod && !isTransitioningToNextEpisode) {
                 if (currentTime !== lastTimeRef.current) {

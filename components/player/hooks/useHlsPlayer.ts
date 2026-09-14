@@ -140,8 +140,8 @@ export function useHlsPlayer({
                     manifestLoadingTimeOut: 20000,
                     levelLoadingTimeOut: 20000,
 
-                    // Backbuffer
-                    backBufferLength: isMobileClient ? 15 : 45,
+                    // Backbuffer: 手机端由 15 秒放宽至 30 秒，避免短距离后退立即清空内存缓存
+                    backBufferLength: isMobileClient ? 30 : 45,
 
                     // 深度隐私伪装与请求头净化：遵循 no-referrer 规范，与原生 TV 盒子客户端流量特征对齐
                     xhrSetup: (xhr: XMLHttpRequest, url: string) => {
@@ -247,180 +247,10 @@ export function useHlsPlayer({
             }
         } else if (isNativeHlsSupported) {
             // Native HLS (iOS, Mobile Safari)
-            // Limitations: Native HLS cannot easily intercept sub-playlist requests.
-            // We use fetch+blob for the master playlist as a best 'first-level' filter.
-            // If the ad discontinuity is in the master playlist (rare for ads, common for periods), it works.
-            // If it's in sub-playlists, it might fail unless we parse and blob those too (complex).
-
-            if (isAdFilterEnabled && !isPremium) {
-                const fetchWithFallback = async (url: string): Promise<string> => {
-                    try {
-                        const res = await fetch(url);
-                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                        return await res.text();
-                    } catch (e) {
-                        if (!mediaProxyEnabled) {
-                            throw e;
-                        }
-                        console.warn(`[HLS Native] Fetch failed for ${url}, trying proxy...`, e);
-                        const proxiedUrl = `/api/proxy?url=${encodeURIComponent(url)}`;
-                        const res = await fetch(proxiedUrl);
-                        if (!res.ok) throw new Error(`Proxy fetch failed: HTTP ${res.status}`);
-                        return await res.text();
-                    }
-                };
-
-                const processMasterPlaylist = async (masterSrc: string) => {
-                    // Move blob tracking outside try to ensure cleanup on error
-                    const createdBlobs: string[] = [];
-
-                    // Safely resolve relative URLs to absolute (handles iOS Safari scenarios)
-                    let absoluteMasterSrc: string;
-                    try {
-                        absoluteMasterSrc = new URL(masterSrc, window.location.href).toString();
-                    } catch {
-                        absoluteMasterSrc = masterSrc; // Fallback if URL parsing fails
-                    }
-
-                    try {
-                        const masterContent = await fetchWithFallback(absoluteMasterSrc);
-
-                        // If it's a simple playlist (no variants), just filter and play
-                        if (!masterContent.includes('#EXT-X-STREAM-INF')) {
-                            const filtered = filterM3u8Ad(masterContent, absoluteMasterSrc, adFilterModeRef.current, adKeywordsRef.current);
-                            const blob = new Blob([filtered], { type: 'application/vnd.apple.mpegurl' });
-                            const blobUrl = URL.createObjectURL(blob);
-                            createdBlobs.push(blobUrl);
-                            return { masterBlobUrl: blobUrl, allBlobs: createdBlobs };
-                        }
-
-                        // It IS a master playlist. Use map + Promise.all for clean concurrent processing.
-                        const lines = masterContent.split(/\r?\n/);
-
-
-
-                        // Process each line, looking back at previous line to determine context
-                        const lineProcessingPromises = lines.map(async (line, index) => {
-                            const trimmedLine = line.trim();
-
-                            // Handle #EXT-X-MEDIA:URI="..."
-                            if (trimmedLine.startsWith('#EXT-X-MEDIA') && trimmedLine.includes('URI="')) {
-                                const uriMatch = trimmedLine.match(/URI="([^"]+)"/);
-                                const uri = uriMatch?.[1];
-                                if (uri) {
-                                    // Process if relative or absolute URL; fetch will handle CORS
-                                    const isRelative = !uri.startsWith('http');
-
-                                    if (isRelative || uri.startsWith('http')) {
-                                        try {
-                                            const absoluteUrl = isRelative ? new URL(uri, absoluteMasterSrc).toString() : uri;
-                                            const subContent = await fetchWithFallback(absoluteUrl);
-                                            const filteredSub = filterM3u8Ad(subContent, absoluteUrl, adFilterModeRef.current, adKeywordsRef.current);
-                                            const subBlob = new Blob([filteredSub], { type: 'application/vnd.apple.mpegurl' });
-                                            const subBlobUrl = URL.createObjectURL(subBlob);
-                                            createdBlobs.push(subBlobUrl);
-                                            return line.replace(`URI="${uri}"`, `URI="${subBlobUrl}"`);
-                                        } catch (e) {
-                                            console.warn('[HLS Native] Failed to process EXT-X-MEDIA URI:', e);
-                                            return line;
-                                        }
-                                    }
-                                }
-                            }
-
-                            // Handle playlist URL (line after #EXT-X-STREAM-INF)
-                            const prevLine = index > 0 ? lines[index - 1].trim() : '';
-                            if (prevLine.startsWith('#EXT-X-STREAM-INF') && trimmedLine && !trimmedLine.startsWith('#')) {
-                                // Process if relative or absolute URL; fetch will handle CORS
-                                const isRelative = !trimmedLine.startsWith('http');
-
-                                if (isRelative || trimmedLine.startsWith('http')) {
-                                    try {
-                                        const absoluteUrl = isRelative ? new URL(trimmedLine, absoluteMasterSrc).toString() : trimmedLine;
-                                        const subContent = await fetchWithFallback(absoluteUrl);
-                                        const filteredSub = filterM3u8Ad(subContent, absoluteUrl, adFilterModeRef.current, adKeywordsRef.current);
-                                        const subBlob = new Blob([filteredSub], { type: 'application/vnd.apple.mpegurl' });
-                                        const subBlobUrl = URL.createObjectURL(subBlob);
-                                        createdBlobs.push(subBlobUrl);
-                                        return subBlobUrl;
-                                    } catch (e) {
-                                        console.warn('[HLS Native] Failed to process variant playlist:', e);
-                                        return line;
-                                    }
-                                }
-                            }
-
-                            // All other lines pass through unchanged
-                            return line;
-                        });
-
-                        const processedLines = await Promise.all(lineProcessingPromises);
-
-                        // Join back
-                        const finalMasterContent = processedLines.join('\n');
-                        const masterBlob = new Blob([finalMasterContent], { type: 'application/vnd.apple.mpegurl' });
-                        const masterBlobUrl = URL.createObjectURL(masterBlob);
-                        createdBlobs.push(masterBlobUrl);
-
-                        return { masterBlobUrl, allBlobs: createdBlobs };
-                    } catch (e) {
-                        // Critical: Clean up any blobs created before the error
-                        for (const blobUrl of createdBlobs) {
-                            try {
-                                URL.revokeObjectURL(blobUrl);
-                            } catch { /* ignore cleanup errors */ }
-                        }
-                        console.error('[HLS Native] Recursive fetch failed', e);
-                        throw e;
-                    }
-                };
-
-                processMasterPlaylist(effectiveSrc).then((result) => {
-                    video.src = result.masterBlobUrl;
-                    extraBlobs = result.allBlobs;
-
-                    // Some WebView-based browsers (Alook, Arthur, etc.) cannot play from blob: URLs.
-                    // Detect playback failure and fall back to the original source.
-                    let blobPlaybackFailed = false;
-
-                    const onBlobError = () => {
-                        if (blobPlaybackFailed) return;
-                        blobPlaybackFailed = true;
-                        console.warn('[HLS Native] Blob URL playback failed, falling back to original source.');
-                        video.removeEventListener('error', onBlobError);
-                        onErrorRef.current?.('当前浏览器不支持广告过滤，已回退到原始视频流');
-                        // Revoke blob URLs immediately
-                        extraBlobs.forEach(url => URL.revokeObjectURL(url));
-                        extraBlobs = [];
-                        video.src = effectiveSrc;
-                    };
-
-                    video.addEventListener('error', onBlobError);
-
-                    // Also set a timeout: if video hasn't started loading within 8s, fall back
-                    const fallbackTimer = setTimeout(() => {
-                        if (video.readyState === 0 && !blobPlaybackFailed) {
-                            console.warn('[HLS Native] Blob URL playback timed out, falling back to original source.');
-                            onBlobError();
-                        }
-                    }, 8000);
-
-                    // Clear the timeout once video starts loading
-                    const onLoadedData = () => {
-                        clearTimeout(fallbackTimer);
-                        video.removeEventListener('error', onBlobError);
-                        video.removeEventListener('loadeddata', onLoadedData);
-                    };
-                    video.addEventListener('loadeddata', onLoadedData);
-                }).catch((e) => {
-                    console.warn('[HLS Native] Ad filtering failed, falling back to original source.', e);
-                    onErrorRef.current?.('广告过滤失败，已回退到原始视频流');
-                    video.src = effectiveSrc;
-                });
-
-            } else {
-                video.src = effectiveSrc;
-            }
+            // 核心保障：iOS WebKit AVPlayer 运行于系统独立进程，严禁使用 blob: 拦截改写！
+            // blob: 会阻断系统的 HTTP Range 请求，导致拖动进度条(Seek)时发生底层死锁和永久转圈。
+            // 直接赋予原生 HTTPS 直连流，激活苹果原装硬件级解复用、关键帧寻道与分片预读能力！
+            video.src = effectiveSrc;
         } else {
             // Neither MSE nor native HLS supported
             // Try direct playback as last resort (works for mp4 and some browser WebView)

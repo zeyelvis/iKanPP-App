@@ -25,9 +25,18 @@ export function DesktopProgressBar({
             <div
                 ref={progressBarRef}
                 className="slider-track cursor-pointer"
-                onClick={onProgressClick}
-                onMouseDown={onProgressMouseDown}
-                onTouchStart={onProgressTouchStart}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onProgressClick(e);
+                }}
+                onMouseDown={(e) => {
+                    e.stopPropagation();
+                    onProgressMouseDown(e);
+                }}
+                onTouchStart={(e) => {
+                    e.stopPropagation();
+                    onProgressTouchStart(e);
+                }}
                 style={{ pointerEvents: 'auto' }}
             >
                 <div
