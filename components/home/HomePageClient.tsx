@@ -1,17 +1,38 @@
 'use client';
 
 import { useMemo, useEffect } from 'react';
-import { SearchLoadingAnimation } from '@/components/SearchLoadingAnimation';
-import { NoResults } from '@/components/search/NoResults';
+import dynamic from 'next/dynamic';
 import { PopularFeatures } from '@/components/home/PopularFeatures';
-import { WatchHistorySidebar } from '@/components/history/WatchHistorySidebar';
-import { FavoritesSidebar } from '@/components/favorites/FavoritesSidebar';
 import { Navbar } from '@/components/layout/Navbar';
-import { SearchResults } from '@/components/home/SearchResults';
 import { useHomePage } from '@/lib/hooks/useHomePage';
 import { useLatencyPing } from '@/lib/hooks/useLatencyPing';
-import { ResumePlayBubble } from '@/components/home/ResumePlayBubble';
 import { MainSiteJsonLd } from '@/components/seo/MainSiteJsonLd';
+
+// 🚀 八层极速秒开架构：次级交互组件（侧边栏抽屉/搜索结果/断点气泡）按需延迟加载
+const SearchLoadingAnimation = dynamic(
+  () => import('@/components/SearchLoadingAnimation').then(m => m.SearchLoadingAnimation),
+  { ssr: false }
+);
+const NoResults = dynamic(
+  () => import('@/components/search/NoResults').then(m => m.NoResults),
+  { ssr: false }
+);
+const SearchResults = dynamic(
+  () => import('@/components/home/SearchResults').then(m => m.SearchResults),
+  { ssr: false }
+);
+const WatchHistorySidebar = dynamic(
+  () => import('@/components/history/WatchHistorySidebar').then(m => m.WatchHistorySidebar),
+  { ssr: false }
+);
+const FavoritesSidebar = dynamic(
+  () => import('@/components/favorites/FavoritesSidebar').then(m => m.FavoritesSidebar),
+  { ssr: false }
+);
+const ResumePlayBubble = dynamic(
+  () => import('@/components/home/ResumePlayBubble').then(m => m.ResumePlayBubble),
+  { ssr: false }
+);
 
 export function HomePageClient() {
   // 频道大厅与午夜版返回穿透保护守卫：若用户刚刚在播放器退出且来自子大厅/午夜版，确保永不误落回总首页

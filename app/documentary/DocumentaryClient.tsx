@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import { CategoryHub } from '@/components/category/CategoryHub';
+import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 
 const GENRES = [
@@ -47,9 +48,7 @@ export default function DocumentaryClient() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center">
-          <div className="brand-spinner" />
-        </div>
+        <CategoryHubSkeleton channelKey="documentary" categoryTitle="纪录片大厅" activeNav="documentary" />
       }
     >
       <CategoryHub

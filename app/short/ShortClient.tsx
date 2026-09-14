@@ -4,6 +4,7 @@ import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CategoryHub } from '@/components/category/CategoryHub';
+import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
 import { Icons } from '@/components/ui/Icon';
 import { ShortDramaTrendingRail } from '@/components/home/ShortDramaTrendingRail';
 import { ShortDramaForYouRail } from '@/components/home/ShortDramaForYouRail';
@@ -341,9 +342,7 @@ export default function ShortClient(props: ShortClientProps) {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center">
-          <div className="brand-spinner" />
-        </div>
+        <CategoryHubSkeleton channelKey="short" categoryTitle="微短剧专区" activeNav="short" />
       }
     >
       <ShortContent {...props} />

@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import { CategoryHub } from '@/components/category/CategoryHub';
+import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 
 const GENRES = [
@@ -49,7 +50,7 @@ const SHELVES = [
 
 export default function TvClient() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center"><div className="brand-spinner" /></div>}>
+    <Suspense fallback={<CategoryHubSkeleton channelKey="tv" categoryTitle="电视剧集" activeNav="tv" />}>
       <CategoryHub
         categoryTitle="电视剧集"
         categorySubtitle="全球连载追剧 · 华语大剧 · 顶级美剧 · 热门韩剧"

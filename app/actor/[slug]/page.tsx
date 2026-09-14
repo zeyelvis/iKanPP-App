@@ -146,6 +146,12 @@ export default async function ActorPage({ params }: Props) {
         description={`${actorName} 参演与主演的高分影视作品精选合集`}
         items={itemList}
       />
+      {/* 🚀 演员肖像预加载 */}
+      {avatarUrl && (
+        <link rel="preload" as="image" href={getOptimizedImageUrl(avatarUrl)} fetchPriority="high" />
+      )}
+
+      {/* 面包屑 */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
@@ -208,55 +214,115 @@ export default async function ActorPage({ params }: Props) {
 
         {/* 影视卡片网格 */}
         {entities.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
-            {entities.map(item => (
-              <Link
-                key={item.entityId}
-                href={`/title/${item.entityId}-${item.slug}`}
-                className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-200 hover:-translate-y-1"
-              >
-                <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
-                  {item.cover ? (
-                    <Image
-                      src={getOptimizedImageUrl(item.cover)}
-                      alt={item.title}
-                      fill
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white/20">
-                      <Film className="w-8 h-8" />
-                    </div>
-                  )}
-                  {item.rate && (
-                    <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm border border-amber-500/30 flex items-center gap-1">
-                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                      <span className="font-bold text-amber-400 text-xs">{item.rate}</span>
-                    </div>
-                  )}
-                  {item.year && (
-                    <div className="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[11px] text-white/70">
-                      {item.year}
-                    </div>
-                  )}
-                </div>
-                <div className="p-3">
-                  <div className="font-semibold text-sm text-white/90 group-hover:text-white truncate">
-                    {item.title}
-                  </div>
-                  <div className="flex items-center gap-1.5 mt-1 text-xs text-white/40">
-                    <span>{item.type === 'movie' ? '电影' : '剧集'}</span>
-                    {item.genres && item.genres.length > 0 && (
-                      <>
-                        <span>•</span>
-                        <span className="truncate">{item.genres.slice(0, 2).join('/')}</span>
-                      </>
+          <div className="space-y-4 sm:space-y-6">
+            {/* 首屏前 12 部作品 */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
+              {entities.slice(0, 12).map(item => (
+                <Link
+                  key={item.entityId}
+                  href={`/title/${item.entityId}-${item.slug}`}
+                  className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-200 hover:-translate-y-1"
+                >
+                  <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
+                    {item.cover ? (
+                      <Image
+                        src={getOptimizedImageUrl(item.cover)}
+                        alt={item.title}
+                        fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-white/20">
+                        <Film className="w-8 h-8" />
+                      </div>
+                    )}
+                    {item.rate && (
+                      <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm border border-amber-500/30 flex items-center gap-1">
+                        <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                        <span className="font-bold text-amber-400 text-xs">{item.rate}</span>
+                      </div>
+                    )}
+                    {item.year && (
+                      <div className="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[11px] text-white/70">
+                        {item.year}
+                      </div>
                     )}
                   </div>
+                  <div className="p-3">
+                    <div className="font-semibold text-sm text-white/90 group-hover:text-white truncate">
+                      {item.title}
+                    </div>
+                    <div className="flex items-center gap-1.5 mt-1 text-xs text-white/40">
+                      <span>{item.type === 'movie' ? '电影' : '剧集'}</span>
+                      {item.genres && item.genres.length > 0 && (
+                        <>
+                          <span>•</span>
+                          <span className="truncate">{item.genres.slice(0, 2).join('/')}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* 非首屏后续作品 (content-visibility: auto 渲染剪枝) */}
+            {entities.length > 12 && (
+              <div className="below-fold-section">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
+                  {entities.slice(12).map(item => (
+                    <Link
+                      key={item.entityId}
+                      href={`/title/${item.entityId}-${item.slug}`}
+                      className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-200 hover:-translate-y-1"
+                    >
+                      <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
+                        {item.cover ? (
+                          <Image
+                            src={getOptimizedImageUrl(item.cover)}
+                            alt={item.title}
+                            fill
+                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-white/20">
+                            <Film className="w-8 h-8" />
+                          </div>
+                        )}
+                        {item.rate && (
+                          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm border border-amber-500/30 flex items-center gap-1">
+                            <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                            <span className="font-bold text-amber-400 text-xs">{item.rate}</span>
+                          </div>
+                        )}
+                        {item.year && (
+                          <div className="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[11px] text-white/70">
+                            {item.year}
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-3">
+                        <div className="font-semibold text-sm text-white/90 group-hover:text-white truncate">
+                          {item.title}
+                        </div>
+                        <div className="flex items-center gap-1.5 mt-1 text-xs text-white/40">
+                          <span>{item.type === 'movie' ? '电影' : '剧集'}</span>
+                          {item.genres && item.genres.length > 0 && (
+                            <>
+                              <span>•</span>
+                              <span className="truncate">{item.genres.slice(0, 2).join('/')}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
-              </Link>
-            ))}
+              </div>
+            )}
           </div>
         ) : (
           <div className="text-center py-20 bg-white/5 rounded-2xl border border-white/10">

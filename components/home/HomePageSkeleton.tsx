@@ -1,0 +1,196 @@
+import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
+
+/**
+ * 首页首屏高保真 SSR 骨架 (HomePageSkeleton)
+ * 纯 Server Component，0 毫秒首字节 HTML 直出。
+ * 包含首屏真实 4K/1080P Hero 背景图预渲染与首屏货架骨位，
+ * 彻底消灭 blank spinner，为全球及受限国家用户提供秒开视觉感知。
+ */
+export function HomePageSkeleton() {
+  const hero = ALL_HOME_DATA.hero[0] || {
+    title: '精选大片',
+    backdrop: 'https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg',
+    episodes_info: '热门·剧情',
+    rate: '8.8',
+  };
+
+  const trendingNav = ALL_HOME_DATA.trendingNav || [];
+  const backdropUrl = hero.backdrop
+    ? `/api/img-proxy?url=${encodeURIComponent(hero.backdrop)}&w=1280`
+    : '';
+
+  return (
+    <div className="min-h-screen bg-[#0A0A0F] text-white">
+      {/* 1. 顶部极简毛玻璃导航栏骨架 (与 Navbar 高度 64px 严格对齐) */}
+      <header className="fixed top-0 inset-x-0 h-16 z-50 bg-[#0A0A0F]/60 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-4 lg:px-8">
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-(--accent-color,theme(colors.red.600)) flex items-center justify-center font-black text-white text-base">
+              iK
+            </div>
+            <span className="font-extrabold text-lg tracking-wider text-white">iKanPP</span>
+          </div>
+          <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-white/70">
+            <span className="text-white font-bold">首页</span>
+            <span>电影</span>
+            <span>电视剧</span>
+            <span>动漫</span>
+            <span>综艺</span>
+            <span>纪录片</span>
+            <span>排行榜</span>
+          </nav>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:flex items-center w-48 lg:w-64 h-9 rounded-full bg-white/10 border border-white/10 px-3 text-xs text-white/40">
+            搜索电影、电视剧、演员...
+          </div>
+          <div className="w-8 h-8 rounded-full bg-white/10" />
+        </div>
+      </header>
+
+      {/* 2. 影院级全景巨幕 Hero 区域 (与 HeroSlideshow 高度与结构绝对 1:1 对齐) */}
+      <section className="relative w-full h-[68vh] min-h-140 sm:h-[75vh] lg:h-[82vh] max-h-210 overflow-hidden select-none">
+        {/* 原生 <img> 高优先级预渲染背景图，绕过 Next/Image JS 运行时，0ms 启动网络流 */}
+        {backdropUrl && (
+          <img
+            src={backdropUrl}
+            alt={hero.title}
+            fetchPriority="high"
+            decoding="sync"
+            className="absolute inset-0 w-full h-full object-cover object-center transform scale-102"
+          />
+        )}
+
+        {/* 电影级暗黑羽化与渐变遮罩系统 */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/40 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0F]/90 via-[#0A0A0F]/30 to-transparent z-10" />
+
+        {/* 巨幕内容排版 */}
+        <div className="absolute inset-x-0 bottom-0 z-20 w-full flex flex-col justify-end pb-3 sm:pb-4 lg:pb-5">
+          <div className="fluid-container relative">
+            <div className="iyf-hero-bar relative flex items-end justify-between">
+              {/* 左栏：标题与立即播放按钮 */}
+              <div className="shrink-0 w-full max-w-[280px] sm:max-w-[340px] lg:w-[380px] xl:w-[480px] 2xl:w-[540px] flex flex-col items-start justify-end">
+                <div className="mb-3 sm:mb-4 w-full h-[76px] sm:h-[88px] lg:h-[96px] flex flex-col justify-end">
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[34px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1 leading-tight whitespace-nowrap">
+                    {hero.title}
+                  </h2>
+                  <div className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] h-6">
+                    <span className="truncate">{hero.episodes_info || '电影 · 剧情'}</span>
+                    {hero.rate && (
+                      <span className="text-amber-400 font-bold text-sm sm:text-base flex items-center gap-0.5 shrink-0">
+                        ★ {hero.rate}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-white/20 backdrop-blur-md text-white rounded-full text-base sm:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
+                  <span>立即播放</span>
+                  <span className="text-sm sm:text-base">▷</span>
+                </div>
+              </div>
+
+              {/* 中栏：TrendingNav 速报标签栏 (爱壹帆 6+6 绝对对称排布) */}
+              {trendingNav.length > 0 && (() => {
+                const line1 = trendingNav.slice(0, 6);
+                const line2 = trendingNav.slice(6, 12);
+                const renderItem = (item: { title: string; updateBadge?: string }, idx: number) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-start text-left text-white/90 select-none shrink-0"
+                  >
+                    <span className="font-bold tracking-tight whitespace-nowrap leading-snug truncate text-[12.5px] lg:text-[13.5px] xl:text-[14.5px] 2xl:text-[15px] max-w-[105px] lg:max-w-[125px] xl:max-w-[145px] 2xl:max-w-[165px]">
+                      {item.title}
+                    </span>
+                    {item.updateBadge ? (
+                      <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9px] xl:text-[10px] 2xl:text-[10.5px] font-black rounded-xs px-1.5 py-0.2 min-w-4 h-4 leading-none ml-1.5 shrink-0 shadow-md">
+                        {item.updateBadge}
+                      </span>
+                    ) : null}
+                  </div>
+                );
+
+                return (
+                  <div className="hidden lg:flex flex-1 min-w-0 flex-col items-center justify-end px-3 xl:px-6 pb-1">
+                    <div className="flex flex-col items-center gap-y-2.5 xl:gap-y-3.5 w-full max-w-fit">
+                      <div className="flex items-center justify-center whitespace-nowrap gap-x-3.5 lg:gap-x-4.5 xl:gap-x-6 2xl:gap-x-7">
+                        {line1.map(renderItem)}
+                      </div>
+                      <div className="flex items-center justify-center whitespace-nowrap gap-x-3.5 lg:gap-x-4.5 xl:gap-x-6 2xl:gap-x-7">
+                        {line2.map((item, idx) => renderItem(item, idx + 6))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* 右栏：8 席轮播大片缩略海报卡片列表占位 */}
+              <div className="hidden md:flex items-center gap-1 xl:gap-1.5 shrink-0 self-end p-1.5 rounded-xl bg-black/25 backdrop-blur-xs border border-white/10 ml-auto lg:ml-0">
+                {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+                  <div
+                    key={i}
+                    className={`w-[40px] h-[58px] sm:w-[44px] sm:h-[64px] lg:w-[46px] lg:h-[66px] xl:w-[50px] xl:h-[72px] 2xl:w-[54px] 2xl:h-[78px] rounded-lg bg-white/5 border ${
+                      i === 0 ? 'border-[#00D1FF] ring-2 ring-[#00D1FF]/70 scale-105' : 'border-white/10'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. 核心货架骨架区 */}
+      <div className="fluid-container space-y-8 mt-4 relative z-20 pb-20">
+        {/* 口碑榜胶囊条占位 */}
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 border-b border-white/10 pb-3">
+          {['全部', '电影', '电视剧', '动漫', '综艺', '纪录片', '短剧'].map((tab, idx) => (
+            <div
+              key={idx}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold ${
+                idx === 0 ? 'bg-white/20 text-white' : 'bg-white/5 text-white/40'
+              }`}
+            >
+              {tab}
+            </div>
+          ))}
+        </div>
+
+        {/* 货架 1 骨架 (Top 10 / 热门) */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-32 h-6 rounded bg-white/10 animate-pulse" />
+            <div className="w-16 h-5 rounded-full bg-white/5 animate-pulse" />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="space-y-2">
+                <div className="aspect-[2/3] rounded-xl bg-white/5 animate-pulse border border-white/5" />
+                <div className="w-3/4 h-4 rounded bg-white/10 animate-pulse" />
+                <div className="w-1/2 h-3 rounded bg-white/5 animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 货架 2 骨架 */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-40 h-6 rounded bg-white/10 animate-pulse" />
+            <div className="w-16 h-5 rounded-full bg-white/5 animate-pulse" />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="space-y-2">
+                <div className="aspect-[2/3] rounded-xl bg-white/5 animate-pulse border border-white/5" />
+                <div className="w-3/4 h-4 rounded bg-white/10 animate-pulse" />
+                <div className="w-1/2 h-3 rounded bg-white/5 animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

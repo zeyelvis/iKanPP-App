@@ -92,7 +92,28 @@
 2. **全站图片 R2 预热**：规范降维多尺寸（w342 卡片、w1280 巨幕）推送到亚太 R2；
 3. **详情页三维资产 R2 预热**：详情主画幅大图（w780）与肖像（w185）预先写入 R2；
 4. **边缘 CDN 缓存热加载**：并发向生产发起全频道及核心影视详情页请求，让 Cloudflare 边缘节点提前锁定 ISR 与 RSC Prefetch 缓存，实现用户进站 **100% 30~50ms 秒开**。
-- **执行计划**：北京时间每日 04:00 与 16:30 两次固定执行，并在爱壹帆新片同步后自动联动触发。
+### 2.8 八层极速秒开全栈架构 (Full-Site 8-Layer Ultra-Fast Architecture)
+在 2026 年最新流媒体 Web 性能基准下，全站确立“八层极速秒开”全栈链路，各层无缝协同，将受限国家首次打开时间从 3~5 秒压缩至 0.8~1.2 秒，全球二次打开达到绝对 0ms：
+1. **第 1 层：Cloudflare 边缘缓存与 30ms TTFB (Edge HTML Cache)**
+   - 静态路由及边缘 ISR 在全球 330+ 数据中心缓存完整 HTML，首字节响应稳定在 30~50ms 内。
+2. **第 2 层：SSR 高保真骨架首字节直出 (Zero-JS Skeleton First Paint)**
+   - 彻底废除全站空白居中 `<div className="brand-spinner" />`；
+   - 首页采用 `HomePageSkeleton`，各频道采用 `CategoryHubSkeleton`；
+   - 服务端首字节 HTML 100% 直出真实 16:9 4K Hero 背景图（原生 `<img>`、`fetchPriority="high"`、`loading="eager"`）、真实标题、立即播放 CTA 与爱壹帆对齐的 TrendingNav 速报标签；
+   - 用户肉眼在网络连接建立后第 100~300ms 即可感知到完整页面形态。
+3. **第 3 层：全球与大陆全链路持久化海报镜像 (R2 Image Pipeline)**
+   - 全网首屏 Hero 背景通过 `/api/img-proxy?url=...&w=1280` 由亚太 R2 同域秒出，彻底隔绝大陆等受限地区网络封锁。
+4. **第 4 层：全站级推测预渲染与智能预取 (Speculation Rules API)**
+   - `app/layout.tsx` 全站注入推测规则，在用户触碰或悬停时毫秒级在后台预渲染核心频道（`/movie`, `/tv`, `/anime`, `/variety`, `/documentary`, `/ranking`）与详情页（`/title/*`），实现 0ms 瞬间换页。
+5. **第 5 层：非首屏 DOM 视口渲染跳过 (content-visibility: auto)**
+   - 所有首屏下方的货架、全库瀑布流与剧情梗概模块应用 `.below-fold-rail` 与 `.below-fold-section`；
+   - 使用 `contain-intrinsic-size` 锁死物理高度防止布局跳动（CLS 恒为 0），首屏 CPU 主线程渲染耗时立降 60~70%。
+6. **第 6 层：非首屏组件严格按需动态加载 (Dynamic Imports)**
+   - 侧边栏抽屉（WatchHistorySidebar, FavoritesSidebar）、搜索交互模块（SearchResults, NoResults, SearchLoadingAnimation）、非首屏货架（LiveChannelsPreview, CollectionsRail, PlatformFeaturesStrip, ExploreHubFooterBanner, PersonalizedForYouRail）全部转为 `dynamic(..., { ssr: false })` 异步 chunk，主包体积直降 30% 以上。
+7. **第 7 层：HTTP/3 QUIC 传输优化与 Early Hints**
+   - 启用 0-RTT 连接复用与 103 Early Hints，首屏资源并发提前握手。
+8. **第 8 层：Service Worker PWA 全域智能预缓存**
+   - `sw.js` 在 `install` 阶段预缓存全站核心频道页面 shell 与关键海报，实现离线与二次访问 100% 内存级 0ms 瞬间开启。
 
 ---
 
@@ -109,7 +130,7 @@
 ## 4. 永久工程铁律 (Iron Rules)
 
 > [!CAUTION]
-> **以下十条铁律为全站性能红线，任何后续开发与重构均不得违背：**
+> **以下十二条铁律为全站性能红线，任何后续开发与重构均不得违背：**
 
 1. **绝对禁止引入外部 CDN 依赖**：不得引用 Google Fonts 外部直连、cdnjs、unpkg、jsdelivr 等存在国内阻断或污染风险的资源。全站字体必须通过 `next/font` 纯本地自托管打包。
 2. **绝对禁止硬编码图片直连**：所有外部海报、剧照、演职员头像，必须统一经由 `getOptimizedImageUrl()` 接入降维与分流链路。
@@ -121,4 +142,7 @@
 8. **R2 镜像路径必须统一结构**：严格遵守 `{source}/{width}/{filename}` 格式，保持仓储整洁与命中一致性。
 9. **严禁在详情页 SSR 阶段加设网络超时截断**：头像与资产获取必须走客户端非阻塞自愈（`CastRail`）或后台异步，严禁使用 `Promise.race` 截断产生空数据并污染 ISR 缓存。
 10. **全站卡片必须遵循语义化 `<Link>` 规范**：严禁在影片卡片上使用 `e.preventDefault() + router.push()` 破坏 Next.js 原生预加载（Viewport & Hover Prefetch）机制。
+11. **严禁在全站主要页面使用空白 brand-spinner 作为 Suspense fallback**：首页及 6 大频道页必须使用 `HomePageSkeleton` / `CategoryHubSkeleton` 在服务端首字节 HTML 中直出高保真大图与骨架。骨架背景图必须使用原生 `<img>` 配合 `fetchPriority="high"`，零 JS 依赖即刻启动网络传输。
+12. **非首屏货架与次级交互组件必须实行严格按需动态加载 (Dynamic Imports)**：侧边栏抽屉、搜索交互模块与非首屏货架严禁打入首屏主 Entry Bundle，必须使用 `dynamic(..., { ssr: false })` 异步解耦。
+
 

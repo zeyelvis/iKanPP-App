@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import { CategoryHub } from '@/components/category/CategoryHub';
+import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
 import { ANIME_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 
 const GENRES = [
@@ -45,7 +46,7 @@ const SHELVES: Array<{
 
 export default function AnimeClient() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center"><div className="brand-spinner" /></div>}>
+    <Suspense fallback={<CategoryHubSkeleton channelKey="anime" categoryTitle="动漫专区" activeNav="anime" />}>
       <CategoryHub
         categoryTitle="动漫专区"
         categorySubtitle="当季新番连载 · 国创新巅峰 · 经典剧场版动画"

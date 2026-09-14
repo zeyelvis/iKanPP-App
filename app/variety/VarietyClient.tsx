@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import { CategoryHub } from '@/components/category/CategoryHub';
+import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
 import { VARIETY_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 
 const GENRES = [
@@ -39,7 +40,7 @@ const SHELVES = [
 
 export default function VarietyClient() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center"><div className="brand-spinner" /></div>}>
+    <Suspense fallback={<CategoryHubSkeleton channelKey="variety" categoryTitle="综艺娱乐" activeNav="variety" />}>
       <CategoryHub
         categoryTitle="综艺娱乐"
         categorySubtitle="爆笑真人秀 · 顶级音乐竞演 · 热门脱口秀 · 慢生活旅行"

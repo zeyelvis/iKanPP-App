@@ -11,9 +11,21 @@
 const VIDEO_CACHE = 'video-cache-v3';
 const IMG_CACHE = 'img-cache-v1';
 const API_CACHE = 'api-cache-v1';
-const PAGE_CACHE = 'page-cache-v2';
+const PAGE_CACHE = 'page-cache-v3';
 
 const ALL_CACHES = [VIDEO_CACHE, IMG_CACHE, API_CACHE, PAGE_CACHE];
+
+// 核心预缓存 URL 列表：全站核心大厅与高保真首屏资源
+const PRECACHE_URLS = [
+  '/',
+  '/movie',
+  '/tv',
+  '/anime',
+  '/variety',
+  '/documentary',
+  '/ranking',
+  '/short',
+];
 
 // 图片缓存 7 天过期
 const IMG_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
@@ -21,7 +33,19 @@ const IMG_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 const API_MAX_AGE = 5 * 60 * 1000;
 
 self.addEventListener('install', (event) => {
-    self.skipWaiting();
+  event.waitUntil(
+    caches.open(PAGE_CACHE).then((cache) => {
+      // 预缓存核心页面（容错模式，避免单个页面失败阻断安装）
+      return Promise.allSettled(
+        PRECACHE_URLS.map((url) =>
+          fetch(url, { cache: 'no-cache' }).then((response) => {
+            if (response.ok) return cache.put(url, response);
+          }).catch(() => null)
+        )
+      );
+    })
+  );
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {

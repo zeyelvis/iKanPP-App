@@ -113,5 +113,49 @@
    - 服务端主渲染链路恒为 0ms 纯内存匹配，缺失头像必须由客户端在后台异步拉取淡入；
    - **严禁在服务端主渲染路径中加设任何网络超时截断（如 Promise.race 350ms）**，彻底杜绝单字兜底或污染边缘 ISR 缓存。
 
+---
+
+## 9. 全站八层极速秒开与 0ms 感知架构铁律 (Full-Site 8-Layer Ultra-Fast Performance Spec)
+
+全站（首页大厅、6 大频道大厅、详情页、影人页等所有页面）必须永久恪守“八层极速秒开”工程铁律，任何后续开发、组件重构或功能迭代严禁违反以下原则：
+
+### 1. 彻底消灭空白 Spinner 铁律 (Zero Blank Spinner / SSR Skeleton First Paint)
+- **绝对禁忌**：**严禁在首页或任何主要频道页（`/`, `/movie`, `/tv`, `/anime`, `/variety`, `/documentary`, `/ranking`）使用空白居中的 `<div className="brand-spinner" />` 作为 Suspense fallback！**
+- **必须直出真实高保真骨架**：
+  - 首页必须使用 `<HomePageSkeleton />`；
+  - 6 大频道页必须使用 `<CategoryHubSkeleton />`；
+  - 骨架必须直接利用预烘焙数据（`PREBAKED_HOME_DATA`）在服务端首字节 HTML 中直出：
+    1. 真实 16:9 宽屏 Hero 背景大图；
+    2. 真实片名与立即播放大按钮；
+    3. 100% 对齐爱壹帆官方排版的 TrendingNav 频道专属速报标签栏；
+    4. 具有 `contain-intrinsic-size` 锁高防抖的骨架货架横轨。
+- **原生 `<img>` 零 JS 依赖启动**：
+  - 骨架中的首屏背景大图必须使用原生 `<img>` 标签（严禁使用 Next/Image 以免受客户端 JS 运行时水合阻塞）；
+  - 必须携带 `fetchPriority="high"`、`loading="eager"` 与 `decoding="sync"`；
+  - 图片 URL 必须通过 `/api/img-proxy?url=...&w=1280` 直出，确保中国大陆与全球受限国家用户首屏直出 0ms 防裂图秒开。
+
+### 2. 全站级 Speculation Rules 推测预渲染铁律
+- 全站 `<head>` 必须且只能由 `app/layout.tsx` 注入统一的 Speculation Rules API：
+  - 对 6 大核心频道（`/movie`, `/tv`, `/anime`, `/variety`, `/documentary`, `/ranking`）配置 `prerender`（`eagerness: 'moderate'`）；
+  - 对影视详情页（`/title/*`）配置 `prefetch` / `prerender`；
+  - 确保用户鼠标悬停或触碰链接的 200~300ms 间隙内，目标页面已在后台极速预渲染完成，点击路由切换体验恒为 **0ms 秒切（Instant Navigation）**。
+
+### 3. 非首屏 DOM 视口渲染跳过铁律 (content-visibility: auto)
+- 所有处于首屏视口下方的货架、瀑布流、长文本剧情梗概及演职员滑轨，必须使用 `.below-fold-rail` 或 `.below-fold-section` 工具类；
+- 必须配合 `contain-intrinsic-size` 物理锁死占位高度，确保用户滚动平滑不跳动（CLS 恒为 0）；
+- 强制浏览器在首屏阶段跳过屏下 DOM 的样式计算、布局排版与重绘渲染，首屏主线程 CPU 耗时立降 60%~70%。
+
+### 4. 非首屏组件严格按需动态加载铁律 (Dynamic Imports)
+- **侧边栏与弹窗**：`FavoritesSidebar`、`WatchHistorySidebar`、`ResumePlayBubble` 必须使用 `dynamic(..., { ssr: false })` 按需加载；
+- **搜索交互模块**：`SearchResults`、`NoResults`、`SearchLoadingAnimation` 必须使用 `dynamic(..., { ssr: false })` 拆解；
+- **非首屏货架**：`LiveChannelsPreview`、`CollectionsRail`、`PlatformFeaturesStrip`、`ExploreHubFooterBanner`、`PersonalizedForYouRail` 必须使用 `dynamic` 异步加载；
+- **严禁将次级或偶发交互组件强行打入首屏主 Entry Bundle！**
+
+### 5. 全站 Service Worker 全域智能预缓存
+- Service Worker 在 `install` 阶段必须自动预缓存首页及 6 大频道大厅的页面 shell（`PRECACHE_URLS`）；
+- 对全网海报与图片持久实行 Cache-First 0ms 读取；
+- 二次访问与全站任意漫游实现 100% 内存/本地磁盘 0ms 瞬间打开。
+
+
 
 

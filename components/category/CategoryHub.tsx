@@ -4,17 +4,26 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { Navbar } from '@/components/layout/Navbar';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 import { MovieGrid } from '@/components/home/MovieGrid';
 import { Icons } from '@/components/ui/Icon';
-import { FavoritesSidebar } from '@/components/favorites/FavoritesSidebar';
-import { WatchHistorySidebar } from '@/components/history/WatchHistorySidebar';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { getPrebakedCategoryShelves, PREBAKED_CATEGORY_ITEMS } from '@/lib/data/category-prebaked';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 import { HeroSlideshow } from '@/components/home/TmdbSlideshow';
 import type { PrebakedSubject, TrendingNavItem } from '@/lib/data/home-prebaked';
+
+// 🚀 八层极速秒开架构：次级侧边栏组件按需加载
+const FavoritesSidebar = dynamic(
+  () => import('@/components/favorites/FavoritesSidebar').then((m) => m.FavoritesSidebar),
+  { ssr: false }
+);
+const WatchHistorySidebar = dynamic(
+  () => import('@/components/history/WatchHistorySidebar').then((m) => m.WatchHistorySidebar),
+  { ssr: false }
+);
 
 export interface FilterOption {
   label: string;
@@ -489,21 +498,30 @@ function isSameList(a: any[], b: any[]): boolean {
 
         {/* 2. 专属垂直特色片单滑轨 */}
         <div className="space-y-4">
-          {shelves.map((shelf) => (
-            <ContentRail
-              key={shelf.tag}
-              title={shelf.title}
-              icon={shelf.icon}
-              badge={shelf.badge}
-              movies={shelfData[shelf.tag] || []}
-              loading={loadingShelves}
-              onMovieClick={handleMovieClick}
-              onViewAll={() => {
-                setSelectedGenre(shelf.tag);
-                window.scrollTo({ top: 800, behavior: 'smooth' });
-              }}
-            />
-          ))}
+          {shelves.map((shelf, idx) => {
+            const railNode = (
+              <ContentRail
+                key={shelf.tag}
+                title={shelf.title}
+                icon={shelf.icon}
+                badge={shelf.badge}
+                movies={shelfData[shelf.tag] || []}
+                loading={loadingShelves}
+                onMovieClick={handleMovieClick}
+                onViewAll={() => {
+                  setSelectedGenre(shelf.tag);
+                  window.scrollTo({ top: 800, behavior: 'smooth' });
+                }}
+              />
+            );
+            return idx >= 2 ? (
+              <div key={shelf.tag} className="below-fold-rail">
+                {railNode}
+              </div>
+            ) : (
+              railNode
+            );
+          })}
         </div>
 
         {/* 3. 多维综合分类筛选矩阵 */}
@@ -674,7 +692,7 @@ function isSameList(a: any[], b: any[]): boolean {
         </div>
 
         {/* 4. 全库海报瀑布流网格 */}
-        <div>
+        <div className="below-fold-section">
           <MovieGrid
             movies={gridMovies}
             loading={loadingGrid}

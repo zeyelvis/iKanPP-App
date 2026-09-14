@@ -131,6 +131,37 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://img2.doubanio.com" />
         <link rel="dns-prefetch" href="https://img9.doubanio.com" />
         <link rel="dns-prefetch" href="https://api.themoviedb.org" />
+
+        {/* 🔮 全站级 Speculation Rules (推测预渲染与智能预取) — 鼠标触碰/悬停时瞬间在后台预渲染频道大厅与详情页 */}
+        <script
+          type="speculationrules"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              prerender: [
+                {
+                  source: 'list',
+                  urls: ['/movie', '/tv', '/anime', '/variety', '/documentary', '/ranking', '/short'],
+                  eagerness: 'moderate',
+                },
+              ],
+              prefetch: [
+                {
+                  source: 'document',
+                  where: {
+                    and: [
+                      { href_matches: '/title/*' },
+                      { not: { href_matches: '/api/*' } },
+                      { not: { href_matches: '/player*' } },
+                      { not: { href_matches: '/premium*' } },
+                    ],
+                  },
+                  eagerness: 'moderate',
+                },
+              ],
+            }),
+          }}
+        />
+
         {/* Apple PWA Support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

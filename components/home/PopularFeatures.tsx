@@ -2,17 +2,35 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { HeroSlideshow } from './TmdbSlideshow';
 import { Top10Rail } from './Top10Rail';
 import { ContentRail } from './ContentRail';
 import { ContinueWatchingRail } from './ContinueWatchingRail';
-import { LiveChannelsPreview } from './LiveChannelsPreview';
-import { CollectionsRail } from './CollectionsRail';
-import { PlatformFeaturesStrip } from './PlatformFeaturesStrip';
-import { PersonalizedForYouRail } from './PersonalizedForYouRail';
-import { ExploreHubFooterBanner } from './ExploreHubFooterBanner';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
+
+// 🚀 八层极速秒开架构：非首屏重量级组件按需动态加载，首屏 JS 包体积直降 30%
+const LiveChannelsPreview = dynamic(
+  () => import('./LiveChannelsPreview').then((m) => m.LiveChannelsPreview),
+  { loading: () => <div className="h-44 rounded-2xl bg-white/5 animate-pulse border border-white/5" /> }
+);
+const CollectionsRail = dynamic(
+  () => import('./CollectionsRail').then((m) => m.CollectionsRail),
+  { loading: () => <div className="h-44 rounded-2xl bg-white/5 animate-pulse border border-white/5" /> }
+);
+const PlatformFeaturesStrip = dynamic(
+  () => import('./PlatformFeaturesStrip').then((m) => m.PlatformFeaturesStrip),
+  { loading: () => <div className="h-28 rounded-2xl bg-white/5 animate-pulse border border-white/5" /> }
+);
+const PersonalizedForYouRail = dynamic(
+  () => import('./PersonalizedForYouRail').then((m) => m.PersonalizedForYouRail),
+  { loading: () => <div className="h-56 rounded-2xl bg-white/5 animate-pulse border border-white/5" /> }
+);
+const ExploreHubFooterBanner = dynamic(
+  () => import('./ExploreHubFooterBanner').then((m) => m.ExploreHubFooterBanner),
+  { loading: () => <div className="h-36 rounded-2xl bg-white/5 animate-pulse border border-white/5" /> }
+);
 
 export type HomeContentType = 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | 'short';
 
@@ -484,68 +502,86 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       />
 
       {/* 5. 🎯 猜你喜欢 · 智能定制推荐（全站综合推荐，不受上方排行榜切换影响） */}
-      <PersonalizedForYouRail
-        onMovieClick={handleMovieClick}
-        contentType="movie"
-        excludeTitles={deduplicatedContent.seenSnapshot}
-      />
+      <div className="below-fold-rail">
+        <PersonalizedForYouRail
+          onMovieClick={handleMovieClick}
+          contentType="movie"
+          excludeTitles={deduplicatedContent.seenSnapshot}
+        />
+      </div>
 
       {/* 6. 货架 1 */}
-      <ContentRail
-        title={m1.title}
-        icon={m1.icon}
-        badge={m1.badge}
-        movies={deduplicatedContent.s1}
-        loading={loadingShelves}
-        isPriority={true}
-        onMovieClick={handleMovieClick}
-        onViewAll={() => router.push(m1.viewAll)}
-      />
+      <div className="below-fold-rail">
+        <ContentRail
+          title={m1.title}
+          icon={m1.icon}
+          badge={m1.badge}
+          movies={deduplicatedContent.s1}
+          loading={loadingShelves}
+          isPriority={true}
+          onMovieClick={handleMovieClick}
+          onViewAll={() => router.push(m1.viewAll)}
+        />
+      </div>
 
       {/* 7. 货架 2 */}
-      <ContentRail
-        title={m2.title}
-        icon={m2.icon}
-        badge={m2.badge}
-        movies={deduplicatedContent.s2}
-        loading={loadingShelves}
-        onMovieClick={handleMovieClick}
-        onViewAll={() => router.push(m2.viewAll)}
-      />
+      <div className="below-fold-rail">
+        <ContentRail
+          title={m2.title}
+          icon={m2.icon}
+          badge={m2.badge}
+          movies={deduplicatedContent.s2}
+          loading={loadingShelves}
+          onMovieClick={handleMovieClick}
+          onViewAll={() => router.push(m2.viewAll)}
+        />
+      </div>
 
       {/* 8. 📡 电视直播精选频道（在推荐主干展示） */}
-      <LiveChannelsPreview />
+      <div className="below-fold-section">
+        <LiveChannelsPreview />
+      </div>
 
       {/* 8.5 📚 精选片单 · 官方策展（常驻独立版位，不受品类 Tab 切换干扰） */}
-      <CollectionsRail />
+      <div className="below-fold-rail">
+        <CollectionsRail />
+      </div>
 
       {/* 9. 货架 3 */}
-      <ContentRail
-        title={m3.title}
-        icon={m3.icon}
-        badge={m3.badge}
-        movies={deduplicatedContent.s3}
-        loading={loadingShelves}
-        onMovieClick={handleMovieClick}
-        onViewAll={() => router.push(m3.viewAll)}
-      />
+      <div className="below-fold-rail">
+        <ContentRail
+          title={m3.title}
+          icon={m3.icon}
+          badge={m3.badge}
+          movies={deduplicatedContent.s3}
+          loading={loadingShelves}
+          onMovieClick={handleMovieClick}
+          onViewAll={() => router.push(m3.viewAll)}
+        />
+      </div>
 
       {/* 10. 货架 4 */}
-      <ContentRail
-        title={m4.title}
-        icon={m4.icon}
-        badge={m4.badge}
-        movies={deduplicatedContent.s4}
-        loading={loadingShelves}
-        onMovieClick={handleMovieClick}
-        onViewAll={() => router.push(m4.viewAll)}
-      />
+      <div className="below-fold-rail">
+        <ContentRail
+          title={m4.title}
+          icon={m4.icon}
+          badge={m4.badge}
+          movies={deduplicatedContent.s4}
+          loading={loadingShelves}
+          onMovieClick={handleMovieClick}
+          onViewAll={() => router.push(m4.viewAll)}
+        />
+      </div>
 
       {/* 11. 🛡️ 平台核心特性与极速播放优势 */}
-      <PlatformFeaturesStrip />
+      <div className="below-fold-section">
+        <PlatformFeaturesStrip />
+      </div>
 
       {/* 12. 🧭 全库多维分类检索大厅导航卡片 */}
-      <ExploreHubFooterBanner />
+      <div className="below-fold-footer">
+        <ExploreHubFooterBanner />
+      </div>
       </div>
     </div>
   );

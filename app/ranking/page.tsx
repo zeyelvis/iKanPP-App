@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import RankingClient from './RankingClient';
+import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { JsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
@@ -39,7 +41,9 @@ export default function RankingPage() {
     <>
       <JsonLd data={breadcrumbs} />
       <ItemListJsonLd name="全网影视风云榜 TOP10" items={topRanked} />
-      <RankingClient />
+      <Suspense fallback={<CategoryHubSkeleton channelKey="movie" categoryTitle="影视风云榜" activeNav="ranking" />}>
+        <RankingClient />
+      </Suspense>
     </>
   );
 }

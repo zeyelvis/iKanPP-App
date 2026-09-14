@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import { CategoryHub } from '@/components/category/CategoryHub';
+import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 
 const GENRES = [
@@ -52,7 +53,7 @@ const SHELVES = [
 
 export default function MovieClient() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center"><div className="brand-spinner" /></div>}>
+    <Suspense fallback={<CategoryHubSkeleton channelKey="movie" categoryTitle="电影大厅" activeNav="movie" />}>
       <CategoryHub
         categoryTitle="电影大厅"
         categorySubtitle="全球 4K 院线巨制 · 豆瓣高分神作 · 经典华语佳片"

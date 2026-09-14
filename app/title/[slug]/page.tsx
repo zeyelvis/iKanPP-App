@@ -524,6 +524,11 @@ export default async function TitlePage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white selection:bg-red-600 selection:text-white relative">
+      {/* 🚀 八层极速秒开架构：详情页核心背景大图预加载，消除 LCP 延迟 */}
+      {heroBackdrop && (
+        <link rel="preload" as="image" href={heroBackdrop} fetchPriority="high" />
+      )}
+
       {/* 结构化数据注入 */}
       <TitleJsonLd entity={entity} siteUrl={BASE_URL} />
 
@@ -806,16 +811,18 @@ export default async function TitlePage({ params }: Props) {
 
         {/* 演职员圆形名牌滑轨 (Cast & Crew Rail) - 客户端自愈补全组件 */}
         {(validDirectors.length > 0 || validActors.length > 0) && (
-          <CastRail
-            directors={validDirectors}
-            actors={validActors}
-            initialAvatars={peopleAvatars}
-          />
+          <div className="below-fold-rail">
+            <CastRail
+              directors={validDirectors}
+              actors={validActors}
+              initialAvatars={peopleAvatars}
+            />
+          </div>
         )}
 
         {/* Netflix 标志性“更多类似推荐”（More Like This） */}
         {combinedRelated.length > 0 && (
-          <section className="mt-8">
+          <section className="mt-8 below-fold-section">
             <h2 className="text-xl sm:text-2xl font-bold text-white mb-6 flex items-center gap-2">
               <span>🍿</span>
               <span>更多{primaryGenre}精选推荐</span>
