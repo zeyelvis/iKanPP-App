@@ -71,8 +71,8 @@ const HUB_FEATURES: HubFeature[] = [
 
 export function ExploreHubFooterBanner() {
   return (
-    <div className="mt-14 pt-10 border-t border-white/10">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-8">
+    <div className="pt-7 border-t border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2.5">
             <span>🧭</span>

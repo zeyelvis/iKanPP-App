@@ -29,7 +29,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="relative mt-20 border-t border-white/10 bg-[#0A0A0F]/95 text-white/70 overflow-hidden">
+    <footer className="relative mt-6 sm:mt-8 border-t border-white/10 bg-[#0A0A0F]/95 text-white/70 overflow-hidden">
       {/* 顶部环境流光装饰线 */}
       <div
         className="h-px w-full"
@@ -39,9 +39,9 @@ export function Footer() {
         }}
       />
 
-      <div className="fluid-container py-12 space-y-10">
+      <div className="fluid-container pt-10 pb-8 space-y-8">
         {/* 核心网格：品牌愿景 + 8 大核心专区 + 服务生态 + 合规申诉 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 pb-10 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 pb-8 border-b border-white/10">
           {/* 第 1 列：品牌形象与定位（占 5 列） */}
           <div className="lg:col-span-5 space-y-4">
             <div className="flex items-center gap-2.5">
@@ -138,8 +138,8 @@ export function Footer() {
           </div>
         </div>
 
-        {/* 底栏：免责声明与版权信息 */}
-        <div className="space-y-4 text-xs text-white/50">
+        {/* 底栏：免责声明与版权信息（增加左右避让安全区，杜绝被浮动按钮遮挡） */}
+        <div className="space-y-4 text-xs text-white/50 px-8 sm:px-12 md:px-0">
           <p className="text-[11px] text-white/35 leading-relaxed">
             免责声明：iKanPP 为纯粹的非营利性流媒体聚合搜索引擎，所有视频资源均来源于公开网络第三方接口或蜘蛛抓取，本站服务器不存储、不制作任何物理视听文件。若权利方认为内容涉及侵权，请联系官方邮箱 contact@ikanpp.com，我们将在 48 小时内核实并做下架处理。
           </p>

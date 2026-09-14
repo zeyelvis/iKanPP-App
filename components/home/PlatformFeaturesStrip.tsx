@@ -31,7 +31,7 @@ const FEATURES: FeatureItem[] = [
 
 export function PlatformFeaturesStrip() {
   return (
-    <div className="my-12 py-6 px-6 sm:px-8 bg-[#0A0A0F]/60 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl">
+    <div className="py-5 px-6 sm:px-8 bg-[#0A0A0F]/60 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {FEATURES.map((f, idx) => (
           <div key={idx} className="flex items-start gap-3.5">
