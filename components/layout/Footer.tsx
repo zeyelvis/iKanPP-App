@@ -206,7 +206,7 @@ export function Footer() {
               <span>·</span>
               <Link href="/privacy" className="hover:text-white transition-colors">隐私政策</Link>
               <span>·</span>
-              <a href="mailto:zeyelvis@icloud.com" className="hover:text-white transition-colors">版权申诉 (zeyelvis@icloud.com)</a>
+              <a href="mailto:contact@ikanpp.com" className="hover:text-white transition-colors">版权申诉 (contact@ikanpp.com)</a>
             </div>
           </div>
 

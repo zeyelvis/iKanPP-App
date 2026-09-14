@@ -111,7 +111,7 @@ export default function PrivacyPolicy() {
                         <h2 className="text-base font-semibold mb-3" style={{ color: 'var(--text-color)' }}>十、联系方式</h2>
                         <p className="opacity-70">
                             如您对本隐私条款有任何问题或建议，请联系：<br />
-                            邮箱：<a href="mailto:zeyelvis@icloud.com" style={{ color: '#60a5fa' }}>zeyelvis@icloud.com</a>
+                            邮箱：<a href="mailto:contact@ikanpp.com" style={{ color: '#60a5fa' }}>contact@ikanpp.com</a>
                         </p>
                     </section>
 

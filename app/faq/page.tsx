@@ -48,7 +48,7 @@ const faqItems = [
     },
     {
         question: '如何联系 iKanPP？',
-        answer: '可通过邮件 zeyelvis@icloud.com 联系我们，版权投诉会在 48 小时内处理。',
+        answer: '可通过邮件 contact@ikanpp.com 联系我们，版权投诉会在 48 小时内处理。',
     },
 ];
 
@@ -136,7 +136,7 @@ export default function FAQPage() {
                         还有其他问题？
                     </p>
                     <a
-                        href="mailto:zeyelvis@icloud.com"
+                        href="mailto:contact@ikanpp.com"
                         className="inline-flex items-center gap-1.5 text-sm font-semibold transition-opacity hover:opacity-80"
                         style={{ color: 'var(--accent-color)' }}
                     >

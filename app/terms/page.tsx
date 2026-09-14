@@ -67,7 +67,7 @@ export default function TermsOfService() {
                         <h2 className="text-base font-semibold mb-3" style={{ color: 'var(--text-color)' }}>五、知识产权声明</h2>
                         <p className="opacity-70">
                             本站所有视频和图片均来自互联网收集，版权归原创者所有。本站仅提供 Web 页面服务，不提供资源存储，也不参与录制、上传。若本站收录的节目无意侵犯了贵司版权，请附上版权证明邮件至
-                            <a href="mailto:zeyelvis@icloud.com" className="mx-1" style={{ color: '#60a5fa' }}>zeyelvis@icloud.com</a>
+                            <a href="mailto:contact@ikanpp.com" className="mx-1" style={{ color: '#60a5fa' }}>contact@ikanpp.com</a>
                             （我们会在收到邮件后 48 小时内删除）。
                         </p>
                     </section>
@@ -93,7 +93,7 @@ export default function TermsOfService() {
                         <h2 className="text-base font-semibold mb-3" style={{ color: 'var(--text-color)' }}>八、联系方式</h2>
                         <p className="opacity-70">
                             如您对本协议有任何疑问，请通过以下方式联系我们：<br />
-                            邮箱：<a href="mailto:zeyelvis@icloud.com" style={{ color: '#60a5fa' }}>zeyelvis@icloud.com</a>
+                            邮箱：<a href="mailto:contact@ikanpp.com" style={{ color: '#60a5fa' }}>contact@ikanpp.com</a>
                         </p>
                     </section>
 

@@ -35,7 +35,7 @@ const organizationSchema = {
     },
     contactPoint: {
         '@type': 'ContactPoint',
-        email: 'zeyelvis@icloud.com',
+        email: 'contact@ikanpp.com',
         contactType: 'customer service',
         availableLanguage: ['Chinese', 'English'],
     },
