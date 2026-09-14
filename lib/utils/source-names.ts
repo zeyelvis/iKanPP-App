@@ -1,5 +1,6 @@
 export function getSourceName(sourceId: string): string {
   const sourceNames: Record<string, string> = {
+    'ole_vip': '超清专线',
     'jisu': '极速资源',
     'guangsu': '光速资源',
     'xinlang': '新浪资源',

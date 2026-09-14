@@ -60,6 +60,7 @@ const geistMono = Geist_Mono({
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 
 export const metadata: Metadata = {
+  referrer: 'no-referrer',
   title: {
     default: 'iKanPP — 爱看片片 | 海外华人影视聚合搜索与极速播放平台',
     template: `%s`,

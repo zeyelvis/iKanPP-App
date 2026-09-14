@@ -40,14 +40,17 @@ const FOUR_K_SOURCES = new Set([
 
 // 1080P 蓝光秒播高码率专线字典
 const HD_BLURAY_SOURCES = new Set([
-    'jisu', 'guangsu', 'xinlang', 'wujin', 'liangzi', 'dytt',
+    'ole_vip', 'jisu', 'guangsu', 'xinlang', 'wujin', 'liangzi', 'dytt',
     'feifan', 'huya', 'haitun', 'ruyi', 'zuida', 'subo', 'youku'
 ]);
 
 // 黄金线路优先级权重（严格按金字塔梯队分级，对齐全站最新健康骨干源标准）
 const GOLDEN_PRIORITY_MAP: Record<string, number> = {
+    // === 第零梯队：1080P 4.91Mbps 超清原画专线（原画秒播首选） ===
+    'ole_vip': 0,   // 超清专线 (1080P 4.91Mbps 原画第一首选)
+
     // === 第一梯队：全量 443 端口纯净切片与数百万海量热播大源（CORS 100% 开放，秒播首选） ===
-    'guangsu': 1,   // 光速资源 (数百万海量新热影视第一大站)
+    'guangsu': 1,   // 光速资源 (数百万海量新热影视第一大站，降级首选)
     'wujin': 2,     // 无尽资源 (443纯净源，老片/动画秒播首选)
     'zuida': 3,     // 最大资源 (443纯净源，经典/新剧兼备)
     'jisu': 4,      // 极速资源 (443纯净源)
@@ -79,6 +82,7 @@ const GOLDEN_PRIORITY_MAP: Record<string, number> = {
 
 // ikanbot 线路标识映射
 const FLAG_TO_SOURCE_KEY: Record<string, string> = {
+    'ole_vip': 'ole_vip',
     'wjm3u8': 'wujin',
     'zuidam3u8': 'zuida',
     'gsm3u8': 'guangsu',

@@ -552,7 +552,7 @@ export function IkanPPPlayerContainer() {
       (s) => s.source && s.source !== currentActiveSource && !failedSourcesRef.current.has(s.source)
     );
     const candidate = validCandidates.sort((a, b) => {
-      const TOP_ORDER: Record<string, number> = { guangsu: 1, wujin: 2, zuida: 3, jisu: 4, xinlang: 5, modu: 6, zy360: 7 };
+      const TOP_ORDER: Record<string, number> = { ole_vip: 0, guangsu: 1, wujin: 2, zuida: 3, jisu: 4, xinlang: 5, modu: 6, zy360: 7 };
       const aOrder = TOP_ORDER[a.source] ?? 99;
       const bOrder = TOP_ORDER[b.source] ?? 99;
       if (aOrder !== bOrder) return aOrder - bOrder;

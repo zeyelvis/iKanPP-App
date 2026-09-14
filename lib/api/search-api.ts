@@ -4,6 +4,8 @@ import type {
     ApiSearchResponse,
 } from '@/lib/types';
 import { fetchWithTimeout, withRetry } from './http-utils';
+import { searchOlevod } from '@/lib/server/olevod';
+
 /**
  * Search videos from a single source
  */
@@ -13,6 +15,40 @@ async function searchVideosBySource(
     page: number = 1
 ): Promise<{ results: VideoItem[]; source: string; responseTime: number; pagecount: number }> {
     const startTime = Date.now();
+
+    if (source.id === 'ole_vip') {
+        try {
+            const match = await searchOlevod(query);
+            if (match) {
+                return {
+                    results: [{
+                        vod_id: match.id,
+                        vod_name: match.name,
+                        vod_pic: match.pic,
+                        vod_year: match.year ? String(match.year) : undefined,
+                        vod_remarks: '1080P超清原画',
+                        source: 'ole_vip',
+                    }],
+                    source: 'ole_vip',
+                    responseTime: Date.now() - startTime,
+                    pagecount: 1,
+                };
+            }
+            return {
+                results: [],
+                source: 'ole_vip',
+                responseTime: Date.now() - startTime,
+                pagecount: 1,
+            };
+        } catch {
+            return {
+                results: [],
+                source: 'ole_vip',
+                responseTime: Date.now() - startTime,
+                pagecount: 1,
+            };
+        }
+    }
 
     const url = new URL(`${source.baseUrl}${source.searchPath}`);
     url.searchParams.set('ac', 'detail');

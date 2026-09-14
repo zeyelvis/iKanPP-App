@@ -5,6 +5,7 @@ import type {
 } from '@/lib/types';
 import { fetchWithTimeout, withRetry } from './http-utils';
 import { parseEpisodes } from './parsers';
+import { getOlevodDetail } from '@/lib/server/olevod';
 
 /**
  * Get video detail from a single source
@@ -13,6 +14,24 @@ export async function getVideoDetail(
     id: string | number,
     source: VideoSource
 ): Promise<VideoDetail> {
+    if (source.id === 'ole_vip') {
+        const detail = await getOlevodDetail(id);
+        if (!detail) throw new Error('Video not found in Olevod');
+        return {
+            vod_id: detail.vod_id,
+            vod_name: detail.vod_name,
+            vod_pic: detail.vod_pic || '',
+            vod_year: detail.vod_year,
+            vod_content: detail.vod_content,
+            vod_actor: detail.vod_actor,
+            vod_director: detail.vod_director,
+            type_name: detail.type_name,
+            episodes: detail.episodes,
+            source: 'ole_vip',
+            source_code: 'ole_vip',
+        };
+    }
+
     const url = new URL(`${source.baseUrl}${source.detailPath}`);
     url.searchParams.set('ac', 'detail');
     url.searchParams.set('ids', id.toString());

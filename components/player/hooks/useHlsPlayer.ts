@@ -142,6 +142,13 @@ export function useHlsPlayer({
 
                     // Backbuffer
                     backBufferLength: isMobileClient ? 15 : 45,
+
+                    // 深度隐私伪装与请求头净化：遵循 no-referrer 规范，与原生 TV 盒子客户端流量特征对齐
+                    xhrSetup: (xhr: XMLHttpRequest, url: string) => {
+                        if (url.includes('olemovienews.com') || url.includes('oulehdtv.com')) {
+                            xhr.withCredentials = false;
+                        }
+                    },
                 };
 
                 // Use custom loader if ad filtering is enabled
