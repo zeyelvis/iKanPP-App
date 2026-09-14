@@ -150,10 +150,15 @@ export function usePlaybackControls({
 
     const handleVideoError = useCallback(() => {
         setIsLoading(false);
-        if (onError) {
-            onError('Video failed to load');
+        const err = videoRef.current?.error;
+        // 如果是外部中止或分片重置引起的非故障中止(MEDIA_ERR_ABORTED = 1)，绝不误切源
+        if (err && err.code === 1) {
+            return;
         }
-    }, [setIsLoading, onError]);
+        if (onError) {
+            onError(err ? `Video failed to load: code ${err.code}` : 'Video failed to load');
+        }
+    }, [setIsLoading, onError, videoRef]);
 
     const handleProgressEvent = useCallback(() => {
         updateBufferedTime();

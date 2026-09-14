@@ -142,7 +142,35 @@ export function IkanPPPlayerContainer() {
 
         const targetAnalysis = analyzeTitle(title);
         const targetYear = expectedYear ? parseInt(expectedYear, 10) : null;
+        const hasOleVipEnabled = allSources.some(s => s.id === 'ole_vip');
+        let oleVipReceived = false;
+        let oleVipGraceTimer: NodeJS.Timeout | null = null;
         let pendingBestCandidate: { video: any; score: number; isSeries: boolean } | null = null;
+
+        const performRedirect = (targetVideo: any, isSeries: boolean) => {
+          if (redirected || cancelled) return;
+          redirected = true;
+          if (oleVipGraceTimer) {
+            clearTimeout(oleVipGraceTimer);
+            oleVipGraceTimer = null;
+          }
+          const params = new URLSearchParams();
+          params.set('id', String(targetVideo.vod_id));
+          params.set('source', targetVideo.source);
+          params.set('title', title);
+          if (entityParam) params.set('entity', entityParam);
+          if (episodeParam) {
+            params.set('episode', episodeParam);
+          }
+          const resolvedType = isSeries ? 'tv' : (expectedType || 'movie');
+          params.set('type', resolvedType);
+          if (expectedYear) params.set('year', expectedYear);
+          if (foundSources.length > 0) {
+            const gsKey = storeGroupedSources(foundSources);
+            if (gsKey) params.set('gsKey', gsKey);
+          }
+          router.replace(`/player?${params.toString()}`, { scroll: false });
+        };
 
         while (true) {
           const { done, value } = await reader.read();
@@ -157,6 +185,10 @@ export function IkanPPPlayerContainer() {
               const data = JSON.parse(line.slice(6));
               if (data.type === 'videos' && Array.isArray(data.videos) && data.videos.length > 0) {
                 for (const v of data.videos) {
+                  if (v.source === 'ole_vip') {
+                    oleVipReceived = true;
+                  }
+
                   const rawName = (v.vod_name || '').trim();
                   const typeName = (v.type_name || '').toLowerCase();
                   const remarks = (v.vod_remarks || '').toLowerCase();
@@ -221,7 +253,7 @@ export function IkanPPPlayerContainer() {
                     }
                   } else if (
                     (candAnalysis.pureTitle.length >= 2 && targetAnalysis.pureTitle.includes(candAnalysis.pureTitle)) ||
-                    (targetAnalysis.pureTitle.length >= 2 && candAnalysis.pureTitle.includes(targetAnalysis.pureTitle))
+                    (targetAnalysis.pureTitle.length >= 2 && candAnalysis.pureTitle.includes(candAnalysis.pureTitle))
                   ) {
                     nameScore = 30;
                   } else {
@@ -248,22 +280,29 @@ export function IkanPPPlayerContainer() {
                           maxEpInSource = parsed;
                         }
                       }
-
-                      const isCompleted = remarks.includes('完结') || remarks.includes('全集');
                       if (maxEpInSource !== null) {
                         if (maxEpInSource >= reqEpNum) {
-                          episodeScore += 120;
+                          episodeScore = 60;
                         } else {
-                          episodeScore -= 400;
+                          episodeScore = -500;
                           isEpisodeInsufficient = true;
                         }
-                      } else if (isCompleted) {
-                        episodeScore += 50;
                       }
                     }
                   }
 
-                  const totalScore = nameScore + yearScore + qualityScore + episodeScore;
+                  let sourceScore = 0;
+                  // 黄金调度优先级：超清专线(1080P原画)作为全站主力最高优先级
+                  if (v.source === 'ole_vip') sourceScore = 120;
+                  else if (v.source === 'guangsu') sourceScore = 100;
+                  else if (v.source === 'wujin') sourceScore = 90;
+                  else if (v.source === 'zuida') sourceScore = 80;
+                  else if (v.source === 'jisu') sourceScore = 70;
+                  else if (v.source === 'xinlang') sourceScore = 60;
+                  else if (v.source === 'modu') sourceScore = 50;
+                  else if (v.source === 'zy360') sourceScore = 40;
+
+                  const totalScore = nameScore + yearScore + qualityScore + episodeScore + sourceScore;
 
                   const isStrictCandidate = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isExactName && !isEpisodeInsufficient &&
                     (isSeriesItem || !targetYear || !candYear || Math.abs(candYear - targetYear) <= 1);
@@ -289,7 +328,9 @@ export function IkanPPPlayerContainer() {
                     }
                   }
 
-                  // 极速秒播裁决：一旦命中合法正片片源且满足集数需求，立即秒跳！绝不阻塞！
+                  // 极速秒播裁决：
+                  // 1. 若命中超清专线 (ole_vip)，直接立即秒跳，尊享 1080P 原画！
+                  // 2. 若命中其他源（如光速 150ms 极快返回）：给超清专线留出 1.5s 窗口，绝不被光速抢跑截胡！
                   const isQualified = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isExactName && !isEpisodeInsufficient && totalScore >= 80;
                   if (isQualified && !redirected && !cancelled) {
                     const isTopTarget = 
@@ -297,28 +338,27 @@ export function IkanPPPlayerContainer() {
                       (!isSeriesItem && (isExactYearMatch || !targetYear));
 
                     if (isTopTarget) {
-                      redirected = true;
-                      const params = new URLSearchParams();
-                      params.set('id', String(v.vod_id));
-                      params.set('source', v.source);
-                      params.set('title', title);
-                      if (entityParam) params.set('entity', entityParam);
-                      if (episodeParam) {
-                        params.set('episode', episodeParam);
+                      if (v.source === 'ole_vip' || !hasOleVipEnabled || oleVipReceived) {
+                        performRedirect(v, isSeriesItem);
+                        break;
+                      } else {
+                        // 命中合规光速等源，暂存为最佳兜底候选
+                        if (!pendingBestCandidate || totalScore > pendingBestCandidate.score) {
+                          pendingBestCandidate = { video: v, score: totalScore, isSeries: isSeriesItem };
+                        }
+                        // 启动 1500ms 宽限定时器：等待超清专线到达
+                        if (!oleVipGraceTimer) {
+                          oleVipGraceTimer = setTimeout(() => {
+                            if (!redirected && !cancelled && pendingBestCandidate) {
+                              performRedirect(pendingBestCandidate.video, pendingBestCandidate.isSeries);
+                            }
+                          }, 1500);
+                        }
                       }
-                      const resolvedType = isSeriesItem ? 'tv' : (expectedType || 'movie');
-                      params.set('type', resolvedType);
-                      if (expectedYear) params.set('year', expectedYear);
-                      if (foundSources.length > 0) {
-                        const gsKey = storeGroupedSources(foundSources);
-                        if (gsKey) params.set('gsKey', gsKey);
+                    } else {
+                      if (!pendingBestCandidate || totalScore > pendingBestCandidate.score) {
+                        pendingBestCandidate = { video: v, score: totalScore, isSeries: isSeriesItem };
                       }
-                      router.replace(`/player?${params.toString()}`, { scroll: false });
-                      break;
-                    }
-
-                    if (!pendingBestCandidate || totalScore > pendingBestCandidate.score) {
-                      pendingBestCandidate = { video: v, score: totalScore, isSeries: isSeriesItem };
                     }
                   }
                 }
@@ -329,23 +369,12 @@ export function IkanPPPlayerContainer() {
         }
 
         if (!redirected && !cancelled) {
+          if (oleVipGraceTimer) {
+            clearTimeout(oleVipGraceTimer);
+            oleVipGraceTimer = null;
+          }
           if (pendingBestCandidate) {
-            redirected = true;
-            const bestVideo = pendingBestCandidate.video;
-            const params = new URLSearchParams();
-            params.set('id', String(bestVideo.vod_id));
-            params.set('source', bestVideo.source);
-            params.set('title', title);
-            if (entityParam) params.set('entity', entityParam);
-            if (episodeParam) params.set('episode', episodeParam);
-            const resolvedType = pendingBestCandidate.isSeries ? 'tv' : (expectedType || 'movie');
-            params.set('type', resolvedType);
-            if (expectedYear) params.set('year', expectedYear);
-            if (foundSources.length > 0) {
-              const gsKey = storeGroupedSources(foundSources);
-              if (gsKey) params.set('gsKey', gsKey);
-            }
-            router.replace(`/player?${params.toString()}`, { scroll: false });
+            performRedirect(pendingBestCandidate.video, pendingBestCandidate.isSeries);
           } else {
             setTitleSearchError('未找到与该片名匹配的高质量正片片源，请尝试精确片名搜索');
             setTitleSearching(false);
@@ -540,11 +569,21 @@ export function IkanPPPlayerContainer() {
   }, [videoData?.type_name, expectedType]);
 
   const playerTimeRef = useRef(0);
+  const sourceErrorCountsRef = useRef<Map<string, number>>(new Map());
 
   // 线路异常智能自愈
   const handlePlaybackError = useCallback((_error: string) => {
     const currentActiveSource = currentSourceId || source || '';
     if (currentActiveSource) {
+      const errCount = (sourceErrorCountsRef.current.get(currentActiveSource) || 0) + 1;
+      sourceErrorCountsRef.current.set(currentActiveSource, errCount);
+
+      // 超清专线(1080P原画)因跨国 CDN 初始加载切片大(6~8MB)，若仅第 1 次报错，允许底层 Hls.js 自动重试恢复，不立即切源拉黑
+      if (currentActiveSource === 'ole_vip' && errCount < 2) {
+        console.warn('[Player] 超清专线仍在连接/缓冲中，暂不切换降级...');
+        return false;
+      }
+
       failedSourcesRef.current.add(currentActiveSource);
     }
 

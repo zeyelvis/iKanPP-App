@@ -124,21 +124,21 @@ export function useHlsPlayer({
                     abrBandWidthFactor: 0.85,
                     abrBandWidthUpFactor: 0.7,
 
-                    // Loading Settings: 增强切片重试和容错
-                    fragLoadingMaxRetry: 6,
-                    fragLoadingRetryDelay: 500,
-                    fragLoadingMaxRetryTimeout: 30000,
-                    manifestLoadingMaxRetry: 5,
-                    manifestLoadingRetryDelay: 600,
-                    manifestLoadingMaxRetryTimeout: 30000,
-                    levelLoadingMaxRetry: 5,
-                    levelLoadingRetryDelay: 600,
-                    levelLoadingMaxRetryTimeout: 30000,
+                    // Loading Settings: 增强切片重试和容错，支持超清原画高码率(4.9Mbps)跨国传输
+                    fragLoadingMaxRetry: 10,
+                    fragLoadingRetryDelay: 1000,
+                    fragLoadingMaxRetryTimeout: 60000,
+                    manifestLoadingMaxRetry: 8,
+                    manifestLoadingRetryDelay: 1000,
+                    manifestLoadingMaxRetryTimeout: 60000,
+                    levelLoadingMaxRetry: 8,
+                    levelLoadingRetryDelay: 1000,
+                    levelLoadingMaxRetryTimeout: 60000,
 
-                    // Timeouts
-                    fragLoadingTimeOut: 12000,
-                    manifestLoadingTimeOut: 8000,
-                    levelLoadingTimeOut: 8000,
+                    // Timeouts: 超清原画首个大切片(6~8MB)加载需宽裕时间，避免过早超时触发切源
+                    fragLoadingTimeOut: 30000,
+                    manifestLoadingTimeOut: 20000,
+                    levelLoadingTimeOut: 20000,
 
                     // Backbuffer
                     backBufferLength: isMobileClient ? 15 : 45,
@@ -210,7 +210,7 @@ export function useHlsPlayer({
                 // Error Handling
                 let networkErrorRetries = 0;
                 let mediaErrorRetries = 0;
-                const MAX_RETRIES = 3;
+                const MAX_RETRIES = 6;
 
                 hls.on(Hls.Events.ERROR, (event, data) => {
                     if (data.fatal) {
