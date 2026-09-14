@@ -105,7 +105,8 @@ export const PREBAKED_HOME_DATA: {
     "hero": [
         {
                 "id": "iyf_hero_movie_1",
-                "title": "特立独行",
+        "tmdbId": "1353926",
+        "title": "特立独行",
                 "rate": "6.4",
                 "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
@@ -308,7 +309,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "抓特务",
         "rate": "7.4",
         "cover": "https://img9.doubanio.com/view/photo/m_ratio_poster/public/p2933198755.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/mkdgT692DYjFKC0BI1HqLfHxI1t.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/8Jjl0CUOt2T6Wf2hYcii4pd0SDR.jpg",
         "description": "豆瓣一周电影口碑榜 TOP 3。高能谍战智斗，悬念丛生，层层反转扣人心弦。",
         "year": "2026",
         "types": [
@@ -565,10 +566,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "36808876",
+        "tmdbId": "1368337",
         "title": "奥德赛",
         "rate": "8.6",
         "cover": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2933569626.jpg",
-        "backdrop": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2933569626.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/RMXG8myu1aGlNUsRjtxzmpdMK0.jpg",
         "description": "2026 院线热播巨制。由克里斯托弗·诺兰执导，马特·达蒙 / 汤姆·霍兰德 / 安妮·海瑟薇联袂呈现。",
         "year": "2026",
         "types": [
@@ -591,10 +593,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "36882191",
+        "tmdbId": "1633056",
         "title": "八仙！",
         "rate": "8.2",
         "cover": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2934074566.jpg",
-        "backdrop": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2934074566.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/lMK3FnMfQ9O3DiC7hi4J2XBzNf.jpg",
         "description": "2026 院线热播巨制。由牟正洋执导，陈浩 / 李绍哲 / 立冬联袂呈现。",
         "year": "2026",
         "types": [
@@ -620,7 +623,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "蜘蛛侠：崭新之日",
         "rate": "7.8",
         "cover": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2934276912.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/qeQJx07rK2xm8SD2sJxFKhE7gs0.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/7iwUUcKURMT7aKfCwMy6YnGtchD.jpg",
         "description": "2026 院线热播巨制。由德斯汀·丹尼尔·克雷顿执导，汤姆·霍兰德 / 赞达亚 / 萨迪·辛克联袂呈现。",
         "year": "2026",
         "types": [
@@ -643,10 +646,11 @@ export const PREBAKED_HOME_DATA: {
       },
       {
         "id": "36452545",
+        "tmdbId": "1491920",
         "title": "功夫女足",
         "rate": "6.3",
         "cover": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933860063.jpg",
-        "backdrop": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933860063.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/J1UgJwRxDQS92kw75KgeVFZMHf.jpg",
         "description": "2026 院线热播巨制。由周星驰执导，张小斐 / 迪丽热巴 / 张艺兴联袂呈现。",
         "year": "2026",
         "types": [
@@ -672,7 +676,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "痴迷",
         "rate": "7.6",
         "cover": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2934049524.jpg",
-        "backdrop": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2934049524.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/rZfmzpixLKLR3Hg2u0WgC7XLFl8.jpg",
         "description": "2025 院线热播惊悚力作。由库里·巴克执导，迈克尔·约翰斯顿 / 印达·纳瓦雷特联袂呈现。",
         "year": "2025",
         "types": [
@@ -698,7 +702,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "后室",
         "rate": "6.6",
         "cover": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933327977.jpg",
-        "backdrop": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933327977.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/dqmMWNWfLnExDRpMtIMqI97GQFR.jpg",
         "description": "2026 院线热播科幻巨制。由凯恩·帕森斯执导，切瓦特·埃加福 / 雷娜特·赖因斯夫 / 芬恩·本尼特联袂呈现。",
         "year": "2026",
         "types": [
@@ -724,7 +728,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "玩具总动员5",
         "rate": "8.0",
         "cover": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933391462.jpg",
-        "backdrop": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933391462.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
         "description": "2026 迪士尼皮克斯动画巨制。由安德鲁·斯坦顿 麦肯纳·哈里斯执导，汤姆·汉克斯 / 蒂姆·艾伦 / 琼·库萨克联袂呈现。",
         "year": "2026",
         "types": [
@@ -750,7 +754,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "抓特务",
         "rate": "7.4",
         "cover": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2933198755.jpg",
-        "backdrop": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2933198755.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/8Jjl0CUOt2T6Wf2hYcii4pd0SDR.jpg",
         "description": "2026 院线热播巨制。由冯小刚执导，雷佳音 / 胡歌 / 啜妮联袂呈现。",
         "year": "2026",
         "types": [
@@ -776,7 +780,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "空枪",
         "rate": "7.2",
         "cover": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2934946788.jpg",
-        "backdrop": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2934946788.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/c1hrosrq2q56Afn7aZHJZqA1Dn6.jpg",
         "description": "2026 院线热播悬疑巨制。由韩延执导，朱一龙 / 檀健次 / 梁家辉联袂呈现。",
         "year": "2026",
         "types": [
@@ -802,7 +806,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "年会不能停！2",
         "rate": "6.6",
         "cover": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2934583425.jpg",
-        "backdrop": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2934583425.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/jXW4Gu7s96HB2KZf8Cb73SRGe9q.jpg",
         "description": "2026 院线爆笑喜剧。由董润年执导，张若昀 / 白客 / 高叶联袂呈现。",
         "year": "2026",
         "types": [
@@ -828,7 +832,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "特立独行",
         "rate": "6.7",
         "cover": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933638302.jpg",
-        "backdrop": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2933638302.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
         "description": "2026 院线热播巨制。由邢文雄执导，白敬亭 / 魏翔 / 张国强联袂呈现。",
         "year": "2026",
         "types": [
@@ -854,7 +858,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "小黄人与大怪兽",
         "rate": "6.6",
         "cover": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2933539994.jpg",
-        "backdrop": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2933539994.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/kkcwhgSFd81QDlXo8ytrpHPQjhy.jpg",
         "description": "2026 照明娱乐合家欢动画巨制。由皮埃尔·柯芬执导。",
         "year": "2026",
         "types": [
@@ -880,7 +884,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "四渡",
         "rate": "7.5",
         "cover": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2931635664.jpg",
-        "backdrop": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2931635664.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/8BVpdY93rqrbopHi9BwEkiIdkX7.jpg",
         "description": "2026 历史战争史诗巨制。由徐展雄执导，刘烨 / 王雷 / 于适联袂呈现。",
         "year": "2026",
         "types": [
@@ -906,7 +910,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "牛来",
         "rate": "6.0",
         "cover": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2934945600.jpg",
-        "backdrop": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2934945600.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/xVZBG9LgFfbUbP6RJDKCO3emUK7.jpg",
         "description": "2026 院线温情治愈力作。由信雨萌执导。",
         "year": "2026",
         "types": [
@@ -929,7 +933,7 @@ export const PREBAKED_HOME_DATA: {
         "title": "去你的岛",
         "rate": "7.6",
         "cover": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2934742318.jpg",
-        "backdrop": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2934742318.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/sUtCmlkUcup2aI10p5XxVELaFbg.jpg",
         "description": "2026 院线治愈系动画电影。由周浩然执导，杨茜云 / 张福正 / 孙婉瑜联袂献声。",
         "year": "2026",
         "types": [
