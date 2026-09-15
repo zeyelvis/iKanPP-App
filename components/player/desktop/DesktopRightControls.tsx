@@ -71,8 +71,8 @@ export function DesktopRightControls({
                     <button
                         onClick={onTogglePictureInPicture}
                         className="btn-icon shrink-0"
-                        aria-label="画中画"
-                        title="画中画"
+                        aria-label="画中画 (系统浮窗)"
+                        title="画中画 (系统浮窗)"
                     >
                         <Icons.PictureInPicture size={20} />
                     </button>

@@ -36,12 +36,22 @@ interface ViewportMetrics {
   height: number;
 }
 
-type LegacyInlineVideoProps = React.VideoHTMLAttributes<HTMLVideoElement> & {
+type MobileDomesticVideoProps = React.VideoHTMLAttributes<HTMLVideoElement> & {
   'webkit-playsinline'?: 'true';
+  'x5-video-player-type'?: 'h5-page';
+  'x5-video-player-fullscreen'?: 'true';
+  'x5-video-orientation'?: 'landscape|portrait' | 'landscape' | 'portrait';
+  'x5-playsinline'?: 'true';
+  't7-video-player-type'?: 'inline';
 };
 
-const LEGACY_INLINE_VIDEO_PROPS: LegacyInlineVideoProps = {
+const MOBILE_DOMESTIC_VIDEO_PROPS: MobileDomesticVideoProps = {
   'webkit-playsinline': 'true',
+  'x5-video-player-type': 'h5-page',
+  'x5-video-player-fullscreen': 'true',
+  'x5-video-orientation': 'landscape|portrait',
+  'x5-playsinline': 'true',
+  't7-video-player-type': 'inline',
 };
 
 function readViewportMetrics(): ViewportMetrics {
@@ -436,6 +446,27 @@ export function DesktopVideoPlayer({
     : 'kvideo-stage absolute inset-0';
   const isTopAlignedWebFullscreen = data.fullscreenMode === 'window' && isMobile && !isLandscape && !shouldForceLandscape;
 
+  // iPad / 移动端画中画操作指引 Toast 提示（提示支持四角磁吸停靠与双指缩放画幅）
+  const [showPiPGuideToast, setShowPiPGuideToast] = React.useState(false);
+  const pipGuideTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  React.useEffect(() => {
+    const handlePiPActive = () => {
+      if (pipGuideTimerRef.current) clearTimeout(pipGuideTimerRef.current);
+      setShowPiPGuideToast(true);
+      pipGuideTimerRef.current = setTimeout(() => {
+        setShowPiPGuideToast(false);
+        pipGuideTimerRef.current = null;
+      }, 3500);
+    };
+
+    window.addEventListener('kvideo-pip-active', handlePiPActive);
+    return () => {
+      window.removeEventListener('kvideo-pip-active', handlePiPActive);
+      if (pipGuideTimerRef.current) clearTimeout(pipGuideTimerRef.current);
+    };
+  }, []);
+
   // Mobile long-press fast forward state
   const [isLongPressFastForward, setIsLongPressFastForward] = React.useState(false);
   const previousPlaybackRateRef = React.useRef<number>(1.0);
@@ -494,6 +525,8 @@ export function DesktopVideoPlayer({
             preload="auto"
             x-webkit-airplay="allow"
             playsInline={true} // Crucial for iOS custom fullscreen to work without native player taking over
+            controlsList="nodownload nofullscreen noplaybackrate"
+            disablePictureInPicture={false}
             onPlay={() => {
               clearDebouncedLoading();
               handlePlay();
@@ -527,8 +560,20 @@ export function DesktopVideoPlayer({
             onTouchStart={isMobile ? handleTouchStart : undefined}
             onTouchEnd={isMobile ? handleTouchEnd : undefined}
             onTouchCancel={isMobile ? handleTouchCancel : undefined}
-            {...LEGACY_INLINE_VIDEO_PROPS} // Legacy iOS support
+            {...MOBILE_DOMESTIC_VIDEO_PROPS} // 微信X5同层、夸克/UC/移动端与iOS完整兼容属性
           />
+
+          {/* iPad / 移动端画中画操作指引 Toast（消除“无法随意移动”误解） */}
+          {showPiPGuideToast && (
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-scale-in max-w-[90vw]">
+              <div className="bg-black/90 backdrop-blur-xl border border-white/25 px-4 py-2 rounded-full flex items-center gap-2 shadow-[0_12px_36px_rgba(0,0,0,0.85)]">
+                <span className="text-amber-400 text-sm">💡</span>
+                <span className="text-xs font-bold text-white tracking-wide">
+                  画中画已开启：支持在 iPad 四角磁吸停靠与双指缩放画幅
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* Long Press 2X Fast Forward Capsule Badge */}
           {isLongPressFastForward && (

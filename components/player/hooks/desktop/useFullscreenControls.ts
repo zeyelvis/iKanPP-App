@@ -51,11 +51,22 @@ type FullscreenCapableElement = HTMLElement & {
 
 type PiPCapableVideoElement = HTMLVideoElement & {
     webkitEnterFullscreen?: () => void;
+    webkitExitFullscreen?: () => void;
+    webkitDisplayingFullscreen?: boolean;
+    webkitSupportsFullscreen?: boolean;
     webkitSupportsPresentationMode?: (mode: 'picture-in-picture') => boolean;
     webkitPresentationMode?: 'inline' | 'picture-in-picture' | string;
     webkitSetPresentationMode?: (mode: 'inline' | 'picture-in-picture') => void;
     webkitShowPlaybackTargetPicker?: () => void;
 };
+
+function isAppleTouchDevice(): boolean {
+    if (typeof navigator === 'undefined') return false;
+    return (
+        /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+    );
+}
 
 function getFullscreenDocument(): FullscreenCapableDocument {
     return document as FullscreenCapableDocument;
@@ -160,6 +171,7 @@ export function useFullscreenControls({
 
     const exitNativeFullscreen = useCallback(async () => {
         const fullscreenDocument = getFullscreenDocument();
+        const video = videoRef.current as PiPCapableVideoElement | null;
 
         try {
             if (fullscreenDocument.exitFullscreen) {
@@ -171,6 +183,9 @@ export function useFullscreenControls({
             } else if (fullscreenDocument.msExitFullscreen) {
                 await fullscreenDocument.msExitFullscreen();
             }
+            if (video && typeof video.webkitExitFullscreen === 'function') {
+                video.webkitExitFullscreen();
+            }
         } catch (error) {
             console.error('Failed to exit fullscreen:', error);
         } finally {
@@ -178,7 +193,7 @@ export function useFullscreenControls({
             setIsFullscreen(false);
             setFullscreenMode('none');
         }
-    }, [setFullscreenMode, setIsFullscreen, unlockOrientation]);
+    }, [setFullscreenMode, setIsFullscreen, unlockOrientation, videoRef]);
 
     const exitWindowFullscreen = useCallback(() => {
         unlockOrientation();
@@ -201,8 +216,25 @@ export function useFullscreenControls({
         const video = videoRef.current as PiPCapableVideoElement | null;
         const docEl = (typeof document !== 'undefined' ? document.documentElement : null) as FullscreenCapableElement | null;
 
-        // 优先使用播放器容器，若失败则使用整页顶层节点
-        const targets: (FullscreenCapableElement | PiPCapableVideoElement | null)[] = [container, docEl, video];
+        const isApple = isAppleTouchDevice();
+
+        // 阶段一：在 iPad / iPhone 设备上，优先尝试原生视频全屏（同步调用，确保 WebKit 临时手势令牌不失效）
+        if (isApple && video && typeof video.webkitEnterFullscreen === 'function') {
+            try {
+                video.webkitEnterFullscreen();
+                setFullscreenMode('native');
+                setIsFullscreen(true);
+                await lockLandscape();
+                return;
+            } catch (appleErr) {
+                console.warn('video.webkitEnterFullscreen failed on iOS/iPad device, trying container:', appleErr);
+            }
+        }
+
+        // 阶段二：尝试 DOM 元素全屏 (桌面端及支持 Element 全屏的标准浏览器)
+        const targets: (FullscreenCapableElement | PiPCapableVideoElement | null)[] = isApple
+            ? [container, docEl]
+            : [container, docEl, video];
 
         for (const target of targets) {
             if (!target) continue;
@@ -241,8 +273,15 @@ export function useFullscreenControls({
                 console.warn('Attempt to enter native fullscreen failed on target, trying next:', err);
             }
         }
+
+        // 阶段三：终极自愈降级 (Fail-safe Fallback)
+        // 当系统或浏览器策略（如 iPad 夸克、UC、微信内置 WebView）拒绝任何原生全屏调用时，
+        // 100% 毫秒级自愈降级为网页全屏 (Window Fullscreen)，保证点击全屏必成功！
+        console.info('Native fullscreen rejected by environment, seamlessly falling back to window fullscreen.');
+        await enterWindowFullscreen();
     }, [
         containerRef,
+        enterWindowFullscreen,
         lockLandscape,
         setFullscreenMode,
         setIsFullscreen,
@@ -319,11 +358,13 @@ export function useFullscreenControls({
 
     const toggleNativeFullscreen = useCallback(async () => {
         const fullscreenDocument = getFullscreenDocument();
+        const video = videoRef.current as PiPCapableVideoElement | null;
         const isCurrentlyNative = Boolean(
             fullscreenDocument.fullscreenElement ||
             fullscreenDocument.webkitFullscreenElement ||
             fullscreenDocument.mozFullScreenElement ||
-            fullscreenDocument.msFullscreenElement
+            fullscreenDocument.msFullscreenElement ||
+            video?.webkitDisplayingFullscreen
         );
 
         if (isCurrentlyNative || fullscreenMode === 'native') {
@@ -337,18 +378,24 @@ export function useFullscreenControls({
         }
 
         await enterNativeFullscreen();
-    }, [enterNativeFullscreen, exitNativeFullscreen, exitWindowFullscreen, fullscreenMode]);
+    }, [enterNativeFullscreen, exitNativeFullscreen, exitWindowFullscreen, fullscreenMode, videoRef]);
 
     const toggleFullscreen = useCallback(async () => {
-        // 主全屏方法统一调用设备物理真全屏
-        await toggleNativeFullscreen();
-    }, [toggleNativeFullscreen]);
+        if (fullscreenType === 'window') {
+            await toggleWindowFullscreen();
+        } else {
+            await toggleNativeFullscreen();
+        }
+    }, [fullscreenType, toggleNativeFullscreen, toggleWindowFullscreen]);
 
     useEffect(() => {
+        const video = videoRef.current as PiPCapableVideoElement | null;
+
         const handleFullscreenChange = () => {
             const nativeFullscreenElement = getNativeFullscreenElement();
+            const isWebkitVideoFullscreen = Boolean(video?.webkitDisplayingFullscreen);
 
-            if (nativeFullscreenElement) {
+            if (nativeFullscreenElement || isWebkitVideoFullscreen) {
                 setIsFullscreen(true);
                 setFullscreenMode('native');
                 lockLandscape().catch(() => { });
@@ -362,18 +409,55 @@ export function useFullscreenControls({
             }
         };
 
+        const handleVideoBeginFullscreen = () => {
+            setIsFullscreen(true);
+            setFullscreenMode('native');
+            lockLandscape().catch(() => { });
+        };
+
+        const handleVideoEndFullscreen = () => {
+            unlockOrientation();
+            setIsFullscreen(false);
+            setFullscreenMode('none');
+        };
+
+        const handleEnterPiP = () => {
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('kvideo-pip-active'));
+            }
+        };
+
+        const handlePresentationModeChange = () => {
+            if (video?.webkitPresentationMode === 'picture-in-picture') {
+                handleEnterPiP();
+            }
+        };
+
         document.addEventListener('fullscreenchange', handleFullscreenChange);
         document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
         document.addEventListener('mozfullscreenchange', handleFullscreenChange);
         document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+        if (video) {
+            video.addEventListener('webkitbeginfullscreen', handleVideoBeginFullscreen);
+            video.addEventListener('webkitendfullscreen', handleVideoEndFullscreen);
+            video.addEventListener('enterpictureinpicture', handleEnterPiP);
+            video.addEventListener('webkitpresentationmodechanged', handlePresentationModeChange);
+        }
 
         return () => {
             document.removeEventListener('fullscreenchange', handleFullscreenChange);
             document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
             document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
             document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+            if (video) {
+                video.removeEventListener('webkitbeginfullscreen', handleVideoBeginFullscreen);
+                video.removeEventListener('webkitendfullscreen', handleVideoEndFullscreen);
+                video.removeEventListener('enterpictureinpicture', handleEnterPiP);
+                video.removeEventListener('webkitpresentationmodechanged', handlePresentationModeChange);
+            }
         };
-    }, [fullscreenMode, getNativeFullscreenElement, lockLandscape, setFullscreenMode, setIsFullscreen, unlockOrientation]);
+    }, [fullscreenMode, getNativeFullscreenElement, lockLandscape, setFullscreenMode, setIsFullscreen, unlockOrientation, videoRef]);
 
     useEffect(() => {
         if (fullscreenMode !== 'window') return;
@@ -434,16 +518,28 @@ export function useFullscreenControls({
                 video.webkitSetPresentationMode?.('inline');
             } else if (video.requestPictureInPicture && fullscreenDocument.pictureInPictureEnabled) {
                 await video.requestPictureInPicture();
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('kvideo-pip-active'));
+                }
             } else if (await requestAndroidPictureInPicture()) {
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('kvideo-pip-active'));
+                }
                 return;
             } else if (
                 video.webkitSupportsPresentationMode?.('picture-in-picture') &&
                 video.webkitSetPresentationMode
             ) {
                 video.webkitSetPresentationMode('picture-in-picture');
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('kvideo-pip-active'));
+                }
             }
         } catch (error) {
             if (await requestAndroidPictureInPicture()) {
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('kvideo-pip-active'));
+                }
                 return;
             }
             console.error('Failed to toggle Picture-in-Picture:', error);
