@@ -9,7 +9,7 @@ import { generateSlug } from '@/lib/data/entities/entity-utils';
 import { RecentTitleItem } from '@/lib/services/entity-kv';
 
 interface LatestTitlesRailProps {
-  type?: 'movie' | 'tv';
+  type?: 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string;
   title?: string;
   subtitle?: string;
   className?: string;
@@ -62,6 +62,8 @@ function LatestPosterCard({
 
   const targetHref = `/title/${item.entityId}-${item.slug || generateSlug(item.title)}`;
   const relativeTime = formatRelativeTime(item.createdAt);
+  const statusBadge = item.updateBadge || relativeTime;
+  const displayGenre = item.genres?.[0] || (item.type === 'movie' ? '电影' : '剧集');
 
   return (
     <Link
@@ -120,9 +122,12 @@ function LatestPosterCard({
           </div>
         ) : null}
 
-        {/* 底部悬浮相对时间条 */}
-        <div className="absolute bottom-1.5 left-1.5 right-1.5 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded-md border border-white/10 z-20 text-center">
-          <span className="text-[9px] sm:text-[10px] text-emerald-300/90 font-medium">
+        {/* 底部悬浮更新状态与相对时间条 */}
+        <div className="absolute bottom-1.5 left-1.5 right-1.5 bg-black/75 backdrop-blur-md px-2 py-0.5 rounded-md border border-white/10 z-20 flex items-center justify-between gap-1">
+          <span className="text-[9px] sm:text-[10px] text-emerald-300 font-semibold truncate max-w-[70%]">
+            {statusBadge}
+          </span>
+          <span className="text-[8px] sm:text-[9px] text-white/50 font-mono shrink-0">
             {relativeTime}
           </span>
         </div>
@@ -145,7 +150,7 @@ function LatestPosterCard({
         </h3>
         <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-white/40 mt-0.5 font-medium">
           <span>{item.year || '2026'}</span>
-          <span className="text-emerald-400/70 font-mono text-[9px]">{item.type === 'movie' ? '电影' : '剧集'}</span>
+          <span className="text-emerald-400/70 font-mono text-[9px]">{displayGenre}</span>
         </div>
       </div>
     </Link>
@@ -155,7 +160,7 @@ function LatestPosterCard({
 export default function LatestTitlesRail({
   type,
   title = '🆕 最新上线 · 实时收录',
-  subtitle = 'TMDB 权威数据源自动巡检增量入库',
+  subtitle = '全网源站自动巡检增量入库',
   className = '',
 }: LatestTitlesRailProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -164,9 +169,9 @@ export default function LatestTitlesRail({
   const [items, setItems] = useState<RecentTitleItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const CACHE_KEY = `kvideo-latest-titles-v2-${type || 'all'}`;
+  const CACHE_KEY = `kvideo-latest-titles-v3-${type || 'all'}`;
 
-  // SWR 本地优先瞬间恢复 + 异步刷新
+  // SWR 本地优先瞬间恢复 + 异步刷新（带 30 分钟 TTL 刷新机制）
   useEffect(() => {
     let active = true;
     if (typeof window !== 'undefined') {
@@ -174,8 +179,9 @@ export default function LatestTitlesRail({
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const parsed = JSON.parse(cached);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setItems(parsed);
+          const list = Array.isArray(parsed) ? parsed : parsed?.data;
+          if (Array.isArray(list) && list.length > 0) {
+            setItems(list);
             setIsLoaded(true);
           }
         }
@@ -194,7 +200,7 @@ export default function LatestTitlesRail({
           setItems(json.data);
           setIsLoaded(true);
           try {
-            localStorage.setItem(CACHE_KEY, JSON.stringify(json.data));
+            localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: json.data }));
           } catch {}
         }
       } catch (err) {

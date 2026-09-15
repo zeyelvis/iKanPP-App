@@ -500,9 +500,9 @@ function isSameList(a: any[], b: any[]): boolean {
         {/* 顶部自定义专属推荐与热度榜等 */}
         {topCustomRails}
 
-        {/* 🆕 专区最新增量入库横轨（TMDB 自动化飞轮定时巡检） */}
+        {/* 🆕 专区最新增量入库横轨（全网真实源站自动化定时巡检） */}
         <LatestTitlesRail
-          type={doubanType}
+          type={activeNav || doubanType}
           title={`🆕 ${categoryTitle} · 最新上线`}
           subtitle="全自动增量收录 · 实时更新"
         />

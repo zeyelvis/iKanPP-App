@@ -4,6 +4,7 @@
  */
 
 import { DOCUMENTARY_DATASET } from './documentary-data';
+import { PREBAKED_LATEST_TITLES } from './latest-titles-prebaked';
 
 export interface PrebakedCategoryItem {
   id: string;
@@ -576,7 +577,25 @@ export function getPrebakedCategoryShelves(
   }
 
   // 将预烘焙数据分配到前几个货架中，保证首屏 100% 满屏渲染
+  const latestList = PREBAKED_LATEST_TITLES[channelKey] || PREBAKED_LATEST_TITLES.all || [];
+  const convertedLatest = latestList.map(item => ({
+    id: item.entityId,
+    title: item.title,
+    rate: item.rate,
+    cover: item.cover,
+    year: item.year,
+    types: item.genres,
+    is_new: true,
+    remarks: item.updateBadge,
+  }));
+
   shelves.forEach((shelf, idx) => {
+    // 1. 若为「最新上线」核心货架，优先注入真实最新增量新片
+    if ((shelf.tag === '最新' || shelf.tag.includes('最新')) && convertedLatest.length > 0) {
+      result[shelf.tag] = convertedLatest;
+      return;
+    }
+
     if (shelf.tag === 'ai') {
       const aiItems = list.filter((it) => it.types?.some((t) => t.includes('AI') || t.includes('漫剧')));
       if (aiItems.length > 0) {

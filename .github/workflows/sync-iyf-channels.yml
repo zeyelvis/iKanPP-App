@@ -38,11 +38,13 @@ jobs:
         with:
           node-version: 22
 
-      - name: Execute IYF Channels Sync
+      - name: Execute IYF Channels & Latest Titles Sync
         run: |
           TARGET="${{ github.event.inputs.channel || 'all_channels' }}"
-          echo "🚀 正在启动爱壹帆专区同步，目标板块: $TARGET"
+          echo "🚀 正在启动爱壹帆专区轮播与速报同步，目标板块: $TARGET"
           node scripts/sync-iyf-hero.mjs --target="$TARGET"
+          echo "🚀 正在启动全站 6 大专区「最新上线」真实增量流巡检与预烘焙..."
+          node scripts/sync-latest-titles.mjs
 
       - name: Commit, push, and trigger deploy if data updated
         env:
@@ -51,11 +53,11 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-          if [[ -n $(git status --porcelain lib/data/home-prebaked.ts lib/data/home-prebaked-extra.ts) ]]; then
+          if [[ -n $(git status --porcelain lib/data/home-prebaked.ts lib/data/home-prebaked-extra.ts lib/data/latest-titles-prebaked.ts) ]]; then
             TARGET="${{ github.event.inputs.channel || 'all_channels' }}"
-            echo "✅ 检测到预烘焙影视大剧与速报数据更新，正在提交..."
-            git add lib/data/home-prebaked.ts lib/data/home-prebaked-extra.ts
-            git commit -m "chore(sync): 自动同步爱壹帆专区板块 [$TARGET] 轮播巨幕与速报"
+            echo "✅ 检测到预烘焙影视大剧、速报与最新上线数据更新，正在提交..."
+            git add lib/data/home-prebaked.ts lib/data/home-prebaked-extra.ts lib/data/latest-titles-prebaked.ts
+            git commit -m "chore(sync): 自动同步全站专区 [$TARGET] 轮播、速报与最新上线影视"
             git push
             echo "🚀 正在触发 Cloudflare Pages 编译部署工作流..."
             gh workflow run deploy.yml --ref main

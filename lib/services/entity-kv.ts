@@ -1,6 +1,7 @@
 import { TitleEntity } from '@/lib/types/entity';
 import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie, hasTitleOverlap } from '@/lib/data/entities/entity-utils';
 import { PREBAKED_HOME_DATA, PrebakedSubject } from '@/lib/data/home-prebaked';
+import { PREBAKED_LATEST_TITLES, LatestPrebakedItem } from '@/lib/data/latest-titles-prebaked';
 import { POPULAR_DIRECTORS, POPULAR_ACTORS } from '@/lib/data/popular-people';
 import { PEOPLE_PREBAKED_ENTITIES } from '@/lib/data/people-prebaked';
 
@@ -9,14 +10,17 @@ import { PEOPLE_PREBAKED_ENTITIES } from '@/lib/data/people-prebaked';
  */
 export interface RecentTitleItem {
   entityId: string;
+  tmdbId?: string;
   title: string;
   slug: string;
   cover: string;
   backdrop?: string;
   rate: string;
   year: string;
-  type: 'movie' | 'tv' | 'anime' | string;
+  type: 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string;
+  channelKey?: string;
   genres?: string[];
+  updateBadge?: string;
   createdAt: string;
 }
 
@@ -223,10 +227,13 @@ function seedPrebakedData() {
   memoryStore.set('index:all', JSON.stringify(allIds));
   memoryStore.set('counter:next_id', String(Math.max(seq, 2000)));
 
-  // 初始化最近入库有序索引（冷启动与本地测试兜底）
-  memoryStore.set('recent:all', JSON.stringify(recentAllList));
-  memoryStore.set('recent:movie', JSON.stringify(recentMovieList));
-  memoryStore.set('recent:tv', JSON.stringify(recentTvList));
+  // 初始化最近入库有序索引（使用真实定时巡检烘焙数据集）
+  const allChannels = ['all', 'movie', 'tv', 'anime', 'variety', 'documentary'];
+  for (const ch of allChannels) {
+    if (PREBAKED_LATEST_TITLES[ch] && PREBAKED_LATEST_TITLES[ch].length > 0) {
+      memoryStore.set(`recent:${ch}`, JSON.stringify(PREBAKED_LATEST_TITLES[ch]));
+    }
+  }
 }
 
 // 获取 Cloudflare KV 实例（如果在 Cloudflare Pages / Worker 环境）
@@ -482,12 +489,15 @@ export async function saveEntity(entity: TitleEntity): Promise<void> {
 /**
  * 获取最新入库的影视条目（用于首页及频道专区「最新上线」货架、RSS Feed 等）
  * @param limit 获取数量限制（默认 20，上限 60）
- * @param type 可选 'movie' | 'tv' 筛选
+ * @param type 可选 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | 'all' 筛选
  */
-export async function listRecentEntities(limit = 20, type?: 'movie' | 'tv' | string): Promise<RecentTitleItem[]> {
-  const cleanType = (type === 'movie' || type === 'tv') ? type : undefined;
-  const targetKey = cleanType ? `recent:${cleanType}` : 'recent:all';
+export async function listRecentEntities(limit = 20, type?: string): Promise<RecentTitleItem[]> {
+  const normalizedChannel = (type || 'all').toLowerCase().trim();
+  const validChannels = ['movie', 'tv', 'anime', 'variety', 'documentary'];
+  const channelKey = validChannels.includes(normalizedChannel) ? normalizedChannel : 'all';
+  const targetKey = channelKey === 'all' ? 'recent:all' : `recent:${channelKey}`;
 
+  // 1. 尝试从 Cloudflare KV 获取增量缓存
   const raw = await kvGet(targetKey);
   if (raw) {
     try {
@@ -500,7 +510,13 @@ export async function listRecentEntities(limit = 20, type?: 'movie' | 'tv' | str
     }
   }
 
-  // 兜底：若 KV 暂无或处于冷启动，从预烘焙核心影片中提取并赋予自然递减时间戳，确保永不为空
+  // 2. 真实预烘焙直出：全专区 0ms 秒开且 100% 具备真实的 24h 最新上线影片、连载集数与 TMDB 高清海报
+  const prebakedList = PREBAKED_LATEST_TITLES[channelKey] || PREBAKED_LATEST_TITLES.all || [];
+  if (prebakedList.length > 0) {
+    return (prebakedList as RecentTitleItem[]).slice(0, limit);
+  }
+
+  // 3. 终极兜底：预烘焙核心影片
   seedPrebakedData();
   const fallbackList: RecentTitleItem[] = [];
   const now = Date.now();
@@ -510,7 +526,7 @@ export async function listRecentEntities(limit = 20, type?: 'movie' | 'tv' | str
     if (k.startsWith('entity:')) {
       try {
         const ent = JSON.parse(v) as TitleEntity;
-        if (cleanType && ent.type !== cleanType) continue;
+        if (channelKey !== 'all' && ent.type !== channelKey) continue;
         const norm = normalizeTitle(ent.title);
         if (seen.has(norm)) continue;
         seen.add(norm);
