@@ -90,15 +90,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "不成功穿越指南",
-                "updateBadge": ""
-        },
-        {
                 "title": "怒之杀(听译)",
                 "updateBadge": ""
         },
         {
-                "title": "寒战1994",
+                "title": "不成功穿越指南",
+                "updateBadge": ""
+        },
+        {
+                "title": "抓特务",
                 "updateBadge": ""
         }
       ],
@@ -1825,7 +1825,7 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "早春晴朗",
@@ -1833,7 +1833,7 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "交锋",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "冬城猎凶",
@@ -1844,19 +1844,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "生逢其时",
-                "updateBadge": "1"
-        },
-        {
-                "title": "死有对证",
-                "updateBadge": "1"
-        },
-        {
                 "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
-                "title": "云雀叫天录",
+                "title": "死有对证",
+                "updateBadge": ""
+        },
+        {
+                "title": "生逢其时",
                 "updateBadge": ""
         },
         {
@@ -1864,11 +1860,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "不是你的恋爱",
+                "title": "杀手妈咪",
                 "updateBadge": ""
         },
         {
-                "title": "九门",
+                "title": "云雀叫天录",
+                "updateBadge": "2"
+        },
+        {
+                "title": "百花杀",
                 "updateBadge": ""
         }
       ],
@@ -1978,7 +1978,7 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_tv_7",
                 "title": "早春晴朗",
-                "rate": "8.3",
+                "rate": "8.2",
                 "cover": "https://image.tmdb.org/t/p/w500/nLWFbYv1r99Yy7dWvjoxMRegoe0.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/oUFUvEMCBP80e4eYsfVfxC8n7ih.jpg",
                 "description": "这是一段十年交锋，敬于才华，合于性格、久于平等的禁忌之恋。北漂伊始的尚之桃与极具天赋的“鬼才”栾念狭路相逢。热烈勇敢的尚之桃亦步亦趋地蜕变成长，撬碎了栾念世故坚硬的心防，互相吸引的二人在都市丛林中极限拉扯、分分合合。爱情，就是用光所有勇气，再无遗憾。爱，则是互相修复，共同成长。但情和爱之间，她选择生存。当她独当一面，他收敛锋芒，势均力敌的他们将会为彼此写下了新的结局……",

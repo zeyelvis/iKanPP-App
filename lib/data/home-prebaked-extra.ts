@@ -9,15 +9,23 @@ import type { PrebakedSubject, PrebakedHomeCategory } from './home-prebaked';
 export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
+        "title": "一斩苍穹",
+        "updateBadge": "1"
+    },
+    {
         "title": "仙逆",
         "updateBadge": ""
     },
     {
         "title": "吞噬星空",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "凡人修仙传",
+        "updateBadge": ""
+    },
+    {
+        "title": "海贼王",
         "updateBadge": ""
     },
     {
@@ -29,7 +37,15 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "海贼王",
+        "title": "万界独尊",
+        "updateBadge": "1"
+    },
+    {
+        "title": "炼气十万年",
+        "updateBadge": "1"
+    },
+    {
+        "title": "沧元图",
         "updateBadge": ""
     },
     {
@@ -37,23 +53,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "沧元图",
-        "updateBadge": ""
-    },
-    {
         "title": "遮天",
-        "updateBadge": ""
-    },
-    {
-        "title": "无职转生到了异世界就拿出真本事第3季",
-        "updateBadge": ""
-    },
-    {
-        "title": "择日飞升",
-        "updateBadge": ""
-    },
-    {
-        "title": "一斩苍穹",
         "updateBadge": ""
     }
   ],
@@ -636,14 +636,14 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "花儿与少年第8季",
-        "updateBadge": ""
-    },
-    {
-        "title": "披荆斩棘2026",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
         "title": "一饭封神第2季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "披荆斩棘2026",
         "updateBadge": ""
     },
     {
@@ -655,7 +655,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "喜剧之王单口季第3季",
+        "title": "地球超新鲜第2季",
         "updateBadge": ""
     },
     {
@@ -704,13 +704,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609041706270661205.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111843274326403.jpg",
-        "description": "《花儿与少年第8季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260914(陪看)。",
+        "description": "《花儿与少年第8季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260915(送机篇)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260914(陪看)",
+        "episodes_info": "更新至20260915(送机篇)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -727,7 +727,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260914(风暴进行时)",
+        "episodes_info": "更新至20260915(第4期下)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -772,13 +772,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607231303450351514.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202607271339373917253.jpg",
-        "description": "《一饭封神第2季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260914(封神陪看第6期)。",
+        "description": "《一饭封神第2季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260915(封神陪看第7期)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260914(封神陪看第6期)",
+        "episodes_info": "更新至20260915(封神陪看第7期)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1763,7 +1763,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "兰香如故",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "早春晴朗",
@@ -1771,7 +1771,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "交锋",
-        "updateBadge": "2"
+        "updateBadge": ""
+    },
+    {
+        "title": "心动的信号第9季",
+        "updateBadge": ""
     },
     {
         "title": "冬城猎凶",
@@ -1782,31 +1786,27 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "生逢其时",
-        "updateBadge": "1"
-    },
-    {
-        "title": "死有对证",
-        "updateBadge": "1"
-    },
-    {
-        "title": "心动的信号第9季",
-        "updateBadge": ""
-    },
-    {
         "title": "飞到我心上",
         "updateBadge": ""
     },
     {
-        "title": "云雀叫天录",
+        "title": "死有对证",
+        "updateBadge": ""
+    },
+    {
+        "title": "生逢其时",
+        "updateBadge": ""
+    },
+    {
+        "title": "一斩苍穹",
+        "updateBadge": "1"
+    },
+    {
+        "title": "花开锦绣",
         "updateBadge": ""
     },
     {
         "title": "仙逆",
-        "updateBadge": ""
-    },
-    {
-        "title": "花开锦绣",
         "updateBadge": ""
     }
   ],
@@ -2387,23 +2387,23 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第2季",
-        "updateBadge": ""
-    },
-    {
-        "title": "中国通史",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第3季",
         "updateBadge": ""
     },
     {
-        "title": "闪闪的儿科医生第2季",
+        "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
     {
-        "title": "蚂蚁星球",
+        "title": "守护解放西第6季",
+        "updateBadge": ""
+    },
+    {
+        "title": "扯淡地球史",
+        "updateBadge": ""
+    },
+    {
+        "title": "若泽·穆里尼奥：特立之道",
         "updateBadge": ""
     }
   ],
