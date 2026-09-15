@@ -67,7 +67,7 @@ export function SearchBox({ onSearch, onClear, initialQuery = '', placeholder = 
     });
 
     return (
-        <form onSubmit={handleSubmit} className="relative group" style={{ isolation: 'isolate' }}>
+        <form onSubmit={handleSubmit} className="relative group w-full max-w-[220px] md:max-w-[260px] lg:max-w-[300px] xl:max-w-[380px] 2xl:max-w-[440px]" style={{ isolation: 'isolate' }}>
             <Input
                 ref={inputRef}
                 type="text"
@@ -77,7 +77,7 @@ export function SearchBox({ onSearch, onClear, initialQuery = '', placeholder = 
                 onBlur={handleInputBlur}
                 onKeyDown={handleKeyDown}
                 placeholder={placeholder}
-                className="text-sm sm:text-lg pr-20 sm:pr-36 md:pr-44 truncate h-9 sm:h-auto"
+                className="text-xs sm:text-sm xl:text-base pr-16 sm:pr-24 md:pr-32 xl:pr-40 truncate h-9 sm:h-10 xl:h-11"
                 aria-label="搜索视频内容"
                 aria-expanded={isDropdownOpen}
                 aria-controls="search-history-dropdown"

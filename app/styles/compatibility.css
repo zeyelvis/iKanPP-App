@@ -220,3 +220,17 @@ a,
 a, button, [role="button"], input, select, textarea {
     touch-action: manipulation;
 }
+
+/* ====================================================
+   14. iPad / iOS WebKit 文本与字形防挤压变形规范
+   - 阻止 Safari / 夸克在屏幕尺寸变化或横竖屏时强行放大或挤压文字 (-webkit-text-size-adjust: 100%)
+   - 启用高保真文字渲染与平滑边缘
+   ==================================================== */
+html, body {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+

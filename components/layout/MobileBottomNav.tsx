@@ -59,8 +59,8 @@ export function MobileBottomNav() {
       {/* 顶部精密流光高光反光边 (Specular Glow Highlight) */}
       <div className="absolute inset-x-0 top-0 h-[1px] bg-linear-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
 
-      {/* 6 等分标准黄金对称网格 */}
-      <div className="grid grid-cols-6 gap-0.5 sm:gap-1 items-center max-w-md mx-auto">
+      {/* 6 等分标准黄金对称网格 (自适应移动端与 iPad 竖屏) */}
+      <div className="grid grid-cols-6 gap-0.5 sm:gap-1.5 items-center max-w-md sm:max-w-xl mx-auto">
         {NAV_ITEMS.map((item) => {
           const isPremiumTab = item.id === 'premium';
           const isActive =
@@ -72,7 +72,7 @@ export function MobileBottomNav() {
           const IconComponent = item.icon;
 
           // 基础视觉类名
-          const tabClassName = `group relative flex flex-col items-center justify-center py-1.5 px-0.5 rounded-2xl transition-all duration-300 cursor-pointer select-none active:scale-90 ${
+          const tabClassName = `group relative flex flex-col items-center justify-center py-1.5 px-0.5 rounded-2xl transition-all duration-300 cursor-pointer select-none active:scale-90 shrink-0 ${
             isActive
               ? 'bg-linear-to-b from-red-600/18 via-red-600/8 to-transparent border border-red-500/25 shadow-[0_0_20px_rgba(229,9,20,0.22),inset_0_1px_1px_rgba(255,255,255,0.15)]'
               : isPremiumTab
@@ -83,10 +83,10 @@ export function MobileBottomNav() {
           const tabContent = (
             <>
               {/* 图标与微光霓虹 */}
-              <div className="relative flex items-center justify-center">
+              <div className="relative flex items-center justify-center shrink-0">
                 <IconComponent
                   size={19}
-                  className={`transition-all duration-300 ${
+                  className={`transition-all duration-300 shrink-0 ${
                     isActive
                       ? 'text-red-500 scale-105 stroke-[2.2] drop-shadow-[0_2px_10px_rgba(239,68,68,0.55)]'
                       : isPremiumTab
@@ -103,7 +103,7 @@ export function MobileBottomNav() {
 
               {/* 标题文字 */}
               <span
-                className={`text-[10px] tracking-tight mt-1 transition-all duration-300 ${
+                className={`text-[10px] sm:text-xs tracking-tight mt-1 transition-all duration-300 shrink-0 whitespace-nowrap ${
                   isActive
                     ? 'text-white font-extrabold drop-shadow-sm'
                     : isPremiumTab

@@ -436,11 +436,11 @@ export function HeroSlideshow({
         <div className="fluid-container relative">
           <div className="iyf-hero-bar pointer-events-auto relative">
             
-            {/* 1. 左栏：大气沉浸的大片标题与流媒体 CTA 播放大按钮（全量统一巨幕主标题大字号，单排完整呈现） */}
-            <div className="shrink-0 w-full max-w-[280px] sm:max-w-[340px] lg:w-[380px] xl:w-[480px] 2xl:w-[540px] flex flex-col items-start justify-end">
+            {/* 1. 左栏：大气沉浸的大片标题与流媒体 CTA 播放大按钮（iPad/桌面自适应弹性宽度，单排完整呈现） */}
+            <div className="shrink-0 w-full max-w-[280px] sm:max-w-[340px] lg:w-[260px] xl:w-[380px] 2xl:w-[480px] flex flex-col items-start justify-end">
               {/* 上方：固定高度弹性底对齐，片名单排完整呈现，统一至尊主标题大字号，容器物理尺寸恒定保证中栏零位移 */}
               <div className="mb-3 sm:mb-4 w-full h-[76px] sm:h-[88px] lg:h-[96px] flex flex-col justify-end overflow-visible">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[34px] font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1 leading-tight whitespace-nowrap">
+                <h2 className="text-2xl sm:text-3xl lg:text-[26px] xl:text-3xl 2xl:text-4xl font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mb-1 leading-tight whitespace-nowrap">
                   {active.title}
                 </h2>
                 <div className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] h-6">
@@ -451,18 +451,18 @@ export function HeroSlideshow({
                 </div>
               </div>
 
-                  {/* 下方：放大后的流媒体播放大按钮（高度约 50-52px，位置与底线恒定） */}
-                  <Link
-                    href={`/title/${generateSlug(active.title)}`}
-                    prefetch={true}
-                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-base sm:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102 shrink-0"
-                  >
-                    <span>立即播放</span>
-                    <span className="text-sm sm:text-base">▷</span>
-                  </Link>
-                </div>
+              {/* 下方：流媒体播放大按钮（iPad与桌面高度协调，位置与底线恒定） */}
+              <Link
+                href={`/title/${generateSlug(active.title)}`}
+                prefetch={true}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 xl:px-6 xl:py-3 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-sm sm:text-base xl:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102 shrink-0"
+              >
+                <span>立即播放</span>
+                <span className="text-sm sm:text-base">▷</span>
+              </Link>
+            </div>
 
-            {/* 2. 中栏：100% 绝对对齐爱壹帆官方各专区原生速报排布（电影6+6/首页与剧集6+5/综艺与动漫纪录片4+4） */}
+            {/* 2. 中栏：100% 绝对对齐爱壹帆官方各专区原生速报排布（iPad与大屏全尺寸自适应防变形） */}
             {activeTrendingNav && activeTrendingNav.length > 0 && (() => {
               // 根据爱壹帆官方各板块原生实际排版绝对对齐：
               // - 电影专区 (movie)、首页大厅 (all)、电视剧 (tv)、动漫频道 (anime): 12 席 (6 + 6 黄金对称)
@@ -480,15 +480,15 @@ export function HeroSlideshow({
                   className="group flex items-center justify-start text-left cursor-pointer text-white/90 hover:text-white hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.75)] hover:scale-103 transition-all duration-200 select-none shrink-0"
                   title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}
                 >
-                  <span className={`font-bold tracking-tight whitespace-nowrap leading-snug truncate ${
+                  <span className={`font-bold tracking-tight whitespace-nowrap leading-snug truncate shrink-0 ${
                     isWide4
-                      ? 'text-[13.5px] lg:text-[14.5px] xl:text-[15.5px] 2xl:text-[16px] max-w-[140px] lg:max-w-[170px] xl:max-w-[200px] 2xl:max-w-[220px]'
-                      : 'text-[12.5px] lg:text-[13.5px] xl:text-[14.5px] 2xl:text-[15px] max-w-[105px] lg:max-w-[125px] xl:max-w-[145px] 2xl:max-w-[165px]'
+                      ? 'text-[12px] lg:text-[12.5px] xl:text-[14.5px] 2xl:text-[16px] max-w-[110px] lg:max-w-[130px] xl:max-w-[185px] 2xl:max-w-[220px]'
+                      : 'text-[11px] lg:text-[11.5px] xl:text-[13px] 2xl:text-[14.5px] max-w-[74px] lg:max-w-[82px] xl:max-w-[120px] 2xl:max-w-[150px]'
                   }`}>
                     {item.title}
                   </span>
                   {item.updateBadge ? (
-                    <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[9px] xl:text-[10px] 2xl:text-[10.5px] font-black rounded-xs px-1.5 py-0.2 min-w-4 h-4 leading-none ml-1.5 shrink-0 shadow-md">
+                    <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[8.5px] xl:text-[9.5px] 2xl:text-[10px] font-black rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0 shadow-md">
                       {item.updateBadge}
                     </span>
                   ) : null}
@@ -496,19 +496,19 @@ export function HeroSlideshow({
               );
 
               return (
-                <div className="hidden lg:flex flex-1 min-w-0 flex-col items-center justify-end px-3 xl:px-6 pb-1">
-                  <div className="flex flex-col items-center gap-y-2.5 xl:gap-y-3.5 w-full max-w-fit">
-                    <div className={`flex items-center justify-center whitespace-nowrap ${
+                <div className="hidden lg:flex flex-1 min-w-0 flex-col items-center justify-end px-2 xl:px-6 pb-1">
+                  <div className="flex flex-col items-center gap-y-2 xl:gap-y-3 w-full max-w-fit">
+                    <div className={`flex items-center justify-center whitespace-nowrap shrink-0 ${
                       isWide4
-                        ? 'gap-x-5 lg:gap-x-7 xl:gap-x-9 2xl:gap-x-11'
-                        : 'gap-x-3.5 lg:gap-x-4.5 xl:gap-x-6 2xl:gap-x-7'
+                        ? 'gap-x-3 lg:gap-x-4 xl:gap-x-8 2xl:gap-x-11'
+                        : 'gap-x-2 lg:gap-x-2.5 xl:gap-x-5 2xl:gap-x-7'
                     }`}>
                       {line1.map(renderItem)}
                     </div>
-                    <div className={`flex items-center justify-center whitespace-nowrap ${
+                    <div className={`flex items-center justify-center whitespace-nowrap shrink-0 ${
                       isWide4
-                        ? 'gap-x-5 lg:gap-x-7 xl:gap-x-9 2xl:gap-x-11'
-                        : 'gap-x-3.5 lg:gap-x-4.5 xl:gap-x-6 2xl:gap-x-7'
+                        ? 'gap-x-3 lg:gap-x-4 xl:gap-x-8 2xl:gap-x-11'
+                        : 'gap-x-2 lg:gap-x-2.5 xl:gap-x-5 2xl:gap-x-7'
                     }`}>
                       {line2.map((item: TrendingNavItem, idx: number) => renderItem(item, idx + splitIdx))}
                     </div>
@@ -517,20 +517,19 @@ export function HeroSlideshow({
               );
             })()}
 
-
-            {/* 3. 右栏：爱壹帆同款完整轮播大片缩略海报卡片列表（黄金比例尺寸，视觉精致饱满） */}
-            <div className="hidden md:flex items-center gap-1 xl:gap-1.5 shrink-0 self-end p-1.5 rounded-xl bg-black/25 backdrop-blur-xs border border-white/10 ml-auto lg:ml-0">
+            {/* 3. 右栏：爱壹帆同款完整轮播大片缩略海报卡片列表（iPad与宽屏全自适应防挤压） */}
+            <div className="hidden md:flex items-center gap-0.5 xl:gap-1.5 shrink-0 self-end p-1 xl:p-1.5 rounded-xl bg-black/25 backdrop-blur-xs border border-white/10 ml-auto lg:ml-0">
               {currentData.slice(0, 8).map((item, idx) => {
                 const isSelected = idx === activeIndex;
                 const cardSizeClass = currentData.length > 7
-                  ? 'w-[40px] h-[58px] sm:w-[44px] sm:h-[64px] lg:w-[46px] lg:h-[66px] xl:w-[50px] xl:h-[72px] 2xl:w-[54px] 2xl:h-[78px]'
-                  : 'w-[44px] h-[64px] sm:w-[48px] sm:h-[70px] lg:w-[50px] lg:h-[72px] xl:w-[56px] xl:h-[80px] 2xl:w-[60px] 2xl:h-[86px]';
+                  ? 'w-[36px] h-[52px] sm:w-[40px] sm:h-[58px] lg:w-[38px] lg:h-[54px] xl:w-[48px] xl:h-[70px] 2xl:w-[54px] 2xl:h-[78px]'
+                  : 'w-[40px] h-[58px] sm:w-[44px] sm:h-[64px] lg:w-[42px] lg:h-[60px] xl:w-[52px] xl:h-[76px] 2xl:w-[60px] 2xl:h-[86px]';
                 return (
                   <button
                     key={item.title ? `hero-thumb-${item.title}` : (item.id || idx)}
                     type="button"
                     onClick={() => setActiveIndex(idx)}
-                    className={`group relative ${cardSizeClass} rounded-lg overflow-visible transition-[transform,border-color,box-shadow,opacity] duration-200 cursor-pointer border ${
+                    className={`group relative ${cardSizeClass} rounded-lg overflow-visible transition-[transform,border-color,box-shadow,opacity] duration-200 cursor-pointer border shrink-0 ${
                       isSelected
                         ? 'border-[#00D1FF] ring-2 ring-[#00D1FF]/70 scale-105 shadow-[0_0_14px_rgba(0,209,255,0.6)] z-10'
                         : 'border-white/10 opacity-75 hover:opacity-100 hover:scale-102 hover:border-white/30'

@@ -136,8 +136,8 @@ function NavbarInner({
       }`}
     >
       <div className="fluid-container flex items-center justify-between gap-4">
-        {/* 左侧：Logo + 品牌标识 + 核心分类导航 */}
-        <div className="flex items-center gap-6 lg:gap-8">
+        {/* 左侧：Logo 与导航标签 (自适应 iPad 横屏与超宽桌面) */}
+        <div className="flex items-center gap-2 sm:gap-4 lg:gap-2.5 xl:gap-6 2xl:gap-8 min-w-0">
           {isPlayer ? (
             <div className="flex items-center gap-2.5">
               <button
@@ -186,9 +186,9 @@ function NavbarInner({
             </Link>
           )}
 
-          {/* 桌面端顶级频道横排导航 */}
+          {/* 桌面端/平板顶级频道横排导航 (iPad与宽屏自适应防挤压) */}
           {!isPlayer && (
-            <div className="hidden lg:flex items-center gap-1 xl:gap-2">
+            <div className="hidden lg:flex items-center gap-0.5 xl:gap-1.5 2xl:gap-2 shrink-0">
               {navCategories.map(cat => {
                 const isActive = (cat.href === '/' && pathname === '') || pathname === cat.href || activeCategory === cat.id;
 
@@ -204,14 +204,14 @@ function NavbarInner({
                           window.location.href = cat.href;
                         }
                       }}
-                      className={`px-3.5 py-1.5 rounded-full text-xs xl:text-sm font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                      className={`shrink-0 whitespace-nowrap px-2 xl:px-3.5 py-1.5 rounded-full text-[11.5px] xl:text-xs 2xl:text-sm font-bold transition-all duration-200 cursor-pointer flex items-center gap-1 xl:gap-1.5 ${
                         cat.id === 'premium'
                           ? 'text-pink-400 hover:text-pink-300 hover:bg-pink-500/10 border border-pink-500/20'
                           : 'text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 border border-amber-500/20'
                       }`}
                     >
-                      {cat.id === 'premium' && <span>🌙</span>}
-                      <span>{cat.label}</span>
+                      {cat.id === 'premium' && <span className="shrink-0">🌙</span>}
+                      <span className="shrink-0 whitespace-nowrap">{cat.label}</span>
                     </button>
                   );
                 }
@@ -220,13 +220,13 @@ function NavbarInner({
                   <Link
                     key={cat.id}
                     href={cat.href}
-                    className={`px-3.5 py-1.5 rounded-full text-xs xl:text-sm font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                    className={`shrink-0 whitespace-nowrap px-2 xl:px-3.5 py-1.5 rounded-full text-[11.5px] xl:text-xs 2xl:text-sm font-bold transition-all duration-200 cursor-pointer flex items-center gap-1 xl:gap-1.5 ${
                       isActive
                         ? 'bg-(--accent-color) text-white shadow-lg shadow-(--accent-color)/25 scale-105'
                         : 'text-white/70 hover:text-white hover:bg-white/10'
                     }`}
                   >
-                    <span>{cat.label}</span>
+                    <span className="shrink-0 whitespace-nowrap">{cat.label}</span>
                   </Link>
                 );
               })}
