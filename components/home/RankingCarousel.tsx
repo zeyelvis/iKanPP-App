@@ -276,7 +276,7 @@ export function RankingCarousel({ contentType }: RankingCarouselProps) {
                     {/* 可滚动卡片容器 */}
                     <div
                         ref={scrollRef}
-                        className="flex gap-3 h-full overflow-x-auto scrollbar-hide scroll-smooth"
+                        className="content-rail-scroll flex gap-3 h-full overflow-x-auto scrollbar-hide overscroll-x-contain"
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
                         {currentData.map((movie, idx) => (
@@ -356,7 +356,7 @@ export function RankingCarousel({ contentType }: RankingCarouselProps) {
                     </span>
                 </div>
                 <div
-                    className="flex gap-2.5 overflow-x-auto scrollbar-hide pb-1"
+                    className="content-rail-scroll flex gap-2.5 overflow-x-auto scrollbar-hide overscroll-x-contain pb-1"
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
                     {currentData.map((movie, idx) => (

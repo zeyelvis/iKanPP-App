@@ -2,11 +2,13 @@
    Cinema-Grade Streaming Rails & Modern Media Components
    ============================================================ */
 
-/* 横向滑动片单导轨 (Content Rail Scrollbar) */
+/* 横向滑动片单导轨 (Content Rail Scrollbar - iPad & 移动端极致动量滚动) */
 .content-rail-scroll {
     display: flex;
     overflow-x: auto;
-    scroll-behavior: smooth;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+    scroll-snap-type: x proximity;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     -ms-overflow-style: none;

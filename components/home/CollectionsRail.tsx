@@ -230,7 +230,7 @@ export function CollectionsRail() {
       {/* 横向滑轨容器 */}
       <div
         ref={scrollRef}
-        className="content-rail-scroll flex gap-4 sm:gap-6 overflow-x-auto pt-1 pb-4 px-1 sm:px-2 scroll-smooth"
+        className="content-rail-scroll flex gap-4 sm:gap-6 overflow-x-auto pt-1 pb-4 px-1 sm:px-2 overscroll-x-contain"
       >
         {CURATED_COLLECTIONS.map((collection, index) => (
           <CascadeDeckCard

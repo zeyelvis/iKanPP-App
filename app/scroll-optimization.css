@@ -65,18 +65,17 @@
   }
 }
 
-/* Optimize for mobile devices */
-@media (max-width: 768px) {
-  /* Reduce visual complexity on mobile */
+/* Optimize for mobile and iPad touch devices */
+@media (hover: none) and (pointer: coarse), (max-width: 1024px) {
+  /* Reduce visual complexity on touch devices */
   .video-card {
-    /* Simpler rendering */
     will-change: auto;
   }
   
-  /* Disable expensive hover effects on mobile */
+  /* Disable expensive hover effects and heavy filters on touch/iPad */
   .video-card-overlay {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 }
 
@@ -91,8 +90,34 @@
   gap: 1rem;
 }
 
-/* Passive event listeners hint */
+/* ══════════════════════════════════════════════════════════════
+   iPad & 移动端极致手势滑动优化 (Touch Momentum & Gesture Pipeline)
+   - 彻底废除全局 pan-y 造成的横向滑轨死锁卡顿
+   - 启用全方向无延迟自然手势 (touch-action: manipulation)
+   - 强制横向滑轨启用原生动量惯性滚动与边缘回弹遏制
+   ══════════════════════════════════════════════════════════════ */
 html {
-  /* Hint to browser for passive touch events */
-  touch-action: pan-y;
+  touch-action: manipulation;
+  -webkit-overflow-scrolling: touch;
 }
+
+/* 全站横向导轨原生极致跟手规范 (Netflix / Apple TV 丝滑手感) */
+.content-rail-scroll,
+.cast-rail-scroll,
+[class*="content-rail-scroll"] {
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-x: contain !important;
+  touch-action: pan-x pan-y !important;
+  scroll-snap-type: x proximity;
+  scroll-behavior: auto !important; /* 触摸手势必须使用原生物理动量，严禁叠加CSS平滑动画 */
+  transform: translateZ(0);
+  will-change: scroll-position;
+}
+
+/* 导轨内卡片滚动边缘轻盈贴合 (Scroll Snap Align) */
+.cinema-poster-card,
+.content-rail-scroll > *,
+.cast-rail-scroll > * {
+  scroll-snap-align: start;
+}
+

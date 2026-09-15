@@ -60,4 +60,20 @@
   contain-intrinsic-size: 0 200px;
 }
 
+/* ══════════════════════════════════════════════════════════════
+   iPad / 移动端 120Hz ProMotion 极速手势滑动与 GPU 加速图层
+   - 彻底解锁全站横向与纵向自然动量惯性
+   - 消除触摸跟手延迟，锁定 60/120fps 流畅滑动
+   ══════════════════════════════════════════════════════════════ */
+@supports (-webkit-touch-callout: none) {
+  body {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+
 

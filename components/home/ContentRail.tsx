@@ -256,7 +256,7 @@ export function ContentRail({
       {/* 滑轨容器 */}
       <div
         ref={scrollRef}
-        className="content-rail-scroll flex gap-3 sm:gap-4 overflow-x-auto pb-4 pt-1 px-1 sm:px-2 scroll-smooth"
+        className="content-rail-scroll flex gap-3 sm:gap-4 overflow-x-auto pb-4 pt-1 px-1 sm:px-2 overscroll-x-contain"
       >
         {loading ? (
           // 高级流光骨架屏

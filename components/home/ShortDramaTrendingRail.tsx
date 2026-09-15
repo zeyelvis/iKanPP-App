@@ -112,7 +112,7 @@ export function ShortDramaTrendingRail() {
       {/* 滑轨容器 */}
       <div
         ref={railRef}
-        className="flex overflow-x-auto no-scrollbar px-4 sm:px-8 pb-4 scroll-smooth"
+        className="content-rail-scroll flex overflow-x-auto no-scrollbar px-4 sm:px-8 pb-4 overscroll-x-contain"
       >
         {loading
           ? Array.from({ length: 5 }).map((_, i) => (

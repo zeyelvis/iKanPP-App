@@ -254,7 +254,7 @@ export function Top10Rail({
       {/* 滑轨容器 */}
       <div
         ref={scrollRef}
-        className="content-rail-scroll flex gap-2 sm:gap-4 overflow-x-auto pb-4 pt-1 px-1 sm:px-2 scroll-smooth items-center"
+        className="content-rail-scroll flex gap-2 sm:gap-4 overflow-x-auto pb-4 pt-1 px-1 sm:px-2 overscroll-x-contain items-center"
       >
         {loading ? (
           Array.from({ length: 5 }).map((_, idx) => (

@@ -64,7 +64,7 @@ export function CastRail({ directors, actors, initialAvatars = {} }: CastRailPro
         <span>演职员专栏</span>
       </h2>
 
-      <div className="flex items-center gap-3.5 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+      <div className="cast-rail-scroll flex items-center gap-3.5 overflow-x-auto pb-4 overscroll-x-contain scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         {/* 导演卡片 */}
         {directors.map(d => {
           const avatarUrl = avatars[d] || initialAvatars[d];

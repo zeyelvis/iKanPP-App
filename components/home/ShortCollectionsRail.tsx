@@ -161,7 +161,7 @@ export function ShortCollectionsRail() {
 
       <div
         ref={railRef}
-        className="flex gap-4 sm:gap-6 overflow-x-auto no-scrollbar px-4 sm:px-8 pb-4 scroll-smooth"
+        className="content-rail-scroll flex gap-4 sm:gap-6 overflow-x-auto no-scrollbar px-4 sm:px-8 pb-4 overscroll-x-contain"
       >
         {SHORT_DRAMA_COLLECTIONS.map((col, idx) => (
           <ShortCollectionDeckCard key={col.id} collection={col} index={idx} />

@@ -71,7 +71,7 @@ export function ShortDramaForYouRail() {
       {/* 横向滑轨 */}
       <div
         ref={railRef}
-        className="flex gap-3 sm:gap-4 overflow-x-auto no-scrollbar px-4 sm:px-8 pb-3 scroll-smooth"
+        className="content-rail-scroll flex gap-3 sm:gap-4 overflow-x-auto no-scrollbar px-4 sm:px-8 pb-3 overscroll-x-contain"
       >
         {loading && movies.length === 0
           ? Array.from({ length: 6 }).map((_, i) => (

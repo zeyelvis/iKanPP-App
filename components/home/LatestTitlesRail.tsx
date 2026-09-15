@@ -286,8 +286,8 @@ export default function LatestTitlesRail({
       {/* 滑轨容器 */}
       <div
         ref={scrollRef}
-        className="flex items-stretch gap-3 sm:gap-4 overflow-x-auto no-scrollbar scroll-smooth px-1 sm:px-2 pb-2"
-        style={{ scrollSnapType: 'x mandatory' }}
+        className="content-rail-scroll flex items-stretch gap-3 sm:gap-4 overflow-x-auto no-scrollbar overscroll-x-contain px-1 sm:px-2 pb-2"
+        style={{ scrollSnapType: 'x proximity' }}
       >
         {items.map((item, idx) => (
           <LatestPosterCard key={`${item.entityId}-${idx}`} item={item} idx={idx} />
