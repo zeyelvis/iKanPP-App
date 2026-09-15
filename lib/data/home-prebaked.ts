@@ -78,6 +78,10 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "海洋奇缘：启航",
+                "updateBadge": ""
+        },
+        {
                 "title": "夜王",
                 "updateBadge": ""
         },
@@ -86,15 +90,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "海洋奇缘：启航",
+                "title": "不成功穿越指南",
                 "updateBadge": ""
         },
         {
                 "title": "怒之杀(听译)",
-                "updateBadge": ""
-        },
-        {
-                "title": "不成功穿越指南",
                 "updateBadge": ""
         },
         {
@@ -1832,11 +1832,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "交锋",
-                "updateBadge": ""
+                "title": "冬城猎凶",
+                "updateBadge": "1"
         },
         {
-                "title": "冬城猎凶",
+                "title": "交锋",
                 "updateBadge": ""
         },
         {
@@ -1848,11 +1848,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "死有对证",
+                "title": "生逢其时",
                 "updateBadge": ""
         },
         {
-                "title": "生逢其时",
+                "title": "死有对证",
                 "updateBadge": ""
         },
         {
@@ -1860,12 +1860,12 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "杀手妈咪",
-                "updateBadge": ""
-        },
-        {
                 "title": "云雀叫天录",
                 "updateBadge": "2"
+        },
+        {
+                "title": "杀手妈咪",
+                "updateBadge": ""
         },
         {
                 "title": "百花杀",
@@ -1902,7 +1902,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至10集 | 共18集",
+                "episodes_info": "更新至11集 | 共18集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true

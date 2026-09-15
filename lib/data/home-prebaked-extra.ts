@@ -9,19 +9,19 @@ import type { PrebakedSubject, PrebakedHomeCategory } from './home-prebaked';
 export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "一斩苍穹",
-        "updateBadge": "1"
-    },
-    {
         "title": "仙逆",
         "updateBadge": ""
     },
     {
-        "title": "吞噬星空",
-        "updateBadge": ""
+        "title": "一斩苍穹",
+        "updateBadge": "1"
     },
     {
         "title": "凡人修仙传",
+        "updateBadge": ""
+    },
+    {
+        "title": "吞噬星空",
         "updateBadge": ""
     },
     {
@@ -37,24 +37,24 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "万界独尊",
+        "title": "武神主宰",
         "updateBadge": "1"
-    },
-    {
-        "title": "炼气十万年",
-        "updateBadge": "1"
-    },
-    {
-        "title": "沧元图",
-        "updateBadge": ""
     },
     {
         "title": "光阴之外",
         "updateBadge": ""
     },
     {
-        "title": "遮天",
+        "title": "沧元图",
         "updateBadge": ""
+    },
+    {
+        "title": "炼气十万年",
+        "updateBadge": "1"
+    },
+    {
+        "title": "万界独尊",
+        "updateBadge": "1"
     }
   ],
   hero: [
@@ -639,27 +639,27 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
+        "title": "披荆斩棘2026",
+        "updateBadge": "1"
+    },
+    {
         "title": "一饭封神第2季",
         "updateBadge": "1"
     },
     {
-        "title": "披荆斩棘2026",
-        "updateBadge": ""
-    },
-    {
-        "title": "我家那闺女2026",
-        "updateBadge": ""
+        "title": "密室大逃脱第8季",
+        "updateBadge": "1"
     },
     {
         "title": "大哥小助理",
         "updateBadge": "1"
     },
     {
-        "title": "地球超新鲜第2季",
+        "title": "说唱巅峰对决2026",
         "updateBadge": ""
     },
     {
-        "title": "说唱巅峰对决2026",
+        "title": "我家那闺女2026",
         "updateBadge": ""
     }
   ],
@@ -738,13 +738,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608102124022465304.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202608261125002570740.jpg",
-        "description": "《披荆斩棘2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260913(加更版)。",
+        "description": "《披荆斩棘2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260915(三公小考)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260913(加更版)",
+        "episodes_info": "更新至20260915(三公小考)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -755,13 +755,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607311122522270150.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202608031821302167723.jpg",
-        "description": "《心动的信号第9季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260914(第7期中（上）纯享)。",
+        "description": "《心动的信号第9季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260915(第7期中（下）纯享)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260914(第7期中（上）纯享)",
+        "episodes_info": "更新至20260915(第7期中（下）纯享)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1766,19 +1766,19 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "早春晴朗",
-        "updateBadge": ""
-    },
-    {
-        "title": "交锋",
-        "updateBadge": ""
-    },
-    {
         "title": "心动的信号第9季",
         "updateBadge": ""
     },
     {
+        "title": "早春晴朗",
+        "updateBadge": ""
+    },
+    {
         "title": "冬城猎凶",
+        "updateBadge": "1"
+    },
+    {
+        "title": "交锋",
         "updateBadge": ""
     },
     {
@@ -1790,24 +1790,24 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "死有对证",
-        "updateBadge": ""
-    },
-    {
         "title": "生逢其时",
         "updateBadge": ""
     },
     {
-        "title": "一斩苍穹",
-        "updateBadge": "1"
+        "title": "死有对证",
+        "updateBadge": ""
     },
     {
         "title": "花开锦绣",
         "updateBadge": ""
     },
     {
-        "title": "仙逆",
-        "updateBadge": ""
+        "title": "花儿与少年第8季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "云雀叫天录",
+        "updateBadge": "2"
     }
   ],
   hero: [
@@ -1912,7 +1912,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至10集 | 共18集",
+        "episodes_info": "更新至11集 | 共18集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -2387,6 +2387,10 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "守护解放西第6季",
+        "updateBadge": ""
+    },
+    {
         "title": "克拉克森的农场第3季",
         "updateBadge": ""
     },
@@ -2395,15 +2399,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "守护解放西第6季",
+        "title": "中国通史",
         "updateBadge": ""
     },
     {
-        "title": "扯淡地球史",
-        "updateBadge": ""
-    },
-    {
-        "title": "若泽·穆里尼奥：特立之道",
+        "title": "国宝里的中国故事",
         "updateBadge": ""
     }
   ],
