@@ -8,9 +8,10 @@ export function useIsMobile() {
 
     useEffect(() => {
         const checkMobile = () => {
+            const isIPadOS = typeof navigator !== 'undefined' && navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
             const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
                 navigator.userAgent
-            ) || window.innerWidth < 768;
+            ) || isIPadOS || window.innerWidth < 768;
             setIsMobile(mobile);
         };
 
@@ -24,14 +25,15 @@ export function useIsMobile() {
 }
 
 /**
- * Hook to detect if the device is iOS
+ * Hook to detect if the device is iOS (including iPadOS)
  */
 export function useIsIOS() {
     const [isIOS, setIsIOS] = useState(false);
 
     useEffect(() => {
         const checkIOS = () => {
-            const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+            const isIPadOS = typeof navigator !== 'undefined' && navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+            const ios = (/iPad|iPhone|iPod/.test(navigator.userAgent) || isIPadOS) && !(window as any).MSStream;
             setIsIOS(ios);
         };
 

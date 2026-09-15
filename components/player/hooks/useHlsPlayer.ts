@@ -56,15 +56,35 @@ export function useHlsPlayer({
 
         let hls: Hls | null = null;
         let extraBlobs: string[] = [];
+        let nativeCleanup: (() => void) | null = null;
 
-        // Check if HLS is supported natively (Safari, Mobile Chrome)
+        // Check if HLS is supported natively (Safari, Mobile Chrome, iOS, iPad)
         const isNativeHlsSupported = video.canPlayType('application/vnd.apple.mpegurl');
 
         // Check if MSE is available (required by HLS.js)
         const isMSESupported = Hls.isSupported();
 
-        if (isMSESupported) {
+        // 精准识别 iOS / iPadOS 设备（包含 iPadOS 桌面模式的 MacIntel 伪装）
+        const isIOSOrIPad = typeof navigator !== 'undefined' && (
+            /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+        );
 
+        const isMobileClient = typeof navigator !== 'undefined' && (
+            /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+        );
+
+        // 核心架构决策：
+        // 在 iOS / iPadOS 上，普通影视（!isPremium）100% 直连源站 CDN，坚决优先走原生硬件级 AVPlayer！
+        // 苹果系统独立进程 mediaserverd 硬解具备最强抗网络抖动、原生自适应码率与零内存溢出风险，彻底杜绝夸克等第三方浏览器的脚本劫持与撕扯。
+        // 只有非 iOS 设备（PC/安卓）或午夜专区（isPremium 必须切片重写）才启用 Hls.js。
+        const shouldUseHlsJs = isMSESupported && (
+            (!isIOSOrIPad && (!isNativeHlsSupported || isAdFilterEnabled || isPremium)) ||
+            (isIOSOrIPad && isPremium)
+        );
+
+        if (shouldUseHlsJs) {
             // Define custom loader class to intercept manifest loading
             // We use 'any' cast because default loader type might not be strictly exposed in all typings
             const DefaultLoader = (Hls as any).DefaultConfig.loader;
@@ -89,26 +109,20 @@ export function useHlsPlayer({
                 }
             }
 
-            if (!isNativeHlsSupported || isAdFilterEnabled || isPremium) {
-                // 优先使用功能完备的 Hls.js 处理切片、重试与代理，避免原生 Safari video 标签因防盗链阻断崩溃
-                // 在 iOS 上因不支持 MSE (Hls.isSupported() 为 false)，会自动安全降级到下面的原生 HLS 块
-
-                const isMobileClient = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-                const config: any = {
+            const config: any = {
                     // Worker & Performance
                     enableWorker: true,
                     lowLatencyMode: false,
 
-                    // 高性能自适应缓冲水位体系：彻底杜绝 Buffer Starvation（看 1 秒卡 1 秒）
-                    maxBufferLength: isMobileClient ? 60 : 120,
-                    maxMaxBufferLength: isMobileClient ? 120 : 240,
-                    maxBufferSize: isMobileClient ? 60 * 1000 * 1000 : 120 * 1000 * 1000,
+                    // 高性能自适应缓冲水位体系：移动端与 iPad 采用紧凑轻量级水位，杜绝 QuotaExceededError 导致的断续卡顿
+                    maxBufferLength: isMobileClient ? 30 : 90,
+                    maxMaxBufferLength: isMobileClient ? 60 : 180,
+                    maxBufferSize: isMobileClient ? 30 * 1000 * 1000 : 90 * 1000 * 1000,
                     maxBufferHole: 0.8,
 
                     // 启动阶段激进预拉取，保障秒播与连续播放丝滑
                     startFragPrefetch: true,
-                    maxStarvationDelay: 4,
+                    maxStarvationDelay: isMobileClient ? 2 : 4,
 
                     // 针对 Seek 关键帧停滞的智能微调救活机制（平滑微调 0.05s，无感过渡杜绝黑闪）
                     nudgeOffset: 0.05,
@@ -124,24 +138,24 @@ export function useHlsPlayer({
                     abrBandWidthFactor: 0.85,
                     abrBandWidthUpFactor: 0.7,
 
-                    // Loading Settings: 增强切片重试和容错，支持超清原画高码率(4.9Mbps)跨国传输
-                    fragLoadingMaxRetry: 10,
+                    // Loading Settings: 增强切片重试和容错，支持超清原画高码率跨国传输
+                    fragLoadingMaxRetry: 8,
                     fragLoadingRetryDelay: 1000,
-                    fragLoadingMaxRetryTimeout: 60000,
+                    fragLoadingMaxRetryTimeout: 45000,
                     manifestLoadingMaxRetry: 8,
                     manifestLoadingRetryDelay: 1000,
-                    manifestLoadingMaxRetryTimeout: 60000,
+                    manifestLoadingMaxRetryTimeout: 45000,
                     levelLoadingMaxRetry: 8,
                     levelLoadingRetryDelay: 1000,
-                    levelLoadingMaxRetryTimeout: 60000,
+                    levelLoadingMaxRetryTimeout: 45000,
 
-                    // Timeouts: 超清原画首个大切片(6~8MB)加载需宽裕时间，避免过早超时触发切源
-                    fragLoadingTimeOut: 30000,
-                    manifestLoadingTimeOut: 20000,
-                    levelLoadingTimeOut: 20000,
+                    // Timeouts: 超清原画首个大切片加载需宽裕时间，避免过早超时触发切源
+                    fragLoadingTimeOut: 20000,
+                    manifestLoadingTimeOut: 15000,
+                    levelLoadingTimeOut: 15000,
 
-                    // Backbuffer: 手机端由 15 秒放宽至 30 秒，避免短距离后退立即清空内存缓存
-                    backBufferLength: isMobileClient ? 30 : 45,
+                    // Backbuffer: 移动端即播即清（10 秒），防止内存持续堆积压垮浏览器
+                    backBufferLength: isMobileClient ? 10 : 30,
 
                     // 深度隐私伪装与请求头净化：遵循 no-referrer 规范，与原生 TV 盒子客户端流量特征对齐
                     xhrSetup: (xhr: XMLHttpRequest, url: string) => {
@@ -241,16 +255,36 @@ export function useHlsPlayer({
                         }
                     }
                 });
-            } else {
-                // Native HLS (Desktop Safari, no Filter)
-                video.src = effectiveSrc;
-            }
-        } else if (isNativeHlsSupported) {
-            // Native HLS (iOS, Mobile Safari)
+            } else if (isNativeHlsSupported) {
+                // Native HLS (iOS, Mobile Safari, iPad)
             // 核心保障：iOS WebKit AVPlayer 运行于系统独立进程，严禁使用 blob: 拦截改写！
             // blob: 会阻断系统的 HTTP Range 请求，导致拖动进度条(Seek)时发生底层死锁和永久转圈。
             // 直接赋予原生 HTTPS 直连流，激活苹果原装硬件级解复用、关键帧寻道与分片预读能力！
             video.src = effectiveSrc;
+
+            const handleNativeLoadedMetadata = () => {
+                if (autoPlay && !preloadMode) {
+                    video.play().catch((err) => {
+                        onAutoPlayPreventedRef.current?.(err);
+                    });
+                }
+            };
+
+            const handleNativeError = () => {
+                const err = video.error;
+                console.warn('[Native HLS] Video playback error:', err);
+                if (err) {
+                    onErrorRef.current?.(`播放异常 (代码 ${err.code})：网络连接中断或源站拒绝连接`);
+                }
+            };
+
+            video.addEventListener('loadedmetadata', handleNativeLoadedMetadata, { once: true });
+            video.addEventListener('error', handleNativeError, { once: true });
+
+            nativeCleanup = () => {
+                video.removeEventListener('loadedmetadata', handleNativeLoadedMetadata);
+                video.removeEventListener('error', handleNativeError);
+            };
         } else {
             // Neither MSE nor native HLS supported
             // Try direct playback as last resort (works for mp4 and some browser WebView)
@@ -278,6 +312,11 @@ export function useHlsPlayer({
 
             video.addEventListener('canplay', handleCanPlay, { once: true });
             video.addEventListener('error', handleError, { once: true });
+
+            nativeCleanup = () => {
+                video.removeEventListener('canplay', handleCanPlay);
+                video.removeEventListener('error', handleError);
+            };
         }
 
         return () => {
@@ -285,6 +324,9 @@ export function useHlsPlayer({
                 hls.destroy();
             }
             extraBlobs.forEach(url => URL.revokeObjectURL(url));
+            if (nativeCleanup) {
+                nativeCleanup();
+            }
         };
     }, [src, autoPlay, isPremium, preloadMode]);
 }
