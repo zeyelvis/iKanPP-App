@@ -3,8 +3,9 @@ import { parseSeasonFromTitle, generateSeasonSearchVariants, matchesTargetSeason
 
 export const runtime = 'edge';
 
-// 选用响应速度最快、更新最及时的骨干线路进行秒级探测
+// 选用响应速度最快、更新最及时的骨干线路进行秒级探测（国内访问暴风资源最快，首选置顶）
 const PROBE_SOURCES = [
+  { id: 'baofeng', baseUrl: 'https://bfzyapi.com/api.php/provide/vod' },
   { id: 'guangsu', baseUrl: 'https://api.guangsuapi.com/api.php/provide/vod' },
   { id: 'dytt', baseUrl: 'http://caiji.dyttzyapi.com/api.php/provide/vod' },
   { id: 'wujin', baseUrl: 'https://api.wujinapi.me/api.php/provide/vod' },
@@ -261,7 +262,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'No matching episodes found' });
     }
 
-    // 排序优先级：命中目标季优先 > 正片总集数最多
+    // 排序优先级：命中目标季优先 > 正片总集数最多 > 线路极速响应权重（baofeng 第一首选）
+    const SOURCE_PROBE_WEIGHTS: Record<string, number> = {
+      baofeng: 100,
+      guangsu: 90,
+      wujin: 80,
+      jisu: 70,
+      dytt: 60,
+    };
+
     results.sort((a: any, b: any) => {
       if (targetSeason) {
         const aSeasonMatch = matchesTargetSeason(a.vodName, targetSeason) ? 1 : 0;
@@ -270,7 +279,12 @@ export async function GET(request: NextRequest) {
           return bSeasonMatch - aSeasonMatch;
         }
       }
-      return b.totalEpisodes - a.totalEpisodes;
+      if (b.totalEpisodes !== a.totalEpisodes) {
+        return b.totalEpisodes - a.totalEpisodes;
+      }
+      const aWeight = SOURCE_PROBE_WEIGHTS[a.source] || 0;
+      const bWeight = SOURCE_PROBE_WEIGHTS[b.source] || 0;
+      return bWeight - aWeight;
     });
 
     const best = results[0];

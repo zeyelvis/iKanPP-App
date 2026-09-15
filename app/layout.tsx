@@ -150,9 +150,13 @@ export default function RootLayout({
                   source: 'document',
                   where: {
                     and: [
-                      { href_matches: '/title/*' },
+                      {
+                        or: [
+                          { href_matches: '/title/*' },
+                          { href_matches: '/player*' },
+                        ],
+                      },
                       { not: { href_matches: '/api/*' } },
-                      { not: { href_matches: '/player*' } },
                       { not: { href_matches: '/premium*' } },
                     ],
                   },

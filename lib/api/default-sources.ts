@@ -3,6 +3,16 @@ import type { VideoSource } from '@/lib/types';
 // 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-15T14:37:38.362Z）
 export const DEFAULT_SOURCES: VideoSource[] = [
   {
+    id: 'baofeng',
+    name: '暴风资源',
+    baseUrl: 'https://bfzyapi.com',
+    searchPath: '/api.php/provide/vod',
+    detailPath: '/api.php/provide/vod',
+    group: 'normal',
+    enabled: true,
+    priority: 1,
+  },
+  {
     id: 'guangsu',
     name: '光速资源',
     baseUrl: 'https://api.guangsuapi.com',
@@ -10,7 +20,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 1,
+    priority: 2,
   },
   {
     id: 'jisu',
@@ -20,7 +30,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 2,
+    priority: 3,
   },
   {
     id: 'xinlang',
@@ -28,16 +38,6 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     baseUrl: 'https://api.xinlangapi.com',
     searchPath: '/xinlangapi.php/provide/vod',
     detailPath: '/xinlangapi.php/provide/vod',
-    group: 'normal',
-    enabled: true,
-    priority: 3,
-  },
-  {
-    id: 'baofeng',
-    name: '暴风资源',
-    baseUrl: 'https://bfzyapi.com',
-    searchPath: '/api.php/provide/vod',
-    detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
     priority: 4,

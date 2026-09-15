@@ -7,6 +7,7 @@ import { useFavoritesStore } from '@/lib/store/favorites-store';
 import { useHistoryStore } from '@/lib/store/history-store';
 import { TitleEntity } from '@/lib/types/entity';
 import { getEpisodeDisplayInfo, EpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
+import { fetchTitleProbe, subscribeTitleProbe, resolvePlayTarget } from '@/lib/utils/title-probe';
 
 interface TitleActionsBarProps {
   entity: TitleEntity;
@@ -35,8 +36,20 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
   const [historyPercent, setHistoryPercent] = useState<number>(0);
   const [historySource, setHistorySource] = useState<string | null>(null);
   const [historyVodId, setHistoryVodId] = useState<string | number | null>(null);
+  const [probedTarget, setProbedTarget] = useState<{ id?: string | number; source?: string }>({});
 
   const effectiveTitle = playTitle || entity.title;
+
+  useEffect(() => {
+    // 提前在后台秒级拉取暴风/光速骨干源的真实 ID，打通 0ms 直达快车道
+    fetchTitleProbe(effectiveTitle);
+    const unsubscribe = subscribeTitleProbe(effectiveTitle, (res) => {
+      if (res && res.id && res.source) {
+        setProbedTarget({ id: res.id, source: res.source });
+      }
+    });
+    return () => unsubscribe();
+  }, [effectiveTitle]);
 
   useEffect(() => {
     // 检查收藏状态 (以 entityId 作为 videoId)
@@ -60,7 +73,19 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
     }
   }, [entity.entityId, entity.title, effectiveTitle, isFavorite, viewingHistory]);
 
-  const handlePlay = (param: string = lastEpisodeInfo.paramValue) => {
+  const handlePlay = async (param: string = lastEpisodeInfo.paramValue) => {
+    let playId = historyVodId || probedTarget.id;
+    let playSource = historySource || probedTarget.source;
+
+    // 若尚未就绪，超短竞速等待 200ms 抢抓极速源（优先暴风资源）
+    if (!playId || !playSource) {
+      const fast = await resolvePlayTarget(effectiveTitle, 200);
+      if (fast.id && fast.source) {
+        playId = fast.id;
+        playSource = fast.source;
+      }
+    }
+
     startTransition(() => {
       const params = new URLSearchParams({
         entity: entity.entityId,
@@ -68,8 +93,8 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
         type: entity.type === 'tv' ? 'tv' : 'movie',
         episode: String(param),
       });
-      if (historyVodId) params.set('id', String(historyVodId));
-      if (historySource) params.set('source', historySource);
+      if (playId) params.set('id', String(playId));
+      if (playSource) params.set('source', playSource);
       router.push(`/player?${params.toString()}`);
     });
   };

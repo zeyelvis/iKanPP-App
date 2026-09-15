@@ -6,6 +6,7 @@ import { Play, Tv, Sparkles } from 'lucide-react';
 import { useHistoryStore } from '@/lib/store/history-store';
 import { extractEpisodeNumber } from '@/lib/utils/episode-resolver';
 import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
+import { fetchTitleProbe, subscribeTitleProbe } from '@/lib/utils/title-probe';
 
 interface SpecialEpisodeItem {
   name: string;
@@ -104,40 +105,44 @@ export function EpisodesSelector({
       }
     }
 
-    // 2. 异步毫秒级探测骨干源最新收录切片集数
-    fetch(`/api/title-episodes?title=${encodeURIComponent(activeTitle)}`)
-      .then(res => res.json())
-      .then(data => {
-        if (cancelled) return;
-        if (data.success && data.totalEpisodes && data.totalEpisodes > 0) {
-          setRealTotalEpisodes(data.totalEpisodes);
-          if (data.source) setRealSource(data.source);
-          if (data.id) setRealVodId(data.id);
+    // 2. 异步毫秒级探测骨干源最新收录切片集数（共用全局单例合并与缓存，0ms 共享）
+    const applyProbeData = (data: any) => {
+      if (cancelled) return;
+      if (data && data.success && data.totalEpisodes && data.totalEpisodes > 0) {
+        setRealTotalEpisodes(data.totalEpisodes);
+        if (data.source) setRealSource(data.source);
+        if (data.id) setRealVodId(data.id);
 
-          if (Array.isArray(data.specialEpisodes) && data.specialEpisodes.length > 0) {
-            setSpecialEpisodes(data.specialEpisodes);
-          }
-
-          if (Array.isArray(data.episodes)) {
-            const nameMap: Record<number, string> = {};
-            data.episodes.forEach((ep: any, i: number) => {
-              if (ep.episodeNumber) {
-                nameMap[ep.episodeNumber] = ep.name;
-              } else if (ep.name) {
-                const epNum = extractEpisodeNumber(ep.name);
-                if (epNum !== null) {
-                  nameMap[epNum] = ep.name;
-                }
-              }
-            });
-            setRealEpisodeNames(nameMap);
-          }
+        if (Array.isArray(data.specialEpisodes) && data.specialEpisodes.length > 0) {
+          setSpecialEpisodes(data.specialEpisodes);
         }
-      })
-      .catch(() => {});
+
+        if (Array.isArray(data.episodes)) {
+          const nameMap: Record<number, string> = {};
+          data.episodes.forEach((ep: any) => {
+            if (ep.episodeNumber) {
+              nameMap[ep.episodeNumber] = ep.name;
+            } else if (ep.name) {
+              const epNum = extractEpisodeNumber(ep.name);
+              if (epNum !== null) {
+                nameMap[epNum] = ep.name;
+              }
+            }
+          });
+          setRealEpisodeNames(nameMap);
+        }
+      }
+    };
+
+    fetchTitleProbe(activeTitle).then(data => {
+      if (data) applyProbeData(data);
+    });
+
+    const unsubscribe = subscribeTitleProbe(activeTitle, applyProbeData);
 
     return () => {
       cancelled = true;
+      unsubscribe();
     };
   }, [activeTitle, title, viewingHistory]);
 

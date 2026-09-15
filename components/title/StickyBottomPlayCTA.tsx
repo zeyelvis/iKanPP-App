@@ -9,6 +9,8 @@ import { TitleEntity } from '@/lib/types/entity';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { getEpisodeDisplayInfo, EpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
 
+import { fetchTitleProbe, subscribeTitleProbe, resolvePlayTarget } from '@/lib/utils/title-probe';
+
 interface StickyBottomPlayCTAProps {
   entity: TitleEntity;
   playTitle?: string;
@@ -25,8 +27,22 @@ export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAPr
     episodeNumber: 1,
     isSpecial: false,
   });
+  const [historySource, setHistorySource] = useState<string | null>(null);
+  const [historyVodId, setHistoryVodId] = useState<string | number | null>(null);
+  const [probedTarget, setProbedTarget] = useState<{ id?: string | number; source?: string }>({});
 
   const effectiveTitle = playTitle || entity.title;
+
+  useEffect(() => {
+    // 提前订阅骨干源的真实 ID，打通 0ms 直达快车道
+    fetchTitleProbe(effectiveTitle);
+    const unsubscribe = subscribeTitleProbe(effectiveTitle, (res) => {
+      if (res && res.id && res.source) {
+        setProbedTarget({ id: res.id, source: res.source });
+      }
+    });
+    return () => unsubscribe();
+  }, [effectiveTitle]);
 
   useEffect(() => {
     // 检查历史进度
@@ -36,6 +52,8 @@ export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAPr
     );
     if (historyItem) {
       setEpisodeInfo(getEpisodeDisplayInfo(historyItem.episodes, historyItem.episodeIndex));
+      if (historyItem.source) setHistorySource(historyItem.source);
+      if (historyItem.videoId) setHistoryVodId(historyItem.videoId);
     }
 
     // 监听主播放区域 `#main-play-cta` 是否滑出视口
@@ -54,7 +72,19 @@ export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAPr
     return () => observer.disconnect();
   }, [entity.title, effectiveTitle, viewingHistory]);
 
-  const handlePlay = () => {
+  const handlePlay = async () => {
+    let playId = historyVodId || probedTarget.id;
+    let playSource = historySource || probedTarget.source;
+
+    // 若尚未就绪，超短竞速等待 200ms 抢抓极速源（优先暴风资源）
+    if (!playId || !playSource) {
+      const fast = await resolvePlayTarget(effectiveTitle, 200);
+      if (fast.id && fast.source) {
+        playId = fast.id;
+        playSource = fast.source;
+      }
+    }
+
     startTransition(() => {
       const params = new URLSearchParams({
         entity: entity.entityId,
@@ -62,6 +92,8 @@ export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAPr
         type: entity.type === 'tv' ? 'tv' : 'movie',
         episode: episodeInfo.paramValue,
       });
+      if (playId) params.set('id', String(playId));
+      if (playSource) params.set('source', playSource);
       router.push(`/player?${params.toString()}`);
     });
   };

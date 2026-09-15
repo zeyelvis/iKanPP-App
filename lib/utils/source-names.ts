@@ -41,7 +41,7 @@ export function getSourceName(sourceId: string): string {
 }
 
 export const SOURCE_IDS = [
-  'jisu', 'guangsu', 'xinlang', 'wujin', 'baofeng', 'liangzi',
+  'baofeng', 'guangsu', 'jisu', 'xinlang', 'wujin', 'liangzi',
   'dytt', 'json1080', 'huya', 'haitun', 'feifan', 'hongniu',
   'ruyi', 'zuida', 'subo', 'jinying', 'youku', 'ikun',
   'lezi', 'zy360', 'modu', 'jingyu', 'moduys', 'modu_dm'

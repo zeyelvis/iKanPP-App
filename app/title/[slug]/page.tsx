@@ -9,12 +9,14 @@ import { getGenreBySlug } from '@/lib/data/genres';
 import { parseEntitySlug, normalizeTitle } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, fetchTMDBDetails, fetchTMDBAiredEpisodeCount, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
 import { getFastPersonAvatars } from '@/lib/services/person-avatar';
-import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
+import { getOptimizedImageUrl, isRestrictedRegion } from '@/lib/utils/image-utils';
+import { headers } from 'next/headers';
 import { TitleEntity } from '@/lib/types/entity';
 import { TitleJsonLd } from '@/components/seo/TitleJsonLd';
 import { TitleActionsBar } from '@/components/title/TitleActionsBar';
 import { EpisodesSelector } from '@/components/title/EpisodesSelector';
 import { StickyBottomPlayCTA } from '@/components/title/StickyBottomPlayCTA';
+import { MobileHeroStage } from '@/components/title/MobileHeroStage';
 import { CastRail } from '@/components/title/CastRail';
 import { Navbar } from '@/components/layout/Navbar';
 import { normalizeVideoType } from '@/lib/utils/taxonomy';
@@ -441,6 +443,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function TitlePage({ params }: Props) {
   const { slug } = await params;
+  const headersList = await headers();
+  const country = headersList.get('cf-ipcountry') || headersList.get('x-geo-country');
+  const isChinaMainland = isRestrictedRegion(country);
+
   let decodedSlug = slug.trim();
   try {
     decodedSlug = decodeURIComponent(decodedSlug).trim();
@@ -523,10 +529,10 @@ export default async function TitlePage({ params }: Props) {
     healBackdropInBackground(entity);
   }
 
-  // 是否为纯正的 16:9 横版电影剧照大图，并接入物理尺寸精准降维与双轨加速
+  // 是否为纯正的 16:9 横版电影剧照大图，并接入物理尺寸精准降维与双轨加速（大陆用户直出安全代理镜像，0ms 秒开）
   const isTrueBackdrop = !isFakeBackdrop(resolvedBackdrop, entity.cover);
-  const heroBackdrop = getOptimizedImageUrl(resolvedBackdrop || entity.cover, { variant: 'backdrop' });
-  const entityCover = getOptimizedImageUrl(entity.cover, { variant: 'detail' });
+  const heroBackdrop = getOptimizedImageUrl(resolvedBackdrop || entity.cover, { variant: 'backdrop', isChinaMainland });
+  const entityCover = getOptimizedImageUrl(entity.cover, { variant: 'detail', isChinaMainland });
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white selection:bg-red-600 selection:text-white relative">
@@ -549,7 +555,6 @@ export default async function TitlePage({ params }: Props) {
                 where: {
                   and: [
                     { href_matches: '/title/*' },
-                    { not: { href_matches: '/player*' } },
                     { not: { href_matches: '/premium*' } },
                   ],
                 },
@@ -627,42 +632,15 @@ export default async function TitlePage({ params }: Props) {
           <article className="grid grid-cols-1 md:grid-cols-12 gap-2.5 md:gap-8 lg:gap-12 pb-4 sm:pb-16 items-end">
             {/* 左侧海报区：移动端 16:9 宽屏剧照舞台（点击秒播） vs 桌面端 2:3 立体大悬浮海报 */}
             <div className="md:col-span-4 lg:col-span-3">
-              {/* 1. 移动端 16:9 全画幅沉浸式舞台 (仅在小于 md 渲染) */}
+              {/* 1. 移动端 16:9 全画幅沉浸式舞台 (仅在小于 md 渲染，带源秒开直达快车道) */}
               <div className="block md:hidden w-full mb-1">
-                <Link
-                  href={`/player?${new URLSearchParams({
-                    entity: entity.entityId,
-                    title: effectiveSearchTitle,
-                    type: entity.type === 'tv' ? 'tv' : 'movie',
-                    episode: '1',
-                  }).toString()}`}
-                  className="group relative block w-full aspect-16/9 rounded-2xl overflow-hidden bg-black/60 border border-white/15 shadow-2xl shadow-black cursor-pointer"
-                >
-                  {heroBackdrop ? (
-                    <Image
-                      src={heroBackdrop}
-                      alt={`${entity.title} 封面海报`}
-                      fill
-                      priority
-                      sizes="100vw"
-                      className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white/30">
-                      <Film className="w-12 h-12" />
-                    </div>
-                  )}
-                  {/* 电影级微光暗角融合 */}
-                  <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-black/30" />
-                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-
-                  {/* 居中浮动 Netflix 级透明磨砂玻璃【▶ 播放】高阶按钮 */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/30 text-white flex items-center justify-center shadow-2xl shadow-black/80 group-hover:scale-110 group-active:scale-95 group-hover:bg-black/55 group-hover:border-white/50 transition-all duration-300">
-                      <Play className="w-6 h-6 fill-white text-white translate-x-0.5 opacity-90 group-hover:opacity-100" />
-                    </div>
-                  </div>
-                </Link>
+                <MobileHeroStage
+                  entityId={entity.entityId}
+                  title={effectiveSearchTitle}
+                  type={entity.type}
+                  heroBackdrop={heroBackdrop}
+                  displayTitle={entity.title}
+                />
               </div>
 
               {/* 2. 桌面端 2:3 黄金比例悬浮立体海报 (hidden md:block) */}
@@ -845,7 +823,7 @@ export default async function TitlePage({ params }: Props) {
                   <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
                     {rel.cover ? (
                       <Image
-                        src={getOptimizedImageUrl(rel.cover, { variant: 'poster' })}
+                        src={getOptimizedImageUrl(rel.cover, { variant: 'poster', isChinaMainland })}
                         alt={rel.title}
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
