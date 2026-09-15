@@ -88,6 +88,12 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
   const { entityId, slug: innerSlug } = parseEntitySlug(decodedSlug);
   let cleanTitle = innerSlug || (entityId ? '' : decodedSlug);
   cleanTitle = cleanTitle.replace(/^[-\s]+|[-\s]+$/g, '');
+  if (/^[a-zA-Z0-9_]+-/.test(cleanTitle)) {
+    cleanTitle = cleanTitle.replace(/^[a-zA-Z0-9_]+-/, '');
+  }
+  try {
+    cleanTitle = decodeURIComponent(cleanTitle).trim();
+  } catch {}
 
   // 🌟 优先级 1：若存在明确纯净标题，优先尝试 100% 精准标题匹配（最高安全级别，杜绝任何 ID 冲突）
   if (cleanTitle) {

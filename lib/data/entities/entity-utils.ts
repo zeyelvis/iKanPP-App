@@ -41,11 +41,21 @@ export function formatEntityId(seq: number): string {
 export function parseEntitySlug(param: string): { entityId: string | null; slug: string } {
   if (!param) return { entityId: null, slug: '' };
 
-  const match = param.match(/^(ik\d{6})(?:-(.*))?$/i);
-  if (match) {
+  // 1. 优先匹配标准 6 位实体 ID：如 "ik000001-xiao-shen-ke-de-jiu-shu" 或 "ik000001"
+  const matchStandard = param.match(/^(ik\d{6})(?:-(.*))?$/i);
+  if (matchStandard) {
     return {
-      entityId: match[1].toLowerCase(),
-      slug: (match[2] || '').toLowerCase(),
+      entityId: matchStandard[1].toLowerCase(),
+      slug: (matchStandard[2] || '').toLowerCase(),
+    };
+  }
+
+  // 2. 增强容错：兼容带下划线或其他前缀的内部 ID（如 "ik_latest_all_1-兰香如故" 或 "pb_cat_movie_1-抓娃娃"）
+  const matchInternal = param.match(/^((?:ik|pb)_[a-zA-Z0-9_]+)-(.*)$/i);
+  if (matchInternal) {
+    return {
+      entityId: matchInternal[1].toLowerCase(),
+      slug: (matchInternal[2] || '').trim(),
     };
   }
 

@@ -222,6 +222,52 @@ function seedPrebakedData() {
   memoryStore.set('people:directors', JSON.stringify(Array.from(allDirs)));
   memoryStore.set('people:actors', JSON.stringify(Array.from(allActs)));
 
+  // 注入最新上线增量作品，确保全站最新上线 0ms 直出且绝无 404
+  for (const items of Object.values(PREBAKED_LATEST_TITLES)) {
+    if (!Array.isArray(items)) continue;
+    for (const item of items) {
+      if (!item || !item.title) continue;
+      const norm = normalizeTitle(item.title);
+      if (seenTitles.has(norm)) continue;
+      seenTitles.add(norm);
+
+      const entityId = item.entityId && /^ik\d{6}$/i.test(item.entityId) ? item.entityId : formatEntityId(seq++);
+      const slug = generateSlug(item.title);
+      const simulatedDate = item.createdAt || new Date(now - (seq - 1) * 3600000).toISOString();
+
+      const entity: TitleEntity = {
+        entityId,
+        slug,
+        tmdbId: item.tmdbId || String(seq + 900000),
+        tmdbType: item.type === 'movie' ? 'movie' : 'tv',
+        title: item.title,
+        type: item.type === 'movie' ? 'movie' : 'tv',
+        year: item.year || '2026',
+        description: `${item.title} 是一部精彩的${item.type === 'movie' ? '电影' : '连续剧'}，评分 ${item.rate || '9.0'}，支持在 iKanPP 免费在线观看完整版高清视频。`,
+        cover: item.cover,
+        backdrop: item.backdrop || item.cover,
+        rate: item.rate || '9.0',
+        genres: item.genres || [item.type === 'movie' ? '电影' : '电视剧'],
+        directors: [],
+        actors: [],
+        createdAt: simulatedDate,
+        updatedAt: simulatedDate,
+      };
+
+      memoryStore.set(`entity:${entityId}`, JSON.stringify(entity));
+      if (item.entityId) {
+        memoryStore.set(`entity:${item.entityId.toLowerCase()}`, JSON.stringify(entity));
+        memoryStore.set(`slug:${item.entityId.toLowerCase()}-${slug}`, entityId);
+        memoryStore.set(`slug:${item.entityId.toLowerCase()}`, entityId);
+      }
+      memoryStore.set(`slug:${entityId}-${slug}`, entityId);
+      memoryStore.set(`slug:${entityId}`, entityId);
+      memoryStore.set(`slug:${slug}`, entityId);
+      memoryStore.set(`title:${norm}`, entityId);
+      memoryStore.set(`tmdb:${entity.tmdbType}:${entity.tmdbId}`, entityId);
+    }
+  }
+
   // 全量实体索引
   const allIds = Array.from(seenTitles).map((_, i) => formatEntityId(i + 1));
   memoryStore.set('index:all', JSON.stringify(allIds));

@@ -60,7 +60,7 @@ function LatestPosterCard({
     }
   };
 
-  const targetHref = `/title/${item.entityId}-${item.slug || generateSlug(item.title)}`;
+  const targetHref = `/title/${generateSlug(item.title)}`;
   const relativeTime = formatRelativeTime(item.createdAt);
   const statusBadge = item.updateBadge || relativeTime;
   const displayGenre = item.genres?.[0] || (item.type === 'movie' ? '电影' : '剧集');
