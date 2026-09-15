@@ -79,7 +79,7 @@ async function enrichWithTmdb(title, defaultPic, defaultScore) {
   const q = cleanTitle(title);
   if (!q) {
     return {
-      cover: defaultPic || 'https://image.tmdb.org/t/p/w500/placeholder.jpg',
+      cover: defaultPic || '/placeholder-poster.svg',
       rate: defaultScore && defaultScore !== '0.0' ? defaultScore : '8.5',
     };
   }
@@ -101,7 +101,7 @@ async function enrichWithTmdb(title, defaultPic, defaultScore) {
   } catch { /* fallback to default */ }
 
   return {
-    cover: defaultPic || 'https://image.tmdb.org/t/p/w500/placeholder.jpg',
+    cover: defaultPic || '/placeholder-poster.svg',
     rate: defaultScore && defaultScore !== '0.0' ? defaultScore : '8.6',
   };
 }

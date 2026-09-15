@@ -74,7 +74,10 @@ export function getOptimizedImageUrl(
   options?: ImageOptimizationOptions
 ): string {
   if (!url) return '/placeholder-poster.svg';
-  if (!url.startsWith('http')) return url;
+  if (url.includes('placeholder.jpg')) return '/placeholder-poster.svg';
+  if (!url.startsWith('http')) {
+    return url.startsWith('/') ? url : '/placeholder-poster.svg';
+  }
 
   // 1. 确定目标宽度
   let targetWidth = 342;
@@ -126,7 +129,11 @@ export function getFallbackProxiedImageUrl(
   url?: string | null,
   options?: ImageOptimizationOptions
 ): string {
-  if (!url || !url.startsWith('http')) return url || '/placeholder-poster.svg';
+  if (!url) return '/placeholder-poster.svg';
+  if (url.includes('placeholder.jpg')) return '/placeholder-poster.svg';
+  if (!url.startsWith('http')) {
+    return url.startsWith('/') ? url : '/placeholder-poster.svg';
+  }
   let targetWidth = 342;
   if (options?.width && options.width > 0) {
     targetWidth = options.width;

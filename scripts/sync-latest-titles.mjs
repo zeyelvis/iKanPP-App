@@ -102,6 +102,69 @@ async function fetchTmdbMeta(query, mediaType = 'movie') {
   }
 }
 
+const COLLECTOR_APIS = [
+  'https://api.guangsuapi.com/api.php/provide/vod?ac=detail&wd=',
+  'https://api.zuidapi.com/api.php/provide/vod?ac=detail&wd=',
+  'https://api.wujinapi.me/api.php/provide/vod?ac=detail&wd=',
+];
+
+const CHN_NUM_MAP = {
+  '1': '一', '2': '二', '3': '三', '4': '四', '5': '五',
+  '6': '六', '7': '七', '8': '八', '9': '九', '10': '十'
+};
+
+/**
+ * 当 TMDB 无匹配时，从骨干采集库（光速、最大、无尽）并发检索官方原版高清海报
+ */
+async function fetchCollectorCover(title) {
+  const searchKeywords = new Set();
+  searchKeywords.add(title);
+
+  // 变体1: "第9季" -> "第九季"
+  const chnVariant = title.replace(/第(\d+)季/g, (_, num) => `第${CHN_NUM_MAP[num] || num}季`);
+  searchKeywords.add(chnVariant);
+
+  // 变体2: 去除季数纯片名 "心动的信号第9季" -> "心动的信号"
+  let pureTitle = title.replace(/第[0-9一二三四五六七八九十]+[季期]/g, '').trim();
+  pureTitle = pureTitle.replace(/\d+$/, '').trim();
+  if (pureTitle && pureTitle !== title) {
+    searchKeywords.add(pureTitle);
+  }
+
+  // 变体3: 提取冒号后或副标题
+  if (title.includes('：')) {
+    title.split('：').forEach(p => searchKeywords.add(p.trim()));
+  }
+
+  for (const apiBase of COLLECTOR_APIS) {
+    for (const kw of searchKeywords) {
+      if (!kw || kw.length < 2) continue;
+      try {
+        const res = await fetch(`${apiBase}${encodeURIComponent(kw)}`, {
+          headers: { 'User-Agent': 'Mozilla/5.0' },
+          signal: AbortSignal.timeout(3500)
+        });
+        if (!res.ok) continue;
+        const data = await res.json();
+        const list = data?.list || [];
+        if (list.length === 0) continue;
+
+        // 优先完全匹配或包含季数的项
+        const exact = list.find(it => it.vod_name === title || it.vod_name === chnVariant);
+        const match = exact || list[0];
+        if (match && match.vod_pic && match.vod_pic.startsWith('http')) {
+          return {
+            cover: match.vod_pic,
+            backdrop: match.vod_pic,
+            rate: match.vod_score && match.vod_score !== '0.0' ? match.vod_score : undefined,
+          };
+        }
+      } catch {}
+    }
+  }
+  return null;
+}
+
 /**
  * 同步单个专区板块的最新上线列表
  */
@@ -138,12 +201,14 @@ async function fetchChannelLatest(channel) {
       const year = item.year || '2026';
       const genres = [item.videoType || '精选', targetType === 'movie' ? '电影' : '剧集'].filter(Boolean);
 
-      // 查询 TMDB 补齐高清剧照
+      // 1. 查询 TMDB 补齐高清剧照
       const tmdb = await fetchTmdbMeta(title, targetType);
-      // 保证封面存在：优先 TMDB，若无则使用标准图片
-      const cover = tmdb?.cover || `https://image.tmdb.org/t/p/w500/placeholder.jpg`;
-      const backdrop = tmdb?.backdrop || cover;
-      const rate = tmdb?.rate || (item.pinFenValue ? (item.pinFenValue * 10).toFixed(1) : '8.8');
+      // 2. 若 TMDB 查无匹配，回退到各大采集骨干库秒级检索真实高清封面
+      const collector = !tmdb?.cover ? await fetchCollectorCover(title) : null;
+
+      const cover = tmdb?.cover || collector?.cover || '/placeholder-poster.svg';
+      const backdrop = tmdb?.backdrop || collector?.backdrop || cover;
+      const rate = tmdb?.rate || collector?.rate || (item.pinFenValue ? (item.pinFenValue * 10).toFixed(1) : '8.8');
       const finalYear = tmdb?.year || year;
 
       resultList.push({
