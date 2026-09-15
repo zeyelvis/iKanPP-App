@@ -1,7 +1,17 @@
 import type { VideoSource } from '@/lib/types';
 
-// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-15T08:05:25.466Z）
+// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-15T13:49:32.860Z）
 export const DEFAULT_SOURCES: VideoSource[] = [
+  {
+    id: 'ole_hd',
+    name: '高清专线',
+    baseUrl: 'https://api.olelive.com',
+    searchPath: '',
+    detailPath: '',
+    group: 'normal',
+    enabled: true,
+    priority: 0,
+  },
   {
     id: 'guangsu',
     name: '光速资源',
@@ -13,6 +23,16 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     priority: 1,
   },
   {
+    id: 'ole_vip',
+    name: '超清专线',
+    baseUrl: 'https://api.olelive.com',
+    searchPath: '',
+    detailPath: '',
+    group: 'normal',
+    enabled: true,
+    priority: 2,
+  },
+  {
     id: 'jisu',
     name: '极速资源',
     baseUrl: 'https://jszyapi.com',
@@ -20,7 +40,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 2,
+    priority: 3,
   },
   {
     id: 'xinlang',
@@ -30,7 +50,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/xinlangapi.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 3,
+    priority: 4,
   },
   {
     id: 'baofeng',
@@ -40,7 +60,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 4,
+    priority: 5,
   },
   {
     id: 'dytt',
@@ -50,7 +70,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 5,
+    priority: 6,
   },
   {
     id: 'json1080',
@@ -60,7 +80,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/inc/apijson.php',
     group: 'normal',
     enabled: true,
-    priority: 6,
+    priority: 7,
   },
   {
     id: 'haitun',
@@ -70,7 +90,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 7,
+    priority: 8,
   },
   {
     id: 'huya',
@@ -80,7 +100,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 8,
+    priority: 9,
   },
   {
     id: 'jinying',
@@ -90,7 +110,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 9,
+    priority: 10,
   },
   {
     id: 'subo',
@@ -100,7 +120,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 10,
+    priority: 11,
   },
   {
     id: 'liangzi',
@@ -110,7 +130,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 11,
+    priority: 12,
   },
   {
     id: 'feifan',
@@ -120,7 +140,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 12,
+    priority: 13,
   },
   {
     id: 'ruyi',
@@ -130,7 +150,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 13,
+    priority: 14,
   },
   {
     id: 'ikun',
@@ -140,7 +160,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 14,
+    priority: 15,
   },
   {
     id: 'youku',
@@ -150,22 +170,12 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 15,
+    priority: 16,
   },
   {
     id: 'lezi',
     name: '乐子资源',
     baseUrl: 'https://cj.lziapi.com',
-    searchPath: '/api.php/provide/vod',
-    detailPath: '/api.php/provide/vod',
-    group: 'normal',
-    enabled: true,
-    priority: 16,
-  },
-  {
-    id: 'zy360',
-    name: '360资源',
-    baseUrl: 'https://360zy.com',
     searchPath: '/api.php/provide/vod',
     detailPath: '/api.php/provide/vod',
     group: 'normal',

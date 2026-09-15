@@ -235,7 +235,50 @@ async function main() {
     process.exit(1);
   }
 
-  const sourceItems = activeSources.map((s, idx) => {
+  // 核心架构铁律：将系统专属专线 (ole_hd 高清专线 priority 0, ole_vip 超清专线 priority 2) 绝对永久锚定于最前列
+  const guangsuSource = activeSources.find(s => s.id === 'guangsu') || {
+    id: 'guangsu',
+    name: '光速资源',
+    baseUrl: 'https://api.guangsuapi.com',
+    searchPath: '/api.php/provide/vod',
+    detailPath: '/api.php/provide/vod',
+    group: 'normal',
+    enabled: true,
+  };
+  const otherActiveSources = activeSources.filter(s => s.id !== 'guangsu' && s.id !== 'ole_hd' && s.id !== 'ole_vip');
+
+  const finalSources = [
+    {
+      id: 'ole_hd',
+      name: '高清专线',
+      baseUrl: 'https://api.olelive.com',
+      searchPath: '',
+      detailPath: '',
+      group: 'normal',
+      enabled: true,
+      priority: 0,
+    },
+    {
+      ...guangsuSource,
+      priority: 1,
+    },
+    {
+      id: 'ole_vip',
+      name: '超清专线',
+      baseUrl: 'https://api.olelive.com',
+      searchPath: '',
+      detailPath: '',
+      group: 'normal',
+      enabled: true,
+      priority: 2,
+    },
+    ...otherActiveSources.map((s, idx) => ({
+      ...s,
+      priority: idx + 3,
+    })),
+  ];
+
+  const sourceItems = finalSources.map((s) => {
     return `  {
     id: '${s.id}',
     name: '${s.name}',
@@ -244,7 +287,7 @@ async function main() {
     detailPath: '${s.detailPath}',
     group: 'normal',
     enabled: true,
-    priority: ${idx + 1},
+    priority: ${s.priority},
   },`;
   }).join('\n');
 
