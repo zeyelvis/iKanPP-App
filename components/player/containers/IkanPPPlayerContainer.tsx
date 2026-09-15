@@ -142,18 +142,10 @@ export function IkanPPPlayerContainer() {
 
         const targetAnalysis = analyzeTitle(title);
         const targetYear = expectedYear ? parseInt(expectedYear, 10) : null;
-        const hasOleHdEnabled = allSources.some(s => s.id === 'ole_hd');
-        let oleHdReceived = false;
-        let oleHdGraceTimer: NodeJS.Timeout | null = null;
-        let pendingBestCandidate: { video: any; score: number; isSeries: boolean } | null = null;
 
         const performRedirect = (targetVideo: any, isSeries: boolean) => {
           if (redirected || cancelled) return;
           redirected = true;
-          if (oleHdGraceTimer) {
-            clearTimeout(oleHdGraceTimer);
-            oleHdGraceTimer = null;
-          }
           const params = new URLSearchParams();
           params.set('id', String(targetVideo.vod_id));
           params.set('source', targetVideo.source);
@@ -185,10 +177,6 @@ export function IkanPPPlayerContainer() {
               const data = JSON.parse(line.slice(6));
               if (data.type === 'videos' && Array.isArray(data.videos) && data.videos.length > 0) {
                 for (const v of data.videos) {
-                  if (v.source === 'ole_hd') {
-                    oleHdReceived = true;
-                  }
-
                   const rawName = (v.vod_name || '').trim();
                   const typeName = (v.type_name || '').toLowerCase();
                   const remarks = (v.vod_remarks || '').toLowerCase();
@@ -292,16 +280,15 @@ export function IkanPPPlayerContainer() {
                   }
 
                   let sourceScore = 0;
-                  // 黄金调度优先级：高清专线(720P)作为全站主力秒开首选，光速紧随其后，超清专线作为高画质备选
-                  if (v.source === 'ole_hd') sourceScore = 130;
-                  else if (v.source === 'guangsu') sourceScore = 110;
-                  else if (v.source === 'ole_vip') sourceScore = 100;
-                  else if (v.source === 'wujin') sourceScore = 90;
-                  else if (v.source === 'zuida') sourceScore = 80;
-                  else if (v.source === 'jisu') sourceScore = 70;
-                  else if (v.source === 'xinlang') sourceScore = 60;
-                  else if (v.source === 'modu') sourceScore = 50;
-                  else if (v.source === 'zy360') sourceScore = 40;
+                  // 黄金调度优先级：光速作为全站主力秒开首选，无尽、最大、极速紧随其后
+                  if (v.source === 'guangsu') sourceScore = 130;
+                  else if (v.source === 'wujin') sourceScore = 110;
+                  else if (v.source === 'zuida') sourceScore = 100;
+                  else if (v.source === 'jisu') sourceScore = 90;
+                  else if (v.source === 'xinlang') sourceScore = 80;
+                  else if (v.source === 'baofeng') sourceScore = 70;
+                  else if (v.source === 'modu') sourceScore = 60;
+                  else if (v.source === 'zy360') sourceScore = 50;
 
                   const totalScore = nameScore + yearScore + qualityScore + episodeScore + sourceScore;
 
@@ -310,7 +297,7 @@ export function IkanPPPlayerContainer() {
 
                   if (isStrictCandidate) {
                     const existingIdx = foundSources.findIndex(s => s.source === v.source);
-                    const newSourceItem: SourceInfo & { _score?: number } = {
+                    const newSourceItem: SourceInfo & { _score?: number; _video?: any; _isSeries?: boolean } = {
                       id: v.vod_id,
                       source: v.source,
                       sourceName: v.sourceDisplayName || getSourceName(v.source),
@@ -318,6 +305,8 @@ export function IkanPPPlayerContainer() {
                       pic: v.vod_pic,
                       typeName: v.type_name,
                       _score: totalScore,
+                      _video: v,
+                      _isSeries: isSeriesItem,
                     };
                     if (existingIdx === -1) {
                       foundSources.push(newSourceItem);
@@ -329,9 +318,7 @@ export function IkanPPPlayerContainer() {
                     }
                   }
 
-                  // 极速秒播裁决：
-                  // 1. 若命中高清专线 (ole_hd)，直接立即秒跳，尊享 720P 极速秒开！
-                  // 2. 若命中其他源（如光速 150ms 极快返回）：给高清专线留出 1.2s 窗口，若未命中则优雅降级跳转光速！
+                  // 极速秒播裁决：命中首选目标（如光速、无尽等且评分达标），直接立即秒跳播放
                   const isQualified = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isExactName && !isEpisodeInsufficient && totalScore >= 80;
                   if (isQualified && !redirected && !cancelled) {
                     const isTopTarget = 
@@ -339,27 +326,8 @@ export function IkanPPPlayerContainer() {
                       (!isSeriesItem && (isExactYearMatch || !targetYear));
 
                     if (isTopTarget) {
-                      if (v.source === 'ole_hd' || !hasOleHdEnabled || oleHdReceived) {
-                        performRedirect(v, isSeriesItem);
-                        break;
-                      } else {
-                        // 命中合规光速等源，暂存为最佳兜底候选
-                        if (!pendingBestCandidate || totalScore > pendingBestCandidate.score) {
-                          pendingBestCandidate = { video: v, score: totalScore, isSeries: isSeriesItem };
-                        }
-                        // 启动 1200ms 宽限定时器：等待高清专线到达
-                        if (!oleHdGraceTimer) {
-                          oleHdGraceTimer = setTimeout(() => {
-                            if (!redirected && !cancelled && pendingBestCandidate) {
-                              performRedirect(pendingBestCandidate.video, pendingBestCandidate.isSeries);
-                            }
-                          }, 1200);
-                        }
-                      }
-                    } else {
-                      if (!pendingBestCandidate || totalScore > pendingBestCandidate.score) {
-                        pendingBestCandidate = { video: v, score: totalScore, isSeries: isSeriesItem };
-                      }
+                      performRedirect(v, isSeriesItem);
+                      break;
                     }
                   }
                 }
@@ -370,12 +338,14 @@ export function IkanPPPlayerContainer() {
         }
 
         if (!redirected && !cancelled) {
-          if (oleHdGraceTimer) {
-            clearTimeout(oleHdGraceTimer);
-            oleHdGraceTimer = null;
-          }
-          if (pendingBestCandidate) {
-            performRedirect(pendingBestCandidate.video, pendingBestCandidate.isSeries);
+          if (foundSources.length > 0) {
+            const best = (foundSources as any[]).sort((a, b) => (b._score ?? 0) - (a._score ?? 0))[0];
+            if (best?._video) {
+              performRedirect(best._video, best._isSeries ?? false);
+            } else {
+              setTitleSearchError('未找到与该片名匹配的高质量正片片源，请尝试精确片名搜索');
+              setTitleSearching(false);
+            }
           } else {
             setTitleSearchError('未找到与该片名匹配的高质量正片片源，请尝试精确片名搜索');
             setTitleSearching(false);
@@ -576,15 +546,6 @@ export function IkanPPPlayerContainer() {
   const handlePlaybackError = useCallback((_error: string) => {
     const currentActiveSource = currentSourceId || source || '';
     if (currentActiveSource) {
-      const errCount = (sourceErrorCountsRef.current.get(currentActiveSource) || 0) + 1;
-      sourceErrorCountsRef.current.set(currentActiveSource, errCount);
-
-      // 专线(720P / 1080P)若仅第 1 次报错，允许底层 Hls.js 自动重试恢复，不立即切源拉黑
-      if ((currentActiveSource === 'ole_hd' || currentActiveSource === 'ole_vip') && errCount < 2) {
-        console.warn(`[Player] ${currentActiveSource} 仍在连接/缓冲中，暂不切换降级...`);
-        return false;
-      }
-
       failedSourcesRef.current.add(currentActiveSource);
     }
 
@@ -592,7 +553,7 @@ export function IkanPPPlayerContainer() {
       (s) => s.source && s.source !== currentActiveSource && !failedSourcesRef.current.has(s.source)
     );
     const candidate = validCandidates.sort((a, b) => {
-      const TOP_ORDER: Record<string, number> = { ole_hd: 0, guangsu: 1, ole_vip: 2, wujin: 3, zuida: 4, jisu: 5, xinlang: 6, modu: 7, zy360: 8 };
+      const TOP_ORDER: Record<string, number> = { guangsu: 0, wujin: 1, zuida: 2, jisu: 3, xinlang: 4, baofeng: 5, dytt: 6, modu: 7, zy360: 8 };
       const aOrder = TOP_ORDER[a.source] ?? 99;
       const bOrder = TOP_ORDER[b.source] ?? 99;
       if (aOrder !== bOrder) return aOrder - bOrder;

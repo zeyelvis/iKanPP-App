@@ -227,17 +227,16 @@ export const settingsStore = {
       // 1. 优先按照黄金优先级加入最新的默认顶级源，并继承用户的开关状态
       defaultSrcs.forEach(ds => {
         const local = localMap.get(ds.id);
-        const isCoreSpecialSource = ds.id === 'ole_hd' || ds.id === 'ole_vip';
         validSources.push({
           ...ds,
-          enabled: isCoreSpecialSource ? (local?.enabled !== false) : (local?.enabled !== undefined ? local.enabled : ds.enabled),
+          enabled: local?.enabled !== undefined ? local.enabled : ds.enabled,
         });
         visited.add(ds.id);
       });
 
-      // 2. 保留用户自定义新增的源（标记为 custom 的非默认源）
+      // 2. 保留用户自定义新增的源（标记为 custom 的非默认源，彻底排除已废弃专线）
       localSources.forEach(ls => {
-        if (ls && ls.id && !visited.has(ls.id) && (ls as any).custom) {
+        if (ls && ls.id && !visited.has(ls.id) && (ls as any).custom && ls.id !== 'ole_hd' && ls.id !== 'ole_vip') {
           validSources.push(ls);
           visited.add(ls.id);
         }

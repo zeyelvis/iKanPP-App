@@ -40,54 +40,45 @@ const FOUR_K_SOURCES = new Set([
 
 // 1080P 蓝光秒播高码率专线字典
 const HD_BLURAY_SOURCES = new Set([
-    'ole_vip', 'jisu', 'guangsu', 'xinlang', 'wujin', 'liangzi', 'dytt',
+    'jisu', 'guangsu', 'xinlang', 'wujin', 'liangzi', 'dytt',
     'feifan', 'huya', 'haitun', 'ruyi', 'zuida', 'subo', 'youku'
 ]);
 
 // 黄金线路优先级权重（严格按金字塔梯队分级，对齐全站最新健康骨干源标准）
 const GOLDEN_PRIORITY_MAP: Record<string, number> = {
-    // === 第零梯队：720P 极速秒开专线（全站默认主力首选） ===
-    'ole_hd': 0,    // 高清专线 (720P 2.51Mbps 极速秒开第一首选)
-
     // === 第一梯队：全量 443 端口纯净切片与数百万海量热播大源（CORS 100% 开放，秒播首选） ===
-    'guangsu': 1,   // 光速资源 (数百万海量新热影视第一大站，降级首选)
+    'guangsu': 0,   // 光速资源 (数百万海量新热影视第一大站，秒播首选)
+    'wujin': 1,     // 无尽资源 (443纯净源，老片/动画秒播首选)
+    'zuida': 2,     // 最大资源 (443纯净源，经典/新剧兼备)
+    'jisu': 3,      // 极速资源 (443纯净源)
+    'xinlang': 4,   // 新浪资源 (443纯净源)
+    'modu': 5,      // 魔都资源 (热播大站)
+    'zy360': 6,     // 360资源 (独播大站)
 
-    // === 第二梯队：1080P 4.91Mbps 超清原画专线（大屏画质专享） ===
-    'ole_vip': 2,   // 超清专线 (1080P 4.91Mbps 原画顶级专享)
-
-    // === 第三梯队：优质骨干主流源 ===
-    'wujin': 3,     // 无尽资源 (443纯净源，老片/动画秒播首选)
-    'zuida': 4,     // 最大资源 (443纯净源，经典/新剧兼备)
-    'jisu': 5,      // 极速资源 (443纯净源)
-    'xinlang': 6,   // 新浪资源 (443纯净源)
-    'modu': 7,      // 魔都资源 (热播大站)
-    'zy360': 8,     // 360资源 (独播大站)
-
-    // === 第四梯队：优质主流高码率专线（1080P/4K，部分节点有防盗链策略） ===
-    'json1080': 9,  // 1080JSON
-    'feifan': 10,   // 非凡资源
-    'baofeng': 11,  // 暴风资源 (4K/蓝光)
-    'dytt': 12,     // 电影天堂
-    'liangzi': 13,  // 量子资源
-    'hongniu': 14,  // 红牛资源 (4K)
-    'huya': 15,     // 虎牙资源
-    'haitun': 16,   // 海豚资源
-    'lezi': 17,     // 乐子资源
-    'ruyi': 17,     // 如意资源
-    'modu_dm': 18,  // 魔都动漫
-    'moduys': 19,   // 魔都影视
+    // === 第二梯队：优质主流高码率专线（1080P/4K，部分节点有防盗链策略） ===
+    'json1080': 7,  // 1080JSON
+    'feifan': 8,    // 非凡资源
+    'baofeng': 9,   // 暴风资源 (4K/蓝光)
+    'dytt': 10,     // 电影天堂
+    'liangzi': 11,  // 量子资源
+    'hongniu': 12,  // 红牛资源 (4K)
+    'huya': 13,     // 虎牙资源
+    'haitun': 14,   // 海豚资源
+    'lezi': 15,     // 乐子资源
+    'ruyi': 16,     // 如意资源
+    'modu_dm': 17,  // 魔都动漫
+    'moduys': 18,   // 魔都影视
 
     // === 第三梯队：备用线路（部分切片挂在非标端口或开启防盗链，顺延保底） ===
-    'ikun': 20,     // iKun资源
-    'subo': 21,     // 速博资源
-    'jinying': 22,  // 金鹰点播
-    'youku': 23,    // 优酷资源
-    'jingyu': 24,   // 鲸鱼资源
+    'ikun': 19,     // iKun资源
+    'subo': 20,     // 速博资源
+    'jinying': 21,  // 金鹰点播
+    'youku': 22,    // 优酷资源
+    'jingyu': 23,   // 鲸鱼资源
 };
 
 // ikanbot 线路标识映射
 const FLAG_TO_SOURCE_KEY: Record<string, string> = {
-    'ole_vip': 'ole_vip',
     'wjm3u8': 'wujin',
     'zuidam3u8': 'zuida',
     'gsm3u8': 'guangsu',
@@ -261,17 +252,9 @@ export function SourceSelector({
                                 </span>
                             </div>
 
-                            {/* 右侧徽章（720P / 1080P / 4K / 蓝光 / 备用 / 首选） */}
+                            {/* 右侧徽章（4K / 蓝光 / 备用 / 首选） */}
                             <div className="flex items-center gap-1 shrink-0 ml-1">
-                                {cleanKey === 'ole_vip' ? (
-                                    <span className="text-[9px] font-black px-1.5 py-0.2 bg-purple-500/20 text-purple-300 border border-purple-400/50 rounded shadow-xs">
-                                        1080P
-                                    </span>
-                                ) : cleanKey === 'ole_hd' ? (
-                                    <span className="text-[9px] font-black px-1.5 py-0.2 bg-blue-500/20 text-blue-300 border border-blue-400/50 rounded shadow-xs">
-                                        720P
-                                    </span>
-                                ) : is4K ? (
+                                {is4K ? (
                                     <span className="text-[9px] font-black px-1.5 py-0.2 bg-amber-400 text-black rounded shadow-xs">
                                         4K
                                     </span>
