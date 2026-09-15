@@ -168,4 +168,25 @@
   - `v10.baofeng10.com` ➔ **`v.fengbao10.com`** (老域名遭运营商阻断)
   - `v.baofeng10.com` ➔ **`v.fengbao10.com`** (官方建议割接)
 
+---
+
+## 9. 全库实时网格数据源与全自动 SEO 闭环规范 (Full-Library Realtime Browse & SEO Automation Spec) (2026-09 升级)
+
+### 1. 全库浏览网格架构（`/api/library/browse`）
+- **核心定位**：取代传统全库网格对豆瓣静态/限速接口的依赖，全面接入全网 112,823+ 部主流公网影视采集库。
+- **网络与架构规范**：
+  1. **双源秒开容灾**：由光速资源为主力源、极速资源为备用/补充源，并发拉取并按片名智能去重。
+  2. **100% 恪守 Track A 零代理直连铁律**：API 仅返回影视元数据与片名，播放时客户端仍 100% 直连第三方源站 CDN，严禁中转任何正片流量。
+  3. **边缘 CDN 缓存**：配置 `s-maxage=600, stale-while-revalidate=3600`，同参数毫秒级响应。
+  4. **纪录片无缝解锁**：打破纯静态限制，将高分殿堂纪录片置顶，后续无缝衔接 2,440+ 部实时纪录片库。
+
+### 2. 连载追踪与预烘焙小时级闭环
+- **连载状态感知（`sync-episode-updates.mjs`）**：每小时自动遍历连载影视库（电视剧、动漫、综艺），精准提取采集源最新 `vod_remarks`，小时级感知并回写最新集数角标。
+- **7 大专区预烘焙（`sync-category-prebaked.mjs`）**：覆盖电影、电视剧、动漫、综艺、纪录片、短剧、排行榜，首屏 0ms 瞬间直出最新上映剧照与豆瓣评分。
+
+### 3. SEO 全自动 Entity 管道与搜索引擎主动推送
+- **主动入库推送（`sync-seo-entities.mjs`）**：新入库影片自动生成规范 SEO Slug 与详情页 URL（`/title/{slug}`），通过 IndexNow 协议向各大搜索引擎（Bing / Yandex / IndexNow）批量广播，秒级触发收录。
+- **全自动无人值守**：由 `.github/workflows/sync-iyf-channels.yml` 每小时 5 步全量流水线闭环执行，数据变动自动触发 Cloudflare Pages 编译部署上线。
+
+
 

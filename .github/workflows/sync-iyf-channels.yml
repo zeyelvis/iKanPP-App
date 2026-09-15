@@ -38,13 +38,23 @@ jobs:
         with:
           node-version: 22
 
-      - name: Execute IYF Channels & Latest Titles Sync
+      - name: Execute Full Auto-Update & SEO Pipeline
         run: |
           TARGET="${{ github.event.inputs.channel || 'all_channels' }}"
-          echo "🚀 正在启动爱壹帆专区轮播与速报同步，目标板块: $TARGET"
+          echo "🚀 [1/5] 爱壹帆专区轮播与速报同步，目标板块: $TARGET..."
           node scripts/sync-iyf-hero.mjs --target="$TARGET"
-          echo "🚀 正在启动全站 6 大专区「最新上线」真实增量流巡检与预烘焙..."
+
+          echo "🚀 [2/5] 全站「最新上线」真实增量流巡检与预烘焙..."
           node scripts/sync-latest-titles.mjs
+
+          echo "📺 [3/5] 连载作品最新集数变更自动检测与角标回写..."
+          node scripts/sync-episode-updates.mjs
+
+          echo "📚 [4/5] 全站 7 大专区预烘焙分类数据全量刷新..."
+          node scripts/sync-category-prebaked.mjs
+
+          echo "🔍 [5/5] SEO Entity 自动入库与全网搜索引擎推送..."
+          node scripts/sync-seo-entities.mjs
 
       - name: Commit, push, and trigger deploy if data updated
         env:
@@ -53,11 +63,13 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-          if [[ -n $(git status --porcelain lib/data/home-prebaked.ts lib/data/home-prebaked-extra.ts lib/data/latest-titles-prebaked.ts) ]]; then
+          MODIFIED_FILES="lib/data/home-prebaked.ts lib/data/home-prebaked-extra.ts lib/data/latest-titles-prebaked.ts lib/data/category-prebaked.ts lib/data/new-scraped-titles.json"
+
+          if [[ -n $(git status --porcelain $MODIFIED_FILES) ]]; then
             TARGET="${{ github.event.inputs.channel || 'all_channels' }}"
-            echo "✅ 检测到预烘焙影视大剧、速报与最新上线数据更新，正在提交..."
-            git add lib/data/home-prebaked.ts lib/data/home-prebaked-extra.ts lib/data/latest-titles-prebaked.ts
-            git commit -m "chore(sync): 自动同步全站专区 [$TARGET] 轮播、速报与最新上线影视"
+            echo "✅ 检测到预烘焙影视、最新集数与分类大厅数据更新，正在提交..."
+            git add $MODIFIED_FILES
+            git commit -m "chore(sync): 自动同步全站专区 [$TARGET] 轮播、集数更新、分类大厅与 SEO 实体"
             git push
             echo "🚀 正在触发 Cloudflare Pages 编译部署工作流..."
             gh workflow run deploy.yml --ref main

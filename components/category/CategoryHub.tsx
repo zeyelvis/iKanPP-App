@@ -29,6 +29,14 @@ const LatestTitlesRail = dynamic(
   { ssr: false }
 );
 
+const NAV_TO_BROWSE_TYPE: Record<string, string> = {
+  movie: 'movie',
+  tv: 'tv',
+  anime: 'anime',
+  variety: 'variety',
+  documentary: 'documentary',
+};
+
 export interface FilterOption {
   label: string;
   value: string;
@@ -136,8 +144,8 @@ function isSameList(a: any[], b: any[]): boolean {
 
   // 货架数据状态（SWR: 优先从本地/预烘焙数据集瞬间 0ms 展示，永不阻塞白屏）
   const initialPrebaked = useMemo(() => {
-    return getPrebakedCategoryShelves(doubanType, activeNav, shelves);
-  }, [doubanType, activeNav, shelves]);
+    return getPrebakedCategoryShelves(activeNav, doubanType, shelves);
+  }, [activeNav, doubanType, shelves]);
 
   const [shelfData, setShelfData] = useState<Record<string, RailMovie[]>>(() => {
     if (!usePrebakedOnly && typeof window !== 'undefined') {
@@ -355,22 +363,29 @@ function isSameList(a: any[], b: any[]): boolean {
           return;
         }
 
-        const pageStart = pageNum * PAGE_SIZE;
+        // 采集站全库实时网格浏览（覆盖电影/电视剧/动漫/综艺/纪录片，双源秒开容灾）
+        const browseType = NAV_TO_BROWSE_TYPE[activeNav] || doubanType;
+        const targetPage = pageNum + 1;
         const params = new URLSearchParams();
+        params.set('type', browseType);
+        params.set('page', String(targetPage));
+        params.set('limit', String(PAGE_SIZE));
         if (selectedGenre) params.set('genre', selectedGenre);
-        if (selectedRegion) params.set('region', selectedRegion);
+        if (selectedRegion) params.set('area', selectedRegion);
         if (selectedYear) params.set('year', selectedYear);
-        if (activeSearchTag) params.set('tag', activeSearchTag);
-        params.set('type', doubanType);
-        params.set('page_limit', String(PAGE_SIZE));
-        params.set('page_start', String(pageStart));
+        if (selectedSort) params.set('sort', selectedSort);
 
-        const res = await fetch(`/api/douban/recommend?${params.toString()}`);
+        const res = await fetch(`/api/library/browse?${params.toString()}`);
+        if (!res.ok) {
+          setGridMovies([]);
+          setHasMore(false);
+          return;
+        }
         const data = await res.json();
-        const subjects = data.subjects || [];
+        const subjects = data.list || [];
 
         setGridMovies(subjects);
-        setHasMore(subjects.length === PAGE_SIZE);
+        setHasMore(data.page < data.pagecount && subjects.length > 0);
         setPage(pageNum);
       } catch (err) {
         console.error('Fetch grid error:', err);
@@ -379,7 +394,7 @@ function isSameList(a: any[], b: any[]): boolean {
         setLoadingGrid(false);
       }
     },
-    [selectedGenre, selectedRegion, selectedYear, activeSearchTag, doubanType, usePrebakedOnly, activeNav, shortDramaMode]
+    [selectedGenre, selectedRegion, selectedYear, selectedSort, doubanType, usePrebakedOnly, activeNav, shortDramaMode]
   );
 
   // 筛选器变化时重置回第 0 页
