@@ -54,11 +54,15 @@ export const PREBAKED_HOME_DATA: {
   "movie": {
     "trendingNav": [
         {
-                "title": "逃出绝命街",
+                "title": "打生桩",
                 "updateBadge": ""
         },
         {
                 "title": "欢迎来龙餐馆",
+                "updateBadge": ""
+        },
+        {
+                "title": "逃出绝命街",
                 "updateBadge": ""
         },
         {
@@ -78,10 +82,6 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "海洋奇缘：启航",
-                "updateBadge": ""
-        },
-        {
                 "title": "夜王",
                 "updateBadge": ""
         },
@@ -90,7 +90,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "不成功穿越指南",
+                "title": "海洋奇缘：启航",
                 "updateBadge": ""
         },
         {
@@ -98,7 +98,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "抓特务",
+                "title": "不成功穿越指南",
                 "updateBadge": ""
         }
       ],
@@ -142,7 +142,7 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_movie_3",
                 "title": "玩具总动员5",
-                "rate": "8.4",
+                "rate": "8.3",
                 "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
                 "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
@@ -1825,34 +1825,34 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": ""
+                "updateBadge": "2"
         },
         {
                 "title": "早春晴朗",
                 "updateBadge": ""
         },
         {
+                "title": "交锋",
+                "updateBadge": "2"
+        },
+        {
                 "title": "冬城猎凶",
                 "updateBadge": "1"
         },
         {
-                "title": "交锋",
-                "updateBadge": ""
+                "title": "生逢其时",
+                "updateBadge": "1"
         },
         {
                 "title": "深渊无间",
                 "updateBadge": ""
         },
         {
-                "title": "飞到我心上",
-                "updateBadge": ""
-        },
-        {
-                "title": "生逢其时",
-                "updateBadge": ""
-        },
-        {
                 "title": "死有对证",
+                "updateBadge": "1"
+        },
+        {
+                "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
@@ -1861,14 +1861,14 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "云雀叫天录",
-                "updateBadge": "2"
-        },
-        {
-                "title": "杀手妈咪",
                 "updateBadge": ""
         },
         {
                 "title": "百花杀",
+                "updateBadge": ""
+        },
+        {
+                "title": "九门",
                 "updateBadge": ""
         }
       ],
@@ -1885,7 +1885,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至10集 | 共47集",
+                "episodes_info": "更新至12集 | 共47集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1936,7 +1936,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至20集 | 共40集",
+                "episodes_info": "更新至22集 | 共40集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1953,7 +1953,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至16集 | 共26集",
+                "episodes_info": "更新至17集 | 共26集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
