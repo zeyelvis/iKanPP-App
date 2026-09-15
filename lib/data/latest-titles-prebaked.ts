@@ -56,7 +56,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "全24集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_all_3",
@@ -96,20 +96,21 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
     },
     {
       "entityId": "ik_latest_all_5",
-      "title": "心动的信号第9季",
-      "slug": "%E5%BF%83%E5%8A%A8%E7%9A%84%E4%BF%A1%E5%8F%B7%E7%AC%AC9%E5%AD%A3",
-      "cover": "https://img.guangsuimage.com/cover/bc6f1f3779c04d2b142bc35d69bd3474.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/bc6f1f3779c04d2b142bc35d69bd3474.jpg",
-      "rate": "8.8",
+      "tmdbId": "301489",
+      "title": "深渊无间",
+      "slug": "%E6%B7%B1%E6%B8%8A%E6%97%A0%E9%97%B4",
+      "cover": "https://image.tmdb.org/t/p/w500/b9ngtGNgaHBbLihRrT0MsPRY0GW.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/s9YSQAJtXjimsjBVsqLtJNnIjEs.jpg",
+      "rate": "9.0",
       "year": "2026",
-      "type": "movie",
+      "type": "tv",
       "channelKey": "all",
       "genres": [
-        "真人秀",
-        "电影"
+        "悬疑",
+        "剧集"
       ],
-      "updateBadge": "第7期",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "updateBadge": "全16集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_all_6",
@@ -131,21 +132,20 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
     },
     {
       "entityId": "ik_latest_all_7",
-      "tmdbId": "301489",
-      "title": "深渊无间",
-      "slug": "%E6%B7%B1%E6%B8%8A%E6%97%A0%E9%97%B4",
-      "cover": "https://image.tmdb.org/t/p/w500/b9ngtGNgaHBbLihRrT0MsPRY0GW.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/s9YSQAJtXjimsjBVsqLtJNnIjEs.jpg",
-      "rate": "9.0",
+      "title": "心动的信号第9季",
+      "slug": "%E5%BF%83%E5%8A%A8%E7%9A%84%E4%BF%A1%E5%8F%B7%E7%AC%AC9%E5%AD%A3",
+      "cover": "https://img.guangsuimage.com/cover/bc6f1f3779c04d2b142bc35d69bd3474.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/bc6f1f3779c04d2b142bc35d69bd3474.jpg",
+      "rate": "8.8",
       "year": "2026",
-      "type": "tv",
+      "type": "movie",
       "channelKey": "all",
       "genres": [
-        "悬疑",
-        "剧集"
+        "真人秀",
+        "电影"
       ],
-      "updateBadge": "全16集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "updateBadge": "第7期",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_all_8",
@@ -163,7 +163,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "更新至第07集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_all_9",
@@ -181,28 +181,10 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "全24集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_all_10",
-      "tmdbId": "224839",
-      "title": "遮天",
-      "slug": "%E9%81%AE%E5%A4%A9",
-      "cover": "https://image.tmdb.org/t/p/w500/z9JNGlJ8eGy6S6SOlBhpmxjjXGT.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/1HcuGlNEfc6EYZHEZGwgKjAvYa4.jpg",
-      "rate": "8.9",
-      "year": "2023",
-      "type": "tv",
-      "channelKey": "all",
-      "genres": [
-        "冒险",
-        "剧集"
-      ],
-      "updateBadge": "更新至第181集",
-      "createdAt": "2026-09-15T14:19:00.000Z"
-    },
-    {
-      "entityId": "ik_latest_all_11",
       "tmdbId": "287496",
       "title": "花开锦绣",
       "slug": "%E8%8A%B1%E5%BC%80%E9%94%A6%E7%BB%A3",
@@ -217,10 +199,45 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "全36集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_all_11",
+      "tmdbId": "1469930",
+      "title": "打生桩",
+      "slug": "%E6%89%93%E7%94%9F%E6%A1%A9",
+      "cover": "https://image.tmdb.org/t/p/w500/wdOa8jWX8u1YNSlWyRvoNCc9y7S.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/k3Nc57fdRkzleHjodta45mGJV2C.jpg",
+      "rate": "3.8",
+      "year": "2026",
+      "type": "movie",
+      "channelKey": "all",
+      "genres": [
+        "惊悚",
+        "电影"
+      ],
+      "updateBadge": "正片",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_all_12",
+      "title": "花儿与少年第8季",
+      "slug": "%E8%8A%B1%E5%84%BF%E4%B8%8E%E5%B0%91%E5%B9%B4%E7%AC%AC8%E5%AD%A3",
+      "cover": "https://img.guangsuimage.com/cover/f8063f1b0b35246aaecc6911f3981d81.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/f8063f1b0b35246aaecc6911f3981d81.jpg",
+      "rate": "8.4",
+      "year": "2026",
+      "type": "movie",
+      "channelKey": "all",
+      "genres": [
+        "真人秀",
+        "电影"
+      ],
+      "updateBadge": "第5期",
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_all_13",
       "tmdbId": "223911",
       "title": "仙逆",
       "slug": "%E4%BB%99%E9%80%86",
@@ -238,42 +255,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2026-09-13T13:08:00.000Z"
     },
     {
-      "entityId": "ik_latest_all_13",
-      "tmdbId": "1469930",
-      "title": "打生桩",
-      "slug": "%E6%89%93%E7%94%9F%E6%A1%A9",
-      "cover": "https://image.tmdb.org/t/p/w500/wdOa8jWX8u1YNSlWyRvoNCc9y7S.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/k3Nc57fdRkzleHjodta45mGJV2C.jpg",
-      "rate": "3.8",
-      "year": "2026",
-      "type": "movie",
-      "channelKey": "all",
-      "genres": [
-        "惊悚",
-        "电影"
-      ],
-      "updateBadge": "正片",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
       "entityId": "ik_latest_all_14",
-      "title": "花儿与少年第8季",
-      "slug": "%E8%8A%B1%E5%84%BF%E4%B8%8E%E5%B0%91%E5%B9%B4%E7%AC%AC8%E5%AD%A3",
-      "cover": "https://img.guangsuimage.com/cover/f8063f1b0b35246aaecc6911f3981d81.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/f8063f1b0b35246aaecc6911f3981d81.jpg",
-      "rate": "8.4",
-      "year": "2026",
-      "type": "movie",
-      "channelKey": "all",
-      "genres": [
-        "真人秀",
-        "电影"
-      ],
-      "updateBadge": "第5期",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_all_15",
       "title": "披荆斩棘2026",
       "slug": "%E6%8A%AB%E8%8D%86%E6%96%A9%E6%A3%982026",
       "cover": "https://img.guangsuimage.com/cover/2eea2ab420e3cde52f34fd7cc5d341ee.jpg",
@@ -287,10 +269,10 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "电影"
       ],
       "updateBadge": "三公小考",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
-      "entityId": "ik_latest_all_16",
+      "entityId": "ik_latest_all_15",
       "tmdbId": "1391021",
       "title": "欢迎来龙餐馆",
       "slug": "%E6%AC%A2%E8%BF%8E%E6%9D%A5%E9%BE%99%E9%A4%90%E9%A6%86",
@@ -305,28 +287,28 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "电影"
       ],
       "updateBadge": "正片",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
-      "entityId": "ik_latest_all_17",
-      "tmdbId": "106449",
-      "title": "凡人修仙传",
-      "slug": "%E5%87%A1%E4%BA%BA%E4%BF%AE%E4%BB%99%E4%BC%A0",
-      "cover": "https://image.tmdb.org/t/p/w500/u1VRjvvCIVwb1MUhoxSAUimhoKZ.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/8NIvQY34tNPc4txNeym2zEYk9ek.jpg",
-      "rate": "8.4",
-      "year": "2020",
+      "entityId": "ik_latest_all_16",
+      "tmdbId": "224839",
+      "title": "遮天",
+      "slug": "%E9%81%AE%E5%A4%A9",
+      "cover": "https://image.tmdb.org/t/p/w500/z9JNGlJ8eGy6S6SOlBhpmxjjXGT.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/1HcuGlNEfc6EYZHEZGwgKjAvYa4.jpg",
+      "rate": "8.9",
+      "year": "2023",
       "type": "tv",
       "channelKey": "all",
       "genres": [
-        "热血",
+        "冒险",
         "剧集"
       ],
-      "updateBadge": "更新至第191集",
-      "createdAt": "2026-09-12T05:13:00.000Z"
+      "updateBadge": "更新至第181集",
+      "createdAt": "2026-09-15T14:19:00.000Z"
     },
     {
-      "entityId": "ik_latest_all_18",
+      "entityId": "ik_latest_all_17",
       "tmdbId": "288873",
       "title": "云雀叫天录",
       "slug": "%E4%BA%91%E9%9B%80%E5%8F%AB%E5%A4%A9%E5%BD%95",
@@ -344,7 +326,43 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2026-09-15T06:26:00.000Z"
     },
     {
+      "entityId": "ik_latest_all_18",
+      "tmdbId": "106449",
+      "title": "凡人修仙传",
+      "slug": "%E5%87%A1%E4%BA%BA%E4%BF%AE%E4%BB%99%E4%BC%A0",
+      "cover": "https://image.tmdb.org/t/p/w500/u1VRjvvCIVwb1MUhoxSAUimhoKZ.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/8NIvQY34tNPc4txNeym2zEYk9ek.jpg",
+      "rate": "8.4",
+      "year": "2020",
+      "type": "tv",
+      "channelKey": "all",
+      "genres": [
+        "热血",
+        "剧集"
+      ],
+      "updateBadge": "更新至第191集",
+      "createdAt": "2026-09-12T05:13:00.000Z"
+    },
+    {
       "entityId": "ik_latest_all_19",
+      "tmdbId": "1101383",
+      "title": "逃出绝命街",
+      "slug": "%E9%80%83%E5%87%BA%E7%BB%9D%E5%91%BD%E8%A1%97",
+      "cover": "https://image.tmdb.org/t/p/w500/2eXquFgtDqSyVmrcBwC9ZnzNw3d.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/b9q9VmbXDvJmTziRqkwdEmFdwhr.jpg",
+      "rate": "6.6",
+      "year": "2026",
+      "type": "movie",
+      "channelKey": "all",
+      "genres": [
+        "动作",
+        "电影"
+      ],
+      "updateBadge": "正片",
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_all_20",
       "tmdbId": "286506",
       "title": "百花杀",
       "slug": "%E7%99%BE%E8%8A%B1%E6%9D%80",
@@ -359,25 +377,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "更新至第75集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_all_20",
-      "tmdbId": "303287",
-      "title": "一斩苍穹",
-      "slug": "%E4%B8%80%E6%96%A9%E8%8B%8D%E7%A9%B9",
-      "cover": "https://image.tmdb.org/t/p/w500/7rDjnBLbJhFN6oLE2uVd9bDx0bU.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/cU5PAnxXY9DWStsZ0HsFhq4SHWr.jpg",
-      "rate": "10.0",
-      "year": "2026",
-      "type": "tv",
-      "channelKey": "all",
-      "genres": [
-        "魔幻",
-        "剧集"
-      ],
-      "updateBadge": "更新至第9集",
-      "createdAt": "2026-09-15T04:09:00.000Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     }
   ],
   "movie": [
@@ -397,7 +397,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "电影"
       ],
       "updateBadge": "正片",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_movie_2",
@@ -415,7 +415,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "电影"
       ],
       "updateBadge": "正片",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_movie_3",
@@ -432,8 +432,8 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "动作",
         "电影"
       ],
-      "updateBadge": "1080P超清",
-      "createdAt": "2026-09-14T13:24:00.000Z"
+      "updateBadge": "正片",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_movie_4",
@@ -477,7 +477,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "title": "蜂鸟行动",
       "slug": "%E8%9C%82%E9%B8%9F%E8%A1%8C%E5%8A%A8",
       "cover": "https://image.tmdb.org/t/p/w500/oZXH2DonlPsDVPBTIy5gQxBZLcU.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w500/oZXH2DonlPsDVPBTIy5gQxBZLcU.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/dqnS9n5yfMNPzJYyKyand2skUNY.jpg",
       "rate": "4.0",
       "year": "2026",
       "type": "movie",
@@ -581,24 +581,6 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
     },
     {
       "entityId": "ik_latest_movie_12",
-      "tmdbId": "1572830",
-      "title": "不成功穿越指南",
-      "slug": "%E4%B8%8D%E6%88%90%E5%8A%9F%E7%A9%BF%E8%B6%8A%E6%8C%87%E5%8D%97",
-      "cover": "https://image.tmdb.org/t/p/w500/3ETbY1nV0vJIeoxiJslXon0Z9Q9.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/ajqlk7EGZVjjl4b5VrrQQUc6k7G.jpg",
-      "rate": "5.8",
-      "year": "2026",
-      "type": "movie",
-      "channelKey": "movie",
-      "genres": [
-        "剧情",
-        "电影"
-      ],
-      "updateBadge": "2160P",
-      "createdAt": "2026-09-10T13:10:00.000Z"
-    },
-    {
-      "entityId": "ik_latest_movie_13",
       "tmdbId": "1305672",
       "title": "抓特务",
       "slug": "%E6%8A%93%E7%89%B9%E5%8A%A1",
@@ -616,30 +598,13 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2026-08-28T12:27:00.000Z"
     },
     {
-      "entityId": "ik_latest_movie_14",
-      "tmdbId": "1084244",
-      "title": "玩具总动员5",
-      "slug": "%E7%8E%A9%E5%85%B7%E6%80%BB%E5%8A%A8%E5%91%985",
-      "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
-      "rate": "8.3",
-      "year": "2026",
-      "type": "movie",
-      "channelKey": "movie",
-      "genres": [
-        "动画",
-        "电影"
-      ],
-      "updateBadge": "1080P超清",
-      "createdAt": "2026-08-18T00:23:00.000Z"
-    },
-    {
-      "entityId": "ik_latest_movie_15",
-      "title": "百分之十",
-      "slug": "%E7%99%BE%E5%88%86%E4%B9%8B%E5%8D%81",
-      "cover": "https://img.guangsuimage.com/cover/729192820ddbc2879943360421c281a2.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/729192820ddbc2879943360421c281a2.jpg",
-      "rate": "6.8",
+      "entityId": "ik_latest_movie_13",
+      "tmdbId": "1572830",
+      "title": "不成功穿越指南",
+      "slug": "%E4%B8%8D%E6%88%90%E5%8A%9F%E7%A9%BF%E8%B6%8A%E6%8C%87%E5%8D%97",
+      "cover": "https://image.tmdb.org/t/p/w500/3ETbY1nV0vJIeoxiJslXon0Z9Q9.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/ajqlk7EGZVjjl4b5VrrQQUc6k7G.jpg",
+      "rate": "5.8",
       "year": "2026",
       "type": "movie",
       "channelKey": "movie",
@@ -647,11 +612,11 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧情",
         "电影"
       ],
-      "updateBadge": "720P",
-      "createdAt": "2026-09-10T15:38:00.000Z"
+      "updateBadge": "2160P",
+      "createdAt": "2026-09-10T13:10:00.000Z"
     },
     {
-      "entityId": "ik_latest_movie_16",
+      "entityId": "ik_latest_movie_14",
       "tmdbId": "1499071",
       "title": "寒战1994",
       "slug": "%E5%AF%92%E6%88%981994",
@@ -669,7 +634,59 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2026-07-24T11:04:00.000Z"
     },
     {
+      "entityId": "ik_latest_movie_15",
+      "title": "邻人可疑",
+      "slug": "%E9%82%BB%E4%BA%BA%E5%8F%AF%E7%96%91",
+      "cover": "https://ok.zuidapic.com/upload/vod/20260821-1/71dff0f210d972b32cc59cd2e6a8a661.jpg",
+      "backdrop": "https://ok.zuidapic.com/upload/vod/20260821-1/71dff0f210d972b32cc59cd2e6a8a661.jpg",
+      "rate": "8.4",
+      "year": "2026",
+      "type": "movie",
+      "channelKey": "movie",
+      "genres": [
+        "剧情",
+        "电影"
+      ],
+      "updateBadge": "2160P",
+      "createdAt": "2026-08-20T11:37:00.000Z"
+    },
+    {
+      "entityId": "ik_latest_movie_16",
+      "tmdbId": "1084244",
+      "title": "玩具总动员5",
+      "slug": "%E7%8E%A9%E5%85%B7%E6%80%BB%E5%8A%A8%E5%91%985",
+      "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
+      "rate": "8.3",
+      "year": "2026",
+      "type": "movie",
+      "channelKey": "movie",
+      "genres": [
+        "动画",
+        "电影"
+      ],
+      "updateBadge": "1080P超清",
+      "createdAt": "2026-08-18T00:23:00.000Z"
+    },
+    {
       "entityId": "ik_latest_movie_17",
+      "title": "百分之十",
+      "slug": "%E7%99%BE%E5%88%86%E4%B9%8B%E5%8D%81",
+      "cover": "https://img.guangsuimage.com/cover/729192820ddbc2879943360421c281a2.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/729192820ddbc2879943360421c281a2.jpg",
+      "rate": "6.8",
+      "year": "2026",
+      "type": "movie",
+      "channelKey": "movie",
+      "genres": [
+        "剧情",
+        "电影"
+      ],
+      "updateBadge": "720P",
+      "createdAt": "2026-09-10T15:38:00.000Z"
+    },
+    {
+      "entityId": "ik_latest_movie_18",
       "tmdbId": "1522776",
       "title": "小气鬼",
       "slug": "%E5%B0%8F%E6%B0%94%E9%AC%BC",
@@ -687,39 +704,22 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2026-09-02T10:49:00.000Z"
     },
     {
-      "entityId": "ik_latest_movie_18",
-      "title": "邻人可疑",
-      "slug": "%E9%82%BB%E4%BA%BA%E5%8F%AF%E7%96%91",
-      "cover": "https://ok.zuidapic.com/upload/vod/20260821-1/71dff0f210d972b32cc59cd2e6a8a661.jpg",
-      "backdrop": "https://ok.zuidapic.com/upload/vod/20260821-1/71dff0f210d972b32cc59cd2e6a8a661.jpg",
-      "rate": "8.4",
-      "year": "2026",
-      "type": "movie",
-      "channelKey": "movie",
-      "genres": [
-        "剧情",
-        "电影"
-      ],
-      "updateBadge": "2160P",
-      "createdAt": "2026-08-20T11:37:00.000Z"
-    },
-    {
       "entityId": "ik_latest_movie_19",
-      "tmdbId": "1339713",
-      "title": "痴迷",
-      "slug": "%E7%97%B4%E8%BF%B7",
-      "cover": "https://image.tmdb.org/t/p/w500/32HbiLe4AWBqsM7WrYEYpL3oHmS.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/rZfmzpixLKLR3Hg2u0WgC7XLFl8.jpg",
-      "rate": "8.2",
+      "tmdbId": "1440098",
+      "title": "保镖恋人",
+      "slug": "%E4%BF%9D%E9%95%96%E6%81%8B%E4%BA%BA",
+      "cover": "https://image.tmdb.org/t/p/w500/wRyb983cO7hdEdWsN6RNAXXhWqu.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/i65y7cMae36K0giN0GRaMjAHUru.jpg",
+      "rate": "6.6",
       "year": "2026",
       "type": "movie",
       "channelKey": "movie",
       "genres": [
-        "恐怖",
+        "爱情",
         "电影"
       ],
-      "updateBadge": "1080P超清",
-      "createdAt": "2026-06-30T16:05:00.000Z"
+      "updateBadge": "576P",
+      "createdAt": "2026-09-09T15:41:00.000Z"
     },
     {
       "entityId": "ik_latest_movie_20",
@@ -775,7 +775,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "全24集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_tv_3",
@@ -815,6 +815,24 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
     },
     {
       "entityId": "ik_latest_tv_5",
+      "tmdbId": "301489",
+      "title": "深渊无间",
+      "slug": "%E6%B7%B1%E6%B8%8A%E6%97%A0%E9%97%B4",
+      "cover": "https://image.tmdb.org/t/p/w500/b9ngtGNgaHBbLihRrT0MsPRY0GW.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/s9YSQAJtXjimsjBVsqLtJNnIjEs.jpg",
+      "rate": "9.0",
+      "year": "2026",
+      "type": "tv",
+      "channelKey": "tv",
+      "genres": [
+        "悬疑",
+        "剧集"
+      ],
+      "updateBadge": "全16集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_tv_6",
       "tmdbId": "286686",
       "title": "生逢其时",
       "slug": "%E7%94%9F%E9%80%A2%E5%85%B6%E6%97%B6",
@@ -832,24 +850,6 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2026-09-15T14:18:00.000Z"
     },
     {
-      "entityId": "ik_latest_tv_6",
-      "tmdbId": "301489",
-      "title": "深渊无间",
-      "slug": "%E6%B7%B1%E6%B8%8A%E6%97%A0%E9%97%B4",
-      "cover": "https://image.tmdb.org/t/p/w500/b9ngtGNgaHBbLihRrT0MsPRY0GW.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/s9YSQAJtXjimsjBVsqLtJNnIjEs.jpg",
-      "rate": "9.0",
-      "year": "2026",
-      "type": "tv",
-      "channelKey": "tv",
-      "genres": [
-        "悬疑",
-        "剧集"
-      ],
-      "updateBadge": "全16集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
       "entityId": "ik_latest_tv_7",
       "tmdbId": "331912",
       "title": "死有对证",
@@ -865,7 +865,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "更新至第07集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_tv_8",
@@ -883,7 +883,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "全24集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_tv_9",
@@ -901,7 +901,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "全36集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_tv_10",
@@ -937,7 +937,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "更新至第75集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_tv_12",
@@ -955,7 +955,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "正片",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_tv_13",
@@ -977,60 +977,24 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
     },
     {
       "entityId": "ik_latest_tv_14",
-      "tmdbId": "279388",
-      "title": "逐玉",
-      "slug": "%E9%80%90%E7%8E%89",
-      "cover": "https://image.tmdb.org/t/p/w500/cYV1cn51qeu7aLqMUrSsmPe1QNo.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/yiUZ8Ck86FF3obLztVvSQqeBi0Y.jpg",
-      "rate": "8.1",
-      "year": "2026",
-      "type": "tv",
-      "channelKey": "tv",
-      "genres": [
-        "剧情",
-        "剧集"
-      ],
-      "updateBadge": "全40集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_tv_15",
-      "tmdbId": "294095",
-      "title": "杀手妈咪",
-      "slug": "%E6%9D%80%E6%89%8B%E5%A6%88%E5%92%AA",
-      "cover": "https://image.tmdb.org/t/p/w500/jdaHI1jIbJgPXdlDi2quuWw6fKB.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/j9AqsMJxuq7NEYJX4Q1vSfKb5CG.jpg",
-      "rate": "8.2",
-      "year": "2026",
-      "type": "tv",
-      "channelKey": "tv",
-      "genres": [
-        "剧情",
-        "剧集"
-      ],
-      "updateBadge": "全14集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_tv_16",
-      "tmdbId": "319659",
-      "title": "重案六组:消失的警号",
-      "slug": "%E9%87%8D%E6%A1%88%E5%85%AD%E7%BB%84-%E6%B6%88%E5%A4%B1%E7%9A%84%E8%AD%A6%E5%8F%B7",
-      "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/nr1uqvJs4kqtGcBTwIAew5OiSXI.jpg",
+      "tmdbId": "291856",
+      "title": "重器",
+      "slug": "%E9%87%8D%E5%99%A8",
+      "cover": "https://image.tmdb.org/t/p/w500/43iXOUo8dw7KfllwOnuu8JSyqFt.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/sUTK5UjUNud0d5hcEbhOk4RTqII.jpg",
       "rate": "8.0",
       "year": "2026",
       "type": "tv",
       "channelKey": "tv",
       "genres": [
-        "悬疑",
+        "剧情",
         "剧集"
       ],
-      "updateBadge": "全26集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "updateBadge": "全33集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
-      "entityId": "ik_latest_tv_17",
+      "entityId": "ik_latest_tv_15",
       "tmdbId": "289761",
       "title": "醒来",
       "slug": "%E9%86%92%E6%9D%A5",
@@ -1045,7 +1009,43 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "全22集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_tv_16",
+      "tmdbId": "279388",
+      "title": "逐玉",
+      "slug": "%E9%80%90%E7%8E%89",
+      "cover": "https://image.tmdb.org/t/p/w500/cYV1cn51qeu7aLqMUrSsmPe1QNo.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/yiUZ8Ck86FF3obLztVvSQqeBi0Y.jpg",
+      "rate": "8.1",
+      "year": "2026",
+      "type": "tv",
+      "channelKey": "tv",
+      "genres": [
+        "剧情",
+        "剧集"
+      ],
+      "updateBadge": "全40集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_tv_17",
+      "tmdbId": "319659",
+      "title": "重案六组:消失的警号",
+      "slug": "%E9%87%8D%E6%A1%88%E5%85%AD%E7%BB%84-%E6%B6%88%E5%A4%B1%E7%9A%84%E8%AD%A6%E5%8F%B7",
+      "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/nr1uqvJs4kqtGcBTwIAew5OiSXI.jpg",
+      "rate": "8.0",
+      "year": "2026",
+      "type": "tv",
+      "channelKey": "tv",
+      "genres": [
+        "悬疑",
+        "剧集"
+      ],
+      "updateBadge": "全26集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_tv_18",
@@ -1063,16 +1063,16 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "全30集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_tv_19",
-      "tmdbId": "291856",
-      "title": "重器",
-      "slug": "%E9%87%8D%E5%99%A8",
-      "cover": "https://image.tmdb.org/t/p/w500/43iXOUo8dw7KfllwOnuu8JSyqFt.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/sUTK5UjUNud0d5hcEbhOk4RTqII.jpg",
-      "rate": "8.0",
+      "tmdbId": "294095",
+      "title": "杀手妈咪",
+      "slug": "%E6%9D%80%E6%89%8B%E5%A6%88%E5%92%AA",
+      "cover": "https://image.tmdb.org/t/p/w500/jdaHI1jIbJgPXdlDi2quuWw6fKB.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/j9AqsMJxuq7NEYJX4Q1vSfKb5CG.jpg",
+      "rate": "8.2",
       "year": "2026",
       "type": "tv",
       "channelKey": "tv",
@@ -1080,49 +1080,31 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧情",
         "剧集"
       ],
-      "updateBadge": "全33集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "updateBadge": "全14集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_tv_20",
-      "tmdbId": "294636",
-      "title": "中头奖还是要上班",
-      "slug": "%E4%B8%AD%E5%A4%B4%E5%A5%96%E8%BF%98%E6%98%AF%E8%A6%81%E4%B8%8A%E7%8F%AD",
-      "cover": "https://image.tmdb.org/t/p/w500/iit1tcgJFXlsrBoif3G1HLJFAXs.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/2vN1SjkpXT6oCBxeE9GOK5NVS2b.jpg",
-      "rate": "10.0",
+      "tmdbId": "295558",
+      "title": "雀骨",
+      "slug": "%E9%9B%80%E9%AA%A8",
+      "cover": "https://image.tmdb.org/t/p/w500/858HgKLO9hZkYs2tS7ZPkqh9HVr.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/eZTq2kkhZ9AQtQ1H5SD7h1Q0PIc.jpg",
+      "rate": "7.9",
       "year": "2026",
       "type": "tv",
       "channelKey": "tv",
       "genres": [
-        "剧情",
+        "爱情",
         "剧集"
       ],
-      "updateBadge": "更新至第2集",
-      "createdAt": "2026-09-10T16:05:00.000Z"
+      "updateBadge": "全28集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     }
   ],
   "anime": [
     {
       "entityId": "ik_latest_anime_1",
-      "tmdbId": "224839",
-      "title": "遮天",
-      "slug": "%E9%81%AE%E5%A4%A9",
-      "cover": "https://image.tmdb.org/t/p/w500/z9JNGlJ8eGy6S6SOlBhpmxjjXGT.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/1HcuGlNEfc6EYZHEZGwgKjAvYa4.jpg",
-      "rate": "8.9",
-      "year": "2023",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "冒险",
-        "剧集"
-      ],
-      "updateBadge": "更新至第181集",
-      "createdAt": "2026-09-15T14:19:00.000Z"
-    },
-    {
-      "entityId": "ik_latest_anime_2",
       "tmdbId": "223911",
       "title": "仙逆",
       "slug": "%E4%BB%99%E9%80%86",
@@ -1138,6 +1120,24 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第158集",
       "createdAt": "2026-09-13T13:08:00.000Z"
+    },
+    {
+      "entityId": "ik_latest_anime_2",
+      "tmdbId": "224839",
+      "title": "遮天",
+      "slug": "%E9%81%AE%E5%A4%A9",
+      "cover": "https://image.tmdb.org/t/p/w500/z9JNGlJ8eGy6S6SOlBhpmxjjXGT.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/1HcuGlNEfc6EYZHEZGwgKjAvYa4.jpg",
+      "rate": "8.9",
+      "year": "2023",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "冒险",
+        "剧集"
+      ],
+      "updateBadge": "更新至第181集",
+      "createdAt": "2026-09-15T14:19:00.000Z"
     },
     {
       "entityId": "ik_latest_anime_3",
@@ -1195,6 +1195,24 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
     },
     {
       "entityId": "ik_latest_anime_6",
+      "tmdbId": "79481",
+      "title": "斗破苍穹年番",
+      "slug": "%E6%96%97%E7%A0%B4%E8%8B%8D%E7%A9%B9%E5%B9%B4%E7%95%AA",
+      "cover": "https://image.tmdb.org/t/p/w500/oyoahIcdamTXwjIaL3CqZ1v5CLl.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/cTCn2EO69SERNfhaezJMoqBom4G.jpg",
+      "rate": "7.9",
+      "year": "2017",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "热血",
+        "剧集"
+      ],
+      "updateBadge": "更新至第210集",
+      "createdAt": "2026-09-12T13:05:00.000Z"
+    },
+    {
+      "entityId": "ik_latest_anime_7",
       "tmdbId": "106480",
       "title": "海贼王",
       "slug": "%E6%B5%B7%E8%B4%BC%E7%8E%8B",
@@ -1209,10 +1227,10 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "艾格赫德前半总集篇",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
-      "entityId": "ik_latest_anime_7",
+      "entityId": "ik_latest_anime_8",
       "tmdbId": "236534",
       "title": "牧神记",
       "slug": "%E7%89%A7%E7%A5%9E%E8%AE%B0",
@@ -1230,7 +1248,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2026-09-13T05:21:00.000Z"
     },
     {
-      "entityId": "ik_latest_anime_8",
+      "entityId": "ik_latest_anime_9",
       "tmdbId": "331477",
       "title": "一念永恒完结季",
       "slug": "%E4%B8%80%E5%BF%B5%E6%B0%B8%E6%81%92%E5%AE%8C%E7%BB%93%E5%AD%A3",
@@ -1246,24 +1264,6 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第11集",
       "createdAt": "2026-09-15T14:17:00.000Z"
-    },
-    {
-      "entityId": "ik_latest_anime_9",
-      "tmdbId": "79481",
-      "title": "斗破苍穹年番",
-      "slug": "%E6%96%97%E7%A0%B4%E8%8B%8D%E7%A9%B9%E5%B9%B4%E7%95%AA",
-      "cover": "https://image.tmdb.org/t/p/w500/oyoahIcdamTXwjIaL3CqZ1v5CLl.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/cTCn2EO69SERNfhaezJMoqBom4G.jpg",
-      "rate": "7.9",
-      "year": "2017",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "热血",
-        "剧集"
-      ],
-      "updateBadge": "更新至第210集",
-      "createdAt": "2026-09-12T13:05:00.000Z"
     },
     {
       "entityId": "ik_latest_anime_10",
@@ -1303,24 +1303,6 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
     },
     {
       "entityId": "ik_latest_anime_12",
-      "tmdbId": "30983",
-      "title": "名侦探柯南",
-      "slug": "%E5%90%8D%E4%BE%A6%E6%8E%A2%E6%9F%AF%E5%8D%97",
-      "cover": "https://image.tmdb.org/t/p/w500/7qBrY88hNwMrMb75PkBZjhFolbL.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/z67lpMtm8YGykJO4p89meuNMvj8.jpg",
-      "rate": "8.0",
-      "year": "1996",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "推理",
-        "剧集"
-      ],
-      "updateBadge": "更新至第1272集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_anime_13",
       "title": "死神：千年血战篇第4季",
       "slug": "%E6%AD%BB%E7%A5%9E-%E5%8D%83%E5%B9%B4%E8%A1%80%E6%88%98%E7%AF%87%E7%AC%AC4%E5%AD%A3",
       "cover": "https://img.guangsuimage.com/cover/c7b2dd37955735b005d5f5d6221ff657.jpg",
@@ -1337,7 +1319,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2026-09-12T17:04:00.000Z"
     },
     {
-      "entityId": "ik_latest_anime_14",
+      "entityId": "ik_latest_anime_13",
       "tmdbId": "220850",
       "title": "炼气十万年",
       "slug": "%E7%82%BC%E6%B0%94%E5%8D%81%E4%B8%87%E5%B9%B4",
@@ -1355,7 +1337,78 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2026-09-15T03:52:00.000Z"
     },
     {
+      "entityId": "ik_latest_anime_14",
+      "tmdbId": "30983",
+      "title": "名侦探柯南",
+      "slug": "%E5%90%8D%E4%BE%A6%E6%8E%A2%E6%9F%AF%E5%8D%97",
+      "cover": "https://image.tmdb.org/t/p/w500/7qBrY88hNwMrMb75PkBZjhFolbL.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/z67lpMtm8YGykJO4p89meuNMvj8.jpg",
+      "rate": "8.0",
+      "year": "1996",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "推理",
+        "剧集"
+      ],
+      "updateBadge": "更新至第1272集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
       "entityId": "ik_latest_anime_15",
+      "tmdbId": "326695",
+      "title": "择日飞升",
+      "slug": "%E6%8B%A9%E6%97%A5%E9%A3%9E%E5%8D%87",
+      "cover": "https://image.tmdb.org/t/p/w500/5NKojVuw2Jf0dT9nSgGPlLiBQV5.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/yUqwbhTCHEKAAZquPqgLAZXgaUF.jpg",
+      "rate": "8.6",
+      "year": "2026",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "魔幻",
+        "剧集"
+      ],
+      "updateBadge": "更新至第11集",
+      "createdAt": "2026-09-12T02:53:00.000Z"
+    },
+    {
+      "entityId": "ik_latest_anime_16",
+      "title": "诛仙4",
+      "slug": "%E8%AF%9B%E4%BB%994",
+      "cover": "https://img.guangsuimage.com/cover/e255ba0d78af223ff77727dea645f1a1.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/e255ba0d78af223ff77727dea645f1a1.jpg",
+      "rate": "9.3",
+      "year": "2026",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "热血",
+        "剧集"
+      ],
+      "updateBadge": "更新至第6集",
+      "createdAt": "2026-09-10T13:12:00.000Z"
+    },
+    {
+      "entityId": "ik_latest_anime_17",
+      "tmdbId": "46260",
+      "title": "火影忍者",
+      "slug": "%E7%81%AB%E5%BD%B1%E5%BF%8D%E8%80%85",
+      "cover": "https://image.tmdb.org/t/p/w500/1K8RFGwiXIWdmaBRcgru3YUAXAt.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/5F0HVEgkgP99fEWDjPyikGt9jQi.jpg",
+      "rate": "8.4",
+      "year": "2002",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "热血",
+        "剧集"
+      ],
+      "updateBadge": "全220集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_anime_18",
       "tmdbId": "122612",
       "title": "万界独尊",
       "slug": "%E4%B8%87%E7%95%8C%E7%8B%AC%E5%B0%8A",
@@ -1373,25 +1426,24 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2026-09-15T05:07:00.000Z"
     },
     {
-      "entityId": "ik_latest_anime_16",
-      "tmdbId": "218642",
-      "title": "师兄啊师兄",
-      "slug": "%E5%B8%88%E5%85%84%E5%95%8A%E5%B8%88%E5%85%84",
-      "cover": "https://image.tmdb.org/t/p/w500/hLUK05JYFVDVGYJLDlI7FUxV6jh.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/3Icy4H4NAJ5obx4c3AxJin1nvLY.jpg",
-      "rate": "8.8",
-      "year": "2023",
+      "entityId": "ik_latest_anime_19",
+      "title": "无职转生到了异世界就拿出真本事第3季",
+      "slug": "%E6%97%A0%E8%81%8C%E8%BD%AC%E7%94%9F%E5%88%B0%E4%BA%86%E5%BC%82%E4%B8%96%E7%95%8C%E5%B0%B1%E6%8B%BF%E5%87%BA%E7%9C%9F%E6%9C%AC%E4%BA%8B%E7%AC%AC3%E5%AD%A3",
+      "cover": "/placeholder-poster.svg",
+      "backdrop": "/placeholder-poster.svg",
+      "rate": "9.6",
+      "year": "2026",
       "type": "anime",
       "channelKey": "anime",
       "genres": [
-        "爆笑",
+        "冒险",
         "剧集"
       ],
-      "updateBadge": "更新至第158集",
-      "createdAt": "2026-09-09T04:07:00.000Z"
+      "updateBadge": "更新至第12集",
+      "createdAt": "2026-09-13T17:05:00.000Z"
     },
     {
-      "entityId": "ik_latest_anime_17",
+      "entityId": "ik_latest_anime_20",
       "tmdbId": "110181",
       "title": "武神主宰",
       "slug": "%E6%AD%A6%E7%A5%9E%E4%B8%BB%E5%AE%B0",
@@ -1407,59 +1459,6 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第692集",
       "createdAt": "2026-09-15T06:21:00.000Z"
-    },
-    {
-      "entityId": "ik_latest_anime_18",
-      "tmdbId": "46260",
-      "title": "火影忍者",
-      "slug": "%E7%81%AB%E5%BD%B1%E5%BF%8D%E8%80%85",
-      "cover": "https://image.tmdb.org/t/p/w500/1K8RFGwiXIWdmaBRcgru3YUAXAt.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/5F0HVEgkgP99fEWDjPyikGt9jQi.jpg",
-      "rate": "8.4",
-      "year": "2002",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "热血",
-        "剧集"
-      ],
-      "updateBadge": "全220集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_anime_19",
-      "title": "诛仙4",
-      "slug": "%E8%AF%9B%E4%BB%994",
-      "cover": "https://img.guangsuimage.com/cover/e255ba0d78af223ff77727dea645f1a1.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/e255ba0d78af223ff77727dea645f1a1.jpg",
-      "rate": "9.3",
-      "year": "2026",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "热血",
-        "剧集"
-      ],
-      "updateBadge": "更新至第6集",
-      "createdAt": "2026-09-10T13:12:00.000Z"
-    },
-    {
-      "entityId": "ik_latest_anime_20",
-      "tmdbId": "326695",
-      "title": "择日飞升",
-      "slug": "%E6%8B%A9%E6%97%A5%E9%A3%9E%E5%8D%87",
-      "cover": "https://image.tmdb.org/t/p/w500/5NKojVuw2Jf0dT9nSgGPlLiBQV5.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/yUqwbhTCHEKAAZquPqgLAZXgaUF.jpg",
-      "rate": "8.6",
-      "year": "2026",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "魔幻",
-        "剧集"
-      ],
-      "updateBadge": "更新至第11集",
-      "createdAt": "2026-09-12T02:53:00.000Z"
     }
   ],
   "variety": [
@@ -1478,7 +1477,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "第7期",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_variety_2",
@@ -1495,7 +1494,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "第5期",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_variety_3",
@@ -1512,7 +1511,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "三公小考",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_variety_4",
@@ -1533,40 +1532,6 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
     },
     {
       "entityId": "ik_latest_variety_5",
-      "title": "我家那闺女2026",
-      "slug": "%E6%88%91%E5%AE%B6%E9%82%A3%E9%97%BA%E5%A5%B32026",
-      "cover": "https://img.guangsuimage.com/cover/26341e155670d44627317021c84245ac.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/26341e155670d44627317021c84245ac.jpg",
-      "rate": "8.1",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "真人秀",
-        "剧集"
-      ],
-      "updateBadge": "第3期",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_variety_6",
-      "title": "密室大逃脱第8季",
-      "slug": "%E5%AF%86%E5%AE%A4%E5%A4%A7%E9%80%83%E8%84%B1%E7%AC%AC8%E5%AD%A3",
-      "cover": "https://img.guangsuimage.com/cover/4bd8575441a219bc600c27999928e8ed.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/4bd8575441a219bc600c27999928e8ed.jpg",
-      "rate": "9.2",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "真人秀",
-        "剧集"
-      ],
-      "updateBadge": "第9期",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_variety_7",
       "tmdbId": "331649",
       "title": "大哥小助理",
       "slug": "%E5%A4%A7%E5%93%A5%E5%B0%8F%E5%8A%A9%E7%90%86",
@@ -1581,10 +1546,27 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "第5期",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
-      "entityId": "ik_latest_variety_8",
+      "entityId": "ik_latest_variety_6",
+      "title": "我家那闺女2026",
+      "slug": "%E6%88%91%E5%AE%B6%E9%82%A3%E9%97%BA%E5%A5%B32026",
+      "cover": "https://img.guangsuimage.com/cover/26341e155670d44627317021c84245ac.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/26341e155670d44627317021c84245ac.jpg",
+      "rate": "8.1",
+      "year": "2026",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "真人秀",
+        "剧集"
+      ],
+      "updateBadge": "第3期",
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_variety_7",
       "title": "脱口秀和Ta的朋友们第3季",
       "slug": "%E8%84%B1%E5%8F%A3%E7%A7%80%E5%92%8Cta%E7%9A%84%E6%9C%8B%E5%8F%8B%E4%BB%AC%E7%AC%AC3%E5%AD%A3",
       "cover": "https://img.guangsuimage.com/cover/a5a145919123f9541e89868ab2796244.jpg",
@@ -1598,10 +1580,44 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "穷门永存纯享",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_variety_8",
+      "title": "地球超新鲜第2季",
+      "slug": "%E5%9C%B0%E7%90%83%E8%B6%85%E6%96%B0%E9%B2%9C%E7%AC%AC2%E5%AD%A3",
+      "cover": "https://img.guangsuimage.com/cover/b9157fcbb292322b146460825507c6a3.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/b9157fcbb292322b146460825507c6a3.jpg",
+      "rate": "9.4",
+      "year": "2026",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "真人秀",
+        "剧集"
+      ],
+      "updateBadge": "第2期",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_variety_9",
+      "title": "密室大逃脱第8季",
+      "slug": "%E5%AF%86%E5%AE%A4%E5%A4%A7%E9%80%83%E8%84%B1%E7%AC%AC8%E5%AD%A3",
+      "cover": "https://img.guangsuimage.com/cover/4bd8575441a219bc600c27999928e8ed.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/4bd8575441a219bc600c27999928e8ed.jpg",
+      "rate": "9.2",
+      "year": "2026",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "真人秀",
+        "剧集"
+      ],
+      "updateBadge": "第9期",
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_variety_10",
       "tmdbId": "326694",
       "title": "说唱巅峰对决2026",
       "slug": "%E8%AF%B4%E5%94%B1%E5%B7%85%E5%B3%B0%E5%AF%B9%E5%86%B32026",
@@ -1616,10 +1632,10 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "总决赛(六)",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
-      "entityId": "ik_latest_variety_10",
+      "entityId": "ik_latest_variety_11",
       "title": "喜剧之王单口季第3季",
       "slug": "%E5%96%9C%E5%89%A7%E4%B9%8B%E7%8E%8B%E5%8D%95%E5%8F%A3%E5%AD%A3%E7%AC%AC3%E5%AD%A3",
       "cover": "https://img.guangsuimage.com/cover/2a0c7668910b8ee5928c5255c5855f5c.jpg",
@@ -1633,45 +1649,10 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "飞行气氛组特辑",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_variety_11",
-      "title": "地球超新鲜第2季",
-      "slug": "%E5%9C%B0%E7%90%83%E8%B6%85%E6%96%B0%E9%B2%9C%E7%AC%AC2%E5%AD%A3",
-      "cover": "https://img.guangsuimage.com/cover/b9157fcbb292322b146460825507c6a3.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/b9157fcbb292322b146460825507c6a3.jpg",
-      "rate": "9.4",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "真人秀",
-        "剧集"
-      ],
-      "updateBadge": "第2期",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_variety_12",
-      "tmdbId": "33238",
-      "title": "Running Man",
-      "slug": "running-man",
-      "cover": "https://image.tmdb.org/t/p/w500/15SMnscZqd7HZ0bzruatOcKUlOV.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/wsHj4oHQJoe7DMYaqNFwVoyLiAh.jpg",
-      "rate": "8.2",
-      "year": "2010",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "竞技",
-        "剧集"
-      ],
-      "updateBadge": "正片",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_variety_13",
       "tmdbId": "94773",
       "title": "舞蹈新风暴",
       "slug": "%E8%88%9E%E8%B9%88%E6%96%B0%E9%A3%8E%E6%9A%B4",
@@ -1686,10 +1667,10 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "第4期",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
-      "entityId": "ik_latest_variety_14",
+      "entityId": "ik_latest_variety_13",
       "tmdbId": "154770",
       "title": "你好星期六",
       "slug": "%E4%BD%A0%E5%A5%BD%E6%98%9F%E6%9C%9F%E5%85%AD",
@@ -1707,7 +1688,77 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2026-09-14T06:15:00.000Z"
     },
     {
+      "entityId": "ik_latest_variety_14",
+      "tmdbId": "137726",
+      "title": "毛雪汪",
+      "slug": "%E6%AF%9B%E9%9B%AA%E6%B1%AA",
+      "cover": "https://image.tmdb.org/t/p/w500/biarmEDDU3W5WSxCo8rYsykPOpP.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/3UtKvTXlqLNHoADgkKxdj5QppPN.jpg",
+      "rate": "8.8",
+      "year": "2021",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "真人秀",
+        "剧集"
+      ],
+      "updateBadge": "第155期",
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
       "entityId": "ik_latest_variety_15",
+      "title": "姐姐当家第2季",
+      "slug": "%E5%A7%90%E5%A7%90%E5%BD%93%E5%AE%B6%E7%AC%AC2%E5%AD%A3",
+      "cover": "https://img.guangsuimage.com/cover/adc48ee14471bd351849361486a28c04.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/adc48ee14471bd351849361486a28c04.jpg",
+      "rate": "9.7",
+      "year": "2026",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "真人秀",
+        "剧集"
+      ],
+      "updateBadge": "第10期",
+      "createdAt": "2026-09-13T09:30:00.000Z"
+    },
+    {
+      "entityId": "ik_latest_variety_16",
+      "tmdbId": "33238",
+      "title": "Running Man",
+      "slug": "running-man",
+      "cover": "https://image.tmdb.org/t/p/w500/15SMnscZqd7HZ0bzruatOcKUlOV.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/wsHj4oHQJoe7DMYaqNFwVoyLiAh.jpg",
+      "rate": "8.2",
+      "year": "2010",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "竞技",
+        "剧集"
+      ],
+      "updateBadge": "正片",
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_variety_17",
+      "title": "第六感: B side",
+      "slug": "%E7%AC%AC%E5%85%AD%E6%84%9F-b-side",
+      "cover": "https://img.guangsuimage.com/cover/fe33f3bcfb5d340bc270a8fc0ecfd9b8.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/fe33f3bcfb5d340bc270a8fc0ecfd9b8.jpg",
+      "rate": "6.0",
+      "year": "2026",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "真人秀",
+        "剧集"
+      ],
+      "updateBadge": "已完结",
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_variety_18",
       "tmdbId": "121876",
       "title": "花儿与少年丝路季",
       "slug": "%E8%8A%B1%E5%84%BF%E4%B8%8E%E5%B0%91%E5%B9%B4%E4%B8%9D%E8%B7%AF%E5%AD%A3",
@@ -1725,42 +1776,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2024-02-07T08:47:00.000Z"
     },
     {
-      "entityId": "ik_latest_variety_16",
-      "title": "第六感: B side",
-      "slug": "%E7%AC%AC%E5%85%AD%E6%84%9F-b-side",
-      "cover": "https://img.guangsuimage.com/cover/fe33f3bcfb5d340bc270a8fc0ecfd9b8.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/fe33f3bcfb5d340bc270a8fc0ecfd9b8.jpg",
-      "rate": "6.0",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "真人秀",
-        "剧集"
-      ],
-      "updateBadge": "已完结",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_variety_17",
-      "tmdbId": "137726",
-      "title": "毛雪汪",
-      "slug": "%E6%AF%9B%E9%9B%AA%E6%B1%AA",
-      "cover": "https://image.tmdb.org/t/p/w500/biarmEDDU3W5WSxCo8rYsykPOpP.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/3UtKvTXlqLNHoADgkKxdj5QppPN.jpg",
-      "rate": "8.8",
-      "year": "2021",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "真人秀",
-        "剧集"
-      ],
-      "updateBadge": "第155期",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_variety_18",
+      "entityId": "ik_latest_variety_19",
       "tmdbId": "331587",
       "title": "伦敦合伙人",
       "slug": "%E4%BC%A6%E6%95%A6%E5%90%88%E4%BC%99%E4%BA%BA",
@@ -1775,32 +1791,15 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "第6期",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_variety_19",
-      "title": "姐姐当家第2季",
-      "slug": "%E5%A7%90%E5%A7%90%E5%BD%93%E5%AE%B6%E7%AC%AC2%E5%AD%A3",
-      "cover": "https://img.guangsuimage.com/cover/adc48ee14471bd351849361486a28c04.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/adc48ee14471bd351849361486a28c04.jpg",
-      "rate": "9.7",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "真人秀",
-        "剧集"
-      ],
-      "updateBadge": "第10期",
-      "createdAt": "2026-09-13T09:30:00.000Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_variety_20",
-      "title": "打歌2026",
-      "slug": "%E6%89%93%E6%AD%8C2026",
-      "cover": "https://img.guangsuimage.com/cover/15a14d5c27bb3d97f6380cbd051efe77.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/15a14d5c27bb3d97f6380cbd051efe77.jpg",
-      "rate": "6.0",
+      "title": "密室大逃脱大神版第8季",
+      "slug": "%E5%AF%86%E5%AE%A4%E5%A4%A7%E9%80%83%E8%84%B1%E5%A4%A7%E7%A5%9E%E7%89%88%E7%AC%AC8%E5%AD%A3",
+      "cover": "https://img.guangsuimage.com/cover/40a862df96c3aaee56ff5f2c750de8c1.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/40a862df96c3aaee56ff5f2c750de8c1.jpg",
+      "rate": "9.1",
       "year": "2026",
       "type": "variety",
       "channelKey": "variety",
@@ -1808,8 +1807,8 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "真人秀",
         "剧集"
       ],
-      "updateBadge": "第1期",
-      "createdAt": "2026-09-13T06:09:00.000Z"
+      "updateBadge": "已完结",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     }
   ],
   "documentary": [
@@ -1828,7 +1827,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "全8集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_documentary_2",
@@ -1845,27 +1844,10 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "全8集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_documentary_3",
-      "title": "克拉克森的农场第2季",
-      "slug": "%E5%85%8B%E6%8B%89%E5%85%8B%E6%A3%AE%E7%9A%84%E5%86%9C%E5%9C%BA%E7%AC%AC2%E5%AD%A3",
-      "cover": "https://img.guangsuimage.com/cover/6177dff3880bc5a2d2e5aeae40fa48fe.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/6177dff3880bc5a2d2e5aeae40fa48fe.jpg",
-      "rate": "9.6",
-      "year": "2023",
-      "type": "documentary",
-      "channelKey": "documentary",
-      "genres": [
-        "人物",
-        "剧集"
-      ],
-      "updateBadge": "全8集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_documentary_4",
       "title": "克拉克森的农场第4季",
       "slug": "%E5%85%8B%E6%8B%89%E5%85%8B%E6%A3%AE%E7%9A%84%E5%86%9C%E5%9C%BA%E7%AC%AC4%E5%AD%A3",
       "cover": "https://img.guangsuimage.com/cover/6f08b009341a1952b8dacc9990cafe94.jpg",
@@ -1879,7 +1861,25 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "全8集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_documentary_4",
+      "tmdbId": "78990",
+      "title": "中国通史",
+      "slug": "%E4%B8%AD%E5%9B%BD%E9%80%9A%E5%8F%B2",
+      "cover": "https://image.tmdb.org/t/p/w500/ryV0N1mCAXRseheuAfNljlnKV10.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/lauMPVhxZVifi7sZ5k56nfRu74Y.jpg",
+      "rate": "9.8",
+      "year": "2013",
+      "type": "documentary",
+      "channelKey": "documentary",
+      "genres": [
+        "历史",
+        "剧集"
+      ],
+      "updateBadge": "全100集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_documentary_5",
@@ -1896,10 +1896,28 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "剧集"
       ],
       "updateBadge": "全8集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_documentary_6",
+      "tmdbId": "328735",
+      "title": "爱达荷州血案：大学梦魇",
+      "slug": "%E7%88%B1%E8%BE%BE%E8%8D%B7%E5%B7%9E%E8%A1%80%E6%A1%88-%E5%A4%A7%E5%AD%A6%E6%A2%A6%E9%AD%87",
+      "cover": "https://image.tmdb.org/t/p/w500/72hhJQKejnwpK0UP2QpFDRdpFd0.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/1BosXOwTUudCrE77ayEJSROW8sL.jpg",
+      "rate": "6.7",
+      "year": "2026",
+      "type": "documentary",
+      "channelKey": "documentary",
+      "genres": [
+        "其它",
+        "剧集"
+      ],
+      "updateBadge": "全3集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_documentary_7",
       "title": "守护解放西第6季",
       "slug": "%E5%AE%88%E6%8A%A4%E8%A7%A3%E6%94%BE%E8%A5%BF%E7%AC%AC6%E5%AD%A3",
       "cover": "https://img.guangsuimage.com/cover/5a5abe3c5d675d05ce98484ca2bfa3fa.jpg",
@@ -1916,49 +1934,66 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2025-12-05T13:11:00.000Z"
     },
     {
-      "entityId": "ik_latest_documentary_7",
-      "tmdbId": "78990",
-      "title": "中国通史",
-      "slug": "%E4%B8%AD%E5%9B%BD%E9%80%9A%E5%8F%B2",
-      "cover": "https://image.tmdb.org/t/p/w500/ryV0N1mCAXRseheuAfNljlnKV10.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/lauMPVhxZVifi7sZ5k56nfRu74Y.jpg",
-      "rate": "9.8",
-      "year": "2013",
+      "entityId": "ik_latest_documentary_8",
+      "title": "BBC战争中的世界：二战全史",
+      "slug": "bbc%E6%88%98%E4%BA%89%E4%B8%AD%E7%9A%84%E4%B8%96%E7%95%8C-%E4%BA%8C%E6%88%98%E5%85%A8%E5%8F%B2",
+      "cover": "/placeholder-poster.svg",
+      "backdrop": "/placeholder-poster.svg",
+      "rate": "8.5",
+      "year": "1974",
       "type": "documentary",
       "channelKey": "documentary",
       "genres": [
         "历史",
         "剧集"
       ],
-      "updateBadge": "全100集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_documentary_8",
-      "tmdbId": "329274",
-      "title": "若泽·穆里尼奥：特立之道",
-      "slug": "%E8%8B%A5%E6%B3%BD-%E7%A9%86%E9%87%8C%E5%B0%BC%E5%A5%A5-%E7%89%B9%E7%AB%8B%E4%B9%8B%E9%81%93",
-      "cover": "https://image.tmdb.org/t/p/w500/2rqY4giaooi18Z0mLiGOfJ4XUuN.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/ucEswoBdNxw3UchQ6WHxnGU4g1a.jpg",
-      "rate": "7.8",
-      "year": "2026",
-      "type": "documentary",
-      "channelKey": "documentary",
-      "genres": [
-        "人物",
-        "剧集"
-      ],
-      "updateBadge": "全3集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "updateBadge": "更新至第26集",
+      "createdAt": "2014-10-25T11:24:00.000Z"
     },
     {
       "entityId": "ik_latest_documentary_9",
-      "tmdbId": "328735",
-      "title": "爱达荷州血案：大学梦魇",
-      "slug": "%E7%88%B1%E8%BE%BE%E8%8D%B7%E5%B7%9E%E8%A1%80%E6%A1%88-%E5%A4%A7%E5%AD%A6%E6%A2%A6%E9%AD%87",
-      "cover": "https://image.tmdb.org/t/p/w500/72hhJQKejnwpK0UP2QpFDRdpFd0.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/1BosXOwTUudCrE77ayEJSROW8sL.jpg",
-      "rate": "6.7",
+      "tmdbId": "79594",
+      "title": "王朝第2季",
+      "slug": "%E7%8E%8B%E6%9C%9D%E7%AC%AC2%E5%AD%A3",
+      "cover": "https://image.tmdb.org/t/p/w500/9xZB3Vytryl6bensq5BioV65iwR.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/siKFyGBHSM4GzMRAJmvQfQHY0pI.jpg",
+      "rate": "8.0",
+      "year": "2017",
+      "type": "documentary",
+      "channelKey": "documentary",
+      "genres": [
+        "探索",
+        "剧集"
+      ],
+      "updateBadge": "全3集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
+    },
+    {
+      "entityId": "ik_latest_documentary_10",
+      "tmdbId": "227007",
+      "title": "解放之战",
+      "slug": "%E8%A7%A3%E6%94%BE%E4%B9%8B%E6%88%98",
+      "cover": "https://image.tmdb.org/t/p/w500/bf9URrBox9BpyK42Il0N2UCzlQG.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w500/bf9URrBox9BpyK42Il0N2UCzlQG.jpg",
+      "rate": "8.6",
+      "year": "2019",
+      "type": "documentary",
+      "channelKey": "documentary",
+      "genres": [
+        "历史",
+        "剧集"
+      ],
+      "updateBadge": "更新至第15集",
+      "createdAt": "2020-06-30T16:24:00.000Z"
+    },
+    {
+      "entityId": "ik_latest_documentary_11",
+      "tmdbId": "313338",
+      "title": "TikTok杀手：蛛丝网迹",
+      "slug": "tiktok%E6%9D%80%E6%89%8B-%E8%9B%9B%E4%B8%9D%E7%BD%91%E8%BF%B9",
+      "cover": "https://image.tmdb.org/t/p/w500/95dPENf5ub7l0xK8lp6saTv8PVQ.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/qTbaaF0zthCuFxFPowr7XdnJl5r.jpg",
+      "rate": "5.9",
       "year": "2026",
       "type": "documentary",
       "channelKey": "documentary",
@@ -1966,11 +2001,11 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "其它",
         "剧集"
       ],
-      "updateBadge": "全3集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "updateBadge": "更新至第2集",
+      "createdAt": "2026-03-07T09:53:00.000Z"
     },
     {
-      "entityId": "ik_latest_documentary_10",
+      "entityId": "ik_latest_documentary_12",
       "tmdbId": "288824",
       "title": "寻色中国",
       "slug": "%E5%AF%BB%E8%89%B2%E4%B8%AD%E5%9B%BD",
@@ -1988,46 +2023,29 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2025-06-20T06:45:00.000Z"
     },
     {
-      "entityId": "ik_latest_documentary_11",
-      "title": "河中巨怪第1-9季",
-      "slug": "%E6%B2%B3%E4%B8%AD%E5%B7%A8%E6%80%AA%E7%AC%AC1-9%E5%AD%A3",
-      "cover": "https://img.guangsuimage.com/cover/bc6f1f3779c04d2b142bc35d69bd3474.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/bc6f1f3779c04d2b142bc35d69bd3474.jpg",
-      "rate": "8.4",
-      "year": "2020",
-      "type": "documentary",
-      "channelKey": "documentary",
-      "genres": [
-        "自然",
-        "剧集"
-      ],
-      "updateBadge": "第7期",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_documentary_12",
-      "title": "风味人间第5季",
-      "slug": "%E9%A3%8E%E5%91%B3%E4%BA%BA%E9%97%B4%E7%AC%AC5%E5%AD%A3",
-      "cover": "https://img.guangsuimage.com/cover/6440e1d36d864f933925761f6cfbd8ee.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/6440e1d36d864f933925761f6cfbd8ee.jpg",
-      "rate": "9.2",
+      "entityId": "ik_latest_documentary_13",
+      "title": "闪闪的儿科医生第2季",
+      "slug": "%E9%97%AA%E9%97%AA%E7%9A%84%E5%84%BF%E7%A7%91%E5%8C%BB%E7%94%9F%E7%AC%AC2%E5%AD%A3",
+      "cover": "https://img.guangsuimage.com/cover/8d9b022a432f971e2709ee034c4c5b78.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/8d9b022a432f971e2709ee034c4c5b78.jpg",
+      "rate": "9.1",
       "year": "2024",
       "type": "documentary",
       "channelKey": "documentary",
       "genres": [
-        "文化",
+        "其它",
         "剧集"
       ],
-      "updateBadge": "更新至第5集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "updateBadge": "全10集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
-      "entityId": "ik_latest_documentary_13",
-      "title": "守护解放西第4季",
-      "slug": "%E5%AE%88%E6%8A%A4%E8%A7%A3%E6%94%BE%E8%A5%BF%E7%AC%AC4%E5%AD%A3",
-      "cover": "https://img.guangsuimage.com/cover/5a5abe3c5d675d05ce98484ca2bfa3fa.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/5a5abe3c5d675d05ce98484ca2bfa3fa.jpg",
-      "rate": "9.5",
+      "entityId": "ik_latest_documentary_14",
+      "title": "克拉克森的农场第2季",
+      "slug": "%E5%85%8B%E6%8B%89%E5%85%8B%E6%A3%AE%E7%9A%84%E5%86%9C%E5%9C%BA%E7%AC%AC2%E5%AD%A3",
+      "cover": "https://img.guangsuimage.com/cover/6177dff3880bc5a2d2e5aeae40fa48fe.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/6177dff3880bc5a2d2e5aeae40fa48fe.jpg",
+      "rate": "9.6",
       "year": "2023",
       "type": "documentary",
       "channelKey": "documentary",
@@ -2035,132 +2053,116 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
         "人物",
         "剧集"
       ],
-      "updateBadge": "更新至第10集",
-      "createdAt": "2023-12-29T13:04:00.000Z"
-    },
-    {
-      "entityId": "ik_latest_documentary_14",
-      "tmdbId": "1623125",
-      "title": "大卫·艾登堡：大猩猩的故事",
-      "slug": "%E5%A4%A7%E5%8D%AB-%E8%89%BE%E7%99%BB%E5%A0%A1-%E5%A4%A7%E7%8C%A9%E7%8C%A9%E7%9A%84%E6%95%85%E4%BA%8B",
-      "cover": "https://image.tmdb.org/t/p/w500/43XAqW4AnHaDqez4C8qYk55A75o.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/r80zWzxQn5pMAPgDHd4CiKIGOyU.jpg",
-      "rate": "7.9",
-      "year": "2026",
-      "type": "documentary",
-      "channelKey": "documentary",
-      "genres": [
-        "其它",
-        "剧集"
-      ],
-      "updateBadge": "正片",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "updateBadge": "全8集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_documentary_15",
-      "tmdbId": "313298",
-      "title": "恐龙时代：你不知道的故事",
-      "slug": "%E6%81%90%E9%BE%99%E6%97%B6%E4%BB%A3-%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84%E6%95%85%E4%BA%8B",
-      "cover": "https://image.tmdb.org/t/p/w500/2PqiAWN4VEFZ6yYeUVxP202opTr.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/8X2R9uLys3SmkRuQAmSI96xxJAF.jpg",
-      "rate": "8.0",
-      "year": "2026",
+      "tmdbId": "9326",
+      "title": "史前星球",
+      "slug": "%E5%8F%B2%E5%89%8D%E6%98%9F%E7%90%83",
+      "cover": "https://image.tmdb.org/t/p/w500/ubahGAUSZmZsTVwjKcZpQh7vcIK.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w500/ubahGAUSZmZsTVwjKcZpQh7vcIK.jpg",
+      "rate": "8.5",
+      "year": "2002",
       "type": "documentary",
       "channelKey": "documentary",
       "genres": [
-        "其它",
+        "历史",
         "剧集"
       ],
-      "updateBadge": "全4集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "updateBadge": "全5集",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_documentary_16",
-      "title": "一级方程式：疾速争胜第8季",
-      "slug": "%E4%B8%80%E7%BA%A7%E6%96%B9%E7%A8%8B%E5%BC%8F-%E7%96%BE%E9%80%9F%E4%BA%89%E8%83%9C%E7%AC%AC8%E5%AD%A3",
-      "cover": "https://img.guangsuimage.com/cover/8b0d529874ff99349e6ccff0393b0be8.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/8b0d529874ff99349e6ccff0393b0be8.jpg",
-      "rate": "7.7",
-      "year": "2026",
+      "tmdbId": "82269",
+      "title": "疯马歌舞秀",
+      "slug": "%E7%96%AF%E9%A9%AC%E6%AD%8C%E8%88%9E%E7%A7%80",
+      "cover": "https://image.tmdb.org/t/p/w500/ik2NZcIKp44eZUpR9IcgCertTZA.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/yLE0ugUiOPpeu5Lxy2iV9d5RuSh.jpg",
+      "rate": "6.5",
+      "year": "2011",
       "type": "documentary",
       "channelKey": "documentary",
       "genres": [
-        "其它",
+        "人物",
         "剧集"
       ],
-      "updateBadge": "全10集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "updateBadge": "正片",
+      "createdAt": "2026-09-15T22:05:41.115Z"
     },
     {
       "entityId": "ik_latest_documentary_17",
-      "title": "一级方程式：疾速争胜第7季",
-      "slug": "%E4%B8%80%E7%BA%A7%E6%96%B9%E7%A8%8B%E5%BC%8F-%E7%96%BE%E9%80%9F%E4%BA%89%E8%83%9C%E7%AC%AC7%E5%AD%A3",
-      "cover": "https://img.guangsuimage.com/cover/8b0d529874ff99349e6ccff0393b0be8.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/8b0d529874ff99349e6ccff0393b0be8.jpg",
-      "rate": "7.7",
-      "year": "2025",
+      "tmdbId": "255156",
+      "title": "守望秦岭",
+      "slug": "%E5%AE%88%E6%9C%9B%E7%A7%A6%E5%B2%AD",
+      "cover": "https://image.tmdb.org/t/p/w500/l9h8g4ghj6VGyhdeBbxQvggDwdT.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/lletZ4issNC68sRu4e18L2Mulvg.jpg",
+      "rate": "8.6",
+      "year": "2022",
       "type": "documentary",
       "channelKey": "documentary",
       "genres": [
-        "其它",
+        "自然",
         "剧集"
       ],
-      "updateBadge": "全10集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
+      "updateBadge": "热播中",
+      "createdAt": "2022-09-13T14:01:00.000Z"
     },
     {
       "entityId": "ik_latest_documentary_18",
-      "tmdbId": "131651",
-      "title": "转折点：911与反恐战争",
-      "slug": "%E8%BD%AC%E6%8A%98%E7%82%B9-911%E4%B8%8E%E5%8F%8D%E6%81%90%E6%88%98%E4%BA%89",
-      "cover": "https://image.tmdb.org/t/p/w500/aWHyzSVVVlKcd6KIuZCMIvD5TPZ.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/pxhxhEKJXznWEavLXJWUxxxdo2X.jpg",
-      "rate": "7.3",
-      "year": "2021",
-      "type": "documentary",
-      "channelKey": "documentary",
-      "genres": [
-        "解密",
-        "剧集"
-      ],
-      "updateBadge": "更新至第05集",
-      "createdAt": "2026-09-15T18:53:13.415Z"
-    },
-    {
-      "entityId": "ik_latest_documentary_19",
-      "tmdbId": "71373",
-      "title": "诚邀辣妹：网络性与爱",
-      "slug": "%E8%AF%9A%E9%82%80%E8%BE%A3%E5%A6%B9-%E7%BD%91%E7%BB%9C%E6%80%A7%E4%B8%8E%E7%88%B1",
-      "cover": "https://image.tmdb.org/t/p/w500/vWDRcfF4pGKDxlA2qPzAuMnTMV6.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/jbrFPhGdcQxGSvgajLHJfKw0wjb.jpg",
-      "rate": "6.3",
-      "year": "2017",
-      "type": "documentary",
-      "channelKey": "documentary",
-      "genres": [
-        "探索",
-        "剧集"
-      ],
-      "updateBadge": "更新至第5集",
-      "createdAt": "2020-05-21T18:20:00.000Z"
-    },
-    {
-      "entityId": "ik_latest_documentary_20",
-      "tmdbId": "83670",
-      "title": "风味人间",
-      "slug": "%E9%A3%8E%E5%91%B3%E4%BA%BA%E9%97%B4",
-      "cover": "https://image.tmdb.org/t/p/w500/d6plBmVJfWLA5UD8tcIvI2QUrTN.jpg",
-      "backdrop": "https://image.tmdb.org/t/p/w1280/iwTN8EYAvPtV6Wsgyl3UUi8CxMT.jpg",
-      "rate": "8.9",
-      "year": "2018",
+      "tmdbId": "103397",
+      "title": "守护解放西",
+      "slug": "%E5%AE%88%E6%8A%A4%E8%A7%A3%E6%94%BE%E8%A5%BF",
+      "cover": "https://image.tmdb.org/t/p/w500/3gIc5PjBV3LmMODWKkAaY5CnGy1.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/5CcRTSJCAIA0F6gd6LtMSOABvxB.jpg",
+      "rate": "8.5",
+      "year": "2019",
       "type": "documentary",
       "channelKey": "documentary",
       "genres": [
         "文化",
         "剧集"
       ],
-      "updateBadge": "更新至第8集",
-      "createdAt": "2018-12-16T15:41:00.000Z"
+      "updateBadge": "更新至第10集",
+      "createdAt": "2022-01-29T17:54:00.000Z"
+    },
+    {
+      "entityId": "ik_latest_documentary_19",
+      "tmdbId": "115194",
+      "title": "完美星球",
+      "slug": "%E5%AE%8C%E7%BE%8E%E6%98%9F%E7%90%83",
+      "cover": "https://image.tmdb.org/t/p/w500/4yTamAfsSPIayH8Q7phf7fKRbCQ.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w1280/vLmR4e0XP2ecCTFBzauNwQt40Bp.jpg",
+      "rate": "8.7",
+      "year": "2021",
+      "type": "documentary",
+      "channelKey": "documentary",
+      "genres": [
+        "自然",
+        "剧集"
+      ],
+      "updateBadge": "更新至第5集",
+      "createdAt": "2021-02-01T14:34:00.000Z"
+    },
+    {
+      "entityId": "ik_latest_documentary_20",
+      "tmdbId": "112827",
+      "title": "亿万富翁们的饕餮盛宴",
+      "slug": "%E4%BA%BF%E4%B8%87%E5%AF%8C%E7%BF%81%E4%BB%AC%E7%9A%84%E9%A5%95%E9%A4%AE%E7%9B%9B%E5%AE%B4",
+      "cover": "https://image.tmdb.org/t/p/w500/xFoxue0Lg4PoLJ7dqywvIrR9RDb.jpg",
+      "backdrop": "https://image.tmdb.org/t/p/w500/xFoxue0Lg4PoLJ7dqywvIrR9RDb.jpg",
+      "rate": "8.6",
+      "year": "2015",
+      "type": "documentary",
+      "channelKey": "documentary",
+      "genres": [
+        "文化",
+        "剧集"
+      ],
+      "updateBadge": "更新至第5集",
+      "createdAt": "2020-10-16T17:37:00.000Z"
     }
   ]
 };

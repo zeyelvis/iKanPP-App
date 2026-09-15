@@ -25,7 +25,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "id": "pb_cat_movie_1",
       "title": "狮拳",
       "rate": "7.3",
-      "cover": "https://image.tmdb.org/t/p/w500/ezFIXWTbIXlBuZ4kKgto4N3i3of.jpg",
+      "cover": "https://image.tmdb.org/t/p/w500/3x9vKiUombbUvpVxdxSxcBDxrqB.jpg",
       "year": "2026",
       "types": [
         "动作片",
@@ -820,7 +820,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     {
       "id": "pb_cat_anime_15",
       "title": "百日成王",
-      "rate": "6.5",
+      "rate": "6.7",
       "cover": "https://image.tmdb.org/t/p/w500/pUQVZGKxODzRNTAD91DK4tu3qZS.jpg",
       "year": "2026",
       "types": [
@@ -1101,7 +1101,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     {
       "id": "pb_cat_documentary_3",
       "title": "一个致命故事",
-      "rate": "0.0",
+      "rate": "10.0",
       "cover": "https://image.tmdb.org/t/p/w500/rDPi9MXUtK0oVx3uwXHY5yRTKVW.jpg",
       "year": "2026",
       "types": [
@@ -1747,7 +1747,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "id": "pb_cat_rank_17",
       "title": "狮拳",
       "rate": "7.3",
-      "cover": "https://image.tmdb.org/t/p/w500/ezFIXWTbIXlBuZ4kKgto4N3i3of.jpg",
+      "cover": "https://image.tmdb.org/t/p/w500/3x9vKiUombbUvpVxdxSxcBDxrqB.jpg",
       "year": "2026",
       "types": [
         "动作片",
