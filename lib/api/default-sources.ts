@@ -1,17 +1,7 @@
 import type { VideoSource } from '@/lib/types';
 
-// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-16T10:55:06.355Z）
+// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-16T11:09:52.500Z）
 export const DEFAULT_SOURCES: VideoSource[] = [
-  {
-    id: 'baofeng',
-    name: '暴风资源',
-    baseUrl: 'https://bfzyapi.com',
-    searchPath: '/api.php/provide/vod',
-    detailPath: '/api.php/provide/vod',
-    group: 'normal',
-    enabled: true,
-    priority: 1,
-  },
   {
     id: 'juliang',
     name: '巨量资源',
@@ -20,12 +10,22 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 2,
+    priority: 1,
   },
   {
     id: 'guangsu',
     name: '光速资源',
     baseUrl: 'https://api.guangsuapi.com',
+    searchPath: '/api.php/provide/vod',
+    detailPath: '/api.php/provide/vod',
+    group: 'normal',
+    enabled: true,
+    priority: 2,
+  },
+  {
+    id: 'baofeng',
+    name: '暴风资源',
+    baseUrl: 'https://bfzyapi.com',
     searchPath: '/api.php/provide/vod',
     detailPath: '/api.php/provide/vod',
     group: 'normal',

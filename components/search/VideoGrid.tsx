@@ -150,11 +150,11 @@ export const VideoGrid = memo(function VideoGrid({
           return aIsDeriv ? 1 : -1;
         }
 
-        // 黄金健康骨干源梯队优先（暴风1 > 巨量2 > 光速3 > 无尽4 > 最大5 > 极速6 > 新浪7 > 魔都8 > 360 9）
+        // 黄金健康骨干源梯队优先（巨量1 > 光速2 > 暴风3 > 无尽4 > 最大5 > 极速6 > 新浪7 > 魔都8 > 360 9）
         const SOURCE_PRIORITY_ORDER: Record<string, number> = {
-          baofeng: 1,
-          juliang: 2,
-          guangsu: 3,
+          juliang: 1,
+          guangsu: 2,
+          baofeng: 3,
           wujin: 4,
           zuida: 5,
           jisu: 6,

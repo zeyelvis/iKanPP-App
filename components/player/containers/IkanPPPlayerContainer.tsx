@@ -290,10 +290,10 @@ export function IkanPPPlayerContainer() {
                   }
 
                   let sourceScore = 0;
-                  // 黄金调度优先级：国内暴风资源访问最快作为全站第一主力秒开首选，巨量香港Anycast纯净第二首选，光速、无尽、最大紧随其后
-                  if (v.source === 'baofeng') sourceScore = 150;
-                  else if (v.source === 'juliang') sourceScore = 140;
-                  else if (v.source === 'guangsu') sourceScore = 130;
+                  // 黄金调度优先级：巨量香港Anycast纯净全站No.1首选，光速全球高速高可用第二首选，暴风高并发第三首选，无尽、最大紧随其后
+                  if (v.source === 'juliang') sourceScore = 160;
+                  else if (v.source === 'guangsu') sourceScore = 140;
+                  else if (v.source === 'baofeng') sourceScore = 130;
                   else if (v.source === 'wujin') sourceScore = 110;
                   else if (v.source === 'zuida') sourceScore = 100;
                   else if (v.source === 'jisu') sourceScore = 90;
@@ -598,7 +598,7 @@ export function IkanPPPlayerContainer() {
       (s) => s.source && s.source !== currentActiveSource && !failedSourcesRef.current.has(s.source)
     );
     const candidate = validCandidates.sort((a, b) => {
-      const TOP_ORDER: Record<string, number> = { baofeng: 0, juliang: 1, guangsu: 2, wujin: 3, zuida: 4, jisu: 5, xinlang: 6, dytt: 7, modu: 8, zy360: 9 };
+      const TOP_ORDER: Record<string, number> = { juliang: 0, guangsu: 1, baofeng: 2, wujin: 3, zuida: 4, jisu: 5, xinlang: 6, dytt: 7, modu: 8, zy360: 9 };
       const aOrder = TOP_ORDER[a.source] ?? 99;
       const bOrder = TOP_ORDER[b.source] ?? 99;
       if (aOrder !== bOrder) return aOrder - bOrder;

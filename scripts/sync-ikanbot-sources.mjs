@@ -224,10 +224,11 @@ async function main() {
     }
   });
 
-  // 确保暴风资源与巨量资源永久常驻骨干第一梯队（绝不被 ikanbot 热门抖动漏掉）
+  // 确保巨量、光速与暴风资源永久常驻骨干第一梯队（绝不被 ikanbot 热门抖动漏掉）
   const IMMORTAL_SOURCES = [
-    { id: 'baofeng', name: '暴风资源', baseUrl: 'https://bfzyapi.com', searchPath: '/api.php/provide/vod', detailPath: '/api.php/provide/vod' },
     { id: 'juliang', name: '巨量资源', baseUrl: 'https://api.juliang.live', searchPath: '/api/provide/vod', detailPath: '/api/provide/vod' },
+    { id: 'guangsu', name: '光速资源', baseUrl: 'https://api.guangsuapi.com', searchPath: '/api.php/provide/vod', detailPath: '/api.php/provide/vod' },
+    { id: 'baofeng', name: '暴风资源', baseUrl: 'https://bfzyapi.com', searchPath: '/api.php/provide/vod', detailPath: '/api.php/provide/vod' },
   ];
   IMMORTAL_SOURCES.forEach(s => {
     if (!visitedIds.has(s.id)) {
@@ -245,11 +246,11 @@ async function main() {
   let activeSources = healthResults.filter(s => s.health.ok);
   console.log(`\n=== 健康检查结果: ${activeSources.length}/${candidateSources.length} 存活 ===`);
 
-  // 严格保持黄金骨干第一梯队的绝对优先度（暴风 #1，巨量 #2，光速 #3，无尽 #4，最大 #5，极速 #6，新浪 #7，电影天堂 #8，魔都 #9，360 #10）
+  // 严格保持黄金骨干第一梯队的绝对优先度（巨量 #1，光速 #2，暴风 #3，无尽 #4，最大 #5，极速 #6，新浪 #7，电影天堂 #8，魔都 #9，360 #10）
   const PINNED_LEADERS = [
-    'baofeng',
     'juliang',
     'guangsu',
+    'baofeng',
     'wujin',
     'zuida',
     'jisu',
