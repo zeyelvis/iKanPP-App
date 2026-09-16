@@ -329,14 +329,15 @@ export function IkanPPPlayerContainer() {
                     }
                   }
 
-                  // 极速秒播裁决：命中首选目标（如光速、无尽等且评分达标），直接立即秒跳播放
+                  // 极速秒播裁决：唯有命中全站 No.1 黄金首选巨量资源 (juliang) 且匹配正片时直接秒跳起播；其他源作为候选池备用，绝不抢跑截胡
                   const isQualified = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isExactName && !isEpisodeInsufficient && totalScore >= 80;
                   if (isQualified && !redirected && !cancelled) {
-                    const isTopTarget = 
+                    const isSeasonOrYearMatched = 
                       (isSeriesItem && (targetAnalysis.seasonNumber !== null ? candAnalysis.seasonNumber === targetAnalysis.seasonNumber : (candAnalysis.seasonNumber === 1 || candAnalysis.seasonNumber === null))) ||
                       (!isSeriesItem && (isExactYearMatch || !targetYear));
 
-                    if (isTopTarget) {
+                    // 铁律：必须且只能全站 No.1 巨量资源可以直接秒跳起播，杜绝其他低优先级源因网络先行到达而抢占默认源
+                    if (isSeasonOrYearMatched && v.source === 'juliang') {
                       performRedirect(v, isSeriesItem);
                       break;
                     }

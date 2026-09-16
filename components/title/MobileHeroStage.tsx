@@ -35,22 +35,27 @@ export function MobileHeroStage({
     );
 
     let playEpisode = '1';
-    const isHistorySourceValid = historyItem?.source && isValidSourceId(historyItem.source);
-    let playId = isHistorySourceValid ? historyItem.videoId : undefined;
-    let playSource = isHistorySourceValid ? historyItem.source : undefined;
-
     if (historyItem) {
       const displayInfo = getEpisodeDisplayInfo(historyItem.episodes, historyItem.episodeIndex);
       playEpisode = displayInfo.paramValue;
     }
 
-    // 若无有效历史记录，极速竞速获取骨干源真实 ID（优先暴风资源）
-    if (!playId || !playSource) {
-      const fast = await resolvePlayTarget(title, 200);
-      if (fast.id && fast.source && isValidSourceId(fast.source)) {
-        playId = fast.id;
-        playSource = fast.source;
-      }
+    let playId: string | number | undefined = undefined;
+    let playSource: string | undefined = undefined;
+
+    // 1. 优先超短竞速 300ms 抢抓骨干源（巨量 Anycast 纯净全网首选）
+    const fast = await resolvePlayTarget(title, 300);
+    if (fast.source === 'juliang' && fast.id) {
+      playId = fast.id;
+      playSource = 'juliang';
+    } else if (historyItem?.source && isValidSourceId(historyItem.source)) {
+      // 2. 巨量未收录时，回退老用户历史记录源
+      playId = historyItem.videoId;
+      playSource = historyItem.source;
+    } else if (fast.id && fast.source && isValidSourceId(fast.source)) {
+      // 3. 次级骨干源（光速/暴风）
+      playId = fast.id;
+      playSource = fast.source;
     }
 
     startTransition(() => {

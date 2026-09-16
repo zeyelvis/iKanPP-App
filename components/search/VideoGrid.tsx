@@ -9,6 +9,21 @@ import { Video } from '@/lib/types';
 import { extractCleanBaseTitle } from '@/lib/utils/search';
 import { useUserStore } from '@/lib/store/user-store';
 
+// 黄金健康骨干源梯队优先（巨量1 > 光速2 > 暴风3 > 无尽4 > 最大5 > 极速6 > 新浪7 > 魔都8 > 360 9）
+const SOURCE_PRIORITY_ORDER: Record<string, number> = {
+  juliang: 1,
+  guangsu: 2,
+  baofeng: 3,
+  wujin: 4,
+  zuida: 5,
+  jisu: 6,
+  xinlang: 7,
+  modu: 8,
+  zy360: 9,
+};
+
+const RISKY_SOURCES = new Set(['subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
+
 interface VideoGridProps {
   videos: Video[];
   className?: string;
@@ -43,14 +58,7 @@ export const VideoGrid = memo(function VideoGrid({
     if (savedPos && settings.rememberScrollPosition) {
       const position = parseInt(savedPos, 10);
       if (!isNaN(position) && position > 500) {
-        // Approximate visible count needed: 
-        // 500 is roughly where the second/third row starts.
-        // Each row is ~300-400px high on most screens. 
-        // 24 items is 4-6 rows.
-        // If scroll is deep, we force a larger initial visible count.
-        // 24, 48, 72, 96...
         const estimatedRowsNeeded = Math.ceil(position / 300) + 2;
-        // Match CSS breakpoints: sm: 3, md: 4, lg: 5, xl: 6
         const itemsPerRow = window.innerWidth >= 1280 ? 6 :
           (window.innerWidth >= 1024 ? 5 :
             (window.innerWidth >= 768 ? 4 :
@@ -71,7 +79,7 @@ export const VideoGrid = memo(function VideoGrid({
     return () => unsubscribe();
   }, [pathname, searchParams, videos.length]);
 
-  // 搜索结果去重与智能排序：同名同年份的视频聚合为最优卡片，并严格按相关度排序
+  // 搜索结果去重与智能排序：同名同年份的视频聚合为最优卡片，并严格按黄金骨干源与相关度排序
   const deduplicatedVideos = useMemo(() => {
     const groups = new Map<string, Video[]>();
     for (const video of videos) {
@@ -86,8 +94,20 @@ export const VideoGrid = memo(function VideoGrid({
     const dedupedList = Array.from(groups.values()).map(group => {
       if (group.length === 1) return group[0];
 
-      // 保留最优的：优先延迟最低的源
+      // 保留最优的：黄金骨干梯队（巨量第一）优先，非风险源优先，最后比延迟
       const sorted = [...group].sort((a, b) => {
+        const pA = SOURCE_PRIORITY_ORDER[a.source] ?? 99;
+        const pB = SOURCE_PRIORITY_ORDER[b.source] ?? 99;
+        if (pA !== pB) {
+          return pA - pB;
+        }
+
+        const aIsRisky = RISKY_SOURCES.has(a.source);
+        const bIsRisky = RISKY_SOURCES.has(b.source);
+        if (aIsRisky !== bIsRisky) {
+          return aIsRisky ? 1 : -1;
+        }
+
         if (a.latency === undefined) return 1;
         if (b.latency === undefined) return -1;
         return a.latency - b.latency;
@@ -151,17 +171,6 @@ export const VideoGrid = memo(function VideoGrid({
         }
 
         // 黄金健康骨干源梯队优先（巨量1 > 光速2 > 暴风3 > 无尽4 > 最大5 > 极速6 > 新浪7 > 魔都8 > 360 9）
-        const SOURCE_PRIORITY_ORDER: Record<string, number> = {
-          juliang: 1,
-          guangsu: 2,
-          baofeng: 3,
-          wujin: 4,
-          zuida: 5,
-          jisu: 6,
-          xinlang: 7,
-          modu: 8,
-          zy360: 9,
-        };
         const pA = SOURCE_PRIORITY_ORDER[a.source] ?? 99;
         const pB = SOURCE_PRIORITY_ORDER[b.source] ?? 99;
         if (pA !== pB) {
@@ -169,7 +178,6 @@ export const VideoGrid = memo(function VideoGrid({
         }
 
         // 存在非标端口切片或旧域名 404 风险的源尽量不作为首选代表源
-        const RISKY_SOURCES = new Set(['subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
         const aIsRisky = RISKY_SOURCES.has(a.source);
         const bIsRisky = RISKY_SOURCES.has(b.source);
         if (aIsRisky !== bIsRisky) {

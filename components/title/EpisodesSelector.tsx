@@ -6,7 +6,7 @@ import { Play, Tv, Sparkles } from 'lucide-react';
 import { useHistoryStore } from '@/lib/store/history-store';
 import { extractEpisodeNumber } from '@/lib/utils/episode-resolver';
 import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
-import { fetchTitleProbe, subscribeTitleProbe } from '@/lib/utils/title-probe';
+import { fetchTitleProbe, subscribeTitleProbe, getCachedTitleProbe } from '@/lib/utils/title-probe';
 import { isValidSourceId } from '@/lib/api/video-sources';
 
 interface SpecialEpisodeItem {
@@ -181,29 +181,47 @@ export function EpisodesSelector({
   }, [activeTitle, title, viewingHistory, count, GROUP_SIZE]);
 
   const handleSelectEpisode = (ep: number) => {
+    let playId = realVodId;
+    let playSource = realSource;
+
+    const cached = getCachedTitleProbe(activeTitle);
+    if (cached?.source === 'juliang' && cached.id) {
+      playId = cached.id;
+      playSource = 'juliang';
+    }
+
     const params = new URLSearchParams({
       entity: entityId,
       title: activeTitle,
       type: type === 'tv' ? 'tv' : 'movie',
       episode: String(ep),
     });
-    if (realVodId && realSource && isValidSourceId(realSource)) {
-      params.set('id', String(realVodId));
-      params.set('source', realSource);
+    if (playId && playSource && isValidSourceId(playSource)) {
+      params.set('id', String(playId));
+      params.set('source', playSource);
     }
     router.push(`/player?${params.toString()}`);
   };
 
   const handleSelectSpecial = (special: SpecialEpisodeItem) => {
+    let playId = realVodId;
+    let playSource = realSource;
+
+    const cached = getCachedTitleProbe(activeTitle);
+    if (cached?.source === 'juliang' && cached.id) {
+      playId = cached.id;
+      playSource = 'juliang';
+    }
+
     const params = new URLSearchParams({
       entity: entityId,
       title: activeTitle,
       type: type === 'tv' ? 'tv' : 'movie',
       episode: special.name,
     });
-    if (realVodId && realSource && isValidSourceId(realSource)) {
-      params.set('id', String(realVodId));
-      params.set('source', realSource);
+    if (playId && playSource && isValidSourceId(playSource)) {
+      params.set('id', String(playId));
+      params.set('source', playSource);
     }
     router.push(`/player?${params.toString()}`);
   };

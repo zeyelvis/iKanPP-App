@@ -242,6 +242,18 @@ export const settingsStore = {
         }
       });
 
+      // 3. 老用户自动迁移自愈：若本地已存配置的首选源不是巨量资源或缺少巨量，立即回写校准 localStorage
+      const needsMigration = !localSources.length || localSources[0]?.id !== 'juliang' || !localMap.has('juliang');
+      if (needsMigration && typeof window !== 'undefined') {
+        try {
+          const updated = {
+            ...parsed,
+            sources: validSources,
+          };
+          localStorage.setItem(SETTINGS_KEY, JSON.stringify(updated));
+        } catch { /* ignore */ }
+      }
+
       const defaultPremSrcs = getDefaultPremiumSources();
       const localPremSources: VideoSource[] = Array.isArray(parsed.premiumSources) ? parsed.premiumSources : defaultPremSrcs;
       const validPremMap = new Map<string, VideoSource>(localPremSources.filter((s: any) => s && s.id && s.name && s.baseUrl).map((s: any) => [s.id, s]));

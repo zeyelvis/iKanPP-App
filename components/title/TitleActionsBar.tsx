@@ -80,15 +80,29 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
   }, [entity.entityId, entity.title, effectiveTitle, isFavorite, viewingHistory]);
 
   const handlePlay = async (param: string = lastEpisodeInfo.paramValue) => {
-    let playId = (historySource && isValidSourceId(historySource)) ? historyVodId : (isValidSourceId(probedTarget.source) ? probedTarget.id : null);
-    let playSource = (historySource && isValidSourceId(historySource)) ? historySource : (isValidSourceId(probedTarget.source) ? probedTarget.source : null);
+    let playId: string | number | null | undefined = null;
+    let playSource: string | null | undefined = null;
 
-    // 若尚未就绪，超短竞速等待 200ms 抢抓极速源（优先暴风资源）
-    if (!playId || !playSource) {
-      const fast = await resolvePlayTarget(effectiveTitle, 200);
-      if (fast.id && fast.source && isValidSourceId(fast.source)) {
+    // 1. 黄金第一优先级：若当前已探测命中巨量资源，新老用户均 100% 绝对优先以巨量起播
+    if (probedTarget.source === 'juliang' && probedTarget.id) {
+      playId = probedTarget.id;
+      playSource = 'juliang';
+    } else {
+      // 2. 超短竞速 300ms 抢抓骨干源探测（优先巨量 Anycast 纯净源）
+      const fast = await resolvePlayTarget(effectiveTitle, 300);
+      if (fast.source === 'juliang' && fast.id) {
+        playId = fast.id;
+        playSource = 'juliang';
+      } else if (isValidSourceId(probedTarget.source) && probedTarget.id) {
+        playId = probedTarget.id;
+        playSource = probedTarget.source;
+      } else if (fast.id && fast.source && isValidSourceId(fast.source)) {
         playId = fast.id;
         playSource = fast.source;
+      } else if (historySource && isValidSourceId(historySource)) {
+        // 3. 巨量资源未收录时，回退老用户历史源
+        playId = historyVodId;
+        playSource = historySource;
       }
     }
 

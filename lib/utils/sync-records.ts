@@ -41,7 +41,7 @@ export function keepRenderableHistory(items: unknown): VideoHistoryItem[] {
       }
       return {
         ...item,
-        source: 'baofeng', // 优雅回退到当前第一骨干源
+        source: 'juliang', // 优雅回退到当前全站第一黄金骨干源
         sourceMap: cleanedSourceMap,
       };
     }

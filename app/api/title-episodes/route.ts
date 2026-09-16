@@ -264,7 +264,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'No matching episodes found' });
     }
 
-    // 排序优先级：命中目标季优先 > 正片总集数最多 > 线路极速响应权重（juliang 第一首选，guangsu 第二首选，baofeng 第三首选）
+    // 排序优先级：
+    // 1. 命中目标季优先
+    // 2. 骨干线路权重仲裁：消除采集站预告片/花絮/特别篇切片虚高干扰（巨量 Anycast 纯净首选，光速全球高可用第二，暴风第三）
+    // 3. 连载正片集数显著领先（差异超过 5 集且非花絮预告误差）
     const SOURCE_PROBE_WEIGHTS: Record<string, number> = {
       juliang: 100,
       guangsu: 95,
@@ -282,9 +285,28 @@ export async function GET(request: NextRequest) {
           return bSeasonMatch - aSeasonMatch;
         }
       }
-      if (b.totalEpisodes !== a.totalEpisodes) {
-        return b.totalEpisodes - a.totalEpisodes;
+
+      const aEp = a.totalEpisodes || 0;
+      const bEp = b.totalEpisodes || 0;
+      const epDiff = Math.abs(aEp - bEp);
+      const isMovie = aEp <= 3 && bEp <= 3;
+      const maxEp = Math.max(aEp, bEp, 1);
+      const relativeDiff = epDiff / maxEp;
+
+      // 电影，或者剧集集数差异在 8 集以内，或相对误差在 10% 以内（长篇年番/连续剧预告、花絮、彩蛋、特别篇常见切片虚高），严格以黄金骨干线路优先级（巨量 > 光速 > 暴风）仲裁
+      if (isMovie || epDiff <= 8 || relativeDiff <= 0.1) {
+        const aWeight = SOURCE_PROBE_WEIGHTS[a.source] || 0;
+        const bWeight = SOURCE_PROBE_WEIGHTS[b.source] || 0;
+        if (aWeight !== bWeight) {
+          return bWeight - aWeight;
+        }
       }
+
+      // 真实连载更新显著领先（集数差距 > 8 集且超出 10%）时，才以更新集数更多者优先
+      if (bEp !== aEp) {
+        return bEp - aEp;
+      }
+
       const aWeight = SOURCE_PROBE_WEIGHTS[a.source] || 0;
       const bWeight = SOURCE_PROBE_WEIGHTS[b.source] || 0;
       return bWeight - aWeight;

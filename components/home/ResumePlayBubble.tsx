@@ -9,6 +9,7 @@ import type { VideoHistoryItem } from '@/lib/types';
 import { getSourceName } from '@/lib/utils/source-names';
 import { storeGroupedSources } from '@/lib/utils/grouped-sources-cache';
 import { getEpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
+import { getCachedTitleProbe } from '@/lib/utils/title-probe';
 
 export function ResumePlayBubble() {
   const router = useRouter();
@@ -65,10 +66,28 @@ export function ResumePlayBubble() {
   const handleResume = () => {
     // 跳转到播放页
     const displayInfo = getEpisodeDisplayInfo(latestItem.episodes, latestItem.episodeIndex);
+    
+    let activeSource = latestItem.source;
+    let activeId = latestItem.videoId;
+
+    // 非午夜特区下，老用户历史记录优先无缝升级为巨量资源
+    if (!latestItem.isPremium) {
+      if (latestItem.sourceMap && latestItem.sourceMap['juliang']) {
+        activeSource = 'juliang';
+        activeId = latestItem.sourceMap['juliang'];
+      } else {
+        const cached = getCachedTitleProbe(latestItem.title);
+        if (cached?.source === 'juliang' && cached.id) {
+          activeSource = 'juliang';
+          activeId = cached.id;
+        }
+      }
+    }
+
     const query = new URLSearchParams({
-      id: String(latestItem.videoId),
+      id: String(activeId),
       title: latestItem.title,
-      source: latestItem.source,
+      source: activeSource,
       episode: displayInfo.paramValue,
     });
     if (latestItem.playbackPosition && latestItem.playbackPosition > 1) {

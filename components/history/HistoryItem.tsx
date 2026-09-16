@@ -11,6 +11,7 @@ import { FavoriteButton } from '@/components/favorites/FavoriteButton';
 import { getSourceName } from '@/lib/utils/source-names';
 import { storeGroupedSources } from '@/lib/utils/grouped-sources-cache';
 import { getEpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
+import { getCachedTitleProbe } from '@/lib/utils/title-probe';
 import type { VideoHistoryItem } from '@/lib/types';
 
 interface HistoryItemProps {
@@ -23,9 +24,26 @@ export function HistoryItem({ item, onRemove, isPremium = false }: HistoryItemPr
   const displayInfo = getEpisodeDisplayInfo(item.episodes, item.episodeIndex);
 
   const getVideoUrl = (): string => {
+    let activeSource = item.source;
+    let activeId = item.videoId;
+
+    // 非午夜特区下，老用户历史记录优先无缝升级为巨量资源
+    if (!isPremium && !item.isPremium) {
+      if (item.sourceMap && item.sourceMap['juliang']) {
+        activeSource = 'juliang';
+        activeId = item.sourceMap['juliang'];
+      } else {
+        const cached = getCachedTitleProbe(item.title);
+        if (cached?.source === 'juliang' && cached.id) {
+          activeSource = 'juliang';
+          activeId = cached.id;
+        }
+      }
+    }
+
     const params = new URLSearchParams({
-      id: item.videoId.toString(),
-      source: item.source,
+      id: activeId.toString(),
+      source: activeSource,
       title: item.title,
       episode: displayInfo.paramValue,
     });

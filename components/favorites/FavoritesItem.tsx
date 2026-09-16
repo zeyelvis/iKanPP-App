@@ -6,6 +6,7 @@
 import { Icons } from '@/components/ui/Icon';
 import { formatDate } from '@/lib/utils/format-utils';
 import type { FavoriteItem } from '@/lib/types';
+import { getCachedTitleProbe } from '@/lib/utils/title-probe';
 
 interface FavoritesItemProps {
     item: FavoriteItem;
@@ -15,9 +16,21 @@ interface FavoritesItemProps {
 
 export function FavoritesItem({ item, onRemove, isPremium = false }: FavoritesItemProps) {
     const getVideoUrl = (): string => {
+        let activeSource = item.source;
+        let activeId = item.videoId;
+
+        // 非午夜特区下，老用户收藏夹优先无缝升级为巨量资源
+        if (!isPremium) {
+            const cached = getCachedTitleProbe(item.title);
+            if (cached?.source === 'juliang' && cached.id) {
+                activeSource = 'juliang';
+                activeId = cached.id;
+            }
+        }
+
         const params = new URLSearchParams({
-            id: item.videoId.toString(),
-            source: item.source,
+            id: activeId.toString(),
+            source: activeSource,
             title: item.title,
         });
         if (isPremium) {
