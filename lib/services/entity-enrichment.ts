@@ -40,6 +40,8 @@ function sanitizeSearchTitle(title: string): string {
     .replace(/\s*[Ss](?:eason)?\s*\d+/i, '')
     .replace(/\s*[（(][^)）]*[)）]/g, '')
     .replace(/\s*(?:更新至|全)\d+集?/, '')
+    .replace(/\s*(?:19|20)\d{2}\s*$/, '') // 移除末尾年份（如 2026、2021）
+    .replace(/^(?:19|20)\d{2}\s+/, '')    // 移除开头的年份
     .trim();
 }
 
@@ -141,6 +143,9 @@ export async function searchAndEnrichFromTMDB(
 
   if (!TMDB_API_KEY) return null;
 
+  // 智能提取标题自带年份（例如 "求救信号 2026" 或 "求救信号2026"）
+  const effectiveYear = year || title.match(/\b((?:19|20)\d{2})\b/)?.[1];
+
   const cleanQuery = sanitizeSearchTitle(title);
   if (!cleanQuery) return null;
 
@@ -170,8 +175,8 @@ export async function searchAndEnrichFromTMDB(
         : ['search/movie', 'search/tv'];
       for (const ep of fallbackEps) {
         let sUrl = `${TMDB_BASE}/${ep}?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(cleanQuery)}`;
-        if (year) {
-          const y = year.match(/\d{4}/)?.[0];
+        if (effectiveYear) {
+          const y = effectiveYear.match(/\d{4}/)?.[0];
           if (y) sUrl += ep.includes('tv') ? `&first_air_date_year=${y}` : `&year=${y}`;
         }
         try {
@@ -224,9 +229,9 @@ export async function searchAndEnrichFromTMDB(
         if (votes > 100) score += 10;
 
         // 5. 指定年份匹配
-        if (year) {
+        if (effectiveYear) {
           const hitYear = (hit.release_date || hit.first_air_date || '').slice(0, 4);
-          if (hitYear === year.slice(0, 4)) score += 50;
+          if (hitYear === effectiveYear.slice(0, 4)) score += 50;
         }
 
         // 6. 类型偏好匹配

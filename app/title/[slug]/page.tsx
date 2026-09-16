@@ -98,10 +98,21 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
   } catch {}
 
   // 🌟 优先级 1：若存在明确纯净标题，优先尝试 100% 精准标题匹配（最高安全级别，杜绝任何 ID 冲突）
+  const yearMatch = cleanTitle.match(/(.*?)(?:[\s_—\-]+)?((?:19|20)\d{2})$/);
+  const baseCleanTitle = yearMatch ? yearMatch[1].trim() : cleanTitle;
+  const yearSuffix = yearMatch ? yearMatch[2] : undefined;
+
   if (cleanTitle) {
     const titleMatch = await getEntityByTitle(cleanTitle);
     if (titleMatch && titleMatch.cover && normalizeTitle(titleMatch.title) === normalizeTitle(cleanTitle)) {
       return enrichEpisodeCount(titleMatch);
+    }
+    // 若原标题未命中且包含年份后缀（如 "求救信号2026"），回退使用去年的纯标题匹配
+    if (baseCleanTitle && baseCleanTitle !== cleanTitle) {
+      const baseMatch = await getEntityByTitle(baseCleanTitle);
+      if (baseMatch && baseMatch.cover && normalizeTitle(baseMatch.title) === normalizeTitle(baseCleanTitle)) {
+        return enrichEpisodeCount(baseMatch);
+      }
     }
   }
 
@@ -130,9 +141,12 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
   // 3. 如果有纯净标题，尝试在本地按标题反向索引查找
   if (cleanTitle) {
     entity = await getEntityByTitle(cleanTitle);
-    if (entity && hasTitleOverlap(entity.title, cleanTitle)) {
+    if (!entity && baseCleanTitle && baseCleanTitle !== cleanTitle) {
+      entity = await getEntityByTitle(baseCleanTitle);
+    }
+    if (entity && (hasTitleOverlap(entity.title, cleanTitle) || (baseCleanTitle && hasTitleOverlap(entity.title, baseCleanTitle)))) {
       if (!entity.cover || entity.cover.trim() === '') {
-        const healed = await searchAndEnrichFromTMDB(cleanTitle, entity.type, entity.year, true);
+        const healed = await searchAndEnrichFromTMDB(entity.title || cleanTitle, entity.type, entity.year || yearSuffix, true);
         if (healed && healed.cover) return enrichEpisodeCount(healed);
       }
       return enrichEpisodeCount(entity);
@@ -142,7 +156,10 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
   // 4. 若本地/预置库未命中，使用纯净标题到 TMDB 搜索并自愈入库（仅全新冷门词条触发）
   const queryTitle = cleanTitle || decodedSlug;
   if (queryTitle && !/^ik\d{6}$/i.test(queryTitle)) {
-    entity = await searchAndEnrichFromTMDB(queryTitle);
+    entity = await searchAndEnrichFromTMDB(queryTitle, undefined, yearSuffix);
+    if (!entity && baseCleanTitle && baseCleanTitle !== queryTitle) {
+      entity = await searchAndEnrichFromTMDB(baseCleanTitle, undefined, yearSuffix);
+    }
     if (entity) {
       return enrichEpisodeCount(entity);
     }

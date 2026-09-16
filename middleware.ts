@@ -117,8 +117,15 @@ export function middleware(request: NextRequest) {
     }
 
     // 历史播放器旧 URL 规范化 301 重定向至实体详情页：
-    // 仅拦截无 entity 参数的历史 /player?title=xxx 链接；新版带 entity 参数的直接放行，杜绝循环 301
-    if (pathname === '/player' && url.searchParams.has('title') && !url.searchParams.has('entity')) {
+    // 严禁拦截带有效播放源定位参数（id、source、url、gsKey）的合法播放请求！
+    // 仅规范化无任何源站定位参数的历史纯标题 /player?title=xxx 孤立旧链接
+    const hasPlaySourceParams = url.searchParams.has('id') ||
+        url.searchParams.has('source') ||
+        url.searchParams.has('url') ||
+        url.searchParams.has('gsKey') ||
+        url.searchParams.has('entity');
+
+    if (pathname === '/player' && url.searchParams.has('title') && !hasPlaySourceParams) {
         const rawTitle = url.searchParams.get('title') || '';
         if (rawTitle.trim()) {
             const slug = generateSlug(rawTitle);
