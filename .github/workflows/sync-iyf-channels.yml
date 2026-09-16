@@ -41,19 +41,22 @@ jobs:
       - name: Execute Full Auto-Update & SEO Pipeline
         run: |
           TARGET="${{ github.event.inputs.channel || 'all_channels' }}"
-          echo "🚀 [1/5] 爱壹帆专区轮播与速报同步，目标板块: $TARGET..."
+          echo "🚀 [1/6] 爱壹帆专区轮播与速报同步，目标板块: $TARGET..."
           node scripts/sync-iyf-hero.mjs --target="$TARGET"
 
-          echo "🚀 [2/5] 全站「最新上线」真实增量流巡检与预烘焙..."
+          echo "🚀 [2/6] 全站「最新上线」真实增量流巡检与预烘焙..."
           node scripts/sync-latest-titles.mjs
 
-          echo "📺 [3/5] 连载作品最新集数变更自动检测与角标回写..."
+          echo "📺 [3/6] 连载作品最新集数变更自动检测与角标回写..."
           node scripts/sync-episode-updates.mjs
 
-          echo "📚 [4/5] 全站 7 大专区预烘焙分类数据全量刷新..."
+          echo "⚡ [4/6] 巨量资源短剧专线全自动化巡检与预烘焙同步..."
+          node scripts/sync-juliang-short-dramas.mjs
+
+          echo "📚 [5/6] 全站 7 大专区预烘焙分类数据全量刷新..."
           node scripts/sync-category-prebaked.mjs
 
-          echo "🔍 [5/5] SEO Entity 自动入库与全网搜索引擎推送..."
+          echo "🔍 [6/6] SEO Entity 自动入库与全网搜索引擎推送..."
           node scripts/sync-seo-entities.mjs
 
       - name: Commit, push, and trigger deploy if data updated

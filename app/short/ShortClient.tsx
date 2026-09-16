@@ -168,7 +168,7 @@ function ShortContent({ topCustomRails }: ShortClientProps) {
       <div className="text-center pt-2 sm:pt-4 pb-1">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/80 text-xs font-bold mb-3 shadow-inner">
           <span className="text-base">⚡</span>
-          <span>36,000+ 热门短剧全集免费畅享 · 9:16 沉浸式竖屏连播</span>
+          <span>62,000+ 热门短剧全集免费畅享 · 巨量专线主力 · 9:16 沉浸式竖屏连播</span>
         </div>
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
           精品微短剧专区
@@ -189,7 +189,7 @@ function ShortContent({ topCustomRails }: ShortClientProps) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="在 36,000+ 部短剧中搜索剧名（如：神豪、2026 AI短剧、暴君、逆袭）..."
+            placeholder="在 62,000+ 部短剧中搜索剧名（如：神豪、2026 AI短剧、暴君、逆袭）..."
             className="w-full bg-transparent text-sm sm:text-base text-white placeholder-white/30 focus:outline-none"
           />
           {searchQuery && (
@@ -263,7 +263,7 @@ function ShortContent({ topCustomRails }: ShortClientProps) {
                   “<span className="text-(--accent-color)">{activeKeyword}</span>” 的短剧搜索结果
                 </h2>
                 <p className="text-xs text-white/50 mt-0.5">
-                  {isSearching ? '正在全网 36,000+ 部短剧中极速检索...' : `共找到 ${searchResults.length} 部相关微短剧`}
+                  {isSearching ? '正在全网 62,000+ 部短剧中极速检索...' : `共找到 ${searchResults.length} 部相关微短剧`}
                 </p>
               </div>
             </div>
@@ -377,7 +377,7 @@ function ShortContent({ topCustomRails }: ShortClientProps) {
   return (
     <CategoryHub
       categoryTitle="精品微短剧"
-      categorySubtitle="36,000+ 热门短剧 · 9大精细分类 · 9:16 竖屏上下滑动沉浸全集连播"
+      categorySubtitle="62,000+ 热门短剧 · 巨量专线主力 · 9大精细分类 · 沉浸全集连播"
       doubanType="tv"
       activeNav="short"
       genres={GENRES}
@@ -388,7 +388,8 @@ function ShortContent({ topCustomRails }: ShortClientProps) {
       usePrebakedOnly={false}
       shortDramaMode={true}
       topCustomRails={shortRails}
-      heroItems={[]}
+      heroItems={SHORT_HOME_DATA.hero || []}
+      trendingNav={SHORT_HOME_DATA.trendingNav || []}
     />
   );
 }

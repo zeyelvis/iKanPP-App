@@ -15,22 +15,31 @@ import { getSourceResolutionBadge, shouldExpandForCurrentSource } from '@/lib/pl
 import { SourceSelector } from './SourceSelector';
 // 4K (2160P) 原画专线字典
 const FOUR_K_SOURCES = new Set([
-  'baofeng', 'baofeng_app', 'juliang', 'hongniu', 'hongniu3', 'haohua_4k', 'blue_4k', 'suoni', 'suoni_sd',
+  'baofeng', 'baofeng_app', 'hongniu', 'hongniu3', 'haohua_4k', 'blue_4k', 'suoni', 'suoni_sd',
   'json1080', 'laosiji_4k', 'midnight_4k', 'yutu', 'hsck', 'jingpin'
 ]);
 
 // 1080P 蓝光极清秒播专线字典
 const HD_BLURAY_SOURCES = new Set([
-  'feifan', 'feifan_api', 'feifan1', 'guangsu', 'guangsu_http', 'wolong', 'wolong_cj',
+  'juliang', 'feifan', 'feifan_api', 'feifan1', 'guangsu', 'guangsu_http', 'wolong', 'wolong_cj',
   'zuida', 'zuida_db', 'baidu', 'jisu', 'liangzi', 'kuaiche', 'leba', 'ck', 'tantan', 'sejie', 'wujin', 'wujin_me', 'wujin_cc', 'wujin_net', 'dytt'
 ]);
 
-export function isSource4K(s: { source: string; sourceName?: string }): boolean {
+export function isSource4K(s: { source: string; sourceName?: string; typeName?: string }): boolean {
+  // 巨量资源：只有专区或名称带 4K/2160 时才标记 4K
+  if (s.source === 'juliang' || s.sourceName?.includes('巨量')) {
+    return Boolean(s.sourceName?.includes('4K')) ||
+           Boolean(s.sourceName?.includes('2160')) ||
+           Boolean(s.typeName?.includes('4K')) ||
+           Boolean(s.typeName?.includes('2160'));
+  }
+
   return FOUR_K_SOURCES.has(s.source) ||
          Boolean(s.sourceName?.includes('4K')) ||
          Boolean(s.sourceName?.includes('2160')) ||
+         Boolean(s.typeName?.includes('4K')) ||
+         Boolean(s.typeName?.includes('2160')) ||
          Boolean(s.sourceName?.includes('暴风')) ||
-         Boolean(s.sourceName?.includes('巨量')) ||
          Boolean(s.sourceName?.includes('红牛')) ||
          Boolean(s.sourceName?.includes('索尼')) ||
          Boolean(s.sourceName?.includes('老司机'));

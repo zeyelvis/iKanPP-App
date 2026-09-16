@@ -5,6 +5,7 @@ import type {
 } from '@/lib/types';
 import { fetchWithTimeout, withRetry } from './http-utils';
 import { safeParseResponse } from '@/lib/utils/safe-json';
+import { isJuliangExcludedCategory } from './juliang-category-map';
 
 /**
  * Search videos from a single source
@@ -44,10 +45,12 @@ async function searchVideosBySource(
             throw new Error(data.msg || 'Invalid API response');
         }
 
-        const results: VideoItem[] = (data.list || []).map(item => ({
-            ...item,
-            source: source.id,
-        }));
+        const results: VideoItem[] = (data.list || [])
+            .filter((item: any) => !isJuliangExcludedCategory(Number(item.type_id || item.vod_type_id), item.type_name || item.vod_type_name))
+            .map((item: any) => ({
+                ...item,
+                source: source.id,
+            }));
 
         return {
             results,

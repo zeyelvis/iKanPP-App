@@ -35,9 +35,11 @@ function formatRelativeTime(isoString?: string): string {
 function LatestPosterCard({
   item,
   idx,
+  isShort = false,
 }: {
   item: RecentTitleItem;
   idx: number;
+  isShort?: boolean;
 }) {
   const [imageError, setImageError] = useState(false);
   const [useProxyFallback, setUseProxyFallback] = useState(false);
@@ -60,10 +62,16 @@ function LatestPosterCard({
     }
   };
 
-  const targetHref = `/title/${generateSlug(item.title)}`;
+  const isShortDrama = isShort || item.type === 'short' || item.channelKey === 'short';
+  const targetHref = isShortDrama
+    ? `/short/player?${new URLSearchParams({
+        title: item.title,
+        poster: item.cover || '',
+      }).toString()}`
+    : `/title/${generateSlug(item.title)}`;
   const relativeTime = formatRelativeTime(item.createdAt);
   const statusBadge = item.updateBadge || relativeTime;
-  const displayGenre = item.genres?.[0] || (item.type === 'movie' ? '电影' : '剧集');
+  const displayGenre = item.genres?.[0] || (isShortDrama ? '短剧' : item.type === 'movie' ? '电影' : '剧集');
 
   return (
     <Link
@@ -169,7 +177,7 @@ export default function LatestTitlesRail({
   const [items, setItems] = useState<RecentTitleItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const CACHE_KEY = `kvideo-latest-titles-v3-${type || 'all'}`;
+  const CACHE_KEY = `kvideo-latest-titles-v4-${type || 'all'}`;
 
   // SWR 本地优先瞬间恢复 + 异步刷新（带 30 分钟 TTL 刷新机制）
   useEffect(() => {
@@ -290,7 +298,12 @@ export default function LatestTitlesRail({
         style={{ scrollSnapType: 'x proximity' }}
       >
         {items.map((item, idx) => (
-          <LatestPosterCard key={`${item.entityId}-${idx}`} item={item} idx={idx} />
+          <LatestPosterCard
+            key={`${item.entityId}-${idx}`}
+            item={item}
+            idx={idx}
+            isShort={type === 'short' || item.type === 'short' || item.channelKey === 'short'}
+          />
         ))}
       </div>
     </section>

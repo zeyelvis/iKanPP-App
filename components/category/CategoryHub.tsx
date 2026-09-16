@@ -424,15 +424,15 @@ function isSameList(a: any[], b: any[]): boolean {
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white">
-      {/* 顶部导航：在大片巨幕上方浮动穿透，短剧无通栏巨幕模式下采用常规固定背景 */}
+      {/* 顶部导航：在大片巨幕上方浮动穿透 */}
       <Navbar
         onSearch={handleSearch}
         activeCategory={activeNav}
-        transparentFloat={Boolean(!shortDramaMode && heroItems && heroItems.length > 0)}
+        transparentFloat={Boolean(heroItems && heroItems.length > 0)}
       />
 
-      {/* 1. 频道顶部影院级全景通栏大片巨幕 (Hero Spotlight / HeroSlideshow 轮播，微短剧模式下去通栏化) */}
-      {!shortDramaMode && heroItems && heroItems.length > 0 ? (
+      {/* 1. 频道顶部影院级全景通栏大片巨幕 (Hero Spotlight / HeroSlideshow 轮播) */}
+      {heroItems && heroItems.length > 0 ? (
         <HeroSlideshow
           contentType={(activeNav as any) || (doubanType === 'movie' ? 'movie' : 'tv')}
           customHeroMovies={heroItems}
@@ -443,7 +443,7 @@ function isSameList(a: any[], b: any[]): boolean {
         />
       ) : null}
 
-      <div className={`fluid-container ${shortDramaMode ? 'pt-20 sm:pt-24' : 'pt-3 sm:pt-4'} pb-24 sm:pb-20 space-y-6 sm:space-y-10 relative z-20`}>
+      <div className={`fluid-container ${heroItems && heroItems.length > 0 ? 'pt-3 sm:pt-4' : (shortDramaMode ? 'pt-20 sm:pt-24' : 'pt-3 sm:pt-4')} pb-24 sm:pb-20 space-y-6 sm:space-y-10 relative z-20`}>
         {/* SEO 规范：为分类页提供显式唯一的 H1 标题 */}
         <h1 className="sr-only">
           {categoryTitle} - {categorySubtitle}

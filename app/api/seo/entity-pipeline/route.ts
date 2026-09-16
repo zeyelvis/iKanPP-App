@@ -3,6 +3,7 @@ import { getEntityByTmdb, getNextEntitySeq, saveEntity } from '@/lib/services/en
 import { fetchTMDBDetails } from '@/lib/services/entity-enrichment';
 import { formatEntityId, generateSlug } from '@/lib/data/entities/entity-utils';
 import { TitleEntity } from '@/lib/types/entity';
+import { isJuliangExcludedCategory } from '@/lib/api/juliang-category-map';
 
 export const runtime = 'edge';
 
@@ -139,6 +140,60 @@ export async function GET(request: Request) {
     } catch (err) {
       console.warn('[Pipeline item error]:', err);
     }
+  }
+
+  // 增量融合：巨量短剧专线高热实体收录
+  try {
+    const jlRes = await fetch('https://api.juliang.live/api/provide/vod/?ac=detail&t=5&pg=1', {
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+    });
+    if (jlRes.ok) {
+      const jlData = await jlRes.json();
+      if (jlData && Array.isArray(jlData.list)) {
+        for (const it of jlData.list.slice(0, 15)) {
+          if (isJuliangExcludedCategory(Number(it.type_id), it.type_name)) continue;
+          const title = it.vod_name?.replace(/[（(][^）)]*[）)]/g, '').trim();
+          if (!title) continue;
+
+          const tmdbPseudoId = `jl_${it.vod_id}`;
+          const existing = await getEntityByTmdb('tv', tmdbPseudoId);
+          if (existing) continue;
+
+          const slug = generateSlug(title);
+          const nextSeq = await getNextEntitySeq();
+          const entityId = formatEntityId(nextSeq);
+          const totalEp = it.vod_remarks?.match(/\d+/)?.[0] || '80';
+
+          const entity: TitleEntity = {
+            entityId,
+            slug,
+            tmdbId: tmdbPseudoId,
+            tmdbType: 'tv',
+            title,
+            originalTitle: title,
+            type: 'tv',
+            year: String(it.vod_year || '2026'),
+            description: it.vod_content ? it.vod_content.replace(/<[^>]+>/g, '').trim().slice(0, 200) : `${title} 短剧全集高清在线播放。`,
+            cover: it.vod_pic || '',
+            backdrop: it.vod_pic || '',
+            rate: '8.5',
+            genres: ['短剧', '微短剧', it.type_name || '爽剧'],
+            directors: [],
+            actors: it.vod_actor ? it.vod_actor.split(',').map((s: string) => s.trim()).filter(Boolean) : [],
+            numberOfEpisodes: parseInt(totalEp, 10),
+            keywords: ['短剧', '微短剧', title, '爽剧', '全集播放'],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+
+          await saveEntity(entity);
+          newAddedCount++;
+          newUrls.push(`${BASE_URL}/title/${entityId}-${slug}`);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('[Pipeline short drama error]:', err);
   }
 
   // 若有新入库实体，异步触发 IndexNow 推送 Bing / Yandex，并主动通知搜索引擎 Sitemap 更新

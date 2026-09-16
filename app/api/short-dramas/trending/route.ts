@@ -5,6 +5,8 @@ import {
   parseShortDramaPlayUrl,
   parseEpisodesCount,
 } from '@/lib/api/short-drama-sources';
+import { isJuliangExcludedCategory } from '@/lib/api/juliang-category-map';
+import { safeParseResponse } from '@/lib/utils/safe-json';
 
 export const runtime = 'edge';
 
@@ -19,7 +21,12 @@ export async function GET() {
 
     try {
       // 聚合短剧最新榜单
-      const url = `${source.baseUrl}${source.apiPath}?ac=detail&t=38&pg=1`;
+      const allCatId = typeof source.categories.all === 'number'
+        ? source.categories.all
+        : Array.isArray(source.categories.all)
+        ? source.categories.all[0]
+        : 38;
+      const url = `${source.baseUrl}${source.apiPath}?ac=detail&t=${allCatId}&pg=1`;
       const res = await fetch(url, {
         signal: controller.signal,
         headers: {
@@ -30,12 +37,13 @@ export async function GET() {
       clearTimeout(timer);
 
       if (!res.ok) continue;
-      const data = await res.json();
+      const data = await safeParseResponse(res);
       if (!data || !Array.isArray(data.list) || data.list.length === 0) continue;
 
       const candidates: ShortDramaItem[] = [];
 
       for (const item of data.list) {
+        if (isJuliangExcludedCategory(Number(item.type_id), item.type_name)) continue;
         const playUrl = item.vod_play_url || '';
         const episodes = parseShortDramaPlayUrl(playUrl);
         const parsedCount = parseEpisodesCount(item.vod_remarks, episodes.length);

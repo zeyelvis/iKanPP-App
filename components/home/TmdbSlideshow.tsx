@@ -83,10 +83,12 @@ function HeroBackdrop({
   backdrop,
   cover,
   title,
+  isShortDrama = false,
 }: {
   backdrop?: string | null;
   cover?: string | null;
   title: string;
+  isShortDrama?: boolean;
 }) {
   // 构建候选重试容灾链：
   // 1. 优化版 Backdrop（自适应地域路由）
@@ -159,21 +161,17 @@ function HeroBackdrop({
       {/* 1. 底层：即时电影色彩氛围层（极小体积海报 + 高斯模糊，0 秒呈现，彻底告别黑屏） */}
       {ambientSrc && (
         <div className="absolute inset-0 -m-8 pointer-events-none">
-          <Image
+          <img
             src={ambientSrc}
             alt=""
-            fill
-            sizes="100vw"
-            unoptimized
-            priority
-            referrerPolicy="no-referrer"
-            className="object-cover blur-3xl opacity-40 scale-125 saturate-150 transition-opacity duration-1000"
+            className={`w-full h-full object-cover ${isShortDrama ? 'blur-3xl opacity-60 scale-125 saturate-150' : 'blur-3xl opacity-40 scale-125 saturate-150'} transition-opacity duration-1000`}
+            loading="eager"
           />
         </div>
       )}
 
-      {/* 2. 底层前一帧剧照（保留至新图完全加载，彻底根除切换瞬间的黑屏/闪烁） */}
-      {prevSrc && prevSrc !== displaySrc && (
+      {/* 2. 底层前一帧剧照（保留至新图完全加载，彻底根除切换瞬间的黑屏/闪烁；短剧模式下免除） */}
+      {!isShortDrama && prevSrc && prevSrc !== displaySrc && (
         <Image
           src={prevSrc}
           alt=""
@@ -187,8 +185,8 @@ function HeroBackdrop({
         />
       )}
 
-      {/* 3. 顶层：当前最新巨幕高清剧照（支持多源自动容灾 + 极速双缓冲平滑淡入） */}
-      {displaySrc && (
+      {/* 3. 顶层：当前最新巨幕高清剧照（非短剧模式下全景呈现） */}
+      {!isShortDrama && displaySrc && (
         <Image
           key={displaySrc}
           src={displaySrc}
@@ -429,7 +427,28 @@ export function HeroSlideshow({
         backdrop={active.backdrop || backdrops[active.title] || active.cover}
         cover={active.cover}
         title={active.title}
+        isShortDrama={contentType === 'short'}
       />
+
+      {/* 2. 方案 A：短剧专区原生 9:16 高清竖版海报居中立体浮雕呈现 */}
+      {contentType === 'short' && (active.cover || active.backdrop) && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-28 sm:pb-32 lg:pb-36 z-15">
+          <div className="relative w-[130px] h-[195px] sm:w-[170px] sm:h-[255px] lg:w-[210px] lg:h-[315px] rounded-2xl overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.95)] border border-white/30 ring-1 ring-white/20 transition-transform duration-500 hover:scale-103">
+            <img
+              src={active.cover || active.backdrop || ''}
+              alt={active.title}
+              className="w-full h-full object-cover"
+              loading="eager"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-black/55 via-transparent to-black/10 pointer-events-none" />
+            {active.rate && parseFloat(active.rate) > 0 && (
+              <div className="absolute top-2 right-2 px-2 py-0.5 bg-black/75 backdrop-blur-md rounded-full border border-amber-400/50 text-amber-400 font-bold text-xs flex items-center gap-1 shadow-lg">
+                ★ {active.rate}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* 3. 巨幕内容排版：爱壹帆 1:1 经典三栏布局（整体贴齐图片最下方边缘） */}
       <div className="absolute inset-x-0 bottom-0 z-20 w-full flex flex-col justify-end pb-3 sm:pb-4 lg:pb-5 pointer-events-none">

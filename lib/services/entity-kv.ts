@@ -2,6 +2,7 @@ import { TitleEntity } from '@/lib/types/entity';
 import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie, hasTitleOverlap } from '@/lib/data/entities/entity-utils';
 import { PREBAKED_HOME_DATA, PrebakedSubject } from '@/lib/data/home-prebaked';
 import { PREBAKED_LATEST_TITLES, LatestPrebakedItem } from '@/lib/data/latest-titles-prebaked';
+import { SHORT_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 import { POPULAR_DIRECTORS, POPULAR_ACTORS } from '@/lib/data/popular-people';
 import { PEOPLE_PREBAKED_ENTITIES } from '@/lib/data/people-prebaked';
 
@@ -539,7 +540,7 @@ export async function saveEntity(entity: TitleEntity): Promise<void> {
  */
 export async function listRecentEntities(limit = 20, type?: string): Promise<RecentTitleItem[]> {
   const normalizedChannel = (type || 'all').toLowerCase().trim();
-  const validChannels = ['movie', 'tv', 'anime', 'variety', 'documentary'];
+  const validChannels = ['movie', 'tv', 'anime', 'variety', 'documentary', 'short'];
   const channelKey = validChannels.includes(normalizedChannel) ? normalizedChannel : 'all';
   const targetKey = channelKey === 'all' ? 'recent:all' : `recent:${channelKey}`;
 
@@ -557,9 +558,28 @@ export async function listRecentEntities(limit = 20, type?: string): Promise<Rec
   }
 
   // 2. 真实预烘焙直出：全专区 0ms 秒开且 100% 具备真实的 24h 最新上线影片、连载集数与 TMDB 高清海报
-  const prebakedList = PREBAKED_LATEST_TITLES[channelKey] || PREBAKED_LATEST_TITLES.all || [];
+  const prebakedList = PREBAKED_LATEST_TITLES[channelKey] || (channelKey === 'short' ? [] : PREBAKED_LATEST_TITLES.all) || [];
   if (prebakedList.length > 0) {
     return (prebakedList as RecentTitleItem[]).slice(0, limit);
+  }
+
+  // 短剧专区专属保底：从 SHORT_HOME_DATA 提取真实微短剧，杜绝回退到普通长视频
+  if (channelKey === 'short') {
+    const heroShorts = SHORT_HOME_DATA.hero || [];
+    return heroShorts.slice(0, limit).map((h, idx) => ({
+      entityId: `ik_latest_short_${idx + 1}`,
+      title: h.title,
+      slug: encodeURIComponent(h.title),
+      cover: h.cover,
+      backdrop: h.backdrop,
+      rate: h.rate || '8.8',
+      year: h.year || '2026',
+      type: 'short',
+      channelKey: 'short',
+      genres: h.types || ['短剧', '爽剧'],
+      updateBadge: '全集连播',
+      createdAt: new Date(Date.now() - idx * 3600000).toISOString(),
+    }));
   }
 
   // 3. 终极兜底：预烘焙核心影片

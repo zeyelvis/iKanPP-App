@@ -6,10 +6,10 @@ import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 export const metadata: Metadata = {
-  title: '精品微短剧专区 - 2026 最火AI短剧 & 36,000+ 热门爆款微短剧全集免费播放 | iKanPP 爱看片片',
-  description: 'iKanPP 微短剧频道汇聚 36,000+ 部全网微短剧与 2026 最新爆款生成式 AI 短剧/AI 漫剧，涵盖反转爽剧、言情总裁、现代都市、古装仙侠、穿越年代、重生民国、脑洞悬疑等。支持 9:16 沉浸式竖屏上下滑动切集与免费连播。',
+  title: '精品微短剧专区 - 2026 最火AI短剧 & 62,000+ 热门爆款微短剧全集免费播放 | iKanPP 爱看片片',
+  description: 'iKanPP 微短剧频道汇聚 62,000+ 部全网微短剧与 2026 最新爆款生成式 AI 短剧/AI 漫剧，巨量专线主力，涵盖反转爽剧、言情总裁、现代都市、古装仙侠、穿越年代、重生民国、脑洞悬疑等。支持 9:16 沉浸式竖屏上下滑动切集与免费连播。',
   openGraph: {
-    title: '精品微短剧专区 - 2026 最火AI短剧 & 36,000+ 部爆款爽剧沉浸式免费看 | iKanPP',
+    title: '精品微短剧专区 - 2026 最火AI短剧 & 62,000+ 部爆款爽剧沉浸式免费看 | iKanPP',
     description: '2026 最火 AI 短剧 · 反转爽剧 · 言情总裁 · 古装仙侠 · 穿越重生全集连播，9:16 沉浸式竖屏播放免 VIP 畅享。',
     type: 'website',
     url: 'https://www.ikanpp.com/short',

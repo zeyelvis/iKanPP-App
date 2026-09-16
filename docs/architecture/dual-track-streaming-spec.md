@@ -208,6 +208,45 @@
 - 巨量资源接口同时返回切片流与网页播放器（`"jlm3u8$$$jlplayer"`），系统分集解析层通过 `playFrom.includes('m3u8')` 物理隔离机制，自动识别并提取 `jlm3u8` 纯净 m3u8 切片，彻底过滤包含跳转与内嵌广告的网页播放器。
 - 恪守 Track A 铁律：巨量流切片直接由客户端直连源站香港 CDN，零代理中转。
 
+### 3. 巨量短剧专线 (#1 主力源) 与 62,665+ 部短剧集成规范
+- **短剧维度优先级跃升**：巨量短剧拥有 62,665+ 部真实分集短剧，超越魔都（34,395 部），正式确立为全站短剧维度 **#1 黄金主力源（Priority 1）**，魔都顺延为 Priority 2，魔都镜像为 3，光速 4，极速 5。
+- **原生 7 大子分类与 AI 漫剧直通映射**：
+  - 古装仙侠 (`t=501`, 10,988 部)
+  - 穿越 (`t=502`, 4,258 部)
+  - 悬疑 (`t=503`, 866 部)
+  - 都市 (`t=504`, 22,249 部)
+  - 女频 (`t=505`, 8,273 部)
+  - 爽剧 (`t=506`, 3,559 部)
+  - 其他短剧 (`t=599`, 12,472 部)
+  - AI漫剧顶级专区 (`t=7` / `t=701`, 10,429 部)
+- **100% 真实原生分集秒开**：全部分集链接在字符层直接经由 `sanitizeStreamUrl` 净化，交由客户端直连，零代理。
+
+### 4. 铁律排除成人边缘分类 (Absolute Adult Category Exclusion)
+- **零容忍彻底封禁**：巨量子类目中的伦理片 (`t=190`) 与写真 (`t=191`) 属于成人擦边类目，**实行全平台彻底排除铁律**：既不进入主站 Track A 普通影视与短剧库，亦不路由至 iKanX 午夜专区。
+- **全链路五重防御卡口**：
+  1. 分类映射层 (`lib/api/juliang-category-map.ts`)：建立 `JULIANG_EXCLUDED_CATEGORY_IDS` 黑名单；
+  2. 频道浏览层 (`app/api/short-dramas/browse/route.ts`)：列表输出前强制 `isJuliangExcludedCategory` 过滤；
+  3. 全局搜索层 (`lib/api/search-api.ts` 与 `app/api/short-dramas/search/route.ts`)：物理阻断成人关键词与对应类目；
+  4. 专区热播层 (`app/api/short-dramas/trending/route.ts`)：榜单聚合强制过滤；
+  5. 自动化同步层 (`scripts/sync-juliang-short-dramas.mjs` 与 `entity-pipeline`)：预烘焙与 SEO 推送坚决剔除。
+
+### 5. 4K 原画专线精准识别规范 (Precision 4K Identification)
+- **杜绝全源一刀切虚标**：纠偏原先对 `juliang` 全部片目赋予 4K 标识的粗放逻辑。巨量资源中只有 4K 专区 (`t=192`) 或片名/分类明确标注 `4K` / `2160` 的内容才判定为 4K 原画（`isSource4K`）。
+- **蓝光专线精准承接**：巨量海量常规 1080P 片目精准归入蓝光极清秒播专线（`HD_BLURAY_SOURCES`），既保障了视觉标识的专业真实性，又保持了高码率线路的梯队优先权。
+
+### 6. 短剧专区 Hero 轮播方案 A 规范 (Vertical Poster Centered + Gaussian Blur 16:9)
+- **视觉痛点破解**：短剧海报 100% 均为 9:16 竖版高清图，无原生 16:9 横版剧照。若强行按横版裁剪拉伸会导致严重失真变形。
+- **方案 A 落地机制**：
+  1. **背景层**：采用该短剧海报全景铺底，施加 `blur-3xl opacity-50 scale-125 saturate-150` 高斯模糊与动态柔光渐变，将 9:16 色彩平滑延展为 16:9 电影级巨幕氛围；
+  2. **前景层**：在巨幕视觉中心以精致浮雕阴影（`shadow-[0_20px_50px_rgba(0,0,0,0.9)]`、`rounded-2xl`）立体呈现原生 9:16 高清海报卡片；
+  3. **控制层**：贴底三栏布局无缝联动爱壹帆 1:1 规范，保持左侧主标题与立即播放 CTA、中栏 12 席（6 + 6）短剧速报标签矩阵、右侧 8 席缩略卡片。
+
+### 7. 自动化全流程闭环与 SEO 索引
+- 由 `scripts/sync-juliang-short-dramas.mjs` 与 `.github/workflows/sync-iyf-channels.yml` 每小时整点闭环执行；
+- 数据变更自动刷新 `SHORT_HOME_DATA`，并在提交后自动触发 Cloudflare Pages 编译部署；
+- 增量爆款短剧实时写入 `new-scraped-titles.json`，秒级触发 IndexNow 全网搜索引擎主动广播收录。
+
+
 
 
 

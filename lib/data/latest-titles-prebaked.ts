@@ -2160,6 +2160,347 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第55集",
       "createdAt": "2021-01-24T02:24:00.000Z"
-    }
-  ]
+    }  ],
+  "short": [
+  {
+    "entityId": "ik_latest_short_1",
+    "title": "开局青云宗主召唤大帝境老祖",
+    "slug": "%E5%BC%80%E5%B1%80%E9%9D%92%E4%BA%91%E5%AE%97%E4%B8%BB%E5%8F%AC%E5%94%A4%E5%A4%A7%E5%B8%9D%E5%A2%83%E8%80%81%E7%A5%96",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/053bb88cf65b40d6870baca902e248ddd8faff06a8495d83051111705f3ace4b.png",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/053bb88cf65b40d6870baca902e248ddd8faff06a8495d83051111705f3ace4b.png",
+    "rate": "8.0",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "古装仙侠短剧",
+      "爽剧"
+    ],
+    "updateBadge": "全207集",
+    "createdAt": "2026-09-16T10:21:36.567Z"
+  },
+  {
+    "entityId": "ik_latest_short_2",
+    "title": "春心难捱：我的死对头居然是我未来老公",
+    "slug": "%E6%98%A5%E5%BF%83%E9%9A%BE%E6%8D%B1%EF%BC%9A%E6%88%91%E7%9A%84%E6%AD%BB%E5%AF%B9%E5%A4%B4%E5%B1%85%E7%84%B6%E6%98%AF%E6%88%91%E6%9C%AA%E6%9D%A5%E8%80%81%E5%85%AC",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/563a530c2db8e068cdf52190881633dd5d2c11c0d854bbd808f6c129edee4366.jpg",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/563a530c2db8e068cdf52190881633dd5d2c11c0d854bbd808f6c129edee4366.jpg",
+    "rate": "8.1",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "其他短剧",
+      "爽剧"
+    ],
+    "updateBadge": "全181集",
+    "createdAt": "2026-09-16T09:21:36.567Z"
+  },
+  {
+    "entityId": "ik_latest_short_3",
+    "title": "假千金：我不想活啦！",
+    "slug": "%E5%81%87%E5%8D%83%E9%87%91%EF%BC%9A%E6%88%91%E4%B8%8D%E6%83%B3%E6%B4%BB%E5%95%A6%EF%BC%81",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d16dfab60e87f6c587eac1676dde63e339c6b417e613bd2b672287aab387c57d.png",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d16dfab60e87f6c587eac1676dde63e339c6b417e613bd2b672287aab387c57d.png",
+    "rate": "8.2",
+    "year": "2025",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "古装仙侠短剧",
+      "爽剧"
+    ],
+    "updateBadge": "全81集",
+    "createdAt": "2026-09-16T08:21:36.567Z"
+  },
+  {
+    "entityId": "ik_latest_short_4",
+    "title": "代号枪神",
+    "slug": "%E4%BB%A3%E5%8F%B7%E6%9E%AA%E7%A5%9E",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/6a3c755ce39f0d4e5f789ae165c57791faf564464fe16128ce7c2af582cc7465.jpg",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/6a3c755ce39f0d4e5f789ae165c57791faf564464fe16128ce7c2af582cc7465.jpg",
+    "rate": "8.3",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "其他短剧",
+      "爽剧"
+    ],
+    "updateBadge": "全135集",
+    "createdAt": "2026-09-16T07:21:36.567Z"
+  },
+  {
+    "entityId": "ik_latest_short_5",
+    "title": "她从仙界归来护全家",
+    "slug": "%E5%A5%B9%E4%BB%8E%E4%BB%99%E7%95%8C%E5%BD%92%E6%9D%A5%E6%8A%A4%E5%85%A8%E5%AE%B6",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/156a8174d506f3691ce0ec10607de1c656613a06a8f42b425026edb6a83030fd.jpg",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/156a8174d506f3691ce0ec10607de1c656613a06a8f42b425026edb6a83030fd.jpg",
+    "rate": "8.4",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "其他短剧",
+      "爽剧"
+    ],
+    "updateBadge": "已完结",
+    "createdAt": "2026-09-16T06:21:36.567Z"
+  },
+  {
+    "entityId": "ik_latest_short_6",
+    "title": "我一邪修养反派为徒很正常吧",
+    "slug": "%E6%88%91%E4%B8%80%E9%82%AA%E4%BF%AE%E5%85%BB%E5%8F%8D%E6%B4%BE%E4%B8%BA%E5%BE%92%E5%BE%88%E6%AD%A3%E5%B8%B8%E5%90%A7",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/faa2a85d36b97816790aee06bb457502220954550a00faa0b033edc625c56b78.jpg",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/faa2a85d36b97816790aee06bb457502220954550a00faa0b033edc625c56b78.jpg",
+    "rate": "8.5",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "其他短剧",
+      "爽剧"
+    ],
+    "updateBadge": "已完结",
+    "createdAt": "2026-09-16T05:21:36.567Z"
+  },
+  {
+    "entityId": "ik_latest_short_7",
+    "title": "太后归来，先帝竟成了我的大学老师",
+    "slug": "%E5%A4%AA%E5%90%8E%E5%BD%92%E6%9D%A5%EF%BC%8C%E5%85%88%E5%B8%9D%E7%AB%9F%E6%88%90%E4%BA%86%E6%88%91%E7%9A%84%E5%A4%A7%E5%AD%A6%E8%80%81%E5%B8%88",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d6b1149bd006587d3900ba1f88db70990d33644a8838b0490b22c4b7c8239b12.jpg",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d6b1149bd006587d3900ba1f88db70990d33644a8838b0490b22c4b7c8239b12.jpg",
+    "rate": "8.6",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "其他短剧",
+      "爽剧"
+    ],
+    "updateBadge": "已完结",
+    "createdAt": "2026-09-16T04:21:36.567Z"
+  },
+  {
+    "entityId": "ik_latest_short_8",
+    "title": "错认竹马",
+    "slug": "%E9%94%99%E8%AE%A4%E7%AB%B9%E9%A9%AC",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/0e72d45f124ad2bf81b5a8e7a27ef1eed1196003705ad85083ac71bc19300ed5.jpg",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/0e72d45f124ad2bf81b5a8e7a27ef1eed1196003705ad85083ac71bc19300ed5.jpg",
+    "rate": "8.7",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "现代都市短剧",
+      "爽剧"
+    ],
+    "updateBadge": "已完结",
+    "createdAt": "2026-09-16T03:21:36.567Z"
+  },
+  {
+    "entityId": "ik_latest_short_9",
+    "title": "龙君七御",
+    "slug": "%E9%BE%99%E5%90%9B%E4%B8%83%E5%BE%A1",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f7d41b4a50f7e3b221777f6d20ed3253ee398d9835a1b73e5293b613ed94ceff.webp",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f7d41b4a50f7e3b221777f6d20ed3253ee398d9835a1b73e5293b613ed94ceff.webp",
+    "rate": "8.8",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "现代都市短剧",
+      "爽剧"
+    ],
+    "updateBadge": "已完结",
+    "createdAt": "2026-09-16T02:21:36.567Z"
+  },
+  {
+    "entityId": "ik_latest_short_10",
+    "title": "噗噗偶像",
+    "slug": "%E5%99%97%E5%99%97%E5%81%B6%E5%83%8F",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/ccad7f6a1128c1f6d25fd92dac1abf7803291ab914b77946b441ade6ae9d1f9e.png",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/ccad7f6a1128c1f6d25fd92dac1abf7803291ab914b77946b441ade6ae9d1f9e.png",
+    "rate": "8.9",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "其他短剧",
+      "爽剧"
+    ],
+    "updateBadge": "全169集",
+    "createdAt": "2026-09-16T01:21:36.567Z"
+  },
+  {
+    "entityId": "ik_latest_short_11",
+    "title": "官宣脱单，他不再清冷",
+    "slug": "%E5%AE%98%E5%AE%A3%E8%84%B1%E5%8D%95%EF%BC%8C%E4%BB%96%E4%B8%8D%E5%86%8D%E6%B8%85%E5%86%B7",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/ceb3aedd94d711cacbb86d24bbdae46413388ec159cc6a449d583e235c4f265d.jpg",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/ceb3aedd94d711cacbb86d24bbdae46413388ec159cc6a449d583e235c4f265d.jpg",
+    "rate": "8.0",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "现代都市短剧",
+      "爽剧"
+    ],
+    "updateBadge": "已完结",
+    "createdAt": "2026-09-16T00:21:36.567Z"
+  },
+  {
+    "entityId": "ik_latest_short_12",
+    "title": "僵尸萌宝穿越被团宠了",
+    "slug": "%E5%83%B5%E5%B0%B8%E8%90%8C%E5%AE%9D%E7%A9%BF%E8%B6%8A%E8%A2%AB%E5%9B%A2%E5%AE%A0%E4%BA%86",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/51fb97927e845974ab2c188e1923ee3cbcf044f94c6b4471faa2c710c8e2d351.png",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/51fb97927e845974ab2c188e1923ee3cbcf044f94c6b4471faa2c710c8e2d351.png",
+    "rate": "8.1",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "其他短剧",
+      "爽剧"
+    ],
+    "updateBadge": "全175集",
+    "createdAt": "2026-09-15T23:21:36.568Z"
+  },
+  {
+    "entityId": "ik_latest_short_13",
+    "title": "如意仙盆，从升级万物开始成为武圣",
+    "slug": "%E5%A6%82%E6%84%8F%E4%BB%99%E7%9B%86%EF%BC%8C%E4%BB%8E%E5%8D%87%E7%BA%A7%E4%B8%87%E7%89%A9%E5%BC%80%E5%A7%8B%E6%88%90%E4%B8%BA%E6%AD%A6%E5%9C%A3",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/92b02a5a943ebff174d7786aa079a527fb41f7da6e387c6c8fd39e9d9d481636.png",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/92b02a5a943ebff174d7786aa079a527fb41f7da6e387c6c8fd39e9d9d481636.png",
+    "rate": "8.2",
+    "year": "2025",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "其他短剧",
+      "爽剧"
+    ],
+    "updateBadge": "全161集",
+    "createdAt": "2026-09-15T22:21:36.568Z"
+  },
+  {
+    "entityId": "ik_latest_short_14",
+    "title": "以力证道，斩妖就变强",
+    "slug": "%E4%BB%A5%E5%8A%9B%E8%AF%81%E9%81%93%EF%BC%8C%E6%96%A9%E5%A6%96%E5%B0%B1%E5%8F%98%E5%BC%BA",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f2d60bbb0a5f8f007894edcca067aef33bb3d526287f9b5656d79a050cbdd498.png",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f2d60bbb0a5f8f007894edcca067aef33bb3d526287f9b5656d79a050cbdd498.png",
+    "rate": "8.3",
+    "year": "2025",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "其他短剧",
+      "爽剧"
+    ],
+    "updateBadge": "全201集",
+    "createdAt": "2026-09-15T21:21:36.568Z"
+  },
+  {
+    "entityId": "ik_latest_short_15",
+    "title": "原来我是绝世剑仙",
+    "slug": "%E5%8E%9F%E6%9D%A5%E6%88%91%E6%98%AF%E7%BB%9D%E4%B8%96%E5%89%91%E4%BB%99",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/9b102e7b9602cebd23c2bbd40e6490e87fb0e8955e4a253103336aa6610c274d.png",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/9b102e7b9602cebd23c2bbd40e6490e87fb0e8955e4a253103336aa6610c274d.png",
+    "rate": "8.4",
+    "year": "2025",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "其他短剧",
+      "爽剧"
+    ],
+    "updateBadge": "全127集",
+    "createdAt": "2026-09-15T20:21:36.568Z"
+  },
+  {
+    "entityId": "ik_latest_short_16",
+    "title": "两文钱牵起一世缘",
+    "slug": "%E4%B8%A4%E6%96%87%E9%92%B1%E7%89%B5%E8%B5%B7%E4%B8%80%E4%B8%96%E7%BC%98",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/128963cd9ba18c9d1e5f0bda02a5f137e374228d84793103a606d2e59ba32271.jpg",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/128963cd9ba18c9d1e5f0bda02a5f137e374228d84793103a606d2e59ba32271.jpg",
+    "rate": "8.5",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "古装仙侠短剧",
+      "爽剧"
+    ],
+    "updateBadge": "已完结",
+    "createdAt": "2026-09-15T19:21:36.568Z"
+  },
+  {
+    "entityId": "ik_latest_short_17",
+    "title": "闺蜜骗我极寒设备，我却在避暑山庄囤制冷机",
+    "slug": "%E9%97%BA%E8%9C%9C%E9%AA%97%E6%88%91%E6%9E%81%E5%AF%92%E8%AE%BE%E5%A4%87%EF%BC%8C%E6%88%91%E5%8D%B4%E5%9C%A8%E9%81%BF%E6%9A%91%E5%B1%B1%E5%BA%84%E5%9B%A4%E5%88%B6%E5%86%B7%E6%9C%BA",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/54ea0b517343fe0f75fba2312a561962a9ba5f46822ffecc480a34eda5b0934b.jpg",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/54ea0b517343fe0f75fba2312a561962a9ba5f46822ffecc480a34eda5b0934b.jpg",
+    "rate": "8.6",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "现代都市短剧",
+      "爽剧"
+    ],
+    "updateBadge": "已完结",
+    "createdAt": "2026-09-15T18:21:36.568Z"
+  },
+  {
+    "entityId": "ik_latest_short_18",
+    "title": "风水大师：我以狐仙镇百诡",
+    "slug": "%E9%A3%8E%E6%B0%B4%E5%A4%A7%E5%B8%88%EF%BC%9A%E6%88%91%E4%BB%A5%E7%8B%90%E4%BB%99%E9%95%87%E7%99%BE%E8%AF%A1",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/efc09861360880cc05c6acc9d6738ddaaab6e7ce71b6df0e589f86884cf66ae8.png",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/efc09861360880cc05c6acc9d6738ddaaab6e7ce71b6df0e589f86884cf66ae8.png",
+    "rate": "8.7",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "其他短剧",
+      "爽剧"
+    ],
+    "updateBadge": "全239集",
+    "createdAt": "2026-09-15T17:21:36.568Z"
+  },
+  {
+    "entityId": "ik_latest_short_19",
+    "title": "末世满员，美食小吃店不打烊",
+    "slug": "%E6%9C%AB%E4%B8%96%E6%BB%A1%E5%91%98%EF%BC%8C%E7%BE%8E%E9%A3%9F%E5%B0%8F%E5%90%83%E5%BA%97%E4%B8%8D%E6%89%93%E7%83%8A",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/e9c3d928d4aed51ce52d31faf5576c9467854b04039cb960e793b16a3dfdb7a2.png",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/e9c3d928d4aed51ce52d31faf5576c9467854b04039cb960e793b16a3dfdb7a2.png",
+    "rate": "8.8",
+    "year": "2025",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "其他短剧",
+      "爽剧"
+    ],
+    "updateBadge": "全231集",
+    "createdAt": "2026-09-15T16:21:36.568Z"
+  },
+  {
+    "entityId": "ik_latest_short_20",
+    "title": "五灵根修仙：我有一个吞噬空间！",
+    "slug": "%E4%BA%94%E7%81%B5%E6%A0%B9%E4%BF%AE%E4%BB%99%EF%BC%9A%E6%88%91%E6%9C%89%E4%B8%80%E4%B8%AA%E5%90%9E%E5%99%AC%E7%A9%BA%E9%97%B4%EF%BC%81",
+    "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/63e283615bde5e6cb0f9e3e850c86f81815864a5490cbfbae65b90def3339951.png",
+    "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/63e283615bde5e6cb0f9e3e850c86f81815864a5490cbfbae65b90def3339951.png",
+    "rate": "8.9",
+    "year": "2026",
+    "type": "short",
+    "channelKey": "short",
+    "genres": [
+      "古装仙侠短剧",
+      "爽剧"
+    ],
+    "updateBadge": "全409集",
+    "createdAt": "2026-09-15T15:21:36.568Z"
+  }
+]
 };

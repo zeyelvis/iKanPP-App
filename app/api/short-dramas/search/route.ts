@@ -6,6 +6,11 @@ import {
   parseShortDramaPlayUrl,
   parseEpisodesCount,
 } from '@/lib/api/short-drama-sources';
+import {
+  isJuliangExcludedCategory,
+  isJuliangShortDramaCategory,
+} from '@/lib/api/juliang-category-map';
+import { safeParseResponse } from '@/lib/utils/safe-json';
 
 export const runtime = 'edge';
 
@@ -13,6 +18,14 @@ const FETCH_TIMEOUT_MS = 3000;
 
 function isShortDramaItem(item: any, source: ShortDramaSource): boolean {
   const typeId = Number(item.type_id);
+  const typeName = String(item.type_name || '');
+
+  // 铁律：排除成人边缘内容 (伦理片、写真等)
+  if (isJuliangExcludedCategory(typeId, typeName)) return false;
+
+  // 巨量源短剧识别 (顶级大类 5, 501~506, 599, 7, 701, 299)
+  if (source.id === 'juliang' && isJuliangShortDramaCategory(typeId)) return true;
+
   // 魔都源 38 是短剧，42 是 AI 漫剧
   if (source.id.startsWith('modu') && (typeId === 38 || typeId === 42)) return true;
 
@@ -21,7 +34,6 @@ function isShortDramaItem(item: any, source: ShortDramaSource): boolean {
   );
   if (allCatIds.includes(typeId)) return true;
 
-  const typeName = String(item.type_name || '');
   const dramaKeywords = ['短剧', '爽剧', '都市', '总裁', '重生', '仙侠', '穿越', '反转', '漫剧'];
   return dramaKeywords.some((kw) => typeName.includes(kw));
 }
@@ -102,7 +114,7 @@ export async function GET(req: NextRequest) {
 
       let data: any = null;
       if (res.ok) {
-        data = await res.json();
+        data = await safeParseResponse(res);
       }
 
       // 若整句未查到且 query 包含标点/副标题，尝试取主标题词二次检索
@@ -117,7 +129,7 @@ export async function GET(req: NextRequest) {
           },
         });
         if (res.ok) {
-          data = await res.json();
+          data = await safeParseResponse(res);
         }
       }
 

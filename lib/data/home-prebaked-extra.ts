@@ -1236,529 +1236,313 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 // ── 3. ⚡ 精品短剧专区精选 (Short Drama) ──────────────────────────────────
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
-    { title: '我在八零年代当后妈', updateBadge: 'HOT' },
-    { title: '无双', updateBadge: 'TOP' },
-    { title: '执笔', updateBadge: '' },
-    { title: '裴总每天都想父凭子贵', updateBadge: '' },
-    { title: '盛夏的秘密', updateBadge: '' },
-    { title: '龙王出狱', updateBadge: 'HOT' },
-    { title: '狂龙战婿', updateBadge: '' },
-    { title: '顾总太太又跑了', updateBadge: '' },
-    { title: '重生之都市修仙', updateBadge: '' },
-    { title: '真假千金归来', updateBadge: '' },
-    { title: '天降萌宝总裁爹地', updateBadge: '' },
-    { title: '2026 AI短剧元宇宙', updateBadge: 'AI' },
+      {
+          "title": "开局青云宗主召唤大帝境老祖",
+          "updateBadge": "全"
+      },
+      {
+          "title": "春心难捱：我的死对头居然是我未来老公",
+          "updateBadge": "全"
+      },
+      {
+          "title": "假千金：我不想活啦！",
+          "updateBadge": "全"
+      },
+      {
+          "title": "代号枪神",
+          "updateBadge": "全"
+      },
+      {
+          "title": "她从仙界归来护全家",
+          "updateBadge": "全"
+      },
+      {
+          "title": "我一邪修养反派为徒很正常吧",
+          "updateBadge": "全"
+      },
+      {
+          "title": "太后归来，先帝竟成了我的大学老师",
+          "updateBadge": "全"
+      },
+      {
+          "title": "错认竹马",
+          "updateBadge": "全"
+      },
+      {
+          "title": "龙君七御",
+          "updateBadge": "全"
+      },
+      {
+          "title": "噗噗偶像",
+          "updateBadge": "全"
+      },
+      {
+          "title": "官宣脱单，他不再清冷",
+          "updateBadge": "全"
+      },
+      {
+          "title": "僵尸萌宝穿越被团宠了",
+          "updateBadge": "全"
+      }
   ],
   hero: [
-    {
-      id: 'pb_short_hero_1',
-      title: '我在八零年代当后妈',
-      rate: '8.6',
-      cover: 'https://image.tmdb.org/t/p/w500/dXjYk7fnA6HNqhJHTnmeD6rV4Aw.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/dXjYk7fnA6HNqhJHTnmeD6rV4Aw.jpg',
-      description: '现代女大学生意外穿越到八十年代，成了两个孩子的后妈。智斗极品亲戚，凭借现代经商头脑带着全家逆袭致富，并俘获帅气军官的甜宠传奇！全网狂揽数亿播放的现象级短剧神作。',
-      year: '2024',
-      types: ['短剧', '年代', '逆袭', '甜宠'],
-      episodes_info: '全82集·已完结',
-      type: 'tv',
-      is_new: true,
-      playable: true,
-      actors: ['滕泽文', '苏袀禾']
-    },
-    {
-      id: 'pb_short_hero_2',
-      title: '无双',
-      rate: '8.8',
-      cover: 'https://image.tmdb.org/t/p/w500/b5P8eg7u4XgDSYNF6da17CcZy2d.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/b5P8eg7u4XgDSYNF6da17CcZy2d.jpg',
-      description: '一代龙王战神隐姓埋名入赘豪门，受尽欺凌与白眼。当外敌入侵、家族危亡之际，他终于撕下伪装，调动十万镇国铁军，王者归来，横扫一切强敌！',
-      year: '2024',
-      types: ['短剧', '战神', '逆袭', '热血'],
-      episodes_info: '全98集·已完结',
-      type: 'tv',
-      is_new: true,
-      playable: true,
-      actors: ['白方文', '张楚萱']
-    },
-    {
-      id: 'pb_short_hero_3',
-      title: '执笔',
-      rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/czembW0Rk1Ke7lCJGahbOhdCuhV.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/czembW0Rk1Ke7lCJGahbOhdCuhV.jpg',
-      description: '相府嫡女苏云绮意外发现自己竟是话本中的恶毒女配，且注定惨死。她誓不认命，执笔改命，撕开命定剧本的枷锁，逆风翻盘主宰自己的人生！高分口碑古装权谋短剧。',
-      year: '2024',
-      types: ['短剧', '古装', '权谋', '重生'],
-      episodes_info: '全24集·已完结',
-      type: 'tv',
-      is_new: true,
-      playable: true,
-      actors: ['李沐宸', '叶盛佳']
-    },
-    {
-      id: 'pb_short_hero_4',
-      title: '黑莲花上位手册',
-      rate: '8.7',
-      cover: 'https://image.tmdb.org/t/p/w500/cDJwZ4lSZiUnHtixdyhaPPwsjyo.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/cDJwZ4lSZiUnHtixdyhaPPwsjyo.jpg',
-      description: '护母复仇，步步为营！庶女宋昭入宫手撕仇人，凭借过人智谋在勾心斗角的后宫绝地反杀，大女主宫斗爽剧巅峰天花板。',
-      year: '2023',
-      types: ['短剧', '复仇', '宫斗', '逆袭'],
-      episodes_info: '全120集·已完结',
-      type: 'tv',
-      is_new: false,
-      playable: true,
-      actors: ['马秋元']
-    },
-    {
-      id: 'pb_short_hero_5',
-      title: '闪婚后傅先生的马甲藏不住了',
-      rate: '8.4',
-      cover: 'https://image.tmdb.org/t/p/w500/nSpk8U35rPVlMMfZ1uxHnbC14Nd.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w1280/nSpk8U35rPVlMMfZ1uxHnbC14Nd.jpg',
-      description: '假结婚变真爱，千亿身价商界帝王隐藏身份化身普通打工人宠妻无极限，高甜高爽反转不断，全网爆火都市甜宠短剧。',
-      year: '2024',
-      types: ['短剧', '豪门', '甜宠', '反转'],
-      episodes_info: '全80集·已完结',
-      type: 'tv',
-      is_new: true,
-      playable: true,
-      actors: ['舒童', '赵夕汐']
-    }
+      {
+          "id": "jl_short_630911827974291500",
+          "title": "开局青云宗主召唤大帝境老祖",
+          "rate": "8.8",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/053bb88cf65b40d6870baca902e248ddd8faff06a8495d83051111705f3ace4b.png",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/053bb88cf65b40d6870baca902e248ddd8faff06a8495d83051111705f3ace4b.png",
+          "description": "风清扬成为掌门后激活了诸天神宗系统，开局就召唤来了大帝境界老祖，从此人生达到了巅峰，大弟子石浩，至尊圣体，天生至尊，独断万古。二弟子林白，青莲剑体，剑气纵横三万里，号青莲剑仙三弟子花轻语，凤凰圣体，神圣凤凰、遨游九天，人称凤凰女帝",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全207集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_636728740302487600",
+          "title": "假千金：我不想活啦！",
+          "rate": "8.9",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d16dfab60e87f6c587eac1676dde63e339c6b417e613bd2b672287aab387c57d.png",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d16dfab60e87f6c587eac1676dde63e339c6b417e613bd2b672287aab387c57d.png",
+          "description": "今年新上的 AI 短剧里这部情绪张力拉满，四十集篇幅把假千金题材拍出了新意 。《 假千金：我不想活啦！》 聚焦身份错位下的心理困境，女主在得知身世真相后陷入自我否定，却在绝境中逐步重建自我认同 。 剧情没有落入俗套复仇套路，而是用细腻笔触刻画角色从崩溃到觉醒的转变过程，矛盾冲突集中在内心挣扎与外部压...",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全81集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637551552671777000",
+          "title": "错认竹马",
+          "rate": "9.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/0e72d45f124ad2bf81b5a8e7a27ef1eed1196003705ad85083ac71bc19300ed5.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/0e72d45f124ad2bf81b5a8e7a27ef1eed1196003705ad85083ac71bc19300ed5.jpg",
+          "description": "青梅竹马错位重逢的情感拉扯在这部AI短剧里演绎得格外揪心。资源包含《错认竹马》第二季四十二集，围绕男女主因误会错认彼此身份而展开的甜虐交织故事，情感浓度极高。两人从互相试探到真相揭开，关系转折层层递进，既有久别重逢的心动也有身份错位的酸涩，叙事节奏快而不乱，主线聚焦情感解绑与重新确认的过程，适合偏爱...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637551553409974500",
+          "title": "龙君七御",
+          "rate": "9.5",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f7d41b4a50f7e3b221777f6d20ed3253ee398d9835a1b73e5293b613ed94ceff.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f7d41b4a50f7e3b221777f6d20ed3253ee398d9835a1b73e5293b613ed94ceff.webp",
+          "description": "追到最后那几集，胸口像被什么堵住了一样，说不出的怅然。这部剧是古装题材，一口气铺到七十九集，郭嘉琦、姚倩、王丽瑶、王宣凯和丁萌几位演员联手呈现了一个格局宏大的故事。剧名里的龙君与七御构建起整套权力体系，角色之间既有忠诚与背叛的拉扯，也有各自立场的不可调和。郭嘉琦把龙君那种隐忍又果决的气质拿捏得很准，...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637557641257681200",
+          "title": "官宣脱单，他不再清冷",
+          "rate": "9.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/ceb3aedd94d711cacbb86d24bbdae46413388ec159cc6a449d583e235c4f265d.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/ceb3aedd94d711cacbb86d24bbdae46413388ec159cc6a449d583e235c4f265d.jpg",
+          "description": "AI 甜宠短剧 《 官宣脱单，他不再清冷 》 仅 15 集却高能密集，主打反差萌恋爱 。 剧情直击高冷男主因恋情曝光而卸下伪装的过程，情感转变迅速且甜度爆表，没有冗长铺垫，每一集都在推进关系升温 。AI 制作在表情捕捉与互动设计上表现出色，让清冷人设的崩塌显得格外生动可信，叙事节奏快准狠 。 喜欢直...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637569718638674200",
+          "title": "两文钱牵起一世缘",
+          "rate": "8.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/128963cd9ba18c9d1e5f0bda02a5f137e374228d84793103a606d2e59ba32271.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/128963cd9ba18c9d1e5f0bda02a5f137e374228d84793103a606d2e59ba32271.jpg",
+          "description": "今年新上的这部 AI 古风短剧用极小切口讲透了宿命情缘，44 集篇幅精炼却情感浓度极高 。《 两文钱牵起一世缘 》 以微末之物串联起跨越身份与时光的羁绊，从初遇到相守每一步都扣动心弦 。 男女主的关系在误会与守护中层层递进，矛盾源于世俗阻碍而非狗血误伤，叙事节奏舒缓有致，情绪铺垫细腻动人 。 偏爱古...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637569719058039000",
+          "title": "闺蜜骗我极寒设备，我却在避暑山庄囤制冷机",
+          "rate": "9.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/54ea0b517343fe0f75fba2312a561962a9ba5f46822ffecc480a34eda5b0934b.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/54ea0b517343fe0f75fba2312a561962a9ba5f46822ffecc480a34eda5b0934b.jpg",
+          "description": "《 闺蜜骗我极寒设备，我却在避暑山庄囤制冷机 》 光看剧名就知道是反套路爽剧，五十四集一口气看完超解压 。 这部二零二六年上线的 AI 短剧围绕信任背叛与逆向操作展开，主角在被闺蜜欺骗后做出截然相反的选择，剧情简介虽短但冲突密度极高，角色关系从亲密到决裂再到反转打脸一气呵成 。 叙事节奏快到飞起，适...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_632368710073450500",
+          "title": "五灵根修仙：我有一个吞噬空间！",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/63e283615bde5e6cb0f9e3e850c86f81815864a5490cbfbae65b90def3339951.png",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/63e283615bde5e6cb0f9e3e850c86f81815864a5490cbfbae65b90def3339951.png",
+          "description": "AI制作的玄幻爽剧《五灵根修仙》第三季重磅归来！主角的吞噬空间再次升级，看他如何在修仙界掀起波澜。90集内容，每一集都是一次实力的飞跃，丹药、法宝应有尽有。作为AI生成的作品，特效场面震撼，打斗场面精彩绝伦。第三季中，主角将面对更强大的敌人，是就此陨落还是逆天改命？修仙迷们，准备好见证一场视觉盛宴吧...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全409集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: '我在八零年代当后妈',
-      rate: '8.6',
-      cover: 'https://image.tmdb.org/t/p/w500/dXjYk7fnA6HNqhJHTnmeD6rV4Aw.jpg',
-      year: '2024',
-      types: ['年代', '甜宠'],
+      title: "开局青云宗主召唤大帝境老祖",
+      rate: "8.8",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/053bb88cf65b40d6870baca902e248ddd8faff06a8495d83051111705f3ace4b.png",
+      year: "2026",
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: '无双',
-      rate: '8.8',
-      cover: 'https://image.tmdb.org/t/p/w500/b5P8eg7u4XgDSYNF6da17CcZy2d.jpg',
-      year: '2024',
-      types: ['战神', '热血'],
+      title: "假千金：我不想活啦！",
+      rate: "8.9",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d16dfab60e87f6c587eac1676dde63e339c6b417e613bd2b672287aab387c57d.png",
+      year: "2025",
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_3',
-      title: '执笔',
-      rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/czembW0Rk1Ke7lCJGahbOhdCuhV.jpg',
-      year: '2024',
-      types: ['古装', '权谋'],
+      title: "错认竹马",
+      rate: "9.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/0e72d45f124ad2bf81b5a8e7a27ef1eed1196003705ad85083ac71bc19300ed5.jpg",
+      year: "2026",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_4',
-      title: '黑莲花上位手册',
-      rate: '8.7',
-      cover: 'https://image.tmdb.org/t/p/w500/cDJwZ4lSZiUnHtixdyhaPPwsjyo.jpg',
-      year: '2023',
-      types: ['复仇', '宫斗'],
-      is_new: false,
+      title: "龙君七御",
+      rate: "9.5",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f7d41b4a50f7e3b221777f6d20ed3253ee398d9835a1b73e5293b613ed94ceff.webp",
+      year: "2026",
+      types: ["短剧","现代都市","全集连播"],
+      is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_5',
-      title: '闪婚后傅先生的马甲藏不住了',
-      rate: '8.4',
-      cover: 'https://image.tmdb.org/t/p/w500/nSpk8U35rPVlMMfZ1uxHnbC14Nd.jpg',
-      year: '2024',
-      types: ['豪门', '甜宠'],
+      title: "官宣脱单，他不再清冷",
+      rate: "9.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/ceb3aedd94d711cacbb86d24bbdae46413388ec159cc6a449d583e235c4f265d.jpg",
+      year: "2026",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_6',
-      title: '授她以柄',
-      rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/dS8C60iEHnuZEFgKFjRx0GCLVRf.jpg',
-      year: '2024',
-      types: ['古风', '虐恋'],
+      title: "两文钱牵起一世缘",
+      rate: "8.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/128963cd9ba18c9d1e5f0bda02a5f137e374228d84793103a606d2e59ba32271.jpg",
+      year: "2026",
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_7',
-      title: '盛夏的果实',
-      rate: '8.3',
-      cover: 'https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg',
-      year: '2024',
-      types: ['都市', '情感'],
+      title: "闺蜜骗我极寒设备，我却在避暑山庄囤制冷机",
+      rate: "9.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/54ea0b517343fe0f75fba2312a561962a9ba5f46822ffecc480a34eda5b0934b.jpg",
+      year: "2026",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_8',
-      title: '顾少的隐婚罪妻',
-      rate: '8.2',
-      cover: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
-      year: '2024',
-      types: ['豪门', '反转'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_9',
-      title: '重生后我成了首富千金',
-      rate: '8.4',
-      cover: 'https://image.tmdb.org/t/p/w500/cAS2e9hUwu6Ydsx7byXj16H00Ai.jpg',
-      year: '2024',
-      types: ['重生', '打脸'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_10',
-      title: '绝世天将',
-      rate: '8.6',
-      cover: 'https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg',
-      year: '2024',
-      types: ['热血', '无敌'],
+      title: "五灵根修仙：我有一个吞噬空间！",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/63e283615bde5e6cb0f9e3e850c86f81815864a5490cbfbae65b90def3339951.png",
+      year: "2026",
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     }
   ],
-  s1: [
-    {
-      id: 'pb_s_s1_1',
-      title: '无双',
-      rate: '8.8',
-      cover: 'https://image.tmdb.org/t/p/w500/b5P8eg7u4XgDSYNF6da17CcZy2d.jpg',
-      year: '2024',
-      types: ['战神', '热血'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s1_2',
-      title: '绝世天将',
-      rate: '8.6',
-      cover: 'https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg',
-      year: '2024',
-      types: ['无敌', '逆袭'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s1_3',
-      title: '镇国神婿',
-      rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
-      year: '2024',
-      types: ['神婿', '打脸'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s1_4',
-      title: '龙王出狱',
-      rate: '8.7',
-      cover: 'https://image.tmdb.org/t/p/w500/cDJwZ4lSZiUnHtixdyhaPPwsjyo.jpg',
-      year: '2024',
-      types: ['都市', '霸气'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s1_5',
-      title: '天降神豪',
-      rate: '8.3',
-      cover: 'https://image.tmdb.org/t/p/w500/dXjYk7fnA6HNqhJHTnmeD6rV4Aw.jpg',
-      year: '2024',
-      types: ['神豪', '暴富'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s1_6',
-      title: '隐形首富',
-      rate: '8.4',
-      cover: 'https://image.tmdb.org/t/p/w500/nSpk8U35rPVlMMfZ1uxHnbC14Nd.jpg',
-      year: '2024',
-      types: ['首富', '扮猪吃虎'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s1_7',
-      title: '狂龙在渊',
-      rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/dS8C60iEHnuZEFgKFjRx0GCLVRf.jpg',
-      year: '2024',
-      types: ['武道', '热血'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s1_8',
-      title: '傲世龙医',
-      rate: '8.6',
-      cover: 'https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg',
-      year: '2024',
-      types: ['神医', '修仙'],
-      is_new: true,
-      playable: true
-    }
-  ],
-  s2: [
-    {
-      id: 'pb_s_s2_1',
-      title: '闪婚后傅先生的马甲藏不住了',
-      rate: '8.4',
-      cover: 'https://image.tmdb.org/t/p/w500/nSpk8U35rPVlMMfZ1uxHnbC14Nd.jpg',
-      year: '2024',
-      types: ['豪门', '甜宠'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s2_2',
-      title: '顾少的隐婚罪妻',
-      rate: '8.2',
-      cover: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
-      year: '2024',
-      types: ['总裁', '虐恋'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s2_3',
-      title: '霍总夫人又惊艳全球了',
-      rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/czembW0Rk1Ke7lCJGahbOhdCuhV.jpg',
-      year: '2024',
-      types: ['豪门', '多重身份'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s2_4',
-      title: '假千金她才是真大佬',
-      rate: '8.6',
-      cover: 'https://image.tmdb.org/t/p/w500/cAS2e9hUwu6Ydsx7byXj16H00Ai.jpg',
-      year: '2024',
-      types: ['真假千金', '爽文'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s2_5',
-      title: '替嫁后大佬马甲掉了',
-      rate: '8.3',
-      cover: 'https://image.tmdb.org/t/p/w500/dXjYk7fnA6HNqhJHTnmeD6rV4Aw.jpg',
-      year: '2024',
-      types: ['替嫁', '先婚后爱'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s2_6',
-      title: '傅爷的小祖宗又爆红了',
-      rate: '8.4',
-      cover: 'https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg',
-      year: '2024',
-      types: ['娱乐圈', '独宠'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s2_7',
-      title: '契约娇妻跑不掉',
-      rate: '8.1',
-      cover: 'https://image.tmdb.org/t/p/w500/b5P8eg7u4XgDSYNF6da17CcZy2d.jpg',
-      year: '2024',
-      types: ['都市', '甜虐'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s2_8',
-      title: '陆总的在逃小甜妻',
-      rate: '8.2',
-      cover: 'https://image.tmdb.org/t/p/w500/dS8C60iEHnuZEFgKFjRx0GCLVRf.jpg',
-      year: '2024',
-      types: ['追妻', '豪门'],
-      is_new: true,
-      playable: true
-    }
-  ],
-  s3: [
-    {
-      id: 'pb_s_s3_1',
-      title: '我在八零年代当后妈',
-      rate: '8.6',
-      cover: 'https://image.tmdb.org/t/p/w500/dXjYk7fnA6HNqhJHTnmeD6rV4Aw.jpg',
-      year: '2024',
-      types: ['年代', '致富'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s3_2',
-      title: '重生后我成了首富千金',
-      rate: '8.4',
-      cover: 'https://image.tmdb.org/t/p/w500/cAS2e9hUwu6Ydsx7byXj16H00Ai.jpg',
-      year: '2024',
-      types: ['重生', '逆风翻盘'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s3_3',
-      title: '回到八零发家致富',
-      rate: '8.3',
-      cover: 'https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg',
-      year: '2024',
-      types: ['种田', '经商'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s3_4',
-      title: '重回1990当首富',
-      rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg',
-      year: '2024',
-      types: ['商业', '风口'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s3_5',
-      title: '重生九零小辣妻',
-      rate: '8.2',
-      cover: 'https://image.tmdb.org/t/p/w500/czembW0Rk1Ke7lCJGahbOhdCuhV.jpg',
-      year: '2024',
-      types: ['逆袭', '爱情'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s3_6',
-      title: '穿越古代当神厨',
-      rate: '8.4',
-      cover: 'https://image.tmdb.org/t/p/w500/b5P8eg7u4XgDSYNF6da17CcZy2d.jpg',
-      year: '2024',
-      types: ['穿越', '美食'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s3_7',
-      title: '我在古代开酒楼',
-      rate: '8.3',
-      cover: 'https://image.tmdb.org/t/p/w500/dS8C60iEHnuZEFgKFjRx0GCLVRf.jpg',
-      year: '2024',
-      types: ['古代', '经商'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s3_8',
-      title: '重回高考前一天',
-      rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
-      year: '2024',
-      types: ['校园', '热血'],
-      is_new: true,
-      playable: true
-    }
-  ],
-  s4: [
-    {
-      id: 'pb_s_s4_1',
-      title: '执笔',
-      rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/czembW0Rk1Ke7lCJGahbOhdCuhV.jpg',
-      year: '2024',
-      types: ['古装', '改命'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s4_2',
-      title: '黑莲花上位手册',
-      rate: '8.7',
-      cover: 'https://image.tmdb.org/t/p/w500/cDJwZ4lSZiUnHtixdyhaPPwsjyo.jpg',
-      year: '2023',
-      types: ['宫斗', '复仇'],
-      is_new: false,
-      playable: true
-    },
-    {
-      id: 'pb_s_s4_3',
-      title: '授她以柄',
-      rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/dS8C60iEHnuZEFgKFjRx0GCLVRf.jpg',
-      year: '2024',
-      types: ['禁忌', '权谋'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s4_4',
-      title: '娘娘今日不上朝',
-      rate: '8.3',
-      cover: 'https://image.tmdb.org/t/p/w500/nSpk8U35rPVlMMfZ1uxHnbC14Nd.jpg',
-      year: '2024',
-      types: ['女帝', '爽快'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s4_5',
-      title: '长公主的谋逆日常',
-      rate: '8.4',
-      cover: 'https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg',
-      year: '2024',
-      types: ['权谋', '大女主'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s4_6',
-      title: '庶女攻略之掌上珠',
-      rate: '8.2',
-      cover: 'https://image.tmdb.org/t/p/w500/b5P8eg7u4XgDSYNF6da17CcZy2d.jpg',
-      year: '2024',
-      types: ['宅斗', '逆袭'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s4_7',
-      title: '凤谋天下',
-      rate: '8.5',
-      cover: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
-      year: '2024',
-      types: ['乱世', '争霸'],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_s4_8',
-      title: '步步深宫',
-      rate: '8.1',
-      cover: 'https://image.tmdb.org/t/p/w500/dXjYk7fnA6HNqhJHTnmeD6rV4Aw.jpg',
-      year: '2024',
-      types: ['深宫', '博弈'],
-      is_new: true,
-      playable: true
-    }
-  ]
+  s1: [],
+  s2: [],
+  s3: [],
+  s4: []
 };
 
-// ── 4. 🔥 全部推荐专区精选 (All / Mixed) ──────────────────────────────────
 export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {

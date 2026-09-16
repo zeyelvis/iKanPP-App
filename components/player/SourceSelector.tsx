@@ -35,7 +35,7 @@ interface SourceSelectorProps {
 
 // 4K (2160P) UHD 极致原画专线字典
 const FOUR_K_SOURCES = new Set([
-    'hongniu', 'baofeng', 'juliang', 'json1080', 'suoni', 'haohua_4k', 'blue_4k', 'laosiji_4k'
+    'hongniu', 'baofeng', 'json1080', 'suoni', 'haohua_4k', 'blue_4k', 'laosiji_4k'
 ]);
 
 // 1080P 蓝光秒播高码率专线字典
@@ -216,6 +216,8 @@ export function SourceSelector({
                     const is4K = FOUR_K_SOURCES.has(cleanKey) ||
                                  source.sourceName?.includes('4K') ||
                                  source.sourceName?.includes('2160') ||
+                                 source.typeName?.includes('4K') ||
+                                 source.typeName?.includes('2160') ||
                                  source.sourceName?.includes('红牛') ||
                                  source.sourceName?.includes('暴风');
                     const isBluRay = !is4K && (HD_BLURAY_SOURCES.has(cleanKey) || source.sourceName?.includes('蓝光'));

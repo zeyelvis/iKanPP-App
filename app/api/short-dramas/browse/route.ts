@@ -6,6 +6,8 @@ import {
   parseShortDramaPlayUrl,
   parseEpisodesCount,
 } from '@/lib/api/short-drama-sources';
+import { isJuliangExcludedCategory } from '@/lib/api/juliang-category-map';
+import { safeParseResponse } from '@/lib/utils/safe-json';
 
 export const runtime = 'edge';
 
@@ -36,7 +38,7 @@ async function fetchSourceCategory(
     clearTimeout(timer);
 
     if (!res.ok) return null;
-    const data = await res.json();
+    const data = await safeParseResponse(res);
     if (!data || !Array.isArray(data.list)) return null;
 
     return {
@@ -118,11 +120,12 @@ export async function GET(req: NextRequest) {
         const result = await fetchSourceCategory(source, allCatId, page);
         if (result && result.list.length > 0) {
           const items = result.list
+            .filter((it) => !isJuliangExcludedCategory(Number(it.type_id), it.type_name))
             .slice(0, limit)
             .map((it) => normalizeDramaItem(it, source, 'all'));
 
           return NextResponse.json({
-            total: result.total || 34000,
+            total: result.total || 62000,
             pagecount: result.pagecount,
             page,
             source: source.id,
@@ -134,12 +137,17 @@ export async function GET(req: NextRequest) {
         let catId: number | undefined;
         let keyword: string | undefined;
 
-        if (source.categoryKeywords && source.categoryKeywords[categoryParam]) {
-          // 魔都等支持分类关键词的真分集源
-          catId = typeof source.categories.all === 'number' ? source.categories.all : 38;
-          keyword = source.categoryKeywords[categoryParam];
-        } else if (typeof source.categories[categoryParam] === 'number') {
+        if (typeof source.categories[categoryParam] === 'number') {
           catId = source.categories[categoryParam] as number;
+          if (source.categoryKeywords && source.categoryKeywords[categoryParam]) {
+            keyword = source.categoryKeywords[categoryParam];
+          }
+        } else if (source.categoryKeywords && source.categoryKeywords[categoryParam]) {
+          // 仅有分类关键词的源（如魔都）
+          catId = typeof source.categories.all === 'number'
+            ? source.categories.all
+            : (Array.isArray(source.categories.all) ? source.categories.all[0] : 38);
+          keyword = source.categoryKeywords[categoryParam];
         } else if (categoryParam === 'ai' && typeof source.categories.ai === 'number') {
           catId = source.categories.ai;
         }
@@ -148,6 +156,7 @@ export async function GET(req: NextRequest) {
           const result = await fetchSourceCategory(source, catId, page, keyword);
           if (result && result.list.length > 0) {
             const items = result.list
+              .filter((it) => !isJuliangExcludedCategory(Number(it.type_id), it.type_name))
               .slice(0, limit)
               .map((it) => normalizeDramaItem(it, source, categoryParam));
             return NextResponse.json(

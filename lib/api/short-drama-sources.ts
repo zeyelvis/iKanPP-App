@@ -41,11 +41,33 @@ export interface ShortDramaItem {
 
 export const SHORT_DRAMA_SOURCES: ShortDramaSource[] = [
   {
+    id: 'juliang',
+    name: '巨量短剧专线',
+    baseUrl: 'https://api.juliang.live',
+    apiPath: '/api/provide/vod',
+    priority: 1,
+    isEpisodic: true,
+    categories: {
+      all: 5,        // 全部短剧顶级大类（62,665+ 部，100% 真实原生分集）
+      shuangju: 506, // 爽剧 (3,559 部)
+      yanqing: 505,  // 女频 (8,273 部)
+      dushi: 504,    // 都市 (22,249 部)
+      guzhuang: 501, // 古装仙侠 (10,988 部)
+      chuanyue: 502, // 穿越 (4,258 部)
+      chongsheng: 504, // 重生都市
+      naodong: 503,  // 悬疑脑洞 (866 部)
+      ai: 7,         // AI漫剧顶级大类 (10,429 部)
+    },
+    categoryKeywords: {
+      chongsheng: '重生',
+    },
+  },
+  {
     id: 'modu',
     name: '魔都短剧专线',
     baseUrl: 'https://caiji.moduapi.cc',
     apiPath: '/api.php/provide/vod',
-    priority: 1,
+    priority: 2,
     isEpisodic: true,
     categories: {
       all: 38,       // 全部短剧（34,395+ 部，100% 分集）
@@ -66,7 +88,7 @@ export const SHORT_DRAMA_SOURCES: ShortDramaSource[] = [
     name: '魔都镜像专线',
     baseUrl: 'https://www.mdzyapi.com',
     apiPath: '/api.php/provide/vod',
-    priority: 2,
+    priority: 3,
     isEpisodic: true,
     categories: {
       all: 38,
@@ -87,7 +109,7 @@ export const SHORT_DRAMA_SOURCES: ShortDramaSource[] = [
     name: '光速资源',
     baseUrl: 'https://api.guangsuapi.com',
     apiPath: '/api.php/provide/vod',
-    priority: 3,
+    priority: 4,
     isEpisodic: false,
     categories: {
       all: [44, 45, 46, 47, 48, 49, 50, 52],
@@ -106,7 +128,7 @@ export const SHORT_DRAMA_SOURCES: ShortDramaSource[] = [
     name: '极速资源',
     baseUrl: 'https://jszyapi.com',
     apiPath: '/api.php/provide/vod',
-    priority: 4,
+    priority: 5,
     isEpisodic: false,
     categories: {
       all: [45, 46, 47, 48, 49, 50, 52, 54],
