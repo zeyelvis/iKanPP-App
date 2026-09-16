@@ -17,15 +17,19 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "22"
     },
     {
+        "title": "灵境行者",
+        "updateBadge": "1"
+    },
+    {
+        "title": "遮天",
+        "updateBadge": ""
+    },
+    {
         "title": "凡人修仙传",
         "updateBadge": ""
     },
     {
         "title": "海贼王",
-        "updateBadge": ""
-    },
-    {
-        "title": "遮天",
         "updateBadge": ""
     },
     {
@@ -41,15 +45,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "一斩苍穹",
-        "updateBadge": ""
-    },
-    {
         "title": "吞噬星空",
         "updateBadge": ""
     },
     {
-        "title": "沧元图",
+        "title": "一斩苍穹",
         "updateBadge": ""
     },
     {
@@ -648,19 +648,19 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "披荆斩棘2026",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
         "title": "我家那闺女2026",
         "updateBadge": "2"
     },
     {
-        "title": "大哥小助理",
-        "updateBadge": "1"
-    },
-    {
         "title": "密室大逃脱大神版第8季",
         "updateBadge": "2"
+    },
+    {
+        "title": "地球超新鲜第2季",
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -1237,153 +1237,90 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "开局青云宗主召唤大帝境老祖",
+          "title": "后娘当家：王爷喊着要入赘",
           "updateBadge": "全"
       },
       {
-          "title": "春心难捱：我的死对头居然是我未来老公",
+          "title": "京夜吻雾",
           "updateBadge": "全"
       },
       {
-          "title": "假千金：我不想活啦！",
+          "title": "不小心穿成兔子精，被毛绒控男主盯上了",
           "updateBadge": "全"
       },
       {
-          "title": "代号枪神",
+          "title": "两文钱牵起一世缘",
           "updateBadge": "全"
       },
       {
-          "title": "她从仙界归来护全家",
+          "title": "闺蜜骗我极寒设备，我却在避暑山庄囤制冷机",
           "updateBadge": "全"
       },
       {
-          "title": "我一邪修养反派为徒很正常吧",
+          "title": "风水大师：我以狐仙镇百诡",
           "updateBadge": "全"
       },
       {
-          "title": "太后归来，先帝竟成了我的大学老师",
+          "title": "末世满员，美食小吃店不打烊",
           "updateBadge": "全"
       },
       {
-          "title": "错认竹马",
+          "title": "昭昭此心",
           "updateBadge": "全"
       },
       {
-          "title": "龙君七御",
+          "title": "姻缘错配将军待我万般温柔",
           "updateBadge": "全"
       },
       {
-          "title": "噗噗偶像",
+          "title": "穿书路人甲逆袭白月光",
           "updateBadge": "全"
       },
       {
-          "title": "官宣脱单，他不再清冷",
+          "title": "弃妃生存指南",
           "updateBadge": "全"
       },
       {
-          "title": "僵尸萌宝穿越被团宠了",
+          "title": "号外！俺们村铁妞成女帝了",
           "updateBadge": "全"
       }
   ],
   hero: [
       {
-          "id": "jl_short_630911827974291500",
-          "title": "开局青云宗主召唤大帝境老祖",
-          "rate": "8.8",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/053bb88cf65b40d6870baca902e248ddd8faff06a8495d83051111705f3ace4b.png",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/053bb88cf65b40d6870baca902e248ddd8faff06a8495d83051111705f3ace4b.png",
-          "description": "风清扬成为掌门后激活了诸天神宗系统，开局就召唤来了大帝境界老祖，从此人生达到了巅峰，大弟子石浩，至尊圣体，天生至尊，独断万古。二弟子林白，青莲剑体，剑气纵横三万里，号青莲剑仙三弟子花轻语，凤凰圣体，神圣凤凰、遨游九天，人称凤凰女帝",
+          "id": "jl_short_636727102980227100",
+          "title": "京夜吻雾",
+          "rate": "8.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/7cebe87135fdf789ed3dc53dfc8761bb4c52b49ec42c2b16c1e1ee2a13c08b2e.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/7cebe87135fdf789ed3dc53dfc8761bb4c52b49ec42c2b16c1e1ee2a13c08b2e.jpg",
+          "description": "开头有多清冷，后面就有多炽热，这部65集的《京夜吻雾》把都市男女的暧昧与深情拍得既克制又撩人。马烁棋和杨洛仟的搭档很有新鲜感，一个沉稳内敛，一个明艳直接，碰撞出的火花让人移不开眼。故事发生在京城夜色里，两个人从偶遇试探到慢慢卸下防备，那种雾里看花的感觉特别上头。杨洛仟的灵动和马烁棋的隐忍形成鲜明对比...",
           "year": "2026",
           "types": [
               "短剧",
-              "古装仙侠",
+              "女频恋爱",
               "全集连播"
           ],
-          "episodes_info": "全207集·已完结",
+          "episodes_info": "全3集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "短剧实力派"
+              "马烁棋＆杨洛仟"
           ]
       },
       {
-          "id": "jl_short_636728740302487600",
-          "title": "假千金：我不想活啦！",
-          "rate": "8.9",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d16dfab60e87f6c587eac1676dde63e339c6b417e613bd2b672287aab387c57d.png",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d16dfab60e87f6c587eac1676dde63e339c6b417e613bd2b672287aab387c57d.png",
-          "description": "今年新上的 AI 短剧里这部情绪张力拉满，四十集篇幅把假千金题材拍出了新意 。《 假千金：我不想活啦！》 聚焦身份错位下的心理困境，女主在得知身世真相后陷入自我否定，却在绝境中逐步重建自我认同 。 剧情没有落入俗套复仇套路，而是用细腻笔触刻画角色从崩溃到觉醒的转变过程，矛盾冲突集中在内心挣扎与外部压...",
+          "id": "jl_short_636728605228924900",
+          "title": "不小心穿成兔子精，被毛绒控男主盯上了",
+          "rate": "9.0",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/2e411a8558a59c8ac86b0c3f43d7d16297e53952369d4bf01842f9205fb6edaa.png",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/2e411a8558a59c8ac86b0c3f43d7d16297e53952369d4bf01842f9205fb6edaa.png",
+          "description": "这部AI短剧最大的看点在于萌系奇幻设定与甜宠互动的完美结合，视觉呈现极具新意。资源收录了2026年上新的《不小心穿成兔子精，被毛绒控男主盯上了》，全剧一口气更到84集，讲述主角意外化身为兔子精后，与拥有特殊癖好的男主之间发生的爆笑又甜蜜的故事。剧情围绕身份错位带来的反差萌展开，男主对“毛绒绒”的执着...",
           "year": "2025",
           "types": [
               "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全81集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_637551552671777000",
-          "title": "错认竹马",
-          "rate": "9.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/0e72d45f124ad2bf81b5a8e7a27ef1eed1196003705ad85083ac71bc19300ed5.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/0e72d45f124ad2bf81b5a8e7a27ef1eed1196003705ad85083ac71bc19300ed5.jpg",
-          "description": "青梅竹马错位重逢的情感拉扯在这部AI短剧里演绎得格外揪心。资源包含《错认竹马》第二季四十二集，围绕男女主因误会错认彼此身份而展开的甜虐交织故事，情感浓度极高。两人从互相试探到真相揭开，关系转折层层递进，既有久别重逢的心动也有身份错位的酸涩，叙事节奏快而不乱，主线聚焦情感解绑与重新确认的过程，适合偏爱...",
-          "year": "2026",
-          "types": [
-              "短剧",
               "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全80集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_637551553409974500",
-          "title": "龙君七御",
-          "rate": "9.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f7d41b4a50f7e3b221777f6d20ed3253ee398d9835a1b73e5293b613ed94ceff.webp",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f7d41b4a50f7e3b221777f6d20ed3253ee398d9835a1b73e5293b613ed94ceff.webp",
-          "description": "追到最后那几集，胸口像被什么堵住了一样，说不出的怅然。这部剧是古装题材，一口气铺到七十九集，郭嘉琦、姚倩、王丽瑶、王宣凯和丁萌几位演员联手呈现了一个格局宏大的故事。剧名里的龙君与七御构建起整套权力体系，角色之间既有忠诚与背叛的拉扯，也有各自立场的不可调和。郭嘉琦把龙君那种隐忍又果决的气质拿捏得很准，...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_637557641257681200",
-          "title": "官宣脱单，他不再清冷",
-          "rate": "9.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/ceb3aedd94d711cacbb86d24bbdae46413388ec159cc6a449d583e235c4f265d.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/ceb3aedd94d711cacbb86d24bbdae46413388ec159cc6a449d583e235c4f265d.jpg",
-          "description": "AI 甜宠短剧 《 官宣脱单，他不再清冷 》 仅 15 集却高能密集，主打反差萌恋爱 。 剧情直击高冷男主因恋情曝光而卸下伪装的过程，情感转变迅速且甜度爆表，没有冗长铺垫，每一集都在推进关系升温 。AI 制作在表情捕捉与互动设计上表现出色，让清冷人设的崩塌显得格外生动可信，叙事节奏快准狠 。 喜欢直...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·已完结",
+          "episodes_info": "全169集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1434,80 +1371,113 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_632368710073450500",
-          "title": "五灵根修仙：我有一个吞噬空间！",
-          "rate": "9.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/63e283615bde5e6cb0f9e3e850c86f81815864a5490cbfbae65b90def3339951.png",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/63e283615bde5e6cb0f9e3e850c86f81815864a5490cbfbae65b90def3339951.png",
-          "description": "AI制作的玄幻爽剧《五灵根修仙》第三季重磅归来！主角的吞噬空间再次升级，看他如何在修仙界掀起波澜。90集内容，每一集都是一次实力的飞跃，丹药、法宝应有尽有。作为AI生成的作品，特效场面震撼，打斗场面精彩绝伦。第三季中，主角将面对更强大的敌人，是就此陨落还是逆天改命？修仙迷们，准备好见证一场视觉盛宴吧...",
+          "id": "jl_short_637575730015764500",
+          "title": "昭昭此心",
+          "rate": "8.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/b7f7b7f43df6f17ec1c120c2ebe4380ef334beae4f2cbaf246c74793667b6935.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/b7f7b7f43df6f17ec1c120c2ebe4380ef334beae4f2cbaf246c74793667b6935.webp",
+          "description": "2026年推出的AI短剧《昭昭此心》共30集，以凝练笔触勾勒出一段澄澈坚定的情感历程。剧名即主旨，“昭昭”二字直指心意坦荡、无愧于心，全剧围绕主角在困境中坚守本真、直面情感抉择展开，叙事克制却余韵悠长，矛盾冲突源于内心信念与外部压力的碰撞，主线纯粹而有力。这类重意境、轻套路的古风情感作品，正合偏好含...",
           "year": "2026",
           "types": [
               "短剧",
               "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全409集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
               "短剧实力派"
           ]
+      },
+      {
+          "id": "jl_short_637575730334531600",
+          "title": "姻缘错配将军待我万般温柔",
+          "rate": "8.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/4b922840c85f3a19b252252733b85726bfd5b0981e9eddddc13a1788beaa8aed.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/4b922840c85f3a19b252252733b85726bfd5b0981e9eddddc13a1788beaa8aed.webp",
+          "description": "四十二集的精简体量把先婚后爱的深情演绎得淋漓尽致，这部AI古装短剧情感浓度极高。《姻缘错配将军待我万般温柔》讲述阴差阳错嫁入将军府的女主，从忐忑不安到被男主温柔以待的全过程，错配姻缘反而成就良缘。角色互动克制又炽热，将军的隐忍守护与女主的逐渐敞开心扉形成强烈情感张力，叙事紧凑无废戏，主线专注刻画两人...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637581894132826500",
+          "title": "修仙太狠满门天骄求我早日成神",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/7a6ead1e690fa6c684e813c78cf22b44f0976032d989f73558b66393c9e8dd6e.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/7a6ead1e690fa6c684e813c78cf22b44f0976032d989f73558b66393c9e8dd6e.jpg",
+          "description": "全门派催促主角成神的反向修仙设定是这部 AI 短剧的最大亮点 。 本资源收录 《 修仙太狠满门天骄求我早日成神 》 一百三十五集，讲述主角因修炼方式过于激进反被同门视为希望的故事 。 剧情核心在于主角个人修行节奏与整个门派期待之间的错位，冲突类型属于内部压力驱动型，叙事随着主角突破瓶颈而层层递进 。...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637581894317310300",
+          "title": "听见心声，剧情由我来写",
+          "rate": "8.8",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/502a436a0db85a3c53b244be237e3e8d7c06908c6b402c0c94eaa213e0f29d78.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/502a436a0db85a3c53b244be237e3e8d7c06908c6b402c0c94eaa213e0f29d78.jpg",
+          "description": "本资源最大卖点在于其突破性的元叙事设定，将 “ 听见心声 ” 与 “ 操控剧情 ” 巧妙结合，带来前所未有的互动感体验 。 这部 2026 年上线的 AI 短剧一口气更到 84 集，讲述主角意外获得改写故事走向的能力，在虚实交错中掌控命运主动权 。 剧中角色关系随着剧情重写而不断反转，矛盾冲突层层递...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "乔·科伊"
+          ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "开局青云宗主召唤大帝境老祖",
-      rate: "8.8",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/053bb88cf65b40d6870baca902e248ddd8faff06a8495d83051111705f3ace4b.png",
+      title: "京夜吻雾",
+      rate: "8.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/7cebe87135fdf789ed3dc53dfc8761bb4c52b49ec42c2b16c1e1ee2a13c08b2e.jpg",
       year: "2026",
-      types: ["短剧","古装仙侠","全集连播"],
+      types: ["短剧","女频恋爱","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: "假千金：我不想活啦！",
-      rate: "8.9",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d16dfab60e87f6c587eac1676dde63e339c6b417e613bd2b672287aab387c57d.png",
+      title: "不小心穿成兔子精，被毛绒控男主盯上了",
+      rate: "9.0",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/2e411a8558a59c8ac86b0c3f43d7d16297e53952369d4bf01842f9205fb6edaa.png",
       year: "2025",
-      types: ["短剧","古装仙侠","全集连播"],
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_3',
-      title: "错认竹马",
-      rate: "9.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/0e72d45f124ad2bf81b5a8e7a27ef1eed1196003705ad85083ac71bc19300ed5.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_4',
-      title: "龙君七御",
-      rate: "9.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f7d41b4a50f7e3b221777f6d20ed3253ee398d9835a1b73e5293b613ed94ceff.webp",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_5',
-      title: "官宣脱单，他不再清冷",
-      rate: "9.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/ceb3aedd94d711cacbb86d24bbdae46413388ec159cc6a449d583e235c4f265d.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_6',
       title: "两文钱牵起一世缘",
       rate: "8.3",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/128963cd9ba18c9d1e5f0bda02a5f137e374228d84793103a606d2e59ba32271.jpg",
@@ -1517,7 +1487,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_7',
+      id: 'pb_s_top_4',
       title: "闺蜜骗我极寒设备，我却在避暑山庄囤制冷机",
       rate: "9.2",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/54ea0b517343fe0f75fba2312a561962a9ba5f46822ffecc480a34eda5b0934b.jpg",
@@ -1527,12 +1497,42 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_8',
-      title: "五灵根修仙：我有一个吞噬空间！",
-      rate: "9.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/63e283615bde5e6cb0f9e3e850c86f81815864a5490cbfbae65b90def3339951.png",
+      id: 'pb_s_top_5',
+      title: "昭昭此心",
+      rate: "8.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/b7f7b7f43df6f17ec1c120c2ebe4380ef334beae4f2cbaf246c74793667b6935.webp",
       year: "2026",
       types: ["短剧","古装仙侠","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_6',
+      title: "姻缘错配将军待我万般温柔",
+      rate: "8.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/4b922840c85f3a19b252252733b85726bfd5b0981e9eddddc13a1788beaa8aed.webp",
+      year: "2026",
+      types: ["短剧","古装仙侠","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_7',
+      title: "修仙太狠满门天骄求我早日成神",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/7a6ead1e690fa6c684e813c78cf22b44f0976032d989f73558b66393c9e8dd6e.jpg",
+      year: "2026",
+      types: ["短剧","古装仙侠","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_8',
+      title: "听见心声，剧情由我来写",
+      rate: "8.8",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/502a436a0db85a3c53b244be237e3e8d7c06908c6b402c0c94eaa213e0f29d78.jpg",
+      year: "2026",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1547,7 +1547,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "兰香如故",
-        "updateBadge": ""
+        "updateBadge": "2"
     },
     {
         "title": "早春晴朗",
@@ -1555,14 +1555,18 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "交锋",
-        "updateBadge": ""
+        "updateBadge": "2"
+    },
+    {
+        "title": "生逢其时",
+        "updateBadge": "2"
     },
     {
         "title": "冬城猎凶",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
-        "title": "心动的信号第9季",
+        "title": "死有对证",
         "updateBadge": "1"
     },
     {
@@ -1570,28 +1574,24 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "死有对证",
+        "title": "飞到我心上",
         "updateBadge": ""
     },
     {
-        "title": "飞到我心上",
-        "updateBadge": ""
+        "title": "心动的信号第9季",
+        "updateBadge": "1"
     },
     {
         "title": "深渊无间",
         "updateBadge": ""
     },
     {
-        "title": "生逢其时",
-        "updateBadge": ""
+        "title": "妖神记第4季",
+        "updateBadge": "22"
     },
     {
         "title": "花开锦绣",
         "updateBadge": ""
-    },
-    {
-        "title": "一饭封神第2季",
-        "updateBadge": "3"
     }
   ],
   hero: [
@@ -1679,7 +1679,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至12集 | 共47集",
+        "episodes_info": "更新至14集 | 共47集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1696,7 +1696,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至11集 | 共18集",
+        "episodes_info": "更新至12集 | 共18集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1707,7 +1707,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "rate": "9.0",
         "cover": "https://image.tmdb.org/t/p/w500/b9ngtGNgaHBbLihRrT0MsPRY0GW.jpg",
         "backdrop": "https://image.tmdb.org/t/p/w1280/s9YSQAJtXjimsjBVsqLtJNnIjEs.jpg",
-        "description": "一篇名为《深渊》的推理网文悄然上线，打破了保守小城多年来的平静，文中诸多情节与警方未曾公布的多年前悬案案情有着惊人的相似。热血正义的新警李成，与多方嫌疑人，一次次上演高智对弈。",
+        "description": "　　一篇名为《深渊》的推理网文悄然上线，打破了保守小城多年来的平静。文中诸多情节与警方未曾公布的多年前“三一二”连环奸杀案案情有着惊人的相似，作案手法、现场痕迹、凶手心理侧写，竟与尘封的卷宗几乎一字不差。\n\n　　热血正义的新警李成（任嘉伦 饰）以“网瘾少年”身份潜入网吧卧底，逐步接近案件关键嫌疑人——网吧老板韩品木（秦俊杰 饰）。韩品木表面温和，实则身份成谜，他既是当年受害者的家属，又是小说《深渊》的幕后上传者。在调查过程中，李成与暗中追查旧案的前刑警辛吉然（田小洁 饰）、刑侦队长赵干哲（王砚辉 饰）结成同盟，共同重启这桩尘封八年的悬案。\n\n　　随着一众人等接连登场——行动诡秘的老警察、暗中窥探的酒店保安、口风严密的职场经理、游走灰色地带的边缘人，以及案件幸存者陈春丽（倪虹洁 饰），全员皆藏秘密，人人皆有疑点。李成与多方嫌疑人一次次上演高智对弈，最终拨开迷雾，侦查出掩藏在令人扼腕的亲情和友情之下的真相。\n\n　　一念之差，有的人走向了绿洲，有的人永远被困在了深渊。",
         "year": "2026",
         "types": [
             "热门",
@@ -2159,15 +2159,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
 export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "克拉克森的农场第5季",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第1季",
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第3季",
+        "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
@@ -2175,11 +2171,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "爱达荷州血案：大学梦魇",
-        "updateBadge": ""
-    },
-    {
-        "title": "一级方程式：疾速争胜第8季",
+        "title": "克拉克森的农场第3季",
         "updateBadge": ""
     },
     {
@@ -2187,7 +2179,15 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "若泽·穆里尼奥：特立之道",
+        "title": "人生第一次",
+        "updateBadge": ""
+    },
+    {
+        "title": "克拉克森的农场第2季",
+        "updateBadge": ""
+    },
+    {
+        "title": "河西走廊",
         "updateBadge": ""
     }
   ],

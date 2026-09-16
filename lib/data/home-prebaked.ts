@@ -90,15 +90,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "怒之杀(听译)",
-                "updateBadge": ""
-        },
-        {
                 "title": "求救信号",
                 "updateBadge": ""
         },
         {
-                "title": "不成功穿越指南",
+                "title": "怒之杀(听译)",
+                "updateBadge": ""
+        },
+        {
+                "title": "玩具总动员5",
                 "updateBadge": ""
         }
       ],
@@ -1825,7 +1825,7 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": ""
+                "updateBadge": "2"
         },
         {
                 "title": "早春晴朗",
@@ -1833,15 +1833,19 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "交锋",
-                "updateBadge": ""
+                "updateBadge": "2"
+        },
+        {
+                "title": "生逢其时",
+                "updateBadge": "2"
         },
         {
                 "title": "冬城猎凶",
-                "updateBadge": ""
+                "updateBadge": "1"
         },
         {
                 "title": "死有对证",
-                "updateBadge": ""
+                "updateBadge": "1"
         },
         {
                 "title": "飞到我心上",
@@ -1852,24 +1856,20 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "生逢其时",
-                "updateBadge": ""
-        },
-        {
                 "title": "花开锦绣",
                 "updateBadge": ""
         },
         {
-                "title": "云雀叫天录",
-                "updateBadge": "2"
+                "title": "杀手妈咪",
+                "updateBadge": ""
         },
         {
                 "title": "百花杀",
                 "updateBadge": ""
         },
         {
-                "title": "杀手妈咪",
-                "updateBadge": ""
+                "title": "韩国制造第2季",
+                "updateBadge": "2"
         }
       ],
     "hero": [
@@ -1885,7 +1885,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至12集 | 共47集",
+                "episodes_info": "更新至14集 | 共47集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1902,7 +1902,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至11集 | 共18集",
+                "episodes_info": "更新至12集 | 共18集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1913,7 +1913,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "9.0",
                 "cover": "https://image.tmdb.org/t/p/w500/b9ngtGNgaHBbLihRrT0MsPRY0GW.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/s9YSQAJtXjimsjBVsqLtJNnIjEs.jpg",
-                "description": "一篇名为《深渊》的推理网文悄然上线，打破了保守小城多年来的平静，文中诸多情节与警方未曾公布的多年前悬案案情有着惊人的相似。热血正义的新警李成，与多方嫌疑人，一次次上演高智对弈。",
+                "description": "　　一篇名为《深渊》的推理网文悄然上线，打破了保守小城多年来的平静。文中诸多情节与警方未曾公布的多年前“三一二”连环奸杀案案情有着惊人的相似，作案手法、现场痕迹、凶手心理侧写，竟与尘封的卷宗几乎一字不差。\n\n　　热血正义的新警李成（任嘉伦 饰）以“网瘾少年”身份潜入网吧卧底，逐步接近案件关键嫌疑人——网吧老板韩品木（秦俊杰 饰）。韩品木表面温和，实则身份成谜，他既是当年受害者的家属，又是小说《深渊》的幕后上传者。在调查过程中，李成与暗中追查旧案的前刑警辛吉然（田小洁 饰）、刑侦队长赵干哲（王砚辉 饰）结成同盟，共同重启这桩尘封八年的悬案。\n\n　　随着一众人等接连登场——行动诡秘的老警察、暗中窥探的酒店保安、口风严密的职场经理、游走灰色地带的边缘人，以及案件幸存者陈春丽（倪虹洁 饰），全员皆藏秘密，人人皆有疑点。李成与多方嫌疑人一次次上演高智对弈，最终拨开迷雾，侦查出掩藏在令人扼腕的亲情和友情之下的真相。\n\n　　一念之差，有的人走向了绿洲，有的人永远被困在了深渊。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -1936,7 +1936,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至22集 | 共40集",
+                "episodes_info": "更新至24集 | 共40集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1953,7 +1953,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至17集 | 共26集",
+                "episodes_info": "更新至19集 | 共26集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
