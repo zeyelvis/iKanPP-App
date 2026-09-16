@@ -43,20 +43,17 @@ export function MobileHeroStage({
     let playId: string | number | undefined = undefined;
     let playSource: string | undefined = undefined;
 
-    // 1. 优先超短竞速 300ms 抢抓骨干源（巨量 Anycast 纯净全网首选）
-    const fast = await resolvePlayTarget(title, 300);
+    // 1. 优先竞速 600ms 抢抓骨干源（巨量 Anycast 纯净全网首选）
+    const fast = await resolvePlayTarget(title, 600);
     if (fast.source === 'juliang' && fast.id) {
       playId = fast.id;
       playSource = 'juliang';
-    } else if (historyItem?.source && isValidSourceId(historyItem.source)) {
-      // 2. 巨量未收录时，回退老用户历史记录源
-      playId = historyItem.videoId;
-      playSource = historyItem.source;
     } else if (fast.id && fast.source && isValidSourceId(fast.source)) {
-      // 3. 次级骨干源（光速/暴风）
       playId = fast.id;
       playSource = fast.source;
     }
+    // 注意：若尚未探测到巨量，严禁将老用户的旧源（如暴风/光速）强行写入 URL！
+    // 保持空 id/source 跳转播放器，由播放器在后台并发 SSE 流中优先秒播巨量资源！
 
     startTransition(() => {
       const params = new URLSearchParams({

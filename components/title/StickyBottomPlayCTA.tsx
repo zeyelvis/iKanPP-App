@@ -87,8 +87,8 @@ export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAPr
       playId = probedTarget.id;
       playSource = 'juliang';
     } else {
-      // 2. 超短竞速 300ms 抢抓骨干源探测（优先巨量 Anycast 纯净源）
-      const fast = await resolvePlayTarget(effectiveTitle, 300);
+      // 2. 竞速 600ms 抢抓骨干源探测（优先巨量 Anycast 纯净源）
+      const fast = await resolvePlayTarget(effectiveTitle, 600);
       if (fast.source === 'juliang' && fast.id) {
         playId = fast.id;
         playSource = 'juliang';
@@ -98,11 +98,9 @@ export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAPr
       } else if (fast.id && fast.source && isValidSourceId(fast.source)) {
         playId = fast.id;
         playSource = fast.source;
-      } else if (historySource && isValidSourceId(historySource)) {
-        // 3. 巨量资源未收录时，回退老用户历史源
-        playId = historyVodId;
-        playSource = historySource;
       }
+      // 注意：若尚未探测到巨量，严禁将老用户的旧源（如暴风/光速）强行写入 URL！
+      // 保持空 id/source 跳转播放器，由播放器在后台并发 SSE 流中优先秒播巨量资源！
     }
 
     startTransition(() => {

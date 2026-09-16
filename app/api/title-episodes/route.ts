@@ -99,7 +99,8 @@ async function probeSingleSource(
   for (const kw of finalKeywords) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1800);
+      const timeoutMs = src.id === 'juliang' ? 3200 : 2200;
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
       const url = `${src.baseUrl}?ac=detail&wd=${encodeURIComponent(kw)}`;
       const res = await fetch(url, {
