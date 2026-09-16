@@ -10,11 +10,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "仙逆",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
-        "title": "遮天",
-        "updateBadge": ""
+        "title": "妖神记第4季",
+        "updateBadge": "22"
     },
     {
         "title": "凡人修仙传",
@@ -25,16 +25,12 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "一斩苍穹",
+        "title": "遮天",
         "updateBadge": ""
     },
     {
-        "title": "一念永恒完结季",
-        "updateBadge": ""
-    },
-    {
-        "title": "吞噬星空",
-        "updateBadge": ""
+        "title": "师兄啊师兄",
+        "updateBadge": "1"
     },
     {
         "title": "牧神记",
@@ -45,15 +41,19 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "一斩苍穹",
+        "updateBadge": ""
+    },
+    {
+        "title": "吞噬星空",
+        "updateBadge": ""
+    },
+    {
         "title": "沧元图",
         "updateBadge": ""
     },
     {
-        "title": "光阴之外",
-        "updateBadge": ""
-    },
-    {
-        "title": "名侦探柯南",
+        "title": "一念永恒完结季",
         "updateBadge": ""
     }
   ],
@@ -632,35 +632,35 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "心动的信号第9季",
-        "updateBadge": "4"
+        "updateBadge": "1"
+    },
+    {
+        "title": "一饭封神第2季",
+        "updateBadge": "3"
     },
     {
         "title": "花儿与少年第8季",
-        "updateBadge": ""
+        "updateBadge": "1"
+    },
+    {
+        "title": "密室大逃脱第8季",
+        "updateBadge": "2"
     },
     {
         "title": "披荆斩棘2026",
         "updateBadge": ""
     },
     {
-        "title": "一饭封神第2季",
-        "updateBadge": ""
+        "title": "我家那闺女2026",
+        "updateBadge": "2"
     },
     {
         "title": "大哥小助理",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
-        "title": "我家那闺女2026",
-        "updateBadge": ""
-    },
-    {
-        "title": "脱口秀和Ta的朋友们第3季",
-        "updateBadge": ""
-    },
-    {
-        "title": "地球超新鲜第2季",
-        "updateBadge": ""
+        "title": "密室大逃脱大神版第8季",
+        "updateBadge": "2"
     }
   ],
   hero: [
@@ -687,13 +687,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608271524382431872.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111844144414888.jpg",
-        "description": "《我家那闺女2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260914(加更版)。",
+        "description": "《我家那闺女2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260916(盲盒放送)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260914(加更版)",
+        "episodes_info": "更新至20260916(盲盒放送)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -704,13 +704,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609041706270661205.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111843274326403.jpg",
-        "description": "《花儿与少年第8季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260915(送机篇)。",
+        "description": "《花儿与少年第8季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260916(送机篇)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260915(送机篇)",
+        "episodes_info": "更新至20260916(送机篇)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -727,7 +727,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260915(第4期下)",
+        "episodes_info": "更新至20260916(Plus)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -755,13 +755,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607311122522270150.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202608031821302167723.jpg",
-        "description": "《心动的信号第9季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260915(第7期下纯享)。",
+        "description": "《心动的信号第9季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260916(超前彩蛋)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260915(第7期下纯享)",
+        "episodes_info": "更新至20260916(超前彩蛋)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -772,13 +772,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607231303450351514.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202607271339373917253.jpg",
-        "description": "《一饭封神第2季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260915(封神陪看第7期)。",
+        "description": "《一饭封神第2季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至一饭银河赏。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260915(封神陪看第7期)",
+        "episodes_info": "更新至一饭银河赏",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1771,10 +1771,26 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "交锋",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "冬城猎凶",
+        "updateBadge": ""
+    },
+    {
+        "title": "心动的信号第9季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "仙逆",
+        "updateBadge": "1"
+    },
+    {
+        "title": "死有对证",
+        "updateBadge": ""
+    },
+    {
+        "title": "飞到我心上",
         "updateBadge": ""
     },
     {
@@ -1786,28 +1802,12 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "心动的信号第9季",
-        "updateBadge": "4"
-    },
-    {
-        "title": "死有对证",
-        "updateBadge": "1"
-    },
-    {
-        "title": "飞到我心上",
-        "updateBadge": ""
-    },
-    {
         "title": "花开锦绣",
         "updateBadge": ""
     },
     {
-        "title": "花儿与少年第8季",
-        "updateBadge": ""
-    },
-    {
-        "title": "仙逆",
-        "updateBadge": ""
+        "title": "一饭封神第2季",
+        "updateBadge": "3"
     }
   ],
   hero: [
@@ -1850,7 +1850,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     {
         "id": "iyf_hero_movie_3",
         "title": "玩具总动员5",
-        "rate": "8.3",
+        "rate": "8.4",
         "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
         "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
         "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
@@ -2379,11 +2379,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第3季",
+        "title": "克拉克森的农场第1季",
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第1季",
+        "title": "克拉克森的农场第3季",
         "updateBadge": ""
     },
     {
@@ -2395,7 +2395,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第2季",
+        "title": "一级方程式：疾速争胜第8季",
         "updateBadge": ""
     },
     {
@@ -2403,7 +2403,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "一级方程式：疾速争胜第8季",
+        "title": "若泽·穆里尼奥：特立之道",
         "updateBadge": ""
     }
   ],
