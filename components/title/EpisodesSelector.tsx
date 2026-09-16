@@ -7,6 +7,7 @@ import { useHistoryStore } from '@/lib/store/history-store';
 import { extractEpisodeNumber } from '@/lib/utils/episode-resolver';
 import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 import { fetchTitleProbe, subscribeTitleProbe } from '@/lib/utils/title-probe';
+import { isValidSourceId } from '@/lib/api/video-sources';
 
 interface SpecialEpisodeItem {
   name: string;
@@ -75,8 +76,13 @@ export function EpisodesSelector({
     );
 
     if (historyItem?.episodes && historyItem.episodes.length > 0) {
-      if (historyItem.source) setRealSource(historyItem.source);
-      if (historyItem.videoId) setRealVodId(historyItem.videoId);
+      if (historyItem.source && isValidSourceId(historyItem.source)) {
+        setRealSource(historyItem.source);
+        if (historyItem.videoId) setRealVodId(historyItem.videoId);
+      } else {
+        setRealSource(null);
+        setRealVodId(null);
+      }
 
       const nameMap: Record<number, string> = {};
       let maxHistoryEp = 0;
@@ -110,7 +116,7 @@ export function EpisodesSelector({
       if (cancelled) return;
       if (data && data.success && data.totalEpisodes && data.totalEpisodes > 0) {
         setRealTotalEpisodes(data.totalEpisodes);
-        if (data.source) setRealSource(data.source);
+        if (data.source && isValidSourceId(data.source)) setRealSource(data.source);
         if (data.id) setRealVodId(data.id);
 
         if (Array.isArray(data.specialEpisodes) && data.specialEpisodes.length > 0) {
@@ -181,8 +187,10 @@ export function EpisodesSelector({
       type: type === 'tv' ? 'tv' : 'movie',
       episode: String(ep),
     });
-    if (realVodId) params.set('id', String(realVodId));
-    if (realSource) params.set('source', realSource);
+    if (realVodId && realSource && isValidSourceId(realSource)) {
+      params.set('id', String(realVodId));
+      params.set('source', realSource);
+    }
     router.push(`/player?${params.toString()}`);
   };
 
@@ -193,8 +201,10 @@ export function EpisodesSelector({
       type: type === 'tv' ? 'tv' : 'movie',
       episode: special.name,
     });
-    if (realVodId) params.set('id', String(realVodId));
-    if (realSource) params.set('source', realSource);
+    if (realVodId && realSource && isValidSourceId(realSource)) {
+      params.set('id', String(realVodId));
+      params.set('source', realSource);
+    }
     router.push(`/player?${params.toString()}`);
   };
 

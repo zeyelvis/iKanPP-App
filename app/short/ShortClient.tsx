@@ -159,11 +159,27 @@ function ShortContent({ topCustomRails }: ShortClientProps) {
     router.push(`/short/player?${query.toString()}`);
   };
 
-  // 顶层挂接：短剧专属搜索栏 +（搜索结果展示 OR 推荐热播栏）
+  // 顶层挂接：短剧专属频道 Header + 搜索栏 + 今日热搜速报矩阵 +（搜索结果展示 OR 推荐热播栏）
+  const trendingNavList = SHORT_HOME_DATA.trendingNav || [];
+
   const shortRails = (
     <div className="space-y-6 my-2">
-      {/* 短剧专属频道搜索栏 */}
-      <div className="pt-2 pb-1">
+      {/* 1. 微短剧专区标题与高能 Slogan */}
+      <div className="text-center pt-2 sm:pt-4 pb-1">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/80 text-xs font-bold mb-3 shadow-inner">
+          <span className="text-base">⚡</span>
+          <span>36,000+ 热门短剧全集免费畅享 · 9:16 沉浸式竖屏连播</span>
+        </div>
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+          精品微短剧专区
+        </h1>
+        <p className="text-xs sm:text-sm text-white/50 mt-1.5 max-w-xl mx-auto">
+          逆天爽剧 · 甜宠霸总 · 重生年代 · 2026 最新生成式 AI 漫剧每日同步上新
+        </p>
+      </div>
+
+      {/* 2. 短剧专属频道居中搜索栏 */}
+      <div className="pt-1 pb-1">
         <form
           onSubmit={handleShortSearch}
           className="flex items-center gap-2 max-w-2xl mx-auto bg-white/5 hover:bg-white/10 focus-within:bg-white/10 border border-white/10 focus-within:border-(--accent-color) rounded-2xl px-4 py-2.5 sm:py-3 transition-all shadow-xl"
@@ -194,6 +210,45 @@ function ShortContent({ topCustomRails }: ShortClientProps) {
             搜短剧
           </button>
         </form>
+
+        {/* 今日爆款短剧热搜速报矩阵（6 + 6 对称排列） */}
+        {trendingNavList.length > 0 && (
+          <div className="max-w-4xl mx-auto mt-4 px-2">
+            <div className="flex items-center justify-center gap-1.5 text-xs text-white/50 font-bold mb-2.5">
+              <span className="text-amber-400">🔥</span>
+              <span>今日爆款热搜榜：</span>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+              {trendingNavList.map((item, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery(item.title);
+                    const p = new URLSearchParams(window.location.search);
+                    p.set('q', item.title);
+                    window.history.pushState(null, '', `${window.location.pathname}?${p.toString()}`);
+                    triggerSearch(item.title);
+                  }}
+                  className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 hover:border-white/20 text-xs sm:text-sm font-medium text-white/80 hover:text-white transition-all cursor-pointer shadow-xs"
+                >
+                  <span className="truncate max-w-[140px] sm:max-w-[200px]">{item.title}</span>
+                  {item.updateBadge && (
+                    <span className={`text-[10px] font-black px-1.5 py-0.2 rounded-md ${
+                      item.updateBadge === 'HOT'
+                        ? 'bg-red-500/80 text-white'
+                        : item.updateBadge === 'TOP'
+                        ? 'bg-amber-500/80 text-white'
+                        : 'bg-indigo-500/80 text-white'
+                    }`}>
+                      {item.updateBadge}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 搜索结果展示区：用户搜索后立即展示匹配的网格列表 */}
@@ -333,7 +388,7 @@ function ShortContent({ topCustomRails }: ShortClientProps) {
       usePrebakedOnly={false}
       shortDramaMode={true}
       topCustomRails={shortRails}
-      heroItems={SHORT_HOME_DATA.hero}
+      heroItems={[]}
     />
   );
 }

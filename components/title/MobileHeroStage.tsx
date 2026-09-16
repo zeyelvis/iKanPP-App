@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Play, Film } from 'lucide-react';
 import { resolvePlayTarget } from '@/lib/utils/title-probe';
+import { isValidSourceId } from '@/lib/api/video-sources';
 import { useHistoryStore } from '@/lib/store/history-store';
 import { getEpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
 
@@ -34,18 +35,19 @@ export function MobileHeroStage({
     );
 
     let playEpisode = '1';
-    let playId = historyItem?.videoId;
-    let playSource = historyItem?.source;
+    const isHistorySourceValid = historyItem?.source && isValidSourceId(historyItem.source);
+    let playId = isHistorySourceValid ? historyItem.videoId : undefined;
+    let playSource = isHistorySourceValid ? historyItem.source : undefined;
 
     if (historyItem) {
       const displayInfo = getEpisodeDisplayInfo(historyItem.episodes, historyItem.episodeIndex);
       playEpisode = displayInfo.paramValue;
     }
 
-    // 若无历史记录，极速竞速获取骨干源真实 ID（优先暴风资源）
+    // 若无有效历史记录，极速竞速获取骨干源真实 ID（优先暴风资源）
     if (!playId || !playSource) {
       const fast = await resolvePlayTarget(title, 200);
-      if (fast.id && fast.source) {
+      if (fast.id && fast.source && isValidSourceId(fast.source)) {
         playId = fast.id;
         playSource = fast.source;
       }

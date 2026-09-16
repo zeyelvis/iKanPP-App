@@ -8,6 +8,7 @@ import { useHistoryStore } from '@/lib/store/history-store';
 import { TitleEntity } from '@/lib/types/entity';
 import { getEpisodeDisplayInfo, EpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
 import { fetchTitleProbe, subscribeTitleProbe, resolvePlayTarget } from '@/lib/utils/title-probe';
+import { isValidSourceId } from '@/lib/api/video-sources';
 
 interface TitleActionsBarProps {
   entity: TitleEntity;
@@ -64,8 +65,13 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
       setHasHistory(true);
       const displayInfo = getEpisodeDisplayInfo(historyItem.episodes, historyItem.episodeIndex);
       setLastEpisodeInfo(displayInfo);
-      if (historyItem.source) setHistorySource(historyItem.source);
-      if (historyItem.videoId) setHistoryVodId(historyItem.videoId);
+      if (historyItem.source && isValidSourceId(historyItem.source)) {
+        setHistorySource(historyItem.source);
+        if (historyItem.videoId) setHistoryVodId(historyItem.videoId);
+      } else {
+        setHistorySource(null);
+        setHistoryVodId(null);
+      }
       if (historyItem.duration && historyItem.duration > 0) {
         const pct = Math.min(100, Math.round((historyItem.playbackPosition / historyItem.duration) * 100));
         setHistoryPercent(pct);
@@ -74,13 +80,13 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
   }, [entity.entityId, entity.title, effectiveTitle, isFavorite, viewingHistory]);
 
   const handlePlay = async (param: string = lastEpisodeInfo.paramValue) => {
-    let playId = historyVodId || probedTarget.id;
-    let playSource = historySource || probedTarget.source;
+    let playId = (historySource && isValidSourceId(historySource)) ? historyVodId : (isValidSourceId(probedTarget.source) ? probedTarget.id : null);
+    let playSource = (historySource && isValidSourceId(historySource)) ? historySource : (isValidSourceId(probedTarget.source) ? probedTarget.source : null);
 
     // 若尚未就绪，超短竞速等待 200ms 抢抓极速源（优先暴风资源）
     if (!playId || !playSource) {
       const fast = await resolvePlayTarget(effectiveTitle, 200);
-      if (fast.id && fast.source) {
+      if (fast.id && fast.source && isValidSourceId(fast.source)) {
         playId = fast.id;
         playSource = fast.source;
       }

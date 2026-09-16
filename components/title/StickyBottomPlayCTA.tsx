@@ -10,6 +10,7 @@ import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { getEpisodeDisplayInfo, EpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
 
 import { fetchTitleProbe, subscribeTitleProbe, resolvePlayTarget } from '@/lib/utils/title-probe';
+import { isValidSourceId } from '@/lib/api/video-sources';
 
 interface StickyBottomPlayCTAProps {
   entity: TitleEntity;
@@ -52,8 +53,13 @@ export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAPr
     );
     if (historyItem) {
       setEpisodeInfo(getEpisodeDisplayInfo(historyItem.episodes, historyItem.episodeIndex));
-      if (historyItem.source) setHistorySource(historyItem.source);
-      if (historyItem.videoId) setHistoryVodId(historyItem.videoId);
+      if (historyItem.source && isValidSourceId(historyItem.source)) {
+        setHistorySource(historyItem.source);
+        if (historyItem.videoId) setHistoryVodId(historyItem.videoId);
+      } else {
+        setHistorySource(null);
+        setHistoryVodId(null);
+      }
     }
 
     // 监听主播放区域 `#main-play-cta` 是否滑出视口
@@ -73,13 +79,13 @@ export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAPr
   }, [entity.title, effectiveTitle, viewingHistory]);
 
   const handlePlay = async () => {
-    let playId = historyVodId || probedTarget.id;
-    let playSource = historySource || probedTarget.source;
+    let playId = (historySource && isValidSourceId(historySource)) ? historyVodId : (isValidSourceId(probedTarget.source) ? probedTarget.id : null);
+    let playSource = (historySource && isValidSourceId(historySource)) ? historySource : (isValidSourceId(probedTarget.source) ? probedTarget.source : null);
 
     // 若尚未就绪，超短竞速等待 200ms 抢抓极速源（优先暴风资源）
     if (!playId || !playSource) {
       const fast = await resolvePlayTarget(effectiveTitle, 200);
-      if (fast.id && fast.source) {
+      if (fast.id && fast.source && isValidSourceId(fast.source)) {
         playId = fast.id;
         playSource = fast.source;
       }

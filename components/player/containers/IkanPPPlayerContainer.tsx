@@ -15,6 +15,7 @@ import { ShareButton } from '@/components/player/ShareButton';
 import { Navbar } from '@/components/layout/Navbar';
 import { settingsStore } from '@/lib/store/settings-store';
 import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
+import { DEPRECATED_SOURCES, isValidSourceId } from '@/lib/api/video-sources';
 import { getSourceName } from '@/lib/utils/source-names';
 import { storeGroupedSources, retrieveGroupedSources } from '@/lib/utils/grouped-sources-cache';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
@@ -75,8 +76,8 @@ export function IkanPPPlayerContainer() {
   const router = useRouter();
   const { addToHistory } = useHistory(false);
 
-  const videoId = searchParams.get('id');
-  const source = searchParams.get('source');
+  const rawVideoId = searchParams.get('id');
+  const rawSource = searchParams.get('source');
   const title = searchParams.get('title');
   const entityParam = searchParams.get('entity');
   const episodeParam = searchParams.get('episode') || searchParams.get('ep');
@@ -86,16 +87,22 @@ export function IkanPPPlayerContainer() {
   const expectedType = searchParams.get('type');
   const expectedYear = searchParams.get('year');
 
+  // 若传入的线路已知废弃（如 ole_vip）或不合法，直接丢弃该废弃线路与 ID，自动触发 Title-only 骨干秒播仲裁
+  const isSourceDeprecated = rawSource ? DEPRECATED_SOURCES.has(rawSource) : false;
+  const isSourceValid = rawSource ? (isValidSourceId(rawSource) && !isSourceDeprecated) : false;
+  const videoId = (rawSource && !isSourceValid) ? null : rawVideoId;
+  const source = isSourceValid ? rawSource : null;
+
   const [relatedMovies, setRelatedMovies] = useState<RailMovie[]>([]);
   const [loadingRelated, setLoadingRelated] = useState(true);
 
   // === Title-only 模式：300ms 毫秒级流式秒播仲裁 ===
-  const needsTitleSearch = !videoId && !!title;
+  const needsTitleSearch = (!videoId || !source) && !!title;
   const [titleSearching, setTitleSearching] = useState(() => needsTitleSearch);
   const [titleSearchError, setTitleSearchError] = useState('');
 
   useEffect(() => {
-    if (videoId || !title) return;
+    if ((videoId && source) || !title) return;
 
     let cancelled = false;
     setTitleSearching(true);
@@ -106,6 +113,9 @@ export function IkanPPPlayerContainer() {
     if (allSources.length === 0) {
       allSources = DEFAULT_SOURCES as VideoSource[];
     }
+
+    // 过滤掉已下线的废弃源和已知失败源
+    allSources = allSources.filter(s => !DEPRECATED_SOURCES.has(s.id) && !failedSourcesRef.current.has(s.id));
 
     if (source) {
       const preferredSource = allSources.find(s => s.id === source);
@@ -435,6 +445,40 @@ export function IkanPPPlayerContainer() {
     }
     return sources;
   }, [groupedSourcesParam, gsKeyParam, source, videoId, videoData?.vod_pic, discoveredSources]);
+
+  // === 终端自愈防线三：当指定线路获取失败且有片名时，自动平滑切源或秒播仲裁自愈 ===
+  const autoHealTriggeredRef = useRef(false);
+  useEffect(() => {
+    if (videoError && !videoData && title && !autoHealTriggeredRef.current) {
+      autoHealTriggeredRef.current = true;
+      if (source) {
+        failedSourcesRef.current.add(source);
+      }
+
+      // 1. 若已有健康备选线路，立即平滑切换到下一条健康线路
+      if (groupedSources.length > 0) {
+        const nextCandidate = groupedSources.find(
+          s => s.source && s.source !== source && !failedSourcesRef.current.has(s.source) && isValidSourceId(s.source)
+        );
+        if (nextCandidate) {
+          const params = new URLSearchParams(searchParams.toString());
+          params.set('id', String(nextCandidate.id));
+          params.set('source', nextCandidate.source);
+          router.replace(`/player?${params.toString()}`, { scroll: false });
+          return;
+        }
+      }
+
+      // 2. 清除失效的 id 与 source 参数，自动转入秒播仲裁重新匹配骨干线路
+      const params = new URLSearchParams();
+      params.set('title', title);
+      if (entityParam) params.set('entity', entityParam);
+      if (episodeParam) params.set('episode', episodeParam);
+      if (expectedType) params.set('type', expectedType);
+      if (expectedYear) params.set('year', expectedYear);
+      router.replace(`/player?${params.toString()}`, { scroll: false });
+    }
+  }, [videoError, videoData, title, source, groupedSources, searchParams, entityParam, episodeParam, expectedType, expectedYear, router]);
 
   // 后台补充更多可用源（无感异步）
   useEffect(() => {
@@ -798,6 +842,23 @@ export function IkanPPPlayerContainer() {
   }
 
   if (videoError && !videoData && !isSearchingTitle) {
+    if (title) {
+      return (
+        <div className="min-h-screen bg-(--bg-color)">
+          <Navbar variant="player" isPremiumMode={false} />
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
+              <div className="relative w-14 h-14">
+                <div className="absolute inset-0 rounded-full border-2 border-red-500/20 animate-ping" />
+                <div className="w-14 h-14 rounded-full border-2 border-red-500 border-t-transparent animate-spin" />
+              </div>
+              <p className="text-white/80 font-medium">当前线路响应异常，正在为您自动切换极速健康线路...</p>
+            </div>
+          </main>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen bg-(--bg-color)">
         <Navbar variant="player" isPremiumMode={false} />

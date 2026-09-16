@@ -8,6 +8,7 @@ import { getVideoDetail, searchVideos } from '@/lib/api/client';
 import { getSourceById } from '@/lib/api/video-sources';
 import { isSafeExternalUrl } from '@/lib/utils/security';
 import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
+import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
 import { fetchJableVideoDetail } from '@/lib/server/jable-scraper';
 import { fetchIkanbotDetail } from '@/lib/server/ikanbot';
 
@@ -206,6 +207,45 @@ async function handleDetailRequest(id: string | null, source: any, method: strin
   }
 
   if (!sourceConfig || !isSafeExternalUrl(sourceConfig.baseUrl)) {
+    // 智能自愈防线二：若线路未配置/已废弃，但携带了片名 titleParam，自动从骨干主力源（暴风/巨量/光速）智能自愈拉取！
+    if (titleParam && titleParam.trim().length > 0) {
+      try {
+        const cleanTitle = titleParam.replace(/[《》【】\[\]（）()·\s:：\-]/g, ' ').trim();
+        const fallbackSources = DEFAULT_SOURCES.filter(s => s.enabled !== false).slice(0, 3);
+        const searchRes = await searchVideos(cleanTitle, fallbackSources, 1);
+        for (const res of searchRes) {
+          const candidates = res.results || [];
+          const matched = candidates.find(c => {
+            const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
+            const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
+            return cName === tName;
+          }) || candidates.find(c => {
+            const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
+            const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
+            return cName.includes(tName) || tName.includes(cName);
+          });
+
+          if (matched && matched.vod_id) {
+            const matchedSource = getSourceById(res.source);
+            if (matchedSource) {
+              const healedDetail = await getVideoDetail(matched.vod_id, matchedSource);
+              if (healedDetail && healedDetail.episodes && healedDetail.episodes.length > 0) {
+                return NextResponse.json({
+                  success: true,
+                  data: healedDetail,
+                  healed: true,
+                  healedSource: matchedSource.id,
+                  healedId: matched.vod_id,
+                });
+              }
+            }
+          }
+        }
+      } catch (fallbackHealErr) {
+        console.warn(`[DetailAPI] Missing source fallback heal failed for ${titleParam}:`, fallbackHealErr);
+      }
+    }
+
     return NextResponse.json(
       { success: false, error: '暂未配置该视频线路' },
       { status: 200 }
@@ -242,7 +282,37 @@ async function handleDetailRequest(id: string | null, source: any, method: strin
             return NextResponse.json({
               success: true,
               data: healedDetail,
+              healed: true,
+              healedSource: sourceConfig.id,
+              healedId: matched.vod_id,
             });
+          }
+        }
+
+        // 若原源单源搜不到，使用骨干主力源跨源自愈抢救
+        const fallbackSources = DEFAULT_SOURCES.filter(s => s.enabled !== false && s.id !== sourceConfig.id).slice(0, 2);
+        const crossSearchRes = await searchVideos(cleanTitle, fallbackSources, 1);
+        for (const res of crossSearchRes) {
+          const crossCandidates = res.results || [];
+          const crossMatched = crossCandidates.find(c => {
+            const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
+            const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
+            return cName === tName || cName.includes(tName) || tName.includes(cName);
+          });
+          if (crossMatched && crossMatched.vod_id) {
+            const crossSource = getSourceById(res.source);
+            if (crossSource) {
+              const crossDetail = await getVideoDetail(crossMatched.vod_id, crossSource);
+              if (crossDetail && crossDetail.episodes && crossDetail.episodes.length > 0) {
+                return NextResponse.json({
+                  success: true,
+                  data: crossDetail,
+                  healed: true,
+                  healedSource: crossSource.id,
+                  healedId: crossMatched.vod_id,
+                });
+              }
+            }
           }
         }
       } catch (healErr) {

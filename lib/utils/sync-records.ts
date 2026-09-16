@@ -1,4 +1,5 @@
 import type { FavoriteItem, VideoHistoryItem } from '@/lib/types';
+import { DEPRECATED_SOURCES } from '@/lib/api/video-sources';
 
 function hasIdentity(value: unknown): boolean {
   if (!value || typeof value !== 'object') return false;
@@ -30,7 +31,22 @@ export function isRenderableFavoriteItem(value: unknown): value is FavoriteItem 
 }
 
 export function keepRenderableHistory(items: unknown): VideoHistoryItem[] {
-  return Array.isArray(items) ? items.filter(isRenderableHistoryItem) : [];
+  if (!Array.isArray(items)) return [];
+  return items.filter(isRenderableHistoryItem).map((item) => {
+    // 若命中已下线的历史废弃源（如 ole_vip, ole_hd），清理该废弃标记
+    if (item.source && DEPRECATED_SOURCES.has(item.source)) {
+      const cleanedSourceMap = { ...(item.sourceMap || {}) };
+      for (const dep of DEPRECATED_SOURCES) {
+        delete cleanedSourceMap[dep];
+      }
+      return {
+        ...item,
+        source: 'baofeng', // 优雅回退到当前第一骨干源
+        sourceMap: cleanedSourceMap,
+      };
+    }
+    return item;
+  });
 }
 
 export function keepRenderableFavorites(items: unknown): FavoriteItem[] {

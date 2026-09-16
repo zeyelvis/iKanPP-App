@@ -31,6 +31,70 @@ export function CategoryHubSkeleton({
 
   const navKey = activeNav || channelKey;
 
+  // 微短剧专区：去通栏巨幕化专属高保真 SSR 骨架（首屏 0ms 直出，杜绝 68vh 巨幕跳变）
+  if (channelKey === 'short') {
+    return (
+      <div className="min-h-screen bg-[#0A0A0F] text-white">
+        {/* 顶部导航 */}
+        <header className="fixed top-0 inset-x-0 h-16 z-50 bg-[#0A0A0F]/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-4 lg:px-8">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-(--accent-color,theme(colors.red.600)) flex items-center justify-center font-black text-white text-base">
+                iK
+              </div>
+              <span className="font-extrabold text-lg tracking-wider text-white">iKanPP</span>
+            </div>
+            <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-white/70">
+              <span>首页</span>
+              <span>电影</span>
+              <span>电视剧</span>
+              <span>动漫</span>
+              <span>综艺</span>
+              <span>纪录片</span>
+              <span className="text-white font-bold">短剧</span>
+              <span>排行榜</span>
+            </nav>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-white/10" />
+        </header>
+
+        {/* 短剧内容区骨架 */}
+        <div className="fluid-container pt-20 sm:pt-24 pb-20 space-y-6">
+          {/* 短剧搜索框骨架 */}
+          <div className="max-w-2xl mx-auto h-12 rounded-2xl bg-white/5 border border-white/10 animate-pulse" />
+
+          {/* 今日热搜速报矩阵骨架 */}
+          <div className="max-w-3xl mx-auto p-3 rounded-2xl bg-white/5 border border-white/5 space-y-2">
+            <div className="flex justify-center gap-2">
+              {[1, 2, 3, 4, 5, 6].map(i => (
+                <div key={i} className="w-20 h-5 rounded-full bg-white/10 animate-pulse" />
+              ))}
+            </div>
+            <div className="flex justify-center gap-2">
+              {[1, 2, 3, 4, 5, 6].map(i => (
+                <div key={i} className="w-20 h-5 rounded-full bg-white/10 animate-pulse" />
+              ))}
+            </div>
+          </div>
+
+          {/* 9:16 短剧货架横轨骨架 */}
+          <div className="space-y-3 pt-4">
+            <div className="w-48 h-6 rounded bg-white/10 animate-pulse" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+              {[1, 2, 3, 4, 5, 6].map(i => (
+                <div key={i} className="space-y-2">
+                  <div className="aspect-[9/14] rounded-2xl bg-white/5 animate-pulse border border-white/10" />
+                  <div className="w-3/4 h-4 rounded bg-white/10 animate-pulse" />
+                  <div className="w-1/2 h-3 rounded bg-white/5 animate-pulse" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white">
       {/* 1. 顶部极简毛玻璃导航栏骨架 */}
