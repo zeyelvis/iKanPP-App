@@ -62,10 +62,6 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "打生桩",
-                "updateBadge": ""
-        },
-        {
                 "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
@@ -74,15 +70,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "打生桩",
+                "updateBadge": ""
+        },
+        {
                 "title": "蜂鸟行动",
                 "updateBadge": ""
         },
         {
                 "title": "出入平安",
-                "updateBadge": ""
-        },
-        {
-                "title": "夜王",
                 "updateBadge": ""
         },
         {
@@ -98,7 +94,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "不成功穿越指南",
+                "title": "夜王",
+                "updateBadge": ""
+        },
+        {
+                "title": "抓特务",
                 "updateBadge": ""
         }
       ],
@@ -1828,12 +1828,12 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
-                "title": "早春晴朗",
-                "updateBadge": ""
-        },
-        {
                 "title": "交锋",
                 "updateBadge": "2"
+        },
+        {
+                "title": "早春晴朗",
+                "updateBadge": ""
         },
         {
                 "title": "冬城猎凶",
@@ -1844,6 +1844,10 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
+                "title": "深渊无间",
+                "updateBadge": ""
+        },
+        {
                 "title": "死有对证",
                 "updateBadge": "1"
         },
@@ -1852,24 +1856,20 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "深渊无间",
+                "title": "花开锦绣",
                 "updateBadge": ""
         },
         {
-                "title": "花开锦绣",
+                "title": "侠探杰克第4季",
+                "updateBadge": "1"
+        },
+        {
+                "title": "云雀叫天录",
                 "updateBadge": ""
         },
         {
                 "title": "百花杀",
                 "updateBadge": ""
-        },
-        {
-                "title": "韩国制造第2季",
-                "updateBadge": "2"
-        },
-        {
-                "title": "侠探杰克第4季",
-                "updateBadge": "1"
         }
       ],
     "hero": [
@@ -1996,7 +1996,7 @@ export const PREBAKED_HOME_DATA: {
                 "id": "iyf_hero_tv_8",
                 "title": "金色",
                 "rate": "9.0",
-                "cover": "https://image.tmdb.org/t/p/w500/cxRa9PDb9gGyRLSJE1NHJNt5gl9.jpg",
+                "cover": "https://image.tmdb.org/t/p/w500/k5Gc9qZfx4ofYCUjS55r6120H2l.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/xirWeEiatY915u837oq1l2t4oPP.jpg",
                 "description": "三十万两黄金突现大漠，传言寻金之人皆成厉鬼，相互厮杀。横遭灭门的女子孤闯大漠，决心复仇！权欲之争暗涌，一群江湖侠客纷纷卷入这场恩怨情仇，共谱一段新武侠故事。",
                 "year": "2026",
