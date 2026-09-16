@@ -436,6 +436,7 @@ export const PREBAKED_AVATARS: Record<string, string> = {
   "平野文": "https://image.tmdb.org/t/p/w185/nP3c7cxj4iCHKCrlJtxtnsF3prS.jpg",
   "钱文青": "https://image.tmdb.org/t/p/w185/42V5un2Vw23rfU4NWWi1VLox31D.jpg",
   "乔·博恩瑟": "https://image.tmdb.org/t/p/w185/aSH27tGD4PJoCO54RQnARSSSIQy.jpg",
+  "乔·科伊": "https://image.tmdb.org/t/p/w185/rbD9UnkYFYsmewSn2YFPI8lL5UI.jpg",
   "乔·罗素": "https://image.tmdb.org/t/p/w185/o0OXjFzL10jCy89iAs7UzzSbyoK.jpg",
   "乔·潘托里亚诺": "https://image.tmdb.org/t/p/w185/3OHUI3nX4SYGGItDk3xqeIvWtIf.jpg",
   "乔恩·哈姆": "https://image.tmdb.org/t/p/w185/mrXE5fZbEDPc7BEE5G21J6qrwzi.jpg",
