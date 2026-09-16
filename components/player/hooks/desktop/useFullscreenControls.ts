@@ -61,11 +61,13 @@ type PiPCapableVideoElement = HTMLVideoElement & {
 };
 
 function isAppleTouchDevice(): boolean {
-    if (typeof navigator === 'undefined') return false;
-    return (
-        /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-    );
+    if (typeof navigator === 'undefined' || typeof window === 'undefined') return false;
+    const isIOSUserAgent = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isIPadOS = (navigator.platform === 'MacIntel' || /Macintosh/i.test(navigator.userAgent)) &&
+        navigator.maxTouchPoints > 1 &&
+        'ontouchstart' in window &&
+        (window.matchMedia?.('(pointer: coarse)')?.matches ?? false);
+    return isIOSUserAgent || isIPadOS;
 }
 
 function getFullscreenDocument(): FullscreenCapableDocument {
@@ -137,6 +139,7 @@ export function useFullscreenControls({
         return (
             fullscreenDocument.fullscreenElement ||
             fullscreenDocument.webkitFullscreenElement ||
+            (fullscreenDocument as any).webkitCurrentFullScreenElement ||
             fullscreenDocument.mozFullScreenElement ||
             fullscreenDocument.msFullscreenElement
         );
@@ -178,6 +181,8 @@ export function useFullscreenControls({
                 await fullscreenDocument.exitFullscreen();
             } else if (fullscreenDocument.webkitExitFullscreen) {
                 await fullscreenDocument.webkitExitFullscreen();
+            } else if ((fullscreenDocument as any).webkitCancelFullScreen) {
+                await (fullscreenDocument as any).webkitCancelFullScreen();
             } else if (fullscreenDocument.mozCancelFullScreen) {
                 await fullscreenDocument.mozCancelFullScreen();
             } else if (fullscreenDocument.msExitFullscreen) {
@@ -216,10 +221,9 @@ export function useFullscreenControls({
         const video = videoRef.current as PiPCapableVideoElement | null;
         const docEl = (typeof document !== 'undefined' ? document.documentElement : null) as FullscreenCapableElement | null;
 
-        const isApple = isAppleTouchDevice();
-
-        // 阶段一：在 iPad / iPhone 设备上，优先尝试原生视频全屏（同步调用，确保 WebKit 临时手势令牌不失效）
-        if (isApple && video && typeof video.webkitEnterFullscreen === 'function') {
+        // 阶段一：仅在不支持 DOM 元素全屏的狭小 iPhone 移动端，才尝试 video 原生全屏
+        const isIPhoneOnly = typeof navigator !== 'undefined' && /iPhone|iPod/i.test(navigator.userAgent);
+        if (isIPhoneOnly && video && typeof video.webkitEnterFullscreen === 'function') {
             try {
                 video.webkitEnterFullscreen();
                 setFullscreenMode('native');
@@ -227,43 +231,57 @@ export function useFullscreenControls({
                 await lockLandscape();
                 return;
             } catch (appleErr) {
-                console.warn('video.webkitEnterFullscreen failed on iOS/iPad device, trying container:', appleErr);
+                console.warn('video.webkitEnterFullscreen failed on iPhone, trying container:', appleErr);
             }
         }
 
-        // 阶段二：尝试 DOM 元素全屏 (桌面端及支持 Element 全屏的标准浏览器)
-        const targets: (FullscreenCapableElement | PiPCapableVideoElement | null)[] = isApple
-            ? [container, docEl]
-            : [container, docEl, video];
+        // 阶段二：尝试 DOM 元素全屏 (桌面端 macOS / Windows / Linux 及 iPadOS 标准浏览器)
+        const targets: (FullscreenCapableElement | PiPCapableVideoElement | null)[] = [container, docEl, video];
 
         for (const target of targets) {
             if (!target) continue;
             try {
-                if (target.requestFullscreen) {
+                // 1. 标准 W3C requestFullscreen
+                if (typeof target.requestFullscreen === 'function') {
                     await target.requestFullscreen();
                     setFullscreenMode('native');
                     setIsFullscreen(true);
                     await lockLandscape();
                     return;
-                } else if ('webkitRequestFullscreen' in target && (target as any).webkitRequestFullscreen) {
+                }
+                // 2. WebKit (macOS Safari & 旧版 Chrome) 兼容两种大小写
+                if (typeof (target as any).webkitRequestFullscreen === 'function') {
                     await (target as any).webkitRequestFullscreen();
                     setFullscreenMode('native');
                     setIsFullscreen(true);
                     await lockLandscape();
                     return;
-                } else if ('mozRequestFullScreen' in target && (target as any).mozRequestFullScreen) {
+                }
+                if (typeof (target as any).webkitRequestFullScreen === 'function') {
+                    await (target as any).webkitRequestFullScreen();
+                    setFullscreenMode('native');
+                    setIsFullscreen(true);
+                    await lockLandscape();
+                    return;
+                }
+                // 3. Firefox
+                if (typeof (target as any).mozRequestFullScreen === 'function') {
                     await (target as any).mozRequestFullScreen();
                     setFullscreenMode('native');
                     setIsFullscreen(true);
                     await lockLandscape();
                     return;
-                } else if ('msRequestFullscreen' in target && (target as any).msRequestFullscreen) {
+                }
+                // 4. IE / Edge Legacy
+                if (typeof (target as any).msRequestFullscreen === 'function') {
                     await (target as any).msRequestFullscreen();
                     setFullscreenMode('native');
                     setIsFullscreen(true);
                     await lockLandscape();
                     return;
-                } else if (target === video && video?.webkitEnterFullscreen) {
+                }
+                // 5. 终极 video 播放器回退
+                if (target === video && typeof video?.webkitEnterFullscreen === 'function') {
                     video.webkitEnterFullscreen();
                     setFullscreenMode('native');
                     setIsFullscreen(true);
@@ -275,8 +293,7 @@ export function useFullscreenControls({
         }
 
         // 阶段三：终极自愈降级 (Fail-safe Fallback)
-        // 当系统或浏览器策略（如 iPad 夸克、UC、微信内置 WebView）拒绝任何原生全屏调用时，
-        // 100% 毫秒级自愈降级为网页全屏 (Window Fullscreen)，保证点击全屏必成功！
+        // 当系统或浏览器策略拒绝任何原生全屏调用时，100% 毫秒级自愈降级为网页全屏 (Window Fullscreen)
         console.info('Native fullscreen rejected by environment, seamlessly falling back to window fullscreen.');
         await enterWindowFullscreen();
     }, [

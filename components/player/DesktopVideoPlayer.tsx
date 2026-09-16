@@ -178,9 +178,10 @@ export function DesktopVideoPlayer({
   }, [updateViewportMetrics]);
 
   // 默认全屏偏好：优先设备原生全屏 (Native Fullscreen / 真正的全部全屏)
-  // 如果设备为 iPhone (iOS Safari 不支持容器全屏) 则平滑降级为 window 网页全屏以保留弹幕与控制栏
+  // 仅在设备明确为 iPhone 手机 (iOS Safari 不支持容器元素全屏) 时平滑降级为 window 网页全屏
+  const isIPhoneOnly = typeof navigator !== 'undefined' && /iPhone|iPod/i.test(navigator.userAgent);
   const fullscreenType = settingsFullscreenType === 'auto'
-    ? (isIOS ? 'window' : 'native')
+    ? (isIPhoneOnly ? 'window' : 'native')
     : settingsFullscreenType;
 
   const isLandscape = viewportMetrics.width > viewportMetrics.height;
