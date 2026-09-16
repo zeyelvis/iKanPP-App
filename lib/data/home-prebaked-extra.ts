@@ -14,22 +14,10 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "遮天",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "凡人修仙传",
-        "updateBadge": ""
-    },
-    {
-        "title": "一斩苍穹",
-        "updateBadge": ""
-    },
-    {
-        "title": "吞噬星空",
-        "updateBadge": ""
-    },
-    {
-        "title": "斗破苍穹年番",
         "updateBadge": ""
     },
     {
@@ -37,12 +25,24 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "牧神记",
+        "title": "一斩苍穹",
         "updateBadge": ""
     },
     {
         "title": "一念永恒完结季",
-        "updateBadge": "1"
+        "updateBadge": ""
+    },
+    {
+        "title": "吞噬星空",
+        "updateBadge": ""
+    },
+    {
+        "title": "牧神记",
+        "updateBadge": ""
+    },
+    {
+        "title": "斗破苍穹年番",
+        "updateBadge": ""
     },
     {
         "title": "沧元图",
@@ -53,7 +53,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "死神：千年血战篇第4季",
+        "title": "名侦探柯南",
         "updateBadge": ""
     }
   ],
@@ -1763,7 +1763,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "兰香如故",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "早春晴朗",
@@ -1783,7 +1783,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "生逢其时",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "心动的信号第9季",
@@ -1802,11 +1802,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "打生桩",
+        "title": "花儿与少年第8季",
         "updateBadge": ""
     },
     {
-        "title": "花儿与少年第8季",
+        "title": "仙逆",
         "updateBadge": ""
     }
   ],
@@ -2375,19 +2375,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
 export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "克拉克森的农场第1季",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第5季",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第4季",
-        "updateBadge": ""
-    },
-    {
-        "title": "中国通史",
         "updateBadge": ""
     },
     {
@@ -2395,7 +2383,19 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "克拉克森的农场第1季",
+        "updateBadge": ""
+    },
+    {
+        "title": "克拉克森的农场第4季",
+        "updateBadge": ""
+    },
+    {
         "title": "爱达荷州血案：大学梦魇",
+        "updateBadge": ""
+    },
+    {
+        "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
     {
@@ -2403,7 +2403,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "BBC战争中的世界：二战全史",
+        "title": "一级方程式：疾速争胜第8季",
         "updateBadge": ""
     }
   ],

@@ -95,7 +95,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     {
       "id": "pb_cat_movie_6",
       "title": "叛谍猎手",
-      "rate": "0.5",
+      "rate": "0.8",
       "cover": "https://image.tmdb.org/t/p/w500/wEXaqQXOBPClwqEufiFqgfHVXTk.jpg",
       "year": "2025",
       "types": [
