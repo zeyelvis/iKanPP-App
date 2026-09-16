@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseSeasonFromTitle, generateSeasonSearchVariants, matchesTargetSeason } from '@/lib/utils/season-resolver';
+import { safeParseResponse } from '@/lib/utils/safe-json';
 
 export const runtime = 'edge';
 
@@ -110,7 +111,7 @@ async function probeSingleSource(
       if (!res.ok) continue;
       let data: any;
       try {
-        data = await res.json();
+        data = await safeParseResponse(res);
       } catch {
         continue;
       }

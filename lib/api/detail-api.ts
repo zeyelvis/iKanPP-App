@@ -5,6 +5,7 @@ import type {
 } from '@/lib/types';
 import { fetchWithTimeout, withRetry } from './http-utils';
 import { parseEpisodes } from './parsers';
+import { safeParseResponse } from '@/lib/utils/safe-json';
 
 /**
  * Get video detail from a single source
@@ -14,7 +15,9 @@ export async function getVideoDetail(
     source: VideoSource
 ): Promise<VideoDetail> {
 
-    const url = new URL(`${source.baseUrl}${source.detailPath}`);
+    const baseUrl = source.baseUrl.replace(/\/+$/, '');
+    const detailPath = source.detailPath.startsWith('/') ? source.detailPath : `/${source.detailPath}`;
+    const url = new URL(`${baseUrl}${detailPath}`);
     url.searchParams.set('ac', 'detail');
     url.searchParams.set('ids', id.toString());
 
@@ -35,7 +38,7 @@ export async function getVideoDetail(
             return res;
         });
 
-        const data: ApiDetailResponse = await response.json();
+        const data: ApiDetailResponse = await safeParseResponse(response);
 
         if (data.code !== 1 && data.code !== 0) {
             throw new Error(data.msg || 'Invalid API response');

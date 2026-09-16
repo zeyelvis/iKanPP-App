@@ -4,6 +4,7 @@ import type {
     ApiSearchResponse,
 } from '@/lib/types';
 import { fetchWithTimeout, withRetry } from './http-utils';
+import { safeParseResponse } from '@/lib/utils/safe-json';
 
 /**
  * Search videos from a single source
@@ -37,7 +38,7 @@ async function searchVideosBySource(
             return res;
         });
 
-        const data: ApiSearchResponse = await response.json();
+        const data: ApiSearchResponse = await safeParseResponse(response);
 
         if (data.code !== 1 && data.code !== 0) {
             throw new Error(data.msg || 'Invalid API response');

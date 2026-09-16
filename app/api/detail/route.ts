@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getVideoDetail } from '@/lib/api/client';
+import { getVideoDetail, searchVideos } from '@/lib/api/client';
 import { getSourceById } from '@/lib/api/video-sources';
 import { isSafeExternalUrl } from '@/lib/utils/security';
 import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
@@ -220,6 +220,36 @@ async function handleDetailRequest(id: string | null, source: any, method: strin
       data: videoDetail,
     });
   } catch (error) {
+    // 智能自愈：若根据原 ID 获取失败且提供了片名（如历史截断大数 ID、死链或源站升级），以片名发起单源补救搜源
+    if (titleParam && titleParam.trim().length > 0) {
+      try {
+        const cleanTitle = titleParam.replace(/[《》【】\[\]（）()·\s:：\-]/g, ' ').trim();
+        const searchRes = await searchVideos(cleanTitle, [sourceConfig], 1);
+        const candidates = searchRes[0]?.results || [];
+        const matched = candidates.find(c => {
+          const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
+          const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
+          return cName === tName;
+        }) || candidates.find(c => {
+          const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
+          const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
+          return cName.includes(tName) || tName.includes(cName);
+        });
+
+        if (matched && matched.vod_id && String(matched.vod_id) !== String(id)) {
+          const healedDetail = await getVideoDetail(matched.vod_id, sourceConfig);
+          if (healedDetail && healedDetail.episodes && healedDetail.episodes.length > 0) {
+            return NextResponse.json({
+              success: true,
+              data: healedDetail,
+            });
+          }
+        }
+      } catch (healErr) {
+        console.warn(`[DetailAPI] Auto-heal detail search failed for ${titleParam}:`, healErr);
+      }
+    }
+
     console.error('Detail API error:', error);
 
     return NextResponse.json(

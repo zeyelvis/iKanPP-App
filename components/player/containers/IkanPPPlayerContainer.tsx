@@ -712,7 +712,7 @@ export function IkanPPPlayerContainer() {
     const mediaLd = generateMediaJsonLd({
       title: currentTitle,
       type: mediaType,
-      url: typeof window !== 'undefined' ? window.location.href : `https://www.ikanpp.com/player?title=${encodeURIComponent(currentTitle)}`,
+      url: `https://www.ikanpp.com/player?title=${encodeURIComponent(currentTitle)}`,
       image: videoData?.vod_pic,
       description: videoData?.vod_content?.replace(/<[^>]+>/g, '').slice(0, 160) || `在 iKanPP 免费在线观看《${currentTitle}》高清完整版。`,
       datePublished: videoData?.vod_year || undefined,
@@ -724,11 +724,48 @@ export function IkanPPPlayerContainer() {
     const breadcrumbLd = generateBreadcrumbJsonLd([
       { name: '首页', url: '/' },
       { name: mediaType === 'movie' ? '电影' : mediaType === 'anime' ? '动漫' : '剧集', url: `/${mediaType}` },
-      { name: currentTitle, url: typeof window !== 'undefined' ? window.location.href : '/' },
+      { name: currentTitle, url: `https://www.ikanpp.com/player?title=${encodeURIComponent(currentTitle)}` },
     ]);
 
     return [mediaLd, breadcrumbLd];
   }, [currentTitle, mediaType, videoData, expectedYear]);
+
+  // 解析演职员（导演与演员）用于 Netflix 风格肖像滑轨（Hooks 必须在所有 early return 之前无条件调用）
+  const directorsList = useMemo(() => {
+    if (!videoData?.vod_director) return [];
+    return videoData.vod_director
+      .split(/[,，/ ]/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 3);
+  }, [videoData?.vod_director]);
+
+  const actorsList = useMemo(() => {
+    if (!videoData?.vod_actor) return [];
+    return videoData.vod_actor
+      .split(/[,，/ ]/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 8);
+  }, [videoData?.vod_actor]);
+
+  // 演职员真实头像状态（初始值直接读预烘焙字典，0ms 秒开无白屏）
+  const [avatarsMap, setAvatarsMap] = useState<Record<string, string>>(() => PREBAKED_AVATARS);
+
+  useEffect(() => {
+    const allPeople = [...directorsList, ...actorsList].filter(Boolean);
+    const missing = allPeople.filter((name) => !avatarsMap[name]);
+    if (missing.length === 0) return;
+
+    fetch(`/api/person-avatars?names=${encodeURIComponent(missing.join(','))}`)
+      .then((res) => res.json())
+      .then((data: any) => {
+        if (data?.avatars && Object.keys(data.avatars).length > 0) {
+          setAvatarsMap((prev) => ({ ...prev, ...data.avatars }));
+        }
+      })
+      .catch(() => {});
+  }, [directorsList, actorsList]);
 
   // 计算平滑内嵌在播放器内的连接态文案（彻底取代全屏跳变）
   const isSearchingTitle = needsTitleSearch && titleSearching;
@@ -774,43 +811,6 @@ export function IkanPPPlayerContainer() {
       </div>
     );
   }
-
-  // 解析演职员（导演与演员）用于 Netflix 风格肖像滑轨
-  const directorsList = useMemo(() => {
-    if (!videoData?.vod_director) return [];
-    return videoData.vod_director
-      .split(/[,，/ ]/)
-      .map((s) => s.trim())
-      .filter(Boolean)
-      .slice(0, 3);
-  }, [videoData?.vod_director]);
-
-  const actorsList = useMemo(() => {
-    if (!videoData?.vod_actor) return [];
-    return videoData.vod_actor
-      .split(/[,，/ ]/)
-      .map((s) => s.trim())
-      .filter(Boolean)
-      .slice(0, 8);
-  }, [videoData?.vod_actor]);
-
-  // 演职员真实头像状态（初始值直接读预烘焙字典，0ms 秒开无白屏）
-  const [avatarsMap, setAvatarsMap] = useState<Record<string, string>>(() => PREBAKED_AVATARS);
-
-  useEffect(() => {
-    const allPeople = [...directorsList, ...actorsList].filter(Boolean);
-    const missing = allPeople.filter((name) => !avatarsMap[name]);
-    if (missing.length === 0) return;
-
-    fetch(`/api/person-avatars?names=${encodeURIComponent(missing.join(','))}`)
-      .then((res) => res.json())
-      .then((data: any) => {
-        if (data?.avatars && Object.keys(data.avatars).length > 0) {
-          setAvatarsMap((prev) => ({ ...prev, ...data.avatars }));
-        }
-      })
-      .catch(() => {});
-  }, [directorsList, actorsList]);
 
   return (
     <div className={`min-h-screen ${isCinemaMode ? 'bg-[#050505]' : 'bg-(--bg-color)'}`}>
