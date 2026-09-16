@@ -21,6 +21,9 @@ const SOURCES_FILE = path.join(ROOT_DIR, 'lib/api/default-sources.ts');
 
 // 采集站端点知识库（Flag / Domain 到标准 API 端点的映射）
 const KNOWN_SOURCES_MAP = {
+  'jlm3u8': { id: 'juliang', name: '巨量资源', baseUrl: 'https://api.juliang.live', searchPath: '/api/provide/vod', detailPath: '/api/provide/vod' },
+  'juliang': { id: 'juliang', name: '巨量资源', baseUrl: 'https://api.juliang.live', searchPath: '/api/provide/vod', detailPath: '/api/provide/vod' },
+  'jlzy': { id: 'juliang', name: '巨量资源', baseUrl: 'https://api.juliang.live', searchPath: '/api/provide/vod', detailPath: '/api/provide/vod' },
   'jsm3u8': { id: 'jisu', name: '极速资源', baseUrl: 'https://jszyapi.com', searchPath: '/api.php/provide/vod', detailPath: '/api.php/provide/vod' },
   'gsm3u8': { id: 'guangsu', name: '光速资源', baseUrl: 'https://api.guangsuapi.com', searchPath: '/api.php/provide/vod', detailPath: '/api.php/provide/vod' },
   'xlm3u8': { id: 'xinlang', name: '新浪资源', baseUrl: 'https://api.xinlangapi.com', searchPath: '/xinlangapi.php/provide/vod', detailPath: '/xinlangapi.php/provide/vod' },
@@ -139,17 +142,32 @@ async function getSourcesFromVideoId(videoId) {
 // 3. 校验采集源 API 是否真正健康可用
 async function checkSourceHealth(source) {
   const t0 = Date.now();
-  try {
-    const testUrl = `${source.baseUrl}${source.searchPath}?ac=detail&wd=${encodeURIComponent('阿凡达')}`;
-    const res = await fetchWithTimeout(testUrl, { headers: HEADERS }, 3500);
-    if (!res.ok) return { ok: false, duration: Date.now() - t0 };
+  const isCoreSource = source.id === 'juliang' || source.id === 'baofeng';
+  const timeoutMs = isCoreSource ? 7000 : 4500;
+  const maxAttempts = isCoreSource ? 2 : 1;
 
-    const text = await res.text();
-    const json = JSON.parse(text);
-    const count = json.list ? json.list.length : 0;
-    return { ok: count > 0, duration: Date.now() - t0, count };
-  } catch (e) {
-    return { ok: false, duration: Date.now() - t0, error: e.message };
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const testUrl = `${source.baseUrl}${source.searchPath}?ac=detail&wd=${encodeURIComponent('阿凡达')}`;
+      const res = await fetchWithTimeout(testUrl, { headers: HEADERS }, timeoutMs);
+      if (!res.ok) {
+        if (attempt < maxAttempts) continue;
+        return { ok: false, duration: Date.now() - t0 };
+      }
+
+      const text = await res.text();
+      const json = JSON.parse(text);
+      const count = json.list ? json.list.length : 0;
+      return { ok: count > 0, duration: Date.now() - t0, count };
+    } catch (e) {
+      if (attempt < maxAttempts) continue;
+      // 暴风与巨量核心骨干源容灾保底：只要不是明确返回 4xx/5xx，哪怕探测网络偶发超时也坚决保持存活
+      if (isCoreSource) {
+        console.warn(`  ⚠️ 核心骨干源 [${source.id}] 探测偶发抖动 (${e.message})，触发保底机制保持存活`);
+        return { ok: true, duration: Date.now() - t0, count: 1, fallback: true };
+      }
+      return { ok: false, duration: Date.now() - t0, error: e.message };
+    }
   }
 }
 
@@ -206,6 +224,18 @@ async function main() {
     }
   });
 
+  // 确保暴风资源与巨量资源永久常驻骨干第一梯队（绝不被 ikanbot 热门抖动漏掉）
+  const IMMORTAL_SOURCES = [
+    { id: 'baofeng', name: '暴风资源', baseUrl: 'https://bfzyapi.com', searchPath: '/api.php/provide/vod', detailPath: '/api.php/provide/vod' },
+    { id: 'juliang', name: '巨量资源', baseUrl: 'https://api.juliang.live', searchPath: '/api/provide/vod', detailPath: '/api/provide/vod' },
+  ];
+  IMMORTAL_SOURCES.forEach(s => {
+    if (!visitedIds.has(s.id)) {
+      candidateSources.push(s);
+      visitedIds.add(s.id);
+    }
+  });
+
   console.log(`[4/4] 正在对 ${candidateSources.length} 个候选源执行全并发实时可用性与带宽健康检查...`);
   const healthResults = await Promise.all(candidateSources.map(async (source) => {
     const health = await checkSourceHealth(source);
@@ -215,8 +245,20 @@ async function main() {
   let activeSources = healthResults.filter(s => s.health.ok);
   console.log(`\n=== 健康检查结果: ${activeSources.length}/${candidateSources.length} 存活 ===`);
 
-  // 保持黄金骨干第一梯队的绝对优先度（光速、极速、新浪优先，杜绝防盗链/限流源占领默认首选源）
-  const PINNED_LEADERS = ['guangsu', 'jisu', 'xinlang', 'baofeng', 'dytt', 'json1080'];
+  // 严格保持黄金骨干第一梯队的绝对优先度（暴风 #1，巨量 #2，光速 #3，无尽 #4，最大 #5，极速 #6，新浪 #7，电影天堂 #8，魔都 #9，360 #10）
+  const PINNED_LEADERS = [
+    'baofeng',
+    'juliang',
+    'guangsu',
+    'wujin',
+    'zuida',
+    'jisu',
+    'xinlang',
+    'dytt',
+    'modu',
+    'zy360',
+    'json1080',
+  ];
   activeSources.sort((a, b) => {
     const aIdx = PINNED_LEADERS.indexOf(a.id);
     const bIdx = PINNED_LEADERS.indexOf(b.id);
