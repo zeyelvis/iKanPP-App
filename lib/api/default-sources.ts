@@ -13,6 +13,16 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     priority: 1,
   },
   {
+    id: 'juliang',
+    name: '巨量资源',
+    baseUrl: 'https://api.juliang.live',
+    searchPath: '/api/provide/vod',
+    detailPath: '/api/provide/vod',
+    group: 'normal',
+    enabled: true,
+    priority: 2,
+  },
+  {
     id: 'guangsu',
     name: '光速资源',
     baseUrl: 'https://api.guangsuapi.com',
@@ -20,7 +30,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 2,
+    priority: 3,
   },
   {
     id: 'jisu',

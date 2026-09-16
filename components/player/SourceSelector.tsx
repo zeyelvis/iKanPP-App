@@ -35,12 +35,12 @@ interface SourceSelectorProps {
 
 // 4K (2160P) UHD 极致原画专线字典
 const FOUR_K_SOURCES = new Set([
-    'hongniu', 'baofeng', 'json1080', 'suoni', 'haohua_4k', 'blue_4k', 'laosiji_4k'
+    'hongniu', 'baofeng', 'juliang', 'json1080', 'suoni', 'haohua_4k', 'blue_4k', 'laosiji_4k'
 ]);
 
 // 1080P 蓝光秒播高码率专线字典
 const HD_BLURAY_SOURCES = new Set([
-    'jisu', 'guangsu', 'xinlang', 'wujin', 'liangzi', 'dytt',
+    'jisu', 'guangsu', 'juliang', 'xinlang', 'wujin', 'liangzi', 'dytt',
     'feifan', 'huya', 'haitun', 'ruyi', 'zuida', 'subo', 'youku'
 ]);
 
@@ -48,37 +48,39 @@ const HD_BLURAY_SOURCES = new Set([
 const GOLDEN_PRIORITY_MAP: Record<string, number> = {
     // === 第一梯队：全量 443 端口纯净切片与数百万海量热播大源（CORS 100% 开放，国内极速秒开首选） ===
     'baofeng': 0,   // 暴风资源 (国内目前访问速度最快，多线CDN秒播首选)
-    'guangsu': 1,   // 光速资源 (数百万海量新热影视第一大站，秒播首选)
-    'wujin': 2,     // 无尽资源 (443纯净源，老片/动画秒播首选)
-    'zuida': 3,     // 最大资源 (443纯净源，经典/新剧兼备)
-    'jisu': 4,      // 极速资源 (443纯净源)
-    'xinlang': 5,   // 新浪资源 (443纯净源)
-    'modu': 6,      // 魔都资源 (热播大站)
-    'zy360': 7,     // 360资源 (独播大站)
+    'juliang': 1,   // 巨量资源 (纯净2.0切片，香港Anycast极速，4K/短剧秒播)
+    'guangsu': 2,   // 光速资源 (数百万海量新热影视第一大站，秒播首选)
+    'wujin': 3,     // 无尽资源 (443纯净源，老片/动画秒播首选)
+    'zuida': 4,     // 最大资源 (443纯净源，经典/新剧兼备)
+    'jisu': 5,      // 极速资源 (443纯净源)
+    'xinlang': 6,   // 新浪资源 (443纯净源)
+    'modu': 7,      // 魔都资源 (热播大站)
+    'zy360': 8,     // 360资源 (独播大站)
 
     // === 第二梯队：优质主流高码率专线（1080P/4K，部分节点有防盗链策略） ===
-    'json1080': 8,  // 1080JSON
-    'feifan': 9,    // 非凡资源
-    'dytt': 10,     // 电影天堂
-    'liangzi': 11,  // 量子资源
-    'hongniu': 12,  // 红牛资源 (4K)
-    'huya': 13,     // 虎牙资源
-    'haitun': 14,   // 海豚资源
-    'lezi': 15,     // 乐子资源
-    'ruyi': 16,     // 如意资源
-    'modu_dm': 17,  // 魔都动漫
-    'moduys': 18,   // 魔都影视
+    'json1080': 9,  // 1080JSON
+    'feifan': 10,   // 非凡资源
+    'dytt': 11,     // 电影天堂
+    'liangzi': 12,  // 量子资源
+    'hongniu': 13,  // 红牛资源 (4K)
+    'huya': 14,     // 虎牙资源
+    'haitun': 15,   // 海豚资源
+    'lezi': 16,     // 乐子资源
+    'ruyi': 17,     // 如意资源
+    'modu_dm': 18,  // 魔都动漫
+    'moduys': 19,   // 魔都影视
 
     // === 第三梯队：备用线路（部分切片挂在非标端口或开启防盗链，顺延保底） ===
-    'ikun': 19,     // iKun资源
-    'subo': 20,     // 速博资源
-    'jinying': 21,  // 金鹰点播
-    'youku': 22,    // 优酷资源
-    'jingyu': 23,   // 鲸鱼资源
+    'ikun': 20,     // iKun资源
+    'subo': 21,     // 速博资源
+    'jinying': 22,  // 金鹰点播
+    'youku': 23,    // 优酷资源
+    'jingyu': 24,   // 鲸鱼资源
 };
 
-// ikanbot 线路标识映射
+// ikanbot / 采集站线路标识映射
 const FLAG_TO_SOURCE_KEY: Record<string, string> = {
+    'jlm3u8': 'juliang',
     'wjm3u8': 'wujin',
     'zuidam3u8': 'zuida',
     'gsm3u8': 'guangsu',

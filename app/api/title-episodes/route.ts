@@ -3,9 +3,10 @@ import { parseSeasonFromTitle, generateSeasonSearchVariants, matchesTargetSeason
 
 export const runtime = 'edge';
 
-// 选用响应速度最快、更新最及时的骨干线路进行秒级探测（国内访问暴风资源最快，首选置顶）
+// 选用响应速度最快、更新最及时的骨干线路进行秒级探测（国内暴风首选，巨量香港Anycast纯净次选）
 const PROBE_SOURCES = [
   { id: 'baofeng', baseUrl: 'https://bfzyapi.com/api.php/provide/vod' },
+  { id: 'juliang', baseUrl: 'https://api.juliang.live/api/provide/vod' },
   { id: 'guangsu', baseUrl: 'https://api.guangsuapi.com/api.php/provide/vod' },
   { id: 'dytt', baseUrl: 'http://caiji.dyttzyapi.com/api.php/provide/vod' },
   { id: 'wujin', baseUrl: 'https://api.wujinapi.me/api.php/provide/vod' },
@@ -262,9 +263,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'No matching episodes found' });
     }
 
-    // 排序优先级：命中目标季优先 > 正片总集数最多 > 线路极速响应权重（baofeng 第一首选）
+    // 排序优先级：命中目标季优先 > 正片总集数最多 > 线路极速响应权重（baofeng 第一首选，juliang 第二首选）
     const SOURCE_PROBE_WEIGHTS: Record<string, number> = {
       baofeng: 100,
+      juliang: 95,
       guangsu: 90,
       wujin: 80,
       jisu: 70,

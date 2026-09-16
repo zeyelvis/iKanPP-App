@@ -5,6 +5,7 @@ export function getSourceName(sourceId: string): string {
     'xinlang': '新浪资源',
     'wujin': '无尽资源',
     'baofeng': '暴风资源',
+    'juliang': '巨量资源',
     'liangzi': '量子资源',
     'dytt': '电影天堂',
     'json1080': '1080JSON',
@@ -41,7 +42,7 @@ export function getSourceName(sourceId: string): string {
 }
 
 export const SOURCE_IDS = [
-  'baofeng', 'guangsu', 'jisu', 'xinlang', 'wujin', 'liangzi',
+  'baofeng', 'juliang', 'guangsu', 'jisu', 'xinlang', 'wujin', 'liangzi',
   'dytt', 'json1080', 'huya', 'haitun', 'feifan', 'hongniu',
   'ruyi', 'zuida', 'subo', 'jinying', 'youku', 'ikun',
   'lezi', 'zy360', 'modu', 'jingyu', 'moduys', 'modu_dm'
