@@ -99,13 +99,17 @@ async function probeSingleSource(
   for (const kw of finalKeywords) {
     try {
       const controller = new AbortController();
-      const timeoutMs = src.id === 'juliang' ? 3200 : 2200;
+      const timeoutMs = src.id === 'juliang' ? 3500 : 2200;
       const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-      const url = `${src.baseUrl}?ac=detail&wd=${encodeURIComponent(kw)}`;
+      const cleanBase = src.baseUrl.replace(/\/+$/, '');
+      const url = `${cleanBase}/?ac=detail&wd=${encodeURIComponent(kw)}`;
       const res = await fetch(url, {
         signal: controller.signal,
-        headers: { 'User-Agent': 'Mozilla/5.0' },
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+          'Accept': 'application/json, text/plain, */*',
+        },
       });
       clearTimeout(timeoutId);
 
@@ -231,12 +235,12 @@ async function probeSingleSource(
         specialEpisodes,
         remarks: matched.vod_remarks || '',
       };
-    } catch {
-      continue;
+    } catch (err: any) {
+      return { source: src.id, failed: true, error: `${err?.name || 'Error'}: ${err?.message || 'unknown'}` };
     }
   }
 
-  return null;
+  return { source: src.id, failed: true, error: 'no matching items' };
 }
 
 export async function GET(request: NextRequest) {
@@ -259,10 +263,12 @@ export async function GET(request: NextRequest) {
       probeSingleSource(src, cleanTitle, baseTitle, targetSeason, searchVariants)
     );
 
-    const results = (await Promise.all(probePromises)).filter(Boolean);
+    const rawResults = await Promise.all(probePromises);
+    const results = rawResults.filter((r: any) => r && !r.failed);
+    const probeErrors = rawResults.filter((r: any) => r && r.failed);
 
     if (results.length === 0) {
-      return NextResponse.json({ success: false, error: 'No matching episodes found' });
+      return NextResponse.json({ success: false, error: 'No matching episodes found', _debugErrors: probeErrors });
     }
 
     // 排序优先级：
@@ -331,6 +337,8 @@ export async function GET(request: NextRequest) {
       remarks: best.remarks,
       episodes: best.episodes,
       specialEpisodes: best.specialEpisodes,
+      _candidates: results.map((r: any) => ({ source: r.source, id: r.id, ep: r.totalEpisodes })),
+      _debugErrors: probeErrors,
     }, {
       headers: {
         'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
