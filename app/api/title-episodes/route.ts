@@ -99,7 +99,7 @@ async function probeSingleSource(
   for (const kw of finalKeywords) {
     try {
       const controller = new AbortController();
-      const timeoutMs = src.id === 'juliang' ? 3500 : 2200;
+      const timeoutMs = src.id === 'juliang' ? 6000 : 3500;
       const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
       const cleanBase = src.baseUrl.replace(/\/+$/, '');

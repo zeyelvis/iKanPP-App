@@ -64,9 +64,10 @@ export async function POST(request: NextRequest) {
         const searchPromises = sources.map(async (source: any) => {
           const startTime = performance.now();
           try {
-            // 设置单源 2500ms 熔断保护，防止单个慢源拖垮整个流
+            // 设置单源熔断保护（巨量Anycast骨干源允许 5500ms 跨洋握手与查询，其他源 3500ms）
+            const timeoutMs = source.id === 'juliang' ? 5500 : 3500;
             const timeoutPromise = new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('Source request timeout')), 2500)
+              setTimeout(() => reject(new Error('Source request timeout')), timeoutMs)
             );
 
             // 若关键词含有季数（如 "时光代理人第3季"），国内采集站通常使用中文数字立项（"时光代理人第三季"）
