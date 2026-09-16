@@ -357,7 +357,7 @@ async function main() {
   console.log(`====================================================\n`);
 
   if (hasAvatarUpdates) {
-    process.exit(10); // 退出码 10 代表有新数据更新，通知 GitHub Actions 提交并部署
+    console.log(`💡 检测到演职员肖像库有新增更新，后续步骤将自动提交并触发部署。`);
   }
 }
 

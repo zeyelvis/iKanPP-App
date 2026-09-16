@@ -55,8 +55,6 @@ jobs:
         run: |
           echo "🚀 启动 iKanPP 全站全维度全量自动化预热..."
           npx tsx scripts/full-site-prewarm.ts
-          EXIT_CODE=$?
-          echo "PREWARM_EXIT_CODE=$EXIT_CODE" >> $GITHUB_ENV
 
       - name: Commit and push new avatars if updated
         env:
