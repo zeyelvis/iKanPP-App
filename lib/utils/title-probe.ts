@@ -133,9 +133,9 @@ export async function fetchTitleProbe(title?: string | null): Promise<TitleProbe
  */
 export async function resolvePlayTarget(
   title?: string | null,
-  timeoutMs: number = 300
+  timeoutMs: number = 120
 ): Promise<{ id?: string | number; source?: string }> {
-  if (!title || !title.trim()) return {};
+  if (!title || !title.trim()) return { source: 'juliang' };
 
   // 1. 0ms 同步直出
   const cached = getCachedTitleProbe(title);
@@ -143,7 +143,7 @@ export async function resolvePlayTarget(
     return { id: cached.id, source: cached.source };
   }
 
-  // 2. 超短竞速等待在飞探测
+  // 2. 超短微窗口竞速（默认最多 120ms，杜绝阻塞主线程）
   try {
     const probePromise = fetchTitleProbe(title);
     const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs));
@@ -155,5 +155,6 @@ export async function resolvePlayTarget(
     // 忽略异常直接降级
   }
 
-  return {};
+  // 3. 若超短竞速未出完整结果，默认直接以全站黄金 No.1 首选巨量源 (juliang) 直达起播
+  return { source: 'juliang' };
 }

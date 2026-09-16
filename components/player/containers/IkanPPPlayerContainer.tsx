@@ -128,6 +128,7 @@ export function IkanPPPlayerContainer() {
 
     const cleanTitle = title.replace(/[《》【】\[\]（）()]/g, ' ').replace(/\s+/g, ' ').trim();
     let redirected = false;
+    const searchStartTime = Date.now();
 
     (async () => {
       try {
@@ -334,17 +335,24 @@ export function IkanPPPlayerContainer() {
                     }
                   }
 
-                  // 极速秒播裁决：唯有命中全站 No.1 黄金首选巨量资源 (juliang) 且匹配正片时直接秒跳起播；其他源作为候选池备用，绝不抢跑截胡
+                  // 极速秒播裁决：
+                  // 1. 全站 No.1 黄金首选巨量资源 (juliang) 无论何时到达，只要匹配立即秒播直出；
+                  // 2. 光速/暴风等高质量骨干源 (totalScore >= 120)：给巨量 1500ms 优先冲刺窗口，若巨量超时仍未到达则弹性秒播直出，拒绝白屏干等！
                   const isQualified = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isExactName && !isEpisodeInsufficient && totalScore >= 80;
                   if (isQualified && !redirected && !cancelled) {
                     const isSeasonOrYearMatched = 
                       (isSeriesItem && (targetAnalysis.seasonNumber !== null ? candAnalysis.seasonNumber === targetAnalysis.seasonNumber : (candAnalysis.seasonNumber === 1 || candAnalysis.seasonNumber === null))) ||
                       (!isSeriesItem && (isExactYearMatch || !targetYear));
 
-                    // 铁律：必须且只能全站 No.1 巨量资源可以直接秒跳起播，杜绝其他低优先级源因网络先行到达而抢占默认源
-                    if (isSeasonOrYearMatched && v.source === 'juliang') {
-                      performRedirect(v, isSeriesItem);
-                      break;
+                    if (isSeasonOrYearMatched) {
+                      const elapsed = Date.now() - searchStartTime;
+                      const isJuliang = v.source === 'juliang';
+                      const isHighQualityBackbone = (v.source === 'guangsu' || v.source === 'baofeng') && totalScore >= 120;
+
+                      if (isJuliang || (isHighQualityBackbone && elapsed > 1500)) {
+                        performRedirect(v, isSeriesItem);
+                        break;
+                      }
                     }
                   }
                 }

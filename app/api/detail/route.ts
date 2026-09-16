@@ -258,6 +258,10 @@ async function handleDetailRequest(id: string | null, source: any, method: strin
     return NextResponse.json({
       success: true,
       data: videoDetail,
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+      },
     });
   } catch (error) {
     // 智能自愈：若根据原 ID 获取失败且提供了片名（如历史截断大数 ID、死链或源站升级），以片名发起单源补救搜源

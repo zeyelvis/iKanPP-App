@@ -202,6 +202,8 @@ export function EpisodesSelector({
     if (playId && playSource && isValidSourceId(playSource)) {
       params.set('id', String(playId));
       params.set('source', playSource);
+    } else {
+      params.set('source', 'juliang');
     }
     router.push(`/player?${params.toString()}`);
   };
@@ -228,6 +230,8 @@ export function EpisodesSelector({
     if (playId && playSource && isValidSourceId(playSource)) {
       params.set('id', String(playId));
       params.set('source', playSource);
+    } else {
+      params.set('source', 'juliang');
     }
     router.push(`/player?${params.toString()}`);
   };

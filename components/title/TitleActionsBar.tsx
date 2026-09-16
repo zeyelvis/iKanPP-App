@@ -88,8 +88,8 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
       playId = probedTarget.id;
       playSource = 'juliang';
     } else {
-      // 2. 竞速 600ms 抢抓骨干源探测（优先巨量 Anycast 纯净源）
-      const fast = await resolvePlayTarget(effectiveTitle, 600);
+      // 2. 超短竞速 100ms 抢抓骨干源探测（优先巨量 Anycast 纯净源，杜绝主线程卡顿）
+      const fast = await resolvePlayTarget(effectiveTitle, 100);
       if (fast.source === 'juliang' && fast.id) {
         playId = fast.id;
         playSource = 'juliang';
@@ -99,9 +99,10 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
       } else if (fast.id && fast.source && isValidSourceId(fast.source)) {
         playId = fast.id;
         playSource = fast.source;
+      } else {
+        // 默认兜底以巨量资源起播
+        playSource = 'juliang';
       }
-      // 注意：若尚未探测到巨量，严禁将老用户的旧源（如暴风/光速）强行写入 URL！
-      // 保持空 id/source 跳转播放器，由播放器在后台并发 SSE 流中优先秒播巨量资源！
     }
 
     startTransition(() => {

@@ -9,8 +9,6 @@ const PROBE_SOURCES = [
   { id: 'juliang', baseUrl: 'https://api.juliang.live/api/provide/vod' },
   { id: 'guangsu', baseUrl: 'https://api.guangsuapi.com/api.php/provide/vod' },
   { id: 'baofeng', baseUrl: 'https://bfzyapi.com/api.php/provide/vod' },
-  { id: 'dytt', baseUrl: 'http://caiji.dyttzyapi.com/api.php/provide/vod' },
-  { id: 'wujin', baseUrl: 'https://api.wujinapi.me/api.php/provide/vod' },
   { id: 'jisu', baseUrl: 'https://jszyapi.com/api.php/provide/vod' },
 ];
 
@@ -101,15 +99,15 @@ async function probeSingleSource(
     }
   }
 
-  // 尝试前 4 个最精准变体（包含中文数字、去符号及核心子标题）
-  const finalKeywords = keywordsToTry.slice(0, 4);
+  // 尝试前 2 个最精准核心变体（母标题及去符号标准名），杜绝漫长轮询
+  const finalKeywords = keywordsToTry.slice(0, 2);
   const cleanSymbols = (s: string) => (s || '').replace(/[·・\-_:：\s+]/g, '').toLowerCase();
   const normalizedBase = cleanSymbols(baseTitle);
 
   for (const kw of finalKeywords) {
     try {
       const controller = new AbortController();
-      const timeoutMs = src.id === 'juliang' ? 6000 : 3500;
+      const timeoutMs = src.id === 'juliang' ? 2500 : 1800;
       const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
       const cleanBase = src.baseUrl.replace(/\/+$/, '');
@@ -282,14 +280,69 @@ export async function GET(request: NextRequest) {
   const searchVariants = generateSeasonSearchVariants(cleanTitle);
 
   try {
-    // 并行向骨干源发起探测
-    const probePromises = PROBE_SOURCES.map(src =>
-      probeSingleSource(src, cleanTitle, baseTitle, targetSeason, searchVariants)
-    );
+    // 采用“首选骨干源早停收敛窗口（Fast Early-Return Grace Window）”：
+    // 1. 若巨量资源 (juliang) 率先命中，其权重恒定最高 (100)，直接在 50ms 内瞬间直出，无需等待其他任何源；
+    // 2. 若光速或暴风等骨干源率先命中，开启 350ms 宽限窗口：若巨量在 350ms 内到达则采用巨量，若巨量超时则直接由光速/暴风直出；
+    // 3. 全局最长等待 2200ms 熔断，绝不允许接口被慢速源拖累。
+    const collected: any[] = [];
+    const probeErrors: any[] = [];
+    let completedCount = 0;
+    const totalSources = PROBE_SOURCES.length;
 
-    const rawResults = await Promise.all(probePromises);
-    const results = rawResults.filter((r: any) => r && !r.failed);
-    const probeErrors = rawResults.filter((r: any) => r && r.failed);
+    await new Promise<void>((resolve) => {
+      let isResolved = false;
+      let graceTimer: ReturnType<typeof setTimeout> | null = null;
+
+      const finish = () => {
+        if (isResolved) return;
+        isResolved = true;
+        if (graceTimer) clearTimeout(graceTimer);
+        resolve();
+      };
+
+      // 全局硬熔断守卫：最多 2200ms
+      const globalTimer = setTimeout(() => {
+        finish();
+      }, 2200);
+
+      PROBE_SOURCES.forEach(src => {
+        probeSingleSource(src, cleanTitle, baseTitle, targetSeason, searchVariants)
+          .then(res => {
+            completedCount++;
+            if (res) {
+              if (!res.failed) {
+                collected.push(res);
+                // 1. 若全网首选【巨量资源】成功命中且有效，直接在 50ms 缓冲后立即提前结束
+                if (res.source === 'juliang' && (res.totalEpisodes ?? 0) > 0) {
+                  if (!graceTimer) {
+                    graceTimer = setTimeout(() => finish(), 50);
+                  }
+                } else if (collected.length > 0 && !graceTimer) {
+                  // 2. 若光速/暴风等先到达，给巨量留出 350ms 窗口；若超时未到则直接提前结束
+                  graceTimer = setTimeout(() => finish(), 350);
+                }
+              } else {
+                probeErrors.push(res);
+              }
+            }
+
+            if (completedCount >= totalSources) {
+              clearTimeout(globalTimer);
+              finish();
+            }
+          })
+          .catch(err => {
+            completedCount++;
+            probeErrors.push({ source: src.id, failed: true, error: String(err) });
+            if (completedCount >= totalSources) {
+              clearTimeout(globalTimer);
+              finish();
+            }
+          });
+      });
+    });
+
+    const results = collected.filter((r: any) => r && !r.failed);
 
     if (results.length === 0) {
       return NextResponse.json({ success: false, error: 'No matching episodes found', _debugErrors: probeErrors });
@@ -303,9 +356,7 @@ export async function GET(request: NextRequest) {
       juliang: 100,
       guangsu: 95,
       baofeng: 90,
-      wujin: 80,
       jisu: 70,
-      dytt: 60,
     };
 
     results.sort((a: any, b: any) => {
@@ -365,7 +416,7 @@ export async function GET(request: NextRequest) {
       _debugErrors: probeErrors,
     }, {
       headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
       },
     });
   } catch (err: any) {
