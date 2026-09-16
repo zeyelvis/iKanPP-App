@@ -24,6 +24,7 @@ import Image from 'next/image';
 import { Tv, Clapperboard, Sparkles, User, Star, Film, MonitorPlay, Layers, CheckCircle2 } from 'lucide-react';
 import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { PREBAKED_AVATARS } from '@/lib/data/prebaked-avatars';
+import { extractSeasonAndEpisodeNumber } from '@/lib/utils/episode-resolver';
 
 interface TitleAnalysis {
   rawTitle: string;
@@ -81,6 +82,7 @@ export function IkanPPPlayerContainer() {
   const title = searchParams.get('title');
   const entityParam = searchParams.get('entity');
   const episodeParam = searchParams.get('episode') || searchParams.get('ep');
+  const seasonParam = searchParams.get('season');
   const epCountParam = searchParams.get('epCount');
   const groupedSourcesParam = searchParams.get('groupedSources');
   const gsKeyParam = searchParams.get('gsKey');
@@ -163,6 +165,9 @@ export function IkanPPPlayerContainer() {
           if (entityParam) params.set('entity', entityParam);
           if (episodeParam) {
             params.set('episode', episodeParam);
+          }
+          if (seasonParam) {
+            params.set('season', seasonParam);
           }
           const resolvedType = isSeries ? 'tv' : (expectedType || 'movie');
           params.set('type', resolvedType);
@@ -399,7 +404,7 @@ export function IkanPPPlayerContainer() {
     setPlayUrl,
     setVideoError,
     fetchVideoDetails,
-  } = useVideoPlayer(videoId || '', source || '', episodeParam, isReversed, handleSourceUnavailable, title);
+  } = useVideoPlayer(videoId || '', source || '', episodeParam, isReversed, handleSourceUnavailable, title, seasonParam);
 
   const [discoveredSources, setDiscoveredSources] = useState<SourceInfo[]>([]);
 
@@ -615,8 +620,12 @@ export function IkanPPPlayerContainer() {
       if (expectedType) params.set('type', expectedType);
       if (expectedYear) params.set('year', expectedYear);
       const currentEpName = videoData?.episodes?.[currentEpisode]?.name;
-      const curDisplayNum = currentEpName?.match(/(?:第|ep)?\s*(\d+)\s*(?:集|话)?/i)?.[1] || (currentEpisode + 1).toString();
+      const { seasonNumber, episodeNumber } = extractSeasonAndEpisodeNumber(currentEpName);
+      const curDisplayNum = episodeNumber !== null ? String(episodeNumber) : (currentEpisode + 1).toString();
       params.set('episode', curDisplayNum);
+      if (seasonNumber !== null) {
+        params.set('season', String(seasonNumber));
+      }
       if (playerTimeRef.current > 1) {
         params.set('t', Math.floor(playerTimeRef.current).toString());
       }
@@ -660,8 +669,14 @@ export function IkanPPPlayerContainer() {
     setPlayUrl(episode.url);
     setVideoError('');
     const params = new URLSearchParams(searchParams.toString());
-    const epDisplayNum = episode?.name?.match(/(?:第|ep)?\s*(\d+)\s*(?:集|话)?/i)?.[1] || (index + 1).toString();
+    const { seasonNumber, episodeNumber } = extractSeasonAndEpisodeNumber(episode?.name);
+    const epDisplayNum = episodeNumber !== null ? String(episodeNumber) : (index + 1).toString();
     params.set('episode', epDisplayNum);
+    if (seasonNumber !== null) {
+      params.set('season', String(seasonNumber));
+    } else {
+      params.delete('season');
+    }
     router.replace(`/player?${params.toString()}`, { scroll: false });
   }, [searchParams, router, setCurrentEpisode, setPlayUrl, setVideoError]);
 
@@ -697,8 +712,12 @@ export function IkanPPPlayerContainer() {
     if (expectedType) params.set('type', expectedType);
     if (expectedYear) params.set('year', expectedYear);
     const currentEpName = videoData?.episodes?.[currentEpisode]?.name;
-    const curDisplayNum = currentEpName?.match(/(?:第|ep)?\s*(\d+)\s*(?:集|话)?/i)?.[1] || (currentEpisode + 1).toString();
+    const { seasonNumber, episodeNumber } = extractSeasonAndEpisodeNumber(currentEpName);
+    const curDisplayNum = episodeNumber !== null ? String(episodeNumber) : (currentEpisode + 1).toString();
     params.set('episode', curDisplayNum);
+    if (seasonNumber !== null) {
+      params.set('season', String(seasonNumber));
+    }
     if (playerTimeRef.current > 1) {
       params.set('t', Math.floor(playerTimeRef.current).toString());
     }

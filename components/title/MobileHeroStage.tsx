@@ -35,9 +35,11 @@ export function MobileHeroStage({
     );
 
     let playEpisode = '1';
+    let playSeason: number | null | undefined = undefined;
     if (historyItem) {
       const displayInfo = getEpisodeDisplayInfo(historyItem.episodes, historyItem.episodeIndex);
       playEpisode = displayInfo.paramValue;
+      playSeason = displayInfo.seasonNumber;
     }
 
     let playId: string | number | undefined = undefined;
@@ -62,6 +64,7 @@ export function MobileHeroStage({
         type: type === 'tv' ? 'tv' : 'movie',
         episode: playEpisode,
       });
+      if (playSeason) params.set('season', String(playSeason));
       if (playId) params.set('id', String(playId));
       if (playSource) params.set('source', playSource);
       router.push(`/player?${params.toString()}`);

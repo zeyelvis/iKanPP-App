@@ -37,7 +37,8 @@ export function useVideoPlayer(
   episodeParam: string | null,
   isReversed: boolean = false,
   onSourceUnavailable?: () => void,
-  title?: string | null
+  title?: string | null,
+  seasonParam?: string | null
 ): UseVideoPlayerReturn {
   const [videoData, setVideoData] = useState<VideoData | null>(null);
   // Initialize loading to true if we have the necessary params to start fetching
@@ -49,6 +50,7 @@ export function useVideoPlayer(
   // Refs to keep track of latest values for the fetch function without re-triggering it
   // This solves the stale closure problem while keeping fetchVideoDetails stable for the player
   const episodeParamRef = useRef(episodeParam);
+  const seasonParamRef = useRef(seasonParam);
   const isReversedRef = useRef(isReversed);
   const onSourceUnavailableRef = useRef(onSourceUnavailable);
   const titleRef = useRef(title);
@@ -56,6 +58,10 @@ export function useVideoPlayer(
   useEffect(() => {
     episodeParamRef.current = episodeParam;
   }, [episodeParam]);
+
+  useEffect(() => {
+    seasonParamRef.current = seasonParam;
+  }, [seasonParam]);
 
   useEffect(() => {
     isReversedRef.current = isReversed;
@@ -150,8 +156,10 @@ export function useVideoPlayer(
             }
           }
 
+          const latestSeasonParam = seasonParamRef.current;
+
           const validIndex = latestEpisodeParam
-            ? resolveEpisodeIndex(episodes, latestEpisodeParam, defaultIndex)
+            ? resolveEpisodeIndex(episodes, latestEpisodeParam, defaultIndex, latestSeasonParam)
             : defaultIndex;
 
           const episodeUrl = episodes[validIndex].url;
@@ -204,13 +212,13 @@ export function useVideoPlayer(
   // Sync state from params if they change externally (e.g. back/forward navigation)
   useEffect(() => {
     if (videoData?.episodes && episodeParam !== null) {
-      const index = resolveEpisodeIndex(videoData.episodes, episodeParam, currentEpisode);
+      const index = resolveEpisodeIndex(videoData.episodes, episodeParam, currentEpisode, seasonParam);
       if (index !== currentEpisode && videoData.episodes[index]) {
         setCurrentEpisode(index);
         setPlayUrl(videoData.episodes[index].url);
       }
     }
-  }, [episodeParam, videoData, currentEpisode]);
+  }, [episodeParam, seasonParam, videoData, currentEpisode]);
 
   useEffect(() => {
     if (videoId && source) {

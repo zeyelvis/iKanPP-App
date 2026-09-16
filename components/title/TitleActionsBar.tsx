@@ -111,6 +111,7 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
         type: entity.type === 'tv' ? 'tv' : 'movie',
         episode: String(param),
       });
+      if (lastEpisodeInfo.seasonNumber) params.set('season', String(lastEpisodeInfo.seasonNumber));
       if (playId) params.set('id', String(playId));
       if (playSource) params.set('source', playSource);
       router.push(`/player?${params.toString()}`);

@@ -188,18 +188,22 @@ export function parseShortDramaPlayUrl(rawUrl?: string): ShortDramaEpisode[] {
     if (parts.length >= 2) {
       const epName = parts[0].trim();
       const epUrl = parts[1].trim();
+      // 过滤巨量资源等采集站放置在首部的“播放”、“全集”等单片占位项（仅当后续存在多个明确分集切片时过滤）
+      if (episodes.length === 0 && items.length > 2 && /^(?:播放|全集|正片|预告)$/i.test(epName)) {
+        continue;
+      }
       if (epUrl.startsWith('http://') || epUrl.startsWith('https://')) {
         episodes.push({
           name: epName,
           url: sanitizeStreamUrl(epUrl),
-          epIndex: i,
+          epIndex: episodes.length + 1,
         });
       }
     } else if (parts.length === 1 && (parts[0].startsWith('http://') || parts[0].startsWith('https://'))) {
       episodes.push({
-        name: `第${i + 1}集`,
+        name: `第${episodes.length + 1}集`,
         url: sanitizeStreamUrl(parts[0].trim()),
-        epIndex: i + 1,
+        epIndex: episodes.length + 1,
       });
     }
   }

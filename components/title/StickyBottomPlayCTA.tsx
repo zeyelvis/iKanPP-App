@@ -110,6 +110,7 @@ export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAPr
         type: entity.type === 'tv' ? 'tv' : 'movie',
         episode: episodeInfo.paramValue,
       });
+      if (episodeInfo.seasonNumber) params.set('season', String(episodeInfo.seasonNumber));
       if (playId) params.set('id', String(playId));
       if (playSource) params.set('source', playSource);
       router.push(`/player?${params.toString()}`);

@@ -196,6 +196,9 @@ export function EpisodesSelector({
       type: type === 'tv' ? 'tv' : 'movie',
       episode: String(ep),
     });
+    if (selectedSeason && selectedSeason > 0) {
+      params.set('season', String(selectedSeason));
+    }
     if (playId && playSource && isValidSourceId(playSource)) {
       params.set('id', String(playId));
       params.set('source', playSource);
@@ -219,6 +222,9 @@ export function EpisodesSelector({
       type: type === 'tv' ? 'tv' : 'movie',
       episode: special.name,
     });
+    if (selectedSeason && selectedSeason > 0) {
+      params.set('season', String(selectedSeason));
+    }
     if (playId && playSource && isValidSourceId(playSource)) {
       params.set('id', String(playId));
       params.set('source', playSource);

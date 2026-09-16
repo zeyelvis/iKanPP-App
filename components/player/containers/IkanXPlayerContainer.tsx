@@ -16,6 +16,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { settingsStore } from '@/lib/store/settings-store';
 import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
 import { getSourceName } from '@/lib/utils/source-names';
+import { extractSeasonAndEpisodeNumber } from '@/lib/utils/episode-resolver';
 
 export function IkanXPlayerContainer() {
   const searchParams = useSearchParams();
@@ -276,9 +277,16 @@ export function IkanXPlayerContainer() {
     setPlayUrl(episode.url);
     setVideoError('');
     const params = new URLSearchParams(searchParams.toString());
-    const epDisplayNum = episode?.name?.match(/(?:第|ep)?\s*(\d+)\s*(?:集|话)?/i)?.[1] || (index + 1).toString();
+    const { seasonNumber, episodeNumber } = extractSeasonAndEpisodeNumber(episode?.name);
+    const epDisplayNum = episodeNumber !== null ? String(episodeNumber) : (index + 1).toString();
     params.set('episode', epDisplayNum);
-    router.replace(`/player?${params.toString()}`, { scroll: false });
+    if (seasonNumber !== null) {
+      params.set('season', String(seasonNumber));
+    } else {
+      params.delete('season');
+    }
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/premium/player';
+    router.replace(`${currentPath}?${params.toString()}`, { scroll: false });
   }, [searchParams, router, setCurrentEpisode, setPlayUrl, setVideoError]);
 
   const handleBack = useCallback(() => {
