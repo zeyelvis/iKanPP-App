@@ -44,24 +44,34 @@ function extractEpisodeNumber(name?: string): number | null {
   const clean = name.trim();
   if (/(?:预告|花絮|PV|特辑|采访|彩蛋)/i.test(clean)) return null;
 
-  // 优先匹配：第191集、第191话、EP191、第77集星海飞驰篇
-  const m1 = clean.match(/(?:第|ep)\s*(\d+)\s*(?:集|话)?/i);
+  // 1. 先剔除季数前缀（如 '第 1 季 ', 'Season 2', 'S01'），防止 '第 1 季 第 189 集' 误将季数 '1' 识别为集数
+  const withoutSeason = clean.replace(/(?:第\s*[\d一二三四五六七八九十]+\s*季|season\s*\d+|s\d+)/gi, '').trim();
+
+  // 2. 强匹配：明确带有 '集'、'话'、'期' 的集数（如 '第 189 集', '第191话', '189集', 'EP 12期'）
+  const m1 = withoutSeason.match(/(?:第|ep)?\s*(\d+)\s*(?:集|话|期)/i);
   if (m1) {
     const num = parseInt(m1[1], 10);
     if (num > 0 && num < 2500) return num;
   }
 
-  // 匹配：191集、191话
-  const m2 = clean.match(/^(\d+)\s*(?:集|话)/);
+  // 3. 匹配明确的 EP/第 + 数字（如 'EP189', '第189', 'EP.189'）
+  const m2 = withoutSeason.match(/(?:ep\.?|第)\s*(\d+)/i);
   if (m2) {
     const num = parseInt(m2[1], 10);
     if (num > 0 && num < 2500) return num;
   }
 
-  // 匹配纯数字：191（排除4位数年份）
-  if (/^\d+$/.test(clean)) {
-    const num = parseInt(clean, 10);
-    if (num > 0 && num < 1900) return num;
+  // 4. 匹配以数字开头的集数（如 '189', '189 完结', '01'，排除4位数年份）
+  const m3 = withoutSeason.match(/^(\d+)(?:\s|$|[-_:：])/);
+  if (m3) {
+    const num = parseInt(m3[1], 10);
+    if (num > 0 && num < 2500 && num !== 1900 && num !== 2023 && num !== 2024 && num !== 2025 && num !== 2026) return num;
+  }
+
+  // 5. 兜底匹配纯数字
+  if (/^\d+$/.test(withoutSeason)) {
+    const num = parseInt(withoutSeason, 10);
+    if (num > 0 && num < 2500) return num;
   }
 
   return null;
@@ -139,30 +149,44 @@ async function probeSingleSource(
 
       let matched: any = null;
 
-      // 🌟 强防线 2：若有明确季数，优先在有效条目中挑选完全匹配目标季的条目（优先正统原版，降级日语/英配版）
+      // 🌟 强防线 2：若有明确季数，优先在有效条目中挑选完全匹配目标季的条目（优先正统原版，降级日语/英配版，优先集数最多最新）
       if (targetSeason) {
-        matched = validItems.find((item: any) => {
+        const seasonMatches = validItems.filter((item: any) => {
           const rawName = (item.vod_name || '').trim();
-          const isForeignDub = /(?:日语|韩语|英语|日剧|日版|英配)/i.test(rawName);
-          return !isForeignDub && matchesTargetSeason(rawName, targetSeason);
+          return matchesTargetSeason(rawName, targetSeason);
         });
-        if (!matched) {
-          matched = validItems.find((item: any) => {
-            const rawName = (item.vod_name || '').trim();
-            return matchesTargetSeason(rawName, targetSeason);
+        if (seasonMatches.length > 0) {
+          seasonMatches.sort((a: any, b: any) => {
+            const isADub = /(?:日语|韩语|英语|日剧|日版|英配)/i.test(a.vod_name || '') ? 1 : 0;
+            const isBDub = /(?:日语|韩语|英语|日剧|日版|英配)/i.test(b.vod_name || '') ? 1 : 0;
+            if (isADub !== isBDub) return isADub - isBDub;
+            const aEpsCount = (a.vod_play_url || '').split('#').length;
+            const bEpsCount = (b.vod_play_url || '').split('#').length;
+            return bEpsCount - aEpsCount;
           });
+          matched = seasonMatches[0];
         }
       }
 
-      // 🌟 强防线 3：若未匹配到季数专属条目，尝试与当前搜索词或原始标题一致
+      // 🌟 强防线 3：若未匹配到季数专属条目，尝试与当前搜索词或原始标题精确匹配（若有同名条目，按更新切片数量与 remarks 排序，选最新最全的一条）
       if (!matched) {
-        matched = validItems.find((item: any) => {
+        const exactMatches = validItems.filter((item: any) => {
           const rawName = cleanSymbols(item.vod_name);
           return rawName === cleanSymbols(kw) || rawName === cleanSymbols(cleanTitle);
         });
+        if (exactMatches.length > 0) {
+          exactMatches.sort((a: any, b: any) => {
+            const aEpsCount = (a.vod_play_url || '').split('#').length;
+            const bEpsCount = (b.vod_play_url || '').split('#').length;
+            const aRem = extractEpisodeFromRemarks(a.vod_remarks) || 0;
+            const bRem = extractEpisodeFromRemarks(b.vod_remarks) || 0;
+            return Math.max(bEpsCount, bRem) - Math.max(aEpsCount, aRem);
+          });
+          matched = exactMatches[0];
+        }
       }
 
-      // 🌟 强防线 4：若无季数要求，取有效条目中的第一条
+      // 🌟 强防线 4：若无季数要求且无精确片名，取有效条目中的第一条
       if (!matched && !targetSeason) {
         matched = validItems[0];
       }

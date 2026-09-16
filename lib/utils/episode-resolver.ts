@@ -18,24 +18,34 @@ export function extractEpisodeNumber(name?: string): number | null {
   const clean = name.trim();
   if (/(?:预告|花絮|PV|特辑|采访|彩蛋)/i.test(clean)) return null;
 
-  // 优先匹配：第191集、第191话、EP191、第77集星海飞驰篇
-  const m1 = clean.match(/(?:第|ep)\s*(\d+)\s*(?:集|话)?/i);
+  // 1. 先剔除季数前缀（如 '第 1 季 ', 'Season 2', 'S01'），防止 '第 1 季 第 189 集' 误将季数 '1' 识别为集数
+  const withoutSeason = clean.replace(/(?:第\s*[\d一二三四五六七八九十]+\s*季|season\s*\d+|s\d+)/gi, '').trim();
+
+  // 2. 强匹配：明确带有 '集'、'话'、'期' 的集数（如 '第 189 集', '第191话', '189集', 'EP 12期'）
+  const m1 = withoutSeason.match(/(?:第|ep)?\s*(\d+)\s*(?:集|话|期)/i);
   if (m1) {
     const num = parseInt(m1[1], 10);
     if (num > 0 && num < 2500) return num;
   }
 
-  // 匹配：191集、191话
-  const m2 = clean.match(/^(\d+)\s*(?:集|话)/);
+  // 3. 匹配明确的 EP/第 + 数字（如 'EP189', '第189', 'EP.189'）
+  const m2 = withoutSeason.match(/(?:ep\.?|第)\s*(\d+)/i);
   if (m2) {
     const num = parseInt(m2[1], 10);
     if (num > 0 && num < 2500) return num;
   }
 
-  // 匹配纯数字：191（排除4位数年份）
-  if (/^\d+$/.test(clean)) {
-    const num = parseInt(clean, 10);
-    if (num > 0 && num < 1900) return num;
+  // 4. 匹配以数字开头的集数（如 '189', '189 完结', '01'，排除4位数年份）
+  const m3 = withoutSeason.match(/^(\d+)(?:\s|$|[-_:：])/);
+  if (m3) {
+    const num = parseInt(m3[1], 10);
+    if (num > 0 && num < 2500 && num !== 1900 && num !== 2023 && num !== 2024 && num !== 2025 && num !== 2026) return num;
+  }
+
+  // 5. 兜底匹配纯数字
+  if (/^\d+$/.test(withoutSeason)) {
+    const num = parseInt(withoutSeason, 10);
+    if (num > 0 && num < 2500) return num;
   }
 
   return null;
