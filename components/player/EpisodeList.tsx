@@ -15,8 +15,8 @@ import { getSourceResolutionBadge, shouldExpandForCurrentSource } from '@/lib/pl
 import { SourceSelector } from './SourceSelector';
 // 4K (2160P) 原画专线字典
 const FOUR_K_SOURCES = new Set([
-  'hongniu', 'hongniu3', 'haohua_4k', 'blue_4k', 'suoni', 'suoni_sd',
-  'baofeng', 'baofeng_app', 'json1080', 'laosiji_4k', 'midnight_4k', 'yutu', 'hsck', 'jingpin'
+  'baofeng', 'baofeng_app', 'juliang', 'hongniu', 'hongniu3', 'haohua_4k', 'blue_4k', 'suoni', 'suoni_sd',
+  'json1080', 'laosiji_4k', 'midnight_4k', 'yutu', 'hsck', 'jingpin'
 ]);
 
 // 1080P 蓝光极清秒播专线字典
@@ -29,8 +29,9 @@ export function isSource4K(s: { source: string; sourceName?: string }): boolean 
   return FOUR_K_SOURCES.has(s.source) ||
          Boolean(s.sourceName?.includes('4K')) ||
          Boolean(s.sourceName?.includes('2160')) ||
-         Boolean(s.sourceName?.includes('红牛')) ||
          Boolean(s.sourceName?.includes('暴风')) ||
+         Boolean(s.sourceName?.includes('巨量')) ||
+         Boolean(s.sourceName?.includes('红牛')) ||
          Boolean(s.sourceName?.includes('索尼')) ||
          Boolean(s.sourceName?.includes('老司机'));
 }
