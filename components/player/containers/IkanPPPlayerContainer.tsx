@@ -24,7 +24,7 @@ import Image from 'next/image';
 import { Tv, Clapperboard, Sparkles, User, Star, Film, MonitorPlay, Layers, CheckCircle2 } from 'lucide-react';
 import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { PREBAKED_AVATARS } from '@/lib/data/prebaked-avatars';
-import { extractSeasonAndEpisodeNumber } from '@/lib/utils/episode-resolver';
+import { extractSeasonAndEpisodeNumber, cleanEpisodeName, formatEpisodeGridLabel } from '@/lib/utils/episode-resolver';
 
 interface TitleAnalysis {
   rawTitle: string;
@@ -1119,13 +1119,14 @@ export function IkanPPPlayerContainer() {
                       key={idx}
                       type="button"
                       onClick={() => handleEpisodeClick(ep, idx)}
+                      title={cleanEpisodeName(ep.name) || `第 ${idx + 1} 集`}
                       className={`py-2 px-1 rounded-xl text-xs font-semibold text-center transition-all cursor-pointer border ${
                         isCurrent
                           ? 'bg-red-600 text-white border-red-500 shadow-md shadow-red-600/30 ring-2 ring-red-400/50'
                           : 'bg-white/5 hover:bg-white/15 text-white/70 hover:text-white border-white/10'
                       }`}
                     >
-                      {ep.name?.replace(/第|集/g, '') || idx + 1}
+                      {formatEpisodeGridLabel(ep.name, idx)}
                     </button>
                   );
                 })}

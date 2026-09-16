@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Play, Tv, Sparkles } from 'lucide-react';
 import { useHistoryStore } from '@/lib/store/history-store';
-import { extractEpisodeNumber } from '@/lib/utils/episode-resolver';
+import { extractEpisodeNumber, cleanEpisodeName } from '@/lib/utils/episode-resolver';
 import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 import { fetchTitleProbe, subscribeTitleProbe, getCachedTitleProbe } from '@/lib/utils/title-probe';
 import { isValidSourceId } from '@/lib/api/video-sources';
@@ -92,10 +92,10 @@ export function EpisodesSelector({
         if (!ep || !ep.name) return;
         const epNum = extractEpisodeNumber(ep.name);
         if (epNum !== null) {
-          nameMap[epNum] = ep.name;
+          nameMap[epNum] = cleanEpisodeName(ep.name);
           if (epNum > maxHistoryEp) maxHistoryEp = epNum;
         } else {
-          historySpecials.push({ name: ep.name, index: i });
+          historySpecials.push({ name: cleanEpisodeName(ep.name), index: i });
         }
       });
 
@@ -127,11 +127,11 @@ export function EpisodesSelector({
           const nameMap: Record<number, string> = {};
           data.episodes.forEach((ep: any) => {
             if (ep.episodeNumber) {
-              nameMap[ep.episodeNumber] = ep.name;
+              nameMap[ep.episodeNumber] = cleanEpisodeName(ep.name);
             } else if (ep.name) {
               const epNum = extractEpisodeNumber(ep.name);
               if (epNum !== null) {
-                nameMap[epNum] = ep.name;
+                nameMap[epNum] = cleanEpisodeName(ep.name);
               }
             }
           });

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Play, ArrowUpDown } from 'lucide-react';
+import { cleanEpisodeName, formatEpisodeGridLabel } from '@/lib/utils/episode-resolver';
 
 interface EpisodeItem {
   name?: string;
@@ -150,7 +151,8 @@ export function InPlayerEpisodesDrawer({
           <div className="grid grid-cols-4 gap-2.5">
             {displayList.map(({ episode, originalIndex }) => {
               const isCurrent = originalIndex === currentEpisode;
-              const episodeLabel = episode.name || `第${originalIndex + 1}集`;
+              const fullLabel = cleanEpisodeName(episode.name) || `第${originalIndex + 1}集`;
+              const gridLabel = formatEpisodeGridLabel(episode.name, originalIndex);
 
               return (
                 <button
@@ -166,18 +168,18 @@ export function InPlayerEpisodesDrawer({
                       ? 'bg-red-600 text-white border-red-500 shadow-lg shadow-red-600/40 ring-2 ring-red-400/50 scale-105'
                       : 'bg-white/5 hover:bg-white/15 text-white/80 hover:text-white border-white/10 hover:border-white/20 hover:scale-102'
                   }`}
-                  title={episodeLabel}
+                  title={fullLabel}
                 >
                   {isCurrent ? (
                     <div className="flex items-center gap-1">
                       <Play size={12} className="fill-white animate-pulse" />
                       <span className="text-xs font-bold truncate max-w-[55px]">
-                        {episodeLabel.replace(/第|集/g, '') || originalIndex + 1}
+                        {gridLabel}
                       </span>
                     </div>
                   ) : (
                     <span className="text-xs truncate max-w-[65px]">
-                      {episodeLabel.replace(/第|集/g, '') || originalIndex + 1}
+                      {gridLabel}
                     </span>
                   )}
 

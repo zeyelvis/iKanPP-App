@@ -20,6 +20,55 @@ const CHINESE_NUM_MAP: Record<string, number> = {
 };
 
 /**
+ * 清洗第三方采集站切片名称中的内部转码序列号、工单号等垃圾前缀
+ * 例如："0001 · 第 1 季 第 1 集" ➔ "第 1 季 第 1 集"
+ *       "0151 · 第 1 季 第 151 集" ➔ "第 1 季 第 151 集"
+ *       "0001-第1集" ➔ "第1集"
+ *       "0001. 第1集" ➔ "第1集"
+ *       "0001 第1集" ➔ "第1集"
+ */
+export function cleanEpisodeName(rawName?: string): string {
+  if (!rawName) return '';
+  let clean = rawName.trim();
+
+  // 匹配前缀：3~4位数字紧随分隔符（点、中圆点、短横线、下划线、空格等）且后面跟随其他有效文本
+  const prefixMatch = clean.match(/^(\d{3,4})\s*[·・\-_\.\s]\s*(.+)$/);
+  if (prefixMatch && prefixMatch[2]) {
+    clean = prefixMatch[2].trim();
+  }
+  return clean || rawName.trim();
+}
+
+/**
+ * 针对网格胶囊按钮（宽度有限，70~90px）智能格式化剧集标签
+ * 优先展示纯数字编号（如 151、152），特辑/预告展示紧凑文本
+ */
+export function formatEpisodeGridLabel(name?: string, index: number = 0): string {
+  if (!name) return String(index + 1);
+
+  const clean = cleanEpisodeName(name);
+
+  // 1. 尝试提取正片集数
+  const epNum = extractEpisodeNumber(clean);
+  if (epNum !== null && epNum > 0) {
+    return String(epNum);
+  }
+
+  // 2. 特别篇 / 预告 / 花絮等非纯数字剧集
+  // 精简冗余字词，确保在胶囊内不溢出
+  let compact = clean
+    .replace(/\s+/g, '')
+    .replace(/^第/, '')
+    .replace(/集$/, '');
+
+  if (compact.length > 5) {
+    compact = compact.slice(0, 4) + '..';
+  }
+
+  return compact || String(index + 1);
+}
+
+/**
  * 智能提取切片名称中的季数编号与正片集数编号
  * 例如：'第 1 季 第 2 集' ➔ { seasonNumber: 1, episodeNumber: 2 }
  *       '第 2 季 第 1 集 范闲死讯传遍全城' ➔ { seasonNumber: 2, episodeNumber: 1 }
@@ -28,7 +77,7 @@ const CHINESE_NUM_MAP: Record<string, number> = {
  */
 export function extractSeasonAndEpisodeNumber(name?: string): { seasonNumber: number | null; episodeNumber: number | null } {
   if (!name) return { seasonNumber: null, episodeNumber: null };
-  const clean = name.trim();
+  const clean = cleanEpisodeName(name);
   if (/(?:预告|花絮|PV|特辑|采访|彩蛋)/i.test(clean)) return { seasonNumber: null, episodeNumber: null };
 
   let seasonNumber: number | null = null;
@@ -68,7 +117,7 @@ export function extractSeasonAndEpisodeNumber(name?: string): { seasonNumber: nu
  */
 export function extractEpisodeNumber(name?: string): number | null {
   if (!name) return null;
-  const clean = name.trim();
+  const clean = cleanEpisodeName(name);
   if (/(?:预告|花絮|PV|特辑|采访|彩蛋)/i.test(clean)) return null;
 
   // 1. 先彻底剔除季数前缀（如 '第 1 季 ', 'Season 2', 'S01'），防止 '第 1 季 第 189 集' 误将季数 '1' 识别为集数
@@ -247,7 +296,7 @@ export function getEpisodeDisplayInfo(
       };
     }
     // 非正片纯集数（如特别篇、番外、PV、剧场版等）
-    const cleanName = currentEp.name.trim();
+    const cleanName = cleanEpisodeName(currentEp.name);
     return {
       label: cleanName,
       paramValue: cleanName,

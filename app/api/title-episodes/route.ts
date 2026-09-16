@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseSeasonFromTitle, generateSeasonSearchVariants, matchesTargetSeason } from '@/lib/utils/season-resolver';
 import { safeParseResponse } from '@/lib/utils/safe-json';
+import { cleanEpisodeName } from '@/lib/utils/episode-resolver';
 
 export const runtime = 'edge';
 
@@ -202,7 +203,7 @@ async function probeSingleSource(
           const part = rawEps[i].trim();
           if (!part) continue;
           const [name] = part.split('$');
-          const cleanName = name || `第${i + 1}集`;
+          const cleanName = cleanEpisodeName(name) || `第${i + 1}集`;
           const epNum = extractEpisodeNumber(cleanName);
 
           parsedEps.push({

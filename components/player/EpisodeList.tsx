@@ -13,6 +13,7 @@ import type { ResolutionInfo } from '@/lib/hooks/useResolutionProbe';
 import { getCachedResolution } from '@/lib/player/resolution-cache';
 import { getSourceResolutionBadge, shouldExpandForCurrentSource } from '@/lib/player/source-list-utils';
 import { SourceSelector } from './SourceSelector';
+import { cleanEpisodeName, formatEpisodeGridLabel } from '@/lib/utils/episode-resolver';
 // 4K (2160P) 原画专线字典
 const FOUR_K_SOURCES = new Set([
   'baofeng', 'baofeng_app', 'hongniu', 'hongniu3', 'haohua_4k', 'blue_4k', 'suoni', 'suoni_sd',
@@ -367,7 +368,7 @@ export function EpisodeList({
   });
 
   const showReverseToggle = episodes && episodes.length > 1;
-  const currentEpisodeLabel = episodes?.[currentEpisode]?.name || `第${currentEpisode + 1}集`;
+  const currentEpisodeLabel = cleanEpisodeName(episodes?.[currentEpisode]?.name) || `第${currentEpisode + 1}集`;
 
   if (!episodes) {
     return (
@@ -507,6 +508,8 @@ export function EpisodeList({
                 const originalIndex = getOriginalIndex(displayIndex);
                 const isCurrentEpisode = currentEpisode === originalIndex;
                 const isGrid = episodeLayout === 'grid';
+                const fullLabel = cleanEpisodeName(episode.name) || `第 ${originalIndex + 1} 集`;
+                const gridLabel = formatEpisodeGridLabel(episode.name, originalIndex);
 
                 return (
                   <button
@@ -523,7 +526,8 @@ export function EpisodeList({
                     role="radio"
                     aria-checked={isCurrentEpisode}
                     aria-current={isCurrentEpisode ? 'true' : undefined}
-                    aria-label={`${episode.name || `第 ${originalIndex + 1} 集`}${isCurrentEpisode ? '，当前播放' : ''}`}
+                    aria-label={`${fullLabel}${isCurrentEpisode ? '，当前播放' : ''}`}
+                    title={fullLabel}
                     className={`
                       rounded-[var(--radius-2xl)] transition-[var(--transition-fluid)] cursor-pointer
                       ${isGrid
@@ -538,8 +542,8 @@ export function EpisodeList({
                     `}
                   >
                     <div className={`flex items-center ${isGrid ? 'justify-center gap-1.5' : 'justify-between'}`}>
-                      <span className={`font-semibold ${isGrid ? 'text-xs sm:text-sm truncate' : 'text-sm sm:text-base'}`}>
-                        {episode.name || `第 ${originalIndex + 1} 集`}
+                      <span className={`font-semibold ${isGrid ? 'text-xs sm:text-sm tracking-tight' : 'text-sm sm:text-base'}`}>
+                        {isGrid ? gridLabel : fullLabel}
                       </span>
                       {isCurrentEpisode && (
                         <div className="equalizer-bar text-white flex-shrink-0">

@@ -4,6 +4,7 @@
 
 import type { Episode } from '@/lib/types';
 import { sanitizeStreamUrl } from '@/lib/utils/stream-sanitizer';
+import { cleanEpisodeName } from '@/lib/utils/episode-resolver';
 
 /**
  * Parse episode URL string into structured array
@@ -20,7 +21,7 @@ export function parseEpisodes(playUrl: string): Episode[] {
             let name: string, url: string;
 
             if (parts.length > 1) {
-                name = parts[0];
+                name = cleanEpisodeName(parts[0]);
                 url = parts[1];
             } else {
                 // If no '$' separator, treat the whole thing as the URL
