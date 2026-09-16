@@ -507,16 +507,26 @@ export function DesktopVideoPlayer({
   return (
     <div
       ref={containerRef}
-      className={`kvideo-container relative aspect-video bg-black group ${data.fullscreenMode === 'window' ? 'is-web-fullscreen' : ''
-        } ${shouldForceLandscape ? 'force-landscape' : ''} ${isTopAlignedWebFullscreen ? 'top-align-stage' : ''} overflow-hidden rounded-none sm:rounded-2xl`}
+      className={`kvideo-container relative bg-black group ${
+        data.isFullscreen ? 'w-full h-full is-fullscreen' : 'aspect-video'
+      } ${
+        data.fullscreenMode === 'window' ? 'is-web-fullscreen' : ''
+      } ${
+        data.fullscreenMode === 'native' ? 'is-native-fullscreen' : ''
+      } ${shouldForceLandscape ? 'force-landscape' : ''} ${
+        isTopAlignedWebFullscreen ? 'top-align-stage' : ''
+      } overflow-hidden ${
+        data.isFullscreen ? 'rounded-none' : 'rounded-none sm:rounded-2xl'
+      }`}
       style={containerStyle}
       onMouseMove={() => { handleMouseMove(); }}
       onMouseLeave={() => isPlaying && setShowControls(false)}
     >
       <div className={stageClassName}>
         {/* Clipping Wrapper for video and overlays - Restores the 'Liquid Glass' rounded look */}
-        <div className={`absolute inset-0 overflow-hidden pointer-events-none ${data.fullscreenMode === 'window' ? 'rounded-none' : 'rounded-none sm:rounded-2xl'
-          }`}>
+        <div className={`kvideo-clipping-wrapper absolute inset-0 overflow-hidden pointer-events-none ${
+          data.isFullscreen ? 'rounded-none' : 'rounded-none sm:rounded-2xl'
+        }`}>
           <div className="absolute inset-0 pointer-events-auto">
           {/* Video Element */}
           <video

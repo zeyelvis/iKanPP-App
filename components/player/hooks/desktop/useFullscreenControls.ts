@@ -416,6 +416,13 @@ export function useFullscreenControls({
                 setIsFullscreen(true);
                 setFullscreenMode('native');
                 lockLandscape().catch(() => { });
+                // 强制触发一次微小布局读取，激活硬件图层重绘并派发鼠标移动事件唤醒控制栏
+                if (videoRef.current) {
+                    void videoRef.current.offsetHeight;
+                }
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
+                }
                 return;
             }
 
@@ -423,6 +430,9 @@ export function useFullscreenControls({
                 unlockOrientation();
                 setIsFullscreen(false);
                 setFullscreenMode('none');
+                if (videoRef.current) {
+                    void videoRef.current.offsetHeight;
+                }
             }
         };
 

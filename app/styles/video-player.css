@@ -546,3 +546,194 @@
     display: none;
 }
 
+/* ====================================================
+   系统全屏 (Native Fullscreen) 强制顶层硬件加速与满屏视口规范
+   彻底解决 macOS / Windows 系统全屏黑屏有声音、宽高坍塌与圆角剪裁失效
+   ==================================================== */
+
+/* 1. 标准 W3C :fullscreen */
+.kvideo-container:fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    width: 100% !important;
+    height: 100vh !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    aspect-ratio: auto !important;
+    container-type: normal !important;
+    border-radius: 0 !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #000 !important;
+    z-index: 2147483647 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.kvideo-container:fullscreen .kvideo-stage {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.kvideo-container:fullscreen .kvideo-clipping-wrapper {
+    border-radius: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.kvideo-container:fullscreen video {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    display: block !important;
+}
+
+/* 2. WebKit 前缀 (macOS Safari & 旧版 Chromium) - 必须独立书写以防选择器整块作废 */
+.kvideo-container:-webkit-full-screen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    width: 100% !important;
+    height: 100vh !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    aspect-ratio: auto !important;
+    container-type: normal !important;
+    border-radius: 0 !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #000 !important;
+    z-index: 2147483647 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.kvideo-container:-webkit-full-screen .kvideo-stage {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.kvideo-container:-webkit-full-screen .kvideo-clipping-wrapper {
+    border-radius: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.kvideo-container:-webkit-full-screen video {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    display: block !important;
+}
+
+/* 3. 纯 CSS 类名保底 (.is-native-fullscreen) - 保证即使伪类延迟生效，布局也恒定坚不可摧 */
+.kvideo-container.is-native-fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    width: 100% !important;
+    height: 100vh !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    aspect-ratio: auto !important;
+    container-type: normal !important;
+    border-radius: 0 !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #000 !important;
+    z-index: 2147483647 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.kvideo-container.is-native-fullscreen .kvideo-stage {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.kvideo-container.is-native-fullscreen .kvideo-clipping-wrapper {
+    border-radius: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.kvideo-container.is-native-fullscreen video {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    display: block !important;
+}
+
+/* 全屏纯黑 backdrop */
+.kvideo-container::backdrop {
+    background-color: #000 !important;
+}
+
+
