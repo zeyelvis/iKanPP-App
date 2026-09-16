@@ -2,7 +2,6 @@ import { TitleEntity } from '@/lib/types/entity';
 import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie, hasTitleOverlap } from '@/lib/data/entities/entity-utils';
 import { PREBAKED_HOME_DATA, PrebakedSubject } from '@/lib/data/home-prebaked';
 import { PREBAKED_LATEST_TITLES, LatestPrebakedItem } from '@/lib/data/latest-titles-prebaked';
-import { SHORT_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 import { POPULAR_DIRECTORS, POPULAR_ACTORS } from '@/lib/data/popular-people';
 import { PEOPLE_PREBAKED_ENTITIES } from '@/lib/data/people-prebaked';
 
@@ -563,23 +562,9 @@ export async function listRecentEntities(limit = 20, type?: string): Promise<Rec
     return (prebakedList as RecentTitleItem[]).slice(0, limit);
   }
 
-  // 短剧专区专属保底：从 SHORT_HOME_DATA 提取真实微短剧，杜绝回退到普通长视频
+  // 短剧专区专属兜底：若为空直接返回空列表，绝不回退到全站普通长视频
   if (channelKey === 'short') {
-    const heroShorts = SHORT_HOME_DATA.hero || [];
-    return heroShorts.slice(0, limit).map((h, idx) => ({
-      entityId: `ik_latest_short_${idx + 1}`,
-      title: h.title,
-      slug: encodeURIComponent(h.title),
-      cover: h.cover,
-      backdrop: h.backdrop,
-      rate: h.rate || '8.8',
-      year: h.year || '2026',
-      type: 'short',
-      channelKey: 'short',
-      genres: h.types || ['短剧', '爽剧'],
-      updateBadge: '全集连播',
-      createdAt: new Date(Date.now() - idx * 3600000).toISOString(),
-    }));
+    return (PREBAKED_LATEST_TITLES.short || []).slice(0, limit) as RecentTitleItem[];
   }
 
   // 3. 终极兜底：预烘焙核心影片
