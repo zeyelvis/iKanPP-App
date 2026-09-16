@@ -412,6 +412,7 @@ function isSameList(a: any[], b: any[]): boolean {
       if (playUrl) query.set('url', playUrl);
       if (poster) query.set('poster', poster);
       if (movie.id) query.set('id', String(movie.id));
+      query.set('source', movie.sourceId || 'juliang');
       router.push(`/short/player?${query.toString()}`);
       return;
     }
@@ -488,6 +489,7 @@ function isSameList(a: any[], b: any[]): boolean {
                         title: heroMovie.title || '',
                         url: (heroMovie as any).play_url || (heroMovie as any).playUrl || heroMovie.url || (heroMovie as any).firstPlayUrl || '',
                         poster: heroMovie.cover || (heroMovie as any).poster || '',
+                        source: (heroMovie as any).sourceId || 'juliang',
                         ...((heroMovie as any).id ? { id: String((heroMovie as any).id) } : {})
                       }).toString()}`
                     : `/title/${generateSlug(heroMovie.title)}`

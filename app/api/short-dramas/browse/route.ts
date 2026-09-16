@@ -23,16 +23,19 @@ async function fetchSourceCategory(
   keyword?: string
 ): Promise<{ total: number; pagecount: number; page: number; list: any[] } | null> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  const timeoutMs = source.id === 'juliang' ? 6000 : 3500;
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const kwParam = keyword ? `&wd=${encodeURIComponent(keyword)}` : '';
-    const url = `${source.baseUrl}${source.apiPath}?ac=detail&t=${catId}${kwParam}&pg=${page}`;
+    const cleanBase = source.baseUrl.replace(/\/+$/, '');
+    const cleanPath = source.apiPath.replace(/\/+$/, '');
+    const url = `${cleanBase}${cleanPath}/?ac=detail&t=${catId}${kwParam}&pg=${page}`;
     const res = await fetch(url, {
       signal: controller.signal,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        Accept: 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+        Accept: 'application/json, text/plain, */*',
       },
     });
     clearTimeout(timer);

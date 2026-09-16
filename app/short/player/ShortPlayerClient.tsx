@@ -33,10 +33,12 @@ export default function ShortPlayerClient() {
   const rawUrlParam = searchParams.get('url') || '';
   const initialEpParam = parseInt(searchParams.get('ep') || '1', 10);
   const posterParam = searchParams.get('poster') || '';
+  const sourceParam = searchParams.get('source') || 'juliang';
 
   // 状态管理
   const [title, setTitle] = useState(titleParam);
   const [poster, setPoster] = useState(posterParam);
+  const [source, setSource] = useState(sourceParam);
   const [episodes, setEpisodes] = useState<ShortDramaEpisode[]>([]);
   const [currentEpIndex, setCurrentEpIndex] = useState(initialEpParam);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -144,6 +146,7 @@ export default function ShortPlayerClient() {
             if (isMounted) {
               setTitle(bestHit.title || titleParam);
               if (bestHit.poster) setPoster(bestHit.poster);
+              if (bestHit.sourceId) setSource(bestHit.sourceId);
               if (bestHit.episodes && bestHit.episodes.length > 0) {
                 setEpisodes(bestHit.episodes);
                 if (bestHit.playUrl && typeof window !== 'undefined') {
@@ -252,14 +255,14 @@ export default function ShortPlayerClient() {
         }
       }
 
-      // 同步历史记录
+      // 同步历史记录（默认巨量资源）
       if (video.currentTime > 2 && video.duration > 0) {
         addToHistory(
           `short-${title}`,
           title,
           currentUrl,
           currentEpIndex,
-          'modu',
+          source || 'juliang',
           video.currentTime,
           video.duration,
           poster,
@@ -304,7 +307,7 @@ export default function ShortPlayerClient() {
       video.removeEventListener('loadeddata', onLoadedData);
       video.removeEventListener('ended', onEnded);
     };
-  }, [currentUrl, currentEpIndex, episodes, title, poster, addToHistory, showToast]);
+  }, [currentUrl, currentEpIndex, episodes, title, poster, source, addToHistory, showToast]);
 
   // 切集函数
   const switchEpisode = useCallback(

@@ -155,6 +155,7 @@ function ShortContent({ topCustomRails }: ShortClientProps) {
     query.set('title', item.title);
     if (item.firstPlayUrl || item.playUrl) query.set('url', item.firstPlayUrl || item.playUrl);
     if (item.poster) query.set('poster', item.poster);
+    query.set('source', item.sourceId || 'juliang');
     query.set('ep', '1');
     router.push(`/short/player?${query.toString()}`);
   };

@@ -100,15 +100,18 @@ export async function GET(req: NextRequest) {
 
   for (const source of candidateSources) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    const timeoutMs = source.id === 'juliang' ? 6000 : 3500;
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      let url = `${source.baseUrl}${source.apiPath}?ac=detail&wd=${encodeURIComponent(query)}&pg=${page}`;
+      const cleanBase = source.baseUrl.replace(/\/+$/, '');
+      const cleanPath = source.apiPath.replace(/\/+$/, '');
+      let url = `${cleanBase}${cleanPath}/?ac=detail&wd=${encodeURIComponent(query)}&pg=${page}`;
       let res = await fetch(url, {
         signal: controller.signal,
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          Accept: 'application/json',
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+          Accept: 'application/json, text/plain, */*',
         },
       });
 
@@ -120,12 +123,12 @@ export async function GET(req: NextRequest) {
       // 若整句未查到且 query 包含标点/副标题，尝试取主标题词二次检索
       const subTitle = query.split(/[,，、:：\s\-—_]/)[0]?.trim();
       if ((!data || !Array.isArray(data.list) || data.list.length === 0) && subTitle && subTitle.length >= 2 && subTitle !== query) {
-        url = `${source.baseUrl}${source.apiPath}?ac=detail&wd=${encodeURIComponent(subTitle)}&pg=${page}`;
+        url = `${cleanBase}${cleanPath}/?ac=detail&wd=${encodeURIComponent(subTitle)}&pg=${page}`;
         res = await fetch(url, {
           signal: controller.signal,
           headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            Accept: 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+            Accept: 'application/json, text/plain, */*',
           },
         });
         if (res.ok) {

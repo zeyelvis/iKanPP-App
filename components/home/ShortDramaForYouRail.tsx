@@ -25,6 +25,7 @@ export function ShortDramaForYouRail() {
     if (playUrl) query.set('url', playUrl);
     if (drama.poster) query.set('poster', drama.poster);
     if (drama.id) query.set('id', String(drama.id));
+    query.set('source', drama.sourceId || 'juliang');
     router.push(`/short/player?${query.toString()}`);
   };
 

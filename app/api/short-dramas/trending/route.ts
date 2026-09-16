@@ -17,7 +17,8 @@ export async function GET() {
 
   for (const source of primarySources) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    const timeoutMs = source.id === 'juliang' ? 6000 : 3500;
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
       // 聚合短剧最新榜单
@@ -26,12 +27,14 @@ export async function GET() {
         : Array.isArray(source.categories.all)
         ? source.categories.all[0]
         : 38;
-      const url = `${source.baseUrl}${source.apiPath}?ac=detail&t=${allCatId}&pg=1`;
+      const cleanBase = source.baseUrl.replace(/\/+$/, '');
+      const cleanPath = source.apiPath.replace(/\/+$/, '');
+      const url = `${cleanBase}${cleanPath}/?ac=detail&t=${allCatId}&pg=1`;
       const res = await fetch(url, {
         signal: controller.signal,
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          Accept: 'application/json',
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+          Accept: 'application/json, text/plain, */*',
         },
       });
       clearTimeout(timer);
@@ -66,6 +69,8 @@ export async function GET() {
           year: item.vod_year || '2026',
           remarks: displayRemarks,
           totalEpisodes,
+          sourceId: source.id,
+          sourceName: source.name,
           playUrl,
           episodes,
           firstPlayUrl: episodes[0]?.url || '',
