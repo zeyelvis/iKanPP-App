@@ -17,9 +17,10 @@ function escapeXml(str: string): string {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { page: string } }
+  context: { params: Promise<{ page: string }> }
 ) {
-  const pageParam = (params?.page || '1').replace(/\.xml$/i, '');
+  const { page: rawPage } = await context.params;
+  const pageParam = (rawPage || '1').replace(/\.xml$/i, '');
   const page = Math.max(1, parseInt(pageParam, 10) || 1);
 
   const catalog = await getSitemapCatalog();
