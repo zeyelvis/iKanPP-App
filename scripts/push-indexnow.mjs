@@ -15,21 +15,51 @@ const SEARCH_ENGINES = [
 ];
 
 async function run() {
-  console.log('📡 [IndexNow] 正在从线上提取最新的 sitemap.xml...');
+  console.log('📡 [IndexNow] 正在从线上提取最新的 sitemap-index.xml 及所有分卷...');
   try {
-    const sitemapUrl = `${BASE_URL}/sitemap.xml`;
-    const res = await fetch(sitemapUrl, {
-      headers: { 'User-Agent': 'iKanPP-AutoIndexer/1.0' }
-    });
+    const sitemapIndexUrl = `${BASE_URL}/sitemap-index.xml`;
+    let subSitemaps = [];
+
+    try {
+      const idxRes = await fetch(sitemapIndexUrl, {
+        headers: { 'User-Agent': 'iKanPP-AutoIndexer/1.0' }
+      });
+      if (idxRes.ok) {
+        const idxXml = await idxRes.text();
+        const matches = idxXml.matchAll(/<loc>([^<]+)<\/loc>/gi);
+        for (const m of matches) {
+          if (m[1]) subSitemaps.push(m[1].trim());
+        }
+      }
+    } catch (e) {
+      console.warn('⚠️ [IndexNow] 提取 sitemap-index.xml 失败，回退到普通 sitemap.xml:', e.message);
+    }
+
+    if (subSitemaps.length === 0) {
+      subSitemaps = [`${BASE_URL}/sitemap.xml`];
+    }
+
+    console.log(`📋 [IndexNow] 发现 ${subSitemaps.length} 个 Sitemap 分卷，正在并发提取 URL...`);
 
     let urls = [];
-    if (res.ok) {
-      const xml = await res.text();
-      const locMatches = xml.matchAll(/<loc>([^<]+)<\/loc>/gi);
-      for (const match of locMatches) {
-        if (match[1]) urls.push(match[1].trim());
-      }
-    }
+    await Promise.all(
+      subSitemaps.map(async (smUrl) => {
+        try {
+          const res = await fetch(smUrl, {
+            headers: { 'User-Agent': 'iKanPP-AutoIndexer/1.0' }
+          });
+          if (res.ok) {
+            const xml = await res.text();
+            const locMatches = xml.matchAll(/<loc>([^<]+)<\/loc>/gi);
+            for (const match of locMatches) {
+              if (match[1]) urls.push(match[1].trim());
+            }
+          }
+        } catch (err) {
+          console.warn(`⚠️ [IndexNow] 抓取分卷 ${smUrl} 失败:`, err.message);
+        }
+      })
+    );
 
     if (urls.length === 0) {
       urls = [
@@ -44,7 +74,8 @@ async function run() {
       ];
     }
 
-    const urlList = Array.from(new Set(urls)).slice(0, 1000);
+    // IndexNow 每次请求最高支持 10,000 个 URL
+    const urlList = Array.from(new Set(urls)).slice(0, 10000);
     console.log(`🎯 [IndexNow] 成功提取 ${urlList.length} 个页面 URL，准备向各大搜索引擎自动推送...`);
 
     const payload = {
