@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DOCUMENTARY_DATASET } from '@/lib/data/documentary-data';
+import { queryEntities } from '@/lib/services/entity-kv';
 
 export const runtime = 'edge';
 
@@ -80,6 +81,9 @@ const GUANGSU_TYPE_MAP: Record<string, string> = {
 
   // 纪录片
   'documentary_default': '24',
+
+  // 短剧
+  'short_default': '13,14,15,16,21,22,23',
 };
 
 // 极速资源分类映射
@@ -230,19 +234,217 @@ function normalizeVodItem(item: any) {
   };
 }
 
+/**
+ * 语言匹配辅助函数
+ */
+function matchesLang(item: any, lang: string): boolean {
+  if (!lang || lang === '全部') return true;
+  const itemLang = (item.vod_lang || '').toLowerCase();
+  const remarks = (item.vod_remarks || '').toLowerCase();
+  const target = lang.toLowerCase();
+
+  if (target === '国语') {
+    return itemLang.includes('国语') || itemLang.includes('普通话') || itemLang.includes('汉语') || remarks.includes('国语');
+  }
+  if (target === '粤语') {
+    return itemLang.includes('粤语') || remarks.includes('粤语') || itemLang.includes('广东话');
+  }
+  if (target === '英语') {
+    return itemLang.includes('英') || itemLang.includes('english');
+  }
+  if (target === '韩语') {
+    return itemLang.includes('韩') || itemLang.includes('korean');
+  }
+  if (target === '日语') {
+    return itemLang.includes('日') || itemLang.includes('japanese');
+  }
+  if (target === '西班牙语') {
+    return itemLang.includes('西班牙') || itemLang.includes('spanish');
+  }
+  if (target === '法语') {
+    return itemLang.includes('法') || itemLang.includes('french');
+  }
+  if (target === '德语') {
+    return itemLang.includes('德') || itemLang.includes('german');
+  }
+  if (target === '意大利语') {
+    return itemLang.includes('意') || itemLang.includes('italian');
+  }
+  if (target === '泰国语' || target === '泰语') {
+    return itemLang.includes('泰') || itemLang.includes('thai');
+  }
+  if (target === '其它' || target === '其他') {
+    const knownLangs = ['国语', '普通话', '汉语', '粤语', '英语', '韩语', '日语', '西班牙', '法', '德', '意', '泰'];
+    return !knownLangs.some(l => itemLang.includes(l));
+  }
+
+  return itemLang.includes(target);
+}
+
+/**
+ * 画质匹配辅助函数
+ */
+function matchesQuality(item: any, quality: string): boolean {
+  if (!quality || quality === '全部') return true;
+  const remarks = (item.vod_remarks || '').toUpperCase();
+  const name = (item.vod_name || '').toUpperCase();
+  const combined = `${remarks} ${name}`;
+
+  if (quality === '4K') {
+    return combined.includes('4K') || combined.includes('2160P') || combined.includes('2160');
+  }
+  if (quality === '1080P') {
+    return combined.includes('1080') || combined.includes('HD') || combined.includes('超清') || combined.includes('蓝光') || combined.includes('BD');
+  }
+  if (quality === '900P') {
+    return combined.includes('900') || combined.includes('HD');
+  }
+  if (quality === '720P') {
+    return combined.includes('720') || combined.includes('高清');
+  }
+
+  return combined.includes(quality.toUpperCase());
+}
+
+/**
+ * 状态匹配辅助函数
+ */
+function matchesStatus(item: any, status: string): boolean {
+  if (!status || status === '全部') return true;
+  const remarks = (item.vod_remarks || '');
+
+  if (status === '全集' || status === '完结') {
+    return remarks.includes('完结') || remarks.includes('全集') || remarks.includes('全') || /\d+集全/.test(remarks) || remarks.toUpperCase().includes('HD');
+  }
+  if (status === '连载中' || status === '更新中') {
+    return remarks.includes('更') || remarks.includes('连载') || /第\d+集/.test(remarks) || /更新至/.test(remarks);
+  }
+
+  return true;
+}
+
+/**
+ * 年份匹配辅助函数
+ */
+function matchesYear(item: any, yearStr: string): boolean {
+  if (!yearStr || yearStr === '全部' || yearStr === '经典高分') return true;
+  const itemYear = parseInt(item.vod_year || '0', 10);
+  const currentYear = new Date().getFullYear(); // e.g. 2025/2026
+
+  if (yearStr === '今年') {
+    return itemYear >= currentYear - 1;
+  }
+  if (yearStr === '去年') {
+    return itemYear === currentYear - 1 || itemYear === currentYear - 2;
+  }
+  if (yearStr === '更早') {
+    return itemYear > 0 && itemYear < currentYear - 2 && itemYear >= 2000;
+  }
+  if (yearStr === '90年代') {
+    return itemYear >= 1990 && itemYear <= 1999;
+  }
+  if (yearStr === '80年代') {
+    return itemYear >= 1980 && itemYear <= 1989;
+  }
+  if (yearStr === '怀旧') {
+    return itemYear > 0 && itemYear < 1980;
+  }
+
+  // 精确匹配具体年份（如 2026, 2025, 2024 等）
+  if (item.vod_year) {
+    return String(item.vod_year).includes(yearStr);
+  }
+
+  return true;
+}
+
+// 板块映射表
+const CHANNEL_MAP: Record<string, string> = {
+  '全部': 'movie',
+  'all': 'movie',
+  '电影': 'movie',
+  'movie': 'movie',
+  '电视剧': 'tv',
+  'tv': 'tv',
+  '综艺': 'variety',
+  'variety': 'variety',
+  '动漫': 'anime',
+  'anime': 'anime',
+  '纪录片': 'documentary',
+  'documentary': 'documentary',
+  '短剧': 'short',
+  'short': 'short',
+  'short-drama': 'short',
+};
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const type = (searchParams.get('type') || 'movie').toLowerCase();
+  const rawType = (searchParams.get('type') || 'movie').toLowerCase();
+  const type = CHANNEL_MAP[rawType] || rawType || 'movie';
   const genre = searchParams.get('genre') || '';
   const area = searchParams.get('area') || searchParams.get('region') || '';
   const year = searchParams.get('year') || '';
-  const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
-  const limit = Math.min(48, Math.max(12, parseInt(searchParams.get('limit') || '24', 10)));
-
+  const lang = searchParams.get('lang') || '';
+  const quality = searchParams.get('quality') || '';
+  const status = searchParams.get('status') || '';
   const sort = searchParams.get('sort') || '';
+  const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+  const limit = Math.min(48, Math.max(12, parseInt(searchParams.get('limit') || '36', 10)));
+
   const isRankSort = sort === 'rank' || sort === 'rating' || genre === '豆瓣高分';
+  const isTimeSort = sort === 'time' || sort === 'time_added' || sort === 'time_updated';
+  const isHitsSort = sort === 'popularity' || sort === 'hits';
   const cleanGenre = (genre === '最新' || genre === '豆瓣高分' || genre === '热门' || genre === '全部') ? '' : genre;
 
+  // ── 1. 优先从 Cloudflare KV 自有结构化实体片库中查询 ───────────────────
+  try {
+    const kvResult = await queryEntities({
+      channel: type,
+      genre: cleanGenre,
+      region: (area && area !== '全部') ? area : undefined,
+      year: (year && year !== '全部') ? year : undefined,
+      language: (lang && lang !== '全部') ? lang : undefined,
+      status: (status && status !== '全部') ? status : undefined,
+      sort: isRankSort ? 'rating' : (isHitsSort ? 'popularity' : 'time'),
+      page,
+      limit,
+    });
+
+    if (kvResult && kvResult.total > 0) {
+      const list = kvResult.items.map(entity => ({
+        id: entity.entityId,
+        title: entity.title,
+        cover: entity.cover,
+        rate: entity.rate || '8.8',
+        year: entity.year || '2026',
+        types: entity.genres || [],
+        remarks: entity.status || (entity.numberOfEpisodes ? `${entity.numberOfEpisodes}集全` : '全高清'),
+        area: entity.region || '华语',
+        updatedAt: (entity.updatedAt || entity.createdAt || '').split('T')[0],
+        url: `/title/${encodeURIComponent(entity.slug || entity.title)}`,
+      }));
+
+      return NextResponse.json(
+        {
+          code: 200,
+          page: kvResult.page,
+          pagecount: kvResult.pageCount,
+          total: kvResult.total,
+          limit: kvResult.limit,
+          list,
+        },
+        {
+          headers: {
+            'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=3600',
+          },
+        }
+      );
+    }
+  } catch (kvErr) {
+    console.warn('[browse/route.ts] KV query fallback to collector API:', kvErr);
+  }
+
+  // ── 2. 降级备用：第三方采集站实时代理（双保险兜底）──────────────────────
   // 解析光速和极速各自的 type_id
   const gsTypeId = resolveTypeId('guangsu', type, cleanGenre, area);
   const jsTypeId = resolveTypeId('jisu', type, cleanGenre, area);
@@ -291,11 +493,9 @@ export async function GET(req: NextRequest) {
     if (seenTitles.has(cleanTitle)) continue;
     seenTitles.add(cleanTitle);
 
-    // 内存过滤年份（如果用户指定）
-    if (year && year !== '全部' && year !== '经典高分') {
-      if (item.vod_year && !item.vod_year.includes(year)) {
-        continue;
-      }
+    // 内存过滤年份
+    if (!matchesYear(item, year)) {
+      continue;
     }
 
     // 内存过滤地区（在无法由 type_id 覆盖的场景下补充过滤）
@@ -305,18 +505,47 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    // 内存过滤语言
+    if (!matchesLang(item, lang)) {
+      continue;
+    }
+
+    // 内存过滤画质
+    if (!matchesQuality(item, quality)) {
+      continue;
+    }
+
+    // 内存过滤状态（全集 / 连载中）
+    if (!matchesStatus(item, status)) {
+      continue;
+    }
+
     normalizedList.push(normalizeVodItem(item));
   }
 
-  // 若用户指定高分排序，优先按评分降序排列
+  // 排序处理
   if (isRankSort) {
     normalizedList.sort((a, b) => parseFloat(b.rate || '0') - parseFloat(a.rate || '0'));
+  } else if (isTimeSort) {
+    normalizedList.sort((a, b) => {
+      const timeA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+      const timeB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+      return timeB - timeA;
+    });
+  } else if (isHitsSort) {
+    normalizedList.sort((a, b) => (parseFloat(b.rate || '0') * 10 + (b.year ? parseInt(b.year, 10) : 0)) - (parseFloat(a.rate || '0') * 10 + (a.year ? parseInt(a.year, 10) : 0)));
   }
 
-  // 计算分页指标
+  // 计算分页指标（真实反映源站与筛选后的条目数量）
   const primaryData = gsData?.total ? gsData : jsData;
-  const total = Number(primaryData?.total) || normalizedList.length;
-  const pagecount = Number(primaryData?.pagecount) || Math.ceil(total / limit) || 1;
+  const isFiltered = Boolean((year && year !== '全部') || (lang && lang !== '全部') || (quality && quality !== '全部') || (status && status !== '全部'));
+
+  // 未加细筛选时，直接透传源站该专区真实总数；加细筛选时如实统计匹配结果
+  let total = Number(primaryData?.total) || normalizedList.length;
+  if (isFiltered) {
+    total = normalizedList.length;
+  }
+  const pagecount = isFiltered ? Math.max(1, Math.ceil(total / limit)) : (Number(primaryData?.pagecount) || Math.max(1, Math.ceil(total / limit)));
 
   // 切割到指定页大小
   const pagedList = normalizedList.slice(0, limit);
@@ -337,3 +566,4 @@ export async function GET(req: NextRequest) {
     }
   );
 }
+

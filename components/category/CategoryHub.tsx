@@ -14,6 +14,7 @@ import { getPrebakedCategoryShelves, PREBAKED_CATEGORY_ITEMS } from '@/lib/data/
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 import { HeroSlideshow } from '@/components/home/TmdbSlideshow';
 import type { PrebakedSubject, TrendingNavItem } from '@/lib/data/home-prebaked';
+import { UniversalFilterMatrix, FilterParams } from '@/components/category/UniversalFilterMatrix';
 
 // 🚀 八层极速秒开架构：次级侧边栏组件按需加载
 const FavoritesSidebar = dynamic(
@@ -56,9 +57,9 @@ export interface CategoryHubProps {
   categorySubtitle: string;
   doubanType: 'movie' | 'tv';
   activeNav: string;
-  genres: FilterOption[];
-  regions: FilterOption[];
-  years: FilterOption[];
+  genres?: FilterOption[];
+  regions?: FilterOption[];
+  years?: FilterOption[];
   shelves: ShelfConfig[];
   defaultTag?: string;
   usePrebakedOnly?: boolean;
@@ -73,9 +74,9 @@ export function CategoryHub({
   categorySubtitle,
   doubanType,
   activeNav,
-  genres,
-  regions,
-  years,
+  genres = [],
+  regions = [],
+  years = [],
   shelves,
   defaultTag = '热门',
   usePrebakedOnly = false,
@@ -87,27 +88,17 @@ export function CategoryHub({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // 从 URL 初始化筛选状态
-  const initialGenre = searchParams.get('genre') || '';
-  const initialRegion = searchParams.get('region') || '';
-  const initialYear = searchParams.get('year') || '';
-
-  // 筛选器状态
-  const [selectedGenre, setSelectedGenre] = useState<string>(initialGenre);
-  const [selectedRegion, setSelectedRegion] = useState<string>(initialRegion);
-  const [selectedYear, setSelectedYear] = useState<string>(initialYear);
-  const [selectedSort, setSelectedSort] = useState<'recommend' | 'time' | 'rank'>('recommend');
-
-  // URL 参数同步
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (selectedGenre) params.set('genre', selectedGenre);
-    if (selectedRegion) params.set('region', selectedRegion);
-    if (selectedYear) params.set('year', selectedYear);
-    const qs = params.toString();
-    const newUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
-    window.history.replaceState(null, '', newUrl);
-  }, [selectedGenre, selectedRegion, selectedYear]);
+  // 统一多维检索矩阵状态（覆盖板块/地区/语言/年份/画质/状态/排序）
+  const [filters, setFilters] = useState<FilterParams>({
+    channel: activeNav || 'movie',
+    region: searchParams.get('region') || '',
+    lang: searchParams.get('lang') || '',
+    year: searchParams.get('year') || '',
+    quality: searchParams.get('quality') || '',
+    status: searchParams.get('status') || '',
+    sort: 'time_added',
+  });
+  const [totalCount, setTotalCount] = useState<number>(0);
 
 // ── SWR 频道大厅本地瞬间缓存 ──────────────────────────
 const CATHUB_CACHE_KEY = 'kvideo-cathub-v6-';
@@ -302,43 +293,33 @@ function isSameList(a: any[], b: any[]): boolean {
     };
   }, [shelves, doubanType, activeNav]);
 
-  // 计算当前有效综合搜索 Tag
-  const activeSearchTag = useMemo(() => {
-    if (selectedGenre && selectedRegion) return `${selectedGenre} ${selectedRegion}`;
-    if (selectedGenre) return selectedGenre;
-    if (selectedRegion) return selectedRegion;
-    if (selectedYear) return selectedYear;
-    return defaultTag;
-  }, [selectedGenre, selectedRegion, selectedYear, defaultTag]);
-
-  // 加载全库网格数据（支持多维 1~3 个条件交叉组合）
+  // 加载全库网格数据（支持全站统一 7 行多维条件检索）
   const loadGridPage = useCallback(
-    async (pageNum: number) => {
+    async (pageNum: number, overrideFilters?: FilterParams) => {
       setLoadingGrid(true);
       try {
+        const activeFilters = overrideFilters || filters;
+
         if (usePrebakedOnly) {
-          // 纯预烘焙频道（短剧）：直接使用本地精选池进行内存过滤与分页呈现
+          // 纯预烘焙频道：直接使用本地精选池进行内存过滤与分页呈现
           const pool = PREBAKED_CATEGORY_ITEMS[activeNav] || PREBAKED_CATEGORY_ITEMS.short || [];
           let filtered = [...pool];
-          if (selectedGenre) {
-            filtered = filtered.filter(item => item.types?.some(t => t.includes(selectedGenre)));
-          }
-          if (selectedYear) {
-            filtered = filtered.filter(item => item.year === selectedYear);
+          if (activeFilters.year) {
+            filtered = filtered.filter((item) => item.year === activeFilters.year);
           }
           const pageStart = pageNum * PAGE_SIZE;
           const subjects = filtered.slice(pageStart, pageStart + PAGE_SIZE);
           setGridMovies(subjects);
           setHasMore(pageStart + PAGE_SIZE < filtered.length);
+          setTotalCount(filtered.length);
           setPage(pageNum);
           return;
         }
 
-        if (shortDramaMode && !usePrebakedOnly) {
-          const currentCategory = selectedGenre || 'all';
+        if (shortDramaMode && !usePrebakedOnly && (activeFilters.channel === 'short' || activeNav === 'short')) {
           const targetPage = pageNum + 1;
           const res = await fetch(
-            `/api/short-dramas/browse?category=${encodeURIComponent(currentCategory)}&page=${targetPage}&limit=${PAGE_SIZE}`
+            `/api/short-dramas/browse?category=all&page=${targetPage}&limit=${PAGE_SIZE}`
           );
           if (!res.ok) {
             setGridMovies([]);
@@ -359,21 +340,29 @@ function isSameList(a: any[], b: any[]): boolean {
           }));
           setGridMovies(subjects);
           setHasMore(data.page < data.pagecount && subjects.length > 0);
+          setTotalCount(Number(data.total) || 62000);
           setPage(pageNum);
           return;
         }
 
-        // 采集站全库实时网格浏览（覆盖电影/电视剧/动漫/综艺/纪录片，双源秒开容灾）
-        const browseType = NAV_TO_BROWSE_TYPE[activeNav] || doubanType;
+        // 采集站全库实时网格浏览（覆盖全部板块/地区/语言/年份/画质/状态/排序）
+        const targetChannel = activeFilters.channel || activeNav;
+        const browseType =
+          targetChannel === 'all'
+            ? NAV_TO_BROWSE_TYPE[activeNav] || 'movie'
+            : NAV_TO_BROWSE_TYPE[targetChannel] || targetChannel || doubanType;
+
         const targetPage = pageNum + 1;
         const params = new URLSearchParams();
         params.set('type', browseType);
         params.set('page', String(targetPage));
         params.set('limit', String(PAGE_SIZE));
-        if (selectedGenre) params.set('genre', selectedGenre);
-        if (selectedRegion) params.set('area', selectedRegion);
-        if (selectedYear) params.set('year', selectedYear);
-        if (selectedSort) params.set('sort', selectedSort);
+        if (activeFilters.region) params.set('area', activeFilters.region);
+        if (activeFilters.lang) params.set('lang', activeFilters.lang);
+        if (activeFilters.year) params.set('year', activeFilters.year);
+        if (activeFilters.quality) params.set('quality', activeFilters.quality);
+        if (activeFilters.status) params.set('status', activeFilters.status);
+        if (activeFilters.sort) params.set('sort', activeFilters.sort);
 
         const res = await fetch(`/api/library/browse?${params.toString()}`);
         if (!res.ok) {
@@ -386,6 +375,9 @@ function isSameList(a: any[], b: any[]): boolean {
 
         setGridMovies(subjects);
         setHasMore(data.page < data.pagecount && subjects.length > 0);
+        if (data.total !== undefined) {
+          setTotalCount(Number(data.total) || subjects.length);
+        }
         setPage(pageNum);
       } catch (err) {
         console.error('Fetch grid error:', err);
@@ -394,10 +386,19 @@ function isSameList(a: any[], b: any[]): boolean {
         setLoadingGrid(false);
       }
     },
-    [selectedGenre, selectedRegion, selectedYear, selectedSort, doubanType, usePrebakedOnly, activeNav, shortDramaMode]
+    [filters, doubanType, usePrebakedOnly, activeNav, shortDramaMode]
   );
 
-  // 筛选器变化时重置回第 0 页
+  // 统一筛选矩阵变动回调
+  const handleUniversalFilterChange = useCallback(
+    (newFilters: FilterParams) => {
+      setFilters(newFilters);
+      loadGridPage(0, newFilters);
+    },
+    [loadGridPage]
+  );
+
+  // 初始化首次加载
   useEffect(() => {
     loadGridPage(0);
   }, [loadGridPage]);
@@ -537,8 +538,12 @@ function isSameList(a: any[], b: any[]): boolean {
                 loading={loadingShelves}
                 onMovieClick={handleMovieClick}
                 onViewAll={() => {
-                  setSelectedGenre(shelf.tag);
-                  window.scrollTo({ top: 800, behavior: 'smooth' });
+                  const element = document.getElementById('cathub-universal-filter');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    window.scrollTo({ top: 750, behavior: 'smooth' });
+                  }
                 }}
               />
             );
@@ -552,171 +557,15 @@ function isSameList(a: any[], b: any[]): boolean {
           })}
         </div>
 
-        {/* 3. 多维综合分类筛选矩阵 */}
-        <div className="bg-[#0A0A0F]/90 backdrop-blur-2xl border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-2xl space-y-4 sm:space-y-5">
-          <div className="flex items-center justify-between border-b border-white/10 pb-4">
-            <div className="flex items-center gap-2.5">
-              <span className="text-2xl">🎛️</span>
-              <div>
-                <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-                  {categoryTitle} · 全库多维检索
-                </h2>
-                <p className="text-xs text-white/40">{categorySubtitle}</p>
-              </div>
-            </div>
-            {(selectedGenre || selectedRegion || selectedYear) && (
-              <button
-                onClick={() => {
-                  setSelectedGenre('');
-                  setSelectedRegion('');
-                  setSelectedYear('');
-                }}
-                className="text-xs text-(--accent-color) hover:underline flex items-center gap-1 font-semibold cursor-pointer"
-              >
-                <Icons.RefreshCw size={12} />
-                重置筛选
-              </button>
-            )}
-          </div>
-
-          {/* 题材类型 */}
-          {genres.length > 0 && (
-            <div className="flex items-start gap-3 text-xs">
-              <span className="text-white/40 font-bold shrink-0 pt-1.5 w-12">类型：</span>
-              <div className="flex flex-wrap gap-1.5">
-                <button
-                  onClick={() => setSelectedGenre('')}
-                  className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
-                    selectedGenre === ''
-                      ? 'bg-(--accent-color) text-white font-bold shadow-md'
-                      : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  全部
-                </button>
-                {genres.map((g) => (
-                  <button
-                    key={g.value}
-                    onClick={() => setSelectedGenre(g.value)}
-                    className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
-                      selectedGenre === g.value
-                        ? 'bg-(--accent-color) text-white font-bold shadow-md'
-                        : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    {g.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* 地区 */}
-          {regions.length > 0 && (
-            <div className="flex items-start gap-3 text-xs">
-              <span className="text-white/40 font-bold shrink-0 pt-1.5 w-12">地区：</span>
-              <div className="flex flex-wrap gap-1.5">
-                <button
-                  onClick={() => setSelectedRegion('')}
-                  className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
-                    selectedRegion === ''
-                      ? 'bg-(--accent-color) text-white font-bold shadow-md'
-                      : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  全部
-                </button>
-                {regions.map((r) => (
-                  <button
-                    key={r.value}
-                    onClick={() => setSelectedRegion(r.value)}
-                    className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
-                      selectedRegion === r.value
-                        ? 'bg-(--accent-color) text-white font-bold shadow-md'
-                        : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    {r.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* 年份 */}
-          {years.length > 0 && (
-            <div className="flex items-start gap-3 text-xs">
-              <span className="text-white/40 font-bold shrink-0 pt-1.5 w-12">年份：</span>
-              <div className="flex flex-wrap gap-1.5">
-                <button
-                  onClick={() => setSelectedYear('')}
-                  className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
-                    selectedYear === ''
-                      ? 'bg-(--accent-color) text-white font-bold shadow-md'
-                      : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  全部
-                </button>
-                {years.map((y) => (
-                  <button
-                    key={y.value}
-                    onClick={() => setSelectedYear(y.value)}
-                    className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
-                      selectedYear === y.value
-                        ? 'bg-(--accent-color) text-white font-bold shadow-md'
-                        : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    {y.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* 排序方式 */}
-          <div className="flex items-start gap-3 text-xs pt-1 border-t border-white/5">
-            <span className="text-white/40 font-bold shrink-0 pt-1.5 w-12">排序：</span>
-            <div className="flex flex-wrap gap-1.5">
-              <button
-                onClick={() => setSelectedSort('recommend')}
-                className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
-                  selectedSort === 'recommend'
-                    ? 'bg-amber-500 text-black font-black shadow-md'
-                    : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                🔥 综合热度
-              </button>
-              <button
-                onClick={() => {
-                  setSelectedSort('time');
-                  if (!selectedGenre) setSelectedGenre('最新');
-                }}
-                className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
-                  selectedSort === 'time'
-                    ? 'bg-amber-500 text-black font-black shadow-md'
-                    : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                ✨ 最新上映
-              </button>
-              <button
-                onClick={() => {
-                  setSelectedSort('rank');
-                  if (!selectedGenre) setSelectedGenre('豆瓣高分');
-                }}
-                className={`px-3 py-1 rounded-xl font-medium transition-all cursor-pointer ${
-                  selectedSort === 'rank'
-                    ? 'bg-amber-500 text-black font-black shadow-md'
-                    : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                ⭐ 豆瓣高分
-              </button>
-            </div>
-          </div>
+        {/* 3. 爱壹帆工业级全库统一多维检索矩阵 */}
+        <div id="cathub-universal-filter" className="below-fold-section scroll-mt-24">
+          <UniversalFilterMatrix
+            defaultChannel={activeNav}
+            totalCount={totalCount}
+            loading={loadingGrid}
+            onFilterChange={handleUniversalFilterChange}
+            channelTitle={categoryTitle}
+          />
         </div>
 
         {/* 4. 全库海报瀑布流网格 */}

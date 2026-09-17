@@ -4,6 +4,7 @@ export interface ShortDramaSource {
   id: string;
   name: string;
   baseUrl: string;
+  fallbackBaseUrl?: string; // 容灾镜像线路（如海豚资源）
   apiPath: string;
   priority: number;
   categories: Record<string, number | number[]>;
@@ -140,6 +141,65 @@ export const SHORT_DRAMA_SOURCES: ShortDramaSource[] = [
       shuangju: 50,
       naodong: 52,
       ai: 54,
+    },
+  },
+  {
+    id: 'hongniu',
+    name: '红牛短剧专线',
+    baseUrl: 'https://www.hongniuzy2.com',
+    fallbackBaseUrl: 'https://hhzyapi.com', // 海豚资源 100% 镜像容灾备份（分类ID偏移 +2）
+    apiPath: '/api.php/provide/vod',
+    priority: 6,
+    isEpisodic: true,
+    categories: {
+      all: [43, 44, 45, 46, 47, 48, 49, 51],
+      guzhuang: 43,
+      dushi: 44,
+      chuanyue: 45,
+      yanqing: 46,
+      chongsheng: 47,
+      shuangju: 48,
+      naodong: 49,
+      ai: 51,
+    },
+  },
+  {
+    id: 'feifan',
+    name: '非凡短剧专线',
+    baseUrl: 'https://api.ffzyapi.com',
+    apiPath: '/api.php/provide/vod',
+    priority: 7,
+    isEpisodic: true,
+    categories: {
+      all: 36,
+    },
+    categoryKeywords: {
+      shuangju: '逆袭',
+      yanqing: '总裁',
+      dushi: '都市',
+      guzhuang: '古装',
+      chuanyue: '穿越',
+      chongsheng: '重生',
+      naodong: '悬疑',
+    },
+  },
+  {
+    id: 'baofeng',
+    name: '暴风短剧专线',
+    baseUrl: 'https://bfzyapi.com',
+    apiPath: '/api.php/provide/vod',
+    priority: 8,
+    isEpisodic: true,
+    categories: {
+      all: 58,
+      guzhuang: 72,
+      dushi: 71,
+      chuanyue: 66,
+      yanqing: 69,
+      chongsheng: 65,
+      shuangju: 68,
+      naodong: 67,
+      ai: 74,
     },
   },
 ];

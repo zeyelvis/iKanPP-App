@@ -43,8 +43,13 @@ function getCloudflareKV(): any | null {
   return null;
 }
 
+const CF_KV_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a';
+const CF_KV_NAMESPACE_ID = process.env.CLOUDFLARE_NAMESPACE_ID || '42311924427747deaf00981d99d58998';
+const CF_KV_API_KEY = process.env.CLOUDFLARE_API_KEY || process.env.CF_API_KEY || 'cfk_L8MzQDjTswTK4jBtvJjmcKjEnxTQ1dKNhzNyn4dQa33221aa';
+const CF_KV_EMAIL = process.env.CLOUDFLARE_EMAIL || process.env.CF_EMAIL || 'zeyelvis@gmail.com';
+
 /**
- * 读取 KV 中的原始字符串
+ * 读取 KV 中的原始字符串（优先原生 Cloudflare Binding，本地环境透明走 REST API + 内存缓存）
  */
 async function kvGet(key: string): Promise<string | null> {
   const kv = getCloudflareKV();
@@ -54,6 +59,29 @@ async function kvGet(key: string): Promise<string | null> {
       if (val !== null && val !== undefined) return val;
     } catch (e) {
       console.warn(`[KV get] error for key ${key}:`, e);
+    }
+  }
+
+  // 本地开发或非 Worker 环境：透明通过 Cloudflare REST API 直连并写入内存缓存
+  if (!kv && typeof fetch === 'function' && CF_KV_API_KEY && CF_KV_EMAIL) {
+    if (memoryStore.has(key)) {
+      return memoryStore.get(key) || null;
+    }
+    try {
+      const url = `https://api.cloudflare.com/client/v4/accounts/${CF_KV_ACCOUNT_ID}/storage/kv/namespaces/${CF_KV_NAMESPACE_ID}/values/${encodeURIComponent(key)}`;
+      const res = await fetch(url, {
+        headers: {
+          'X-Auth-Email': CF_KV_EMAIL,
+          'X-Auth-Key': CF_KV_API_KEY,
+        },
+      });
+      if (res.ok) {
+        const val = await res.text();
+        memoryStore.set(key, val);
+        return val;
+      }
+    } catch (err) {
+      // 网络离线或超时静默回退
     }
   }
 
@@ -255,7 +283,41 @@ export async function saveEntity(entity: TitleEntity): Promise<void> {
     }
   }
 
-  // 9. 原子维护最近入库有序索引 (recent:all 与 recent:${entity.type})
+  // 9. 追加到专区频道索引 (channel:movie, channel:tv, channel:anime, etc.)
+  if (entity.type) {
+    const ch = entity.type.toLowerCase().trim();
+    await appendToIndex(`channel:${ch}`, id);
+    if (ch === 'short-drama' || ch === 'short') {
+      await appendToIndex('channel:short', id);
+      await appendToIndex('channel:short-drama', id);
+    }
+  }
+
+  // 10. 追加到地区索引 (region:美国, region:泰国, etc.)
+  const regionTokens = getRegionTokens(entity.region);
+  for (const r of regionTokens) {
+    await appendToIndex(`region:${r}`, id);
+  }
+
+  // 11. 追加到年份索引 (year:2026, year:2025, etc.)
+  if (entity.year) {
+    const y = String(entity.year).trim();
+    await appendToIndex(`year:${y}`, id);
+  }
+
+  // 12. 追加到语言索引 (language:国语, language:英语, etc.)
+  const langTokens = getLanguageTokens(entity.language);
+  for (const l of langTokens) {
+    await appendToIndex(`language:${l}`, id);
+  }
+
+  // 13. 追加到连载状态索引 (status:完结, status:连载中, etc.)
+  const statusTokens = getStatusTokens(entity.status);
+  for (const s of statusTokens) {
+    await appendToIndex(`status:${s}`, id);
+  }
+
+  // 14. 原子维护最近入库有序索引 (recent:all 与 recent:${entity.type})
   const recentItem: RecentTitleItem = {
     entityId: id,
     title: entity.title,
@@ -287,6 +349,299 @@ export async function saveEntity(entity: TitleEntity): Promise<void> {
   if (entity.type === 'movie' || entity.type === 'tv') {
     await updateRecentList(`recent:${entity.type}`);
   }
+}
+
+// ── 辅助函数：分词与多维标签提取 ─────────────────────────────────
+
+function getRegionTokens(region?: string): string[] {
+  if (!region) return [];
+  const tokens = new Set<string>();
+  const str = String(region).trim();
+  const lower = str.toLowerCase();
+
+  // 1. 中英文国别与大区映射
+  if (lower.includes('united states') || lower.includes('usa') || lower === 'us' || str.includes('美国')) {
+    tokens.add('美国');
+    tokens.add('欧美');
+  }
+  if (lower.includes('united kingdom') || lower.includes('uk') || str.includes('英国')) {
+    tokens.add('英国');
+    tokens.add('欧美');
+  }
+  if (lower.includes('korea') || str.includes('韩国') || str.includes('韩剧')) {
+    tokens.add('韩国');
+    tokens.add('韩剧');
+    tokens.add('日韩');
+  }
+  if (lower.includes('japan') || str.includes('日本') || str.includes('日剧')) {
+    tokens.add('日本');
+    tokens.add('日剧');
+    tokens.add('日韩');
+  }
+  if (lower.includes('thailand') || str.includes('泰国') || str.includes('泰剧')) {
+    tokens.add('泰国');
+    tokens.add('泰剧');
+    tokens.add('东南亚');
+  }
+  if (lower.includes('hong kong') || str.includes('香港') || str.includes('港剧')) {
+    tokens.add('香港');
+    tokens.add('港台');
+    tokens.add('华语');
+  }
+  if (lower.includes('taiwan') || str.includes('台湾') || str.includes('台剧')) {
+    tokens.add('台湾');
+    tokens.add('港台');
+    tokens.add('华语');
+  }
+  if (lower.includes('china') || str.includes('大陆') || str.includes('内地') || str.includes('国产') || str === '中国') {
+    tokens.add('大陆');
+    tokens.add('中国大陆');
+    tokens.add('华语');
+    tokens.add('国产');
+  }
+  if (lower.includes('france') || str.includes('法国') || lower.includes('germany') || str.includes('德国') || lower.includes('canada') || str.includes('加拿大')) {
+    tokens.add('欧美');
+  }
+
+  // 2. 切分词
+  const rawParts = str.split(/[/,、| \t]+/).map(s => s.trim()).filter(Boolean);
+  for (const part of rawParts) {
+    if (part.length > 1 && !['of', 'the', 'and'].includes(part.toLowerCase())) {
+      tokens.add(part);
+    }
+  }
+
+  return Array.from(tokens);
+}
+
+function getLanguageTokens(lang?: string): string[] {
+  if (!lang) return [];
+  const tokens = new Set<string>();
+  const rawParts = lang.split(/[/,、| \t]+/).map(s => s.trim()).filter(Boolean);
+  for (const part of rawParts) {
+    tokens.add(part);
+    if (part.includes('国语') || part.includes('普通话') || part.includes('汉语') || part.includes('中文')) {
+      tokens.add('国语');
+      tokens.add('普通话');
+      tokens.add('华语');
+    }
+    if (part.includes('粤语') || part.includes('广东话')) {
+      tokens.add('粤语');
+    }
+    if (part.includes('英语') || part.toLowerCase().includes('english')) {
+      tokens.add('英语');
+    }
+    if (part.includes('日语') || part.toLowerCase().includes('japanese')) {
+      tokens.add('日语');
+    }
+    if (part.includes('韩语') || part.toLowerCase().includes('korean')) {
+      tokens.add('韩语');
+    }
+    if (part.includes('泰语') || part.toLowerCase().includes('thai')) {
+      tokens.add('泰语');
+    }
+  }
+  return Array.from(tokens);
+}
+
+function getStatusTokens(status?: string): string[] {
+  const tokens = new Set<string>();
+  const str = `${status || ''}`;
+  if (str.includes('完结') || str.includes('全集') || str.includes('HD') || str.includes('BD') || str.includes('1080P') || str.includes('4K')) {
+    tokens.add('完结');
+  }
+  if (str.includes('连载') || str.includes('更新') || str.includes('第') || str.includes('期')) {
+    tokens.add('连载中');
+    tokens.add('连载');
+  }
+  return Array.from(tokens);
+}
+
+async function appendToIndex(key: string, id: string): Promise<void> {
+  try {
+    const raw = await kvGet(key);
+    let list: string[] = raw ? JSON.parse(raw) : [];
+    if (!list.includes(id)) {
+      list.unshift(id);
+      if (list.length > 10000) list = list.slice(0, 10000);
+      await kvPut(key, JSON.stringify(list));
+    }
+  } catch (err) {
+    console.warn(`[appendToIndex] failed for key ${key}:`, err);
+  }
+}
+
+// ── 多维精准检索接口定义与核心实现 ──────────────────────────────
+
+export interface QueryEntitiesFilters {
+  channel?: string;    // movie | tv | anime | variety | documentary | short
+  genre?: string;      // 科幻 | 动作 | 爱情 ...
+  region?: string;     // 美国 | 大陆 | 香港 | 台湾 | 韩国 | 日本 | 泰国 ...
+  year?: string;       // 2026 | 2025 ...
+  language?: string;   // 国语 | 英语 | 泰语 ...
+  status?: string;     // 完结 | 连载中
+  sort?: 'latest' | 'rating' | 'popularity' | 'hits' | 'time' | 'rank' | string;
+  page?: number;
+  limit?: number;
+}
+
+export interface QueryEntitiesResult {
+  items: TitleEntity[];
+  total: number;
+  page: number;
+  pageCount: number;
+  limit: number;
+}
+
+/**
+ * 多维筛选查询（这是替代第三方采集站 API 代理的核心片库查询引擎）
+ *
+ * 核心原理：
+ * 1. 根据筛选条件读取各分类反向索引集合（KV 键值直出）
+ * 2. 对各条件 ID 列表执行原子交集运算（Set 内存过滤）
+ * 3. 统计真实总数并计算分页
+ * 4. 针对当前页所需数据并行批量装配完整实体
+ */
+export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise<QueryEntitiesResult> {
+  const page = Math.max(1, Number(filters.page) || 1);
+  const limit = Math.max(1, Math.min(100, Number(filters.limit) || 36));
+
+  const indexKeys: string[] = [];
+
+  // 1. Channel 筛选
+  if (filters.channel && filters.channel !== 'all' && filters.channel !== '全部') {
+    let ch = filters.channel.toLowerCase().trim();
+    if (ch === 'short-drama') ch = 'short';
+    indexKeys.push(`channel:${ch}`);
+  }
+
+  // 2. Genre 筛选
+  if (filters.genre && filters.genre !== 'all' && filters.genre !== '全部') {
+    indexKeys.push(`genre:${filters.genre.trim()}`);
+  }
+
+  // 3. Region 筛选
+  if (filters.region && filters.region !== 'all' && filters.region !== '全部') {
+    indexKeys.push(`region:${filters.region.trim()}`);
+  }
+
+  // 4. Year 筛选
+  if (filters.year && filters.year !== 'all' && filters.year !== '全部') {
+    indexKeys.push(`year:${filters.year.trim()}`);
+  }
+
+  // 5. Language 筛选
+  if (filters.language && filters.language !== 'all' && filters.language !== '全部') {
+    indexKeys.push(`language:${filters.language.trim()}`);
+  }
+
+  // 6. Status 筛选
+  if (filters.status && filters.status !== 'all' && filters.status !== '全部') {
+    const s = filters.status.trim();
+    indexKeys.push(`status:${s.includes('连载') ? '连载中' : s}`);
+  }
+
+  let matchedIds: string[] = [];
+
+  if (indexKeys.length === 0) {
+    // 无任何细化筛选条件时，使用全局全部条目索引
+    const rawAll = await kvGet('index:all');
+    matchedIds = rawAll ? JSON.parse(rawAll) : [];
+  } else {
+    // 并发读取各维度的 ID 列表
+    const idLists: string[][] = [];
+    for (const key of indexKeys) {
+      const raw = await kvGet(key);
+      if (raw) {
+        try {
+          const arr = JSON.parse(raw);
+          if (Array.isArray(arr)) {
+            idLists.push(arr);
+          } else {
+            idLists.push([]);
+          }
+        } catch {
+          idLists.push([]);
+        }
+      } else {
+        idLists.push([]);
+      }
+    }
+
+    // 按数组长度升序排列（从最小集合开始求交集，计算耗时最优）
+    idLists.sort((a, b) => a.length - b.length);
+
+    if (idLists.length === 0 || idLists[0].length === 0) {
+      matchedIds = [];
+    } else {
+      let currentSet = new Set<string>(idLists[0]);
+      for (let i = 1; i < idLists.length; i++) {
+        const nextList = idLists[i];
+        const nextSet = new Set<string>(nextList);
+        currentSet = new Set<string>([...currentSet].filter(id => nextSet.has(id)));
+        if (currentSet.size === 0) break;
+      }
+      matchedIds = Array.from(currentSet);
+    }
+  }
+
+  const total = matchedIds.length;
+  const pageCount = Math.max(1, Math.ceil(total / limit));
+
+  if (total === 0) {
+    return {
+      items: [],
+      total: 0,
+      page,
+      pageCount: 0,
+      limit,
+    };
+  }
+
+  const sortMode = (filters.sort || 'time').toLowerCase();
+  const isScoreSort = sortMode === 'rank' || sortMode === 'rating' || sortMode === 'score';
+  const isHitsSort = sortMode === 'hits' || sortMode === 'popularity' || sortMode === 'recommend';
+
+  // 如果需要按高分或综合热度排序：
+  if (isScoreSort || isHitsSort) {
+    // 限制加载前 150 条候选 ID 进行精确加权排序
+    const candidateIds = matchedIds.slice(0, 150);
+    const candidateEntities = (await Promise.all(candidateIds.map(id => getEntityById(id)))).filter(Boolean) as TitleEntity[];
+
+    if (isScoreSort) {
+      candidateEntities.sort((a, b) => parseFloat(b.rate || '0') - parseFloat(a.rate || '0'));
+    } else if (isHitsSort) {
+      candidateEntities.sort((a, b) => {
+        const popA = a.popularity || (parseFloat(a.rate || '0') * 10 + (a.year ? parseInt(a.year, 10) : 0));
+        const popB = b.popularity || (parseFloat(b.rate || '0') * 10 + (b.year ? parseInt(b.year, 10) : 0));
+        return popB - popA;
+      });
+    }
+
+    const startIndex = (page - 1) * limit;
+    const items = candidateEntities.slice(startIndex, startIndex + limit);
+
+    return {
+      items,
+      total,
+      page,
+      pageCount,
+      limit,
+    };
+  }
+
+  // 默认或按最新上映（time / latest）：ID 数组内部最新实体居首，直接切片后按需并行加载
+  const startIndex = (page - 1) * limit;
+  const pageIds = matchedIds.slice(startIndex, startIndex + limit);
+  const items = (await Promise.all(pageIds.map(id => getEntityById(id)))).filter(Boolean) as TitleEntity[];
+
+  return {
+    items,
+    total,
+    page,
+    pageCount,
+    limit,
+  };
 }
 
 /**

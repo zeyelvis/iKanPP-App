@@ -1,0 +1,86 @@
+name: Ingest Entity Catalog & Multi-Dimensional Index
+
+on:
+  schedule:
+    # 每周日和周三 UTC 20:00 (北京时间凌晨 04:00) 自动执行新片批量入库与多维索引全量同步
+    - cron: '0 20 * * 0,3'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: '入库模式 (incremental: 增量检测 | full: 全量深化 | reindex: 仅重建反向索引 | test: 测试)'
+        required: true
+        default: 'incremental'
+        type: choice
+        options:
+          - 'incremental'
+          - 'full'
+          - 'reindex'
+          - 'test'
+      limit:
+        description: '单次入库最大条数限制'
+        required: true
+        default: '1000'
+      channel:
+        description: '指定专区板块 (all | movie | tv | anime | variety | documentary | short)'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - 'all'
+          - 'movie'
+          - 'tv'
+          - 'anime'
+          - 'variety'
+          - 'documentary'
+          - 'short'
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  ingest-entities:
+    name: Ingest Entities to Cloudflare KV
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run Entity Catalog Ingestion & Indexing Engine
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a' }}
+          CLOUDFLARE_NAMESPACE_ID: ${{ secrets.CLOUDFLARE_NAMESPACE_ID || '42311924427747deaf00981d99d58998' }}
+          CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_AUTH_EMAIL || 'zeyelvis@gmail.com' }}
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_AUTH_KEY || 'cfk_L8MzQDjTswTK4jBtvJjmcKjEnxTQ1dKNhzNyn4dQa33221aa' }}
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957' }}
+        run: |
+          MODE="${{ github.event.inputs.mode || 'incremental' }}"
+          LIMIT="${{ github.event.inputs.limit || '1000' }}"
+          CHANNEL="${{ github.event.inputs.channel || 'all' }}"
+          
+          echo "🚀 [1/3] 启动实体片库数据灌入管线 [MODE=$MODE, LIMIT=$LIMIT, CHANNEL=$CHANNEL]..."
+          CHANNEL_FLAG=""
+          if [ "$CHANNEL" != "all" ]; then
+            CHANNEL_FLAG="--channel=$CHANNEL"
+          fi
+          
+          node scripts/ingest-entity-catalog.mjs --mode="$MODE" --limit="$LIMIT" $CHANNEL_FLAG
+
+          echo "🔍 [2/3] 推送最新入库实体 URL 到 IndexNow (Bing / Yandex)..."
+          node scripts/push-indexnow.mjs || true
+
+          echo "🎉 [3/3] 实体片库入库与多维索引全量同步执行完毕！"
+
+      - name: Trigger Prewarm Workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "⚡ 联动触发全站全量多维预热 (full-site-prewarm)..."
+          gh workflow run full-site-prewarm.yml --ref main || true

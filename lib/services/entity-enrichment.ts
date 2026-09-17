@@ -22,6 +22,12 @@ interface TMDBDetailResponse {
   runtime?: number;
   number_of_seasons?: number;
   number_of_episodes?: number;
+  popularity?: number;
+  status?: string;
+  original_language?: string;
+  spoken_languages?: { iso_639_1: string; name: string }[];
+  production_countries?: { iso_3166_1: string; name: string }[];
+  origin_country?: string[];
   credits?: {
     cast?: { name: string; character?: string; order: number }[];
     crew?: { name: string; job: string }[];
@@ -128,7 +134,7 @@ export async function fetchTMDBAiredEpisodeCount(
  */
 export async function searchAndEnrichFromTMDB(
   title: string,
-  preferredType?: 'movie' | 'tv' | 'anime',
+  preferredType?: 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string,
   year?: string,
   forceRefresh = false
 ): Promise<TitleEntity | null> {
@@ -323,6 +329,24 @@ export async function searchAndEnrichFromTMDB(
     const releaseYear = (detail.release_date || detail.first_air_date || year || '2024').slice(0, 4);
     const genres = (detail.genres || []).map(g => g.name).filter(Boolean);
 
+    const region = detail.production_countries?.[0]?.name || (
+      detail.origin_country?.[0] === 'CN' ? '中国' :
+      detail.origin_country?.[0] === 'US' ? '美国' :
+      detail.origin_country?.[0] === 'KR' ? '韩国' :
+      detail.origin_country?.[0] === 'JP' ? '日本' :
+      detail.origin_country?.[0] === 'TH' ? '泰国' :
+      detail.origin_country?.[0] || '华语'
+    );
+    const language = detail.spoken_languages?.[0]?.name || (
+      detail.original_language === 'zh' ? '国语' :
+      detail.original_language === 'en' ? '英语' :
+      detail.original_language === 'ko' ? '韩语' :
+      detail.original_language === 'ja' ? '日语' :
+      detail.original_language === 'th' ? '泰语' :
+      detail.original_language
+    );
+    const status = detail.status === 'Ended' ? '完结' : (detail.status === 'Returning Series' ? '连载中' : (detail.status || '完结'));
+
     const rawKeywords = detail.keywords?.keywords || detail.keywords?.results || [];
     const keywords = rawKeywords.map(k => k.name).filter(Boolean).slice(0, 10);
 
@@ -342,6 +366,10 @@ export async function searchAndEnrichFromTMDB(
       genres: genres.length > 0 ? genres : [actualType === 'movie' ? '电影' : '电视剧'],
       directors: directors.filter(d => d && d !== '知名导演'),
       actors: actors.filter(a => a && a !== '实力主演'),
+      region,
+      language,
+      status,
+      popularity: detail.popularity,
       runtime: detail.runtime,
       numberOfSeasons: detail.number_of_seasons,
       numberOfEpisodes: detail.number_of_episodes, // 临时赋值，下面精确覆盖
@@ -418,6 +446,24 @@ async function convertHitToEntity(
     const releaseYear = (detail.release_date || detail.first_air_date || '2024').slice(0, 4);
     const genres = (detail.genres || []).map(g => g.name).filter(Boolean);
 
+    const region = detail.production_countries?.[0]?.name || (
+      detail.origin_country?.[0] === 'CN' ? '中国' :
+      detail.origin_country?.[0] === 'US' ? '美国' :
+      detail.origin_country?.[0] === 'KR' ? '韩国' :
+      detail.origin_country?.[0] === 'JP' ? '日本' :
+      detail.origin_country?.[0] === 'TH' ? '泰国' :
+      detail.origin_country?.[0] || '华语'
+    );
+    const language = detail.spoken_languages?.[0]?.name || (
+      detail.original_language === 'zh' ? '国语' :
+      detail.original_language === 'en' ? '英语' :
+      detail.original_language === 'ko' ? '韩语' :
+      detail.original_language === 'ja' ? '日语' :
+      detail.original_language === 'th' ? '泰语' :
+      detail.original_language
+    );
+    const status = detail.status === 'Ended' ? '完结' : (detail.status === 'Returning Series' ? '连载中' : (detail.status || '完结'));
+
     const rawKeywords = detail.keywords?.keywords || detail.keywords?.results || [];
     const keywords = rawKeywords.map(k => k.name).filter(Boolean).slice(0, 10);
 
@@ -437,6 +483,10 @@ async function convertHitToEntity(
       genres: genres.length > 0 ? genres : [actualType === 'movie' ? '电影' : '电视剧'],
       directors: directors.filter(d => d && d !== '知名导演'),
       actors: actors.filter(a => a && a !== '实力主演'),
+      region,
+      language,
+      status,
+      popularity: detail.popularity,
       runtime: detail.runtime,
       numberOfSeasons: detail.number_of_seasons,
       numberOfEpisodes: detail.number_of_episodes,
@@ -780,7 +830,7 @@ export async function searchAndEnrichPersonCredits(
     currentBackdrop?: string,
     currentCover?: string,
     tmdbId?: string,
-    type: 'movie' | 'tv' | 'anime' = 'movie',
+    type: 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string = 'movie',
     year?: string
   ): Promise<string | null> {
     // 若当前已有真正的横版剧照，直接返回
