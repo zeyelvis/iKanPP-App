@@ -94,11 +94,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "抓特务",
+                "title": "怒之杀(听译)",
                 "updateBadge": ""
         },
         {
-                "title": "怒之杀(听译)",
+                "title": "寒战1994",
                 "updateBadge": ""
         }
       ],
@@ -1832,6 +1832,10 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "一瓯春",
+                "updateBadge": "6"
+        },
+        {
                 "title": "交锋",
                 "updateBadge": ""
         },
@@ -1840,15 +1844,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "生逢其时",
+                "title": "死有对证",
                 "updateBadge": ""
         },
         {
-                "title": "死有对证",
-                "updateBadge": "1"
+                "title": "飞到我心上",
+                "updateBadge": ""
         },
         {
-                "title": "飞到我心上",
+                "title": "生逢其时",
                 "updateBadge": ""
         },
         {
@@ -1865,10 +1869,6 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "杀手妈咪",
-                "updateBadge": ""
-        },
-        {
-                "title": "九门",
                 "updateBadge": ""
         }
       ],
@@ -1995,11 +1995,11 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_tv_8",
                 "title": "金色",
-                "rate": "9.0",
-                "cover": "https://image.tmdb.org/t/p/w500/k5Gc9qZfx4ofYCUjS55r6120H2l.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/xirWeEiatY915u837oq1l2t4oPP.jpg",
-                "description": "三十万两黄金突现大漠，传言寻金之人皆成厉鬼，相互厮杀。横遭灭门的女子孤闯大漠，决心复仇！权欲之争暗涌，一群江湖侠客纷纷卷入这场恩怨情仇，共谱一段新武侠故事。",
-                "year": "2026",
+                "rate": "8.5",
+                "cover": "https://image.tmdb.org/t/p/w500/jenzNd6ILceH2q8CTZekIzrhalb.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/n4MfPSRk5PzHeVrm43NHam8oH5d.jpg",
+                "description": "　表面上，高岭清麿（樱井孝宏 配音）是一个性孤僻不爱上学的不良少年，但他其实是个拥有超高智商的天才少年。某日，一个外表奇特的男孩找到了清麿，男孩告诉清麿自己叫卡修（大谷育江 配音），此行前来的目的是为了报恩。就这样，清麿收留了卡修，两人的同居生活正式开始。 　　在卡修随身携带的红书里，隐藏了卡修失忆的线索，而清麿居然轻易的就读懂了上面古怪的文字，从而展开了一段魔幻奇缘。原来，在这个世界上，存在着很多像卡修这样带着魔法书的孩子们，在他们之间，以破坏其余的魔法书为目的，持续着一场浩荡的战争。而卡修和清麿，亦被卷入了这场残酷的战争中去。",
+                "year": "2003",
                 "types": [
                         "热门",
                         "连续剧"

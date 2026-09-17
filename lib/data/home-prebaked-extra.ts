@@ -17,20 +17,16 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "妖神记第4季",
-        "updateBadge": ""
-    },
-    {
-        "title": "灵境行者",
-        "updateBadge": ""
-    },
-    {
         "title": "海贼王",
         "updateBadge": ""
     },
     {
-        "title": "遮天",
+        "title": "妖神记第4季",
         "updateBadge": ""
+    },
+    {
+        "title": "东大高武学院",
+        "updateBadge": "1"
     },
     {
         "title": "牧神记",
@@ -41,19 +37,23 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "吞噬星空",
+        "title": "逆天邪神3D",
+        "updateBadge": "1"
+    },
+    {
+        "title": "遮天",
         "updateBadge": ""
     },
     {
-        "title": "我独自盗墓",
-        "updateBadge": "1"
+        "title": "灵境行者",
+        "updateBadge": ""
     },
     {
-        "title": "从零开始的异世界生活第4季",
-        "updateBadge": "1"
+        "title": "沧元图",
+        "updateBadge": ""
     },
     {
-        "title": "师兄啊师兄",
+        "title": "吞噬星空",
         "updateBadge": ""
     }
   ],
@@ -631,15 +631,19 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
 export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "一饭封神第2季",
-        "updateBadge": ""
+        "title": "心动的信号第9季",
+        "updateBadge": "2"
     },
     {
-        "title": "心动的信号第9季",
-        "updateBadge": ""
+        "title": "一饭封神第2季",
+        "updateBadge": "2"
     },
     {
         "title": "花儿与少年第8季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "密室大逃脱第8季",
         "updateBadge": ""
     },
     {
@@ -647,12 +651,8 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "密室大逃脱第8季",
-        "updateBadge": ""
-    },
-    {
         "title": "我家那闺女2026",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
         "title": "大哥小助理",
@@ -687,13 +687,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608271524382431872.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111844144414888.jpg",
-        "description": "《我家那闺女2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260916(盲盒放送)。",
+        "description": "《我家那闺女2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260917(盲盒放送)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260916(盲盒放送)",
+        "episodes_info": "更新至20260917(盲盒放送)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -704,13 +704,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609041706270661205.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111843274326403.jpg",
-        "description": "《花儿与少年第8季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260916(送机篇)。",
+        "description": "《花儿与少年第8季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260917(超前营业)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260916(送机篇)",
+        "episodes_info": "更新至20260917(超前营业)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -755,13 +755,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607311122522270150.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202608031821302167723.jpg",
-        "description": "《心动的信号第9季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260916(超前彩蛋)。",
+        "description": "《心动的信号第9季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260917(第7期加更上)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260916(超前彩蛋)",
+        "episodes_info": "更新至20260917(第7期加更上)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -772,13 +772,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607231303450351514.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202607271339373917253.jpg",
-        "description": "《一饭封神第2季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至一饭银河赏。",
+        "description": "《一饭封神第2季》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260917(第8期下美食竞技纯享版)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至一饭银河赏",
+        "episodes_info": "更新至20260917(第8期下美食竞技纯享版)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1237,111 +1237,69 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "最强倒爷从天风女国开始",
-          "updateBadge": "HOT"
+          "title": "嘉豪就变强？操场雨中舞剑开天门",
+          "updateBadge": "全"
       },
       {
-          "title": "向阳予婉小青梅",
-          "updateBadge": "HOT"
+          "title": "我是霍家第一嫡长女",
+          "updateBadge": "全"
       },
       {
-          "title": "霍先生的好运娇妻有点甜",
-          "updateBadge": "HOT"
+          "title": "废柴逆袭我成了师尊的掌心宠",
+          "updateBadge": "全"
       },
       {
-          "title": "傅总别装了，你老婆要掀桌",
-          "updateBadge": "HOT"
+          "title": "以重生为约，予你岁岁安然",
+          "updateBadge": "全"
       },
       {
-          "title": "逆伦",
-          "updateBadge": "HOT"
+          "title": "我的兽世狼王",
+          "updateBadge": "全"
       },
       {
-          "title": "这个乞丐有点狂",
-          "updateBadge": "HOT"
+          "title": "本座来自修真界",
+          "updateBadge": "全"
       },
       {
-          "title": "七零被抛弃，我成了隔壁心尖宠",
-          "updateBadge": "HOT"
+          "title": "一剑挽仙洲",
+          "updateBadge": "全"
       },
       {
-          "title": "欺负我老公，少夫人重拳出击",
-          "updateBadge": "HOT"
+          "title": "绑定交易系统，民宿爆火赚麻了",
+          "updateBadge": "全"
       },
       {
-          "title": "代号龙鳞，这个保安不好惹",
-          "updateBadge": "HOT"
+          "title": "小摊食圣",
+          "updateBadge": "全"
       },
       {
-          "title": "爱情上升期",
-          "updateBadge": "HOT"
+          "title": "隐婚蜜爱，霍总他在恋综官宣了",
+          "updateBadge": "全"
       },
       {
-          "title": "无敌张三烽",
-          "updateBadge": "HOT"
+          "title": "失忆妹宝，与他相依偎",
+          "updateBadge": "全"
       },
       {
-          "title": "无声的证词：她的解剖刀会说话",
-          "updateBadge": "HOT"
+          "title": "傲娇人鱼老公的嘴硬日常",
+          "updateBadge": "全"
       }
   ],
   hero: [
       {
-          "id": "jl_short_632707817085599700",
-          "title": "三国，从西凉开始步步为营",
+          "id": "jl_short_636725593735430100",
+          "title": "嘉豪就变强？操场雨中舞剑开天门",
           "rate": "9.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/6ad365046dfbaffeb9d307ba4b0d863394aabd45845151bf67e51a915efd8651.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/6ad365046dfbaffeb9d307ba4b0d863394aabd45845151bf67e51a915efd8651.jpg",
-          "description": "无系统，没有金手指，穿越汉末，依靠领先千年的智慧，广开田，练精兵。当群雄还在强征兵丁，他已经精兵无数。当别人的武将还在为一匹赤兔马互相争抢，他已经组建数万赤兔马军团。当诸侯还在为钱粮发愁之时，他正在洗劫天下。步步为营，一路横推，从此再无三国。",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全121集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_632550432522502100",
-          "title": "嫡女惊华：两世定浮沉",
-          "rate": "8.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/4b06927ecdff007ce8bf0354898254b520937e0a61f7d31cc0d71db3cc47e75f.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/4b06927ecdff007ce8bf0354898254b520937e0a61f7d31cc0d71db3cc47e75f.jpg",
-          "description": "丞相嫡女崔南枝，上一世遭武安侯世子谢云舟与手帕交承欢县主顾承欢联手构陷，因一件当众掉落的抹胸落得淫荡污名，被杖责后扔入皇家道观活活痛死，尸骨喂狼。一朝重生，她回到噩梦开端的马球赛现场，临危不乱步步为营，当场戳破二人奸情自证清白，更反手设局让渣男贱女自食恶果，最终二人身败名裂不得善终，她守住崔家百年清...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全119集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_632065705449095200",
-          "title": "嫌五一抢修要三倍工资？过山车冲湖里又哭了",
-          "rate": "9.0",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/70f613627f22535585030bebc17976cbc957014ac2874aaf2730383dda3ddb87.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/70f613627f22535585030bebc17976cbc957014ac2874aaf2730383dda3ddb87.jpg",
-          "description": "五一期间，江城欢乐世界过山车排队火爆，工程师林晨巡检时发现制动液压泵致命漏油，果断按下急停要求停机抢修。园长赵强贪图流水，将其开除并逼签离职单。林晨冷静签字后立即报警。赵强强行启动过山车，最终液压系统失效，过山车冲进人工湖，所幸无人致命。面对警方审讯，赵强倒打一耙诬陷林晨。林晨拿出报警录音和设备底层...",
-          "year": "2026",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/ba32f49edbfb1e069bf0d531d1cad39e0661a2865c32f1f079bbcfeac04e784d.png",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/ba32f49edbfb1e069bf0d531d1cad39e0661a2865c32f1f079bbcfeac04e784d.png",
+          "description": "陆明绑定系统，化身极度中二的“嘉豪之王”，在官方异闻局与反派渊神教间反复横跳。潜入邪教卧底的他，竟因战力离谱、秒悟神级功法，被教主强推为“圣子”与未来接班人！同时，他在异闻局集训中化作心魔碾压众天才，更在危急时刻逆天炼丹拯救战友，赢得了局内高层的绝对信任。从此，手握异端圣子与异闻局天骄双重身份的陆明...",
+          "year": "2025",
           "types": [
               "短剧",
               "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全67集·已完结",
+          "episodes_info": "全765集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1350,82 +1308,19 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_631823940901208000",
-          "title": "纨绔，请叫我夜帝",
+          "id": "jl_short_637702625697203000",
+          "title": "我是霍家第一嫡长女",
           "rate": "9.1",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/2e1e7eba2f374f075c08d062612158328ea4ae3347cd23d525fb472028d19da5.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/2e1e7eba2f374f075c08d062612158328ea4ae3347cd23d525fb472028d19da5.jpg",
-          "description": "暗世界顶尖强者“夜帝”苏无际，为查母亲十年前被害真相，伪装成纨绔酒吧老板在临城蛰伏。他与慕家千金慕千羽因相亲结缘，意外卷入慕家内斗与京城方家、龙家的阴谋。苏无际一路强势护妻、打脸反派，凭实力碾压各路高手，逐步揭开母亲遇害的幕后真凶龙家。慕千羽也在并肩作战中倾心于他，助他复仇。最终苏无际揭露龙家罪行，...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全133集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_631823940615929900",
-          "title": "全球病毒来袭我靠联系过去逆风翻盘",
-          "rate": "8.8",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/214febd89237a1075fc8e4222c30f43ce4fa20f49da88aed43f19ee77a3a4b00.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/214febd89237a1075fc8e4222c30f43ce4fa20f49da88aed43f19ee77a3a4b00.jpg",
-          "description": "讲述中元节红月降临，诡异全面复苏。左阳意外能用微信联系一个月前的自己，凭借时间重置与永德寺香炉在诡异中求生。他与利己邻居、恶霸、官方御诡者展开人性博弈，心态逐渐黑化，靠计谋闯过死亡危机前往永德寺。途中遭遇各类诡异，卷入御诡者组织阴谋，拆穿周扬的伪装，凭借跨时空能力与诡异对抗，最终登上前往京市避难所的...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全165集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_631812215036575700",
-          "title": "749秘档前传：猎神",
-          "rate": "8.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/01d593cc794bb4326ad88ad8ec94b4fba5a2fab4ea9244272d1d80df88d87cb2.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/01d593cc794bb4326ad88ad8ec94b4fba5a2fab4ea9244272d1d80df88d87cb2.jpg",
-          "description": "百年前，有人于闹市夺万人魂魄渡劫化龙，被上古猎妖人吴名氏一路追杀至大兴安岭。猎妖人舍身救下采药幼童，重创妖蟒后，因一甲子虚弱期冰封沉睡，留下六十年之约。六十年后，幼童已成独臂老把头，带伐木队闯山，引来万兽围杀。冰封崖底的猎妖人即将苏醒，一场惊天猎妖大战一触即发！",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "其他",
-              "全集连播"
-          ],
-          "episodes_info": "全81集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_631812129422442500",
-          "title": "别劝我恋爱，我自修仙登巅峰",
-          "rate": "8.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/5f592514fdcb8a07acfa5d61b58237e21bb7bd639116c585ebb40a72ec12bc08.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/5f592514fdcb8a07acfa5d61b58237e21bb7bd639116c585ebb40a72ec12bc08.jpg",
-          "description": "白幼幽穿成炮灰女配，开局撞见未婚夫楚珩出轨，当场觉醒卷王系统，霸气退婚、收回所有资助，狠狠打脸男主。为逆转灭门结局，她带宗门疯狂内卷，闯禁地收兽王、把妖皇当阵眼，秘境狂夺机缘搞钱。她救下被楚珩“杀妹证道”的原女主楚灵，收服富二代与恶毒女配，组建超强女团。一路截胡男主机缘、拆穿其阴谋，最终在秘境布下大...",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/cc83ef636f505e835a628897acec920cf286996144f9764857215f82be73ed37.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/cc83ef636f505e835a628897acec920cf286996144f9764857215f82be73ed37.jpg",
+          "description": "霍明溪身为霍家第一嫡长女，拥有性格不同的九位哥哥，狼系商界大哥、媒体二哥、法律三哥、技术四哥、武力五哥、情报六哥、多情七哥、心理八哥、萌系九哥，众人对她万般宠溺。远房表妹苏婉清觊觎嫡长女身份与霍家掌家权，处处算计，试图拉拢九位哥哥，排挤霍明溪。面对表妹的种种算计，霍明溪并不与之正面冲突，只需稍稍流露...",
           "year": "2026",
           "types": [
               "短剧",
               "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全161集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1434,19 +1329,124 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_631812128063553500",
-          "title": "重生后，我成了盛京最尊贵的侯夫人",
-          "rate": "9.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/9e3f5b39a1c68c16b3e5472f7a6d7c453485618ca447e733105be5acdb9bfbd7.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/9e3f5b39a1c68c16b3e5472f7a6d7c453485618ca447e733105be5acdb9bfbd7.jpg",
-          "description": "国公府嫡女谢芜嫁入安南侯府一年，夫君提出要纳孤女林曼柔为妾。她顾全大局应允，以贤良姿态打理后宅，赢得婆母信任，顺利执掌侯府中馈。不久后谢芜怀有身孕，府中却接连发生意外变故，夫君不幸离世。身怀遗腹子的谢芜，在娘家与朝廷的支持下，以安南夫人的身份主持侯府大局，悉心教养子嗣，最终看着儿孙承袭爵位，安稳度过...",
+          "id": "jl_short_637702625697137400",
+          "title": "废柴逆袭我成了师尊的掌心宠",
+          "rate": "9.0",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/06907764d00cdbce86dc7fe91bc01f9628e670ba2933a44c9a8530ecbe4a766e.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/06907764d00cdbce86dc7fe91bc01f9628e670ba2933a44c9a8530ecbe4a766e.jpg",
+          "description": "作为修仙界的废柴，三年来修为毫无进展，就在我要被逐出师门的那一刻，仙尊尊上出现了，他说他有办法帮我，但是因我体质特殊，也需要用特殊的方法才能打开灵脉，无论怎样，我都要踏上修仙的路程。而随着时间的推移，我将逐渐解开我的身世之谜，以及一段被遗忘的记忆",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637702625697071900",
+          "title": "以重生为约，予你岁岁安然",
+          "rate": "8.9",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/08b33c81ca61e6ce2dbd34422b911593b752a00986833eecb4227954ad157928.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/08b33c81ca61e6ce2dbd34422b911593b752a00986833eecb4227954ad157928.jpg",
+          "description": "林青柚幡然醒悟，主动奔赴一直默默守护自己的殷寒煜。她勇敢挣脱过往的情感骗局与原生家庭桎梏，携手殷寒煜惩治作恶之人，探寻身世谜团。她认真接管娱乐公司打拼事业，在相处中与殷寒煜双向奔赴、彼此治愈，既实现了自我成长，也收获了真挚坚定的爱情，迎来了圆满幸福的人生。",
           "year": "2026",
           "types": [
               "短剧",
               "年代穿越",
               "全集连播"
           ],
-          "episodes_info": "全93集·已完结",
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637702625696940800",
+          "title": "本座来自修真界",
+          "rate": "8.7",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/a1f3e73dfc8499ffb199bd4924217e99ea3142166fc3f47d5298b9d95dc65f06.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/a1f3e73dfc8499ffb199bd4924217e99ea3142166fc3f47d5298b9d95dc65f06.jpg",
+          "description": "渡劫失利的修真大能穿越凡尘，成了求雨败露、即将被火刑处置的假神女。危急时刻她轻驭五行熄灭火焰，意外发现凡人虔诚信仰化作的愿力可助自身重修。她收下心性纯粹的哑女阿萤为徒，与心怀正道的皇子结伴，探寻连年大旱背后隐秘，拆穿旁门术士的虚假伎俩。借众生纯粹信众稳步恢复修为，一边指点弟子修行，一边拨开迷雾，在凡...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_629684008325742600",
+          "title": "一剑挽仙洲",
+          "rate": "8.9",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/297445/poster/309fc72c91c8034c9e8cea9a323d1d03de9abd7774ab415af5177bb36f2abc0c.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/297445/poster/309fc72c91c8034c9e8cea9a323d1d03de9abd7774ab415af5177bb36f2abc0c.webp",
+          "description": "迟淼得往生镜机缘，习得失传道源法，揭开上古秘辛。各方势力乱斗，灭世隐患浮出水面。她冲破体内诅咒，觉醒七系灵根，联合同门对抗苏醒的上古反派。历经死战平定仙洲浩劫，系统任务落幕就此消散。迟淼守住九剑山，以一剑安定四海，于宗门开启自在新篇。",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全379集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637326808995332200",
+          "title": "绑定交易系统，民宿爆火赚麻了",
+          "rate": "8.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/9012fb05826dcd903acf1bdf802465aa093b032a54d80baba4e3fa9a3f6f495d.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/9012fb05826dcd903acf1bdf802465aa093b032a54d80baba4e3fa9a3f6f495d.jpg",
+          "description": "坚韧财迷的民宿老板姜舒窈，在民宿遭强拆的生死关头意外绑定万界交易系统。为保住父母留下的“时光小筑”，她用现代物资接待异界来客，先后救下濒死的大靖战神萧珩与和亲公主楚倾月，助前者逆转战局、后者登基为女帝。面对金水集团黄有金等人的屡次破坏，姜舒窈靠系统防御与异界助力一一化解，最终守住民宿，凭位面贸易实现...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "其他",
+              "全集连播"
+          ],
+          "episodes_info": "全3集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "唐丽雯＆李乐天"
+          ]
+      },
+      {
+          "id": "jl_short_637086763709366400",
+          "title": "小摊食圣",
+          "rate": "8.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/4f7f6067f3eee339735bb4326e6794d9e9ab8ad6809b6bf6072a033856adb22a.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/4f7f6067f3eee339735bb4326e6794d9e9ab8ad6809b6bf6072a033856adb22a.jpg",
+          "description": "五星名厨沈清意外穿越，沦为家产被夺、身无分文的落魄孤女。绝境之际，她绑定顶级美食系统，开局解锁秘制炸鸡配方。沈清支起小摊现炸炸鸡，金黄酥脆、肉汁饱满的香气传遍街巷，引得百姓争相抢购。恰逢百官途经，众人一尝便彻底沦陷。她凭各式美味一路走红，各色宫廷佳肴、特色小吃信手拈来，厨艺惊艳朝野。皇帝慕名微服排队...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1458,19 +1458,19 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "三国，从西凉开始步步为营",
+      title: "嘉豪就变强？操场雨中舞剑开天门",
       rate: "9.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/6ad365046dfbaffeb9d307ba4b0d863394aabd45845151bf67e51a915efd8651.jpg",
-      year: "2026",
-      types: ["短剧","古装仙侠","全集连播"],
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/ba32f49edbfb1e069bf0d531d1cad39e0661a2865c32f1f079bbcfeac04e784d.png",
+      year: "2025",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: "嫡女惊华：两世定浮沉",
-      rate: "8.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/4b06927ecdff007ce8bf0354898254b520937e0a61f7d31cc0d71db3cc47e75f.jpg",
+      title: "我是霍家第一嫡长女",
+      rate: "9.1",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/cc83ef636f505e835a628897acec920cf286996144f9764857215f82be73ed37.jpg",
       year: "2026",
       types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
@@ -1478,29 +1478,29 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_3',
-      title: "嫌五一抢修要三倍工资？过山车冲湖里又哭了",
+      title: "废柴逆袭我成了师尊的掌心宠",
       rate: "9.0",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/70f613627f22535585030bebc17976cbc957014ac2874aaf2730383dda3ddb87.jpg",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/06907764d00cdbce86dc7fe91bc01f9628e670ba2933a44c9a8530ecbe4a766e.jpg",
       year: "2026",
-      types: ["短剧","现代都市","全集连播"],
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_4',
-      title: "纨绔，请叫我夜帝",
-      rate: "9.1",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/2e1e7eba2f374f075c08d062612158328ea4ae3347cd23d525fb472028d19da5.jpg",
+      title: "以重生为约，予你岁岁安然",
+      rate: "8.9",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/08b33c81ca61e6ce2dbd34422b911593b752a00986833eecb4227954ad157928.jpg",
       year: "2026",
-      types: ["短剧","现代都市","全集连播"],
+      types: ["短剧","年代穿越","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_5',
-      title: "全球病毒来袭我靠联系过去逆风翻盘",
-      rate: "8.8",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/214febd89237a1075fc8e4222c30f43ce4fa20f49da88aed43f19ee77a3a4b00.jpg",
+      title: "本座来自修真界",
+      rate: "8.7",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/a1f3e73dfc8499ffb199bd4924217e99ea3142166fc3f47d5298b9d95dc65f06.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1508,31 +1508,31 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_6',
-      title: "749秘档前传：猎神",
+      title: "一剑挽仙洲",
+      rate: "8.9",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/297445/poster/309fc72c91c8034c9e8cea9a323d1d03de9abd7774ab415af5177bb36f2abc0c.webp",
+      year: "2025",
+      types: ["短剧","古装仙侠","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_7',
+      title: "绑定交易系统，民宿爆火赚麻了",
       rate: "8.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/01d593cc794bb4326ad88ad8ec94b4fba5a2fab4ea9244272d1d80df88d87cb2.jpg",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9012fb05826dcd903acf1bdf802465aa093b032a54d80baba4e3fa9a3f6f495d.jpg",
       year: "2026",
       types: ["短剧","其他","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_7',
-      title: "别劝我恋爱，我自修仙登巅峰",
-      rate: "8.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/5f592514fdcb8a07acfa5d61b58237e21bb7bd639116c585ebb40a72ec12bc08.jpg",
+      id: 'pb_s_top_8',
+      title: "小摊食圣",
+      rate: "8.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/4f7f6067f3eee339735bb4326e6794d9e9ab8ad6809b6bf6072a033856adb22a.jpg",
       year: "2026",
       types: ["短剧","古装仙侠","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_8',
-      title: "重生后，我成了盛京最尊贵的侯夫人",
-      rate: "9.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9e3f5b39a1c68c16b3e5472f7a6d7c453485618ca447e733105be5acdb9bfbd7.jpg",
-      year: "2026",
-      types: ["短剧","年代穿越","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1554,6 +1554,10 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "一瓯春",
+        "updateBadge": "6"
+    },
+    {
         "title": "交锋",
         "updateBadge": ""
     },
@@ -1562,15 +1566,19 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "生逢其时",
-        "updateBadge": ""
+        "title": "心动的信号第9季",
+        "updateBadge": "2"
     },
     {
         "title": "死有对证",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "飞到我心上",
+        "updateBadge": ""
+    },
+    {
+        "title": "生逢其时",
         "updateBadge": ""
     },
     {
@@ -1578,20 +1586,12 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "一饭封神第2季",
-        "updateBadge": ""
-    },
-    {
-        "title": "心动的信号第9季",
-        "updateBadge": ""
-    },
-    {
         "title": "花开锦绣",
         "updateBadge": ""
     },
     {
-        "title": "仙逆",
-        "updateBadge": ""
+        "title": "一饭封神第2季",
+        "updateBadge": "2"
     }
   ],
   hero: [
@@ -2159,23 +2159,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
 export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "克拉克森的农场第4季",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第3季",
-        "updateBadge": ""
-    },
-    {
-        "title": "欢迎来到雷克斯汉姆",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第1季",
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第5季",
+        "title": "守护解放西第6季",
         "updateBadge": ""
     },
     {
@@ -2183,11 +2171,23 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "中国通史",
+        "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
-        "title": "若泽·穆里尼奥：特立之道",
+        "title": "克拉克森的农场第4季",
+        "updateBadge": ""
+    },
+    {
+        "title": "闪闪的儿科医生第2季",
+        "updateBadge": ""
+    },
+    {
+        "title": "克拉克森的农场第3季",
+        "updateBadge": ""
+    },
+    {
+        "title": "味起台州",
         "updateBadge": ""
     }
   ],
