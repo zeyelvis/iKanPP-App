@@ -1,22 +1,33 @@
-[![Upstream Sync](https://github.com/sky06walker/KVideo/actions/workflows/Github_Upstream_Sync.yml/badge.svg)](https://github.com/sky06walker/KVideo/actions/workflows/Github_Upstream_Sync.yml)
-
-# 视频聚合平台 (ikanpp)
+# iKanPP (爱看片片) - 全球海外华人 4K 影视聚合流媒体平台
 
 ![KVideo Banner](public/icon.png)
 
-> 一个基于 Next.js 16 构建的现代化视频聚合播放平台。采用独特的 "Liquid Glass" 设计语言，提供流畅的视觉体验和强大的视频搜索功能。
-
-**在线体验：[https://www.ikanpp.com/](https://www.ikanpp.com/)**
-
 [![Next.js](https://img.shields.io/badge/Next.js-16.1-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.2-blue?style=for-the-badge&logo=react)](https://react.dev/)
+[![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?style=for-the-badge&logo=cloudflare)](https://pages.cloudflare.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
+---
+
+### 🌐 官方生产级案例与架构实证 (Official Live Showcase)
+
+> 🚀 **在线体验站点：[https://www.ikanpp.com](https://www.ikanpp.com)**  
+> **iKanPP（爱看片片）** 是专为全球海外华人打造的高性能现代化 4K 影视聚合平台。基于 **Next.js 16 + React 19 + Cloudflare 全球边缘网络** 构建，独创「双轨流媒体架构（Dual-Track Streaming）」与「全域 0ms 感知八层加速体系」，彻底消灭传统影视站的卡顿与流氓广告，提供影院级纯净视听盛宴。
+
+| 核心架构维度 | 生产级实现指标 | 架构规范说明 |
+| :--- | :--- | :--- |
+| ⚡ **极速流媒体直连** | 100% 纯直连 CDN (Direct Play) | 客户端直连高速源站，严禁非必要转码代理，支持智能平滑切源自愈 |
+| 🎨 **0ms 首屏直出** | SSR 首字节真实骨架 | 彻底消灭空白等待圈，首字节 HTML 直出 16:9 剧照与剧名，CLS 恒为 0 |
+| 🖼️ **跨国防裂图镜像** | Cloudflare R2 持久化缓存 | 中国大陆与全球受限网络走同域 `/api/img-proxy` 镜像，100% 防裂图秒开 |
+| 🔍 **全自动 SEO/GEO** | Google API + IndexNow | 每日自动化健康诊断巡检，6,400+ 影视实体秒级广播至全球各大搜索引擎与 AI 知识库 |
+
+---
+
 ## 项目简介
 
-**KVideo** 是一个高性能、现代化的视频聚合与播放应用，专注于提供极致的用户体验和视觉设计。本项目利用 Next.js 16 的最新特性，结合 React 19 和 Tailwind CSS v4，打造了一个既美观又强大的视频浏览平台。
+**iKanPP (KVideo)** 是一个高性能、现代化的视频聚合与播放应用，专注于提供极致的用户体验和视觉设计。本项目利用 Next.js 16 的最新特性，结合 React 19 和 Tailwind CSS v4，打造了一个既美观又强大的视频浏览平台。
 
 ### 核心设计理念：Liquid Glass（液态玻璃）
 
@@ -792,18 +803,19 @@ KVideo 已内置代理服务器自动处理 CORS 问题和 HLS URL 重写，大�
 - [Lucide](https://lucide.dev/) - 图标库
 - [dnd-kit](https://dndkit.com/) - 拖拽交互
 
-## 联系方式
+## 联系方式与生产维护
 
-- **作者**：[KuekHaoYang](https://github.com/KuekHaoYang)
-- **项目主页**：[https://github.com/KuekHaoYang/KVideo](https://github.com/KuekHaoYang/KVideo)
-- **问题反馈**：[GitHub Issues](https://github.com/KuekHaoYang/KVideo/issues)
+- **iKanPP 生产仓库**：[https://github.com/zeyelvis/iKanPP-App](https://github.com/zeyelvis/iKanPP-App)
+- **iKanPP 官方站点**：[https://www.ikanpp.com](https://www.ikanpp.com)
+- **问题与反馈**：[iKanPP Issues](https://github.com/zeyelvis/iKanPP-App/issues)
+- **上游基础工程致谢**：[KuekHaoYang/KVideo](https://github.com/KuekHaoYang/KVideo)
 
 ---
 
 <div align="center">
-  Made with ❤️ by <a href="https://github.com/KuekHaoYang">KuekHaoYang</a>
+  Crafted with ❤️ for Global Overseas Chinese | 专为全球海外华人匠心打造
   <br>
-  如果这个项目对你有帮助，请考虑给一个 ⭐️
+  如果这个项目对你有帮助，欢迎点亮 ⭐️ Star 支持！
 </div>
 
 ## Star History
