@@ -1,0 +1,25 @@
+name: TMDB Changes High-Frequency Sniffer & Push
+
+on:
+  schedule:
+    # 每 30 分钟高频嗅探 TMDB 全球影视增量变动并极速收录（安全保持在 GitHub Actions 每月 2000 分钟免费额度内）
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  tmdb-sniffer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger TMDB Changes Sniffer
+        run: |
+          echo "🔍 正在触发 TMDB 全球影视变动高频嗅探与即时收录广播..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X GET "https://www.ikanpp.com/api/seo/tmdb-changes?secret=ikanpp-cron-sync-secret&limit=25")
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          echo "HTTP 状态码: $HTTP_CODE"
+          echo "返回数据: $BODY"
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "❌ TMDB Changes 嗅探请求异常"
+            exit 1
+          fi
+          echo "✅ TMDB 增量嗅探与全网收录广播触发成功！"

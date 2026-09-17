@@ -38,6 +38,16 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  // Sitemap 动态分卷 Rewrite
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap-titles-:page.xml',
+        destination: '/api/seo/sitemap-titles/:page',
+      },
+    ];
+  },
+
   // Compiler optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',

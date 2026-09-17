@@ -4,6 +4,7 @@ import { fetchTMDBDetails } from '@/lib/services/entity-enrichment';
 import { formatEntityId, generateSlug } from '@/lib/data/entities/entity-utils';
 import { TitleEntity } from '@/lib/types/entity';
 import { isJuliangExcludedCategory } from '@/lib/api/juliang-category-map';
+import { batchPublishGoogleIndexing } from '@/lib/services/google-indexing';
 
 export const runtime = 'edge';
 
@@ -196,18 +197,23 @@ export async function GET(request: Request) {
     console.warn('[Pipeline short drama error]:', err);
   }
 
-  // 若有新入库实体，异步触发 IndexNow 推送 Bing / Yandex，并主动通知搜索引擎 Sitemap 更新
+  // 若有新入库实体，异步触发 IndexNow (Bing / Yandex) 与 Google Indexing API 实时推送
   if (newUrls.length > 0) {
     try {
+      // 1. 广播至 IndexNow (Bing / Yandex 等)
       fetch(`${BASE_URL}/api/seo/indexnow`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ urls: newUrls }),
       }).catch(() => {});
 
-      // 异步尝试通知搜索引擎抓取更新后的 Sitemap
+      // 2. 实时推送至 Google Indexing API（替代已废弃的 google.com/ping）
+      batchPublishGoogleIndexing(newUrls, 50).catch(err => {
+        console.warn('[Pipeline GoogleIndexing Error]:', err);
+      });
+
+      // 3. 通知 Bing 重新抓取 Sitemap（Bing 依然有效支持 Sitemap Ping）
       const sitemapUrl = encodeURIComponent(`${BASE_URL}/sitemap.xml`);
-      fetch(`https://www.google.com/ping?sitemap=${sitemapUrl}`).catch(() => {});
       fetch(`https://www.bing.com/ping?sitemap=${sitemapUrl}`).catch(() => {});
     } catch {
       // 忽略推送静默异常

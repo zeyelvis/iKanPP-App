@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { listRecentEntities, getAllEntityIds, getEntityById } from '@/lib/services/entity-kv';
+import { listRecentEntities, getSitemapCatalog } from '@/lib/services/entity-kv';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 export const runtime = 'edge';
@@ -72,23 +72,18 @@ export async function GET() {
   </url>`);
         }
 
-        // 3. 追加全量已入库实体（前 150 部核心影片）
-        const allIds = await getAllEntityIds();
-        const candidateIds = allIds.slice(0, 150);
-        const moreEntities = await Promise.all(
-            candidateIds.map(id => getEntityById(id))
-        );
+        // 3. 追加高频活跃影视实体（前 500 部，极速直出且不超时）
+        const catalog = await getSitemapCatalog();
+        const topEntities = catalog.slice(0, 500);
 
-        for (const ent of moreEntities) {
-            if (!ent || !ent.title) continue;
-            const slug = ent.slug || generateSlug(ent.title);
-            const fullUrl = `${BASE_URL}/title/${ent.entityId}-${slug}`;
+        for (const ent of topEntities) {
+            if (!ent || !ent.id) continue;
+            const slug = ent.slug || ent.id;
+            const fullUrl = `${BASE_URL}/title/${ent.id}-${encodeURIComponent(slug)}`;
             if (seenUrls.has(fullUrl)) continue;
             seenUrls.add(fullUrl);
 
-            const modDate = ent.updatedAt
-                ? ent.updatedAt.split('T')[0]
-                : (ent.createdAt ? ent.createdAt.split('T')[0] : lastModDate);
+            const modDate = ent.updatedAt || lastModDate;
 
             urlElements.push(`  <url>
     <loc>${escapeXml(fullUrl)}</loc>

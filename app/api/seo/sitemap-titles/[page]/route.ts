@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getSitemapCatalog } from '@/lib/services/entity-kv';
 
 export const runtime = 'edge';
@@ -15,9 +15,18 @@ function escapeXml(str: string): string {
     .replace(/'/g, '&apos;');
 }
 
-export async function GET() {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { page: string } }
+) {
+  const pageParam = (params?.page || '1').replace(/\.xml$/i, '');
+  const page = Math.max(1, parseInt(pageParam, 10) || 1);
+
   const catalog = await getSitemapCatalog();
-  const slice = catalog.slice(0, TITLES_PER_SITEMAP);
+  const start = (page - 1) * TITLES_PER_SITEMAP;
+  const end = start + TITLES_PER_SITEMAP;
+  const slice = catalog.slice(start, end);
+
   const urlElements: string[] = [];
 
   for (const item of slice) {

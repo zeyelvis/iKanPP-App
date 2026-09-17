@@ -99,19 +99,14 @@ async function pushToIndexNow(urls) {
  */
 async function pingSitemaps() {
   const sitemapUrl = `${BASE_URL}/sitemap.xml`;
-  const pingEndpoints = [
-    `https://www.google.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`,
-    `https://www.bing.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`,
-  ];
-
-  console.log('🔔 正在触发 Google / Bing 站点地图更新通知 (Sitemap Ping)...');
-  for (const ping of pingEndpoints) {
-    try {
-      const res = await fetch(ping, { headers: { 'User-Agent': 'iKanPP-Bot/2.0' } });
-      console.log(`  ✅ [Ping] ${ping.split('?')[0]} ➔ 状态: ${res.status}`);
-    } catch (err) {
-      console.warn(`  ⚠️ [Ping] ${ping.split('?')[0]} 请求异常:`, err.message);
-    }
+  console.log('🔔 正在触发 Bing 站点地图更新通知 (Sitemap Ping)...');
+  try {
+    const res = await fetch(`https://www.bing.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`, {
+      headers: { 'User-Agent': 'iKanPP-Bot/2.0' },
+    });
+    console.log(`  ✅ [Bing Ping] ➔ 状态: ${res.status}`);
+  } catch (err) {
+    console.warn(`  ⚠️ [Bing Ping] 请求异常:`, err.message);
   }
 }
 

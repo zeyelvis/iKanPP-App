@@ -449,12 +449,23 @@ export async function saveEntity(entity: TitleEntity): Promise<void> {
     await kvPut(`title:${normTitle}`, id);
   }
 
-  // 5. 追加到全局所有 ID 列表
+  // 5. 追加到全局所有 ID 列表与 Sitemap 轻量全量目录
   const rawAll = await kvGet('index:all');
   const allIds: string[] = rawAll ? JSON.parse(rawAll) : [];
   if (!allIds.includes(id)) {
     allIds.push(id);
     await kvPut('index:all', JSON.stringify(allIds));
+  }
+
+  try {
+    const rawCatalog = await kvGet('sitemap:catalog');
+    let catalog: [string, string, string][] = rawCatalog ? JSON.parse(rawCatalog) : [];
+    const modDate = (entity.updatedAt || entity.createdAt || new Date().toISOString()).split('T')[0];
+    catalog = catalog.filter(c => c[0] !== id);
+    catalog.push([id, entity.slug || id, modDate]);
+    await kvPut('sitemap:catalog', JSON.stringify(catalog));
+  } catch (err) {
+    console.warn('[saveEntity] sitemap:catalog update warning:', err);
   }
 
   // 6. 追加到分类索引
@@ -727,6 +738,12 @@ export async function getEntitiesByActor(actor: string, limit = 48): Promise<Tit
   return valid.slice(0, limit);
 }
 
+export interface SitemapCatalogEntry {
+  id: string;
+  slug: string;
+  updatedAt: string;
+}
+
 /**
  * 获取所有实体 ID 列表（用于 Sitemap Index 生成）
  */
@@ -738,6 +755,54 @@ export async function getAllEntityIds(): Promise<string[]> {
   } catch {
     return [];
   }
+}
+
+/**
+ * 极速获取全量实体紧凑索引（用于 Sitemap 毫秒级直出，单次 KV 读取，彻底消除 Edge Subrequest 限制）
+ */
+export async function getSitemapCatalog(): Promise<SitemapCatalogEntry[]> {
+  const raw = await kvGet('sitemap:catalog');
+  if (raw) {
+    try {
+      const list: [string, string, string][] = JSON.parse(raw);
+      if (Array.isArray(list) && list.length > 0) {
+        return list.map(([id, slug, updatedAt]) => ({
+          id,
+          slug,
+          updatedAt: updatedAt || new Date().toISOString().split('T')[0],
+        }));
+      }
+    } catch {}
+  }
+
+  // 兜底自愈：从内存预烘焙数据中提取全量已有实体
+  seedPrebakedData();
+  const catalog: SitemapCatalogEntry[] = [];
+  const seenIds = new Set<string>();
+
+  for (const [key, value] of memoryStore.entries()) {
+    if (key.startsWith('entity:')) {
+      try {
+        const ent = JSON.parse(value) as TitleEntity;
+        if (ent && ent.entityId && !seenIds.has(ent.entityId)) {
+          seenIds.add(ent.entityId);
+          catalog.push({
+            id: ent.entityId,
+            slug: ent.slug || ent.entityId,
+            updatedAt: (ent.updatedAt || ent.createdAt || new Date().toISOString()).split('T')[0],
+          });
+        }
+      } catch {}
+    }
+  }
+
+  // 回写优化后续读取
+  if (catalog.length > 0) {
+    const compact = catalog.map(c => [c.id, c.slug, c.updatedAt]);
+    kvPut('sitemap:catalog', JSON.stringify(compact)).catch(() => {});
+  }
+
+  return catalog;
 }
 
 /**
