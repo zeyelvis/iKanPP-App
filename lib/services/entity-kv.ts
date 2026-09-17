@@ -1,9 +1,5 @@
 import { TitleEntity } from '@/lib/types/entity';
 import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie, hasTitleOverlap } from '@/lib/data/entities/entity-utils';
-import { PREBAKED_HOME_DATA, PrebakedSubject } from '@/lib/data/home-prebaked';
-import { PREBAKED_LATEST_TITLES, LatestPrebakedItem } from '@/lib/data/latest-titles-prebaked';
-import { POPULAR_DIRECTORS, POPULAR_ACTORS } from '@/lib/data/popular-people';
-import { PEOPLE_PREBAKED_ENTITIES } from '@/lib/data/people-prebaked';
 
 /**
  * 影视实体精简卡片项（用于「最新上线」货架与 RSS Feed 0ms 瞬间直出）
@@ -24,262 +20,12 @@ export interface RecentTitleItem {
   createdAt: string;
 }
 
-// 内存预烘焙回退字典（确保本地开发、静态构建与边缘冷启动时 0ms 秒开且具备首批 110+ 核心经典影视）
+// 内存缓存字典（用于本地开发或运行时轻量缓存）
 const memoryStore = new Map<string, string>();
-let isPrebakedSeeded = false;
 
-function seedPrebakedData() {
-  if (isPrebakedSeeded) return;
-  isPrebakedSeeded = true;
-
-  const allPrebaked: { subject: PrebakedSubject; type: 'movie' | 'tv' }[] = [];
-  const collect = (list: PrebakedSubject[], type: 'movie' | 'tv') => {
-    for (const s of list) {
-      if (s && s.title) allPrebaked.push({ subject: s, type });
-    }
-  };
-
-  collect(PREBAKED_HOME_DATA.movie.hero, 'movie');
-  collect(PREBAKED_HOME_DATA.movie.top10, 'movie');
-  collect(PREBAKED_HOME_DATA.movie.s1, 'movie');
-  collect(PREBAKED_HOME_DATA.movie.s2, 'movie');
-  collect(PREBAKED_HOME_DATA.movie.s3, 'movie');
-  collect(PREBAKED_HOME_DATA.movie.s4, 'movie');
-
-  collect(PREBAKED_HOME_DATA.tv.hero, 'tv');
-  collect(PREBAKED_HOME_DATA.tv.top10, 'tv');
-  collect(PREBAKED_HOME_DATA.tv.s1, 'tv');
-  collect(PREBAKED_HOME_DATA.tv.s2, 'tv');
-  collect(PREBAKED_HOME_DATA.tv.s3, 'tv');
-  collect(PREBAKED_HOME_DATA.tv.s4, 'tv');
-
-  const seenTitles = new Set<string>();
-  let seq = 1;
-  const recentAllList: RecentTitleItem[] = [];
-  const recentMovieList: RecentTitleItem[] = [];
-  const recentTvList: RecentTitleItem[] = [];
-  const now = Date.now();
-
-  for (const item of allPrebaked) {
-    const s = item.subject;
-    const norm = normalizeTitle(s.title);
-    if (seenTitles.has(norm)) continue;
-    seenTitles.add(norm);
-
-    const entityId = formatEntityId(seq++);
-    const slug = generateSlug(s.title);
-
-    // 解析 TMDB ID（优先使用显式声明的 tmdbId，其次若 s.id 也是纯数字且大于等于 4 位才回退，严禁将类似 iyf_hero_tv_5 等内部槽位字符串误读为 ID）
-    const tmdbId = (s.tmdbId && /^\d+$/.test(s.tmdbId.trim()))
-      ? s.tmdbId.trim()
-      : ((s.id && /^\d{4,}$/.test(s.id.trim())) ? s.id.trim() : String(seq + 900000));
-
-    // 计算一个递减的新鲜度时间戳（模拟每小时入库一部），确保冷启动时有自然的时间梯度
-    const simulatedDate = new Date(now - (seq - 1) * 3600000).toISOString();
-
-    const entity: TitleEntity = {
-      entityId,
-      slug,
-      tmdbId,
-      tmdbType: item.type,
-      title: s.title,
-      type: item.type,
-      year: s.year || '2026',
-      description: s.description || `${s.title} 是一部精彩的${item.type === 'movie' ? '电影' : '连续剧'}，评分 ${s.rate || '9.0'}，支持在 iKanPP 免费在线观看完整版高清视频。`,
-      cover: s.cover,
-      backdrop: s.backdrop || s.cover,
-      rate: s.rate || '9.0',
-      genres: s.types || [item.type === 'movie' ? '电影' : '电视剧'],
-      directors: (s.directors || []).filter(d => d && d !== '知名导演'),
-      actors: (s.actors || []).filter(a => a && a !== '实力主演'),
-      createdAt: simulatedDate,
-      updatedAt: simulatedDate,
-    };
-
-    memoryStore.set(`entity:${entityId}`, JSON.stringify(entity));
-    memoryStore.set(`slug:${entityId}-${slug}`, entityId);
-    memoryStore.set(`slug:${entityId}`, entityId);
-    memoryStore.set(`tmdb:${entity.tmdbType}:${entity.tmdbId}`, entityId);
-    memoryStore.set(`title:${norm}`, entityId);
-
-    // 收集初始 recent 项
-    const rItem: RecentTitleItem = {
-      entityId,
-      title: entity.title,
-      slug: entity.slug,
-      cover: entity.cover,
-      backdrop: entity.backdrop,
-      rate: entity.rate,
-      year: entity.year,
-      type: entity.type,
-      genres: entity.genres,
-      createdAt: simulatedDate,
-    };
-    if (recentAllList.length < 50) recentAllList.push(rItem);
-    if (item.type === 'movie' && recentMovieList.length < 50) recentMovieList.push(rItem);
-    if (item.type === 'tv' && recentTvList.length < 50) recentTvList.push(rItem);
-
-    // 索引分类
-    for (const g of entity.genres) {
-      const gKey = `genre:${g.trim()}`;
-      const existing = memoryStore.get(gKey);
-      const list = existing ? JSON.parse(existing) : [];
-      if (!list.includes(entityId)) {
-        list.push(entityId);
-        memoryStore.set(gKey, JSON.stringify(list));
-      }
-    }
-
-    // 索引导演
-    for (const d of entity.directors || []) {
-      if (!d || d === '知名导演') continue;
-      const dClean = d.trim();
-      const dKey = `director:${dClean}`;
-      const existing = memoryStore.get(dKey);
-      const list = existing ? JSON.parse(existing) : [];
-      if (!list.includes(entityId)) {
-        list.push(entityId);
-        memoryStore.set(dKey, JSON.stringify(list));
-      }
-    }
-
-    // 索引演员
-    for (const a of entity.actors || []) {
-      if (!a || a === '实力主演') continue;
-      const aClean = a.trim();
-      const aKey = `actor:${aClean}`;
-      const existing = memoryStore.get(aKey);
-      const list = existing ? JSON.parse(existing) : [];
-      if (!list.includes(entityId)) {
-        list.push(entityId);
-        memoryStore.set(aKey, JSON.stringify(list));
-      }
-    }
-  }
-
-  // 注入核心名导与顶级号召力巨星精选代表作库（涵盖 56+ 位核心人物，冷启动秒开且 100% 有作品）
-  for (const rawEntity of PEOPLE_PREBAKED_ENTITIES) {
-    const entity: TitleEntity = {
-      ...rawEntity,
-      directors: (rawEntity.directors || []).filter(d => d && d !== '知名导演'),
-      actors: (rawEntity.actors || []).filter(a => a && a !== '实力主演'),
-    };
-    const norm = normalizeTitle(entity.title);
-    if (!seenTitles.has(norm)) {
-      seenTitles.add(norm);
-      memoryStore.set(`entity:${entity.entityId}`, JSON.stringify(entity));
-      memoryStore.set(`slug:${entity.entityId}-${entity.slug}`, entity.entityId);
-      memoryStore.set(`slug:${entity.entityId}`, entity.entityId);
-      memoryStore.set(`tmdb:${entity.tmdbType}:${entity.tmdbId}`, entity.entityId);
-      memoryStore.set(`title:${norm}`, entity.entityId);
-    }
-
-    // 索引分类
-    for (const g of entity.genres || []) {
-      const gKey = `genre:${g.trim()}`;
-      const existing = memoryStore.get(gKey);
-      const list = existing ? JSON.parse(existing) : [];
-      if (!list.includes(entity.entityId)) {
-        list.push(entity.entityId);
-        memoryStore.set(gKey, JSON.stringify(list));
-      }
-    }
-
-    // 索引导演
-    for (const d of entity.directors || []) {
-      if (!d || d === '知名导演') continue;
-      const dClean = d.trim();
-      const dKey = `director:${dClean}`;
-      const existing = memoryStore.get(dKey);
-      const list = existing ? JSON.parse(existing) : [];
-      if (!list.includes(entity.entityId)) {
-        list.push(entity.entityId);
-        memoryStore.set(dKey, JSON.stringify(list));
-      }
-    }
-
-    // 索引演员
-    for (const a of entity.actors || []) {
-      if (!a || a === '实力主演') continue;
-      const aClean = a.trim();
-      const aKey = `actor:${aClean}`;
-      const existing = memoryStore.get(aKey);
-      const list = existing ? JSON.parse(existing) : [];
-      if (!list.includes(entity.entityId)) {
-        list.push(entity.entityId);
-        memoryStore.set(aKey, JSON.stringify(list));
-      }
-    }
-  }
-
-  // 收集并持久化全部已知导演与演员集合
-  const allDirs = new Set<string>(POPULAR_DIRECTORS);
-  const allActs = new Set<string>(POPULAR_ACTORS);
-  for (const [key] of memoryStore.entries()) {
-    if (key.startsWith('director:')) allDirs.add(key.replace('director:', ''));
-    if (key.startsWith('actor:')) allActs.add(key.replace('actor:', ''));
-  }
-  memoryStore.set('people:directors', JSON.stringify(Array.from(allDirs)));
-  memoryStore.set('people:actors', JSON.stringify(Array.from(allActs)));
-
-  // 注入最新上线增量作品，确保全站最新上线 0ms 直出且绝无 404
-  for (const items of Object.values(PREBAKED_LATEST_TITLES)) {
-    if (!Array.isArray(items)) continue;
-    for (const item of items) {
-      if (!item || !item.title) continue;
-      const norm = normalizeTitle(item.title);
-      if (seenTitles.has(norm)) continue;
-      seenTitles.add(norm);
-
-      const entityId = item.entityId && /^ik\d{6}$/i.test(item.entityId) ? item.entityId : formatEntityId(seq++);
-      const slug = generateSlug(item.title);
-      const simulatedDate = item.createdAt || new Date(now - (seq - 1) * 3600000).toISOString();
-
-      const entity: TitleEntity = {
-        entityId,
-        slug,
-        tmdbId: item.tmdbId || String(seq + 900000),
-        tmdbType: item.type === 'movie' ? 'movie' : 'tv',
-        title: item.title,
-        type: item.type === 'movie' ? 'movie' : 'tv',
-        year: item.year || '2026',
-        description: `${item.title} 是一部精彩的${item.type === 'movie' ? '电影' : '连续剧'}，评分 ${item.rate || '9.0'}，支持在 iKanPP 免费在线观看完整版高清视频。`,
-        cover: item.cover,
-        backdrop: item.backdrop || item.cover,
-        rate: item.rate || '9.0',
-        genres: item.genres || [item.type === 'movie' ? '电影' : '电视剧'],
-        directors: [],
-        actors: [],
-        createdAt: simulatedDate,
-        updatedAt: simulatedDate,
-      };
-
-      memoryStore.set(`entity:${entityId}`, JSON.stringify(entity));
-      if (item.entityId) {
-        memoryStore.set(`entity:${item.entityId.toLowerCase()}`, JSON.stringify(entity));
-        memoryStore.set(`slug:${item.entityId.toLowerCase()}-${slug}`, entityId);
-        memoryStore.set(`slug:${item.entityId.toLowerCase()}`, entityId);
-      }
-      memoryStore.set(`slug:${entityId}-${slug}`, entityId);
-      memoryStore.set(`slug:${entityId}`, entityId);
-      memoryStore.set(`slug:${slug}`, entityId);
-      memoryStore.set(`title:${norm}`, entityId);
-      memoryStore.set(`tmdb:${entity.tmdbType}:${entity.tmdbId}`, entityId);
-    }
-  }
-
-  // 全量实体索引
-  const allIds = Array.from(seenTitles).map((_, i) => formatEntityId(i + 1));
-  memoryStore.set('index:all', JSON.stringify(allIds));
-  memoryStore.set('counter:next_id', String(Math.max(seq, 2000)));
-
-  // 初始化最近入库有序索引（使用真实定时巡检烘焙数据集）
-  const allChannels = ['all', 'movie', 'tv', 'anime', 'variety', 'documentary'];
-  for (const ch of allChannels) {
-    if (PREBAKED_LATEST_TITLES[ch] && PREBAKED_LATEST_TITLES[ch].length > 0) {
-      memoryStore.set(`recent:${ch}`, JSON.stringify(PREBAKED_LATEST_TITLES[ch]));
-    }
-  }
+async function ensurePrebakedSeeded(): Promise<void> {
+  // 保持空实现，防止庞大的预烘焙数据打入 Edge Worker bundle
+  return;
 }
 
 // 获取 Cloudflare KV 实例（如果在 Cloudflare Pages / Worker 环境）
@@ -312,7 +58,7 @@ async function kvGet(key: string): Promise<string | null> {
   }
 
   // 回退到内存预烘焙字典
-  seedPrebakedData();
+  await ensurePrebakedSeeded();
   return memoryStore.get(key) || null;
 }
 
@@ -320,7 +66,7 @@ async function kvGet(key: string): Promise<string | null> {
  * 写入 KV
  */
 async function kvPut(key: string, value: string): Promise<void> {
-  seedPrebakedData();
+  await ensurePrebakedSeeded();
   memoryStore.set(key, value);
 
   const kv = getCloudflareKV();
@@ -350,7 +96,7 @@ export async function getEntityById(entityId: string): Promise<TitleEntity | nul
     } catch {}
   }
   // 兜底从内存预烘焙中查找
-  seedPrebakedData();
+  await ensurePrebakedSeeded();
   const memRaw = memoryStore.get(`entity:${cleanId}`);
   if (memRaw) {
     try {
@@ -568,18 +314,23 @@ export async function listRecentEntities(limit = 20, type?: string): Promise<Rec
   }
 
   // 2. 真实预烘焙直出：全专区 0ms 秒开且 100% 具备真实的 24h 最新上线影片、连载集数与 TMDB 高清海报
-  const prebakedList = PREBAKED_LATEST_TITLES[channelKey] || (channelKey === 'short' ? [] : PREBAKED_LATEST_TITLES.all) || [];
-  if (prebakedList.length > 0) {
-    return (prebakedList as RecentTitleItem[]).slice(0, limit);
+  await ensurePrebakedSeeded();
+  const rawMem = memoryStore.get(`recent:${channelKey}`);
+  if (rawMem) {
+    try {
+      const items = JSON.parse(rawMem) as RecentTitleItem[];
+      if (Array.isArray(items) && items.length > 0) {
+        return items.slice(0, limit);
+      }
+    } catch {}
   }
 
   // 短剧专区专属兜底：若为空直接返回空列表，绝不回退到全站普通长视频
   if (channelKey === 'short') {
-    return (PREBAKED_LATEST_TITLES.short || []).slice(0, limit) as RecentTitleItem[];
+    return [];
   }
 
   // 3. 终极兜底：预烘焙核心影片
-  seedPrebakedData();
   const fallbackList: RecentTitleItem[] = [];
   const now = Date.now();
   const seen = new Set<string>();
@@ -677,7 +428,7 @@ export async function getEntitiesByDirector(director: string, limit = 48): Promi
 
   // 若 KV 查询结果为空，自动兜底从内存预烘焙索引中查找
   if (!ids || ids.length === 0) {
-    seedPrebakedData();
+    await ensurePrebakedSeeded();
     const memRaw = memoryStore.get(`director:${name}`);
     if (memRaw) {
       try {
@@ -718,7 +469,7 @@ export async function getEntitiesByActor(actor: string, limit = 48): Promise<Tit
 
   // 若 KV 查询结果为空，自动兜底从内存预烘焙索引中查找
   if (!ids || ids.length === 0) {
-    seedPrebakedData();
+    await ensurePrebakedSeeded();
     const memRaw = memoryStore.get(`actor:${name}`);
     if (memRaw) {
       try {
@@ -776,7 +527,7 @@ export async function getSitemapCatalog(): Promise<SitemapCatalogEntry[]> {
   }
 
   // 兜底自愈：从内存预烘焙数据中提取全量已有实体
-  seedPrebakedData();
+  await ensurePrebakedSeeded();
   const catalog: SitemapCatalogEntry[] = [];
   const seenIds = new Set<string>();
 
@@ -819,6 +570,7 @@ export async function getNextEntitySeq(): Promise<number> {
  * 获取已知全部导演与演员名单（用于人物 Sitemap 生成）
  */
 export async function getKnownPeople(): Promise<{ directors: string[]; actors: string[] }> {
+  const { POPULAR_DIRECTORS, POPULAR_ACTORS } = await import('@/lib/data/popular-people');
   const rawDirs = await kvGet('people:directors');
   const rawActs = await kvGet('people:actors');
   const dirSet = new Set<string>(POPULAR_DIRECTORS);
