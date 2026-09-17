@@ -58,19 +58,19 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "逃出绝命街",
-                "updateBadge": ""
-        },
-        {
                 "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
         {
-                "title": "打生桩",
+                "title": "逃出绝命街",
                 "updateBadge": ""
         },
         {
                 "title": "特立独行",
+                "updateBadge": ""
+        },
+        {
+                "title": "打生桩",
                 "updateBadge": ""
         },
         {
@@ -86,11 +86,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "怒之杀(听译)",
-                "updateBadge": ""
-        },
-        {
-                "title": "海洋奇缘：启航",
+                "title": "M.I.S.S.I.O.N. 歌剧般的潜入搜查官",
                 "updateBadge": ""
         },
         {
@@ -98,7 +94,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "不成功穿越指南",
+                "title": "怒之杀(听译)",
+                "updateBadge": ""
+        },
+        {
+                "title": "玩具总动员5",
                 "updateBadge": ""
         }
       ],
@@ -1832,15 +1832,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "交锋",
-                "updateBadge": "1"
-        },
-        {
                 "title": "一瓯春",
-                "updateBadge": "6"
+                "updateBadge": ""
         },
         {
-                "title": "生逢其时",
+                "title": "交锋",
                 "updateBadge": "2"
         },
         {
@@ -1848,8 +1844,12 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "1"
         },
         {
+                "title": "生逢其时",
+                "updateBadge": "2"
+        },
+        {
                 "title": "死有对证",
-                "updateBadge": ""
+                "updateBadge": "1"
         },
         {
                 "title": "飞到我心上",
@@ -1868,8 +1868,8 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "10"
         },
         {
-                "title": "百花杀",
-                "updateBadge": ""
+                "title": "中头奖还是要上班",
+                "updateBadge": "2"
         }
       ],
     "hero": [
@@ -1953,7 +1953,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至25集 | 共40集",
+                "episodes_info": "更新至26集 | 共40集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
