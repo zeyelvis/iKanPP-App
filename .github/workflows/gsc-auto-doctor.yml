@@ -1,0 +1,31 @@
+name: GSC Autonomous Doctor (SEO Self-Healing)
+
+on:
+  schedule:
+    # 每天北京时间 11:00 (UTC 03:00) 自动执行一次全网自检与智能补推
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  inspect-and-heal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Run GSC Auto-Doctor
+        env:
+          GOOGLE_INDEXING_KEY: ${{ secrets.GOOGLE_INDEXING_KEY }}
+          NEXT_PUBLIC_SITE_URL: https://www.ikanpp.com
+        run: |
+          node scripts/gsc-auto-doctor.mjs

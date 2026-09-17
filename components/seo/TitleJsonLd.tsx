@@ -50,7 +50,17 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
       name: entity.region,
     } : undefined,
     duration: entity.runtime ? `PT${entity.runtime}M` : undefined,
-    inLanguage: 'zh-CN',
+    potentialAction: {
+      '@type': 'WatchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${siteUrl}/player?entity=${entity.entityId}`,
+        actionPlatform: [
+          'http://schema.org/DesktopWebPlatform',
+          'http://schema.org/MobileWebPlatform',
+        ],
+      },
+    },
   };
 
   if (isTv && entity.numberOfEpisodes) {
@@ -86,31 +96,6 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
     ],
   };
 
-  // 3. VideoObject 结构化数据 (Google 视频富媒体卡片 & 立即观看动作)
-  const videoObjectSchema: Record<string, any> = {
-    '@context': 'https://schema.org',
-    '@type': 'VideoObject',
-    name: `${entity.title} 免费高清在线观看`,
-    description: entity.description,
-    thumbnailUrl: [
-      entity.backdrop || entity.cover || `${siteUrl}/og-image.png`,
-    ],
-    uploadDate: entity.createdAt || `${entity.year}-01-01T00:00:00Z`,
-    embedUrl: `${siteUrl}/player?entity=${entity.entityId}`,
-    duration: entity.runtime ? `PT${entity.runtime}M` : undefined,
-    potentialAction: {
-      '@type': 'WatchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${siteUrl}/player?entity=${entity.entityId}`,
-        actionPlatform: [
-          'http://schema.org/DesktopWebPlatform',
-          'http://schema.org/MobileWebPlatform',
-        ],
-      },
-    },
-  };
-
   return (
     <>
       <script
@@ -120,10 +105,6 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(videoObjectSchema) }}
       />
     </>
   );

@@ -1,6 +1,6 @@
 import { cache } from 'react';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect, RedirectType } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, Clock, Calendar, Film, ArrowLeft, Clapperboard, User, Sparkles, CheckCircle2, Play } from 'lucide-react';
@@ -393,6 +393,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const rawCleanTitle = innerSlug || (rawEntityId ? '' : decodedSlug);
   const seasonInfo = parseSeasonFromTitle(rawCleanTitle);
   const seasonTag = seasonInfo ? (seasonInfo.rawSeasonMatch || `第${seasonInfo.seasonNumber}季`) : '';
+  const isSeasonSpecified = Boolean(seasonTag && !entity.title.includes(seasonTag));
+
+  // 🌟 SEO 301 权威规范重定向：在 Metadata 生成阶段立即发起 308/301 永久重定向
+  const canonicalSlug = `${entity.entityId}-${entity.slug}`.toLowerCase();
+  const currentCleanSlug = decodedSlug.toLowerCase();
+  if (currentCleanSlug !== canonicalSlug && !currentCleanSlug.includes('-') && !isSeasonSpecified) {
+    redirect(`/title/${encodeURIComponent(`${entity.entityId}-${entity.slug}`)}`, RedirectType.replace);
+  }
 
   // 多分类智能识别：动漫也属于「有剧集」形态
   const isSeriesLike = entity.type === 'tv' || entity.type === 'anime';
@@ -482,6 +490,14 @@ export default async function TitlePage({ params }: Props) {
   const seasonTag = seasonInfo ? (seasonInfo.rawSeasonMatch || `第${seasonInfo.seasonNumber}季`) : '';
   const isSeasonSpecified = Boolean(seasonTag && !entity.title.includes(seasonTag));
   const effectiveSearchTitle = isSeasonSpecified ? `${entity.title}${seasonTag}` : entity.title;
+
+  // 🌟 SEO 301 权威规范重定向：若请求的 URL 不是权威规范 Slug（如纯 ID ik000001 或历史非规范别名），
+  // 强制发起 308/301 永久重定向，将爬虫与外链权重 100% 汇聚于标准规范 URL，彻底根治 GSC 2130+ 备用网页报警
+  const canonicalSlug = `${entity.entityId}-${entity.slug}`.toLowerCase();
+  const currentCleanSlug = decodedSlug.toLowerCase();
+  if (currentCleanSlug !== canonicalSlug && !currentCleanSlug.includes('-') && !isSeasonSpecified) {
+    redirect(`/title/${encodeURIComponent(`${entity.entityId}-${entity.slug}`)}`, RedirectType.replace);
+  }
 
   // 质量自愈保障：若当前实体缺少封面海报（如历史残缺数据），强制在线触发重新丰润
   if (!entity.cover || entity.cover.trim() === '') {
