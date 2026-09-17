@@ -24,7 +24,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     {
       "id": "pb_cat_movie_1",
       "title": "狮拳",
-      "rate": "5.8",
+      "rate": "6.0",
       "cover": "https://image.tmdb.org/t/p/w500/3x9vKiUombbUvpVxdxSxcBDxrqB.jpg",
       "year": "2026",
       "types": [
@@ -430,7 +430,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     {
       "id": "pb_cat_tv_9",
       "title": "一瓯春",
-      "rate": "0.0",
+      "rate": "9.0",
       "cover": "https://image.tmdb.org/t/p/w500/7KjVhRaarZ5L3CBirQEmt89ioiz.jpg",
       "year": "2026",
       "types": [
@@ -1144,7 +1144,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     {
       "id": "pb_cat_documentary_5",
       "title": "兄弟连：薪火永续",
-      "rate": "8.2",
+      "rate": "8.4",
       "cover": "https://image.tmdb.org/t/p/w500/n29MsV1m2OCbDp6PLeHxziOVOLG.jpg",
       "year": "2026",
       "types": [
@@ -1213,7 +1213,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     {
       "id": "pb_cat_documentary_10",
       "title": "神兽猎局",
-      "rate": "6.3",
+      "rate": "7.3",
       "cover": "https://image.tmdb.org/t/p/w500/tZhx3eXEcaLnLJkITX85TsKCAod.jpg",
       "year": "2026",
       "types": [
@@ -1557,6 +1557,21 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     },
     {
       "id": "pb_cat_rank_3",
+      "title": "一瓯春",
+      "rate": "9.0",
+      "cover": "https://image.tmdb.org/t/p/w500/7KjVhRaarZ5L3CBirQEmt89ioiz.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "古装爱情",
+        "复仇爽剧",
+        "内地剧"
+      ],
+      "remarks": "第6集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_rank_4",
       "title": "云雀叫天录",
       "rate": "9.0",
       "cover": "https://image.tmdb.org/t/p/w500/nHAqLcS38jFpNsDRI0mZLIUmRVI.jpg",
@@ -1571,7 +1586,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_4",
+      "id": "pb_cat_rank_5",
       "title": "惩罚者2026",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/951477c405c46624e7650ab6e4354d4b.jpg",
@@ -1585,7 +1600,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_5",
+      "id": "pb_cat_rank_6",
       "title": "美女捕吏女牢秘档续美女奉行2",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/d5acadf1b2e7b66ec4c8e46b9de59d1f.jpg",
@@ -1599,7 +1614,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_6",
+      "id": "pb_cat_rank_7",
       "title": "血路姐弟",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/7ff09dabdadb83b37fcc9d5177a9b097.jpg",
@@ -1612,7 +1627,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_7",
+      "id": "pb_cat_rank_8",
       "title": "求救信号2026",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/d72e35bf81950d921d449c1219c189c9.jpg",
@@ -1626,7 +1641,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_8",
+      "id": "pb_cat_rank_9",
       "title": "微风襟袖同卿心2026",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/01a0eb84f0ea44688ac2ab93391a399d.jpg",
@@ -1640,7 +1655,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_9",
+      "id": "pb_cat_rank_10",
       "title": "暗恋小说家",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/7319e4d38d55ca798c701cc00f0d480c.jpg",
@@ -1657,7 +1672,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_10",
+      "id": "pb_cat_rank_11",
       "title": "卧龙2026",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/0ab5272275d1bc8042643ef8d5fca88f.jpg",
@@ -1672,7 +1687,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_11",
+      "id": "pb_cat_rank_12",
       "title": "无情的拳头",
       "rate": "8.2",
       "cover": "https://image.tmdb.org/t/p/w500/v9ZtOlIJ3HS49UMtS4eli3WMenT.jpg",
@@ -1685,7 +1700,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_12",
+      "id": "pb_cat_rank_13",
       "title": "冬城猎凶",
       "rate": "8.0",
       "cover": "https://image.tmdb.org/t/p/w500/64NVbdSuNgrK90wqhtnlR2S4sPK.jpg",
@@ -1700,7 +1715,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_13",
+      "id": "pb_cat_rank_14",
       "title": "蜘蛛侠：崭新之日",
       "rate": "7.8",
       "cover": "https://image.tmdb.org/t/p/w500/7AjIupf0lxNKNq0p8z36jv5ZpiJ.jpg",
@@ -1716,7 +1731,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_14",
+      "id": "pb_cat_rank_15",
       "title": "监狱雄心",
       "rate": "7.6",
       "cover": "https://image.tmdb.org/t/p/w500/8i5iZV50CoEtmDCFM7RSxCkpE8h.jpg",
@@ -1730,7 +1745,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_15",
+      "id": "pb_cat_rank_16",
       "title": "破暗",
       "rate": "7.5",
       "cover": "https://image.tmdb.org/t/p/w500/nqqGHIgoTdvBeHaMNwGSj1NT6Uk.jpg",
@@ -1744,7 +1759,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_16",
+      "id": "pb_cat_rank_17",
       "title": "逃出绝命街",
       "rate": "6.9",
       "cover": "https://image.tmdb.org/t/p/w500/2eXquFgtDqSyVmrcBwC9ZnzNw3d.jpg",
@@ -1760,7 +1775,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_17",
+      "id": "pb_cat_rank_18",
       "title": "兰香如故",
       "rate": "6.7",
       "cover": "https://image.tmdb.org/t/p/w500/kfurXRMH1ZkUoyT5HN72zLTQxzZ.jpg",
@@ -1773,20 +1788,6 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
         "内地剧"
       ],
       "remarks": "第16集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_rank_18",
-      "title": "碧血蓝天",
-      "rate": "6.5",
-      "cover": "https://image.tmdb.org/t/p/w500/w3A13uvw19m7ENxXDq6ej2KDJYN.jpg",
-      "year": "1998",
-      "types": [
-        "动作片",
-        "動作",
-        "驚悚"
-      ],
-      "remarks": "正片",
       "is_new": true
     }
   ]
