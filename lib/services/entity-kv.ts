@@ -525,9 +525,50 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
     indexKeys.push(`region:${filters.region.trim()}`);
   }
 
-  // 4. Year 筛选
+  // 4. Year 筛选（支持语义年份：今年/去年/更早/90年代/80年代/怀旧 → 多年份并集）
+  let yearUnionIds: string[] | null = null; // 当语义年份需要并集时使用
   if (filters.year && filters.year !== 'all' && filters.year !== '全部') {
-    indexKeys.push(`year:${filters.year.trim()}`);
+    const yearStr = filters.year.trim();
+    const currentYear = new Date().getFullYear();
+    let semanticYears: number[] | null = null;
+
+    if (yearStr === '今年') {
+      semanticYears = [currentYear, currentYear - 1];
+    } else if (yearStr === '去年') {
+      semanticYears = [currentYear - 1, currentYear - 2];
+    } else if (yearStr === '更早') {
+      semanticYears = [];
+      for (let y = 2000; y < currentYear - 2; y++) semanticYears.push(y);
+    } else if (yearStr === '90年代') {
+      semanticYears = [];
+      for (let y = 1990; y <= 1999; y++) semanticYears.push(y);
+    } else if (yearStr === '80年代') {
+      semanticYears = [];
+      for (let y = 1980; y <= 1989; y++) semanticYears.push(y);
+    } else if (yearStr === '怀旧') {
+      semanticYears = [];
+      for (let y = 1920; y < 1980; y++) semanticYears.push(y);
+    }
+
+    if (semanticYears !== null) {
+      // 语义年份：并发读取多个 year:XXXX 索引并做并集
+      const yearRawResults = await Promise.all(
+        semanticYears.map(y => kvGet(`year:${y}`))
+      );
+      const yearUnionSet = new Set<string>();
+      for (const raw of yearRawResults) {
+        if (raw) {
+          try {
+            const arr = JSON.parse(raw);
+            if (Array.isArray(arr)) arr.forEach((id: string) => yearUnionSet.add(id));
+          } catch { /* 忽略解析异常 */ }
+        }
+      }
+      yearUnionIds = Array.from(yearUnionSet);
+    } else {
+      // 精确年份（如 "2026"）：直接走常规索引键
+      indexKeys.push(`year:${yearStr}`);
+    }
   }
 
   // 5. Language 筛选
@@ -535,18 +576,22 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
     indexKeys.push(`language:${filters.language.trim()}`);
   }
 
-  // 6. Status 筛选
+  // 6. Status 筛选（映射 "全集" → "完结"，UI 可能传 "全集" 但 KV 存的是 "完结"）
   if (filters.status && filters.status !== 'all' && filters.status !== '全部') {
     const s = filters.status.trim();
-    indexKeys.push(`status:${s.includes('连载') ? '连载中' : s}`);
+    const statusKey = s.includes('连载') ? '连载中' : (s === '全集' ? '完结' : s);
+    indexKeys.push(`status:${statusKey}`);
   }
 
   let matchedIds: string[] = [];
 
-  if (indexKeys.length === 0) {
+  if (indexKeys.length === 0 && yearUnionIds === null) {
     // 无任何细化筛选条件时，使用全局全部条目索引
     const rawAll = await kvGet('index:all');
     matchedIds = rawAll ? JSON.parse(rawAll) : [];
+  } else if (indexKeys.length === 0 && yearUnionIds !== null) {
+    // 仅有语义年份筛选，无其他索引条件
+    matchedIds = yearUnionIds;
   } else {
     // 并发读取各维度的 ID 列表
     const idLists: string[][] = [];
@@ -566,6 +611,11 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
       } else {
         idLists.push([]);
       }
+    }
+
+    // 如果有语义年份并集结果，将其作为额外的交集维度纳入
+    if (yearUnionIds !== null) {
+      idLists.push(yearUnionIds);
     }
 
     // 按数组长度升序排列（从最小集合开始求交集，计算耗时最优）
