@@ -410,7 +410,15 @@ export async function GET(req: NextRequest) {
       limit,
     });
 
-    if (kvResult && kvResult.total > 0) {
+    // 频道实体库成熟度仲裁：
+    // 1. 电影与电视剧为成熟主力库（已有万级实体），只要有匹配结果即由 KV 毫秒级直出；
+    // 2. 动漫、综艺、纪录片、短剧等专区若当前收录量较少（< 100 部），说明尚未完成全量灌入，
+    //    自动降级至第三方采集站全网实时接口，确保大厅呈现数千部完整片源！
+    const isMatureChannel = type === 'movie' || type === 'tv';
+    const hasSufficientEntities = kvResult && kvResult.total >= 100;
+    const shouldServeKV = kvResult && kvResult.total > 0 && (isMatureChannel || hasSufficientEntities);
+
+    if (shouldServeKV) {
       const list = kvResult.items.map(entity => ({
         id: entity.entityId,
         title: entity.title,

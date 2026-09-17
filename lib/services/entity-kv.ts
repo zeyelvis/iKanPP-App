@@ -463,7 +463,7 @@ async function appendToIndex(key: string, id: string): Promise<void> {
     let list: string[] = raw ? JSON.parse(raw) : [];
     if (!list.includes(id)) {
       list.unshift(id);
-      if (list.length > 10000) list = list.slice(0, 10000);
+      if (list.length > 100000) list = list.slice(0, 100000);
       await kvPut(key, JSON.stringify(list));
     }
   } catch (err) {

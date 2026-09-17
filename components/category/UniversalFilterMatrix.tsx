@@ -222,7 +222,10 @@ export function UniversalFilterMatrix({
           <div className="flex items-center gap-2">
             <span className="w-2 h-4 bg-[#00a8ff] rounded-xs" />
             <h2 className="text-base sm:text-lg font-bold text-white tracking-wide">
-              {channelTitle} · 全库工业级多维检索
+              {(() => {
+                const opt = CHANNEL_OPTIONS.find(c => c.value === selectedChannel);
+                return opt ? `${opt.label}专区` : channelTitle;
+              })()} · 全库工业级多维检索
             </h2>
           </div>
           {hasActiveFilters && (

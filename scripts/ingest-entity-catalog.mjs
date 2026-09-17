@@ -568,7 +568,7 @@ async function updateIncrementalIndexes(newEntities) {
     } catch {}
     const newIds = Array.from(updates.get(key));
     const combined = [...newIds, ...existingList.filter(id => !updates.get(key).has(id))];
-    kvPairs.push({ key, value: combined.slice(0, 10000) });
+    kvPairs.push({ key, value: combined.slice(0, 100000) });
   }
 
   await kvBulkPut(kvPairs);
