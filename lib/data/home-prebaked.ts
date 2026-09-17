@@ -66,11 +66,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "特立独行",
+                "title": "打生桩",
                 "updateBadge": ""
         },
         {
-                "title": "打生桩",
+                "title": "特立独行",
                 "updateBadge": ""
         },
         {
@@ -82,15 +82,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "海洋奇缘：启航",
-                "updateBadge": ""
-        },
-        {
                 "title": "夜王",
-                "updateBadge": ""
-        },
-        {
-                "title": "求救信号",
                 "updateBadge": ""
         },
         {
@@ -98,7 +90,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "寒战1994",
+                "title": "海洋奇缘：启航",
+                "updateBadge": ""
+        },
+        {
+                "title": "求救信号",
+                "updateBadge": ""
+        },
+        {
+                "title": "不成功穿越指南",
                 "updateBadge": ""
         }
       ],
@@ -106,7 +106,7 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_movie_1",
                 "title": "特立独行",
-                "rate": "6.6",
+                "rate": "6.7",
                 "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
                 "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
@@ -1825,23 +1825,27 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": ""
+                "updateBadge": "2"
         },
         {
                 "title": "早春晴朗",
                 "updateBadge": ""
         },
         {
+                "title": "交锋",
+                "updateBadge": "1"
+        },
+        {
                 "title": "一瓯春",
                 "updateBadge": "6"
         },
         {
-                "title": "交锋",
-                "updateBadge": ""
+                "title": "生逢其时",
+                "updateBadge": "2"
         },
         {
                 "title": "冬城猎凶",
-                "updateBadge": ""
+                "updateBadge": "1"
         },
         {
                 "title": "死有对证",
@@ -1849,10 +1853,6 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "飞到我心上",
-                "updateBadge": ""
-        },
-        {
-                "title": "生逢其时",
                 "updateBadge": ""
         },
         {
@@ -1864,17 +1864,34 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "百花杀",
-                "updateBadge": ""
+                "title": "黑白清道夫",
+                "updateBadge": "10"
         },
         {
-                "title": "杀手妈咪",
+                "title": "百花杀",
                 "updateBadge": ""
         }
       ],
     "hero": [
         {
                 "id": "iyf_hero_tv_1",
+                "title": "一瓯春",
+                "rate": "8.5",
+                "cover": "https://image.tmdb.org/t/p/w500/7KjVhRaarZ5L3CBirQEmt89ioiz.jpg",
+                "backdrop": "https://image.tmdb.org/t/p/w1280/qLZQnTiQxkBOid9tVLWC1CmoOcu.jpg",
+                "description": "“杀伐千面腹黑男”沈润与“人间清醒黑莲花”谢清圆互为刀刃交错，在理智与情感中携手复仇，于高门大户里明争暗斗，立朝堂官场上搅弄风云。最终他们走出暗流深渊，奔赴璀璨新生。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至06集 | 共30集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_2",
                 "title": "兰香如故",
                 "rate": "6.7",
                 "cover": "https://image.tmdb.org/t/p/w500/kfurXRMH1ZkUoyT5HN72zLTQxzZ.jpg",
@@ -1885,13 +1902,13 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至14集 | 共47集",
+                "episodes_info": "更新至16集 | 共47集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_2",
+                "id": "iyf_hero_tv_3",
                 "title": "冬城猎凶",
                 "rate": "8.0",
                 "cover": "https://image.tmdb.org/t/p/w500/64NVbdSuNgrK90wqhtnlR2S4sPK.jpg",
@@ -1902,13 +1919,13 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至12集 | 共18集",
+                "episodes_info": "更新至13集 | 共18集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_3",
+                "id": "iyf_hero_tv_4",
                 "title": "深渊无间",
                 "rate": "9.0",
                 "cover": "https://image.tmdb.org/t/p/w500/b9ngtGNgaHBbLihRrT0MsPRY0GW.jpg",
@@ -1925,7 +1942,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_4",
+                "id": "iyf_hero_tv_5",
                 "title": "交锋",
                 "rate": "9.0",
                 "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
@@ -1936,13 +1953,13 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至24集 | 共40集",
+                "episodes_info": "更新至25集 | 共40集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_5",
+                "id": "iyf_hero_tv_6",
                 "title": "生逢其时",
                 "rate": "9.0",
                 "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
@@ -1953,13 +1970,13 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至19集 | 共26集",
+                "episodes_info": "更新至21集 | 共26集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_6",
+                "id": "iyf_hero_tv_7",
                 "title": "重案六组:消失的警号",
                 "rate": "8.0",
                 "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
@@ -1976,7 +1993,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_7",
+                "id": "iyf_hero_tv_8",
                 "title": "早春晴朗",
                 "rate": "8.4",
                 "cover": "https://image.tmdb.org/t/p/w500/nLWFbYv1r99Yy7dWvjoxMRegoe0.jpg",
@@ -1988,23 +2005,6 @@ export const PREBAKED_HOME_DATA: {
                         "连续剧"
                 ],
                 "episodes_info": "24集全",
-                "type": "tv",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_tv_8",
-                "title": "金色",
-                "rate": "8.5",
-                "cover": "https://image.tmdb.org/t/p/w500/jenzNd6ILceH2q8CTZekIzrhalb.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/n4MfPSRk5PzHeVrm43NHam8oH5d.jpg",
-                "description": "　表面上，高岭清麿（樱井孝宏 配音）是一个性孤僻不爱上学的不良少年，但他其实是个拥有超高智商的天才少年。某日，一个外表奇特的男孩找到了清麿，男孩告诉清麿自己叫卡修（大谷育江 配音），此行前来的目的是为了报恩。就这样，清麿收留了卡修，两人的同居生活正式开始。 　　在卡修随身携带的红书里，隐藏了卡修失忆的线索，而清麿居然轻易的就读懂了上面古怪的文字，从而展开了一段魔幻奇缘。原来，在这个世界上，存在着很多像卡修这样带着魔法书的孩子们，在他们之间，以破坏其余的魔法书为目的，持续着一场浩荡的战争。而卡修和清麿，亦被卷入了这场残酷的战争中去。",
-                "year": "2003",
-                "types": [
-                        "热门",
-                        "连续剧"
-                ],
-                "episodes_info": "13集全",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
