@@ -84,16 +84,26 @@ export async function GET(request: Request) {
       const mainTitle = (detail.title || detail.name || '').trim();
       const originalTitle = (detail.original_title || detail.original_name || '').trim();
 
-      // 3. 严格质量过滤：必须有有效标题，且优先筛选含有汉字或高热度的影视作品
-      if (!mainTitle && !originalTitle) continue;
-      const titleToCheck = mainTitle || originalTitle;
-      const hasChinese = /[\u4e00-\u9fa5]/.test(titleToCheck);
-      const isPopular = (detail.vote_average && detail.vote_average > 0) || (detail.poster_path && detail.overview);
+      // 3. 严格质量过滤铁律：
+      // A. 必须具有中文官方译名（含汉字），绝不盲目收录纯外文无切片冷门作品
+      if (!mainTitle) continue;
+      const hasChinese = /[\u4e00-\u9fa5]/.test(mainTitle);
+      if (!hasChinese) continue;
 
-      // 若既无中文译名又无海报/简介，跳过无意义占位条目
-      if (!hasChinese && !isPopular) continue;
+      // B. 必须具有高清海报与剧情简介，杜绝空白占位条目
+      if (!detail.poster_path || !detail.overview || detail.overview.trim().length < 8) continue;
 
-      const displayTitle = mainTitle || originalTitle;
+      // C. 历史冷门片过滤：早于 2005 年且缺乏大众热度（vote_count < 100）的条目，国内采集站无切片存活，坚决跳过
+      const releaseYearStr = (detail.release_date || detail.first_air_date || '').slice(0, 4);
+      const parsedYear = releaseYearStr ? parseInt(releaseYearStr, 10) : null;
+      if (parsedYear && parsedYear < 2005) {
+        if (!detail.vote_count || detail.vote_count < 100) continue;
+      }
+      if (parsedYear && parsedYear < 2018 && (!detail.vote_average || detail.vote_average === 0) && (!detail.vote_count || detail.vote_count === 0)) {
+        continue;
+      }
+
+      const displayTitle = mainTitle;
       const nextSeq = await getNextEntitySeq();
       const entityId = formatEntityId(nextSeq);
       const slug = generateSlug(displayTitle);

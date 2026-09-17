@@ -70,27 +70,63 @@ export async function POST(request: NextRequest) {
               setTimeout(() => reject(new Error('Source request timeout')), timeoutMs)
             );
 
-            // 若关键词含有季数（如 "时光代理人第3季"），国内采集站通常使用中文数字立项（"时光代理人第三季"）
-            // 且采集站 CMS 会将空格拆分成 OR 导致脱靶，因此使用无空格变体优先搜索
-            const parsedSeason = parseSeasonFromTitle(query.trim());
-            const variants = parsedSeason ? generateSeasonSearchVariants(query.trim()) : [query.trim()];
-            const primaryQuery = variants[0] ? variants[0].replace(/\s+/g, '') : query.trim();
-
-            let searchPromise = searchVideos(primaryQuery, [source], 1);
-            let result: any = await Promise.race([searchPromise, timeoutPromise]);
-            let videos = result[0]?.results || [];
-
-            // 若首选变体未查到且还有原 query，进行快速兜底
-            const cleanRawQuery = query.trim().replace(/\s+/g, '');
-            if (videos.length === 0 && primaryQuery !== cleanRawQuery) {
-              try {
-                const fallbackPromise = searchVideos(cleanRawQuery, [source], 1);
-                const fallbackResult: any = await Promise.race([fallbackPromise, timeoutPromise]);
-                if (fallbackResult[0]?.results?.length) {
-                  videos = fallbackResult[0].results;
-                  result = fallbackResult;
+            // 智能提取副标题（例如 "爱情公寓：辣味英雄传" 提取 "辣味英雄传"）
+            const extractSearchSubtitle = (raw: string): string | null => {
+              if (!raw) return null;
+              const parts = raw.split(/[:：\-—·/]/).map(p => p.trim()).filter(Boolean);
+              if (parts.length >= 2) {
+                const sub = parts[parts.length - 1];
+                if (!/^(?:第?\s*[0-9一二两三四五六七八九十]+\s*[季部期集]|全\s*\d+\s*集|国语|粤语|原声|高清|TC|HD|4K|预告)$/i.test(sub)) {
+                  if (sub.length >= 2 && sub.length <= 15) {
+                    return sub;
+                  }
                 }
-              } catch {}
+              }
+              return null;
+            };
+
+            // 智能构建采集站搜索关键词序列（多层级回退，避免特殊标点导致 CMS 拦截）
+            const parsedSeason = parseSeasonFromTitle(query.trim());
+            const seasonVariants = parsedSeason ? generateSeasonSearchVariants(query.trim()) : [];
+            
+            const queriesToTry: string[] = [];
+            if (seasonVariants.length > 0) {
+              for (const sv of seasonVariants) {
+                const c = sv.replace(/\s+/g, '');
+                if (!queriesToTry.includes(c)) queriesToTry.push(c);
+              }
+            } else {
+              const clean = query.trim();
+              const noSpace = clean.replace(/\s+/g, '');
+              queriesToTry.push(noSpace);
+
+              const noPunctuation = clean.replace(/[:：\-—·/]/g, '').replace(/\s+/g, '');
+              if (noPunctuation !== noSpace && !queriesToTry.includes(noPunctuation)) {
+                queriesToTry.push(noPunctuation);
+              }
+
+              const sub = extractSearchSubtitle(clean);
+              if (sub && !queriesToTry.includes(sub)) {
+                queriesToTry.push(sub);
+              }
+            }
+
+            let videos: any[] = [];
+            let result: any = null;
+
+            for (const q of queriesToTry) {
+              try {
+                const searchPromise = searchVideos(q, [source], 1);
+                const raceResult: any = await Promise.race([searchPromise, timeoutPromise]);
+                const found = raceResult[0]?.results || [];
+                if (found.length > 0) {
+                  videos = found;
+                  result = raceResult;
+                  break; // 一旦当前关键词命中有效片源，立即收敛并流式推送
+                }
+              } catch {
+                // 单次查询超时或异常，若还有备用关键词则继续尝试
+              }
             }
 
             const endTime = performance.now();

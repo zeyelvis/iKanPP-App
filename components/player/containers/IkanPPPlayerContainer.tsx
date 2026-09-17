@@ -30,6 +30,7 @@ interface TitleAnalysis {
   rawTitle: string;
   pureTitle: string;
   seasonNumber: number | null;
+  subtitles: string[];
 }
 
 function analyzeTitle(titleStr: string): TitleAnalysis {
@@ -45,18 +46,24 @@ function analyzeTitle(titleStr: string): TitleAnalysis {
     seasonNumber = cnMap[sStr] ?? (parseInt(sStr, 10) || null);
   }
 
+  // 提取冒号、空格、破折号拆解的有效子词（如 "爱情公寓：辣味英雄传" 拆解为 ["爱情公寓", "辣味英雄传"]）
+  const subtitles = raw
+    .split(/[:：·•\-\s_／/]+/)
+    .map(s => s.replace(/[《》【】\[\]（）()]/g, '').trim().toLowerCase())
+    .filter(s => s.length >= 2);
+
   const pure = raw
     .replace(/[\(（]?(19\d\d|20\d\d)[\)）]?/g, '')
     .replace(/第[一二三四五六七八九十\d]+[季部期]/gi, '')
     .replace(/season\s*\d+/gi, '')
     .replace(/\bS\d{1,2}\b/gi, '')
-    .replace(/(前篇|后篇|最终季|终章|完结篇|序章|特别篇|剧场版)/gi, '')
+    .replace(/(前篇|后篇|最终季|终章|完结篇|序章|特别篇|剧场版|番外篇|番外|大电影|电影版|真人版|动画版|重制版|重置版|精选版|典藏版)/gi, '')
     .replace(/(国语版|粤语版|双语版|原声版|中字版|纯享版|未删减版|加长版)/gi, '')
     .replace(/[《》【】\[\]（）()·\s:：\-]/g, '')
     .toLowerCase()
     .trim();
 
-  return { rawTitle: raw, pureTitle: pure, seasonNumber };
+  return { rawTitle: raw, pureTitle: pure, seasonNumber, subtitles };
 }
 
 function isSeriesTypeName(typeName: string): boolean {
@@ -155,6 +162,7 @@ export function IkanPPPlayerContainer() {
 
         const targetAnalysis = analyzeTitle(title);
         const targetYear = expectedYear ? parseInt(expectedYear, 10) : null;
+        const fallbackCandidates: Array<{ _video: any; _score: number; _isSeries: boolean }> = [];
 
         const performRedirect = (targetVideo: any, isSeries: boolean) => {
           if (redirected || cancelled) return;
@@ -223,8 +231,10 @@ export function IkanPPPlayerContainer() {
                         isExactYearMatch = true;
                       } else if (Math.abs(candYear - targetYear) === 1) {
                         yearScore = 80;
+                      } else if (Math.abs(candYear - targetYear) <= 2) {
+                        yearScore = 30;
                       } else {
-                        yearScore = -400;
+                        yearScore = -300;
                         isYearMismatched = true;
                       }
                     } else {
@@ -236,6 +246,8 @@ export function IkanPPPlayerContainer() {
 
                   let nameScore = 0;
                   let isExactName = false;
+                  let isHighConfidenceMatch = false;
+
                   if (candAnalysis.pureTitle === targetAnalysis.pureTitle) {
                     isExactName = true;
                     if (isSeriesItem) {
@@ -255,13 +267,27 @@ export function IkanPPPlayerContainer() {
                     } else {
                       nameScore = 120;
                     }
-                  } else if (
-                    (candAnalysis.pureTitle.length >= 2 && targetAnalysis.pureTitle.includes(candAnalysis.pureTitle)) ||
-                    (targetAnalysis.pureTitle.length >= 2 && candAnalysis.pureTitle.includes(candAnalysis.pureTitle))
-                  ) {
-                    nameScore = 30;
                   } else {
-                    nameScore = -200;
+                    // 二级高置信度模糊匹配：
+                    // A. 候选纯片名包含目标子标题（如包含了 "辣味英雄传"），或目标纯片名包含候选子标题
+                    const hasSharedSubtitle = targetAnalysis.subtitles.some(st => st.length >= 3 && candAnalysis.pureTitle.includes(st)) ||
+                                              candAnalysis.subtitles.some(sc => sc.length >= 3 && targetAnalysis.pureTitle.includes(sc));
+                    
+                    // B. 纯片名互相包含且重合长度 >= 3
+                    const isSubstringOverlap = (candAnalysis.pureTitle.length >= 3 && targetAnalysis.pureTitle.includes(candAnalysis.pureTitle)) ||
+                                               (targetAnalysis.pureTitle.length >= 3 && candAnalysis.pureTitle.includes(targetAnalysis.pureTitle));
+
+                    if (hasSharedSubtitle || isSubstringOverlap) {
+                      isHighConfidenceMatch = true;
+                      nameScore = hasSharedSubtitle ? 140 : 110;
+                    } else if (
+                      (candAnalysis.pureTitle.length >= 2 && targetAnalysis.pureTitle.includes(candAnalysis.pureTitle)) ||
+                      (targetAnalysis.pureTitle.length >= 2 && candAnalysis.pureTitle.includes(candAnalysis.pureTitle))
+                    ) {
+                      nameScore = 50;
+                    } else {
+                      nameScore = -200;
+                    }
                   }
 
                   let qualityScore = 0;
@@ -269,6 +295,7 @@ export function IkanPPPlayerContainer() {
                   if (remarks.includes('1080') || remarks.includes('hd') || remarks.includes('正片')) qualityScore += 20;
                   if (isTrailer || isCommentary) qualityScore -= 500;
                   if (isMusical) qualityScore -= 400;
+
                   let episodeScore = 0;
                   let isEpisodeInsufficient = false;
                   if (episodeParam && isSeriesItem) {
@@ -300,8 +327,8 @@ export function IkanPPPlayerContainer() {
                   if (v.source === 'juliang') sourceScore = 160;
                   else if (v.source === 'guangsu') sourceScore = 140;
                   else if (v.source === 'baofeng') sourceScore = 130;
+                  else if (v.source === 'zuida') sourceScore = 120;
                   else if (v.source === 'wujin') sourceScore = 110;
-                  else if (v.source === 'zuida') sourceScore = 100;
                   else if (v.source === 'jisu') sourceScore = 90;
                   else if (v.source === 'xinlang') sourceScore = 80;
                   else if (v.source === 'modu') sourceScore = 60;
@@ -309,8 +336,14 @@ export function IkanPPPlayerContainer() {
 
                   const totalScore = nameScore + yearScore + qualityScore + episodeScore + sourceScore;
 
-                  const isStrictCandidate = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isExactName && !isEpisodeInsufficient &&
-                    (isSeriesItem || !targetYear || !candYear || Math.abs(candYear - targetYear) <= 1);
+                  // 记录非预告片的所有相关备选源，用于最终兜底保障
+                  if (!isTrailer && !isCommentary && !isMusical && totalScore > 0) {
+                    fallbackCandidates.push({ _video: v, _score: totalScore, _isSeries: isSeriesItem });
+                  }
+
+                  const isNameMatched = isExactName || isHighConfidenceMatch;
+                  const isStrictCandidate = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isNameMatched && !isEpisodeInsufficient &&
+                    (isSeriesItem || !targetYear || !candYear || Math.abs(candYear - targetYear) <= 2);
 
                   if (isStrictCandidate) {
                     const existingIdx = foundSources.findIndex(s => s.source === v.source);
@@ -337,19 +370,19 @@ export function IkanPPPlayerContainer() {
 
                   // 极速秒播裁决：
                   // 1. 全站 No.1 黄金首选巨量资源 (juliang) 无论何时到达，只要匹配立即秒播直出；
-                  // 2. 光速/暴风等高质量骨干源 (totalScore >= 120)：给巨量 1500ms 优先冲刺窗口，若巨量超时仍未到达则弹性秒播直出，拒绝白屏干等！
-                  const isQualified = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isExactName && !isEpisodeInsufficient && totalScore >= 80;
+                  // 2. 光速/暴风/最大等高质量骨干源 (totalScore >= 100)：给巨量 800ms 优先冲刺窗口，若巨量超时仍未到达则弹性秒播直出，拒绝白屏干等！
+                  const isQualified = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isNameMatched && !isEpisodeInsufficient && totalScore >= 70;
                   if (isQualified && !redirected && !cancelled) {
                     const isSeasonOrYearMatched = 
                       (isSeriesItem && (targetAnalysis.seasonNumber !== null ? candAnalysis.seasonNumber === targetAnalysis.seasonNumber : (candAnalysis.seasonNumber === 1 || candAnalysis.seasonNumber === null))) ||
-                      (!isSeriesItem && (isExactYearMatch || !targetYear));
+                      (!isSeriesItem && (isExactYearMatch || !targetYear || !candYear || Math.abs(candYear - (targetYear || 0)) <= 2));
 
                     if (isSeasonOrYearMatched) {
                       const elapsed = Date.now() - searchStartTime;
                       const isJuliang = v.source === 'juliang';
-                      const isHighQualityBackbone = (v.source === 'guangsu' || v.source === 'baofeng') && totalScore >= 120;
+                      const isHighQualityBackbone = (v.source === 'guangsu' || v.source === 'baofeng' || v.source === 'zuida') && totalScore >= 100;
 
-                      if (isJuliang || (isHighQualityBackbone && elapsed > 1500)) {
+                      if (isJuliang || (isHighQualityBackbone && elapsed > 800)) {
                         performRedirect(v, isSeriesItem);
                         break;
                       }
@@ -368,13 +401,23 @@ export function IkanPPPlayerContainer() {
             if (best?._video) {
               performRedirect(best._video, best._isSeries ?? false);
             } else {
-              setTitleSearchError('未找到与该片名匹配的高质量正片片源，请尝试精确片名搜索');
-              setTitleSearching(false);
+              tryFallbackPlay();
             }
           } else {
-            setTitleSearchError('未找到与该片名匹配的高质量正片片源，请尝试精确片名搜索');
-            setTitleSearching(false);
+            tryFallbackPlay();
           }
+        }
+
+        function tryFallbackPlay() {
+          if (fallbackCandidates.length > 0) {
+            const bestFallback = fallbackCandidates.sort((a, b) => b._score - a._score)[0];
+            if (bestFallback?._video) {
+              performRedirect(bestFallback._video, bestFallback._isSeries);
+              return;
+            }
+          }
+          setTitleSearchError('未找到与该片名匹配的高质量正片片源，请尝试精确片名搜索');
+          setTitleSearching(false);
         }
       } catch (err: any) {
         if (!cancelled && !redirected) {
@@ -547,7 +590,12 @@ export function IkanPPPlayerContainer() {
                 for (const v of data.videos) {
                   const rawName = (v.vod_name || '').trim();
                   const candAnalysis = analyzeTitle(rawName);
-                  if (candAnalysis.pureTitle === targetAnalysis.pureTitle) {
+                  const isExact = candAnalysis.pureTitle === targetAnalysis.pureTitle;
+                  const hasSharedSubtitle = targetAnalysis.subtitles.some(st => st.length >= 3 && candAnalysis.pureTitle.includes(st)) ||
+                                            candAnalysis.subtitles.some(sc => sc.length >= 3 && targetAnalysis.pureTitle.includes(sc));
+                  const isSubstringOverlap = (candAnalysis.pureTitle.length >= 3 && targetAnalysis.pureTitle.includes(candAnalysis.pureTitle)) ||
+                                             (targetAnalysis.pureTitle.length >= 3 && candAnalysis.pureTitle.includes(targetAnalysis.pureTitle));
+                  if (isExact || hasSharedSubtitle || isSubstringOverlap) {
                     const existingIdx = found.findIndex(s => s.source === v.source);
                     if (existingIdx === -1) {
                       found.push({

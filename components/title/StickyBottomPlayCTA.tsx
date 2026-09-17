@@ -98,12 +98,8 @@ export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAPr
       } else if (fast.id && fast.source && isValidSourceId(fast.source)) {
         playId = fast.id;
         playSource = fast.source;
-      } else {
-        // 默认兜底以巨量资源起播
-        playSource = 'juliang';
       }
     }
-
     startTransition(() => {
       const params = new URLSearchParams({
         entity: entity.entityId,
@@ -111,9 +107,12 @@ export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAPr
         type: entity.type === 'tv' ? 'tv' : 'movie',
         episode: episodeInfo.paramValue,
       });
+      if (entity.year) params.set('year', String(entity.year));
       if (episodeInfo.seasonNumber) params.set('season', String(episodeInfo.seasonNumber));
-      if (playId) params.set('id', String(playId));
-      if (playSource) params.set('source', playSource);
+      if (playId && playSource) {
+        params.set('id', String(playId));
+        params.set('source', playSource);
+      }
       router.push(`/player?${params.toString()}`);
     });
   };
