@@ -76,7 +76,7 @@ interface Props {
 
 /**
  * 高容错实体解析引擎：支持各种形态的 Slug（如 ik000013-女仆日记, ik002015-法律与秩序, 法律与秩序, ik000013 等）
- * 彻底避免因为带 ID 前缀调用 TMDB 接口导致的 404
+ * 核心架构铁律：ID 与显式 Slug 映射最高优先级，彻底根治 URL 英文后缀导致李代桃僵的问题
  */
 async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> {
   if (!rawSlugParam) return null;
@@ -97,12 +97,26 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
     cleanTitle = decodeURIComponent(cleanTitle).trim();
   } catch {}
 
-  // 🌟 优先级 1：若存在明确纯净标题，优先尝试 100% 精准标题匹配（最高安全级别，杜绝任何 ID 冲突）
+  // 🌟 优先级 1：根据完整 decodedSlug 优先查询
+  // 覆盖：显式别名映射（如历史错配旧链接 slug:ik002038-the-bill -> ik007343）、规范 canonical slug、实体 ID
+  let entity = await getEntityBySlug(decodedSlug);
+
+  if (entity) {
+    if (!entity.cover || entity.cover.trim() === '') {
+      const healed = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
+      if (healed && healed.cover) return enrichEpisodeCount(healed);
+    }
+    return enrichEpisodeCount(entity);
+  }
+
+  // 🌟 优先级 2：若 URL 未带 ID 但存在明确中文标题，尝试 100% 精准中文标题匹配
   const yearMatch = cleanTitle.match(/(.*?)(?:[\s_—\-]+)?((?:19|20)\d{2})$/);
   const baseCleanTitle = yearMatch ? yearMatch[1].trim() : cleanTitle;
   const yearSuffix = yearMatch ? yearMatch[2] : undefined;
 
-  if (cleanTitle) {
+  const hasChinese = /[\u4e00-\u9fff]/.test(cleanTitle);
+
+  if (cleanTitle && !/^ik\d{6}$/i.test(cleanTitle) && (hasChinese || cleanTitle.length > 8)) {
     const titleMatch = await getEntityByTitle(cleanTitle);
     if (titleMatch && titleMatch.cover && normalizeTitle(titleMatch.title) === normalizeTitle(cleanTitle)) {
       return enrichEpisodeCount(titleMatch);
@@ -116,30 +130,8 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
     }
   }
 
-  // 2. 尝试根据 slug 或 ID 取实体
-  let entity = await getEntityBySlug(decodedSlug);
-
-  // 🌟 核心防线：严格校验取出的实体标题是否与 URL 中的 cleanTitle 匹配！
-  if (entity && cleanTitle) {
-    const normEntity = normalizeTitle(entity.title);
-    const normClean = normalizeTitle(cleanTitle);
-    const isOverExtended = normEntity.length > normClean.length + 2 && (normEntity.includes('剧场版') || normEntity.includes('电影版') || normEntity.includes('特别篇') || normEntity.includes('番外'));
-    if (!hasTitleOverlap(entity.title, cleanTitle) || isOverExtended) {
-      console.warn(`[resolveEntity Mismatch Discarded]: URL cleanTitle="${cleanTitle}" but found entity="${entity.title}" (id=${entity.entityId})`);
-      entity = null;
-    }
-  }
-
-  if (entity) {
-    if (!entity.cover || entity.cover.trim() === '') {
-      const healed = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
-      if (healed && healed.cover) return enrichEpisodeCount(healed);
-    }
-    return enrichEpisodeCount(entity);
-  }
-
-  // 3. 如果有纯净标题，尝试在本地按标题反向索引查找
-  if (cleanTitle) {
+  // 🌟 优先级 3：如果本地按标题反向索引有匹配（仅限含中文字符查询，防止纯英文词根误伤）
+  if (cleanTitle && hasChinese && !/^ik\d{6}$/i.test(cleanTitle)) {
     entity = await getEntityByTitle(cleanTitle);
     if (!entity && baseCleanTitle && baseCleanTitle !== cleanTitle) {
       entity = await getEntityByTitle(baseCleanTitle);
@@ -153,9 +145,9 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
     }
   }
 
-  // 4. 若本地/预置库未命中，使用纯净标题到 TMDB 搜索并自愈入库（仅全新冷门词条触发）
+  // 🌟 优先级 4：若本地/预置库未命中，使用中文纯净标题到 TMDB 搜索并自愈入库（仅全新冷门词条触发）
   const queryTitle = cleanTitle || decodedSlug;
-  if (queryTitle && !/^ik\d{6}$/i.test(queryTitle)) {
+  if (queryTitle && hasChinese && !/^ik\d{6}$/i.test(queryTitle)) {
     entity = await searchAndEnrichFromTMDB(queryTitle, undefined, yearSuffix);
     if (!entity && baseCleanTitle && baseCleanTitle !== queryTitle) {
       entity = await searchAndEnrichFromTMDB(baseCleanTitle, undefined, yearSuffix);
@@ -398,7 +390,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // 🌟 SEO 301 权威规范重定向：在 Metadata 生成阶段立即发起 308/301 永久重定向
   const canonicalSlug = `${entity.entityId}-${entity.slug}`.toLowerCase();
   const currentCleanSlug = decodedSlug.toLowerCase();
-  if (currentCleanSlug !== canonicalSlug && !currentCleanSlug.includes('-') && !isSeasonSpecified) {
+  if (currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
     redirect(`/title/${encodeURIComponent(`${entity.entityId}-${entity.slug}`)}`, RedirectType.replace);
   }
 
@@ -495,7 +487,7 @@ export default async function TitlePage({ params }: Props) {
   // 强制发起 308/301 永久重定向，将爬虫与外链权重 100% 汇聚于标准规范 URL，彻底根治 GSC 2130+ 备用网页报警
   const canonicalSlug = `${entity.entityId}-${entity.slug}`.toLowerCase();
   const currentCleanSlug = decodedSlug.toLowerCase();
-  if (currentCleanSlug !== canonicalSlug && !currentCleanSlug.includes('-') && !isSeasonSpecified) {
+  if (currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
     redirect(`/title/${encodeURIComponent(`${entity.entityId}-${entity.slug}`)}`, RedirectType.replace);
   }
 

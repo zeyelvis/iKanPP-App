@@ -108,6 +108,39 @@ async function kvPut(key: string, value: string): Promise<void> {
 }
 
 /**
+ * 物理删除 KV 键（用于毒化键清理与索引自愈）
+ */
+export async function kvDelete(key: string): Promise<void> {
+  memoryStore.delete(key);
+
+  const kv = getCloudflareKV();
+  if (kv && typeof kv.delete === 'function') {
+    try {
+      await kv.delete(key);
+    } catch (e) {
+      console.warn(`[KV delete] error for key ${key}:`, e);
+    }
+    return;
+  }
+
+  // 本地开发或非 Worker 环境：透明通过 Cloudflare REST API 直连物理删除
+  if (!kv && typeof fetch === 'function' && CF_KV_API_KEY && CF_KV_EMAIL) {
+    try {
+      const url = `https://api.cloudflare.com/client/v4/accounts/${CF_KV_ACCOUNT_ID}/storage/kv/namespaces/${CF_KV_NAMESPACE_ID}/values/${encodeURIComponent(key)}`;
+      await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'X-Auth-Email': CF_KV_EMAIL,
+          'X-Auth-Key': CF_KV_API_KEY,
+        },
+      });
+    } catch (err) {
+      console.warn(`[KV delete REST] error for key ${key}:`, err);
+    }
+  }
+}
+
+/**
  * 根据实体 ID 获取影片
  * @param entityId 如 "ik000001"
  */
@@ -144,26 +177,34 @@ export async function getEntityBySlug(slugKey: string): Promise<TitleEntity | nu
   if (!slugKey) return null;
   const cleanKey = slugKey.toLowerCase();
 
-  // 1. 尝试从 slug 映射取 entityId
-  let targetId = await kvGet(`slug:${cleanKey}`);
-
-  // 2. 如果没取到，解析是否带有 ik[6位数字] 前缀
-  if (!targetId) {
-    const match = cleanKey.match(/^(ik\d{6})/i);
-    if (match) {
-      targetId = match[1].toLowerCase();
+  // 1. 优先尝试从 slug 显式映射取 entityId（如旧 URL 301 映射、历史别名权威路由）
+  const explicitTargetId = await kvGet(`slug:${cleanKey}`);
+  if (explicitTargetId) {
+    const ent = await getEntityById(explicitTargetId);
+    if (ent) {
+      // 显式映射属于权威别名路由，直接返回实体，无需再因 URL 拼写差异丢弃
+      return ent;
     }
   }
 
-  if (targetId) {
+  // 2. 如果无显式 slug 映射，解析是否带有 ik[6位数字] 前缀
+  const match = cleanKey.match(/^(ik\d{6})/i);
+  if (match) {
+    const targetId = match[1].toLowerCase();
     const ent = await getEntityById(targetId);
     if (ent) {
-      // 🌟 强一致防线：如果 slugKey 带有标题部分（例如 ik002001-仙逆剧场版-弑仙之战），
-      // 必须严格校验取出的实体标题是否与 URL 中的标题一致，防止 ID 冲突导致张冠李戴
+      // 🌟 强一致防线：如果 slugKey 带有附加标题部分（例如 ik002001-仙逆剧场版-弑仙之战），
+      // 校验 URL 中的标题部分与实体（中文标题、原名、实体slug）是否具有语义相关性
       const parts = cleanKey.split('-');
       if (parts.length > 1) {
         const urlTitlePart = parts.slice(1).join('-');
-        if (urlTitlePart && !hasTitleOverlap(ent.title, urlTitlePart)) {
+        const isMatch =
+          !urlTitlePart ||
+          hasTitleOverlap(ent.title, urlTitlePart) ||
+          (ent.originalTitle && hasTitleOverlap(ent.originalTitle, urlTitlePart)) ||
+          (ent.slug && hasTitleOverlap(ent.slug, urlTitlePart));
+
+        if (!isMatch) {
           console.warn(`[getEntityBySlug Mismatch Discarded]: URL part="${urlTitlePart}" does not match entity.title="${ent.title}" (targetId=${targetId})`);
           return null;
         }
@@ -176,13 +217,31 @@ export async function getEntityBySlug(slugKey: string): Promise<TitleEntity | nu
 }
 
 /**
- * 根据 TMDB ID 查询实体（用于导入排重）
+ * 根据 TMDB ID 查询实体（用于导入排重与权威匹配）
+ * 核心防线：增加「读取时自动核验与净化（On-Access Auto-Purge）」机制
+ * 若 KV 中存储的实体 tmdbId 与入参不一致，立即物理删除该毒化反向索引键并返回 null！
  */
 export async function getEntityByTmdb(tmdbType: 'movie' | 'tv', tmdbId: string): Promise<TitleEntity | null> {
   if (!tmdbId) return null;
-  const entityId = await kvGet(`tmdb:${tmdbType}:${tmdbId}`);
+  const key = `tmdb:${tmdbType}:${tmdbId}`;
+  const entityId = await kvGet(key);
   if (!entityId) return null;
-  return getEntityById(entityId);
+
+  const ent = await getEntityById(entityId);
+  if (!ent) {
+    // 实体本身不存在，物理清理死键
+    await kvDelete(key);
+    return null;
+  }
+
+  // 🌟 核心防线：强一致核验实体内部的 tmdbId 与 tmdbType
+  if (String(ent.tmdbId) !== String(tmdbId) || (ent.tmdbType && ent.tmdbType !== tmdbType)) {
+    console.warn(`[getEntityByTmdb Auto-Purge] Poisoned key detected: ${key} -> ${entityId} (actual entity tmdbId: ${ent.tmdbId}, type: ${ent.tmdbType}, title: ${ent.title}). Purging!`);
+    await kvDelete(key);
+    return null;
+  }
+
+  return ent;
 }
 
 /**
@@ -191,9 +250,15 @@ export async function getEntityByTmdb(tmdbType: 'movie' | 'tv', tmdbId: string):
 export async function getEntityByTitle(title: string): Promise<TitleEntity | null> {
   if (!title) return null;
   const norm = normalizeTitle(title);
+  if (!norm) return null;
   const entityId = await kvGet(`title:${norm}`);
   if (!entityId) return null;
-  return getEntityById(entityId);
+  const ent = await getEntityById(entityId);
+  if (!ent) {
+    await kvDelete(`title:${norm}`);
+    return null;
+  }
+  return ent;
 }
 
 /**

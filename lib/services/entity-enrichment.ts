@@ -283,7 +283,17 @@ export async function searchAndEnrichFromTMDB(
     if (!forceRefresh) {
       const existByTmdb = await getEntityByTmdb(actualType, String(firstHit.id));
       if (existByTmdb && existByTmdb.cover && existByTmdb.cover.trim() !== '') {
-        return existByTmdb;
+        const hitTitle = (firstHit.title || firstHit.name || '').trim();
+        const origTitle = (firstHit.original_title || firstHit.original_name || '').trim();
+        const isRelated =
+          hasTitleOverlap(existByTmdb.title, hitTitle + origTitle + cleanQuery) ||
+          (existByTmdb.originalTitle && hasTitleOverlap(existByTmdb.originalTitle, hitTitle + origTitle + cleanQuery)) ||
+          (existByTmdb.slug && hasTitleOverlap(existByTmdb.slug, hitTitle + origTitle + cleanQuery));
+
+        if (isRelated) {
+          return existByTmdb;
+        }
+        console.warn(`[searchAndEnrichFromTMDB] Cache discarded due to title mismatch: existTitle="${existByTmdb.title}", hitTitle="${hitTitle}", query="${cleanQuery}"`);
       }
     }
 
@@ -412,7 +422,17 @@ async function convertHitToEntity(
   try {
     const existByTmdb = await getEntityByTmdb(actualType, String(firstHit.id));
     if (existByTmdb && existByTmdb.cover && existByTmdb.cover.trim() !== '') {
-      return enrichEpisodeCount(existByTmdb);
+      const hitTitle = (firstHit.title || firstHit.name || '').trim();
+      const origTitle = (firstHit.original_title || firstHit.original_name || '').trim();
+      const isRelated =
+        hasTitleOverlap(existByTmdb.title, hitTitle + origTitle + fallbackTitle) ||
+        (existByTmdb.originalTitle && hasTitleOverlap(existByTmdb.originalTitle, hitTitle + origTitle + fallbackTitle)) ||
+        (existByTmdb.slug && hasTitleOverlap(existByTmdb.slug, hitTitle + origTitle + fallbackTitle));
+
+      if (isRelated) {
+        return enrichEpisodeCount(existByTmdb);
+      }
+      console.warn(`[convertHitToEntity] Discarding mismatch cache: existTitle="${existByTmdb.title}", hitTitle="${hitTitle}", fallback="${fallbackTitle}"`);
     }
 
     const detail = await fetchTMDBDetails(firstHit.id, actualType, TMDB_API_KEY);

@@ -104,3 +104,50 @@ export interface TitleEntity {
 2. **每小时连载追踪**：
    - 由 `.github/workflows/sync-iyf-channels.yml` 每小时整点触发 `sync-episode-updates.mjs`。
    - 实时同步连载剧集的更新状态（`status`）与播出集数（`numberOfEpisodes`）。
+
+---
+
+## 六、反向索引自愈、防毒化校验与 URL 语义冲突解决铁律 (Auto-Purge & Anti-Poisoning Spec)
+
+为了杜绝搜索引擎流量落地页张冠李戴、站内搜索头部推荐卡片错乱等恶性体验事故，全站必须永久恪守以下五大防毒化与自愈架构铁律：
+
+### 1. 反向索引读取时强一致校验 (On-Access Strong Verification)
+- 任何通过 `getEntityByTmdb(tmdbType, tmdbId)` 读取实体的地方，系统必须且只能在内存中强一致核验读出实体的实际属性：
+  ```typescript
+  if (String(ent.tmdbId) !== String(tmdbId) || (ent.tmdbType && ent.tmdbType !== tmdbType)) {
+    // 判定为毒化键，拒绝向调用方返回
+  }
+  ```
+- 严禁盲目信任反向索引指向的实体，防止历史脏数据或脚本错误导致跨影片关联。
+
+### 2. 读取时自动物理净化 (On-Access Auto-Purge)
+- 一旦检测到反向索引指向了错误的实体（或指向了已删除的虚空实体），系统必须立即调用 `kvDelete` 物理删除该毒化键：
+  ```typescript
+  console.warn(`[getEntityByTmdb Auto-Purge] Poisoned key: ${key} -> ${entityId}. Purging!`);
+  await kvDelete(key);
+  return null;
+  ```
+- 绝不允许“知错留错”，实现任意请求只要触碰到脏数据，即可在毫秒级全自动完成单点物理清理，阻止毒化数据二次蔓延。
+
+### 3. 片名语义重叠门槛防线 (Title Overlap Guard)
+- 在 `searchAndEnrichFromTMDB` 与 `convertHitToEntity` 中，从本地 KV 命中缓存实体后，必须校验该实体的 `title`、`originalTitle` 或 `slug` 是否与当前的搜索命中候选项（Hit Title / Original Title / Query）具备实质语义重叠（`hasTitleOverlap`）；
+- 若标题风马牛不相及（例如以《杀死比尔》检索命中历史毒化条目《我的宝贝四千金》），坚决予以丢弃，强制进入 TMDB 官方 API 深度元数据抓取并重写入库，杜绝搜索推荐卡片“指鹿为马”。
+
+### 4. URL 路由解析实体 ID 优先与显式别名路由 (ID-First & Explicit Alias Routing)
+- 影视详情页路由 `/title/[slug]` 的解析必须严格遵循权威层级优先级：
+  1. **显式别名路由优先**：检查 `slug:${cleanKey}` 是否在 KV 中具有显式映射（如历史被 Google 收录的旧链接 `slug:ik002038-the-bill -> ik007343`）。显式映射代表系统权威意志，直接返回正确实体；
+  2. **实体物理 ID 优先**：若 URL 含有标准 ID（`ik\d{6}`），直接以该 ID 检索实体，并比对 URL 尾部的标题片段。若尾部仅为英文拼写或外语原名，绝不可跳过 ID 直接拿英文尾缀去按片名全局反查，杜绝英文短词（如 `the-bill`）撞车同名其他剧集的恶性 Bug；
+  3. **中文纯净标题检索**：仅当 URL 不含 ID 且包含中文字符时，才允许执行 `getEntityByTitle`；
+  4. **TMDB 在线冷门自愈**：仅对含中文字符的新鲜词条执行在线搜索自愈。
+
+### 5. SEO 规范 URL 301 永久重定向 (Canonical 301 Permanent Redirect)
+- 任何非权威规范 Slug（包含带 `-` 的历史别名 URL、纯 ID URL、拼音不规范 URL），在详情页元数据与主体渲染阶段，必须统一触发 301 / 308 永久重定向：
+  ```typescript
+  const canonicalSlug = `${entity.entityId}-${entity.slug}`.toLowerCase();
+  const currentCleanSlug = decodedSlug.toLowerCase();
+  if (currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
+    redirect(`/title/${encodeURIComponent(`${entity.entityId}-${entity.slug}`)}`, RedirectType.replace);
+  }
+  ```
+- 彻底移除 `!currentCleanSlug.includes('-')` 限制，确保所有历史旧链接（即使带连字符）均能无缝永久重定向至标准 Canonical URL，将外链权重 100% 汇聚，彻底解决 Google Search Console 备用网页报警与流量落地错位。
+
