@@ -177,19 +177,44 @@ export default function LatestTitlesRail({
   const [items, setItems] = useState<RecentTitleItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const CACHE_KEY = `kvideo-latest-titles-v4-${type || 'all'}`;
+  const CACHE_KEY = `kvideo-latest-titles-v5-${type || 'all'}`;
+
+  // 严格安全内容过滤器（彻底杜绝日文低俗色情录像与垃圾脏数据进入主站展示）
+  const filterSafeItems = (rawList: RecentTitleItem[]): RecentTitleItem[] => {
+    const dirtyWords = ['売春', '愛汁', '肉しびれ', '女囚', '痴情', '痴漢', '快辱', '熟女', '巨乳', '乱交', '調教', '無修正', '盗撮', '近親', '三级', '情色', 'AV', '成人'];
+    return rawList.filter(item => {
+      if (!item || !item.title) return false;
+      const t = item.title;
+      // 1. 命中成人违禁词坚决阻断
+      if (dirtyWords.some(w => t.includes(w))) return false;
+      // 2. 纯日文假名（平假名/片假名）低质条目阻断
+      if (/[\u3040-\u309f\u30a0-\u30ff]/.test(t) && !/[\u4e00-\u9fa5]{2,}/.test(t)) return false;
+      // 3. 极低评分异常老片阻断
+      if (item.rate && parseFloat(item.rate) <= 3.0 && item.year && parseInt(item.year, 10) < 2024) return false;
+      return true;
+    });
+  };
 
   // SWR 本地优先瞬间恢复 + 异步刷新（带 30 分钟 TTL 刷新机制）
   useEffect(() => {
     let active = true;
     if (typeof window !== 'undefined') {
       try {
+        // 清理旧版本被污染的历史 localStorage 缓存
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('kvideo-latest-titles-v4-')) {
+            localStorage.removeItem(k);
+          }
+        }
+
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const parsed = JSON.parse(cached);
           const list = Array.isArray(parsed) ? parsed : parsed?.data;
           if (Array.isArray(list) && list.length > 0) {
-            setItems(list);
+            const safeList = filterSafeItems(list);
+            setItems(safeList);
             setIsLoaded(true);
           }
         }
@@ -205,10 +230,11 @@ export default function LatestTitlesRail({
         if (!res.ok) return;
         const json = await res.json();
         if (active && json.success && Array.isArray(json.data) && json.data.length > 0) {
-          setItems(json.data);
+          const safeData = filterSafeItems(json.data);
+          setItems(safeData);
           setIsLoaded(true);
           try {
-            localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: json.data }));
+            localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: safeData }));
           } catch {}
         }
       } catch (err) {

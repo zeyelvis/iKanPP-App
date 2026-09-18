@@ -84,22 +84,36 @@ export async function GET(request: Request) {
       const mainTitle = (detail.title || detail.name || '').trim();
       const originalTitle = (detail.original_title || detail.original_name || '').trim();
 
-      // 3. 严格质量过滤铁律：
-      // A. 必须具有中文官方译名（含汉字），绝不盲目收录纯外文无切片冷门作品
+      // 3. 严格质量与内容安全铁律（双轨隔离：主站绝不允许任何成人低俗与小语种垃圾条目）：
       if (!mainTitle) continue;
-      const hasChinese = /[\u4e00-\u9fa5]/.test(mainTitle);
-      if (!hasChinese) continue;
 
-      // B. 必须具有高清海报与剧情简介，杜绝空白占位条目
-      if (!detail.poster_path || !detail.overview || detail.overview.trim().length < 8) continue;
+      // A. 成人低俗违禁词物理阻断
+      const ADULT_WORDS = ['売春', '愛汁', '肉しびれ', '女囚', '痴情', '痴漢', '快辱', '熟女', '巨乳', '乱交', '調教', '無修正', '盗撮', '近親', '色情', '三级', '情色', 'AV', '成人', 'ポルノ', 'エロ'];
+      if (ADULT_WORDS.some(w => mainTitle.includes(w) || (originalTitle && originalTitle.includes(w)) || (detail.overview && detail.overview.includes(w)))) {
+        continue;
+      }
 
-      // C. 历史冷门片过滤：早于 2005 年且缺乏大众热度（vote_count < 100）的条目，国内采集站无切片存活，坚决跳过
+      // B. 排除日文假名（平假名/片假名）未汉化地下条目
+      if (/[\u3040-\u309f\u30a0-\u30ff]/.test(mainTitle)) {
+        continue;
+      }
+
+      // C. 必须具有至少 2 个正规中文字符
+      const chineseMatches = mainTitle.match(/[\u4e00-\u9fa5]/g);
+      if (!chineseMatches || chineseMatches.length < 2) continue;
+
+      // D. 必须具有高清海报与充实剧情简介，杜绝空白或过短占位
+      if (!detail.poster_path || !detail.overview || detail.overview.trim().length < 15) continue;
+
+      // E. 严格大众热度与评分门槛：评分低于 4.5 或评价人数极少者坚决不收录，杜绝 2.0 分低俗产物
+      if ((detail.vote_average && detail.vote_average < 4.5) || (detail.vote_count && detail.vote_count < 30)) {
+        continue;
+      }
+
+      // F. 历史老片（早于 2020 年）必须具有至少 100 人评价，无热度老片直接跳过
       const releaseYearStr = (detail.release_date || detail.first_air_date || '').slice(0, 4);
       const parsedYear = releaseYearStr ? parseInt(releaseYearStr, 10) : null;
-      if (parsedYear && parsedYear < 2005) {
-        if (!detail.vote_count || detail.vote_count < 100) continue;
-      }
-      if (parsedYear && parsedYear < 2018 && (!detail.vote_average || detail.vote_average === 0) && (!detail.vote_count || detail.vote_count === 0)) {
+      if (parsedYear && parsedYear < 2020 && (!detail.vote_count || detail.vote_count < 100)) {
         continue;
       }
 

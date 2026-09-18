@@ -1,9 +1,7 @@
 name: TMDB Changes High-Frequency Sniffer & Push
 
 on:
-  schedule:
-    # 每 30 分钟高频嗅探 TMDB 全球影视增量变动并极速收录（安全保持在 GitHub Actions 每月 2000 分钟免费额度内）
-    - cron: '*/30 * * * *'
+  # 已根据双轨隔离与内容安全铁律停用自动嗅探，防止 TMDB 未审核成人/小语种 UGC 垃圾污染主站
   workflow_dispatch:
 
 jobs:

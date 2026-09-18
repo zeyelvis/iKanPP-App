@@ -396,23 +396,26 @@ export async function saveEntity(entity: TitleEntity): Promise<void> {
     createdAt: entity.createdAt || new Date().toISOString(),
   };
 
-  const updateRecentList = async (key: string) => {
-    try {
-      const rawList = await kvGet(key);
-      let list: RecentTitleItem[] = rawList ? JSON.parse(rawList) : [];
-      // 排重同 id 或归一化同名实体
-      list = list.filter(item => item.entityId !== id && normalizeTitle(item.title) !== normTitle);
-      list.unshift(recentItem);
-      if (list.length > 60) list = list.slice(0, 60);
-      await kvPut(key, JSON.stringify(list));
-    } catch (e) {
-      console.warn(`[saveEntity] updateRecentList failed for ${key}:`, e);
-    }
-  };
+  // 严格安全内容铁律：成人低俗词汇、日文假名地下录像与垃圾片坚决不进入最近上线索引
+  if (isSafeRecentTitleItem(recentItem)) {
+    const updateRecentList = async (key: string) => {
+      try {
+        const rawList = await kvGet(key);
+        let list: RecentTitleItem[] = rawList ? JSON.parse(rawList) : [];
+        // 排重同 id 或归一化同名实体
+        list = list.filter(item => item.entityId !== id && normalizeTitle(item.title) !== normTitle && isSafeRecentTitleItem(item));
+        list.unshift(recentItem);
+        if (list.length > 60) list = list.slice(0, 60);
+        await kvPut(key, JSON.stringify(list));
+      } catch (e) {
+        console.warn(`[saveEntity] updateRecentList failed for ${key}:`, e);
+      }
+    };
 
-  await updateRecentList('recent:all');
-  if (entity.type === 'movie' || entity.type === 'tv') {
-    await updateRecentList(`recent:${entity.type}`);
+    await updateRecentList('recent:all');
+    if (entity.type === 'movie' || entity.type === 'tv') {
+      await updateRecentList(`recent:${entity.type}`);
+    }
   }
 }
 
@@ -759,6 +762,27 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
   };
 }
 
+const ADULT_BLACKLIST_WORDS = [
+  '売春', '愛汁', '肉しびれ', '女囚', '痴情', '痴漢', '快辱', '熟女', '巨乳', '乱交',
+  '調教', '無修正', '盗撮', '近親', '色情', '三级', '情色', 'AV', '成人', 'ポルノ', 'エロ',
+  'YOSHIO', 'Kis-My-Ft2', 'ジャニーズ', 'Unnatural Causes'
+];
+
+/**
+ * 严格安全内容铁律：主站轨道 A 绝不允许任何成人低俗内容或日文地下录像泄露
+ */
+export function isSafeRecentTitleItem(item: RecentTitleItem): boolean {
+  if (!item || !item.title) return false;
+  const t = item.title;
+  // 1. 命中敏感词黑名单阻断
+  if (ADULT_BLACKLIST_WORDS.some(w => t.includes(w))) return false;
+  // 2. 纯日文假名（平假名/片假名）地下低俗条目拦截
+  if (/[\u3040-\u309f\u30a0-\u30ff]/.test(t) && !/[\u4e00-\u9fa5]{2,}/.test(t)) return false;
+  // 3. 极低评分异常垃圾片阻断
+  if (item.rate && parseFloat(item.rate) <= 3.0 && item.year && parseInt(item.year, 10) < 2024) return false;
+  return true;
+}
+
 /**
  * 获取最新入库的影视条目（用于首页及频道专区「最新上线」货架、RSS Feed 等）
  * @param limit 获取数量限制（默认 20，上限 60）
@@ -770,13 +794,16 @@ export async function listRecentEntities(limit = 20, type?: string): Promise<Rec
   const channelKey = validChannels.includes(normalizedChannel) ? normalizedChannel : 'all';
   const targetKey = channelKey === 'all' ? 'recent:all' : `recent:${channelKey}`;
 
-  // 1. 尝试从 Cloudflare KV 获取增量缓存
+  // 1. 尝试从 Cloudflare KV 获取增量缓存（经过双重安全过滤）
   const raw = await kvGet(targetKey);
   if (raw) {
     try {
       const items = JSON.parse(raw) as RecentTitleItem[];
       if (Array.isArray(items) && items.length > 0) {
-        return items.slice(0, limit);
+        const safeItems = items.filter(isSafeRecentTitleItem);
+        if (safeItems.length > 0) {
+          return safeItems.slice(0, limit);
+        }
       }
     } catch (e) {
       console.warn(`[listRecentEntities] parse error for ${targetKey}:`, e);
@@ -790,7 +817,10 @@ export async function listRecentEntities(limit = 20, type?: string): Promise<Rec
     try {
       const items = JSON.parse(rawMem) as RecentTitleItem[];
       if (Array.isArray(items) && items.length > 0) {
-        return items.slice(0, limit);
+        const safeItems = items.filter(isSafeRecentTitleItem);
+        if (safeItems.length > 0) {
+          return safeItems.slice(0, limit);
+        }
       }
     } catch {}
   }
