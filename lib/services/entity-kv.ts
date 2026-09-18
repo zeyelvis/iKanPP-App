@@ -1,5 +1,5 @@
 import { TitleEntity } from '@/lib/types/entity';
-import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie, hasTitleOverlap } from '@/lib/data/entities/entity-utils';
+import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie, hasTitleOverlap, isCleanChineseTitle } from '@/lib/data/entities/entity-utils';
 
 /**
  * 影视实体精简卡片项（用于「最新上线」货架与 RSS Feed 0ms 瞬间直出）
@@ -769,16 +769,14 @@ const ADULT_BLACKLIST_WORDS = [
 ];
 
 /**
- * 严格安全内容铁律：主站轨道 A 绝不允许任何成人低俗内容或日文地下录像泄露
+ * 严格安全内容铁律：主站轨道 A 绝不允许任何成人低俗内容、日文假名条目或纯外文垃圾条目泄露
  */
 export function isSafeRecentTitleItem(item: RecentTitleItem): boolean {
   if (!item || !item.title) return false;
   const t = item.title;
-  // 1. 命中敏感词黑名单阻断
-  if (ADULT_BLACKLIST_WORDS.some(w => t.includes(w))) return false;
-  // 2. 纯日文假名（平假名/片假名）地下低俗条目拦截
-  if (/[\u3040-\u309f\u30a0-\u30ff]/.test(t) && !/[\u4e00-\u9fa5]{2,}/.test(t)) return false;
-  // 3. 极低评分异常垃圾片阻断
+  // 1. 严格华语合法标题过滤（阻断日文假名、韩文、无中文字符纯外文、违规黑名单）
+  if (!isCleanChineseTitle(t)) return false;
+  // 2. 极低评分异常垃圾片阻断
   if (item.rate && parseFloat(item.rate) <= 3.0 && item.year && parseInt(item.year, 10) < 2024) return false;
   return true;
 }

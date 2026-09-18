@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl, getFallbackProxiedImageUrl } from '@/lib/utils/image-utils';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, isCleanChineseTitle } from '@/lib/data/entities/entity-utils';
 import { RecentTitleItem } from '@/lib/services/entity-kv';
 
 interface LatestTitlesRailProps {
@@ -177,19 +177,15 @@ export default function LatestTitlesRail({
   const [items, setItems] = useState<RecentTitleItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const CACHE_KEY = `kvideo-latest-titles-v5-${type || 'all'}`;
+  const CACHE_KEY = `kvideo-latest-titles-v6-${type || 'all'}`;
 
-  // 严格安全内容过滤器（彻底杜绝日文低俗色情录像与垃圾脏数据进入主站展示）
+  // 严格安全内容过滤器（彻底杜绝日文假名、纯外文无中文条目与垃圾脏数据进入主站展示）
   const filterSafeItems = (rawList: RecentTitleItem[]): RecentTitleItem[] => {
-    const dirtyWords = ['売春', '愛汁', '肉しびれ', '女囚', '痴情', '痴漢', '快辱', '熟女', '巨乳', '乱交', '調教', '無修正', '盗撮', '近親', '三级', '情色', 'AV', '成人'];
     return rawList.filter(item => {
       if (!item || !item.title) return false;
-      const t = item.title;
-      // 1. 命中成人违禁词坚决阻断
-      if (dirtyWords.some(w => t.includes(w))) return false;
-      // 2. 纯日文假名（平假名/片假名）低质条目阻断
-      if (/[\u3040-\u309f\u30a0-\u30ff]/.test(t) && !/[\u4e00-\u9fa5]{2,}/.test(t)) return false;
-      // 3. 极低评分异常老片阻断
+      // 1. 严格华语正片标题过滤（阻断日文假名、韩文、纯英文/德文/西文等无中文译名条目与违禁词）
+      if (!isCleanChineseTitle(item.title)) return false;
+      // 2. 极低评分异常老片阻断
       if (item.rate && parseFloat(item.rate) <= 3.0 && item.year && parseInt(item.year, 10) < 2024) return false;
       return true;
     });
@@ -200,10 +196,10 @@ export default function LatestTitlesRail({
     let active = true;
     if (typeof window !== 'undefined') {
       try {
-        // 清理旧版本被污染的历史 localStorage 缓存
-        for (let i = 0; i < localStorage.length; i++) {
+        // 清理旧版本被污染的历史 localStorage 缓存（v4 与 v5）
+        for (let i = localStorage.length - 1; i >= 0; i--) {
           const k = localStorage.key(i);
-          if (k && k.startsWith('kvideo-latest-titles-v4-')) {
+          if (k && (k.startsWith('kvideo-latest-titles-v4-') || k.startsWith('kvideo-latest-titles-v5-'))) {
             localStorage.removeItem(k);
           }
         }
@@ -224,8 +220,8 @@ export default function LatestTitlesRail({
     const fetchLatest = async () => {
       try {
         const url = type
-          ? `/api/latest-titles?type=${type}&limit=20`
-          : '/api/latest-titles?limit=20';
+          ? `/api/latest-titles?type=${type}&limit=20&v=6`
+          : '/api/latest-titles?limit=20&v=6';
         const res = await fetch(url);
         if (!res.ok) return;
         const json = await res.json();

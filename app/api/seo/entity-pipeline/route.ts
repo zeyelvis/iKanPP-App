@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getEntityByTmdb, getNextEntitySeq, saveEntity } from '@/lib/services/entity-kv';
 import { fetchTMDBDetails } from '@/lib/services/entity-enrichment';
-import { formatEntityId, generateSlug } from '@/lib/data/entities/entity-utils';
+import { formatEntityId, generateSlug, isCleanChineseTitle } from '@/lib/data/entities/entity-utils';
 import { TitleEntity } from '@/lib/types/entity';
 import { isJuliangExcludedCategory } from '@/lib/api/juliang-category-map';
 import { batchPublishGoogleIndexing } from '@/lib/services/google-indexing';
@@ -128,7 +128,7 @@ export async function GET(request: Request) {
       if (!detail) continue;
 
       const mainTitle = detail.title || detail.name || item.title || item.name;
-      if (!mainTitle) continue;
+      if (!mainTitle || !isCleanChineseTitle(mainTitle)) continue;
 
       const nextSeq = await getNextEntitySeq();
       const entityId = formatEntityId(nextSeq);
