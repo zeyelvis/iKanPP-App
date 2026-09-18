@@ -1,0 +1,177 @@
+{
+  "updatedAt": "2026-09-18T15:05:00.000Z",
+  "brandKeywords": [
+    { "keyword": "iKanPP", "type": "核心英文品牌", "intent": "导航型", "target": "/" },
+    { "keyword": "爱看片片", "type": "核心中文品牌", "intent": "导航型", "target": "/" },
+    { "keyword": "ikanpp.com", "type": "主域名直达", "intent": "导航型", "target": "/" },
+    { "keyword": "iKanPP官网", "type": "品牌防伪词", "intent": "导航型", "target": "/" },
+    { "keyword": "iKanPP影视", "type": "品牌功能词", "intent": "信息型", "target": "/" },
+    { "keyword": "iKanPP爱看片片", "type": "双语组合词", "intent": "导航型", "target": "/" }
+  ],
+  "industryHeadKeywords": [
+    { "keyword": "在线电影", "category": "电影", "difficulty": "极高", "target": "/movie" },
+    { "keyword": "高清电视剧在线观看", "category": "电视剧", "difficulty": "极高", "target": "/tv" },
+    { "keyword": "免费追剧网站", "category": "全站聚合", "difficulty": "高", "target": "/" },
+    { "keyword": "海外华人看剧网站", "category": "出海垂直", "difficulty": "中高", "target": "/" },
+    { "keyword": "免翻墙影视聚合", "category": "出海垂直", "difficulty": "中", "target": "/" },
+    { "keyword": "无广告看剧平台", "category": "体验驱动", "difficulty": "中", "target": "/" },
+    { "keyword": "4K超清电影在线看", "category": "画质驱动", "difficulty": "中高", "target": "/movie" },
+    { "keyword": "电视投屏看剧平台", "category": "场景驱动", "difficulty": "中", "target": "/player" },
+    { "keyword": "最新热播好剧推荐", "category": "内容发现", "difficulty": "中", "target": "/ranking" }
+  ],
+  "categoryKeywords": [
+    {
+      "channel": "movie",
+      "channelName": "电影专区",
+      "keywords": [
+        "2026最新电影在线观看",
+        "院线大片高清免费看",
+        "豆瓣高分电影合集",
+        "好莱坞科幻大片中字",
+        "香港经典警匪片",
+        "烧脑悬疑反转电影",
+        "热血动作动作片在线",
+        "治愈系文艺电影"
+      ]
+    },
+    {
+      "channel": "tv",
+      "channelName": "电视剧专区",
+      "keywords": [
+        "热播国产电视剧全集",
+        "美剧高清在线观看",
+        "热播韩剧天天看中字",
+        "最新日本电视剧更新",
+        "古装仙侠玄幻剧",
+        "现代都市职场剧",
+        "家庭伦理情感剧",
+        "黄金档悬疑破案剧"
+      ]
+    },
+    {
+      "channel": "anime",
+      "channelName": "动漫专区",
+      "keywords": [
+        "日本新番动漫同步更新",
+        "热门国漫年番高清在线",
+        "热血打斗战斗番",
+        "异世界转生恋爱番",
+        "治愈温情日常动漫",
+        "二次元无修全集追番"
+      ]
+    },
+    {
+      "channel": "variety",
+      "channelName": "综艺专区",
+      "keywords": [
+        "王牌爆笑综艺在线看",
+        "音乐竞演真人秀",
+        "明星户外真人秀全集",
+        "热门搞笑脱口秀",
+        "恋爱观察真人秀"
+      ]
+    },
+    {
+      "channel": "documentary",
+      "channelName": "纪录片专区",
+      "keywords": [
+        "BBC神级自然纪录片",
+        "国家地理高清探索",
+        "华夏历史人文纪录片",
+        "风味美食舌尖纪录片",
+        "浩瀚宇宙太空纪录片"
+      ]
+    },
+    {
+      "channel": "short",
+      "channelName": "微短剧专区",
+      "keywords": [
+        "都市爽剧短剧全集",
+        "豪门战神回归短剧",
+        "逆袭打脸短剧在线看",
+        "穿越逆袭短剧大全",
+        "甜宠霸道总裁微短剧"
+      ]
+    }
+  ],
+  "broadIntentModifiers": [
+    {
+      "name": "求片观影意图（长尾核心驱动词）",
+      "pattern": "[影视片名] + [泛词后缀]",
+      "suffixes": [
+        "在线观看",
+        "免费看",
+        "完整版",
+        "高清在线",
+        "线上看",
+        "未删减版",
+        "4K中字",
+        "超清国语版",
+        "全集播放",
+        "西瓜视频同款"
+      ],
+      "examples": [
+        "九品猎妖官 在线观看",
+        "沙丘2 完整版高清",
+        "繁花 免费线上看",
+        "周处除三害 未删减版"
+      ]
+    },
+    {
+      "name": "追更进度意图（连载剧高频流量词）",
+      "pattern": "[剧集名称] + [集数/更新后缀]",
+      "suffixes": [
+        "第X集在线观看",
+        "更新到第几集了",
+        "大结局提前看",
+        "大结局完整版",
+        "每周几更新",
+        "更新时间表",
+        "全集未删减大结局"
+      ],
+      "examples": [
+        "庆余年第二季 第36集在线观看",
+        "无限挑战 2026最新一期",
+        "斗罗大陆2绝世唐门 最新集"
+      ]
+    },
+    {
+      "name": "影人明星意图（主创粉丝长尾词）",
+      "pattern": "[演员/导演姓名] + [作品合集后缀]",
+      "suffixes": [
+        "主演的电影合集",
+        "最新主演电视剧",
+        "导演经典作品在线看",
+        "历年代表作盘点",
+        "高分作品精选"
+      ],
+      "examples": [
+        "周星驰 经典无厘头电影合集",
+        "刘德华 动作警匪片在线看",
+        "诺兰 导演烧脑电影全集"
+      ]
+    }
+  ],
+  "geoAndScenarioKeywords": [
+    {
+      "scenario": "海外华人地区限制破壁",
+      "keywords": [
+        "美国怎么看国内电视剧",
+        "欧洲华人看剧网站推荐",
+        "澳洲看国产电影免费平台",
+        "加拿大看爱奇艺腾讯解除限制",
+        "日本看中国动漫网站",
+        "海外看剧不卡顿免翻墙"
+      ]
+    },
+    {
+      "scenario": "硬件与终端投屏场景",
+      "keywords": [
+        "电视盒子看电影网站",
+        "支持AirPlay投屏看剧平台",
+        "电视浏览器看剧推荐",
+        "平板全屏无黑边追剧"
+      ]
+    }
+  ]
+}

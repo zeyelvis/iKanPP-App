@@ -13,6 +13,7 @@ import {
 import { calculateSeoScore } from '@/app/api/seo/entity-pipeline/route';
 import { batchPublishGoogleIndexing, publishGoogleIndexingUrl } from '@/lib/services/google-indexing';
 import highPotentialData from '@/lib/data/seo-high-potential.json';
+import keywordMatrixData from '@/lib/data/seo-keyword-matrix.json';
 import { TitleEntity } from '@/lib/types/entity';
 
 export const runtime = 'edge';
@@ -256,11 +257,17 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
     // 5. 关键词库：/api/admin/keywords
     if (path === 'keywords') {
       const data = highPotentialData as any;
+      const matrix = keywordMatrixData as any;
       return NextResponse.json({
         success: true,
         updatedAt: data.updatedAt || new Date().toISOString(),
-        keywords: data.keywords || [],
-        total: (data.keywords || []).length,
+        highPotentialKeywords: data.keywords || [],
+        matrix: matrix || {},
+        brandKeywords: matrix.brandKeywords || [],
+        industryHeadKeywords: matrix.industryHeadKeywords || [],
+        categoryKeywords: matrix.categoryKeywords || [],
+        broadIntentModifiers: matrix.broadIntentModifiers || [],
+        geoAndScenarioKeywords: matrix.geoAndScenarioKeywords || [],
       });
     }
 
