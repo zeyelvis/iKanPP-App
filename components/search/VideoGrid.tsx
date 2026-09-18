@@ -92,7 +92,12 @@ export const VideoGrid = memo(function VideoGrid({
     }
 
     const dedupedList = Array.from(groups.values()).map(group => {
-      if (group.length === 1) return group[0];
+      if (group.length === 1) {
+        return {
+          ...group[0],
+          sourceCount: 1,
+        };
+      }
 
       // 保留最优的：黄金骨干梯队（巨量第一）优先，非风险源优先，最后比延迟
       const sorted = [...group].sort((a, b) => {
@@ -118,12 +123,8 @@ export const VideoGrid = memo(function VideoGrid({
       const maxScore = Math.max(...group.map(v => (v as any).relevanceScore || 0));
       (best as any).relevanceScore = maxScore + Math.min(group.length * 10, 200);
 
-      // 在备注中标注合并了多少个来源
-      const sourceCount = group.length;
-      const existingRemarks = best.vod_remarks || '';
-      best.vod_remarks = existingRemarks
-        ? `${existingRemarks} · ${sourceCount}个来源`
-        : `${sourceCount}个来源`;
+      // 记录聚合的可用线路总数
+      best.sourceCount = group.length;
 
       return best;
     });

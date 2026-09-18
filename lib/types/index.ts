@@ -45,6 +45,9 @@ export interface Video extends VideoItem {
   sourceName?: string;
   isNew?: boolean;
   relevanceScore?: number;
+  sourceCount?: number;
+  isFallback?: boolean;
+  fallbackTerm?: string;
 }
 
 export interface SourceBadge {

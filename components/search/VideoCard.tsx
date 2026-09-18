@@ -126,13 +126,21 @@ export const VideoCard = memo<VideoCardProps>(({
             </div>
 
             {/* 底部备注角标（清晰度/集数） */}
-            {video.vod_remarks && (
-              <div className="absolute bottom-2 left-2 z-10">
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-black/75 backdrop-blur-md text-amber-300 border border-amber-400/20 shadow-md">
+            <div className="absolute bottom-2 left-2 right-2 z-10 flex items-center justify-between pointer-events-none">
+              {video.vod_remarks ? (
+                <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-black/75 backdrop-blur-md text-amber-300 border border-amber-400/20 shadow-md truncate max-w-[60%]">
                   {video.vod_remarks}
                 </span>
-              </div>
-            )}
+              ) : <div />}
+
+              {/* 聚合多线路数量徽章（对齐 ikanbot 体验） */}
+              {video.sourceCount && video.sourceCount > 1 ? (
+                <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-950/80 backdrop-blur-md text-emerald-400 border border-emerald-500/30 shadow-md flex items-center gap-1 shrink-0 ml-auto">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  {video.sourceCount}条线路
+                </span>
+              ) : null}
+            </div>
 
             {/* 悬停播放遮罩 */}
             <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-3">
@@ -147,17 +155,31 @@ export const VideoCard = memo<VideoCardProps>(({
 
           {/* 底部标题与信息 */}
           <div className="p-3 flex flex-col justify-between flex-1">
-            <h3 className="text-xs sm:text-sm font-bold text-white/90 line-clamp-1 group-hover:text-(--accent-color) transition-colors">
-              {video.vod_name}
-            </h3>
+            <div className="flex items-center gap-1.5">
+              <h3 className="text-xs sm:text-sm font-bold text-white/90 line-clamp-1 group-hover:text-(--accent-color) transition-colors flex-1">
+                {video.vod_name}
+              </h3>
+              {video.isFallback && (
+                <span className="text-[9px] px-1 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 font-medium shrink-0">
+                  相关
+                </span>
+              )}
+            </div>
 
             <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5 text-[11px] text-white/40">
               <span className="truncate">{video.vod_year || video.vod_area || '全网片源'}</span>
-              {video.type_name && (
-                <span className="text-white/40 text-[10px] px-1.5 py-0.5 rounded bg-white/5 border border-white/5 truncate max-w-[80px]">
-                  {video.type_name}
-                </span>
-              )}
+              <div className="flex items-center gap-1 shrink-0">
+                {video.sourceCount && video.sourceCount > 1 && (
+                  <span className="text-emerald-400 text-[10px] font-medium px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 truncate">
+                    {video.sourceCount}线
+                  </span>
+                )}
+                {video.type_name && (
+                  <span className="text-white/40 text-[10px] px-1.5 py-0.5 rounded bg-white/5 border border-white/5 truncate max-w-[80px]">
+                    {normalizeVideoType(video.type_name, video.vod_name).badge}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </Card>
