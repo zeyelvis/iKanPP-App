@@ -10,15 +10,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "沧元图",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "仙逆",
         "updateBadge": ""
-    },
-    {
-        "title": "大主宰年番",
-        "updateBadge": "1"
     },
     {
         "title": "凡人修仙传",
@@ -29,12 +25,8 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "诛仙4",
+        "title": "大主宰年番",
         "updateBadge": ""
-    },
-    {
-        "title": "死灵法师我即是天灾",
-        "updateBadge": "2"
     },
     {
         "title": "斗破苍穹年番",
@@ -45,7 +37,15 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "遮天",
+        "title": "死灵法师我即是天灾",
+        "updateBadge": ""
+    },
+    {
+        "title": "诛仙4",
+        "updateBadge": ""
+    },
+    {
+        "title": "吞噬星空",
         "updateBadge": ""
     },
     {
@@ -53,7 +53,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "吞噬星空",
+        "title": "遮天",
         "updateBadge": ""
     }
   ],
@@ -138,7 +138,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至11集 | 共12集",
+        "episodes_info": "12集全",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -639,27 +639,27 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "2"
     },
     {
-        "title": "一饭封神第2季",
-        "updateBadge": "1"
-    },
-    {
         "title": "披荆斩棘2026",
         "updateBadge": ""
     },
     {
-        "title": "大哥小助理",
-        "updateBadge": "2"
+        "title": "一饭封神第2季",
+        "updateBadge": "1"
     },
     {
         "title": "密室大逃脱第8季",
         "updateBadge": "1"
     },
     {
-        "title": "地球超新鲜第2季",
-        "updateBadge": ""
+        "title": "大哥小助理",
+        "updateBadge": "2"
     },
     {
         "title": "你好星期六",
+        "updateBadge": "1"
+    },
+    {
+        "title": "说唱巅峰对决2026",
         "updateBadge": "1"
     }
   ],
@@ -670,13 +670,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609111636583635663.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111853405324148.jpg",
-        "description": "《打歌2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260913(上班直播第1期)。",
+        "description": "《打歌2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260918(第2期纯享)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260913(上班直播第1期)",
+        "episodes_info": "更新至20260918(第2期纯享)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1558,24 +1558,24 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "2"
     },
     {
+        "title": "生逢其时",
+        "updateBadge": "5"
+    },
+    {
         "title": "交锋",
         "updateBadge": "2"
     },
     {
-        "title": "生逢其时",
-        "updateBadge": "5"
+        "title": "死有对证",
+        "updateBadge": "1"
     },
     {
         "title": "冬城猎凶",
         "updateBadge": "1"
     },
     {
-        "title": "死有对证",
-        "updateBadge": ""
-    },
-    {
-        "title": "心动的信号第9季",
-        "updateBadge": "2"
+        "title": "挑情丑闻",
+        "updateBadge": "8"
     },
     {
         "title": "飞到我心上",
@@ -1583,11 +1583,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "沧元图",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
-        "title": "挑情丑闻",
-        "updateBadge": "8"
+        "title": "心动的信号第9季",
+        "updateBadge": "2"
     },
     {
         "title": "花儿与少年第8季",
@@ -2167,27 +2167,27 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "克拉克森的农场第3季",
+        "updateBadge": ""
+    },
+    {
         "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
     {
-        "title": "恐龙时代：你不知道的故事",
+        "title": "守护解放西第6季",
         "updateBadge": ""
     },
     {
-        "title": "寻色中国",
+        "title": "味起台州",
+        "updateBadge": ""
+    },
+    {
+        "title": "若泽·穆里尼奥：特立之道",
         "updateBadge": ""
     },
     {
         "title": "克拉克森的农场第4季",
-        "updateBadge": ""
-    },
-    {
-        "title": "哈利·波特：一段魔法史",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第3季",
         "updateBadge": ""
     }
   ],

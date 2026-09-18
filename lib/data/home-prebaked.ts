@@ -70,6 +70,10 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "你我对抗全世界",
+                "updateBadge": ""
+        },
+        {
                 "title": "特立独行",
                 "updateBadge": ""
         },
@@ -78,19 +82,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "海洋奇缘：启航",
-                "updateBadge": ""
-        },
-        {
-                "title": "出入平安",
-                "updateBadge": ""
-        },
-        {
                 "title": "蜂鸟行动",
-                "updateBadge": ""
-        },
-        {
-                "title": "怒之杀(听译)",
                 "updateBadge": ""
         },
         {
@@ -98,7 +90,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "求救信号",
+                "title": "出入平安",
+                "updateBadge": ""
+        },
+        {
+                "title": "最佳舞伴",
+                "updateBadge": ""
+        },
+        {
+                "title": "海洋奇缘：启航",
                 "updateBadge": ""
         }
       ],
@@ -1836,31 +1836,27 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
+                "title": "生逢其时",
+                "updateBadge": "5"
+        },
+        {
                 "title": "交锋",
                 "updateBadge": "2"
         },
         {
-                "title": "生逢其时",
-                "updateBadge": "5"
+                "title": "死有对证",
+                "updateBadge": "1"
         },
         {
                 "title": "冬城猎凶",
                 "updateBadge": "1"
         },
         {
-                "title": "死有对证",
-                "updateBadge": ""
-        },
-        {
-                "title": "飞到我心上",
-                "updateBadge": ""
-        },
-        {
                 "title": "挑情丑闻",
                 "updateBadge": "8"
         },
         {
-                "title": "深渊无间",
+                "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
@@ -1868,7 +1864,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "中头奖还是要上班",
+                "title": "深渊无间",
+                "updateBadge": ""
+        },
+        {
+                "title": "百花杀",
                 "updateBadge": ""
         }
       ],
