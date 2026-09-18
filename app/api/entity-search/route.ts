@@ -109,11 +109,11 @@ export async function GET(request: NextRequest) {
     }
 
     // ──────────────────────────────────────────
-    // 4. L4: TMDB 在线多源检索 + 1500ms 超时熔断守卫
+    // 4. L4: TMDB 在线多源检索 + 3500ms 超时熔断守卫
     // ──────────────────────────────────────────
     const tmdbPromise = searchMultipleEntitiesFromTMDB(query, 2);
     const timeoutPromise = new Promise<TitleEntity[]>((resolve) =>
-      setTimeout(() => resolve([]), 1500)
+      setTimeout(() => resolve([]), 3500)
     );
 
     let entities: TitleEntity[] = [];
@@ -135,8 +135,13 @@ export async function GET(request: NextRequest) {
     if (entities.length > 0) {
       // 写入 L1 内存
       MEMORY_CACHE.set(normQuery, { entities, expireAt: Date.now() + MEMORY_TTL_MS });
-      // 异步透写 L2 KV（绝不阻塞客户端响应）
-      kvPut(kvCacheKey, JSON.stringify(entities)).catch(() => {});
+      
+      // 必须 await 写入 L2 KV，防止 Edge Worker 在 response 返回后被瞬间挂起导致写入丢失
+      try {
+        await kvPut(kvCacheKey, JSON.stringify(entities));
+      } catch (saveErr) {
+        console.warn('[Entity Search] kvPut error:', saveErr);
+      }
 
       return NextResponse.json(
         {
