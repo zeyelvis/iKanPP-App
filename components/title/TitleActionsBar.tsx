@@ -2,24 +2,35 @@
 
 import { useState, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { Play, Plus, Check, Share2, ThumbsUp, Loader2, Sparkles } from 'lucide-react';
+import { Play, Plus, Check, Share2, ThumbsUp, Loader2, Sparkles, BellRing } from 'lucide-react';
 import { useFavoritesStore } from '@/lib/store/favorites-store';
 import { useHistoryStore } from '@/lib/store/history-store';
 import { TitleEntity } from '@/lib/types/entity';
 import { getEpisodeDisplayInfo, EpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
 import { fetchTitleProbe, subscribeTitleProbe, resolvePlayTarget } from '@/lib/utils/title-probe';
 import { isValidSourceId } from '@/lib/api/video-sources';
+import { ClassicDemandModal } from './ClassicDemandModal';
 
 interface TitleActionsBarProps {
   entity: TitleEntity;
   playTitle?: string;
+  relatedTitles?: Array<{
+    entityId: string;
+    slug: string;
+    title: string;
+    cover: string;
+    year?: string;
+    rate?: string;
+  }>;
 }
 
-export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
+export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: TitleActionsBarProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isLiked, setIsLiked] = useState(false);
+  const [isClassicNoSource, setIsClassicNoSource] = useState(false);
+  const [isDemandModalOpen, setIsDemandModalOpen] = useState(false);
 
   // 联动收藏/追剧 store
   const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore();
@@ -42,11 +53,15 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
   const effectiveTitle = playTitle || entity.title;
 
   useEffect(() => {
-    // 提前在后台秒级拉取暴风/光速骨干源的真实 ID，打通 0ms 直达快车道
+    // 提前在后台秒级拉取骨干源的真实 ID，打通 0ms 直达快车道
     fetchTitleProbe(effectiveTitle);
     const unsubscribe = subscribeTitleProbe(effectiveTitle, (res) => {
       if (res && res.id && res.source) {
         setProbedTarget({ id: res.id, source: res.source });
+        setIsClassicNoSource(false);
+      } else if (res && res.success === false) {
+        // 探测完成确认全网 0 源
+        setIsClassicNoSource(true);
       }
     });
     return () => unsubscribe();
@@ -101,6 +116,15 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
         playSource = fast.source;
       }
     }
+
+    // 🌟 核心防线：若确认全网无源或为经典无源条目，绝不盲目跳播放器导致404，直接打开优雅求片弹窗
+    const isYearOld = entity.year && parseInt(entity.year, 10) < 1990;
+    if (!playId && !playSource && (isClassicNoSource || isYearOld)) {
+      setIsClassicNoSource(true);
+      setIsDemandModalOpen(true);
+      return;
+    }
+
     startTransition(() => {
       const params = new URLSearchParams({
         entity: entity.entityId,
@@ -177,17 +201,26 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
       {/* 1. 移动端专属布局 (仅在小于 md 视口渲染)：Netflix 级 100% 全宽播放条 + 横向均分轻盈操作列 */}
       <div className="w-full md:hidden">
         <div className="flex flex-col gap-2.5 w-full">
-          {/* 主播放按钮：100% 满宽横跨、高亮利落小圆角、黑底白字 Netflix 质感 */}
+          {/* 主播放按钮：100% 满宽横跨、高亮利落小圆角 */}
           <button
             onClick={() => handlePlay(lastEpisodeInfo.paramValue)}
             disabled={isPending}
             id="btn-netflix-play"
-            className="group relative w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-white hover:bg-white/95 text-black font-extrabold text-base shadow-lg shadow-white/10 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-75"
+            className={`group relative w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-extrabold text-base shadow-lg transition-all cursor-pointer disabled:opacity-75 ${
+              isClassicNoSource
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30'
+                : 'bg-white hover:bg-white/95 text-black shadow-white/10 active:scale-[0.98]'
+            }`}
           >
             {isPending ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin text-black" />
-                <span>正在进入影院...</span>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span>正在查询片源...</span>
+              </>
+            ) : isClassicNoSource ? (
+              <>
+                <BellRing className="w-5 h-5 text-amber-400" />
+                <span>经典馆藏 · 预约求片</span>
               </>
             ) : (
               <>
@@ -200,7 +233,7 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
               </>
             )}
 
-            {hasHistory && historyPercent > 0 && (
+            {hasHistory && historyPercent > 0 && !isClassicNoSource && (
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-xl overflow-hidden">
                 <div
                   className="h-full bg-red-600 transition-all duration-300"
@@ -210,7 +243,7 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
             )}
           </button>
 
-          {/* Netflix 标配轻盈无框垂直图标列 (上图标 + 下微文字)，全宽横向平分舒展 */}
+          {/* Netflix 标配轻盈无框垂直图标列 */}
           <div className="flex items-center justify-around w-full py-1.5 px-2 border-b border-white/5 pb-2.5">
             <button
               onClick={handleToggleFavorite}
@@ -259,12 +292,21 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
           onClick={() => handlePlay(lastEpisodeInfo.paramValue)}
           disabled={isPending}
           id="btn-netflix-play-desktop"
-          className="group relative flex items-center justify-center gap-3 px-8 lg:px-10 py-3.5 lg:py-4 rounded-2xl bg-white hover:bg-white/90 text-black font-black text-base lg:text-lg shadow-2xl shadow-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer disabled:opacity-75 shrink-0"
+          className={`group relative flex items-center justify-center gap-3 px-8 lg:px-10 py-3.5 lg:py-4 rounded-2xl font-black text-base lg:text-lg shadow-2xl transition-all duration-200 cursor-pointer disabled:opacity-75 shrink-0 ${
+            isClassicNoSource
+              ? 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 shadow-amber-950/30'
+              : 'bg-white hover:bg-white/90 text-black shadow-white/20 hover:scale-[1.02] active:scale-[0.98]'
+          }`}
         >
           {isPending ? (
             <>
-              <Loader2 className="w-5 h-5 lg:w-6 lg:h-6 animate-spin text-black" />
-              <span>正在进入影院...</span>
+              <Loader2 className="w-5 h-5 lg:w-6 lg:h-6 animate-spin" />
+              <span>正在查询片源...</span>
+            </>
+          ) : isClassicNoSource ? (
+            <>
+              <BellRing className="w-5 h-5 lg:w-6 lg:h-6 text-amber-400 group-hover:scale-110 transition-transform" />
+              <span>经典馆藏 · 预约求片</span>
             </>
           ) : (
             <>
@@ -277,7 +319,7 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
             </>
           )}
 
-          {hasHistory && historyPercent > 0 && (
+          {hasHistory && historyPercent > 0 && !isClassicNoSource && (
             <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-2xl overflow-hidden">
               <div
                 className="h-full bg-red-600 transition-all duration-300"
@@ -335,11 +377,26 @@ export function TitleActionsBar({ entity, playTitle }: TitleActionsBarProps) {
         </div>
       </div>
 
-      {/* 极速纯直连提示 */}
-      <div className="flex items-center justify-center md:justify-start gap-1.5 text-[11px] sm:text-xs text-white/45 w-full pl-0.5 text-center md:text-left">
-        <Sparkles className="w-3.5 h-3.5 text-amber-400/80 shrink-0" />
-        <span>浏览器纯直连第三方 CDN · 零等待秒播 · 海外免翻墙</span>
-      </div>
+      {/* 状态微文案 */}
+      {isClassicNoSource ? (
+        <div className="flex items-center justify-center md:justify-start gap-1.5 text-[11px] sm:text-xs text-amber-400/90 w-full pl-0.5 text-center md:text-left font-medium">
+          <span>🏛️</span>
+          <span>{entity.year ? `${entity.year}年` : ''}历史经典馆藏 · 公网切片源暂未收录 · 支持一键求片</span>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center md:justify-start gap-1.5 text-[11px] sm:text-xs text-white/45 w-full pl-0.5 text-center md:text-left">
+          <Sparkles className="w-3.5 h-3.5 text-amber-400/80 shrink-0" />
+          <span>浏览器纯直连第三方 CDN · 零等待秒播 · 海外免翻墙</span>
+        </div>
+      )}
+
+      {/* 弹窗：经典求片与同类推荐 */}
+      <ClassicDemandModal
+        isOpen={isDemandModalOpen}
+        onClose={() => setIsDemandModalOpen(false)}
+        entity={entity}
+        relatedTitles={relatedTitles}
+      />
 
       {/* Toast 动效提示 */}
       {toastMessage && (

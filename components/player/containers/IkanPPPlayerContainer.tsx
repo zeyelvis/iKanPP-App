@@ -6,6 +6,7 @@ import { VideoPlayer } from '@/components/player/VideoPlayer';
 import { VideoMetadata } from '@/components/player/VideoMetadata';
 import { EpisodeList, SourceInfo } from '@/components/player/EpisodeList';
 import { PlayerError } from '@/components/player/PlayerError';
+import { ClassicNoSourceState } from '@/components/player/ClassicNoSourceState';
 import type { VideoSource } from '@/lib/types';
 import { useVideoPlayer } from '@/lib/hooks/useVideoPlayer';
 import { useHistory } from '@/lib/store/history-store';
@@ -104,6 +105,18 @@ export function IkanPPPlayerContainer() {
 
   const [relatedMovies, setRelatedMovies] = useState<RailMovie[]>([]);
   const [loadingRelated, setLoadingRelated] = useState(true);
+  const [entityPoster, setEntityPoster] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (entityParam) {
+      fetch(`/api/detail?id=${entityParam}`)
+        .then(r => r.json())
+        .then(d => {
+          if (d.data?.cover) setEntityPoster(d.data.cover);
+        })
+        .catch(() => {});
+    }
+  }, [entityParam]);
 
   // === Title-only 模式：300ms 毫秒级流式秒播仲裁 ===
   const needsTitleSearch = (!videoId || !source) && !!title;
@@ -903,14 +916,20 @@ export function IkanPPPlayerContainer() {
       <div className="min-h-screen bg-(--bg-color)">
         <Navbar variant="player" isPremiumMode={false} />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-          <PlayerError
-            error={titleSearchError}
-            onBack={handleBack}
-            onRetry={() => {
-              setTitleSearchError('');
-              setTitleSearching(true);
-              window.location.reload();
+          <ClassicNoSourceState
+            title={title || '经典影视'}
+            expectedYear={expectedYear}
+            expectedType={expectedType}
+            entityId={entityParam}
+            poster={entityPoster}
+            relatedMovies={relatedMovies}
+            loadingRelated={loadingRelated}
+            onSelectMovie={(movie) => {
+              const params = new URLSearchParams();
+              params.set('title', movie.title);
+              router.push(`/player?${params.toString()}`);
             }}
+            onBack={handleBack}
           />
         </main>
       </div>

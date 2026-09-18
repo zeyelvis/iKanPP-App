@@ -1102,3 +1102,119 @@ export async function getKnownPeople(): Promise<{ directors: string[]; actors: s
   };
 }
 
+/**
+ * 用户求片工单记录结构
+ */
+export interface TitleDemandRecord {
+  entityId: string;
+  title: string;
+  year?: string;
+  type?: string;
+  poster?: string;
+  count: number;
+  firstRequestedAt: string;
+  lastRequestedAt: string;
+}
+
+/**
+ * 记录一次用户求片工单（原子递增计数并刷新排行榜）
+ */
+export async function recordTitleDemand(data: {
+  entityId: string;
+  title: string;
+  year?: string;
+  type?: string;
+  poster?: string;
+}): Promise<TitleDemandRecord> {
+  const entityId = data.entityId.trim();
+  const key = `demand:title:${entityId}`;
+  const now = new Date().toISOString();
+
+  let record: TitleDemandRecord;
+  const existingRaw = await kvGet(key);
+
+  if (existingRaw) {
+    try {
+      const parsed = JSON.parse(existingRaw);
+      record = {
+        ...parsed,
+        title: data.title || parsed.title,
+        year: data.year || parsed.year,
+        type: data.type || parsed.type,
+        poster: data.poster || parsed.poster,
+        count: (parsed.count || 1) + 1,
+        lastRequestedAt: now,
+      };
+    } catch {
+      record = {
+        entityId,
+        title: data.title,
+        year: data.year,
+        type: data.type,
+        poster: data.poster,
+        count: 1,
+        firstRequestedAt: now,
+        lastRequestedAt: now,
+      };
+    }
+  } else {
+    record = {
+      entityId,
+      title: data.title,
+      year: data.year,
+      type: data.type,
+      poster: data.poster,
+      count: 1,
+      firstRequestedAt: now,
+      lastRequestedAt: now,
+    };
+  }
+
+  // 1. 持久化单个条目
+  await kvPut(key, JSON.stringify(record));
+
+  // 2. 更新全局排行榜 (demand:leaderboard)
+  try {
+    const boardRaw = await kvGet('demand:leaderboard');
+    let board: TitleDemandRecord[] = [];
+    if (boardRaw) {
+      try {
+        const parsed = JSON.parse(boardRaw);
+        if (Array.isArray(parsed)) board = parsed;
+      } catch {}
+    }
+
+    const existingIndex = board.findIndex(b => b.entityId === entityId);
+    if (existingIndex >= 0) {
+      board[existingIndex] = record;
+    } else {
+      board.push(record);
+    }
+
+    // 按求片热度排序并截取 Top 100
+    board.sort((a, b) => (b.count || 0) - (a.count || 0));
+    if (board.length > 100) board = board.slice(0, 100);
+
+    await kvPut('demand:leaderboard', JSON.stringify(board));
+  } catch (err) {
+    console.warn('[recordTitleDemand leaderboard update fail]:', err);
+  }
+
+  return record;
+}
+
+/**
+ * 获取全局用户求片热度排行榜
+ */
+export async function getTitleDemandLeaderboard(limit = 50): Promise<TitleDemandRecord[]> {
+  try {
+    const raw = await kvGet('demand:leaderboard');
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.slice(0, limit);
+  } catch {
+    return [];
+  }
+}
+

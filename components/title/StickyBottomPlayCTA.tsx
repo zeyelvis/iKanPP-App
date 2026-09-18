@@ -100,6 +100,17 @@ export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAPr
         playSource = fast.source;
       }
     }
+    // 🌟 核心防线：若确认全网无源且为老片，平滑滚动并触发主求片弹窗，绝不误跳404
+    const isYearOld = entity.year && parseInt(entity.year, 10) < 1990;
+    if (!playId && !playSource && isYearOld) {
+      const mainBtn = document.getElementById('btn-netflix-play');
+      if (mainBtn) {
+        mainBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        mainBtn.click();
+      }
+      return;
+    }
+
     startTransition(() => {
       const params = new URLSearchParams({
         entity: entity.entityId,

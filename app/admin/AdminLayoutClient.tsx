@@ -16,6 +16,7 @@ import {
   X,
   ChevronRight,
   Sparkles,
+  Inbox,
 } from 'lucide-react';
 import './admin.css';
 
@@ -29,6 +30,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { name: '仪表盘总览', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: '影视实体管理', href: '/admin/entities', icon: Film },
+  { name: '用户求片工单', href: '/admin/demands', icon: Inbox },
   { name: 'SEO 智能监控', href: '/admin/seo', icon: Search },
   { name: '促抓控制台', href: '/admin/indexing', icon: Zap },
   { name: 'GSC 数据分析', href: '/admin/analytics', icon: BarChart3 },

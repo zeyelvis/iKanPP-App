@@ -838,7 +838,18 @@ export default async function TitlePage({ params }: Props) {
 
               {/* Netflix 主控行动区 (立即播放 / 追剧清单 / 分享 / 推荐) */}
               <div className="w-full mb-2 sm:mb-6">
-                <TitleActionsBar entity={entity} playTitle={effectiveSearchTitle} />
+                <TitleActionsBar
+                  entity={entity}
+                  playTitle={effectiveSearchTitle}
+                  relatedTitles={combinedRelated.slice(0, 6).map(r => ({
+                    entityId: r.entityId,
+                    slug: r.slug,
+                    title: r.title,
+                    cover: r.cover,
+                    year: r.year,
+                    rate: r.rate,
+                  }))}
+                />
               </div>
             </div>
           </article>

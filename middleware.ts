@@ -123,7 +123,10 @@ export function middleware(request: NextRequest) {
         url.searchParams.has('source') ||
         url.searchParams.has('url') ||
         url.searchParams.has('gsKey') ||
-        url.searchParams.has('entity');
+        url.searchParams.has('entity') ||
+        url.searchParams.has('type') ||
+        url.searchParams.has('year') ||
+        url.searchParams.has('episode');
 
     if (pathname === '/player' && url.searchParams.has('title') && !hasPlaySourceParams) {
         const rawTitle = url.searchParams.get('title') || '';

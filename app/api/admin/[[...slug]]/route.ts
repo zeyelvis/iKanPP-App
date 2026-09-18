@@ -9,6 +9,7 @@ import {
   getEntityById,
   getEntityByTmdb,
   saveEntity,
+  getTitleDemandLeaderboard,
 } from '@/lib/services/entity-kv';
 import { calculateSeoScore } from '@/app/api/seo/entity-pipeline/route';
 import { batchPublishGoogleIndexing, publishGoogleIndexingUrl } from '@/lib/services/google-indexing';
@@ -226,6 +227,15 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
         page: result.page,
         pageCount: result.pageCount,
         limit: result.limit,
+      });
+    }
+
+    // 3.1 用户求片工单：/api/admin/demands
+    if (slug[0] === 'demands') {
+      const demands = await getTitleDemandLeaderboard(100);
+      return NextResponse.json({
+        success: true,
+        data: demands,
       });
     }
 
