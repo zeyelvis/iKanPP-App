@@ -258,6 +258,19 @@ export async function getEntityByTitle(title: string): Promise<TitleEntity | nul
     await kvDelete(`title:${norm}`);
     return null;
   }
+
+  // 强一致防毒化自愈：严格比对条目名称与查询词是否有实质语义重叠
+  const isOverlap =
+    hasTitleOverlap(title, ent.title) ||
+    (ent.originalTitle && hasTitleOverlap(title, ent.originalTitle)) ||
+    (ent.slug && hasTitleOverlap(title, ent.slug));
+
+  if (!isOverlap) {
+    console.warn(`[getEntityByTitle Auto-Purge] Poisoned title key detected: title:${norm} -> ${entityId} (actual title: "${ent.title}", expected: "${title}"). Purging!`);
+    await kvDelete(`title:${norm}`);
+    return null;
+  }
+
   return ent;
 }
 

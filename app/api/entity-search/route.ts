@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getEntityByTitle, kvGet, kvPut } from '@/lib/services/entity-kv';
+import { getEntityByTitle, kvGet, kvPut, kvDelete } from '@/lib/services/entity-kv';
 import { searchMultipleEntitiesFromTMDB, enrichEpisodeCount } from '@/lib/services/entity-enrichment';
-import { normalizeTitle } from '@/lib/data/entities/entity-utils';
+import { normalizeTitle, hasTitleOverlap } from '@/lib/data/entities/entity-utils';
 import { TitleEntity } from '@/lib/types/entity';
 
 export const runtime = 'edge';
@@ -11,13 +11,13 @@ const MEMORY_CACHE = new Map<string, { entities: TitleEntity[]; expireAt: number
 const MEMORY_TTL_MS = 10 * 60 * 1000; // 10分钟节点内热存
 
 /**
- * 权威影视实体极速搜索接口（四级火箭加速引擎）
+ * 权威影视实体极速搜索接口（四级火箭加速引擎 + 防毒化强一致安全防线）
  * 
- * 加速架构：
- * 1. L1 内存热缓存 (0ms) -> 节点内高频词原地直出
- * 2. L2 Cloudflare KV 关键词专属倒排缓存 (5~15ms) -> 全球边缘共享，一人检索全网终生秒开
- * 3. L3 本站 KV 精准标题索引检索 (5~15ms) -> 命中已收录条目直接返回，彻底阻断 TMDB 跨洋握手
- * 4. L4 TMDB 在线多源发现 + 1500ms 超时熔断守卫 -> 异步透写回填 KV 倒排索引
+ * 加速与安全架构：
+ * 1. L1 内存热缓存 (0ms) -> 校验 TitleOverlap，原地秒出
+ * 2. L2 Cloudflare KV 关键词倒排索引 (5~15ms) -> 强一致校验，毒化键自动抹除
+ * 3. L3 本站 KV 精准标题索引检索 (5~15ms) -> 命中已收录条目并核验证实
+ * 4. L4 TMDB 在线多源发现 + 3500ms 超时熔断守卫 -> 异步透写回填 KV 倒排索引
  */
 export async function GET(request: NextRequest) {
   try {
@@ -35,18 +35,22 @@ export async function GET(request: NextRequest) {
     // ──────────────────────────────────────────
     const mem = MEMORY_CACHE.get(normQuery);
     if (mem && mem.expireAt > Date.now()) {
-      return NextResponse.json(
-        {
-          entities: mem.entities,
-          entity: mem.entities[0] || null,
-        },
-        {
-          headers: {
-            'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
-            'X-Cache': 'HIT-L1-MEMORY',
+      const first = mem.entities[0];
+      if (first && (hasTitleOverlap(query, first.title) || (first.originalTitle && hasTitleOverlap(query, first.originalTitle)))) {
+        return NextResponse.json(
+          {
+            entities: mem.entities,
+            entity: first,
           },
-        }
-      );
+          {
+            headers: {
+              'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
+              'X-Cache': 'HIT-L1-MEMORY',
+            },
+          }
+        );
+      }
+      MEMORY_CACHE.delete(normQuery);
     }
 
     // ──────────────────────────────────────────
@@ -58,20 +62,26 @@ export async function GET(request: NextRequest) {
       if (cachedRaw) {
         const cachedEntities: TitleEntity[] = JSON.parse(cachedRaw);
         if (Array.isArray(cachedEntities) && cachedEntities.length > 0) {
-          // 填充 L1
-          MEMORY_CACHE.set(normQuery, { entities: cachedEntities, expireAt: Date.now() + MEMORY_TTL_MS });
-          return NextResponse.json(
-            {
-              entities: cachedEntities,
-              entity: cachedEntities[0] || null,
-            },
-            {
-              headers: {
-                'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
-                'X-Cache': 'HIT-L2-KV',
+          const first = cachedEntities[0];
+          // 强一致防毒化核验：标题必须存在实质语义重叠
+          if (first && (hasTitleOverlap(query, first.title) || (first.originalTitle && hasTitleOverlap(query, first.originalTitle)))) {
+            MEMORY_CACHE.set(normQuery, { entities: cachedEntities, expireAt: Date.now() + MEMORY_TTL_MS });
+            return NextResponse.json(
+              {
+                entities: cachedEntities,
+                entity: first,
               },
-            }
-          );
+              {
+                headers: {
+                  'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
+                  'X-Cache': 'HIT-L2-KV',
+                },
+              }
+            );
+          } else {
+            console.warn(`[Entity Search L2 Purge] Mismatched cache for query "${query}": found "${first?.title}". Purging!`);
+            await kvDelete(kvCacheKey);
+          }
         }
       }
     } catch (kvErr) {
@@ -84,25 +94,28 @@ export async function GET(request: NextRequest) {
     try {
       const localSingle = await getEntityByTitle(query);
       if (localSingle && localSingle.cover) {
-        const enriched = await enrichEpisodeCount(localSingle);
-        const entities = [enriched];
+        if (hasTitleOverlap(query, localSingle.title) || (localSingle.originalTitle && hasTitleOverlap(query, localSingle.originalTitle))) {
+          const enriched = await enrichEpisodeCount(localSingle);
+          const entities = [enriched];
 
-        // 异步回写 L1 & L2
-        MEMORY_CACHE.set(normQuery, { entities, expireAt: Date.now() + MEMORY_TTL_MS });
-        kvPut(kvCacheKey, JSON.stringify(entities)).catch(() => {});
+          MEMORY_CACHE.set(normQuery, { entities, expireAt: Date.now() + MEMORY_TTL_MS });
+          try {
+            await kvPut(kvCacheKey, JSON.stringify(entities));
+          } catch {}
 
-        return NextResponse.json(
-          {
-            entities,
-            entity: enriched,
-          },
-          {
-            headers: {
-              'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
-              'X-Cache': 'HIT-L3-LOCAL-TITLE',
+          return NextResponse.json(
+            {
+              entities,
+              entity: enriched,
             },
-          }
-        );
+            {
+              headers: {
+                'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
+                'X-Cache': 'HIT-L3-LOCAL-TITLE',
+              },
+            }
+          );
+        }
       }
     } catch (localErr) {
       console.warn('[Entity Search] Local title lookup fail:', localErr);
