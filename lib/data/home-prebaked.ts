@@ -78,7 +78,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "蜂鸟行动",
+                "title": "海洋奇缘：启航",
                 "updateBadge": ""
         },
         {
@@ -86,11 +86,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "海洋奇缘：启航",
-                "updateBadge": ""
-        },
-        {
-                "title": "夜王",
+                "title": "蜂鸟行动",
                 "updateBadge": ""
         },
         {
@@ -98,7 +94,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "M.I.S.S.I.O.N. 歌剧般的潜入搜查官",
+                "title": "夜王",
+                "updateBadge": ""
+        },
+        {
+                "title": "求救信号",
                 "updateBadge": ""
         }
       ],
@@ -1825,7 +1825,7 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": ""
+                "updateBadge": "2"
         },
         {
                 "title": "早春晴朗",
@@ -1833,22 +1833,22 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "一瓯春",
-                "updateBadge": ""
+                "updateBadge": "2"
         },
         {
                 "title": "交锋",
-                "updateBadge": ""
-        },
-        {
-                "title": "冬城猎凶",
-                "updateBadge": ""
-        },
-        {
-                "title": "死有对证",
-                "updateBadge": ""
+                "updateBadge": "2"
         },
         {
                 "title": "生逢其时",
+                "updateBadge": "5"
+        },
+        {
+                "title": "冬城猎凶",
+                "updateBadge": "1"
+        },
+        {
+                "title": "死有对证",
                 "updateBadge": ""
         },
         {
@@ -1856,15 +1856,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "挑情丑闻",
+                "updateBadge": "8"
+        },
+        {
                 "title": "深渊无间",
                 "updateBadge": ""
         },
         {
                 "title": "花开锦绣",
-                "updateBadge": ""
-        },
-        {
-                "title": "百花杀",
                 "updateBadge": ""
         },
         {
@@ -1885,7 +1885,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至06集 | 共30集",
+                "episodes_info": "更新至08集 | 共30集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1893,7 +1893,7 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_tv_2",
                 "title": "兰香如故",
-                "rate": "7.3",
+                "rate": "7.2",
                 "cover": "https://image.tmdb.org/t/p/w500/kfurXRMH1ZkUoyT5HN72zLTQxzZ.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/mZSewqVlY4F2F2Axm7hiG6KBOBp.jpg",
                 "description": "大学士府长孙女沈嘉兰与吏部尚书林家的长孙林锦岐订下婚约，然而朝堂风云突变，祖父沈大学士被判谋逆之罪，沈家惨遭灭门。林家为了自保，与沈家退婚，另与御前新贵赵家结亲。沈嘉兰母亲崔氏曾接济过的林家家奴许万全夫妇用刚病亡的女儿许兰香替下嘉兰。嘉兰从此顶着许兰香的身份，成为林府的一名三等丫鬟。在艰难的境遇中，兰香没有向命运低头，始终为自己和家人的幸福生活努力着，反抗一切不公与压迫。最终，兰香凭借自己的善良与聪慧，突破阶级身份的束缚，赢得林锦岐倾心的同时也获得了林家上下的信服与尊重，成为林家的当家人，将命运牢牢掌控在自己的手中，为沈家洗刷冤屈讨回公道。",
@@ -1902,7 +1902,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至16集 | 共47集",
+                "episodes_info": "更新至18集 | 共47集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1919,7 +1919,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至13集 | 共18集",
+                "episodes_info": "更新至14集 | 共18集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1953,7 +1953,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至26集 | 共40集",
+                "episodes_info": "更新至28集 | 共40集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1970,7 +1970,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至21集 | 共26集",
+                "episodes_info": "更新至23集 | 共26集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true

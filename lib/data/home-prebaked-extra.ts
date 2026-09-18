@@ -21,11 +21,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "海贼王",
+        "title": "凡人修仙传",
         "updateBadge": ""
     },
     {
-        "title": "凡人修仙传",
+        "title": "海贼王",
         "updateBadge": ""
     },
     {
@@ -49,12 +49,12 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "无上神帝",
-        "updateBadge": "1"
+        "title": "光阴之外",
+        "updateBadge": ""
     },
     {
-        "title": "逆天至尊",
-        "updateBadge": "1"
+        "title": "吞噬星空",
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -647,20 +647,20 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "密室大逃脱第8季",
-        "updateBadge": "1"
-    },
-    {
         "title": "大哥小助理",
         "updateBadge": "2"
     },
     {
-        "title": "你好星期六",
+        "title": "密室大逃脱第8季",
         "updateBadge": "1"
     },
     {
         "title": "地球超新鲜第2季",
         "updateBadge": ""
+    },
+    {
+        "title": "你好星期六",
+        "updateBadge": "1"
     }
   ],
   hero: [
@@ -1237,87 +1237,87 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "乡野小神农",
-          "updateBadge": "20"
-      },
-      {
-          "title": "错爱重来重生亡妻少年时，鳏夫他又茶又装",
+          "title": "恋综上，我和清冷设计师爆火全网",
           "updateBadge": "全"
       },
       {
-          "title": "很中二，可那就是青春啊！",
+          "title": "魏家逆子成首辅 ：姑苏篇",
           "updateBadge": "全"
       },
       {
-          "title": "闪婚遇良人",
+          "title": "谁说没灵根不能修仙的？之无灵证道",
           "updateBadge": "全"
       },
       {
-          "title": "80打工人勇闯现代养全家",
+          "title": "黑化变团宠：皇后后妈一怒全家都慌了",
           "updateBadge": "全"
       },
       {
-          "title": "真千金她野性难驯",
+          "title": "大吉大利",
           "updateBadge": "全"
       },
       {
-          "title": "冲喜赘婿竟是绝世神医",
+          "title": "带三宝嫁东宫，太子他想活了",
           "updateBadge": "全"
       },
       {
-          "title": "美女老婆要听话，我真无敌了",
+          "title": "好感度超标，我被实习生攻略了",
           "updateBadge": "全"
       },
       {
-          "title": "穿成虐文女主后，我绑定了反派系统",
+          "title": "闪来二婚也很甜",
           "updateBadge": "全"
       },
       {
-          "title": "重生八零，我甩了厂长前夫",
+          "title": "遇棠方知涉：心动偏离主线",
           "updateBadge": "全"
       },
       {
-          "title": "穿书：我真不是来救赎反派的",
+          "title": "吻你万千",
           "updateBadge": "全"
       },
       {
-          "title": "反派别狂了，她一言可定生死",
+          "title": "携狐伴雀，万兽称我为王",
+          "updateBadge": "全"
+      },
+      {
+          "title": "一夜暴富！我的工厂通古今",
           "updateBadge": "全"
       }
   ],
   hero: [
       {
-          "id": "jl_short_630064143583477800",
-          "title": "乡野小神农",
+          "id": "jl_short_630911284845609000",
+          "title": "谁说没灵根不能修仙的？之无灵证道",
           "rate": "8.7",
-          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/333445/poster/9335f9a76a7230d55a7e679ac6118d90c2cfa8ba925938b167dcbc70cf40b317.webp",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/333445/poster/9335f9a76a7230d55a7e679ac6118d90c2cfa8ba925938b167dcbc70cf40b317.webp",
-          "description": "民国年间，清河村的顾青野遭人暗算变得痴傻，与盲母相依为命。濒死之际，他意外恢复神智并获得识百草、养万物的异能。凭借这项能力，他改良农作物，带领村民改善生活，却也因此卷入当地势力的争斗。",
-          "year": "2025",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/31e7a37de9903ddde391d641a796d580e74b67941b6c96ab5c0a507a198d20cf.png",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/31e7a37de9903ddde391d641a796d580e74b67941b6c96ab5c0a507a198d20cf.png",
+          "description": "今天一口气推一部打破常规的修仙佳作，《 谁说没灵根不能修仙的？之无灵证道第 26 季 》 用实力证明天赋并非唯一出路 。 该剧主打反套路修仙，主角凭借坚韧意志与独特智慧，在无灵根的绝境中走出了一条全新的证道之路 。88 集的篇幅深入刻画了修炼体系的创新与人性的光辉，每一集都有新的突破与感悟 。AI ...",
+          "year": "2026",
           "types": [
               "短剧",
-              "现代都市",
+              "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全143集·更新至20集",
+          "episodes_info": "全2935集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "刘轩 / 韩录锦"
+              "短剧实力派"
           ]
       },
       {
-          "id": "jl_short_637841674206445700",
-          "title": "错爱重来重生亡妻少年时，鳏夫他又茶又装",
-          "rate": "8.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/ccd218c1bc998364cf0bba94cddf5b9be0e125c0cc919193733724a5272e5d73.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/ccd218c1bc998364cf0bba94cddf5b9be0e125c0cc919193733724a5272e5d73.jpg",
-          "description": "这部剧最大的卖点就是重生加追妻的极致反差——男主前世是冷血鳏夫，重生后回到妻子少年时代，居然又茶又装地开启倒追模式。118集的体量把「错爱重来」四个字掰开揉碎地演：前世的遗憾有多深，这一世的补救就有多用力。女主从懵懂少女到看清男主真面目的过程层层递进，男主表面温润实则心机深沉的人设更是让人又恨又上头...",
+          "id": "jl_short_637859777476559400",
+          "title": "携狐伴雀，万兽称我为王",
+          "rate": "8.7",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/3310177a6d174254625574538ee7e63c86438b793f7e621fd201dd0765173da4.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/3310177a6d174254625574538ee7e63c86438b793f7e621fd201dd0765173da4.jpg",
+          "description": "八十年代西南深山，孤苦青年雷斌救下受伤灵狐，觉醒万物通灵的特殊能力。他心怀良善，恪守护山规矩，组建护秋合作社，带领村民合规采挖药材、有序捕猎，对抗偷猎歹徒，守护山林野兽与生态。同时兼顾家人，教会顽劣小舅踏实谋生，凭借一身胆识与通灵本事，守好整片西山，带领乡亲靠山林资源安稳致富。",
           "year": "2026",
           "types": [
               "短剧",
-              "年代穿越",
+              "现代都市",
               "全集连播"
           ],
           "episodes_info": "全80集·已完结",
@@ -1329,82 +1329,19 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_637629066781917200",
-          "title": "为了摸鱼，只好把公司做大做强",
-          "rate": "8.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/15a4b61ac6a27c7743e4d8c22e6f5b6bded02b702f169af1e66208989d4d2adc.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/15a4b61ac6a27c7743e4d8c22e6f5b6bded02b702f169af1e66208989d4d2adc.jpg",
-          "description": "初创科技公司龙漫云华岌岌可危。老板李博勤恳忠厚，四名员工素来摆烂摸鱼，躺平技术大神郭庆、擅逢迎的HR胡青雨、爱贪小便宜的史晓晨、鬼点子多的富二代陆迪。李博待他们如家人，但前妻黄慧拜金势利，勾结上司张玮，盗取他的科研成果，霸占房产，联合资本封杀公司。龙漫云华濒临倒闭，李博跑专车、送外卖苦苦支撑，再难也...",
+          "id": "jl_short_637859777359118800",
+          "title": "一夜暴富！我的工厂通古今",
+          "rate": "9.5",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/74cd1c135272fe6471a49942121861d27beded8a0a5ba5683d91ce0d0f12ff48.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/74cd1c135272fe6471a49942121861d27beded8a0a5ba5683d91ce0d0f12ff48.jpg",
+          "description": "文物系女主陈今越接手破产纺织厂，靠祖传转运石打通大齐时空，结识落难太子姜祈安。她输送现代物资帮其平定北疆叛乱、对抗突厥，姜祈安则赠予珍稀古物助她还清巨额欠款。二人双向扶持互生情愫，同时应对吸血亲戚与跨国文物犯罪组织暗影会。时空通道存在消亡危机，双石合一才能稳住世界，代价是永久分隔。最终姜祈安放弃帝位...",
           "year": "2026",
           "types": [
               "短剧",
               "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全3集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "孙樾＆张楚萱＆时康＆李若琪"
-          ]
-      },
-      {
-          "id": "jl_short_631815423058247700",
-          "title": "般配预谋",
-          "rate": "9.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/da7857a2fb4513d73ffbc379eadd997c6a3b27a78242fbee5daecd97928d8888.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/da7857a2fb4513d73ffbc379eadd997c6a3b27a78242fbee5daecd97928d8888.jpg",
-          "description": "成岳与刘蔓莉搭档演绎的 《 般配预谋 》 一口气更新至 106 集，是 2026 年都市情感题材中节奏紧凑的代表作 。 本资源收录这部完整剧集，讲述男女主角在精心设计的相遇中逐步靠近 、 彼此试探又互相吸引的故事线，感情推进不拖沓，每集都有明确的关系变化节点 。 两人对手戏自然流畅，角色从刻意接近到...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "其他",
-              "全集连播"
-          ],
-          "episodes_info": "全3集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "成岳＆刘蔓莉"
-          ]
-      },
-      {
-          "id": "jl_short_631676753126883300",
-          "title": "八零姐妹花致富路上捡个他",
-          "rate": "9.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/1d8bb04451ca38db1eafd335e1648728cb318e4b183fab2a77802ad91f457ec2.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/1d8bb04451ca38db1eafd335e1648728cb318e4b183fab2a77802ad91f457ec2.jpg",
-          "description": "李蕴薇与马若璇联袂出演的 《 八零姐妹花致富路上捡个他 》 更新至 82 集，是 2026 年年代创业题材的真人短剧 。 本资源包含全剧内容，讲述两位女性在八十年代背景下携手打拼事业 、 意外收获爱情与成长的经历，剧情紧扣致富主线，感情线作为辅助自然融入奋斗过程 。 双女主互动鲜活有记忆点，男性角色...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "年代穿越",
-              "全集连播"
-          ],
-          "episodes_info": "全3集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "李蕴薇＆马若璇"
-          ]
-      },
-      {
-          "id": "jl_short_637836234428776600",
-          "title": "很中二，可那就是青春啊！",
-          "rate": "8.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d0b6bba832d3b8afcb3403ea23b8abe5e61126d27209521a1778c1c15426d18b.png",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d0b6bba832d3b8afcb3403ea23b8abe5e61126d27209521a1778c1c15426d18b.png",
-          "description": "很中二，可那就是青春啊！ 精彩全集连播，高能反转停不下来！",
-          "year": "2025",
-          "types": [
-              "短剧",
-              "其他",
-              "全集连播"
-          ],
-          "episodes_info": "全255集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1413,37 +1350,100 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_630112281476399100",
-          "title": "闪婚遇良人",
-          "rate": "8.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/254cd11000418f740b33d3fe0319186cc47ce1acc1dba5054f33cb20812336f6.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/254cd11000418f740b33d3fe0319186cc47ce1acc1dba5054f33cb20812336f6.jpg",
-          "description": "更新全集",
+          "id": "jl_short_637859777342341600",
+          "title": "兽世第一废柴：靠实力啃三代",
+          "rate": "9.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/46c13c941eee05619be247dc025905ec6a2ee9c13270013caeff0c2d97174198.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/46c13c941eee05619be247dc025905ec6a2ee9c13270013caeff0c2d97174198.jpg",
+          "description": "花豹族长之女阿婉，是全兽世出了名的第一废柴：能吃、能睡、能摆烂，甚至吃空部落过冬粮仓，被亲妈连夜打包丢进黑豹领地。谁知她不仅没被暴君墨玄撕碎，反而被一路宠成掌心宝。所有人都以为她只是个只会混吃等死的小废物，直到一场结契大典彻底失控，阿婉隐藏的力量轰然觉醒。",
           "year": "2026",
           "types": [
               "短剧",
-              "女频恋爱",
+              "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全293集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "宋晨＆赵嘉豪"
+              "短剧实力派"
           ]
       },
       {
-          "id": "jl_short_637835879540326500",
-          "title": "80打工人勇闯现代养全家",
-          "rate": "9.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/22535e20a3271f61596e74e05675ea9a1899a4d9efbaa58ff97e6e9c5e52704a.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/22535e20a3271f61596e74e05675ea9a1899a4d9efbaa58ff97e6e9c5e52704a.jpg",
-          "description": "80打工人勇闯现代养全家 精彩全集连播，高能反转停不下来！",
+          "id": "jl_short_637859777325564400",
+          "title": "权宠九天",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f8a7f62280fd2211dd9c9b8b296e30e073c6494f78561981085b98f22397a8e5.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f8a7f62280fd2211dd9c9b8b296e30e073c6494f78561981085b98f22397a8e5.jpg",
+          "description": "堂堂赤龙族小公主龙卿若，本是二十二世纪天才医博、外科圣手，一朝穿越不仅失去元珠，还落得万箭穿心的下场！不仅如此，还有一个侧妃觊觎她的王妃之位！她当机立断振妻纲、收小弟、降恶人、撕绿茶，凭一身医术与龙族傲骨搅得大顺王朝风云变色！那个传闻中冷酷无情的境王爷，却在她面前秒变软脚虾，独宠她一人。",
           "year": "2026",
           "types": [
               "短剧",
-              "其他",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637859775010308600",
+          "title": "持械入宋",
+          "rate": "9.0",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/9e04321fbca2edccfbf678cbf745b72e2931f9548edd3ae13b2774582c3a362a.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/9e04321fbca2edccfbf678cbf745b72e2931f9548edd3ae13b2774582c3a362a.jpg",
+          "description": "林昭五人救下清河村后，借军功申请落户，组建乡勇，马振办木作坊造摇椅、手弩创收，陈素开医馆行医救人，王浩川立志科举。狄知县到访赏识众人。林昭带谢长风与乡勇押西夏战马赴秦州售卖，半路遇流民李奎，结伴行至石家部，恰逢药家部番人劫掠。林昭带队突袭敌阵解围，又趁夜奇袭药家部老巢，斩杀首领，彻底根除边患，与石家...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637859774355997200",
+          "title": "千年旧约为君归",
+          "rate": "9.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/163dcdc8e7d4e7b7aae853f7595c39a26e3a5a6b6514974ae3ee3305452bfe85.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/163dcdc8e7d4e7b7aae853f7595c39a26e3a5a6b6514974ae3ee3305452bfe85.jpg",
+          "description": "都市女孩苏念念偶然接触一处封存千年的古代遗迹，唤醒了沉睡千年的部族战将殷洛。二人循着历史遗存，探寻一桩尘封已久的古代冤案，拨开层层人为制造的迷雾。故事歌颂坚守信义与知恩重义，倡导正视历史真相，传递明辨是非、彼此守护的正能量，诠释真挚感情源于双向理解与共同成长。",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637859773819126300",
+          "title": "八零小锦鲤：二丫欢乐赶海记",
+          "rate": "9.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/8d52351e6f3afee069f836e31afdba711e67d5d99982f1d33b0aeafd74d7b133.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/8d52351e6f3afee069f836e31afdba711e67d5d99982f1d33b0aeafd74d7b133.jpg",
+          "description": "八零年代，退伍军人江啸天一家驻守贫瘠海岛，生活拮据。赶海时捡到自带锦鲤福运的二丫。软萌的二丫有着一双慧眼，能察觉海中各类海货，一口奶音惹人喜爱，成了全家与全岛的团宠。她凭借福运捕捞肥蟹，寻得药引治好母亲顽疾，挖到珍珠，还找到后山甜泉。在二丫的加持下，一家人努力劳作，吃肉攒钱，盖新房、购置大船。调皮哥...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
               "全集连播"
           ],
           "episodes_info": "全80集·已完结",
@@ -1458,29 +1458,29 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "乡野小神农",
+      title: "谁说没灵根不能修仙的？之无灵证道",
       rate: "8.7",
-      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/333445/poster/9335f9a76a7230d55a7e679ac6118d90c2cfa8ba925938b167dcbc70cf40b317.webp",
-      year: "2025",
-      types: ["短剧","现代都市","全集连播"],
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/31e7a37de9903ddde391d641a796d580e74b67941b6c96ab5c0a507a198d20cf.png",
+      year: "2026",
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: "错爱重来重生亡妻少年时，鳏夫他又茶又装",
-      rate: "8.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/ccd218c1bc998364cf0bba94cddf5b9be0e125c0cc919193733724a5272e5d73.jpg",
+      title: "携狐伴雀，万兽称我为王",
+      rate: "8.7",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/3310177a6d174254625574538ee7e63c86438b793f7e621fd201dd0765173da4.jpg",
       year: "2026",
-      types: ["短剧","年代穿越","全集连播"],
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_3',
-      title: "为了摸鱼，只好把公司做大做强",
-      rate: "8.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/15a4b61ac6a27c7743e4d8c22e6f5b6bded02b702f169af1e66208989d4d2adc.jpg",
+      title: "一夜暴富！我的工厂通古今",
+      rate: "9.5",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/74cd1c135272fe6471a49942121861d27beded8a0a5ba5683d91ce0d0f12ff48.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1488,51 +1488,51 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_4',
-      title: "般配预谋",
-      rate: "9.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/da7857a2fb4513d73ffbc379eadd997c6a3b27a78242fbee5daecd97928d8888.jpg",
+      title: "兽世第一废柴：靠实力啃三代",
+      rate: "9.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/46c13c941eee05619be247dc025905ec6a2ee9c13270013caeff0c2d97174198.jpg",
       year: "2026",
-      types: ["短剧","其他","全集连播"],
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_5',
-      title: "八零姐妹花致富路上捡个他",
-      rate: "9.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/1d8bb04451ca38db1eafd335e1648728cb318e4b183fab2a77802ad91f457ec2.jpg",
+      title: "权宠九天",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f8a7f62280fd2211dd9c9b8b296e30e073c6494f78561981085b98f22397a8e5.jpg",
       year: "2026",
-      types: ["短剧","年代穿越","全集连播"],
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_6',
-      title: "很中二，可那就是青春啊！",
-      rate: "8.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d0b6bba832d3b8afcb3403ea23b8abe5e61126d27209521a1778c1c15426d18b.png",
-      year: "2025",
-      types: ["短剧","其他","全集连播"],
+      title: "持械入宋",
+      rate: "9.0",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9e04321fbca2edccfbf678cbf745b72e2931f9548edd3ae13b2774582c3a362a.jpg",
+      year: "2026",
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_7',
-      title: "闪婚遇良人",
-      rate: "8.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/254cd11000418f740b33d3fe0319186cc47ce1acc1dba5054f33cb20812336f6.jpg",
+      title: "千年旧约为君归",
+      rate: "9.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/163dcdc8e7d4e7b7aae853f7595c39a26e3a5a6b6514974ae3ee3305452bfe85.jpg",
       year: "2026",
-      types: ["短剧","女频恋爱","全集连播"],
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_8',
-      title: "80打工人勇闯现代养全家",
-      rate: "9.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/22535e20a3271f61596e74e05675ea9a1899a4d9efbaa58ff97e6e9c5e52704a.jpg",
+      title: "八零小锦鲤：二丫欢乐赶海记",
+      rate: "9.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/8d52351e6f3afee069f836e31afdba711e67d5d99982f1d33b0aeafd74d7b133.jpg",
       year: "2026",
-      types: ["短剧","其他","全集连播"],
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1547,7 +1547,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "兰香如故",
-        "updateBadge": ""
+        "updateBadge": "2"
     },
     {
         "title": "早春晴朗",
@@ -1555,27 +1555,27 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "一瓯春",
-        "updateBadge": ""
+        "updateBadge": "2"
     },
     {
         "title": "交锋",
-        "updateBadge": ""
+        "updateBadge": "2"
+    },
+    {
+        "title": "生逢其时",
+        "updateBadge": "5"
     },
     {
         "title": "冬城猎凶",
-        "updateBadge": ""
-    },
-    {
-        "title": "心动的信号第9季",
-        "updateBadge": "2"
+        "updateBadge": "1"
     },
     {
         "title": "死有对证",
         "updateBadge": ""
     },
     {
-        "title": "生逢其时",
-        "updateBadge": ""
+        "title": "心动的信号第9季",
+        "updateBadge": "2"
     },
     {
         "title": "飞到我心上",
@@ -1586,12 +1586,12 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "花儿与少年第8季",
-        "updateBadge": "2"
+        "title": "挑情丑闻",
+        "updateBadge": "8"
     },
     {
-        "title": "深渊无间",
-        "updateBadge": ""
+        "title": "花儿与少年第8季",
+        "updateBadge": "2"
     }
   ],
   hero: [
@@ -1679,7 +1679,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至06集 | 共30集",
+        "episodes_info": "更新至08集 | 共30集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1687,7 +1687,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     {
         "id": "iyf_hero_tv_6",
         "title": "兰香如故",
-        "rate": "7.3",
+        "rate": "7.2",
         "cover": "https://image.tmdb.org/t/p/w500/kfurXRMH1ZkUoyT5HN72zLTQxzZ.jpg",
         "backdrop": "https://image.tmdb.org/t/p/w1280/mZSewqVlY4F2F2Axm7hiG6KBOBp.jpg",
         "description": "大学士府长孙女沈嘉兰与吏部尚书林家的长孙林锦岐订下婚约，然而朝堂风云突变，祖父沈大学士被判谋逆之罪，沈家惨遭灭门。林家为了自保，与沈家退婚，另与御前新贵赵家结亲。沈嘉兰母亲崔氏曾接济过的林家家奴许万全夫妇用刚病亡的女儿许兰香替下嘉兰。嘉兰从此顶着许兰香的身份，成为林府的一名三等丫鬟。在艰难的境遇中，兰香没有向命运低头，始终为自己和家人的幸福生活努力着，反抗一切不公与压迫。最终，兰香凭借自己的善良与聪慧，突破阶级身份的束缚，赢得林锦岐倾心的同时也获得了林家上下的信服与尊重，成为林家的当家人，将命运牢牢掌控在自己的手中，为沈家洗刷冤屈讨回公道。",
@@ -1696,7 +1696,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至16集 | 共47集",
+        "episodes_info": "更新至18集 | 共47集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1713,7 +1713,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至13集 | 共18集",
+        "episodes_info": "更新至14集 | 共18集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -2171,11 +2171,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第4季",
-        "updateBadge": ""
-    },
-    {
-        "title": "守护解放西第6季",
+        "title": "恐龙时代：你不知道的故事",
         "updateBadge": ""
     },
     {
@@ -2183,7 +2179,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "风云战国之枭雄",
+        "title": "克拉克森的农场第4季",
+        "updateBadge": ""
+    },
+    {
+        "title": "哈利·波特：一段魔法史",
         "updateBadge": ""
     },
     {
