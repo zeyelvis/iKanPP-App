@@ -12,6 +12,7 @@ import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 
 interface SearchKnowledgePanelProps {
   query?: string;
+  onEntityLoaded?: (hasEntities: boolean) => void;
 }
 
 // 内存单例缓存，保证用户切词或返回时不发生重复网络抖动
@@ -288,6 +289,7 @@ const KnowledgeCard = memo(function KnowledgeCard({
 
 export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
   query = '',
+  onEntityLoaded,
 }: SearchKnowledgePanelProps) {
   const cleanQuery = query.trim();
   const [entities, setEntities] = useState<TitleEntity[]>([]);
@@ -299,6 +301,7 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
       setEntities([]);
       setLoading(false);
       setActiveTab(0);
+      onEntityLoaded?.(false);
       return;
     }
 
@@ -307,6 +310,7 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
       const cached = entitiesMemoryCache.get(cleanQuery) || [];
       setEntities(cached);
       setActiveTab(0);
+      onEntityLoaded?.(cached.length > 0);
       return;
     }
 
@@ -328,11 +332,13 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
           entitiesMemoryCache.set(cleanQuery, found);
           setEntities(found);
           setActiveTab(0);
+          onEntityLoaded?.(found.length > 0);
         })
         .catch(() => {
           if (!isSubscribed) return;
           entitiesMemoryCache.set(cleanQuery, []);
           setEntities([]);
+          onEntityLoaded?.(false);
         })
         .finally(() => {
           if (isSubscribed) setLoading(false);
@@ -343,7 +349,7 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
       isSubscribed = false;
       clearTimeout(timer);
     };
-  }, [cleanQuery]);
+  }, [cleanQuery, onEntityLoaded]);
 
   // 加载状态骨架屏
   if (loading && entities.length === 0) {

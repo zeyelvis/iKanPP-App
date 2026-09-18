@@ -12,10 +12,6 @@ const SearchLoadingAnimation = dynamic(
   () => import('@/components/SearchLoadingAnimation').then(m => m.SearchLoadingAnimation),
   { ssr: false }
 );
-const NoResults = dynamic(
-  () => import('@/components/search/NoResults').then(m => m.NoResults),
-  { ssr: false }
-);
 const SearchResults = dynamic(
   () => import('@/components/home/SearchResults').then(m => m.SearchResults),
   { ssr: false }
@@ -94,8 +90,8 @@ export function HomePageClient() {
 
       {/* Main Content */}
       <main className="pb-20">
-        {/* Results Section */}
-        {(results.length >= 1 || (!loading && results.length > 0)) && (
+        {/* 核心搜索结果与知识图谱中枢：只要用户发起检索即刻渲染，实体大脑先行，不再受切片数量是否大于0阻断 */}
+        {hasSearched && (
           <div className="fluid-container pt-2 sm:pt-4">
             <SearchResults
               results={results}
@@ -104,20 +100,14 @@ export function HomePageClient() {
               latencies={latencies}
               query={query}
               onSearch={handleSearch}
+              onReset={handleReset}
             />
           </div>
         )}
 
-        {/* Popular Features - Homepage */}
+        {/* 首页默认精选热播内容推荐（仅在未搜索时渲染） */}
         {!loading && !hasSearched && (
           <PopularFeatures onSearch={handleSearch} />
-        )}
-
-        {/* No Results */}
-        {!loading && hasSearched && results.length === 0 && (
-          <div className="fluid-container pt-8">
-            <NoResults onReset={handleReset} />
-          </div>
         )}
       </main>
 

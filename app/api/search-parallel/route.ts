@@ -11,6 +11,7 @@ import { getSourceName } from '@/lib/utils/source-names';
 import { isSafeExternalUrl } from '@/lib/utils/security';
 import { searchAndEnrichFromTMDB } from '@/lib/services/entity-enrichment';
 import { parseSeasonFromTitle, generateSeasonSearchVariants } from '@/lib/utils/season-resolver';
+import { buildSearchStrategy } from '@/lib/utils/chinese-segmenter';
 
 export const runtime = 'edge';
 
@@ -53,12 +54,13 @@ export async function POST(request: NextRequest) {
           totalSources: sources.length
         })}\n\n`));
 
-
-
         // Track progress
         let completedSources = 0;
         let totalVideosFound = 0;
         let maxPageCount = 1;
+
+        // 构建中文分词与修饰词剥离策略
+        const strategy = buildSearchStrategy(query.trim());
 
         // Search all sources in PARALLEL with Circuit Breaker (Max 2500ms timeout per source)
         const searchPromises = sources.map(async (source: any) => {
@@ -96,14 +98,14 @@ export async function POST(request: NextRequest) {
                 if (!queriesToTry.includes(c)) queriesToTry.push(c);
               }
             } else {
+              // 优先加入分词算法提炼出的 Phase 1 精确全词队列
+              for (const p1 of strategy.phase1) {
+                if (!queriesToTry.includes(p1)) queriesToTry.push(p1);
+              }
+
               const clean = query.trim();
               const noSpace = clean.replace(/\s+/g, '');
-              queriesToTry.push(noSpace);
-
-              const noPunctuation = clean.replace(/[:：\-—·/]/g, '').replace(/\s+/g, '');
-              if (noPunctuation !== noSpace && !queriesToTry.includes(noPunctuation)) {
-                queriesToTry.push(noPunctuation);
-              }
+              if (!queriesToTry.includes(noSpace)) queriesToTry.push(noSpace);
 
               const sub = extractSearchSubtitle(clean);
               if (sub && !queriesToTry.includes(sub)) {
@@ -206,6 +208,48 @@ export async function POST(request: NextRequest) {
 
         // Wait for all sources to complete
         await Promise.all(searchPromises);
+
+        // 🌟 Phase 2 智能回退引擎（对标 ikanbot 的分词相关性检索）：
+        // 若 Phase 1 全网 0 命中，但分词器成功提取出核心主词（如“法蒂玛圣母”提取出“法蒂玛”）
+        if (totalVideosFound === 0 && strategy.fallback.length > 0) {
+          const fallbackTerm = strategy.fallback[0];
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+            type: 'fallback_notice',
+            fallbackTerm,
+            message: `已为您自动拓展检索「${fallbackTerm}」相关作品`,
+          })}\n\n`));
+
+          // 挑选并发查询高命中的骨干大源进行极速秒级回退
+          const topFallbackSources = sources.slice(0, 10);
+          const fallbackPromises = topFallbackSources.map(async (source: any) => {
+            try {
+              const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Fallback timeout')), 3000)
+              );
+              const searchPromise = searchVideos(fallbackTerm, [source], 1);
+              const raceResult: any = await Promise.race([searchPromise, timeoutPromise]);
+              const found = raceResult[0]?.results || [];
+
+              if (found.length > 0) {
+                totalVideosFound += found.length;
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+                  type: 'videos',
+                  videos: found.map((video: any) => ({
+                    ...video,
+                    sourceDisplayName: source.name || getSourceName(source.id),
+                    isFallback: true,
+                    fallbackTerm,
+                  })),
+                  source: source.id,
+                  isFallback: true,
+                  fallbackTerm,
+                })}\n\n`));
+              }
+            } catch {}
+          });
+
+          await Promise.all(fallbackPromises);
+        }
 
         // 长尾片库自扩充钩子 (On-Demand Entity Enrichment)
         // 若搜索到有效视频线路且片名有效，后台非阻塞触发 TMDB 补全与实体沉淀
