@@ -121,10 +121,18 @@ export async function verifyCloudflareAccess(request: Request): Promise<VerifyAc
     process.env.CF_ACCESS_AUD || 'fab3226bf40ab3a4c565562cf9fed3e5b832155c896eeb656768341e11625171';
   const rawTeamDomain = process.env.CF_ACCESS_TEAM_DOMAIN || '9fa';
 
-  // 1. 提取 JWT assertion
-  const jwtAssertion =
+  // 1. 提取 JWT assertion（优先从边缘注入的 Header 提取，次选从 Cookie 'CF_Authorization' 提取）
+  let jwtAssertion =
     request.headers.get('cf-access-jwt-assertion') ||
     request.headers.get('Cf-Access-Jwt-Assertion');
+
+  if (!jwtAssertion) {
+    const cookieHeader = request.headers.get('cookie') || '';
+    const match = cookieHeader.match(/(?:^|;\s*)CF_Authorization=([^;]+)/);
+    if (match) {
+      jwtAssertion = decodeURIComponent(match[1]);
+    }
+  }
 
   // 本地开发调试：若在开发环境且未携带 Cloudflare Access header，允许通过测试
   if (isDev && !jwtAssertion) {
