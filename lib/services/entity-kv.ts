@@ -51,7 +51,7 @@ const CF_KV_EMAIL = process.env.CLOUDFLARE_EMAIL || process.env.CF_EMAIL || 'zey
 /**
  * 读取 KV 中的原始字符串（优先原生 Cloudflare Binding，本地环境透明走 REST API + 内存缓存）
  */
-async function kvGet(key: string): Promise<string | null> {
+export async function kvGet(key: string): Promise<string | null> {
   const kv = getCloudflareKV();
   if (kv && typeof kv.get === 'function') {
     try {
@@ -93,7 +93,7 @@ async function kvGet(key: string): Promise<string | null> {
 /**
  * 写入 KV
  */
-async function kvPut(key: string, value: string): Promise<void> {
+export async function kvPut(key: string, value: string): Promise<void> {
   await ensurePrebakedSeeded();
   memoryStore.set(key, value);
 

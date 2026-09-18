@@ -4,6 +4,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 
 const DISALLOW_PATHS = [
     '/api/',
+    '/admin',
     '/settings',
     '/profile',
     '/premium',

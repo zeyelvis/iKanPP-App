@@ -24,6 +24,7 @@ export interface TitleEntity {
   numberOfEpisodes?: number;   // 电视剧总集数
   keywords?: string[];         // 核心标签与长尾关键词
   relatedEntityIds?: string[]; // 站内强关联影片 entityId 列表 (内链网络拓扑)
+  seoScore?: number;           // SEO 质量评分 (0-100)，≥60 分方可进入搜索引擎主动推送池
   createdAt: string;           // 初次入库 ISO 8601 时间戳
   updatedAt: string;           // 最后更新 ISO 8601 时间戳
 }

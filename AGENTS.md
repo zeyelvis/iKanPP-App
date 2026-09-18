@@ -172,6 +172,25 @@
 4. **SEO 规范 URL 301 永久重定向**：
    - 任何历史非规范 URL（包括旧版别名、纯 ID、历史带连字符 URL），一旦解析出正确实体且当前 slug 与规范 `canonicalSlug` 不一致，必须 100% 触发 301/308 永久重定向，将搜索引擎与外链权重全量转移到标准规范 URL。
 
+---
+
+## 11. SEO Mission Control 管理后台与 Zero Trust 双层隔离铁律 (Admin & Zero Trust Spec)
+
+iKanPP 全域影视实体管理与自动化促抓监控中心 (`/admin`) 必须永久恪守以下安全与架构基线：
+1. **Zero Trust 邮箱 OTP 与应用层双重鉴权防线**：
+   - **第一道防线**：由 Cloudflare Access Zero Trust 在网络层拦截所有 `/admin/*` 访问，仅允许白名单邮箱通过邮箱 OTP 登录，从网络层面彻底杜绝后台被黑客扫描或弱密码爆破风险；
+   - **第二道防线**：所有 `/api/admin/*` 接口必须经由 `verifyCloudflareAccess` / `requireAdminAuth` 进行 Web Crypto RS256 JWKS 公钥验签、`aud` 标签比对与邮箱白名单核验，未通过者坚决返回 401/403 阻断。
+2. **主站零污染与前台绝对静默**：
+   - `app/robots.ts` 必须显式声明 `Disallow: /admin`，禁止任何搜索引擎爬虫索引后台；
+   - 全站级 Speculation Rules API 必须通过 `{ not: { href_matches: '/admin*' } }` 排除后台页面，严禁客户端推测预渲染；
+   - 主站前台组件（`Footer`、`MobileBottomNav`、`BackToTop`）必须在 `/admin` 下彻底静默不渲染，保证后台页面的纯净独立。
+3. **双轨绝对隔离铁律恪守**：
+   - 管理后台仅服务于轨道 A（iKanPP 主站公网影视），**严禁触碰、管理或混合轨道 B（iKanX 午夜特区）的任何数据与代理路由**。
+4. **Google Indexing API 配额安全硬锁**：
+   - 严格遵循 Google 单日 200 URLs 默认调用上限，系统在消耗达到 180 条时强制开启安全熔断硬锁，API 与前端界面同步拦截，杜绝超频违规。
+5. **全流程操作审计留痕 (Audit Trail)**：
+   - 所有实体修改、下架删除、批量促抓推送与 GitHub Actions 调度，必须自动写入 Cloudflare KV (`admin:audit-log:*`) 并保留 90 天，实现全流程透明可追溯。
+
 
 
 

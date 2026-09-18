@@ -158,6 +158,7 @@ export default function RootLayout({
                       },
                       { not: { href_matches: '/api/*' } },
                       { not: { href_matches: '/premium*' } },
+                      { not: { href_matches: '/admin*' } },
                     ],
                   },
                   eagerness: 'moderate',

@@ -27,6 +27,53 @@ interface TrendingItem {
   first_air_date?: string;
 }
 
+/**
+ * 计算实体的 SEO 质量评分 (0-100)
+ * 评分门禁标准：
+ * 1. 剧情描述丰富度（≥80字高质量描述 +25分，≥30字 +15分）
+ * 2. 高清海报 (+20分) 与 剧照背景图 (+10分)
+ * 3. 真实演职人员 (+15分)
+ * 4. 细分流派/分类 (+10分)
+ * 5. 有效评分 (+10分)
+ * 6. 标签与长尾关键词 (+10分)
+ */
+export function calculateSeoScore(entity: TitleEntity): number {
+  let score = 0;
+  const desc = entity.description || '';
+  if (desc.length >= 80 && !desc.includes('在线观看，全网高清影视资源')) {
+    score += 25;
+  } else if (desc.length >= 30) {
+    score += 15;
+  }
+
+  if (entity.cover && !entity.cover.includes('default')) {
+    score += 20;
+  }
+  if (entity.backdrop) {
+    score += 10;
+  }
+
+  const validDirectors = (entity.directors || []).filter(d => d && d !== '知名导演');
+  const validActors = (entity.actors || []).filter(a => a && a !== '实力主演');
+  if (validDirectors.length > 0 || validActors.length > 0) {
+    score += 15;
+  }
+
+  if (entity.genres && entity.genres.length > 0) {
+    score += 10;
+  }
+
+  if (entity.rate && entity.rate !== '0' && entity.rate !== '0.0') {
+    score += 10;
+  }
+
+  if (entity.keywords && entity.keywords.length >= 3) {
+    score += 10;
+  }
+
+  return Math.min(score, 100);
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get('secret') || request.headers.get('x-cron-secret');
@@ -135,9 +182,17 @@ export async function GET(request: Request) {
         updatedAt: new Date().toISOString(),
       };
 
+      entity.seoScore = calculateSeoScore(entity);
+
       await saveEntity(entity);
       newAddedCount++;
-      newUrls.push(`${BASE_URL}/title/${entityId}-${slug}`);
+
+      // 质量门禁：只有评分 ≥ 60 的高质量实体才进入搜索引擎即时主动推送池
+      if ((entity.seoScore ?? 0) >= 60) {
+        newUrls.push(`${BASE_URL}/title/${entityId}-${slug}`);
+      } else {
+        console.log(`[EntityPipeline] 实体 ${entity.title} (${entity.entityId}) SEO评分未达标(${entity.seoScore}/60)，跳过即时推送`);
+      }
     } catch (err) {
       console.warn('[Pipeline item error]:', err);
     }
@@ -187,9 +242,13 @@ export async function GET(request: Request) {
             updatedAt: new Date().toISOString(),
           };
 
+          entity.seoScore = calculateSeoScore(entity);
+
           await saveEntity(entity);
           newAddedCount++;
-          newUrls.push(`${BASE_URL}/title/${entityId}-${slug}`);
+          if ((entity.seoScore ?? 0) >= 60) {
+            newUrls.push(`${BASE_URL}/title/${entityId}-${slug}`);
+          }
         }
       }
     }

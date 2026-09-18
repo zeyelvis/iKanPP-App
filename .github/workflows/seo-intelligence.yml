@@ -1,0 +1,36 @@
+name: SEO Intelligence OS (Daily Autonomous Engine)
+
+on:
+  schedule:
+    # 每天北京时间 11:00 (UTC 03:00) 自动执行全网巡检、大盘广播与精准促抓自愈
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  seo-intelligence-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Run SEO Intelligence Engine
+        env:
+          GOOGLE_INDEXING_KEY: ${{ secrets.GOOGLE_INDEXING_KEY }}
+          NEXT_PUBLIC_SITE_URL: https://www.ikanpp.com
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
+        run: |
+          node scripts/seo-intelligence.mjs

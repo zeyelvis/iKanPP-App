@@ -15,6 +15,15 @@ function escapeXml(str: string): string {
     .replace(/'/g, '&apos;');
 }
 
+async function computeETag(text: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.slice(0, 16).map(b => b.toString(16).padStart(2, '0')).join('');
+  return `"${hashHex}"`;
+}
+
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ page: string }> }
@@ -29,11 +38,17 @@ export async function GET(
   const slice = catalog.slice(start, end);
 
   const urlElements: string[] = [];
+  let latestDate = '';
 
   for (const item of slice) {
     if (!item || !item.id) continue;
-    const fullUrl = `${BASE_URL}/title/${item.id}-${encodeURIComponent(item.slug || item.id)}`;
+    // 权威 SEO 规范 URL：与 canonicalSlug 100% 保持一致，杜绝多余 URL 编码或 301 重定向
+    const cleanSlug = (item.slug || item.id).trim();
+    const fullUrl = `${BASE_URL}/title/${item.id}-${cleanSlug}`;
     const lastMod = item.updatedAt || new Date().toISOString().split('T')[0];
+    if (lastMod > latestDate) {
+      latestDate = lastMod;
+    }
 
     urlElements.push(`  <url>
     <loc>${escapeXml(fullUrl)}</loc>
@@ -48,11 +63,29 @@ export async function GET(
 ${urlElements.join('\n')}
 </urlset>`;
 
+  // 边缘缓存与 ETag 校验：若内容未变动，直接返回 304 Not Modified，极大保护搜索引擎抓取预算
+  const etag = await computeETag(xml);
+  const clientIfNoneMatch = request.headers.get('if-none-match');
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/xml; charset=utf-8',
+    'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400',
+    ETag: etag,
+  };
+
+  if (latestDate) {
+    headers['Last-Modified'] = new Date(latestDate).toUTCString();
+  }
+
+  if (clientIfNoneMatch === etag) {
+    return new NextResponse(null, {
+      status: 304,
+      headers,
+    });
+  }
+
   return new NextResponse(xml, {
     status: 200,
-    headers: {
-      'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400',
-    },
+    headers,
   });
 }

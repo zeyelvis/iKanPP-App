@@ -23,8 +23,8 @@ export function Footer() {
     }
   }
 
-  // 服务端预渲染 (SSR) 阶段与客户端识别 /premium 及短剧播放器 /short/player 路由
-  if (pathname?.startsWith('/premium') || pathname?.startsWith('/short/player')) {
+  // 服务端预渲染 (SSR) 阶段与客户端识别 /premium、短剧播放器 /short/player 及管理后台 /admin 路由
+  if (pathname?.startsWith('/premium') || pathname?.startsWith('/short/player') || pathname?.startsWith('/admin')) {
     return null;
   }
 

@@ -16,26 +16,42 @@ function escapeXml(str: string): string {
 }
 
 export async function GET() {
-  const lastModDate = new Date().toISOString().split('T')[0];
+  const todayStr = new Date().toISOString().split('T')[0];
 
-  // 获取全量实体数量，计算所需分卷数
+  // 获取全量实体数量，计算所需分卷数并计算各分卷真实最后更新时间
   const catalog = await getSitemapCatalog();
   const totalTitles = catalog.length;
   const pageCount = Math.max(1, Math.ceil(totalTitles / TITLES_PER_SITEMAP));
 
-  const subSitemaps = [
-    `${BASE_URL}/sitemap.xml`,
-    `${BASE_URL}/sitemap-genres.xml`,
-    `${BASE_URL}/sitemap-people.xml`,
+  const subSitemaps: { url: string; lastmod: string }[] = [
+    { url: `${BASE_URL}/sitemap.xml`, lastmod: todayStr },
+    { url: `${BASE_URL}/sitemap-genres.xml`, lastmod: todayStr },
+    { url: `${BASE_URL}/sitemap-people.xml`, lastmod: todayStr },
   ];
 
   for (let p = 1; p <= pageCount; p++) {
-    subSitemaps.push(`${BASE_URL}/sitemap-titles-${p}.xml`);
+    const start = (p - 1) * TITLES_PER_SITEMAP;
+    const end = start + TITLES_PER_SITEMAP;
+    const slice = catalog.slice(start, end);
+
+    // 真实增量感知 (Truthful Lastmod)：从分卷切片中提取最大更新时间，历史分卷不虚标更新
+    let maxDate = '';
+    for (const item of slice) {
+      if (item.updatedAt && item.updatedAt > maxDate) {
+        maxDate = item.updatedAt;
+      }
+    }
+    const chunkLastMod = maxDate ? maxDate.split('T')[0] : todayStr;
+
+    subSitemaps.push({
+      url: `${BASE_URL}/sitemap-titles-${p}.xml`,
+      lastmod: chunkLastMod,
+    });
   }
 
-  const sitemapElements = subSitemaps.map(url => `  <sitemap>
-    <loc>${escapeXml(url)}</loc>
-    <lastmod>${lastModDate}</lastmod>
+  const sitemapElements = subSitemaps.map(item => `  <sitemap>
+    <loc>${escapeXml(item.url)}</loc>
+    <lastmod>${item.lastmod}</lastmod>
   </sitemap>`).join('\n');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

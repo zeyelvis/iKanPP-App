@@ -13,6 +13,9 @@ import { getOptimizedImageUrl, isRestrictedRegion } from '@/lib/utils/image-util
 import { headers } from 'next/headers';
 import { TitleEntity } from '@/lib/types/entity';
 import { TitleJsonLd } from '@/components/seo/TitleJsonLd';
+import { RelatedSearchChips } from '@/components/seo/RelatedSearchChips';
+import { AiOverviewCapsule } from '@/components/seo/AiOverviewCapsule';
+import highPotentialKeywordsData from '@/lib/data/seo-high-potential.json';
 import { TitleActionsBar } from '@/components/title/TitleActionsBar';
 import { EpisodesSelector } from '@/components/title/EpisodesSelector';
 import { StickyBottomPlayCTA } from '@/components/title/StickyBottomPlayCTA';
@@ -399,14 +402,35 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const typeText = isSeriesLike ? '全集' : '免费高清完整版';
   const displayTitle = seasonTag && !entity.title.includes(seasonTag) ? `${entity.title} ${seasonTag}` : entity.title;
   const pageTitle = `${displayTitle} (${entity.year}) 在线观看 - ${typeText} | iKanPP 爱看片片`;
+  // 动态构建高信息密度、千人千面的 Meta Description（杜绝模板化被 Google 惩罚）
+  const regionText = entity.region ? entity.region.slice(0, 4) : '';
+  const primaryGenre = (entity.genres && entity.genres.length > 0) ? entity.genres[0] : '';
+  const mediaTypeLabel = entity.type === 'anime' ? '动漫' : entity.type === 'tv' ? '电视剧' : entity.type === 'variety' ? '综艺' : entity.type === 'documentary' ? '纪录片' : '电影';
+  const ratingText = entity.rate && Number(entity.rate) > 0 ? `评分${entity.rate}` : '';
+  const tagParts = [entity.year, regionText, ratingText, primaryGenre, mediaTypeLabel].filter(Boolean);
+  const signalPrefix = `【${tagParts.join('·')}】`;
+
   const validDirs = (entity.directors || []).filter(d => d && !['知名导演', '实力主演', '未知', '暂无'].includes(d.trim()));
   const validActs = (entity.actors || []).filter(a => a && !['知名导演', '实力主演', '未知', '暂无'].includes(a.trim()));
-  let peopleText = '';
-  if (validDirs.length > 0) peopleText += ` 导演: ${validDirs.slice(0, 2).join(' / ')}。`;
-  const rawDesc = entity.description || '';
-  const cleanDesc = rawDesc.replace(/(?:导演|主演)\s*[:：]\s*(?:知名导演|实力主演)[，。、\s]*/g, '').slice(0, 100);
+  const castParts: string[] = [];
+  if (validDirs.length > 0) castParts.push(`由${validDirs.slice(0, 2).join('、')}执导`);
+  if (validActs.length > 0) castParts.push(`${validActs.slice(0, 3).join('、')}领衔主演`);
+  const castStr = castParts.length > 0 ? `${castParts.join('，')}。` : '';
 
-  const metaDescription = `在 iKanPP 免费在线观看《${displayTitle}》(${entity.year}) ${isSeriesLike ? (entity.type === 'anime' ? '动漫全集' : '电视剧全集') : '电影完整版'}。${cleanDesc ? `${cleanDesc}...` : ''}${peopleText}海外华人免翻墙极速超清播放。`;
+  let cleanDesc = (entity.description || '')
+    .replace(/(?:导演|主演)\s*[:：]\s*(?:知名导演|实力主演)[，。、\s]*/g, '')
+    .replace(/在线观看，支持海外华人免翻墙极速高清播放。/g, '')
+    .replace(/在线观看，全网高清影视资源。/g, '')
+    .trim();
+  if (cleanDesc.length > 90) {
+    cleanDesc = cleanDesc.slice(0, 90) + '...';
+  }
+
+  const cta = isSeriesLike
+    ? (entity.numberOfEpisodes ? `共${entity.numberOfEpisodes}集全网纯直连超清速播。` : '全集无删减完整版免VIP极速秒播。')
+    : '1080P超清原画免VIP在线观看。';
+
+  const metaDescription = `${signalPrefix}《${displayTitle}》${castStr}${cleanDesc ? `剧情介绍：${cleanDesc}` : ''} iKanPP提供${cta}`;
   const canonicalUrl = `${BASE_URL}/title/${entity.entityId}-${entity.slug}`;
   let resolvedBackdrop = entity.backdrop;
   if (isFakeBackdrop(entity.backdrop, entity.cover)) {
@@ -531,15 +555,23 @@ export default async function TitlePage({ params }: Props) {
   const filteredDirectorRelated = directorRelated.filter(e => e.entityId !== entity.entityId).slice(0, 6);
   const filteredActorRelated = actorRelated.filter(e => e.entityId !== entity.entityId).slice(0, 6);
 
-  // 去重合并推荐列表
-  const combinedRelated: typeof filteredGenreRelated = [];
+  // 去重合并推荐列表，并优先置顶处于 Google 第 11~30 位的高潜冲榜影片（智能内链提权）
+  const hpTitles = new Set((highPotentialKeywordsData?.keywords || []).map(k => k.title));
+  const boostedRelated: typeof filteredGenreRelated = [];
+  const normalRelated: typeof filteredGenreRelated = [];
   const seenIds = new Set<string>();
+
   for (const item of [...filteredDirectorRelated, ...filteredActorRelated, ...filteredGenreRelated]) {
     if (!seenIds.has(item.entityId)) {
       seenIds.add(item.entityId);
-      combinedRelated.push(item);
+      if (hpTitles.has(item.title)) {
+        boostedRelated.push(item);
+      } else {
+        normalRelated.push(item);
+      }
     }
   }
+  const combinedRelated = [...boostedRelated, ...normalRelated];
 
   // 多分类智能识别：根据 entity.type + genres 精准定位所属频道
   const resolvedChannel = resolveEntityChannel(entity);
@@ -829,6 +861,9 @@ export default async function TitlePage({ params }: Props) {
           </div>
         )}
 
+        {/* AI Overview / GEO 胶囊速览档案与微格式标记 */}
+        <AiOverviewCapsule entity={entity} channelName={channelName} />
+
         {/* Netflix 标志性“更多类似推荐”（More Like This） */}
         {combinedRelated.length > 0 && (
           <section className="mt-8 below-fold-section">
@@ -888,6 +923,9 @@ export default async function TitlePage({ params }: Props) {
             </div>
           </section>
         )}
+
+        {/* 关联热搜与深度内链集群 (Phase 2 SEO High-Potential Mesh) */}
+        <RelatedSearchChips currentTitle={entity.title} currentGenre={primaryGenre} limit={10} />
       </main>
 
       {/* 移动端专属常驻吸底快捷播放栏 */}

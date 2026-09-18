@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { ChevronUp } from 'lucide-react';
 
 /**
@@ -8,7 +9,12 @@ import { ChevronUp } from 'lucide-react';
  * Follows Liquid Glass design system
  */
 export function BackToTop() {
+    const pathname = usePathname();
     const [isVisible, setIsVisible] = useState(false);
+
+    if (pathname?.startsWith('/admin')) {
+        return null;
+    }
 
     useEffect(() => {
         const toggleVisibility = () => {

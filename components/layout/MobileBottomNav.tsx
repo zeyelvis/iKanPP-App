@@ -49,8 +49,8 @@ export function MobileBottomNav() {
     return null;
   }
 
-  // 播放页隐藏底部导航，避免挡住全屏播放器与控制条
-  if (pathname?.startsWith('/player') || pathname?.startsWith('/short/player')) {
+  // 播放页与管理后台隐藏底部导航，避免挡住页面与控制条
+  if (pathname?.startsWith('/player') || pathname?.startsWith('/short/player') || pathname?.startsWith('/admin')) {
     return null;
   }
 
