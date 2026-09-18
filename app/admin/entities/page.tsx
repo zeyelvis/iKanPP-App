@@ -415,7 +415,7 @@ export default function AdminEntitiesPage() {
 
                           <div className="min-w-0">
                             <div className="font-semibold text-white truncate hover:text-red-400 transition-colors">
-                              <Link href={`/admin/entities/${item.entityId}`}>
+                              <Link href={`/admin/entities/edit?id=${item.entityId}`}>
                                 {item.title}
                               </Link>
                             </div>
@@ -460,7 +460,7 @@ export default function AdminEntitiesPage() {
                           </Link>
 
                           <Link
-                            href={`/admin/entities/${item.entityId}`}
+                            href={`/admin/entities/edit?id=${item.entityId}`}
                             className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                             title="编辑实体"
                           >
