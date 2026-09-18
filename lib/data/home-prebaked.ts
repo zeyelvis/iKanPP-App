@@ -62,6 +62,10 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "瘴气营地的青春性事与死亡",
+                "updateBadge": ""
+        },
+        {
                 "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
@@ -82,11 +86,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "打生桩",
-                "updateBadge": ""
-        },
-        {
-                "title": "求救信号",
+                "title": "蜂鸟行动",
                 "updateBadge": ""
         },
         {
@@ -94,11 +94,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "怒之杀(听译)",
+                "title": "求救信号",
                 "updateBadge": ""
         },
         {
-                "title": "蜂鸟行动",
+                "title": "怒之杀(听译)",
                 "updateBadge": ""
         }
       ],
@@ -1825,22 +1825,22 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": "2"
-        },
-        {
-                "title": "交锋",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "挑情丑闻",
                 "updateBadge": "8"
         },
         {
-                "title": "一瓯春",
-                "updateBadge": "2"
+                "title": "交锋",
+                "updateBadge": ""
         },
         {
                 "title": "早春晴朗",
+                "updateBadge": ""
+        },
+        {
+                "title": "一瓯春",
                 "updateBadge": ""
         },
         {
@@ -1868,7 +1868,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "逐玉",
+                "title": "百花杀",
                 "updateBadge": ""
         }
       ],

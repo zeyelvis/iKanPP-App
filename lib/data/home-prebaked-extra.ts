@@ -21,10 +21,6 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "海贼王",
-        "updateBadge": ""
-    },
-    {
         "title": "关于我转生变成史莱姆这档事第4季",
         "updateBadge": "1"
     },
@@ -33,11 +29,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "牧神记",
+        "title": "海贼王",
         "updateBadge": ""
     },
     {
-        "title": "光阴之外",
+        "title": "牧神记",
         "updateBadge": ""
     },
     {
@@ -45,16 +41,20 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "地狱模式 喜欢速通游戏的玩家在废设定异世界无双第2季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "光阴之外",
+        "updateBadge": ""
+    },
+    {
         "title": "诛仙4",
         "updateBadge": ""
     },
     {
-        "title": "吞噬星空",
+        "title": "妖神记第4季",
         "updateBadge": ""
-    },
-    {
-        "title": "地狱模式 喜欢速通游戏的玩家在废设定异世界无双第2季",
-        "updateBadge": "1"
     }
   ],
   hero: [
@@ -129,7 +129,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     {
         "id": "iyf_hero_tv_5",
         "title": "从0位居民开始的边境领主大人",
-        "rate": "7.1",
+        "rate": "7.2",
         "cover": "https://image.tmdb.org/t/p/w500/oz6Aet1VmsjxA70oGIhiaNnXxuk.jpg",
         "backdrop": "https://image.tmdb.org/t/p/w1280/pEhFkDyRMpUZr1lwmmPFVGzdgNl.jpg",
         "description": "迪亚斯是个孤儿，但他却在战场上屡立战功，被誉为“救国英雄”。国王赐予他一块领地作为奖励。然而当他抵达时，却发现这片领地偏僻荒凉，人烟稀少，食物匮乏。这时，迪亚斯遇到了一位名叫阿尔娜的鬼人族女孩，她的额头上长著一根蓝色的角。阿尔娜带领迪亚斯来到了她族人居住的村庄。身为领主，迪亚斯决定尽其所能治理好自己的领地。",
@@ -635,6 +635,10 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "一饭封神第2季",
+        "updateBadge": ""
+    },
+    {
         "title": "披荆斩棘2026",
         "updateBadge": ""
     },
@@ -643,15 +647,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "一饭封神第2季",
-        "updateBadge": ""
-    },
-    {
         "title": "大哥小助理",
-        "updateBadge": "2"
-    },
-    {
-        "title": "密室大逃脱第8季",
         "updateBadge": ""
     },
     {
@@ -659,7 +655,11 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "脱口秀和Ta的朋友们第3季",
+        "title": "密室大逃脱第8季",
+        "updateBadge": ""
+    },
+    {
+        "title": "喜剧之王单口季第3季",
         "updateBadge": ""
     }
   ],
@@ -1547,22 +1547,22 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "兰香如故",
-        "updateBadge": "2"
-    },
-    {
-        "title": "交锋",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "挑情丑闻",
         "updateBadge": "8"
     },
     {
-        "title": "一瓯春",
-        "updateBadge": "2"
+        "title": "交锋",
+        "updateBadge": ""
     },
     {
         "title": "早春晴朗",
+        "updateBadge": ""
+    },
+    {
+        "title": "一瓯春",
         "updateBadge": ""
     },
     {
@@ -1590,7 +1590,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "飞到我心上",
+        "title": "一饭封神第2季",
         "updateBadge": ""
     }
   ],
@@ -2163,7 +2163,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第5季",
+        "title": "欢迎来到雷克斯汉姆",
         "updateBadge": ""
     },
     {
@@ -2171,23 +2171,23 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第3季",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第4季",
         "updateBadge": ""
     },
     {
-        "title": "古代战场",
+        "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
-        "title": "守护解放西第6季",
+        "title": "向着宵夜的方向第3季",
         "updateBadge": ""
     },
     {
-        "title": "若泽·穆里尼奥：特立之道",
+        "title": "克拉克森的农场第3季",
+        "updateBadge": ""
+    },
+    {
+        "title": "恐龙时代：你不知道的故事",
         "updateBadge": ""
     }
   ],
