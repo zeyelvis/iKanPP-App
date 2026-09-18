@@ -58,11 +58,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "特立独行",
+                "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
         {
-                "title": "给阿嬷的情书",
+                "title": "特立独行",
                 "updateBadge": ""
         },
         {
@@ -78,19 +78,19 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "蜂鸟行动",
-                "updateBadge": ""
-        },
-        {
                 "title": "M.I.S.S.I.O.N. 歌剧般的潜入搜查官",
                 "updateBadge": ""
         },
         {
-                "title": "求救信号",
+                "title": "蜂鸟行动",
                 "updateBadge": ""
         },
         {
                 "title": "夜王",
+                "updateBadge": ""
+        },
+        {
+                "title": "求救信号",
                 "updateBadge": ""
         },
         {
@@ -1828,6 +1828,10 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
+                "title": "早春晴朗",
+                "updateBadge": ""
+        },
+        {
                 "title": "交锋",
                 "updateBadge": "2"
         },
@@ -1836,27 +1840,23 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "早春晴朗",
-                "updateBadge": ""
-        },
-        {
                 "title": "冬城猎凶",
                 "updateBadge": ""
         },
         {
                 "title": "生逢其时",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "死有对证",
                 "updateBadge": "1"
         },
         {
-                "title": "深渊无间",
+                "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
-                "title": "飞到我心上",
+                "title": "深渊无间",
                 "updateBadge": ""
         },
         {
@@ -1864,12 +1864,12 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "黑白清道夫",
-                "updateBadge": "10"
-        },
-        {
                 "title": "中头奖还是要上班",
                 "updateBadge": "2"
+        },
+        {
+                "title": "百花杀",
+                "updateBadge": ""
         }
       ],
     "hero": [

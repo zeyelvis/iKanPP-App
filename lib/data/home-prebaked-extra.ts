@@ -13,12 +13,12 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "凡人修仙传",
+        "title": "诛仙4",
         "updateBadge": ""
     },
     {
-        "title": "诛仙4",
-        "updateBadge": "1"
+        "title": "凡人修仙传",
+        "updateBadge": ""
     },
     {
         "title": "海贼王",
@@ -33,11 +33,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "沧元图",
+        "title": "妖神记第4季",
         "updateBadge": ""
     },
     {
-        "title": "妖神记第4季",
+        "title": "沧元图",
         "updateBadge": ""
     },
     {
@@ -45,11 +45,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "吞噬星空",
+        "title": "遮天",
         "updateBadge": ""
     },
     {
-        "title": "遮天",
+        "title": "吞噬星空",
         "updateBadge": ""
     },
     {
@@ -631,11 +631,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
 export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "心动的信号第9季",
-        "updateBadge": "2"
+        "title": "一饭封神第2季",
+        "updateBadge": ""
     },
     {
-        "title": "一饭封神第2季",
+        "title": "心动的信号第9季",
         "updateBadge": ""
     },
     {
@@ -659,7 +659,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "脱口秀和Ta的朋友们第3季",
+        "title": "地球超新鲜第2季",
         "updateBadge": ""
     }
   ],
@@ -1550,6 +1550,10 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "2"
     },
     {
+        "title": "早春晴朗",
+        "updateBadge": ""
+    },
+    {
         "title": "交锋",
         "updateBadge": "2"
     },
@@ -1558,35 +1562,31 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "早春晴朗",
-        "updateBadge": ""
-    },
-    {
         "title": "冬城猎凶",
         "updateBadge": ""
     },
     {
         "title": "生逢其时",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "死有对证",
         "updateBadge": "1"
     },
     {
-        "title": "深渊无间",
-        "updateBadge": ""
-    },
-    {
         "title": "飞到我心上",
         "updateBadge": ""
     },
     {
-        "title": "心动的信号第9季",
-        "updateBadge": "2"
+        "title": "深渊无间",
+        "updateBadge": ""
     },
     {
         "title": "一饭封神第2季",
+        "updateBadge": ""
+    },
+    {
+        "title": "心动的信号第9季",
         "updateBadge": ""
     },
     {
@@ -2159,15 +2159,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
 export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "克拉克森的农场第1季",
-        "updateBadge": ""
-    },
-    {
-        "title": "完美星球",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第5季",
+        "updateBadge": ""
+    },
+    {
+        "title": "克拉克森的农场第1季",
         "updateBadge": ""
     },
     {
@@ -2179,15 +2175,19 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "中国通史",
+        "title": "一级方程式：疾速争胜第1季",
         "updateBadge": ""
     },
     {
-        "title": "美丽美利坚",
+        "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
     {
-        "title": "若泽·穆里尼奥：特立之道",
+        "title": "寻色中国",
+        "updateBadge": ""
+    },
+    {
+        "title": "王朝第2季",
         "updateBadge": ""
     }
   ],
