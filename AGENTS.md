@@ -191,6 +191,33 @@ iKanPP 全域影视实体管理与自动化促抓监控中心 (`/admin`) 必须�
 5. **全流程操作审计留痕 (Audit Trail)**：
    - 所有实体修改、下架删除、批量促抓推送与 GitHub Actions 调度，必须自动写入 Cloudflare KV (`admin:audit-log:*`) 并保留 90 天，实现全流程透明可追溯。
 
+---
+
+## 12. 华语流媒体主站内容安全与非华语/日文假名绝对阻断铁律 (Strict Chinese Content Safety Spec)
+
+iKanPP 作为面向全球华人的高品质流媒体平台，主站（轨道 A）全域前台展示（包括首页大厅、各专区 Hub、「最新上线 · 实时收录」横轨）及 SEO 实体数据库必须永久恪守以下最高内容安全准则，**严禁任何后续开发、自动化脚本或 AI 助手降低门槛或擅自放行**：
+
+### 1. 日文假名绝对零容忍（无论是否包含汉字）
+- **核心判定**：凡是片名包含任何日文平假名或片假名字符（`[\u3040-\u309f\u30a0-\u30ff]`），**无论其夹带多少个汉字（哪怕包含 10 个汉字，如《ど根性物語 銭の踊り》、《悪魔からの勲章》等），一律判定为日文条目，100% 坚决物理阻断与剔除**！
+- **严禁使用**：严禁采用类似 `test(kana) && !test(chinese)` 的漏洞逻辑。日文大量汉字绝不能作为放行日文假名片名的借口。
+
+### 2. 纯外文无中文条目绝对零容忍
+- **中文底线**：所有入库与前台展示的影视作品必须且只能包含合法的中文汉字（`[\u4e00-\u9fa5]`）。
+- **外语过滤**：TMDB、采集站爬取的未本地化、无官方正规中文译名的纯英文、德文、西班牙文、印地文、他加禄语等海外冷门条目（如《Bourek》、《Die Chefin》、《Unser Charly》等），**100% 严禁写入 KV 实体库与 `recent:*` 横轨**。
+
+### 3. 韩文字符绝对零容忍
+- 任何韩剧、韩影必须具备正规规范的中文翻译名称，韩文字母（`[\uac00-\ud7af]`）一律坚决拦截。
+
+### 4. 低俗与成人违禁词一票否决
+- 严格执行 `ADULT_BLACKLIST_WORDS` 敏感词黑名单，地下色情录像、成人番号、露骨低俗条目一律直接物理抹除。
+
+### 5. 四重立体防线协同闭环
+- **底层算法基线**：统一调用 `lib/data/entities/entity-utils.ts` 中的 `isCleanChineseTitle`；
+- **自动化入库门禁**：`app/api/seo/entity-pipeline/route.ts` 与 `app/api/seo/tmdb-changes/route.ts` 在拉取 TMDB 时必须执行 `if (!isCleanChineseTitle(mainTitle)) continue;`；
+- **KV 存储自愈**：`lib/services/entity-kv.ts` 中的 `isSafeRecentTitleItem` 严密把关 `recent:*` 的写入与下发；
+- **前端组件穿透**：`components/home/LatestTitlesRail.tsx` 保持客户端多重过滤，版本升级（`v6`）彻底丢弃旧缓存。
+
+
 
 
 
