@@ -42,7 +42,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# unused/generated files
+# local scripts outputs
+*.generated.*
+/packages/
 contrast-test-results.json
 
 # App builds & native artifacts
