@@ -4,7 +4,7 @@ import { notFound, redirect, RedirectType } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, Clock, Calendar, Film, ArrowLeft, Clapperboard, User, Sparkles, CheckCircle2, Play } from 'lucide-react';
-import { getEntityBySlug, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity } from '@/lib/services/entity-kv';
+import { getEntityBySlug, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity, isSafeRecentTitleItem } from '@/lib/services/entity-kv';
 import { getGenreBySlug } from '@/lib/data/genres';
 import { parseEntitySlug, normalizeTitle } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, fetchTMDBDetails, fetchTMDBAiredEpisodeCount, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
@@ -81,7 +81,7 @@ interface Props {
  * 高容错实体解析引擎：支持各种形态的 Slug（如 ik000013-女仆日记, ik002015-法律与秩序, 法律与秩序, ik000013 等）
  * 核心架构铁律：ID 与显式 Slug 映射最高优先级，彻底根治 URL 英文后缀导致李代桃僵的问题
  */
-async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> {
+async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | null> {
   if (!rawSlugParam) return null;
 
   let decodedSlug = rawSlugParam.trim();
@@ -161,6 +161,19 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
   }
 
   return null;
+}
+
+/**
+ * 影视详情页最终守门员：
+ * 任何历史遗留的假名片、低俗录像、成人违规条目强制拦截返回 null（自动触发 404 与 noindex）
+ */
+async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> {
+  const entity = await resolveEntityRaw(rawSlugParam);
+  if (!entity) return null;
+  if (!isSafeRecentTitleItem(entity as any)) {
+    return null;
+  }
+  return entity;
 }
 
 /**
