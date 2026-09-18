@@ -94,7 +94,9 @@ export async function GET(request: NextRequest) {
     try {
       const localSingle = await getEntityByTitle(query);
       if (localSingle && localSingle.cover) {
-        if (hasTitleOverlap(query, localSingle.title) || (localSingle.originalTitle && hasTitleOverlap(query, localSingle.originalTitle))) {
+        // 若本地条目是年代久远(<1980)且无主要演员的冷门早期作品，不直接拦截，放行至 L4 TMDB 在线多源检索现代主流大片
+        const isAncientCold = Number(localSingle.year) < 1980 && (!localSingle.actors || localSingle.actors.length === 0);
+        if (!isAncientCold && (hasTitleOverlap(query, localSingle.title) || (localSingle.originalTitle && hasTitleOverlap(query, localSingle.originalTitle)))) {
           const enriched = await enrichEpisodeCount(localSingle);
           const entities = [enriched];
 

@@ -296,9 +296,41 @@ export async function saveEntity(entity: TitleEntity): Promise<void> {
     await kvPut(`tmdb:${entity.tmdbType}:${entity.tmdbId}`, id);
   }
 
-  // 4. 保存标题归一化索引 (供 301 重定向命中)
+  // 4. 保存标题归一化索引 (供 301 重定向命中与权威条目直出)
   if (normTitle) {
-    await kvPut(`title:${normTitle}`, id);
+    const existingId = await kvGet(`title:${normTitle}`);
+    if (existingId && existingId.toLowerCase() !== id) {
+      // 存在同名作品冲突，比较两者的权重，避免早期冷门片覆盖主流现代大片
+      const existingEnt = await getEntityById(existingId);
+      if (existingEnt) {
+        const getWeight = (ent: TitleEntity) => {
+          let w = 0;
+          const pop = Number(ent.popularity) || 0;
+          w += pop * 2;
+          if (ent.actors && ent.actors.length > 0) w += 50;
+          if (ent.directors && ent.directors.length > 0 && ent.directors[0] !== '知名导演') w += 20;
+          const rate = Number(ent.rate) || 0;
+          if (rate > 0) w += rate * 5;
+          const year = Number(ent.year) || 0;
+          if (year >= 2000) w += 40;
+          else if (year >= 1980) w += 10;
+          return w;
+        };
+
+        const existingWeight = getWeight(existingEnt);
+        const currentWeight = getWeight(entity);
+
+        if (existingWeight > currentWeight) {
+          console.warn(`[saveEntity Title Conflict] Retaining existing authority ${existingId} ("${existingEnt.title}" ${existingEnt.year}, w:${existingWeight}) over new ${id} ("${entity.title}" ${entity.year}, w:${currentWeight})`);
+        } else {
+          await kvPut(`title:${normTitle}`, id);
+        }
+      } else {
+        await kvPut(`title:${normTitle}`, id);
+      }
+    } else {
+      await kvPut(`title:${normTitle}`, id);
+    }
   }
 
   // 5. 追加到全局所有 ID 列表与 Sitemap 轻量全量目录
