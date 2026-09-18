@@ -305,63 +305,90 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
       return;
     }
 
-    // 命中内存缓存
+    // 1. 命中 JS 内存单例缓存 (0ms 秒开)
     if (entitiesMemoryCache.has(cleanQuery)) {
       const cached = entitiesMemoryCache.get(cleanQuery) || [];
       setEntities(cached);
+      setLoading(false);
       setActiveTab(0);
       onEntityLoaded?.(cached.length > 0);
       return;
     }
 
+    // 2. 命中客户端 sessionStorage 缓存 (0ms 秒开)
+    try {
+      const ssKey = `sq_ent_${cleanQuery}`;
+      const rawSession = sessionStorage.getItem(ssKey);
+      if (rawSession) {
+        const cached = JSON.parse(rawSession);
+        if (Array.isArray(cached) && cached.length > 0) {
+          entitiesMemoryCache.set(cleanQuery, cached);
+          setEntities(cached);
+          setLoading(false);
+          setActiveTab(0);
+          onEntityLoaded?.(true);
+          return;
+        }
+      }
+    } catch {}
+
     let isSubscribed = true;
     setLoading(true);
 
-    const timer = setTimeout(() => {
-      fetch(`/api/entity-search?q=${encodeURIComponent(cleanQuery)}`)
-        .then((res) => {
-          if (!res.ok) throw new Error('Search failed');
-          return res.json();
-        })
-        .then((data: { entities?: TitleEntity[]; entity?: TitleEntity | null }) => {
-          if (!isSubscribed) return;
-          const found = data?.entities && data.entities.length > 0
-            ? data.entities
-            : (data?.entity ? [data.entity] : []);
+    // 彻底移除无意义的人为 150ms 延迟，用户提交搜索后毫秒级直达网络
+    fetch(`/api/entity-search?q=${encodeURIComponent(cleanQuery)}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Search failed');
+        return res.json();
+      })
+      .then((data: { entities?: TitleEntity[]; entity?: TitleEntity | null }) => {
+        if (!isSubscribed) return;
+        const found = data?.entities && data.entities.length > 0
+          ? data.entities
+          : (data?.entity ? [data.entity] : []);
 
-          entitiesMemoryCache.set(cleanQuery, found);
-          setEntities(found);
-          setActiveTab(0);
-          onEntityLoaded?.(found.length > 0);
-        })
-        .catch(() => {
-          if (!isSubscribed) return;
-          entitiesMemoryCache.set(cleanQuery, []);
-          setEntities([]);
-          onEntityLoaded?.(false);
-        })
-        .finally(() => {
-          if (isSubscribed) setLoading(false);
-        });
-    }, 150);
+        entitiesMemoryCache.set(cleanQuery, found);
+        try {
+          sessionStorage.setItem(`sq_ent_${cleanQuery}`, JSON.stringify(found));
+        } catch {}
+
+        setEntities(found);
+        setActiveTab(0);
+        onEntityLoaded?.(found.length > 0);
+      })
+      .catch(() => {
+        if (!isSubscribed) return;
+        entitiesMemoryCache.set(cleanQuery, []);
+        setEntities([]);
+        onEntityLoaded?.(false);
+      })
+      .finally(() => {
+        if (isSubscribed) setLoading(false);
+      });
 
     return () => {
       isSubscribed = false;
-      clearTimeout(timer);
     };
   }, [cleanQuery, onEntityLoaded]);
 
-  // 加载状态骨架屏
+  // 加载状态骨架屏（精致电影态微光，平滑淡入，防止布局突兀跳动）
   if (loading && entities.length === 0) {
     return (
-      <div className="relative mb-6 rounded-2xl overflow-hidden border border-white/10 bg-neutral-900/40 p-4 sm:p-5 animate-pulse">
+      <div className="relative mb-6 rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-neutral-950/60 p-4 sm:p-5 backdrop-blur-xl animate-pulse transition-all duration-300">
         <div className="flex gap-4 sm:gap-6">
-          <div className="w-24 sm:w-32 aspect-2/3 rounded-xl bg-white/5 shrink-0" />
+          <div className="w-24 sm:w-32 aspect-2/3 rounded-xl sm:rounded-2xl bg-white/5 shrink-0 border border-white/5" />
           <div className="flex-1 space-y-3 py-1">
-            <div className="h-5 bg-white/10 rounded w-1/3" />
+            <div className="flex items-center gap-2">
+              <div className="h-5 bg-white/10 rounded-full w-28 sm:w-36" />
+              <div className="h-5 bg-white/5 rounded-full w-16" />
+            </div>
+            <div className="h-5 sm:h-6 bg-white/10 rounded-lg w-1/2 sm:w-1/3" />
             <div className="h-4 bg-white/5 rounded w-1/4" />
-            <div className="h-10 bg-white/5 rounded w-full hidden sm:block" />
-            <div className="h-8 bg-white/10 rounded-full w-32" />
+            <div className="h-10 sm:h-12 bg-white/5 rounded-xl w-full hidden sm:block" />
+            <div className="flex items-center gap-3 pt-1">
+              <div className="h-8 sm:h-9 bg-red-600/30 rounded-xl w-28 sm:w-32" />
+              <div className="h-8 sm:h-9 bg-white/5 rounded-xl w-24" />
+            </div>
           </div>
         </div>
       </div>
