@@ -62,15 +62,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "逃出绝命街",
-                "updateBadge": ""
-        },
-        {
                 "title": "给阿嬷的情书",
-                "updateBadge": ""
-        },
-        {
-                "title": "你我对抗全世界",
                 "updateBadge": ""
         },
         {
@@ -78,15 +70,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "打生桩",
+                "title": "你我对抗全世界",
                 "updateBadge": ""
         },
         {
-                "title": "蜂鸟行动",
-                "updateBadge": ""
-        },
-        {
-                "title": "夜王",
+                "title": "逃出绝命街",
                 "updateBadge": ""
         },
         {
@@ -94,11 +82,23 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "最佳舞伴",
+                "title": "打生桩",
                 "updateBadge": ""
         },
         {
-                "title": "海洋奇缘：启航",
+                "title": "求救信号",
+                "updateBadge": ""
+        },
+        {
+                "title": "夜王",
+                "updateBadge": ""
+        },
+        {
+                "title": "怒之杀(听译)",
+                "updateBadge": ""
+        },
+        {
+                "title": "蜂鸟行动",
                 "updateBadge": ""
         }
       ],
@@ -1828,32 +1828,36 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
-                "title": "早春晴朗",
-                "updateBadge": ""
+                "title": "交锋",
+                "updateBadge": "2"
+        },
+        {
+                "title": "挑情丑闻",
+                "updateBadge": "8"
         },
         {
                 "title": "一瓯春",
                 "updateBadge": "2"
         },
         {
+                "title": "早春晴朗",
+                "updateBadge": ""
+        },
+        {
                 "title": "生逢其时",
                 "updateBadge": "5"
         },
         {
-                "title": "交锋",
-                "updateBadge": "2"
+                "title": "冬城猎凶",
+                "updateBadge": ""
         },
         {
                 "title": "死有对证",
                 "updateBadge": "1"
         },
         {
-                "title": "冬城猎凶",
-                "updateBadge": "1"
-        },
-        {
-                "title": "挑情丑闻",
-                "updateBadge": "8"
+                "title": "深渊无间",
+                "updateBadge": ""
         },
         {
                 "title": "飞到我心上",
@@ -1864,11 +1868,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "深渊无间",
-                "updateBadge": ""
-        },
-        {
-                "title": "百花杀",
+                "title": "逐玉",
                 "updateBadge": ""
         }
       ],
@@ -1911,7 +1911,7 @@ export const PREBAKED_HOME_DATA: {
                 "id": "iyf_hero_tv_3",
                 "title": "冬城猎凶",
                 "rate": "8.0",
-                "cover": "https://image.tmdb.org/t/p/w500/64NVbdSuNgrK90wqhtnlR2S4sPK.jpg",
+                "cover": "https://image.tmdb.org/t/p/w500/8nenduIuctLj2YBjWHG8pFs1X6R.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/28u4q3fPzXmbyf3BoiWweUOuuzj.jpg",
                 "description": "银行大劫案，搅动大城风云；儿童拐卖案，重起罪恶迷雾。双时空、案中案，极致追凶。",
                 "year": "2026",

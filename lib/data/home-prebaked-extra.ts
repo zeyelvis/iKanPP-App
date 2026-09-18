@@ -9,11 +9,11 @@ import type { PrebakedSubject, PrebakedHomeCategory } from './home-prebaked';
 export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "沧元图",
+        "title": "仙逆",
         "updateBadge": ""
     },
     {
-        "title": "仙逆",
+        "title": "沧元图",
         "updateBadge": ""
     },
     {
@@ -25,8 +25,8 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "大主宰年番",
-        "updateBadge": ""
+        "title": "关于我转生变成史莱姆这档事第4季",
+        "updateBadge": "1"
     },
     {
         "title": "斗破苍穹年番",
@@ -37,7 +37,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "死灵法师我即是天灾",
+        "title": "光阴之外",
+        "updateBadge": ""
+    },
+    {
+        "title": "大主宰年番",
         "updateBadge": ""
     },
     {
@@ -49,12 +53,8 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "光阴之外",
-        "updateBadge": ""
-    },
-    {
-        "title": "遮天",
-        "updateBadge": ""
+        "title": "地狱模式 喜欢速通游戏的玩家在废设定异世界无双第2季",
+        "updateBadge": "1"
     }
   ],
   hero: [
@@ -631,36 +631,36 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
 export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "心动的信号第9季",
-        "updateBadge": "2"
-    },
-    {
         "title": "花儿与少年第8季",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "披荆斩棘2026",
         "updateBadge": ""
     },
     {
-        "title": "一饭封神第2季",
-        "updateBadge": "1"
+        "title": "心动的信号第9季",
+        "updateBadge": ""
     },
     {
-        "title": "密室大逃脱第8季",
-        "updateBadge": "1"
+        "title": "一饭封神第2季",
+        "updateBadge": ""
     },
     {
         "title": "大哥小助理",
         "updateBadge": "2"
     },
     {
-        "title": "你好星期六",
-        "updateBadge": "1"
+        "title": "密室大逃脱第8季",
+        "updateBadge": ""
     },
     {
-        "title": "说唱巅峰对决2026",
-        "updateBadge": "1"
+        "title": "我家那闺女2026",
+        "updateBadge": ""
+    },
+    {
+        "title": "脱口秀和Ta的朋友们第3季",
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -1237,55 +1237,76 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "恋综上，我和清冷设计师爆火全网",
-          "updateBadge": "全"
+          "title": "鳄鱼缅北",
+          "updateBadge": "57"
       },
       {
-          "title": "魏家逆子成首辅 ：姑苏篇",
-          "updateBadge": "全"
+          "title": "前任勿扰",
+          "updateBadge": "HOT"
       },
       {
-          "title": "谁说没灵根不能修仙的？之无灵证道",
-          "updateBadge": "全"
+          "title": "铁拳无敌廖师傅",
+          "updateBadge": "HOT"
       },
       {
-          "title": "黑化变团宠：皇后后妈一怒全家都慌了",
-          "updateBadge": "全"
+          "title": "婚约成赘婿，妙手神医破危局",
+          "updateBadge": "HOT"
       },
       {
-          "title": "大吉大利",
-          "updateBadge": "全"
+          "title": "笑我嫁废人他起身掌控全城",
+          "updateBadge": "HOT"
       },
       {
-          "title": "带三宝嫁东宫，太子他想活了",
-          "updateBadge": "全"
+          "title": "陕北村花驯夫记",
+          "updateBadge": "HOT"
       },
       {
-          "title": "好感度超标，我被实习生攻略了",
-          "updateBadge": "全"
+          "title": "左手仁心，右手阎罗",
+          "updateBadge": "HOT"
       },
       {
-          "title": "闪来二婚也很甜",
-          "updateBadge": "全"
+          "title": "一纸误春深",
+          "updateBadge": "HOT"
       },
       {
-          "title": "遇棠方知涉：心动偏离主线",
-          "updateBadge": "全"
+          "title": "我画的魔王活过来了",
+          "updateBadge": "HOT"
       },
       {
-          "title": "吻你万千",
-          "updateBadge": "全"
+          "title": "恰好心动于你",
+          "updateBadge": "HOT"
       },
       {
-          "title": "携狐伴雀，万兽称我为王",
-          "updateBadge": "全"
+          "title": "后妈嫁到，变成全家团宠",
+          "updateBadge": "HOT"
       },
       {
-          "title": "一夜暴富！我的工厂通古今",
-          "updateBadge": "全"
+          "title": "狐妖女友赖上我",
+          "updateBadge": "HOT"
       }
   ],
   hero: [
+      {
+          "id": "jl_short_637908721195810800",
+          "title": "鳄鱼缅北",
+          "rate": "8.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/2a85042bcf4c51a36af025259710fa3aa7d4ec310739b33e32d14d8adf515278.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/2a85042bcf4c51a36af025259710fa3aa7d4ec310739b33e32d14d8adf515278.jpg",
+          "description": "是一部近期热播的关于缅北诈骗、犯罪与逃亡题材的悬疑惊悚类AI漫剧或剧情解说系列短片 。",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "其他",
+              "全集连播"
+          ],
+          "episodes_info": "全57集·更新至第57集",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
       {
           "id": "jl_short_630911284845609000",
           "title": "谁说没灵根不能修仙的？之无灵证道",
@@ -1432,32 +1453,21 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           "actors": [
               "短剧实力派"
           ]
-      },
-      {
-          "id": "jl_short_637859773819126300",
-          "title": "八零小锦鲤：二丫欢乐赶海记",
-          "rate": "9.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/8d52351e6f3afee069f836e31afdba711e67d5d99982f1d33b0aeafd74d7b133.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/8d52351e6f3afee069f836e31afdba711e67d5d99982f1d33b0aeafd74d7b133.jpg",
-          "description": "八零年代，退伍军人江啸天一家驻守贫瘠海岛，生活拮据。赶海时捡到自带锦鲤福运的二丫。软萌的二丫有着一双慧眼，能察觉海中各类海货，一口奶音惹人喜爱，成了全家与全岛的团宠。她凭借福运捕捞肥蟹，寻得药引治好母亲顽疾，挖到珍珠，还找到后山甜泉。在二丫的加持下，一家人努力劳作，吃肉攒钱，盖新房、购置大船。调皮哥...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
+      title: "鳄鱼缅北",
+      rate: "8.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/2a85042bcf4c51a36af025259710fa3aa7d4ec310739b33e32d14d8adf515278.jpg",
+      year: "2026",
+      types: ["短剧","其他","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_2',
       title: "谁说没灵根不能修仙的？之无灵证道",
       rate: "8.7",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/31e7a37de9903ddde391d641a796d580e74b67941b6c96ab5c0a507a198d20cf.png",
@@ -1467,7 +1477,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_2',
+      id: 'pb_s_top_3',
       title: "携狐伴雀，万兽称我为王",
       rate: "8.7",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/3310177a6d174254625574538ee7e63c86438b793f7e621fd201dd0765173da4.jpg",
@@ -1477,7 +1487,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_3',
+      id: 'pb_s_top_4',
       title: "一夜暴富！我的工厂通古今",
       rate: "9.5",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/74cd1c135272fe6471a49942121861d27beded8a0a5ba5683d91ce0d0f12ff48.jpg",
@@ -1487,7 +1497,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_4',
+      id: 'pb_s_top_5',
       title: "兽世第一废柴：靠实力啃三代",
       rate: "9.4",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/46c13c941eee05619be247dc025905ec6a2ee9c13270013caeff0c2d97174198.jpg",
@@ -1497,7 +1507,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_5',
+      id: 'pb_s_top_6',
       title: "权宠九天",
       rate: "9.3",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f8a7f62280fd2211dd9c9b8b296e30e073c6494f78561981085b98f22397a8e5.jpg",
@@ -1507,7 +1517,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_6',
+      id: 'pb_s_top_7',
       title: "持械入宋",
       rate: "9.0",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9e04321fbca2edccfbf678cbf745b72e2931f9548edd3ae13b2774582c3a362a.jpg",
@@ -1517,20 +1527,10 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_7',
+      id: 'pb_s_top_8',
       title: "千年旧约为君归",
       rate: "9.6",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/163dcdc8e7d4e7b7aae853f7595c39a26e3a5a6b6514974ae3ee3305452bfe85.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_8',
-      title: "八零小锦鲤：二丫欢乐赶海记",
-      rate: "9.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/8d52351e6f3afee069f836e31afdba711e67d5d99982f1d33b0aeafd74d7b133.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1550,48 +1550,48 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "2"
     },
     {
-        "title": "早春晴朗",
-        "updateBadge": ""
-    },
-    {
-        "title": "一瓯春",
-        "updateBadge": "2"
-    },
-    {
-        "title": "生逢其时",
-        "updateBadge": "5"
-    },
-    {
         "title": "交锋",
         "updateBadge": "2"
-    },
-    {
-        "title": "死有对证",
-        "updateBadge": "1"
-    },
-    {
-        "title": "冬城猎凶",
-        "updateBadge": "1"
     },
     {
         "title": "挑情丑闻",
         "updateBadge": "8"
     },
     {
-        "title": "飞到我心上",
-        "updateBadge": ""
-    },
-    {
-        "title": "沧元图",
-        "updateBadge": ""
-    },
-    {
-        "title": "心动的信号第9季",
+        "title": "一瓯春",
         "updateBadge": "2"
+    },
+    {
+        "title": "早春晴朗",
+        "updateBadge": ""
+    },
+    {
+        "title": "生逢其时",
+        "updateBadge": "5"
+    },
+    {
+        "title": "冬城猎凶",
+        "updateBadge": ""
+    },
+    {
+        "title": "死有对证",
+        "updateBadge": "1"
     },
     {
         "title": "花儿与少年第8季",
-        "updateBadge": "2"
+        "updateBadge": ""
+    },
+    {
+        "title": "深渊无间",
+        "updateBadge": ""
+    },
+    {
+        "title": "年会不能停！2",
+        "updateBadge": ""
+    },
+    {
+        "title": "飞到我心上",
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -1705,7 +1705,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "id": "iyf_hero_tv_7",
         "title": "冬城猎凶",
         "rate": "8.0",
-        "cover": "https://image.tmdb.org/t/p/w500/64NVbdSuNgrK90wqhtnlR2S4sPK.jpg",
+        "cover": "https://image.tmdb.org/t/p/w500/8nenduIuctLj2YBjWHG8pFs1X6R.jpg",
         "backdrop": "https://image.tmdb.org/t/p/w1280/28u4q3fPzXmbyf3BoiWweUOuuzj.jpg",
         "description": "银行大劫案，搅动大城风云；儿童拐卖案，重起罪恶迷雾。双时空、案中案，极致追凶。",
         "year": "2026",
@@ -2167,11 +2167,19 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "克拉克森的农场第2季",
+        "updateBadge": ""
+    },
+    {
         "title": "克拉克森的农场第3季",
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第2季",
+        "title": "克拉克森的农场第4季",
+        "updateBadge": ""
+    },
+    {
+        "title": "古代战场",
         "updateBadge": ""
     },
     {
@@ -2179,15 +2187,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "味起台州",
-        "updateBadge": ""
-    },
-    {
         "title": "若泽·穆里尼奥：特立之道",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第4季",
         "updateBadge": ""
     }
   ],

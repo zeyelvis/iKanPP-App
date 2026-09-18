@@ -223,7 +223,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     {
       "id": "pb_cat_movie_15",
       "title": "监狱雄心",
-      "rate": "7.6",
+      "rate": "6.9",
       "cover": "https://image.tmdb.org/t/p/w500/8i5iZV50CoEtmDCFM7RSxCkpE8h.jpg",
       "year": "2026",
       "types": [
@@ -1724,20 +1724,6 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     },
     {
       "id": "pb_cat_rank_15",
-      "title": "监狱雄心",
-      "rate": "7.6",
-      "cover": "https://image.tmdb.org/t/p/w500/8i5iZV50CoEtmDCFM7RSxCkpE8h.jpg",
-      "year": "2026",
-      "types": [
-        "动作片",
-        "动作",
-        "冒险"
-      ],
-      "remarks": "正片",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_rank_16",
       "title": "破暗",
       "rate": "7.5",
       "cover": "https://image.tmdb.org/t/p/w500/nqqGHIgoTdvBeHaMNwGSj1NT6Uk.jpg",
@@ -1751,7 +1737,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_17",
+      "id": "pb_cat_rank_16",
       "title": "兰香如故",
       "rate": "7.2",
       "cover": "https://image.tmdb.org/t/p/w500/kfurXRMH1ZkUoyT5HN72zLTQxzZ.jpg",
@@ -1767,7 +1753,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_rank_18",
+      "id": "pb_cat_rank_17",
       "title": "逃出绝命街",
       "rate": "6.9",
       "cover": "https://image.tmdb.org/t/p/w500/2eXquFgtDqSyVmrcBwC9ZnzNw3d.jpg",
@@ -1777,6 +1763,20 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
         "动作",
         "科幻",
         "惊悚",
+        "冒险"
+      ],
+      "remarks": "正片",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_rank_18",
+      "title": "监狱雄心",
+      "rate": "6.9",
+      "cover": "https://image.tmdb.org/t/p/w500/8i5iZV50CoEtmDCFM7RSxCkpE8h.jpg",
+      "year": "2026",
+      "types": [
+        "动作片",
+        "动作",
         "冒险"
       ],
       "remarks": "正片",
