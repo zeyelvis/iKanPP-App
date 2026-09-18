@@ -359,10 +359,14 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
           ent && (hasTitleOverlap(cleanQuery, ent.title) || (ent.originalTitle && hasTitleOverlap(cleanQuery, ent.originalTitle)))
         );
 
-        entitiesMemoryCache.set(cleanQuery, found);
-        try {
-          sessionStorage.setItem(`sq_ent_${cleanQuery}`, JSON.stringify(found));
-        } catch {}
+        // 🌟 核心修复：仅在查到有效实体时才进行持久化与内存缓存！
+        // 严禁将空数组 [] 写入 sessionStorage，防止网络偶发超时直接杀死当前 Tab 的图谱渲染
+        if (found.length > 0) {
+          entitiesMemoryCache.set(cleanQuery, found);
+          try {
+            sessionStorage.setItem(`sq_ent_${cleanQuery}`, JSON.stringify(found));
+          } catch {}
+        }
 
         setEntities(found);
         setActiveTab(0);
@@ -370,7 +374,6 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
       })
       .catch(() => {
         if (!isSubscribed) return;
-        entitiesMemoryCache.set(cleanQuery, []);
         setEntities([]);
         onEntityLoaded?.(false);
       })

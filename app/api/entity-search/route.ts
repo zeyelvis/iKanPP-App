@@ -35,12 +35,14 @@ export async function GET(request: NextRequest) {
     // ──────────────────────────────────────────
     const mem = MEMORY_CACHE.get(normQuery);
     if (mem && mem.expireAt > Date.now()) {
-      const first = mem.entities[0];
-      if (first && (hasTitleOverlap(query, first.title) || (first.originalTitle && hasTitleOverlap(query, first.originalTitle)))) {
+      const validEntities = mem.entities.filter(ent =>
+        ent && (hasTitleOverlap(query, ent.title) || (ent.originalTitle && hasTitleOverlap(query, ent.originalTitle)))
+      );
+      if (validEntities.length > 0) {
         return NextResponse.json(
           {
-            entities: mem.entities,
-            entity: first,
+            entities: validEntities,
+            entity: validEntities[0],
           },
           {
             headers: {
@@ -62,14 +64,15 @@ export async function GET(request: NextRequest) {
       if (cachedRaw) {
         const cachedEntities: TitleEntity[] = JSON.parse(cachedRaw);
         if (Array.isArray(cachedEntities) && cachedEntities.length > 0) {
-          const first = cachedEntities[0];
-          // 强一致防毒化核验：标题必须存在实质语义重叠
-          if (first && (hasTitleOverlap(query, first.title) || (first.originalTitle && hasTitleOverlap(query, first.originalTitle)))) {
-            MEMORY_CACHE.set(normQuery, { entities: cachedEntities, expireAt: Date.now() + MEMORY_TTL_MS });
+          const validEntities = cachedEntities.filter(ent =>
+            ent && (hasTitleOverlap(query, ent.title) || (ent.originalTitle && hasTitleOverlap(query, ent.originalTitle)))
+          );
+          if (validEntities.length > 0) {
+            MEMORY_CACHE.set(normQuery, { entities: validEntities, expireAt: Date.now() + MEMORY_TTL_MS });
             return NextResponse.json(
               {
-                entities: cachedEntities,
-                entity: first,
+                entities: validEntities,
+                entity: validEntities[0],
               },
               {
                 headers: {
@@ -79,7 +82,7 @@ export async function GET(request: NextRequest) {
               }
             );
           } else {
-            console.warn(`[Entity Search L2 Purge] Mismatched cache for query "${query}": found "${first?.title}". Purging!`);
+            console.warn(`[Entity Search L2 Purge] Mismatched cache for query "${query}". Purging!`);
             await kvDelete(kvCacheKey);
           }
         }
@@ -124,11 +127,11 @@ export async function GET(request: NextRequest) {
     }
 
     // ──────────────────────────────────────────
-    // 4. L4: TMDB 在线多源检索 + 3500ms 超时熔断守卫
+    // 4. L4: TMDB 在线多源检索 + 5000ms 超时熔断守卫
     // ──────────────────────────────────────────
     const tmdbPromise = searchMultipleEntitiesFromTMDB(query, 2);
     const timeoutPromise = new Promise<TitleEntity[]>((resolve) =>
-      setTimeout(() => resolve([]), 3500)
+      setTimeout(() => resolve([]), 5000)
     );
 
     let entities: TitleEntity[] = [];
