@@ -136,12 +136,21 @@ export async function GET(request: NextRequest) {
       console.warn(`[Entity Search TMDB Race Fail] query=${query}:`, err);
     }
 
-    // 若 TMDB 熔断超时或未命中，再次宽容尝试本地模糊/首词条目
+    // 强一致安全防线：严格过滤未通过 hasTitleOverlap 校验的条目
+    if (Array.isArray(entities) && entities.length > 0) {
+      entities = entities.filter(ent =>
+        ent && (hasTitleOverlap(query, ent.title) || (ent.originalTitle && hasTitleOverlap(query, ent.originalTitle)))
+      );
+    }
+
+    // 若 TMDB 熔断超时或未命中，再次宽容尝试本地已收录条目（严格保证标题交集）
     if (entities.length === 0) {
       const fallbackSingle = await getEntityByTitle(query);
       if (fallbackSingle && fallbackSingle.cover) {
-        const enriched = await enrichEpisodeCount(fallbackSingle);
-        entities = [enriched];
+        if (hasTitleOverlap(query, fallbackSingle.title) || (fallbackSingle.originalTitle && hasTitleOverlap(query, fallbackSingle.originalTitle))) {
+          const enriched = await enrichEpisodeCount(fallbackSingle);
+          entities = [enriched];
+        }
       }
     }
 

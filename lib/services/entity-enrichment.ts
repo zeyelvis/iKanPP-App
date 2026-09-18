@@ -592,7 +592,7 @@ export async function searchMultipleEntitiesFromTMDB(
 
     const bestTitle = (best.hit.title || best.hit.name || '').trim();
     const bestOrig = (best.hit.original_title || best.hit.original_name || '').trim();
-    if (!hasTitleOverlap(cleanQuery, bestTitle + bestOrig) && best.score < 50) {
+    if (!hasTitleOverlap(cleanQuery, bestTitle + bestOrig)) {
       return [];
     }
 
@@ -608,7 +608,7 @@ export async function searchMultipleEntitiesFromTMDB(
         const candOrig = (cand.hit.original_title || cand.hit.original_name || '').trim();
         const candFullTitle = candTitle + candOrig;
 
-        if (!hasTitleOverlap(cleanQuery, candFullTitle) && cand.score < 50) continue;
+        if (!hasTitleOverlap(cleanQuery, candFullTitle)) continue;
 
         const isSameName = candTitle === bestTitle || candTitle === cleanQuery;
         const hasDecentPop = (cand.hit.popularity || 0) > 3.0 || cand.score >= 80;

@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Icons } from '@/components/ui/Icon';
 import { TitleEntity } from '@/lib/types/entity';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, hasTitleOverlap } from '@/lib/data/entities/entity-utils';
 import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 
 interface SearchKnowledgePanelProps {
@@ -322,12 +322,19 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
       if (rawSession) {
         const cached = JSON.parse(rawSession);
         if (Array.isArray(cached) && cached.length > 0) {
-          entitiesMemoryCache.set(cleanQuery, cached);
-          setEntities(cached);
-          setLoading(false);
-          setActiveTab(0);
-          onEntityLoaded?.(true);
-          return;
+          const valid = cached.filter(ent =>
+            ent && (hasTitleOverlap(cleanQuery, ent.title) || (ent.originalTitle && hasTitleOverlap(cleanQuery, ent.originalTitle)))
+          );
+          if (valid.length > 0) {
+            entitiesMemoryCache.set(cleanQuery, valid);
+            setEntities(valid);
+            setLoading(false);
+            setActiveTab(0);
+            onEntityLoaded?.(true);
+            return;
+          } else {
+            sessionStorage.removeItem(ssKey);
+          }
         }
       }
     } catch {}
@@ -343,9 +350,14 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
       })
       .then((data: { entities?: TitleEntity[]; entity?: TitleEntity | null }) => {
         if (!isSubscribed) return;
-        const found = data?.entities && data.entities.length > 0
+        const rawFound = data?.entities && data.entities.length > 0
           ? data.entities
           : (data?.entity ? [data.entity] : []);
+
+        // 客户端最终一道安全防线：坚决剔除任何无语义交集的条目
+        const found = rawFound.filter(ent =>
+          ent && (hasTitleOverlap(cleanQuery, ent.title) || (ent.originalTitle && hasTitleOverlap(cleanQuery, ent.originalTitle)))
+        );
 
         entitiesMemoryCache.set(cleanQuery, found);
         try {
