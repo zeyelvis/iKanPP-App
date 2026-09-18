@@ -187,7 +187,7 @@ export default function AdminSeoPage() {
           <div>
             <div className="text-xs text-slate-400">有效 Sitemap 条目</div>
             <div className="text-xl font-bold font-mono text-white mt-1">
-              {(report?.sitemapUrlsCount || 1014).toLocaleString()}
+              {(report?.sitemapUrlsCount || 0).toLocaleString()}
             </div>
             <div className="text-[11px] text-emerald-400 mt-0.5">7 个分类分卷全健康</div>
           </div>
