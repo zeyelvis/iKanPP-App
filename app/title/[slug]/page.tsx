@@ -438,9 +438,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   const ogImage = resolvedBackdrop || entity.cover;
 
+  // 自动化构建高转化长尾关键词矩阵 (Programmatic SEO Keywords)
+  const autoKeywords = [
+    displayTitle,
+    `${displayTitle}在线观看`,
+    `${displayTitle}免费看`,
+    `${displayTitle}完整版`,
+    `${displayTitle}未删减版`,
+    `${displayTitle}高清播放`,
+    ...(validActs.slice(0, 2).map(a => `${a}电影`)),
+    ...(validDirs.slice(0, 1).map(d => `${d}导演作品`)),
+    entity.year ? `${entity.year}热播${mediaTypeLabel}` : '',
+    primaryGenre ? `${primaryGenre}片推荐` : '',
+    'iKanPP',
+    '爱看片片',
+  ].filter(Boolean);
+
   return {
     title: pageTitle,
     description: metaDescription,
+    keywords: autoKeywords,
     alternates: {
       canonical: canonicalUrl,
     },
