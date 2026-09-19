@@ -299,6 +299,60 @@ async function fetchCollectorStream(typeIds = [6, 13]) {
 
 const tmdbMetaCache = new Map();
 
+// 常用影视多地译名简繁字映射
+const S2T_MAP = {
+  '丽': '麗', '兹': '茲', '顿': '頓', '齐': '齊', '莉': '莉', '博': '博', '登': '登',
+  '特': '特', '斯': '斯', '尔': '爾', '曼': '曼', '德': '德', '格': '格', '拉': '拉',
+  '维': '維', '杰': '傑', '克': '克', '逊': '遜', '里': '裏', '亚': '亞', '诺': '諾',
+  '兰': '蘭', '罗': '羅', '伯': '伯', '理': '理', '查': '查', '弗': '弗', '雷': '雷',
+  '战': '戰', '杀': '殺', '爱': '愛', '恋': '戀', '恶': '惡', '魔': '魔', '异': '異',
+  '录': '錄', '传': '傳', '说': '說', '记': '記', '历': '歷', '险': '險', '门': '門',
+  '间': '間', '发': '發', '复': '復', '仇': '仇', '绝': '絕', '对': '對', '极': '極',
+  '风': '風', '暴': '暴', '云': '雲', '梦': '夢', '灵': '靈', '魂': '魂', '灭': '滅',
+  '无': '無', '尽': '盡', '终': '終', '结': '結', '形': '形', '体': '體', '国': '國',
+  '度': '度', '时': '時', '代': '代', '头': '頭', '号': '號', '玩': '玩', '家': '家',
+  '总': '總', '动': '動', '员': '員', '神': '神', '偷': '偷', '爸': '爸', '机': '機',
+  '器': '器', '人': '人', '黑': '黑', '客': '客', '帝': '帝'
+};
+
+function toTraditional(str) {
+  return str.split('').map(ch => S2T_MAP[ch] || ch).join('');
+}
+
+function generateSearchQueries(title) {
+  const queries = new Set();
+  const sanitized = title
+    .replace(/[（(][^)）]*[)）]/g, '')
+    .replace(/[·・•]/g, ' ')
+    .replace(/[\-_—–]+/g, ' ')
+    .replace(/[：:]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (sanitized) queries.add(sanitized);
+
+  const compact = sanitized.replace(/\s+/g, '');
+  if (compact && compact !== sanitized) queries.add(compact);
+
+  const parts = sanitized.split(/\s+/).filter(p => p.length > 0);
+  if (parts.length >= 2) {
+    const mainPart = parts[0].trim();
+    if (mainPart.length >= 2) queries.add(mainPart);
+    const subPart = parts.slice(1).join(' ').trim();
+    if (subPart.length >= 2) queries.add(subPart);
+  }
+
+  const tradList = [];
+  for (const q of queries) {
+    const trad = toTraditional(q);
+    if (trad !== q) tradList.push(trad);
+  }
+  for (const t of tradList) {
+    queries.add(t);
+  }
+
+  return Array.from(queries);
+}
+
 async function fetchTmdbMeta(query, mediaType = 'movie', yearHint) {
   const cleanKey = query.replace(/[（(][^)）]*[)）]/g, '').trim();
   const cacheKey = `${cleanKey}_${mediaType}_${yearHint || ''}`;
@@ -308,36 +362,45 @@ async function fetchTmdbMeta(query, mediaType = 'movie', yearHint) {
 
   const searchType = mediaType === 'tv' || mediaType === 'anime' ? 'tv' : (mediaType === 'movie' ? 'movie' : 'multi');
   const endpoint = searchType === 'multi' ? 'search/multi' : `search/${searchType}`;
-  let url = `${TMDB_BASE}/${endpoint}?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(cleanKey)}`;
-  if (yearHint && searchType === 'movie') {
-    url += `&primary_release_year=${yearHint}`;
+  
+  const queryCandidates = generateSearchQueries(cleanKey);
+
+  for (const q of queryCandidates) {
+    let url = `${TMDB_BASE}/${endpoint}?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(q)}`;
+    if (yearHint && searchType === 'movie') {
+      url += `&primary_release_year=${yearHint}`;
+    }
+
+    try {
+      const res = await fetch(url, {
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+        signal: AbortSignal.timeout(4000),
+      });
+      if (!res.ok) continue;
+      const data = await res.json();
+      const results = data?.results || [];
+      if (results.length === 0) continue;
+
+      // 优先标题完全一致项或高匹配项
+      const exact = results.find(r => (r.title || r.name) === cleanKey || (r.title || r.name) === q) || results[0];
+      if (!exact || !exact.id) continue;
+
+      const meta = {
+        tmdbId: String(exact.id),
+        rate: exact.vote_average && exact.vote_average > 0 ? exact.vote_average.toFixed(1) : undefined,
+        cover: exact.poster_path ? `https://image.tmdb.org/t/p/w500${exact.poster_path}` : undefined,
+        backdrop: exact.backdrop_path ? `https://image.tmdb.org/t/p/w1280${exact.backdrop_path}` : undefined,
+        overview: exact.overview || '',
+        year: (exact.release_date || exact.first_air_date || '').slice(0, 4) || undefined,
+      };
+      tmdbMetaCache.set(cacheKey, meta);
+      return meta;
+    } catch {
+      continue;
+    }
   }
 
-  try {
-    const res = await fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0' },
-      signal: AbortSignal.timeout(4000),
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    const results = data?.results || [];
-    if (results.length === 0) return null;
-
-    // 优先标题完全一致项
-    const exact = results.find(r => (r.title || r.name) === cleanKey) || results[0];
-    const meta = {
-      tmdbId: String(exact.id),
-      rate: exact.vote_average && exact.vote_average > 0 ? exact.vote_average.toFixed(1) : undefined,
-      cover: exact.poster_path ? `https://image.tmdb.org/t/p/w500${exact.poster_path}` : undefined,
-      backdrop: exact.backdrop_path ? `https://image.tmdb.org/t/p/w1280${exact.backdrop_path}` : undefined,
-      overview: exact.overview || '',
-      year: (exact.release_date || exact.first_air_date || '').slice(0, 4) || undefined,
-    };
-    tmdbMetaCache.set(cacheKey, meta);
-    return meta;
-  } catch {
-    return null;
-  }
+  return null;
 }
 
 /**

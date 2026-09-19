@@ -217,6 +217,27 @@ iKanPP 作为面向全球华人的高品质流媒体平台，主站（轨道 A�
 - **KV 存储自愈**：`lib/services/entity-kv.ts` 中的 `isSafeRecentTitleItem` 严密把关 `recent:*` 的写入与下发；
 - **前端组件穿透**：`components/home/LatestTitlesRail.tsx` 保持客户端多重过滤，版本升级（`v6`）彻底丢弃旧缓存。
 
+---
+
+## 13. 全站新片雷达与详情页 0ms 零 404 闭环铁律 (Zero-404 Full-Lifecycle Spec)
+
+iKanPP 全域流媒体影视分发中枢必须永久恪守“前台展示即必达、零死链、零 404”的全生命周期工程铁律，任何后续开发、组件重构或自动化巡检脚本严禁违反以下原则：
+
+### 1. 前台展示与详情页 100% 绝对打通（No Isolated Showcase）
+- **铁律原则**：凡是在首页大厅「最新上线 · 实时收录」或 6 大频道专区大厅预烘焙数据集（`PREBAKED_LATEST_TITLES`）及生产 KV `recent:*` 中出现的卡片，影视详情页服务端路由（`app/title/[slug]/page.tsx`）的 `resolveEntityRaw` **必须具备最高优先级的预烘焙直连匹配能力（优先级 1.5）**。
+- **杜绝断层**：严禁出现“首页展示了精美卡片、用户点进去却提示 404”的架构断层。只要首页或频道大厅能看到，详情页必须 100% 能即刻加载并拉起播放。
+
+### 2. 多地译名简繁与音译多级退避防线（Traditional & Transliteration Fallback）
+- **核心痛点**：海外剧集（美剧、日剧、韩剧、动漫）在 TMDB 官方数据库中，社区往往优先录入港台繁体译名（如《怪物：麗茲波頓的故事》）或不同音译汉字（如“莉齐·博登” vs “丽兹·波顿”）。
+- **双重贯通**：
+  1. **构建与离线采集层**（`scripts/sync-release-radar.mjs`）：在每小时同步最新片单时，必须内置 `generateSearchQueries` 与 `toTraditional` 简繁互转，优先捕获 TMDB 官方 4K 原版物料与 TMDB ID；
+  2. **线上运行时自愈层**（`lib/services/entity-enrichment.ts`）：在 `searchAndEnrichFromTMDB` 中，当第一轮简体搜索无结果时，必须自动启动繁体版与主副标题拆解多级并发退避检索，精准唤醒 TMDB 官方条目；
+  3. **严禁单次搜索未命中即放弃**，彻底根治多地译名差异导致的自愈失效。
+
+### 3. URL 规范重定向严格校验防线（No Undefined Slug）
+- 详情页在执行 301/308 SEO 规范重定向时，**必须且只能在 `effectiveEntityId && /^ik\d{6}$/i.test(effectiveEntityId)` 严格成立时方可执行**。
+- 坚决杜绝因实体 ID 字段不一致或缺失而拼接出 `/title/undefined-...` 的非法 URL，从源头消灭伪重定向引发的二次 404。
+
 
 
 
