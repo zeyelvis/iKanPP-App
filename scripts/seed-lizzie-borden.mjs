@@ -44,7 +44,9 @@ async function main() {
   }));
 
   const entityId = 'ik002999';
+  const overviewText = tmdbData.overview || '由瑞恩·墨菲和伊恩·布雷南创作的艾美奖获奖剧集《怪物》系列剧已于 2026 年推出第四部，讲述该剧首位女性“怪物”莉齐·博登的故事。\n\n被困于维多利亚时代残酷家庭的莉齐·博登用斧头残忍杀害了自己的父母，此案震惊全国。';
   const entity = {
+    entityId: entityId,
     id: entityId,
     title: '怪物：丽兹·波顿的故事',
     originalTitle: tmdbData.original_name || 'Monster: The Lizzie Borden Story',
@@ -54,7 +56,8 @@ async function main() {
     year: '2026',
     cover: 'https://image.tmdb.org/t/p/w500/4Uk0MaEEx0bO418rhM7B8gqeFPy.jpg',
     backdrop: 'https://image.tmdb.org/t/p/w1280/hcoKwpW6W5jPIlIRop6dVab1XpR.jpg',
-    overview: tmdbData.overview || '由瑞恩·墨菲和伊恩·布雷南创作的艾美奖获奖剧集《怪物》系列剧已于 2026 年推出第四部，讲述该剧首位女性“怪物”莉齐·博登的故事。\n\n被困于维多利亚时代残酷家庭的莉齐·博登用斧头残忍杀害了自己的父母，此案震惊全国。',
+    overview: overviewText,
+    description: overviewText,
     genres: ['欧美剧', '悬疑', '剧情', '犯罪', '传记', '电视剧'],
     tags: ['网飞', '艾美奖', '真实案件改编', '连环杀手', '瑞恩·墨菲'],
     directors: crew.map(c => c.name),

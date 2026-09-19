@@ -458,10 +458,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const isSeasonSpecified = Boolean(seasonTag && !entity.title.includes(seasonTag));
 
   // 🌟 SEO 301 权威规范重定向：在 Metadata 生成阶段立即发起 308/301 永久重定向
-  const canonicalSlug = `${entity.entityId}-${entity.slug}`.toLowerCase();
-  const currentCleanSlug = decodedSlug.toLowerCase();
-  if (currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
-    redirect(`/title/${encodeURIComponent(`${entity.entityId}-${entity.slug}`)}`, RedirectType.replace);
+  const effectiveEntityId = entity.entityId || (entity as any).id || '';
+  if (effectiveEntityId && /^ik\d{6}$/i.test(effectiveEntityId) && entity.slug) {
+    const canonicalSlug = `${effectiveEntityId}-${entity.slug}`.toLowerCase();
+    const currentCleanSlug = decodedSlug.toLowerCase();
+    if (currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
+      redirect(`/title/${encodeURIComponent(`${effectiveEntityId}-${entity.slug}`)}`, RedirectType.replace);
+    }
   }
 
   // 多分类智能识别：动漫也属于「有剧集」形态
@@ -593,10 +596,13 @@ export default async function TitlePage({ params }: Props) {
 
   // 🌟 SEO 301 权威规范重定向：若请求的 URL 不是权威规范 Slug（如纯 ID ik000001 或历史非规范别名），
   // 强制发起 308/301 永久重定向，将爬虫与外链权重 100% 汇聚于标准规范 URL，彻底根治 GSC 2130+ 备用网页报警
-  const canonicalSlug = `${entity.entityId}-${entity.slug}`.toLowerCase();
-  const currentCleanSlug = decodedSlug.toLowerCase();
-  if (currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
-    redirect(`/title/${encodeURIComponent(`${entity.entityId}-${entity.slug}`)}`, RedirectType.replace);
+  const effectiveEntityId = entity.entityId || (entity as any).id || '';
+  if (effectiveEntityId && /^ik\d{6}$/i.test(effectiveEntityId) && entity.slug) {
+    const canonicalSlug = `${effectiveEntityId}-${entity.slug}`.toLowerCase();
+    const currentCleanSlug = decodedSlug.toLowerCase();
+    if (currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
+      redirect(`/title/${encodeURIComponent(`${effectiveEntityId}-${entity.slug}`)}`, RedirectType.replace);
+    }
   }
 
   // 质量自愈保障：若当前实体缺少封面海报（如历史残缺数据），强制在线触发重新丰润
