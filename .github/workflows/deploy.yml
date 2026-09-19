@@ -37,3 +37,11 @@ jobs:
         run: |
           echo "🚀 触发全自动搜索引擎即时收录广播..."
           node scripts/push-indexnow.mjs || true
+
+      - name: Auto-submit New Titles to Google Indexing API
+        env:
+          GOOGLE_INDEXING_KEY: ${{ secrets.GOOGLE_INDEXING_KEY }}
+        run: |
+          echo "🚀 触发新片全自动 Google Indexing API 闪电广播..."
+          node scripts/push-google-indexing.mjs || true
+

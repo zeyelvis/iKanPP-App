@@ -26,6 +26,7 @@ import { normalizeVideoType } from '@/lib/utils/taxonomy';
 import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { generateFullSpectrumKeywords } from '@/lib/utils/seo-keyword-generator';
 
 interface PrebakedDisplayItem {
   entityId?: string;
@@ -621,7 +622,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? (entity.numberOfEpisodes ? `共${entity.numberOfEpisodes}集全网纯直连超清速播。` : '全集无删减完整版免VIP极速秒播。')
     : '1080P超清原画免VIP在线观看。';
 
-  const metaDescription = `${signalPrefix}《${displayTitle}》${castStr}${cleanDesc ? `剧情介绍：${cleanDesc}` : ''} iKanPP提供${cta}`;
   const canonicalUrl = `${BASE_URL}/title/${entity.entityId}-${entity.slug}`;
   let resolvedBackdrop = entity.backdrop;
   if (isFakeBackdrop(entity.backdrop, entity.cover)) {
@@ -629,26 +629,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   const ogImage = resolvedBackdrop || entity.cover;
 
-  // 自动化构建高转化长尾关键词矩阵 (Programmatic SEO Keywords)
-  const autoKeywords = [
-    displayTitle,
-    `${displayTitle}在线观看`,
-    `${displayTitle}免费看`,
-    `${displayTitle}完整版`,
-    `${displayTitle}未删减版`,
-    `${displayTitle}高清播放`,
-    ...(validActs.slice(0, 2).map(a => `${a}电影`)),
-    ...(validDirs.slice(0, 1).map(d => `${d}导演作品`)),
-    entity.year ? `${entity.year}热播${mediaTypeLabel}` : '',
-    primaryGenre ? `${primaryGenre}片推荐` : '',
-    'iKanPP',
-    '爱看片片',
-  ].filter(Boolean);
+  // 🌟 自动化构建全光谱长尾关键词与意图捕获矩阵 (Programmatic White-Hat SEO & Intent Harvesting)
+  const seoSpectrum = generateFullSpectrumKeywords({
+    title: displayTitle,
+    year: entity.year,
+    type: entity.type,
+    genres: entity.genres,
+    directors: entity.directors,
+    actors: entity.actors,
+    region: entity.region,
+    numberOfEpisodes: entity.numberOfEpisodes,
+    description: entity.description,
+  });
+
+  const metaDescription = seoSpectrum.metaDescription;
 
   return {
     title: pageTitle,
     description: metaDescription,
-    keywords: autoKeywords,
+    keywords: seoSpectrum.keywords,
     alternates: {
       canonical: canonicalUrl,
     },
@@ -1147,7 +1146,7 @@ export default async function TitlePage({ params }: Props) {
         )}
 
         {/* 关联热搜与深度内链集群 (Phase 2 SEO High-Potential Mesh) */}
-        <RelatedSearchChips currentTitle={entity.title} currentGenre={primaryGenre} limit={10} />
+        <RelatedSearchChips currentTitle={entity.title} currentGenre={primaryGenre} entity={entity} limit={12} />
       </main>
 
       {/* 移动端专属常驻吸底快捷播放栏 */}

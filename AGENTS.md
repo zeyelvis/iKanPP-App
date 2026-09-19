@@ -285,7 +285,37 @@ iKanPP 全域流媒体详情页与片库分发中枢必须永久恪守“展示�
 ### 3. 三维静态资产 R2 持久化与 Edge CDN 预热闭环 (R2 Ingestion & Edge Prefetch)
 - **资产推流**：前台所有条目的 `w342`（卡片海报）、`w1280`（全景巨幕）、`w780`（详情页主画幅大图）和 `w185`（演职员肖像）必须预先推流至亚太自建 R2（`img.ikanpp.com`），确保中国大陆及全球受限网络环境下同域 0 延迟秒开与 100% 防裂图；
 - **边缘预取**：每次全站预热必须并发触发核心频道路由与前台影视详情页的 Edge CDN 预取（`Accept: text/html` 与 `RSC: 1`），让全球 Anycast 边缘节点提前就绪缓存；
-- **无人值守**：由 `.github/workflows/full-site-prewarm.yml` 每日 2 次固定巡检（北京时间 04:00 与 16:30）及新片同步后自动联动执行，形成 100% 无人值守的自动化上线闭环。
+---
+
+## 16. 新片首发窗口期全自动 SEO/GEO 闪电引流与程序化白帽铁律 (New Release Programmatic SEO & GEO Syndication Spec)
+
+iKanPP 全域流媒体平台在应对院线新片、热播剧集与新番动漫首发上线窗口期时，必须永久恪守以下全自动引流与白帽合规工程底线，严禁任何后续开发降级或违反：
+
+### 1. 100% 恪守 2026 程序化白帽合规底线 (Strict White-Hat Compliance)
+- **绝对禁忌**：**严禁使用任何黑帽 SEO 手段（包括但不限于：`display: none` / `font-size: 0` 隐藏堆砌关键词、障眼法欺诈重定向 Cloaking、虚假评分或虚假演员伪造）！**
+- **自然融入准则**：所有衍生关键词、网盘截流意图词与播放规格，必须作为正常语法自然融入页面的 Meta 标签、FAQ 展开项或底部探索 Chips，真实用户清晰可见；
+- **真实满足意图**：针对搜寻“网盘/下载”的用户，页面在 Meta Description 中说明“*寻找《xxx》网盘资源？无需繁琐转存解压与限速等待，iKanPP 支持 4K 超清 0ms 免VIP在线秒播*”，并在同页面直接提供秒级起播的真实播放入口，彻底满足用户终极观影需求，大幅提升停留时间（Dwell Time）。
+
+### 2. 全光谱意图长尾矩阵自动裂变机制 (Full-Spectrum Intent Matrix)
+- 详情页必须统一通过 `lib/utils/seo-keyword-generator.ts`（`generateFullSpectrumKeywords`）自动裂变 4 大类 30+ 精准长尾词：
+  1. **网盘/下载截流词**（百度网盘、迅雷下载、夸克云盘、磁力链接、网盘下载）；
+  2. **画质与音轨规格词**（4K超清原画、1080P免VIP、中文字幕、国语配音/粤语原声）；
+  3. **观影决策与剧情词**（豆瓣真实评分、结局解析、演员表阵容、片尾彩蛋）；
+  4. **同音错字与无标点容错词**（如“生活危机” ➔ “生化危机”，自动剔除冒号破折号）。
+
+### 3. GEO 生成式 AI 搜索实体图谱深度对齐 (AI Search & GEO Grounding)
+- **机器可读 Schema 深度增强**：
+  1. 必须在 JSON-LD 中声明 `isAccessibleForFree: true` 与 `inLanguage: 'zh-CN'`，明确告知各大大模型本站内容公开免费无门槛；
+  2. 凡具备有效 `tmdbId` 的影视，必须在 `sameAs` 数组中挂载官方权威实体链接（`https://www.themoviedb.org/...`），在向量空间中与官方知识图谱 100% 强绑定；
+  3. FAQPage 中必须内置免客户端、免网盘直接网页看的权威事实直答，让 ChatGPT Search、Perplexity、Google Gemini 在回答用户时优先打上 iKanPP 引用角标。
+
+### 4. 自动化即时多引擎闪电广播流水线 (Instant Search Syndication Pipeline)
+- 每次构建部署完成后（`.github/workflows/deploy.yml`）或新片增量入库后，必须全自动并发触发两大广播链路：
+  1. **Google Indexing API 闪电广播**：通过 `scripts/push-google-indexing.mjs`，将最新上线影视的规范 URL 提交至 Google Indexing API，触发 Googlebot 在 5~15 分钟内入站抓取，抢占首发搜索红利；单日推送严格控制在 30~50 条以内以防超额；
+  2. **IndexNow 即时全网广播**：通过 `scripts/push-indexnow.mjs` 将全量 URL 广播给 Bing 与 Yandex，实现 1 小时内直通 OpenAI ChatGPT 联网搜索候选池。
+
+### 5. 动态相关探索内链网络 (Dynamic Internal Linking Mesh)
+- 详情页底部的 `<RelatedSearchChips />` 严禁使用纯死板静态词，必须结合当前影片的题材、年份与全光谱意图词，动态裂变专属长尾探索内链，打破孤岛效应，使新片与全站内容形成高密度互联互通。
 
 
 

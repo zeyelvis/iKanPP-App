@@ -20,6 +20,11 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
 
   // 1. Movie / TVSeries 结构化数据
   const isTv = entity.type === 'tv' || entity.type === 'anime';
+  const sameAsUrls: string[] = [];
+  if (entity.tmdbId && /^\d+$/.test(entity.tmdbId)) {
+    sameAsUrls.push(`https://www.themoviedb.org/${isTv ? 'tv' : 'movie'}/${entity.tmdbId}`);
+  }
+
   const mediaSchema: Record<string, any> = {
     '@context': 'https://schema.org',
     '@type': isTv ? 'TVSeries' : 'Movie',
@@ -30,6 +35,9 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
     description: entity.description,
     dateCreated: entity.year,
     genre: entity.genres,
+    isAccessibleForFree: true,
+    inLanguage: 'zh-CN',
+    sameAs: sameAsUrls.length > 0 ? sameAsUrls : undefined,
     director: entity.directors?.map(d => ({
       '@type': 'Person',
       name: d,
@@ -82,6 +90,7 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
     embedUrl: playerUrl,
     contentUrl: playerUrl,
     inLanguage: 'zh-CN',
+    requiresSubscription: false,
     potentialAction: {
       '@type': 'SeekToAction',
       target: `${playerUrl}&t={seek_to_second_number}`,
@@ -145,6 +154,14 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
         acceptedAnswer: {
           '@type': 'Answer',
           text: `《${entity.title}》(${entity.year})${castDesc ? `${castDesc}，` : ''}当前全网真实评分约 ${entity.rate || '8.5'} 分，属于高口碑的${channelName}作品。`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `观看《${entity.title}》需要下载网盘或客户端吗？`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `不需要。在 iKanPP 平台无需转存百度网盘或夸克网盘，亦无需安装任何客户端，直接在手机或电脑浏览器中即可 0ms 纯直连开启 4K 超清秒播。`,
         },
       },
     ],
