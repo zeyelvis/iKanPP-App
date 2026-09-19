@@ -17,6 +17,8 @@ export interface LatestPrebakedItem {
   channelKey: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string;
   genres: string[];
   updateBadge: string;
+  platformBadge?: string;
+  qualityBadge?: string;
   createdAt: string;
 }
 
