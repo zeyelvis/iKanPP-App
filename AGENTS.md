@@ -239,6 +239,28 @@ iKanPP 全域流媒体影视分发中枢必须永久恪守“前台展示即必�
 - 详情页在执行 301/308 SEO 规范重定向时，**必须且只能在 `effectiveEntityId && /^ik\d{6}$/i.test(effectiveEntityId)` 严格成立时方可执行**。
 - 坚决杜绝因实体 ID 字段不一致或缺失而拼接出 `/title/undefined-...` 的非法 URL，从源头消灭伪重定向引发的二次 404。
 
+---
+
+## 14. 全屏硬件直通覆盖层与零 3D Transform 渲染铁律 (Hardware Overlay & Native Fullscreen Spec)
+
+iKanPP 全域视频播放器（包含桌面端、移动端、网页全屏与系统原生全屏）必须永久恪守以下显卡硬件覆盖层与全屏渲染基线，**严禁任何后续开发、代码重构或 AI 助手引入任何违规黑客代码**：
+
+### 1. 全屏 `<video>` 绝对禁止 3D Transform (No 3D Transforms on Video)
+- **绝对禁忌**：**严禁向 `<video>` 元素或其直接容器注入任何 `transform: translateZ(...)`、`scale(...)`、`will-change: transform` 或任何 3D 矩阵形变代码！**
+- **底层硬件原理**：现代操作系统与显卡驱动（macOS CoreAnimation、Windows DirectComposition）在浏览器进入系统原生全屏（Native Fullscreen）时，为了实现 4K 60fps 零拷贝渲染并降低能耗，会自动将 `<video>` 提拔到操作系统顶层的**显卡硬件独占直通覆盖层（Hardware Overlay Plane）**。一旦施加任何 3D Transform，GPU Compositor 被迫在全屏切换瞬间创建带有三维变换矩阵的离屏帧缓冲区（FBO），直接触发 Surface Swap 上下文丢失死锁，导致**“独立线程音频正常播放、视频画面彻底黑屏”**。
+- **正规规范**：
+  1. `<video>` 的行内样式必须恒为 `transform: 'none', WebkitTransform: 'none'`；
+  2. 全屏事件监听中（`useFullscreenControls.ts`），严禁执行任何 `scale(1.00001)` 等抖动黑客代码，进入和退出全屏时必须且只能安全重置 `v.style.transform = ''`；
+  3. `video-player.css` 中所有全屏选择器（`:fullscreen video`, `:-webkit-full-screen video`, `.is-native-fullscreen video`）必须恒定声明 `transform: none !important; -webkit-transform: none !important; will-change: auto !important;`。
+
+### 2. 全屏状态下绝对禁止 `backdrop-filter` 显存回读死锁 (No Fullscreen Backdrop-Filters)
+- **核心判定**：全屏硬件加速覆盖层在安全沙箱和性能保护下，严禁上层 DOM 元素对正在硬件解码的显存进行反向像素回读（GPU Back-buffer Readback）。
+- **防线规范**：
+  1. `video-player.css` 必须全局配置全屏安全防护规则，在全屏激活时强制将容器内部所有子元素的 `backdrop-filter` 降级为 `none !important`；
+  2. 主站普通公网影视（轨道 A，`isPremium: false`）严禁渲染任何 56px/36px 强高斯消融台标层，必须且只能展示轻量纯 CSS 渐变微晶台标；
+  3. 56px/36px 双通道强力高斯模糊滤镜**必须且只能在午夜特区 Jable 去水印模式（轨道 B，`isPremium: true`）中按需使用**。
+
+
 
 
 
