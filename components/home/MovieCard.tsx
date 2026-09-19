@@ -1,22 +1,33 @@
 /**
  * MovieCard - Individual movie card component
- * Displays movie poster, title, and rating
+ * 采用顶级流媒体（Netflix / Apple TV+ 质感）高保真卡片容器排版：
+ * 1. 一体化深色微透圆角底座（bg-white/5 border border-white/10）
+ * 2. 经典 2:3 黄金比例电影海报，带居中播放动效与精致角标（热度/评分）
+ * 3. 优雅主副标题：片名 + 年份/题材标签（如 2025 · 历史），极富呼吸感与电影质感
  */
 
 import { memo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Card } from '@/components/ui/Card';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl, getFallbackProxiedImageUrl } from '@/lib/utils/image-utils';
 import { generateSlug } from '@/lib/data/entities/entity-utils';
 
-interface DoubanMovie {
+export interface DoubanMovie {
   id: string;
   title: string;
   cover: string;
-  rate: string;
-  url: string;
+  rate?: string;
+  score?: string;
+  url?: string;
+  year?: string | number;
+  types?: string[];
+  genres?: string[];
+  remarks?: string;
+  area?: string;
+  region?: string;
+  hot?: number;
+  popularity?: number;
 }
 
 interface MovieCardProps {
@@ -39,7 +50,7 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
     : initialCover;
 
   const handleImageError = () => {
-    // 弹性自愈：若当前直连外链加载失败（如海外局部网络审查阻断 Fastly），自动秒切 /api/img-proxy R2 镜像重试
+    // 弹性自愈：若当前直连外链加载失败，自动秒切 /api/img-proxy R2 镜像重试
     if (!useProxyFallback && movie.cover?.startsWith('http') && !initialCover.includes('/api/img-proxy')) {
       setUseProxyFallback(true);
     } else {
@@ -48,16 +59,25 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
   };
 
   // 智能短剧与正片动态目标路由
-  const isShortDrama = Boolean((movie as any).play_url || (movie as any).playUrl || (movie as any).firstPlayUrl || ((movie as any).types && (movie as any).types.includes('短剧')));
+  const isShortDrama = Boolean(
+    (movie as any).play_url ||
+    (movie as any).playUrl ||
+    (movie as any).firstPlayUrl ||
+    (movie.types && movie.types.includes('短剧'))
+  );
   const playUrl = (movie as any).play_url || (movie as any).playUrl || (movie as any).url || (movie as any).firstPlayUrl || '';
   const targetHref = isShortDrama
     ? `/short/player?${new URLSearchParams({
         title: movie.title || '',
         url: playUrl,
         poster: movie.cover || (movie as any).poster || '',
-        ...((movie as any).id ? { id: String((movie as any).id) } : {})
+        ...(movie.id ? { id: String(movie.id) } : {})
       }).toString()}`
     : `/title/${generateSlug(movie.title)}`;
+
+  // 年份与分类提取
+  const displayYear = movie.year || '2026';
+  const displayGenre = (movie.types && movie.types[0]) || (movie.genres && movie.genres[0]) || movie.area || movie.region || '影视';
 
   return (
     <Link
@@ -66,102 +86,104 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
       onClick={(e) => {
         // Allow default behavior for modifier keys (new tab, etc.)
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-        // 不拦截原生 Link 导航，确保 Viewport Prefetch 与 RSC 预加载完全生效
       }}
       data-focusable
-      className="group cursor-pointer movie-card-hover"
+      className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/25 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-black"
       style={{
-        position: 'relative',
-        zIndex: 1,
         contentVisibility: 'auto',
-        containIntrinsicSize: 'auto 300px',
-        contain: 'layout style paint'
+        containIntrinsicSize: '160px 290px',
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.zIndex = '100')}
-      onMouseLeave={(e) => (e.currentTarget.style.zIndex = '1')}
     >
-      <Card hover={false} className="p-0 h-full shadow-[0_2px_8px_var(--shadow-color)] group-hover:shadow-[0_12px_32px_var(--shadow-color)] transition-all duration-300 ease-out" blur={false}>
-        <div className="relative aspect-2/3 bg-(--glass-bg) rounded-2xl overflow-hidden">
-          {/* 骨架屏 shimmer 底层 */}
-          {!imageLoaded && !imageError && (
-            <div className="absolute inset-0 skeleton-shimmer rounded-2xl" />
-          )}
-          {!imageError ? (
-            <Image
-              src={proxiedCover}
-              alt={movie.title}
-              fill
-              className={`object-cover transition-transform duration-500 group-hover:scale-105 rounded-2xl ${imageLoaded ? 'img-fade-in' : 'opacity-0'}`}
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, (max-width: 1600px) 16vw, 12vw"
-              loading={index < 4 ? 'eager' : 'lazy'}
-              priority={index < 2}
-              decoding="async"
-              unoptimized
-              referrerPolicy="no-referrer"
-              onLoad={() => setImageLoaded(true)}
-              onError={handleImageError}
-            />
-          ) : !fallbackError ? (
-            <Image
-              src="/placeholder-poster.svg"
-              alt={movie.title}
-              fill
-              className="object-cover rounded-2xl"
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, (max-width: 1600px) 16vw, 12vw"
-              unoptimized
-              onError={() => setFallbackError(true)}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-(--glass-bg) rounded-2xl">
-              <p className="text-sm text-(--text-muted)">暂无图片</p>
+      {/* 1. 2:3 黄金比例海报主画幅 */}
+      <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
+        {/* 骨架屏 shimmer 底层 */}
+        {!imageLoaded && !imageError && (
+          <div className="absolute inset-0 skeleton-shimmer" />
+        )}
+        {!imageError ? (
+          <Image
+            src={proxiedCover}
+            alt={movie.title}
+            fill
+            className={`object-cover transition-transform duration-500 group-hover:scale-105 ${imageLoaded ? 'img-fade-in' : 'opacity-0'}`}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, (max-width: 1600px) 18vw, 16vw"
+            loading={index < 4 ? 'eager' : 'lazy'}
+            priority={index < 2}
+            decoding="async"
+            unoptimized
+            referrerPolicy="no-referrer"
+            onLoad={() => setImageLoaded(true)}
+            onError={handleImageError}
+          />
+        ) : !fallbackError ? (
+          <Image
+            src="/placeholder-poster.svg"
+            alt={movie.title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, (max-width: 1600px) 18vw, 16vw"
+            unoptimized
+            onError={() => setFallbackError(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-white/5">
+            <p className="text-xs text-white/30">暂无图片</p>
+          </div>
+        )}
+
+        {/* 全网人气热度角标（🔥 33万） */}
+        {(() => {
+          const hotVal = movie.hot || movie.popularity;
+          if (!hotVal || hotVal < 10000) return null;
+          const fmtHot = hotVal >= 10000000
+            ? `${(hotVal / 10000000).toFixed(1)}千万`
+            : (hotVal >= 10000 ? `${Math.round(hotVal / 10000)}万` : String(hotVal));
+          return (
+            <div className="absolute top-2 left-2 bg-red-600/90 px-1.5 py-0.5 flex items-center gap-1 rounded text-[10px] font-bold text-white shadow-sm backdrop-blur-xs">
+              <span>🔥</span>
+              <span>{fmtHot}</span>
             </div>
-          )}
-          {/* 真实全网热度角标 */}
-          {(() => {
-            const hotVal = (movie as any).hot || (movie as any).popularity;
-            if (!hotVal || hotVal < 10000) return null;
-            const fmtHot = hotVal >= 10000000
-              ? `${(hotVal / 10000000).toFixed(1)}千万`
-              : (hotVal >= 10000 ? `${Math.round(hotVal / 10000)}万` : String(hotVal));
+          );
+        })()}
+
+        {/* 评分标签（★ 9.6） */}
+        {(() => {
+          const displayScore = movie.rate || movie.score;
+          if (displayScore && parseFloat(displayScore) > 0) {
             return (
-              <div className="absolute top-2 left-2 bg-red-600/85 px-2 py-0.5 flex items-center gap-1 rounded-(--radius-full) backdrop-blur-sm text-[10px] font-bold text-white shadow-sm">
-                <span>🔥</span>
-                <span>{fmtHot}</span>
+              <div className="absolute top-2 right-2 bg-black/75 px-1.5 py-0.5 rounded text-amber-400 text-xs font-bold flex items-center gap-0.5 backdrop-blur-xs shadow-sm">
+                <Icons.Star size={11} className="text-amber-400 fill-amber-400" />
+                <span>{displayScore}</span>
               </div>
             );
-          })()}
+          }
+          return (
+            <div className="absolute top-2 right-2 bg-emerald-600/85 px-1.5 py-0.5 rounded text-[10px] font-bold text-white backdrop-blur-xs shadow-sm">
+              <span>🆕 新上线</span>
+            </div>
+          );
+        })()}
 
-          {/* 评分标签 */}
-          {movie.rate && parseFloat(movie.rate) > 0 ? (
-            <div
-              className="absolute top-2 right-2 bg-black/80 px-2 py-1 flex items-center gap-1 rounded-(--radius-full) backdrop-blur-sm"
-            >
-              <Icons.Star size={11} className="text-yellow-400 fill-yellow-400" />
-              <span className="text-xs font-bold text-white">
-                {movie.rate}
-              </span>
-            </div>
-          ) : (
-            <div
-              className="absolute top-2 right-2 bg-emerald-500/90 px-2 py-0.5 rounded-(--radius-full) backdrop-blur-sm"
-            >
-              <span className="text-[10px] font-bold text-white">🆕 新上线</span>
-            </div>
-          )}
-          {/* Hover 时底部渐变叠加 - 播放提示 */}
-          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-3 rounded-2xl">
-            <span className="bg-(--accent-color) text-white text-xs font-semibold px-3.5 py-1 rounded-full flex items-center gap-1 shadow-lg">
-              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-              立即播放
-            </span>
+        {/* Netflix 风格居中悬停播放微动效 */}
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+          <div className="w-11 h-11 rounded-full bg-red-600 text-white flex items-center justify-center shadow-2xl transform scale-90 group-hover:scale-100 transition-transform">
+            <svg className="w-5 h-5 fill-white ml-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
           </div>
         </div>
-        <div className="pt-2.5 px-0.5">
-          <h3 className="movie-card-title font-medium text-center text-(--text-color) line-clamp-2 group-hover:text-(--accent-color) transition-colors">
-            {movie.title}
-          </h3>
-        </div>
-      </Card>
+      </div>
+
+      {/* 2. 详情页同款主副标题优雅信息区 */}
+      <div className="p-2.5 sm:p-3">
+        <h3 className="font-semibold text-sm sm:text-base text-white/90 truncate group-hover:text-red-400 transition-colors">
+          {movie.title}
+        </h3>
+        <p className="text-xs text-white/40 mt-1 truncate">
+          {displayYear} · {displayGenre}
+          {movie.remarks && (
+            <span className="text-white/30 ml-1.5">({movie.remarks})</span>
+          )}
+        </p>
+      </div>
     </Link>
   );
 });

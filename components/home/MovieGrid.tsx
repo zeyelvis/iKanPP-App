@@ -3,16 +3,8 @@
  * 每页 20 部，底部有上一页/下一页按钮和页码显示
  */
 
-import { MovieCard } from './MovieCard';
+import { MovieCard, DoubanMovie } from './MovieCard';
 import { Icons } from '@/components/ui/Icon';
-
-interface DoubanMovie {
-  id: string;
-  title: string;
-  cover: string;
-  rate: string;
-  url: string;
-}
 
 interface MovieGridProps {
   movies: DoubanMovie[];
@@ -105,9 +97,9 @@ export function MovieGrid({
       {/* 加载中遮罩 */}
       {loading && <MovieGridLoading />}
 
-      {/* 影片网格 */}
+      {/* 影片网格（统一采用 6 列经典黄金流媒体排版） */}
       {!loading && movies.length > 0 && (
-        <div className="movie-fluid-grid">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 sm:gap-5 lg:gap-6">
           {movies.map((movie, index) => (
             <MovieCard
               key={movie.title ? `grid-${movie.title}` : (movie.id || index)}
@@ -186,9 +178,19 @@ export function MovieGrid({
 
 function MovieGridLoading() {
   return (
-    <div className="movie-fluid-grid">
-      {[...Array(14)].map((_, i) => (
-        <div key={i} className="skeleton-card skeleton-shimmer aspect-2/3 rounded-2xl" style={{ animationDelay: `${i * 0.05}s` }} />
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 sm:gap-5 lg:gap-6">
+      {[...Array(24)].map((_, i) => (
+        <div
+          key={i}
+          className="rounded-xl overflow-hidden bg-white/5 border border-white/10"
+          style={{ animationDelay: `${i * 0.04}s` }}
+        >
+          <div className="aspect-2/3 skeleton-shimmer w-full bg-white/5" />
+          <div className="p-2.5 space-y-2">
+            <div className="h-4 bg-white/10 rounded w-4/5 skeleton-shimmer" />
+            <div className="h-3 bg-white/5 rounded w-1/2 skeleton-shimmer" />
+          </div>
+        </div>
       ))}
     </div>
   );
