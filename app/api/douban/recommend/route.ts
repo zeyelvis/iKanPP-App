@@ -16,6 +16,7 @@ const VALID_TV_TAGS = new Set([
 ]);
 
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { VARIETY_HOME_DATA, ANIME_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 
 /**
  * 抓取豆瓣 API 结果（带 2500ms 快速超时熔断，防止海外边缘节点跨国请求卡死）
@@ -47,6 +48,22 @@ async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number,
     // 若请求纪录片发生超时熔断，返回纯净纪录片神作兜底，绝不返回普通商业电影
     if (tag === '纪录片') {
       return DOCUMENTARY_DATASET.slice(pageStart, pageStart + pageLimit).map((item: any) => ({
+        ...item,
+        cover: item.cover?.startsWith('http') ? `/api/img-proxy?url=${encodeURIComponent(item.cover)}` : item.cover,
+      }));
+    }
+    // 🌟 若请求综艺发生超时熔断，返回纯净综艺节目兜底，绝不允许返回普通电视剧（绝命毒师等）
+    if (tag === '综艺' || tag === '脱口秀' || tag === '音乐') {
+      const vList = [...VARIETY_HOME_DATA.s1, ...VARIETY_HOME_DATA.s2, ...VARIETY_HOME_DATA.s3, ...VARIETY_HOME_DATA.s4];
+      return vList.slice(pageStart, pageStart + pageLimit).map((item: any) => ({
+        ...item,
+        cover: item.cover?.startsWith('http') ? `/api/img-proxy?url=${encodeURIComponent(item.cover)}` : item.cover,
+      }));
+    }
+    // 🌟 若请求动漫发生超时熔断，返回纯净动漫神作兜底
+    if (tag === '日本动画' || tag === '国产动画' || tag === '动漫' || tag === '新番') {
+      const aList = tag === '国产动画' ? GUOMAN_DATASET : [...ANIME_HOME_DATA.s1, ...ANIME_HOME_DATA.s2, ...ANIME_HOME_DATA.s3, ...ANIME_HOME_DATA.s4];
+      return aList.slice(pageStart, pageStart + pageLimit).map((item: any) => ({
         ...item,
         cover: item.cover?.startsWith('http') ? `/api/img-proxy?url=${encodeURIComponent(item.cover)}` : item.cover,
       }));
@@ -247,6 +264,7 @@ async function fetchGlobalAndDomesticNowPlaying(pageLimit: number, pageStart: nu
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
+  const channel = (searchParams.get('channel') || '').trim();
   const genre = (searchParams.get('genre') || '').trim();
   const region = (searchParams.get('region') || '').trim();
   const year = (searchParams.get('year') || '').trim();
@@ -441,6 +459,140 @@ export async function GET(request: Request) {
     }
   }
 
+  // 0.3 特殊处理：综艺专区与细分题材精准路由 (100% 杜绝美剧/电视剧跨界混入)
+  const isVariety =
+    channel === 'variety' ||
+    rawTag === '综艺' ||
+    genre === '综艺' ||
+    ['脱口秀', '相声', '单口喜剧', '真人秀', '慢生活', '韩综', '音乐竞演'].some(t => rawTag.includes(t) || genre.includes(t)) ||
+    (type === 'tv' && ['脱口秀', '喜剧', '相声', '音乐', '慢生活', '美食'].some(t => rawTag.includes(t) || genre.includes(t))) ||
+    (channel === 'variety' && (region === '韩国' || rawTag === '韩国'));
+
+  if (isVariety) {
+    let pool: any[] = [];
+    const vTag = rawTag || genre || '';
+
+    // 1. 细分题材精准命中
+    if (vTag.includes('脱口秀') || vTag.includes('单口喜剧') || vTag.includes('相声') || vTag.includes('喜剧')) {
+      pool = [...VARIETY_HOME_DATA.s2];
+    } else if (vTag.includes('音乐') || vTag.includes('竞演') || vTag.includes('舞台') || vTag.includes('唱跳')) {
+      pool = [...VARIETY_HOME_DATA.s3];
+    } else if (vTag.includes('慢生活') || vTag.includes('美食') || vTag.includes('旅行') || vTag.includes('治愈')) {
+      pool = [...VARIETY_HOME_DATA.s4];
+    } else if (vTag.includes('韩国') || region.includes('韩国')) {
+      // 韩国高分现象级真人秀
+      pool = [
+        { id: 'v_k_1', title: 'Running Man', rate: '9.2', cover: 'https://image.tmdb.org/t/p/w500/y0Lp6H2VbX4n4D7N8S6b0.jpg', year: '2024', types: ['韩国综艺', '真人秀', '搞笑'], playable: true },
+        { id: 'v_k_2', title: '黑白大厨：料理阶级大战', rate: '8.8', cover: 'https://image.tmdb.org/t/p/w500/qQ4dGfV1X3t4Z5m7Y8w9A.jpg', year: '2024', types: ['韩国综艺', '美食', '竞演'], playable: true },
+        { id: 'v_k_3', title: '单身即地狱 第三季', rate: '7.8', cover: 'https://image.tmdb.org/t/p/w500/3x9vKiUombbUvpVxdxSxcBDxrqB.jpg', year: '2024', types: ['韩国综艺', '恋爱', '真人秀'], playable: true },
+        { id: 'v_k_4', title: '换乘恋爱 第三季', rate: '8.1', cover: 'https://image.tmdb.org/t/p/w500/gttK2vQTd52txo54xrYFdVg1fbS.jpg', year: '2024', types: ['韩国综艺', '情感', '真人秀'], playable: true },
+        { id: 'v_k_5', title: '新西游记 第八季', rate: '9.6', cover: 'https://image.tmdb.org/t/p/w500/42KdZo0AtIxGtdeEe0Z5uStiPYQ.jpg', year: '2020', types: ['韩国综艺', '搞笑', '旅行'], playable: true },
+        { id: 'v_k_6', title: '无限挑战', rate: '9.7', cover: 'https://image.tmdb.org/t/p/w500/vl5WKVXgL1tQs9D9wGE2ido6dwW.jpg', year: '2018', types: ['韩国综艺', '真人秀'], playable: true },
+      ];
+    } else if (vTag.includes('推理') || vTag.includes('大侦探') || vTag.includes('密逃')) {
+      pool = [
+        { id: 'v_det_1', title: '大侦探 第九季', rate: '8.8', cover: 'https://image.tmdb.org/t/p/w500/jOl12DTFiMcp9ga2KaEKwt5H8oo.jpg', year: '2024', types: ['推理', '悬疑'], playable: true },
+        { id: 'v_det_2', title: '密室大逃脱 第六季', rate: '7.8', cover: 'https://image.tmdb.org/t/p/w500/jOl12DTFiMcp9ga2KaEKwt5H8oo.jpg', year: '2024', types: ['解密', '惊悚'], playable: true },
+        { id: 'v_det_3', title: '明星大侦探 第八季', rate: '8.9', cover: 'https://image.tmdb.org/t/p/w500/jOl12DTFiMcp9ga2KaEKwt5H8oo.jpg', year: '2023', types: ['推理', '悬疑'], playable: true },
+        { id: 'v_det_4', title: '森林进化论', rate: '9.0', cover: 'https://image.tmdb.org/t/p/w500/vl5WKVXgL1tQs9D9wGE2ido6dwW.jpg', year: '2023', types: ['博弈', '推理'], playable: true },
+      ];
+    }
+
+    // 2. 若非细分或需扩展，优先从豆瓣获取纯正 tag=综艺
+    if (pool.length === 0) {
+      try {
+        const doubanShows = await fetchDoubanSubjects('tv', '综艺', pageLimit, pageStart);
+        if (doubanShows.length > 0) {
+          pool = doubanShows;
+        }
+      } catch {}
+    }
+
+    // 3. 兜底至 VARIETY_HOME_DATA 纯正综艺库（100% 杜绝美剧/电影跨界）
+    if (pool.length === 0) {
+      pool = [...VARIETY_HOME_DATA.s1, ...VARIETY_HOME_DATA.s2, ...VARIETY_HOME_DATA.s3, ...VARIETY_HOME_DATA.s4];
+    }
+
+    const paged = pool.slice(pageStart, pageStart + pageLimit).map((item: any) => ({
+      ...item,
+      cover: item.cover,
+      playable: true,
+    }));
+
+    return NextResponse.json({
+      subjects: paged,
+      tag: rawTag || '综艺',
+      genre,
+      region,
+      year,
+      total: pool.length,
+    }, {
+      headers: {
+        'Cache-Control': 'public, max-age=3600, s-maxage=7200, stale-while-revalidate=86400',
+        'CDN-Cache-Control': 'public, s-maxage=7200',
+        'Cloudflare-CDN-Cache-Control': 'public, s-maxage=7200',
+      },
+    });
+  }
+
+  // 0.4 特殊处理：动漫专区细分题材精准路由
+  const isAnime =
+    channel === 'anime' ||
+    rawTag === '日本动画' ||
+    genre === '日本动画' ||
+    rawTag === '动漫' ||
+    genre === '动漫' ||
+    ['新番', '国创', '年番', '修真', '剧场版动画'].some(t => rawTag.includes(t) || genre.includes(t));
+
+  if (isAnime) {
+    let pool: any[] = [];
+    const aTag = rawTag || genre || '';
+
+    if (aTag.includes('新番') || aTag.includes('当季') || aTag.includes('连载')) {
+      pool = [...ANIME_HOME_DATA.s1];
+    } else if (aTag.includes('国创') || aTag.includes('修真') || aTag.includes('年番') || aTag.includes('国产动画')) {
+      pool = [...ANIME_HOME_DATA.s2];
+    } else if (aTag.includes('经典') || aTag.includes('神作') || aTag.includes('不朽')) {
+      pool = [...ANIME_HOME_DATA.s3];
+    } else if (aTag.includes('剧场版') || aTag.includes('动画电影')) {
+      pool = [...ANIME_HOME_DATA.s4];
+    }
+
+    if (pool.length === 0) {
+      try {
+        const doubanAnime = await fetchDoubanSubjects('tv', '日本动画', pageLimit, pageStart);
+        if (doubanAnime.length > 0) {
+          pool = doubanAnime;
+        }
+      } catch {}
+    }
+
+    if (pool.length === 0) {
+      pool = [...ANIME_HOME_DATA.s1, ...ANIME_HOME_DATA.s2, ...ANIME_HOME_DATA.s3, ...ANIME_HOME_DATA.s4];
+    }
+
+    const paged = pool.slice(pageStart, pageStart + pageLimit).map((item: any) => ({
+      ...item,
+      cover: item.cover,
+      playable: true,
+    }));
+
+    return NextResponse.json({
+      subjects: paged,
+      tag: rawTag || '日本动画',
+      genre,
+      region,
+      year,
+      total: pool.length,
+    }, {
+      headers: {
+        'Cache-Control': 'public, max-age=3600, s-maxage=7200, stale-while-revalidate=86400',
+        'CDN-Cache-Control': 'public, s-maxage=7200',
+        'Cloudflare-CDN-Cache-Control': 'public, s-maxage=7200',
+      },
+    });
+  }
+
   // 1. 确定针对豆瓣的 1~3 个最精准查询 Tag
   const doubanTags: string[] = [];
 
@@ -478,8 +630,10 @@ export async function GET(request: Request) {
 
     const mappedRawTag = (rawTag === '欧美剧' || rawTag === '欧美' || rawTag === '海外剧')
       ? '美剧'
-      : (rawTag === '华语剧' || rawTag === '华语')
+      : (rawTag === '华语剧' || rawTag === '华语' || rawTag === '台剧' || rawTag === '台湾')
       ? '国产剧'
+      : (rawTag === '港剧' || rawTag === '香港')
+      ? '港剧'
       : rawTag;
 
     if (region && tvRegionMap[region]) {

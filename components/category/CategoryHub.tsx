@@ -44,12 +44,17 @@ export interface FilterOption {
 }
 
 export interface ShelfConfig {
+  id?: string;
   title: string;
   icon: string;
   badge?: string;
   tag: string;
   doubanType?: 'movie' | 'tv';
   prebakedOnly?: boolean;
+}
+
+export function getShelfKey(shelf: ShelfConfig): string {
+  return shelf.id || shelf.title || shelf.tag;
 }
 
 export interface CategoryHubProps {
@@ -100,8 +105,8 @@ export function CategoryHub({
   });
   const [totalCount, setTotalCount] = useState<number>(0);
 
-// ── SWR 频道大厅本地瞬间缓存 ──────────────────────────
-const CATHUB_CACHE_KEY = 'kvideo-cathub-v6-';
+// ── SWR 频道大厅本地瞬间缓存（升级至 v7，彻底清除旧版错误缓存） ────────
+const CATHUB_CACHE_KEY = 'kvideo-cathub-v7-';
 
 function getLocalCatHub(key: string): Record<string, RailMovie[]> | null {
   if (typeof window === 'undefined') return null;
@@ -142,7 +147,7 @@ function isSameList(a: any[], b: any[]): boolean {
     if (!usePrebakedOnly && typeof window !== 'undefined') {
       const cached = getLocalCatHub(activeNav || doubanType);
       if (cached && Object.keys(cached).length > 0) {
-        // 安全合并：确保新增的货架（如 ai）即使在旧缓存中不存在，也能立刻显示初始预烘焙海报
+        // 安全合并：确保新增的货架即使在旧缓存中不存在，也能立刻显示初始预烘焙海报
         return { ...initialPrebaked, ...cached };
       }
     }
@@ -159,7 +164,7 @@ function isSameList(a: any[], b: any[]): boolean {
 
   // 顶部焦点大片（从第一个货架中选取第一部）
   const heroMovie = useMemo(() => {
-    const firstShelfKey = shelves[0]?.tag;
+    const firstShelfKey = shelves[0] ? getShelfKey(shelves[0]) : '';
     const firstList = shelfData[firstShelfKey];
     return firstList && firstList.length > 0 ? firstList[0] : null;
   }, [shelves, shelfData]);
@@ -204,20 +209,21 @@ function isSameList(a: any[], b: any[]): boolean {
                 play_url: item.playUrl,
                 episodes: item.episodes,
               }));
-              return { tag: shelf.tag, subjects };
+              return { key: getShelfKey(shelf), tag: shelf.tag, subjects };
             }
 
             const targetDoubanType = shelf.doubanType || doubanType;
+            const channelParam = activeNav || doubanType;
             const res = await fetch(
               `/api/douban/recommend?tag=${encodeURIComponent(
                 shelf.tag
-              )}&type=${targetDoubanType}&page_limit=20&page_start=0`,
+              )}&type=${targetDoubanType}&channel=${encodeURIComponent(channelParam)}&page_limit=20&page_start=0`,
               { signal: controller.signal }
             );
             clearTimeout(timer);
             if (!res.ok) return null;
             const data = await res.json();
-            return { tag: shelf.tag, subjects: data.subjects || [] };
+            return { key: getShelfKey(shelf), tag: shelf.tag, subjects: data.subjects || [] };
           } catch {
             return null;
           }
@@ -229,16 +235,16 @@ function isSameList(a: any[], b: any[]): boolean {
 
         const updateMap: Record<string, RailMovie[]> = {};
         primaryResults.forEach((res) => {
-          if (res.status === 'fulfilled' && res.value?.tag && res.value.subjects?.length) {
-            updateMap[res.value.tag] = res.value.subjects;
+          if (res.status === 'fulfilled' && res.value?.key && res.value.subjects?.length) {
+            updateMap[res.value.key] = res.value.subjects;
           }
         });
 
         if (Object.keys(updateMap).length > 0) {
           setShelfData((prev) => {
             let hasChanges = false;
-            for (const [tag, list] of Object.entries(updateMap)) {
-              const current = prev[tag] || [];
+            for (const [key, list] of Object.entries(updateMap)) {
+              const current = prev[key] || [];
               if (!isSameList(current, list)) {
                 hasChanges = true;
                 break;
@@ -260,16 +266,16 @@ function isSameList(a: any[], b: any[]): boolean {
           if (!isMounted) return;
 
           remainingResults.forEach((res) => {
-            if (res.status === 'fulfilled' && res.value?.tag && res.value.subjects?.length) {
-              updateMap[res.value.tag] = res.value.subjects;
+            if (res.status === 'fulfilled' && res.value?.key && res.value.subjects?.length) {
+              updateMap[res.value.key] = res.value.subjects;
             }
           });
 
           if (Object.keys(updateMap).length > 0) {
             setShelfData((prev) => {
               let hasChanges = false;
-              for (const [tag, list] of Object.entries(updateMap)) {
-                const current = prev[tag] || [];
+              for (const [key, list] of Object.entries(updateMap)) {
+                const current = prev[key] || [];
                 if (!isSameList(current, list)) {
                   hasChanges = true;
                   break;
@@ -528,13 +534,14 @@ function isSameList(a: any[], b: any[]): boolean {
         {/* 2. 专属垂直特色片单滑轨 */}
         <div className="space-y-4">
           {shelves.map((shelf, idx) => {
+            const shelfKey = getShelfKey(shelf);
             const railNode = (
               <ContentRail
-                key={shelf.tag}
+                key={shelfKey}
                 title={shelf.title}
                 icon={shelf.icon}
                 badge={shelf.badge}
-                movies={shelfData[shelf.tag] || []}
+                movies={shelfData[shelfKey] || []}
                 loading={loadingShelves}
                 onMovieClick={handleMovieClick}
                 onViewAll={() => {
@@ -548,7 +555,7 @@ function isSameList(a: any[], b: any[]): boolean {
               />
             );
             return idx >= 2 ? (
-              <div key={shelf.tag} className="below-fold-rail">
+              <div key={shelfKey} className="below-fold-rail">
                 {railNode}
               </div>
             ) : (

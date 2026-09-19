@@ -6,14 +6,14 @@ import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 
 const SHELVES = [
-  { title: '2026 华语黄金档热播剧', icon: '🔥', badge: 'HOT', tag: '国产剧' },
-  { title: '顶级欧美神剧专区（权游/绝命毒师）', icon: '🌟', badge: 'TOP US', tag: '美剧' },
-  { title: '人气爆款韩剧精选', icon: '🍿', badge: 'TRENDING', tag: '韩剧' },
-  { title: '经典口碑高分日剧', icon: '🌸', badge: 'JAPAN', tag: '日剧' },
-  { title: '经典 TVB & 港剧黄金年代', icon: '🏙️', badge: 'HK TVB', tag: '港剧' },
-  { title: '高分口碑华语台剧 & 时代光影', icon: '🍵', badge: 'TAIWAN', tag: '台剧' },
-  { title: '东南亚悬疑与浪漫热播泰剧', icon: '🐘', badge: 'THAI', tag: '泰剧' },
-  { title: '英伦高分罪案与历史大剧', icon: '👑', badge: 'BRITISH', tag: '英剧' },
+  { id: 'tv_cn', title: '2026 华语黄金档热播剧', icon: '🔥', badge: 'HOT', tag: '国产剧' },
+  { id: 'tv_us', title: '顶级欧美神剧专区（权游/绝命毒师）', icon: '🌟', badge: 'TOP US', tag: '美剧' },
+  { id: 'tv_kr', title: '人气爆款韩剧精选', icon: '🍿', badge: 'TRENDING', tag: '韩剧' },
+  { id: 'tv_jp', title: '经典口碑高分日剧', icon: '🌸', badge: 'JAPAN', tag: '日剧' },
+  { id: 'tv_hk', title: '经典 TVB & 港剧黄金年代', icon: '🏙️', badge: 'HK TVB', tag: '港剧' },
+  { id: 'tv_tw', title: '高分口碑华语台剧 & 时代光影', icon: '🍵', badge: 'TAIWAN', tag: '台剧' },
+  { id: 'tv_th', title: '东南亚悬疑与浪漫热播泰剧', icon: '🐘', badge: 'THAI', tag: '泰剧' },
+  { id: 'tv_uk', title: '英伦高分罪案与历史大剧', icon: '👑', badge: 'BRITISH', tag: '英剧' },
 ];
 
 export default function TvClient() {

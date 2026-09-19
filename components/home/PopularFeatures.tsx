@@ -132,8 +132,8 @@ function getShelvesMeta(contentType: HomeContentType): [ShelfMeta, ShelfMeta, Sh
       return [
         { title: '🎤 全网爆款真人秀', icon: '🎤', badge: 'HOT SHOW', tag: '综艺', doubanType: 'tv', viewAll: '/variety' },
         { title: '🤣 爆笑喜剧与名场面脱口秀', icon: '🤣', badge: 'COMEDY', tag: '脱口秀', doubanType: 'tv', viewAll: '/variety?genre=脱口秀' },
-        { title: '🎵 顶级音乐竞演现场', icon: '🎵', badge: 'MUSIC', tag: '综艺', doubanType: 'tv', viewAll: '/variety?genre=音乐' },
-        { title: '🌿 慢生活治愈与美食旅行', icon: '🌿', badge: 'SLOW LIFE', tag: '综艺', doubanType: 'tv', viewAll: '/variety?genre=美食' },
+        { title: '🎵 顶级音乐竞演现场', icon: '🎵', badge: 'MUSIC', tag: '音乐', doubanType: 'tv', viewAll: '/variety?genre=音乐' },
+        { title: '🌿 慢生活治愈与美食旅行', icon: '🌿', badge: 'SLOW LIFE', tag: '慢生活', doubanType: 'tv', viewAll: '/variety?genre=美食' },
       ];
     case 'documentary':
       return [

@@ -5,18 +5,12 @@ import { CategoryHub } from '@/components/category/CategoryHub';
 import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
 import { ANIME_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 
-const SHELVES: Array<{
-  title: string;
-  icon: string;
-  badge: string;
-  tag: string;
-  doubanType?: 'movie' | 'tv';
-}> = [
-  { title: '当季热血新番连载', icon: '⚡', badge: 'SEASON', tag: '日本动画' },
-  { title: '国创修真年番巅峰（凡人/仙逆/遮天）', icon: '🐉', badge: 'CHINESE ANIME', tag: '国产动画' },
-  { title: '经典殿堂级不朽神作', icon: '👑', badge: 'CLASSIC', tag: '日本动画' },
-  { title: '全球经典剧场版动画大电影', icon: '🎨', badge: 'MOVIE', tag: '动画', doubanType: 'movie' },
-  { title: '欧美高分动画与科幻视效', icon: '🚀', badge: 'US ANIME', tag: '动画', doubanType: 'movie' },
+const SHELVES = [
+  { id: 'a_season', title: '当季热血新番连载', icon: '⚡', badge: 'SEASON', tag: '新番' },
+  { id: 'a_china', title: '国创修真年番巅峰（凡人/仙逆/遮天）', icon: '🐉', badge: 'CHINESE ANIME', tag: '国产动画' },
+  { id: 'a_classic', title: '经典殿堂级不朽神作', icon: '👑', badge: 'CLASSIC', tag: '日本动画' },
+  { id: 'a_movie', title: '全球经典剧场版动画大电影', icon: '🎨', badge: 'MOVIE', tag: '动画', doubanType: 'movie' as const },
+  { id: 'a_us', title: '欧美高分动画与科幻视效', icon: '🚀', badge: 'US ANIME', tag: '欧美动画', doubanType: 'movie' as const },
 ];
 
 export default function AnimeClient() {
