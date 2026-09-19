@@ -515,7 +515,9 @@ export function DesktopVideoPlayer({
         data.fullscreenMode === 'native' ? 'is-native-fullscreen' : ''
       } ${shouldForceLandscape ? 'force-landscape' : ''} ${
         isTopAlignedWebFullscreen ? 'top-align-stage' : ''
-      } overflow-hidden ${
+      } ${
+        data.isFullscreen ? 'overflow-visible' : 'overflow-hidden'
+      } ${
         data.isFullscreen ? 'rounded-none' : 'rounded-none sm:rounded-2xl'
       }`}
       style={containerStyle}
@@ -523,15 +525,19 @@ export function DesktopVideoPlayer({
       onMouseLeave={() => isPlaying && setShowControls(false)}
     >
       <div className={stageClassName}>
-        {/* Clipping Wrapper for video and overlays - Restores the 'Liquid Glass' rounded look */}
-        <div className={`kvideo-clipping-wrapper absolute inset-0 overflow-hidden pointer-events-none ${
-          data.isFullscreen ? 'rounded-none' : 'rounded-none sm:rounded-2xl'
+        {/* Clipping Wrapper for video and overlays - Restores the 'Liquid Glass' rounded look in normal mode */}
+        <div className={`kvideo-clipping-wrapper absolute inset-0 pointer-events-none ${
+          data.isFullscreen ? 'overflow-visible rounded-none' : 'overflow-hidden rounded-none sm:rounded-2xl'
         }`}>
-          <div className="absolute inset-0 pointer-events-auto">
+          <div className="kvideo-video-slot absolute inset-0 pointer-events-auto">
           {/* Video Element */}
           <video
             ref={videoRef}
             className="w-full h-full object-contain"
+            style={{
+              transform: 'translateZ(0)',
+              WebkitTransform: 'translateZ(0)',
+            }}
             poster={poster}
             preload="auto"
             x-webkit-airplay="allow"

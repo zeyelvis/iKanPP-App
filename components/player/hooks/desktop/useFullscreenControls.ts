@@ -219,7 +219,6 @@ export function useFullscreenControls({
     const enterNativeFullscreen = useCallback(async () => {
         const container = containerRef.current as FullscreenCapableElement | null;
         const video = videoRef.current as PiPCapableVideoElement | null;
-        const docEl = (typeof document !== 'undefined' ? document.documentElement : null) as FullscreenCapableElement | null;
 
         // 阶段一：仅在不支持 DOM 元素全屏的狭小 iPhone 移动端，才尝试 video 原生全屏
         const isIPhoneOnly = typeof navigator !== 'undefined' && /iPhone|iPod/i.test(navigator.userAgent);
@@ -235,66 +234,58 @@ export function useFullscreenControls({
             }
         }
 
-        // 阶段二：尝试 DOM 元素全屏 (桌面端 macOS / Windows / Linux 及 iPadOS 标准浏览器)
-        const targets: (FullscreenCapableElement | PiPCapableVideoElement | null)[] = [container, docEl, video];
-
-        for (const target of targets) {
-            if (!target) continue;
+        // 阶段二：尝试容器 DOM 元素全屏 (桌面端 macOS / Windows / Linux 及 iPadOS 标准浏览器)
+        // 核心准则：全屏目标必须且只能是播放器外层容器 container，绝不可回退到 docEl（导致全屏伪类失效与黑屏）
+        // 或裸全屏 video（导致自定义控制栏与所有 UI 彻底脱落）。
+        if (container) {
             try {
                 // 1. 标准 W3C requestFullscreen
-                if (typeof target.requestFullscreen === 'function') {
-                    await target.requestFullscreen();
+                if (typeof container.requestFullscreen === 'function') {
+                    await container.requestFullscreen();
                     setFullscreenMode('native');
                     setIsFullscreen(true);
                     await lockLandscape();
                     return;
                 }
                 // 2. WebKit (macOS Safari & 旧版 Chrome) 兼容两种大小写
-                if (typeof (target as any).webkitRequestFullscreen === 'function') {
-                    await (target as any).webkitRequestFullscreen();
+                if (typeof (container as any).webkitRequestFullscreen === 'function') {
+                    await (container as any).webkitRequestFullscreen();
                     setFullscreenMode('native');
                     setIsFullscreen(true);
                     await lockLandscape();
                     return;
                 }
-                if (typeof (target as any).webkitRequestFullScreen === 'function') {
-                    await (target as any).webkitRequestFullScreen();
+                if (typeof (container as any).webkitRequestFullScreen === 'function') {
+                    await (container as any).webkitRequestFullScreen();
                     setFullscreenMode('native');
                     setIsFullscreen(true);
                     await lockLandscape();
                     return;
                 }
                 // 3. Firefox
-                if (typeof (target as any).mozRequestFullScreen === 'function') {
-                    await (target as any).mozRequestFullScreen();
+                if (typeof (container as any).mozRequestFullScreen === 'function') {
+                    await (container as any).mozRequestFullScreen();
                     setFullscreenMode('native');
                     setIsFullscreen(true);
                     await lockLandscape();
                     return;
                 }
                 // 4. IE / Edge Legacy
-                if (typeof (target as any).msRequestFullscreen === 'function') {
-                    await (target as any).msRequestFullscreen();
+                if (typeof (container as any).msRequestFullscreen === 'function') {
+                    await (container as any).msRequestFullscreen();
                     setFullscreenMode('native');
                     setIsFullscreen(true);
                     await lockLandscape();
                     return;
                 }
-                // 5. 终极 video 播放器回退
-                if (target === video && typeof video?.webkitEnterFullscreen === 'function') {
-                    video.webkitEnterFullscreen();
-                    setFullscreenMode('native');
-                    setIsFullscreen(true);
-                    return;
-                }
             } catch (err) {
-                console.warn('Attempt to enter native fullscreen failed on target, trying next:', err);
+                console.warn('Attempt to enter native fullscreen on player container failed:', err);
             }
         }
 
         // 阶段三：终极自愈降级 (Fail-safe Fallback)
-        // 当系统或浏览器策略拒绝任何原生全屏调用时，100% 毫秒级自愈降级为网页全屏 (Window Fullscreen)
-        console.info('Native fullscreen rejected by environment, seamlessly falling back to window fullscreen.');
+        // 当系统或浏览器安全策略拒绝任何原生全屏调用时，100% 毫秒级自愈降级为网页全屏 (Window Fullscreen)
+        console.info('Native fullscreen unavailable or rejected, seamlessly falling back to window fullscreen.');
         await enterWindowFullscreen();
     }, [
         containerRef,
@@ -416,9 +407,15 @@ export function useFullscreenControls({
                 setIsFullscreen(true);
                 setFullscreenMode('native');
                 lockLandscape().catch(() => { });
-                // 强制触发一次微小布局读取，激活硬件图层重绘并派发鼠标移动事件唤醒控制栏
+                // macOS / WebKit 关键自愈：进入全屏瞬间双帧微形变，强制 GPU 重新送显视频解码表面 (Blit Framebuffer)
                 if (videoRef.current) {
-                    void videoRef.current.offsetHeight;
+                    const v = videoRef.current;
+                    void v.offsetHeight;
+                    v.style.transform = 'translateZ(0) scale(1.00001)';
+                    requestAnimationFrame(() => {
+                        v.style.transform = 'translateZ(0)';
+                        void v.offsetHeight;
+                    });
                 }
                 if (typeof window !== 'undefined') {
                     window.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
@@ -431,7 +428,9 @@ export function useFullscreenControls({
                 setIsFullscreen(false);
                 setFullscreenMode('none');
                 if (videoRef.current) {
-                    void videoRef.current.offsetHeight;
+                    const v = videoRef.current;
+                    v.style.transform = 'translateZ(0)';
+                    void v.offsetHeight;
                 }
             }
         };

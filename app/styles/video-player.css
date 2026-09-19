@@ -573,34 +573,63 @@
     border: none !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     background: #000 !important;
     z-index: 2147483647 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    display: block !important;
 }
 
 .kvideo-container:fullscreen .kvideo-stage {
     position: absolute !important;
     inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     width: 100% !important;
     height: 100% !important;
     max-width: none !important;
     max-height: none !important;
     border-radius: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    display: block !important;
 }
 
 .kvideo-container:fullscreen .kvideo-clipping-wrapper {
+    position: absolute !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     border-radius: 0 !important;
     width: 100% !important;
     height: 100% !important;
+    overflow: visible !important;
+    display: block !important;
+}
+
+.kvideo-container:fullscreen .kvideo-clipping-wrapper > div,
+.kvideo-container:fullscreen .kvideo-video-slot {
+    position: absolute !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+    display: block !important;
 }
 
 .kvideo-container:fullscreen video {
+    position: absolute !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
     width: 100% !important;
     height: 100% !important;
     max-width: 100% !important;
@@ -609,6 +638,10 @@
     border-radius: 0 !important;
     background: transparent !important;
     display: block !important;
+    z-index: 1 !important;
+    transform: translateZ(0) !important;
+    -webkit-transform: translateZ(0) !important;
+    will-change: transform !important;
 }
 
 /* 2. WebKit 前缀 (macOS Safari & 旧版 Chromium) - 必须独立书写以防选择器整块作废 */
@@ -633,34 +666,63 @@
     border: none !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     background: #000 !important;
     z-index: 2147483647 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    display: block !important;
 }
 
 .kvideo-container:-webkit-full-screen .kvideo-stage {
     position: absolute !important;
     inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     width: 100% !important;
     height: 100% !important;
     max-width: none !important;
     max-height: none !important;
     border-radius: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    display: block !important;
 }
 
 .kvideo-container:-webkit-full-screen .kvideo-clipping-wrapper {
+    position: absolute !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     border-radius: 0 !important;
     width: 100% !important;
     height: 100% !important;
+    overflow: visible !important;
+    display: block !important;
+}
+
+.kvideo-container:-webkit-full-screen .kvideo-clipping-wrapper > div,
+.kvideo-container:-webkit-full-screen .kvideo-video-slot {
+    position: absolute !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+    display: block !important;
 }
 
 .kvideo-container:-webkit-full-screen video {
+    position: absolute !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
     width: 100% !important;
     height: 100% !important;
     max-width: 100% !important;
@@ -669,6 +731,10 @@
     border-radius: 0 !important;
     background: transparent !important;
     display: block !important;
+    z-index: 1 !important;
+    transform: translateZ(0) !important;
+    -webkit-transform: translateZ(0) !important;
+    will-change: transform !important;
 }
 
 /* 3. 纯 CSS 类名保底 (.is-native-fullscreen) - 保证即使伪类延迟生效，布局也恒定坚不可摧 */
@@ -693,34 +759,63 @@
     border: none !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     background: #000 !important;
     z-index: 2147483647 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    display: block !important;
 }
 
 .kvideo-container.is-native-fullscreen .kvideo-stage {
     position: absolute !important;
     inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     width: 100% !important;
     height: 100% !important;
     max-width: none !important;
     max-height: none !important;
     border-radius: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    display: block !important;
 }
 
 .kvideo-container.is-native-fullscreen .kvideo-clipping-wrapper {
+    position: absolute !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     border-radius: 0 !important;
     width: 100% !important;
     height: 100% !important;
+    overflow: visible !important;
+    display: block !important;
+}
+
+.kvideo-container.is-native-fullscreen .kvideo-clipping-wrapper > div,
+.kvideo-container.is-native-fullscreen .kvideo-video-slot {
+    position: absolute !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+    display: block !important;
 }
 
 .kvideo-container.is-native-fullscreen video {
+    position: absolute !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
     width: 100% !important;
     height: 100% !important;
     max-width: 100% !important;
@@ -729,10 +824,15 @@
     border-radius: 0 !important;
     background: transparent !important;
     display: block !important;
+    z-index: 1 !important;
+    transform: translateZ(0) !important;
+    -webkit-transform: translateZ(0) !important;
+    will-change: transform !important;
 }
 
 /* 全屏纯黑 backdrop */
-.kvideo-container::backdrop {
+.kvideo-container::backdrop,
+.kvideo-container::-webkit-backdrop {
     background-color: #000 !important;
 }
 
