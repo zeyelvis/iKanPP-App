@@ -27,6 +27,7 @@ import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 import { generateFullSpectrumKeywords } from '@/lib/utils/seo-keyword-generator';
+import { isEntityIndexable } from '@/lib/data/seo-rules/seo-keyword-system';
 
 interface PrebakedDisplayItem {
   entityId?: string;
@@ -562,9 +563,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const entity = await getCachedEntity(slug);
 
-  if (!entity) {
+  if (!entity || !isEntityIndexable(entity)) {
     return {
-      title: '影片未找到 - iKanPP 爱看片片',
+      title: '影片未收录 - iKanPP 爱看片片',
       robots: { index: false, follow: false },
     };
   }

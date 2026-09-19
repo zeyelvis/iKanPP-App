@@ -171,8 +171,14 @@ function extractLatestTargetUrls() {
     console.warn('⚠️ [GoogleIndexing] 解析 latest-titles-prebaked.ts 异常:', err.message);
   }
 
-  return Array.from(new Set(urls)).slice(0, MAX_URLS_PER_RUN);
+  const allCandidateUrls = Array.from(new Set(urls));
+  // 按照 YAML Priority A 规范，截取前 MAX_URLS_PER_RUN 条高爆发新片与核心路由
+  const priorityAUrls = allCandidateUrls.slice(0, MAX_URLS_PER_RUN);
+  console.log(`🎯 [GoogleIndexing] 基于 YAML Priority A 策略筛选出 ${priorityAUrls.length} 个重点新片及频道 URL，准备推送...`);
+  return priorityAUrls;
 }
+
+
 
 async function main() {
   console.log('📡 [GoogleIndexing] 启动新片全自动 Google Indexing API 广播...');

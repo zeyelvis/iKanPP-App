@@ -19,7 +19,7 @@ export function RelatedSearchChips({
 }: RelatedSearchChipsProps) {
   const allKeywords = highPotentialData?.keywords || [];
 
-  // 1. 动态针对当前影片裂变专属意图 Chips
+  // 1. 动态针对当前影片裂变专属意图 Chips 与跨维度 Discovery 探索标签
   const dynamicChips: Array<{ query: string; isDynamic?: boolean }> = [];
   if (entity || currentTitle) {
     const seoRes = generateFullSpectrumKeywords({
@@ -32,8 +32,13 @@ export function RelatedSearchChips({
       region: entity?.region,
       numberOfEpisodes: entity?.numberOfEpisodes,
     });
+    // 优先注入专属意图词
     for (const chip of seoRes.intentChips) {
       dynamicChips.push({ query: chip, isDynamic: true });
+    }
+    // 紧随其后注入 YAML 跨维度探索标签 (如 2026热门科幻电影、美国动作片推荐)
+    for (const dChip of seoRes.discoveryChips) {
+      dynamicChips.push({ query: dChip, isDynamic: true });
     }
   }
 
@@ -45,10 +50,10 @@ export function RelatedSearchChips({
     })
     .map(k => ({ query: k.query, title: k.title, impressions: k.impressions, isDynamic: false }));
 
-  // 3. 动静结合：前 4~6 个为当前影片的专属长尾意图词，后 6~8 个为全站高潜探索词
+  // 3. 动静结合：前 6~8 个为当前影片专属意图与跨维度探索词，后 4~6 个为全站高潜探索词
   const combined = [
-    ...dynamicChips.slice(0, 6),
-    ...filteredStatic.slice(0, limit - Math.min(dynamicChips.length, 6)),
+    ...dynamicChips.slice(0, 8),
+    ...filteredStatic.slice(0, limit - Math.min(dynamicChips.length, 8)),
   ];
 
   if (combined.length === 0) return null;

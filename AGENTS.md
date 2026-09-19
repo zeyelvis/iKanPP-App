@@ -317,6 +317,11 @@ iKanPP 全域流媒体平台在应对院线新片、热播剧集与新番动漫�
 ### 5. 动态相关探索内链网络 (Dynamic Internal Linking Mesh)
 - 详情页底部的 `<RelatedSearchChips />` 严禁使用纯死板静态词，必须结合当前影片的题材、年份与全光谱意图词，动态裂变专属长尾探索内链，打破孤岛效应，使新片与全站内容形成高密度互联互通。
 
+### 6. 机器可读 YAML 全景规范与白帽索引门槛 (YAML Specification & Indexation Guardrails)
+- **基线规范**：全站 SEO 体系永久以 `docs/architecture/ikanpp_seo_keyword_system.yaml` 及 `lib/data/seo-rules/seo-keyword-system.ts` 为唯一权威规则库；
+- **白帽索引门槛 (`isEntityIndexable`)**：必须严密核验条目健康度，对缺失核心信息或非正常入库的空壳条目，强制输出 `robots: { index: false, follow: false }`，坚决杜绝薄弱内容（Thin Content）拉低整站域名信任度。
+
+
 
 
 

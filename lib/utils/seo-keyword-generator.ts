@@ -1,13 +1,21 @@
 /**
  * 全光谱搜索意图与长尾截流生成器 (Full-Spectrum SEO/GEO Keyword Generator)
+ * 驱动核心: docs/architecture/ikanpp_seo_keyword_system.yaml & lib/data/seo-rules/seo-keyword-system.ts
  * 
- * 核心功能：
- * 1. 100% 遵循白帽规范，根据片名、分类、导演、主演全自动裂变衍生 4 大类 25~35 个精准长尾词；
- * 2. 覆盖网盘下载截流意图（百度网盘、迅雷、夸克、磁力），引导用户转化为站内 0ms 在线播放；
- * 3. 覆盖画质与版本意图（4K超清原画、未删减完整版、国粤双语、中文字幕）；
- * 4. 覆盖观影决策衍生词（豆瓣真实评分、结局解析、演职员表、片尾彩蛋）；
- * 5. 常见同音字与标点拆解容错（如“生活危机” <-> “生化危机”）。
+ * 核心特性：
+ * 1. 100% 遵循白帽规范，根据片名、分类、导演、主演自动渲染 YAML 标准模板；
+ * 2. 融入 YAML 意图修饰词库（watch_intent, free_intent, quality, freshness, completion, information）；
+ * 3. 深度融入网盘下载截流矩阵（百度网盘、迅雷、夸克、磁力），引导用户 0ms 在线秒播；
+ * 4. 覆盖观影决策与剧情衍生词（豆瓣真实评分、结局解析、演职员表、片尾彩蛋）；
+ * 5. 拼音与常见错别字容错（如“生活危机” <-> “生化危机”）。
  */
+
+import {
+  KEYWORD_TEMPLATES,
+  GENERIC_MODIFIERS,
+} from '@/lib/data/seo-rules/seo-keyword-system';
+
+
 
 export interface KeywordGeneratorInput {
   title: string;
@@ -26,6 +34,7 @@ export interface KeywordGeneratorOutput {
   metaDescription: string;
   intentChips: string[];
   cleanTitle: string;
+  discoveryChips: string[];
 }
 
 /**
@@ -103,37 +112,58 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
   const isAnime = type === 'anime' || genres.some(g => ['动漫', '动画', '新番', '国漫'].includes(g));
   const mediaLabel = isAnime ? '动漫' : isSeries ? '电视剧' : type === 'variety' ? '综艺' : type === 'documentary' ? '纪录片' : '电影';
 
-  // 1. 基础核心直搜词 (Primary Search Terms)
-  keywordSet.add(primaryTitle);
-  if (compactTitle !== primaryTitle) keywordSet.add(compactTitle);
-  if (year) keywordSet.add(`${primaryTitle} ${year}`);
-  keywordSet.add(`${primaryTitle}在线观看`);
-  keywordSet.add(`${primaryTitle}免费看`);
-  keywordSet.add(`${primaryTitle}完整版`);
-  keywordSet.add(`${primaryTitle}高清播放`);
-  keywordSet.add(`${primaryTitle}未删减版`);
+  const primaryGenre = genres[0] || '';
+  const primaryCountry = region ? region.split(/[·,\s/]/)[0].slice(0, 4) : '';
+  const validActs = actors.filter(a => a && !['知名导演', '实力主演', '未知', '暂无'].includes(a.trim()));
+  const validDirs = directors.filter(d => d && !['知名导演', '实力主演', '未知', '暂无'].includes(d.trim()));
+  const primaryActor = validActs[0] || '';
+  const primaryDirector = validDirs[0] || '';
 
-  if (isSeries) {
-    keywordSet.add(`${primaryTitle}全集在线观看`);
-    keywordSet.add(`${primaryTitle}大结局`);
-    if (numberOfEpisodes && numberOfEpisodes > 1) {
-      keywordSet.add(`${primaryTitle}共${numberOfEpisodes}集`);
-      keywordSet.add(`${primaryTitle}更新至第${numberOfEpisodes}集`);
+  // ====== 1. YAML 标准模板渲染 (KEYWORD_TEMPLATES) ======
+  const templates = isSeries ? KEYWORD_TEMPLATES.tv : KEYWORD_TEMPLATES.movie;
+  for (const tmpl of templates) {
+    const rendered = tmpl
+      .replace('{title}', primaryTitle)
+      .replace('{year}', year || '')
+      .replace('{country}', primaryCountry)
+      .replace('{genre}', primaryGenre)
+      .replace('{actor}', primaryActor)
+      .replace('{director}', primaryDirector)
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    // 如果变量缺失导致的空尾缀（如 "片名  电影"），清理后加入
+    if (rendered && !rendered.endsWith('{country}') && !rendered.endsWith('{genre}') && !rendered.endsWith('{actor}')) {
+      keywordSet.add(rendered);
     }
   }
 
-  // 2. 网盘与下载截流词 (Cloud Storage & Download Intent - 核心转化洼地)
-  keywordSet.add(`${primaryTitle} 百度网盘`);
-  keywordSet.add(`${primaryTitle} 迅雷下载`);
-  keywordSet.add(`${primaryTitle} 夸克网盘资源`);
-  keywordSet.add(`${primaryTitle} 夸克云盘`);
-  keywordSet.add(`${primaryTitle} 磁力链接`);
-  keywordSet.add(`${primaryTitle} 阿里云盘`);
-  keywordSet.add(`${primaryTitle} 网盘下载`);
+  // 紧凑标题与变体
+  if (compactTitle !== primaryTitle) keywordSet.add(compactTitle);
+  if (year) keywordSet.add(`${primaryTitle} ${year}`);
 
-  // 3. 画质与音轨规格词 (Quality & Audio Track Intent)
+  // ====== 2. YAML 通用意图修饰词库 (GENERIC_MODIFIERS) ======
+  keywordSet.add(`${primaryTitle} 在线观看`);
+  keywordSet.add(`${primaryTitle} 免费观看`);
   keywordSet.add(`${primaryTitle} 4K超清原画`);
   keywordSet.add(`${primaryTitle} 1080P免VIP`);
+  keywordSet.add(`${primaryTitle} 完整版未删减`);
+
+  if (isSeries) {
+    keywordSet.add(`${primaryTitle} 全集`);
+    keywordSet.add(`${primaryTitle} 大结局`);
+    if (numberOfEpisodes && numberOfEpisodes > 1) {
+      keywordSet.add(`${primaryTitle} 共${numberOfEpisodes}集`);
+      keywordSet.add(`${primaryTitle} 更新至第${numberOfEpisodes}集`);
+    }
+  }
+
+  // ====== 3. 网盘与下载截流词 (GENERIC_MODIFIERS.cloud_storage_intent - 核心转化洼地) ======
+  for (const mod of GENERIC_MODIFIERS.cloud_storage_intent) {
+    keywordSet.add(`${primaryTitle} ${mod}`);
+  }
+
+  // ====== 4. 音轨与地域规格词 ======
   keywordSet.add(`${primaryTitle} 中文字幕`);
   if (region?.includes('港') || region?.includes('台') || region?.includes('粤')) {
     keywordSet.add(`${primaryTitle} 粤语中字`);
@@ -143,13 +173,13 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
     keywordSet.add(`${primaryTitle} 双语字幕`);
   }
 
-  // 4. 观影决策与剧情衍生词 (Discovery & Decision Intent)
+  // ====== 5. 观影决策与剧情衍生词 ======
   keywordSet.add(`${primaryTitle} 豆瓣真实评分`);
   keywordSet.add(`${primaryTitle} 结局解析`);
   keywordSet.add(`${primaryTitle} 演员表阵容`);
   keywordSet.add(`${primaryTitle} 片尾彩蛋`);
 
-  // 5. 拼音/同音/常见别名容错词 (Fuzzy & Phonetic Aliases)
+  // ====== 6. 拼音/同音/常见别名容错词 (Fuzzy & Phonetic Aliases) ======
   for (const [key, aliases] of Object.entries(COMMON_FUZZY_ALIASES)) {
     if (primaryTitle.includes(key)) {
       for (const alias of aliases) {
@@ -159,26 +189,24 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
     }
   }
 
-  // 6. 主创与类型衍生词
-  const validActs = actors.filter(a => a && !['知名导演', '实力主演', '未知', '暂无'].includes(a.trim()));
-  const validDirs = directors.filter(d => d && !['知名导演', '实力主演', '未知', '暂无'].includes(d.trim()));
+  // ====== 7. 主创与类型衍生词 ======
   for (const actor of validActs.slice(0, 2)) {
     keywordSet.add(`${actor} ${mediaLabel}`);
   }
   for (const dir of validDirs.slice(0, 1)) {
     keywordSet.add(`${dir} 导演新作`);
   }
-  if (genres.length > 0) {
-    keywordSet.add(`${genres[0]}片推荐`);
+  if (primaryGenre) {
+    keywordSet.add(`${primaryGenre}片推荐`);
   }
 
-  // 7. 品牌主词
+  // 品牌词
   keywordSet.add('iKanPP');
   keywordSet.add('爱看片片');
 
-  // 精选用于页面渲染的探索意图 Chips (8~10个最亮眼的词)
+  // 精选用于页面渲染的探索意图 Chips
   const intentChips = [
-    `${primaryTitle}在线观看`,
+    `${primaryTitle} 在线观看`,
     `${primaryTitle} 4K超清`,
     `${primaryTitle} 百度网盘`,
     `${primaryTitle} 迅雷下载`,
@@ -188,8 +216,16 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
     `${primaryTitle} 结局彩蛋`,
   ];
 
-  // 8. 自动化合成高转化、防降权、高点击率的 Meta Description (白帽自然融入)
-  const tagParts = [year, region, genres[0], mediaLabel].filter(Boolean);
+  // ====== 8. YAML 跨维度探索标签 (Discovery Chips) ======
+  const discoveryChips: string[] = [];
+  if (year && primaryGenre) discoveryChips.push(`${year}热门${primaryGenre}${mediaLabel}`);
+  if (primaryCountry && primaryGenre) discoveryChips.push(`${primaryCountry}${primaryGenre}${mediaLabel}推荐`);
+  if (primaryActor) discoveryChips.push(`${primaryActor}主演作品`);
+  if (primaryDirector) discoveryChips.push(`${primaryDirector}导演代表作`);
+  if (primaryGenre) discoveryChips.push(`${primaryGenre}${mediaLabel}排行榜`);
+
+  // ====== 9. YAML 标准元数据语法 + 网盘截流 CTA ======
+  const tagParts = [year, primaryCountry, primaryGenre, mediaLabel].filter(Boolean);
   const signalPrefix = tagParts.length > 0 ? `【${tagParts.join('·')}】` : '';
 
   const castParts: string[] = [];
@@ -206,17 +242,22 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
     cleanDesc = cleanDesc.slice(0, 80) + '...';
   }
 
-  // 网盘截流钩子 + 0ms 播放行动号召 (CTA)
+  // YAML 描述主干 + 网盘截流钩子
+  const yamlNarrative = isSeries
+    ? `在线观看《${primaryTitle}》，查看最新更新、剧情介绍、演职员表${numberOfEpisodes ? `与全网共${numberOfEpisodes}集更新状态` : ''}。`
+    : `在线观看《${primaryTitle}》，查看${year ? `${year}年` : ''}${primaryCountry}${primaryGenre}${mediaLabel}的剧情简介、演员表阵容与导演信息。`;
+
   const hookCta = isSeries
-    ? (numberOfEpisodes ? `寻找《${primaryTitle}》百度网盘/迅雷下载？iKanPP 无需繁琐转存解压，全网首发共${numberOfEpisodes}集 4K 超清 0ms 纯直连秒播。` : `寻找《${primaryTitle}》网盘资源？iKanPP 支持全集 4K 原画免VIP极速在线观看。`)
+    ? (numberOfEpisodes ? `寻找《${primaryTitle}》百度网盘/迅雷下载？iKanPP 无需繁琐转存解压，全网首发 4K 超清 0ms 纯直连秒播。` : `寻找《${primaryTitle}》网盘资源？iKanPP 支持全集 4K 原画免VIP极速在线观看。`)
     : `寻找《${primaryTitle}》百度网盘/迅雷资源？无需转存解压与限速等待，iKanPP 提供 1080P/4K 超清原画完整版 0ms 免VIP在线秒播。`;
 
-  const metaDescription = `${signalPrefix}《${primaryTitle}》${castStr}${cleanDesc ? `剧情介绍：${cleanDesc} ` : ''}${hookCta}`;
+  const metaDescription = `${signalPrefix}${yamlNarrative} ${castStr}${cleanDesc ? `剧情：${cleanDesc} ` : ''}${hookCta}`;
 
   return {
     keywords: Array.from(keywordSet).slice(0, 35),
     metaDescription,
     intentChips,
     cleanTitle: primaryTitle,
+    discoveryChips,
   };
 }
