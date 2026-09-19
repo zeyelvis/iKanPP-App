@@ -778,17 +778,34 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
         try {
           const list = JSON.parse(rawDedicated);
           if (Array.isArray(list) && list.length > 0) {
-            const dedicatedTotal = list.length;
-            const dedicatedPageCount = Math.max(1, Math.ceil(dedicatedTotal / limit));
+            // 真实专区/全库总数以 matchedIds (如电影专区11498部、全站68499部) 为准，绝不拿倒排索引切片长度当总数
+            const realTotal = Math.max(total, list.length);
+            const pageCount = Math.max(1, Math.ceil(realTotal / limit));
             const startIndex = (page - 1) * limit;
-            const pageIds = list.slice(startIndex, startIndex + limit);
+
+            // 前 900 部由爱壹帆官方原生 4 大排序倒排索引高精度直出
+            let pageIds: string[] = [];
+            if (startIndex < list.length) {
+              pageIds = list.slice(startIndex, startIndex + limit);
+            }
+
+            // 若用户深度翻页超过倒排索引（或末页需补齐），从专区全量库 matchedIds 中无缝补充后续影片
+            if (pageIds.length < limit && matchedIds.length > list.length) {
+              const seenIdSet = new Set<string>(list);
+              const remainingIds = matchedIds.filter(id => !seenIdSet.has(id));
+              const remainingOffset = Math.max(0, startIndex - list.length);
+              const needed = limit - pageIds.length;
+              const extraIds = remainingIds.slice(remainingOffset, remainingOffset + needed);
+              pageIds.push(...extraIds);
+            }
+
             const items = (await Promise.all(pageIds.map(id => getEntityById(id)))).filter(Boolean) as TitleEntity[];
 
             return {
               items,
-              total: dedicatedTotal,
+              total: realTotal,
               page,
-              pageCount: dedicatedPageCount,
+              pageCount,
               limit,
             };
           }
