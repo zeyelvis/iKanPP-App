@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getEntityByTmdb, getNextEntitySeq, saveEntity } from '@/lib/services/entity-kv';
 import { fetchTMDBDetails } from '@/lib/services/entity-enrichment';
-import { formatEntityId, generateSlug } from '@/lib/data/entities/entity-utils';
+import { formatEntityId, generateSlug, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
 import { TitleEntity } from '@/lib/types/entity';
 import { batchPublishGoogleIndexing } from '@/lib/services/google-indexing';
 
@@ -169,6 +169,12 @@ export async function GET(request: Request) {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
+
+      const safeCheck = isStrictSafeEntity(entity);
+      if (!safeCheck.safe) {
+        console.warn(`[TMDB-Changes] 拦截成人/违规作品: ${displayTitle} (${safeCheck.reason})`);
+        continue;
+      }
 
       await saveEntity(entity);
       newlyAdded++;

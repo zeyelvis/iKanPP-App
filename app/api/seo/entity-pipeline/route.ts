@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getEntityByTmdb, getNextEntitySeq, saveEntity } from '@/lib/services/entity-kv';
 import { fetchTMDBDetails } from '@/lib/services/entity-enrichment';
-import { formatEntityId, generateSlug, isCleanChineseTitle } from '@/lib/data/entities/entity-utils';
+import { formatEntityId, generateSlug, isCleanChineseTitle, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
 import { TitleEntity } from '@/lib/types/entity';
 import { isJuliangExcludedCategory } from '@/lib/api/juliang-category-map';
 import { batchPublishGoogleIndexing } from '@/lib/services/google-indexing';
@@ -183,6 +183,12 @@ export async function GET(request: Request) {
       };
 
       entity.seoScore = calculateSeoScore(entity);
+
+      const safeCheck = isStrictSafeEntity(entity);
+      if (!safeCheck.safe) {
+        console.warn(`[EntityPipeline] 拦截成人/违规作品: ${entity.title} (${safeCheck.reason})`);
+        continue;
+      }
 
       await saveEntity(entity);
       newAddedCount++;

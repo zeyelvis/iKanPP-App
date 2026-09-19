@@ -1,5 +1,5 @@
 import { TitleEntity } from '@/lib/types/entity';
-import { generateSlug, formatEntityId, normalizeTitle, isCleanChineseTitle } from '@/lib/data/entities/entity-utils';
+import { generateSlug, formatEntityId, normalizeTitle, isCleanChineseTitle, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
 import { getEntityByTitle, getEntityByTmdb, getNextEntitySeq, saveEntity, setPersonEntitiesIndex, markPersonEnriched } from '@/lib/services/entity-kv';
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957';
@@ -577,6 +577,13 @@ export async function searchAndEnrichFromTMDB(
       } catch {}
     }
 
+    // 严格内容安全阻断门禁
+    const safeCheck = isStrictSafeEntity(entity);
+    if (!safeCheck.safe) {
+      console.warn(`[searchAndEnrichFromTMDB 安全阻断] 拦截违规/成人条目: ${mainTitle} (${safeCheck.reason})`);
+      return null;
+    }
+
     // 存入 KV 索引系统
     await saveEntity(entity);
     return entity;
@@ -698,6 +705,13 @@ async function convertHitToEntity(
           entity.numberOfEpisodes = airedCount;
         }
       } catch {}
+    }
+
+    // 严格内容安全阻断门禁
+    const safeCheck = isStrictSafeEntity(entity);
+    if (!safeCheck.safe) {
+      console.warn(`[convertHitToEntity 安全阻断] 拦截违规/成人条目: ${mainTitle} (${safeCheck.reason})`);
+      return null;
     }
 
     await saveEntity(entity);
