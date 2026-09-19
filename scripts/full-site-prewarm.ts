@@ -14,6 +14,7 @@ import { fileURLToPath } from 'url';
 import { PREBAKED_HOME_DATA } from '../lib/data/home-prebaked';
 import { PEOPLE_PREBAKED_ENTITIES } from '../lib/data/people-prebaked';
 import { PREBAKED_AVATARS } from '../lib/data/prebaked-avatars';
+import { PREBAKED_LATEST_TITLES } from '../lib/data/latest-titles-prebaked';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -340,6 +341,34 @@ async function main() {
       mediaTasks.push({ url: avatarUrl, width: 185, type: 'avatar' });
     }
   });
+
+  // 4. 全量扫描全专区最新上线雷达库（PREBAKED_LATEST_TITLES）
+  // 彻底消灭新入库影片详情页冷启动慢与首屏骨架屏闪烁
+  for (const [channelKey, items] of Object.entries(PREBAKED_LATEST_TITLES)) {
+    if (Array.isArray(items)) {
+      items.forEach((item: any) => {
+        if (item.title) uniqueTitles.add(item.title);
+        if (item.slug) {
+          try {
+            uniqueTitles.add(decodeURIComponent(item.slug));
+          } catch {}
+        }
+
+        // 收集封面海报 (w342 卡片 + w780 详情大图)
+        if (item.cover && !seenImageUrls.has(item.cover)) {
+          seenImageUrls.add(item.cover);
+          mediaTasks.push({ url: item.cover, width: 342, type: 'poster' });
+          mediaTasks.push({ url: item.cover, width: 780, type: 'detail-cover' });
+        }
+
+        // 收集全景剧照 (w1280 巨幕)
+        if (item.backdrop && !seenImageUrls.has(item.backdrop)) {
+          seenImageUrls.add(item.backdrop);
+          mediaTasks.push({ url: item.backdrop, width: 1280, type: 'backdrop' });
+        }
+      });
+    }
+  }
 
   console.log(`📊 数据汇总完成：`);
   console.log(`  - 唯一影视作品: ${uniqueTitles.size} 部`);

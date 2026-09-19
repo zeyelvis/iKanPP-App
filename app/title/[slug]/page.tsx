@@ -129,16 +129,45 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
   });
 
   if (prebakedHit) {
-    // 优先以预烘焙的权威中文标题发起增强自愈
-    const healed = await searchAndEnrichFromTMDB(
-      prebakedHit.title,
-      prebakedHit.type,
-      prebakedHit.year,
-      true
-    );
-    if (healed && healed.cover) {
-      return enrichEpisodeCount(healed);
+    // 1. 优先尝试从本地/KV 0ms 读取已持久化的完整实体
+    const existing = await getEntityByTitle(prebakedHit.title);
+    if (existing && existing.cover && existing.cover.trim() !== '') {
+      return enrichEpisodeCount(existing);
     }
+
+    // 2. 0ms 秒开防御：直接使用预烘焙已有的高质量数据（标题、4K海报、年份、类型、集数）瞬间组装直出
+    // 彻底消灭首屏针对海外 TMDB API 的数秒网络等待与骨架屏闪烁！
+    const epCount = prebakedHit.updateBadge ? parseInt(prebakedHit.updateBadge.replace(/\D/g, ''), 10) || 1 : 1;
+    const fallbackEntity: TitleEntity = {
+      entityId: prebakedHit.entityId || `ik_pre_${prebakedHit.tmdbId || '000000'}`,
+      slug: decodeURIComponent(prebakedHit.slug || cleanTitle),
+      tmdbId: prebakedHit.tmdbId || '',
+      tmdbType: (prebakedHit.type === 'tv' || prebakedHit.type === 'anime') ? 'tv' : 'movie',
+      title: prebakedHit.title,
+      type: prebakedHit.type || 'tv',
+      year: prebakedHit.year || '2026',
+      description: `${prebakedHit.title} 是 ${prebakedHit.year || '2026'} 年上线的优质${prebakedHit.type === 'movie' ? '电影' : '剧集'}。提供全网多源纯直连极速播放，画质高清流畅，尽在 iKanPP 爱看片片。`,
+      cover: prebakedHit.cover,
+      backdrop: prebakedHit.backdrop || prebakedHit.cover,
+      rate: prebakedHit.rate || '8.0',
+      genres: prebakedHit.genres || [(prebakedHit.type === 'movie' ? '电影' : '电视剧')],
+      directors: [],
+      actors: [],
+      numberOfSeasons: 1,
+      numberOfEpisodes: epCount,
+      status: prebakedHit.updateBadge || '正片',
+      createdAt: prebakedHit.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // 3. 后台非阻塞异步补全演职员、多语言与深度元数据并持久化到 KV（绝不阻塞用户首屏关键路径）
+    (async () => {
+      try {
+        await searchAndEnrichFromTMDB(prebakedHit.title, prebakedHit.type, prebakedHit.year, true);
+      } catch {}
+    })();
+
+    return enrichEpisodeCount(fallbackEntity);
   }
 
   // 🌟 优先级 2：若 URL 未带 ID 但存在明确中文标题，尝试 100% 精准中文标题匹配

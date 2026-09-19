@@ -591,6 +591,68 @@ async function writeKvShowcase(channelKey, items) {
   }
 }
 
+/**
+ * 将新上线的雷达条目自动生成完整实体写入生产 KV，实现入库即预热
+ */
+async function writeKvEntities(items) {
+  for (const item of items) {
+    if (!item || !item.title) continue;
+    const entityId = item.entityId;
+    const decodedSlug = decodeURIComponent(item.slug || item.title);
+    const title = item.title;
+    const tmdbId = item.tmdbId;
+
+    const entity = {
+      entityId: entityId,
+      id: entityId,
+      title: title,
+      slug: decodedSlug,
+      canonicalSlug: decodedSlug,
+      type: item.type || 'tv',
+      year: item.year || '2026',
+      cover: item.cover,
+      backdrop: item.backdrop || item.cover,
+      overview: item.overview || `${title} 是 ${item.year || '2026'} 年上线的优质影视。提供全网多源纯直连极速播放，画质高清流畅，尽在 iKanPP 爱看片片。`,
+      description: item.overview || `${title} 是 ${item.year || '2026'} 年上线的优质影视。提供全网多源纯直连极速播放，画质高清流畅，尽在 iKanPP 爱看片片。`,
+      genres: item.genres || [(item.type === 'movie' ? '电影' : '电视剧')],
+      directors: [],
+      actors: [],
+      rate: item.rate || '8.0',
+      numberOfSeasons: 1,
+      numberOfEpisodes: item.updateBadge ? parseInt(item.updateBadge.replace(/\D/g, ''), 10) || 1 : 1,
+      status: item.updateBadge || '正片',
+      tmdbId: tmdbId || '',
+      tmdbType: (item.type === 'tv' || item.type === 'anime') ? 'tv' : 'movie',
+      createdAt: item.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const keysToPut = [
+      { key: `entity:${entityId}`, val: entity },
+      { key: `slug:${decodedSlug}`, val: entityId },
+      { key: `title:${title}`, val: entityId },
+    ];
+    if (item.slug && item.slug !== decodedSlug) {
+      keysToPut.push({ key: `slug:${item.slug}`, val: entityId });
+    }
+    if (tmdbId) {
+      keysToPut.push({ key: `tmdb:${entity.tmdbType}:${tmdbId}`, val: entityId });
+    }
+
+    for (const k of keysToPut) {
+      try {
+        const url = `${KV_BASE_URL}/values/${encodeURIComponent(k.key)}`;
+        const payload = typeof k.val === 'string' ? k.val : JSON.stringify(k.val);
+        await fetch(url, {
+          method: 'PUT',
+          headers: { ...KV_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' },
+          body: payload,
+        });
+      } catch {}
+    }
+  }
+}
+
 // ── 主程序 ───────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -617,7 +679,8 @@ async function main() {
     if (!isDryRun) {
       try {
         await writeKvShowcase(channel.key, list);
-        console.log(`☁️ [KV] 成功同步写入 KV 键 recent:${channel.key} (${list.length} 条)`);
+        await writeKvEntities(list);
+        console.log(`☁️ [KV] 成功同步写入 KV 键 recent:${channel.key} 并完成 ${list.length} 部新片完整实体预热`);
       } catch (err) {
         console.warn(`⚠️ [KV] 写入 KV 键 recent:${channel.key} 异常:`, err.message);
       }

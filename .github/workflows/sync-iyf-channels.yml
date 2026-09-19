@@ -82,7 +82,9 @@ jobs:
             git push
             echo "🚀 正在触发 Cloudflare Pages 编译部署工作流..."
             gh workflow run deploy.yml --ref main
-            echo "🎉 数据已推送到远程仓库并成功触发自动部署！"
+            echo "⚡ 正在自动联动全站全维度全量预热工作流..."
+            gh workflow run full-site-prewarm.yml --ref main
+            echo "🎉 数据已推送到远程仓库并成功触发自动部署与全量预热！"
           else
             echo "✨ 现有影视数据已是最新，无变动。"
           fi
