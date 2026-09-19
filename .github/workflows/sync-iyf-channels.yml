@@ -39,13 +39,19 @@ jobs:
           node-version: 22
 
       - name: Execute Full Auto-Update & SEO Pipeline
+        env:
+          CF_KV_ACCOUNT_ID: ${{ secrets.CF_KV_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a' }}
+          CF_KV_NAMESPACE_ID: ${{ secrets.CF_KV_NAMESPACE_ID || '42311924427747deaf00981d99d58998' }}
+          CF_KV_API_KEY: ${{ secrets.CF_KV_API_KEY || 'cfk_L8MzQDjTswTK4jBtvJjmcKjEnxTQ1dKNhzNyn4dQa33221aa' }}
+          CF_KV_EMAIL: ${{ secrets.CF_KV_EMAIL || 'zeyelvis@gmail.com' }}
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957' }}
         run: |
           TARGET="${{ github.event.inputs.channel || 'all_channels' }}"
           echo "🚀 [1/6] 爱壹帆专区轮播与速报同步，目标板块: $TARGET..."
           node scripts/sync-iyf-hero.mjs --target="$TARGET"
 
-          echo "🚀 [2/6] 全站「最新上线」真实增量流巡检与预烘焙..."
-          node scripts/sync-latest-titles.mjs
+          echo "🚀 [2/6] 全球数字发行雷达：爱壹帆 + 采集站 + TMDB 智能融合增量流巡检..."
+          node scripts/sync-release-radar.mjs
 
           echo "📺 [3/6] 连载作品最新集数变更自动检测与角标回写..."
           node scripts/sync-episode-updates.mjs

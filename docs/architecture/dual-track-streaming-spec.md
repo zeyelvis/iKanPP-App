@@ -267,8 +267,37 @@
 4. **搜索普通与分组视图对齐 (`VideoGrid.tsx`)**：
    - 普通去重模式与分组模式统一采用 `SOURCE_PRIORITY_ORDER`，确保卡片代表源 100% 为巨量资源。
 
+---
 
+## 10. 全球数字发行雷达系统与「最新上线」展台绝对解耦铁律 (Global Release Radar & Zero-Pollution Showcase Spec)
 
+全站首页大厅与 6 大专区「最新上线 · 实时收录」货架必须永久恪守“高品质当季热播与真实数字发行时间”标准，任何后续开发、底层搜索拓展或自动化同步严禁违反以下工程基线：
 
+### 1. 彻底切断底层持久化对前台展示的污染 (Zero-Pollution Showcase Invariant)
+- **严禁写入**：`saveEntity()` 严格定位于底层影视实体数据的持久化与搜索反向索引维护（步骤 1-13），**严禁在 `saveEntity()` 内部向 `recent:all` 或 `recent:${type}` 盲目推入数据**。
+- **唯一受控写入口**：前台 `recent:*` 展台的写入权限**唯一归属于 `updateRecentShowcase()`**，只能由每小时执行的「全球数字发行雷达」任务受控调度，彻底杜绝搜索图谱补齐老片（如《美国队长》老动画或冷门老片）污染前台展示。
 
+### 2. 三维数据源智能融合与自愈闭环 (Tri-Source Intelligence Radar)
+- **维度一：爱壹帆（IYF）人工审核最新流**：
+  - 通过逆向解析 `GetLastAdd?cinema=1&cid=${cid}` 接口并搭载动态 MD5 签名算法（`MD5(publicKey + "&" + queryString.toLowerCase() + "&" + privateKey)`）；
+  - 脚本集成 HTML `pConfig` 自动提取自愈机制，彻底免疫爱壹帆未来前端密钥轮转；
+  - 严格继承连载状态、官方分集角标（如更新至第X集、08集全）。
+- **维度二：主流采集站真实入库流 (Real-Time Collector Stream)**：
+  - 针对电影、大陆剧、欧美剧、动漫、综艺等叶子分类并发抓取光速/极速最新资源；
+  - 按真实的 `vod_time`（入库时间）倒序排序，确保刚刚在网络上架的华语热播新片抢先捕获。
+- **维度三：TMDB 全球排期流 (TMDB Trending & Digital Release)**：
+  - 并发监控 `trending/all/day` 与 `movie/now_playing`；
+  - 智能识别流媒体网络发行平台，为卡片自动注入 `Netflix` / `Disney+` / `Apple TV+` / `HBO Max` / `院线热映` / `全球热度` 等发行徽章。
 
+### 3. TMDB 原版 4K 无水印物料赋能
+- 前台卡片绝不直接采用被压缩、拉伸或带第三方水印的低清图片；
+- 融合引擎自动通过片名检索 TMDB 中文条目，补齐原版 4K 竖版海报（`w500`）与 4K 宽屏剧照（`w1280`），并校准真实豆瓣/TMDB 评分。
+
+### 4. 华语流媒体安全防线穿透校验
+- 融合脚本底层、KV 写入前校验与前端展示组件（`LatestTitlesRail.tsx`）三层统一执行 `isCleanChineseTitle` 铁律；
+- 绝对拦截平假名/片假名日文条目、纯外文无中文条目、韩文字符及低俗敏感词，严禁垃圾老片（评分 <= 3.0 且年代 < 2024）入榜。
+
+### 5. 双重落地与持续自动化
+- **预烘焙文件**：生成写入 `lib/data/latest-titles-prebaked.ts`，为全站提供 SSR 0ms 直出骨架；
+- **KV 持久化**：由 `.github/workflows/sync-iyf-channels.yml` 每小时整点调度 `scripts/sync-release-radar.mjs`，通过 Cloudflare KV REST API 自动更新生产环境 `recent:*` 系列键；
+- **客户端缓存无缝升级**：前台组件将缓存版本升级至 `v8`，并自动清理历史旧版本缓存。

@@ -17,6 +17,8 @@ export interface RecentTitleItem {
   channelKey?: string;
   genres?: string[];
   updateBadge?: string;
+  platformBadge?: string;
+  qualityBadge?: string;
   createdAt: string;
 }
 
@@ -427,41 +429,9 @@ export async function saveEntity(entity: TitleEntity): Promise<void> {
     await appendToIndex(`status:${s}`, id);
   }
 
-  // 14. 原子维护最近入库有序索引 (recent:all 与 recent:${entity.type})
-  const recentItem: RecentTitleItem = {
-    entityId: id,
-    title: entity.title,
-    slug: entity.slug,
-    cover: entity.cover,
-    backdrop: entity.backdrop || entity.cover,
-    rate: entity.rate || '8.8',
-    year: entity.year || '2026',
-    type: entity.type,
-    genres: entity.genres || [],
-    createdAt: entity.createdAt || new Date().toISOString(),
-  };
-
-  // 严格安全内容铁律：成人低俗词汇、日文假名地下录像与垃圾片坚决不进入最近上线索引
-  if (isSafeRecentTitleItem(recentItem)) {
-    const updateRecentList = async (key: string) => {
-      try {
-        const rawList = await kvGet(key);
-        let list: RecentTitleItem[] = rawList ? JSON.parse(rawList) : [];
-        // 排重同 id 或归一化同名实体
-        list = list.filter(item => item.entityId !== id && normalizeTitle(item.title) !== normTitle && isSafeRecentTitleItem(item));
-        list.unshift(recentItem);
-        if (list.length > 60) list = list.slice(0, 60);
-        await kvPut(key, JSON.stringify(list));
-      } catch (e) {
-        console.warn(`[saveEntity] updateRecentList failed for ${key}:`, e);
-      }
-    };
-
-    await updateRecentList('recent:all');
-    if (entity.type === 'movie' || entity.type === 'tv') {
-      await updateRecentList(`recent:${entity.type}`);
-    }
-  }
+  // 注：原第 14 步维护 recent:* 已彻底解耦移出。
+  // 遵循 AGENTS.md 架构准则，前台「最新上线」展台唯一由「全球数字发行雷达」定时任务（updateRecentShowcase）精选写入，
+  // 坚决防止底层搜索扩充、详情页冷启动持久化等操作污染前台展示。
 }
 
 // ── 辅助函数：分词与多维标签提取 ─────────────────────────────────
@@ -905,6 +875,29 @@ export async function listRecentEntities(limit = 20, type?: string): Promise<Rec
   }
 
   return fallbackList.slice(0, limit);
+}
+
+/**
+ * 专供「全球数字发行雷达」定时任务写入前台精选「最新上线」列表
+ * 拥有对 recent:* 键的唯一受控写权限，彻底隔离底层实体持久化污染
+ */
+export async function updateRecentShowcase(
+  channel: string,
+  items: RecentTitleItem[]
+): Promise<void> {
+  const normalizedChannel = (channel || 'all').toLowerCase().trim();
+  const validChannels = ['movie', 'tv', 'anime', 'variety', 'documentary', 'short'];
+  const channelKey = validChannels.includes(normalizedChannel) ? normalizedChannel : 'all';
+  const targetKey = channelKey === 'all' ? 'recent:all' : `recent:${channelKey}`;
+
+  // 严格华语安全与品质校验过滤
+  const safeItems = (items || []).filter(isSafeRecentTitleItem).slice(0, 60);
+
+  // 写入内存缓存（供本地 SSR 0ms 直出）
+  memoryStore.set(targetKey, JSON.stringify(safeItems));
+
+  // 写入 Cloudflare KV 持久化
+  await kvPut(targetKey, JSON.stringify(safeItems));
 }
 
 /**

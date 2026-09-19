@@ -112,23 +112,41 @@ function LatestPosterCard({
           </div>
         )}
 
-        {/* 动态脉搏 NEW 角标 */}
-        <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 bg-black/80 backdrop-blur-md px-1.5 sm:px-2 py-0.5 rounded-full flex items-center gap-1 border border-emerald-500/40 shadow-md z-20">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-[9px] sm:text-[10px] font-black text-emerald-300 tracking-wider">
-            NEW
-          </span>
-        </div>
-
-        {/* 评分角标 */}
-        {item.rate && parseFloat(item.rate) > 0 ? (
-          <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-black/80 backdrop-blur-md px-1.5 sm:px-2 py-0.5 rounded-full flex items-center gap-1 border border-white/15 shadow-md z-20">
-            <Icons.Star size={10} className="text-amber-400 fill-amber-400" />
-            <span className="text-[10px] sm:text-[11px] font-black text-amber-300">
-              {item.rate}
+        {/* 动态脉搏 NEW 与发行平台角标 */}
+        <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 flex items-center gap-1 z-20">
+          <div className="bg-black/85 backdrop-blur-md px-1.5 sm:px-2 py-0.5 rounded-full flex items-center gap-1 border border-emerald-500/40 shadow-md">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[9px] sm:text-[10px] font-black text-emerald-300 tracking-wider">
+              NEW
             </span>
           </div>
-        ) : null}
+          {item.platformBadge ? (
+            <div className="bg-amber-500/20 backdrop-blur-md px-1.5 py-0.5 rounded-full flex items-center border border-amber-400/40 shadow-md">
+              <span className="text-[9px] font-bold text-amber-300">
+                {item.platformBadge}
+              </span>
+            </div>
+          ) : null}
+        </div>
+
+        {/* 规格画质与评分角标 */}
+        <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 flex items-center gap-1 z-20">
+          {item.qualityBadge ? (
+            <div className="bg-emerald-950/80 backdrop-blur-md px-1.5 py-0.5 rounded-full flex items-center border border-emerald-500/50 shadow-md">
+              <span className="text-[9px] font-black text-emerald-300 font-mono">
+                {item.qualityBadge}
+              </span>
+            </div>
+          ) : null}
+          {item.rate && parseFloat(item.rate) > 0 ? (
+            <div className="bg-black/80 backdrop-blur-md px-1.5 sm:px-2 py-0.5 rounded-full flex items-center gap-1 border border-white/15 shadow-md">
+              <Icons.Star size={10} className="text-amber-400 fill-amber-400" />
+              <span className="text-[10px] sm:text-[11px] font-black text-amber-300">
+                {item.rate}
+              </span>
+            </div>
+          ) : null}
+        </div>
 
         {/* 底部悬浮更新状态与相对时间条 */}
         <div className="absolute bottom-1.5 left-1.5 right-1.5 bg-black/75 backdrop-blur-md px-2 py-0.5 rounded-md border border-white/10 z-20 flex items-center justify-between gap-1">
@@ -177,7 +195,7 @@ export default function LatestTitlesRail({
   const [items, setItems] = useState<RecentTitleItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const CACHE_KEY = `kvideo-latest-titles-v6-${type || 'all'}`;
+  const CACHE_KEY = `kvideo-latest-titles-v8-${type || 'all'}`;
 
   // 严格安全内容过滤器（彻底杜绝日文假名、纯外文无中文条目与垃圾脏数据进入主站展示）
   const filterSafeItems = (rawList: RecentTitleItem[]): RecentTitleItem[] => {
@@ -196,10 +214,10 @@ export default function LatestTitlesRail({
     let active = true;
     if (typeof window !== 'undefined') {
       try {
-        // 清理旧版本被污染的历史 localStorage 缓存（v4 与 v5）
+        // 清理旧版本被污染的历史 localStorage 缓存（v4, v5, v6, v7）
         for (let i = localStorage.length - 1; i >= 0; i--) {
           const k = localStorage.key(i);
-          if (k && (k.startsWith('kvideo-latest-titles-v4-') || k.startsWith('kvideo-latest-titles-v5-'))) {
+          if (k && (k.startsWith('kvideo-latest-titles-v4-') || k.startsWith('kvideo-latest-titles-v5-') || k.startsWith('kvideo-latest-titles-v6-') || k.startsWith('kvideo-latest-titles-v7-'))) {
             localStorage.removeItem(k);
           }
         }
@@ -220,8 +238,8 @@ export default function LatestTitlesRail({
     const fetchLatest = async () => {
       try {
         const url = type
-          ? `/api/latest-titles?type=${type}&limit=20&v=6`
-          : '/api/latest-titles?limit=20&v=6';
+          ? `/api/latest-titles?type=${type}&limit=20&v=8`
+          : '/api/latest-titles?limit=20&v=8';
         const res = await fetch(url);
         if (!res.ok) return;
         const json = await res.json();
