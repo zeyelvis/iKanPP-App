@@ -226,6 +226,32 @@ async function main() {
         }
       }
 
+      // 🌟【双轨智能融合核心】：对于时间排序（添加时间与更新时间），无缝置顶先锋首发爆款
+      if (sortMode.indexPrefix === 'index:time_added' || sortMode.indexPrefix === 'index:time_updated') {
+        let pioneerIds = [];
+        const pioneersPath = path.join(CACHE_DIR, 'first-release-pioneers.json');
+        if (fs.existsSync(pioneersPath)) {
+          try {
+            const pioneers = JSON.parse(fs.readFileSync(pioneersPath, 'utf-8'));
+            pioneerIds = pioneers
+              .filter(p => channel.key === 'all' || p.type === channel.key)
+              .map(p => p.entityId);
+          } catch {}
+        }
+        // 确保战略先锋爆款（如《生化危机：爆发夜》ik020581）永远常驻在电影和全站第一线
+        if (channel.key === 'movie' || channel.key === 'all') {
+          if (!pioneerIds.includes('ik020581')) {
+            pioneerIds.unshift('ik020581');
+          }
+        }
+        // 动态合并并去重
+        if (pioneerIds.length > 0) {
+          const pioneerSet = new Set(pioneerIds);
+          orderedIds = [...pioneerIds, ...orderedIds.filter(id => !pioneerSet.has(id))];
+          console.log(`  🌟 [双轨融合] 已将 ${pioneerIds.length} 部首发先锋爆款置顶注入 ${sortMode.label} 索引首位`);
+        }
+      }
+
       console.log(`\n  ✅ 【${channel.name}】${sortMode.label} 索引构建完毕: ${orderedIds.length} 部`);
       kvIndexPairs.push({
         key: `${sortMode.indexPrefix}:${channel.key}`,

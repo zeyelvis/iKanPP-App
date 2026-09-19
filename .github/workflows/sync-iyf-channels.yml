@@ -53,6 +53,9 @@ jobs:
           echo "🚀 [2/6] 全球数字发行雷达：爱壹帆 + 采集站 + TMDB 智能融合增量流巡检..."
           node scripts/sync-release-radar.mjs
 
+          echo "🎯 [2.5/7] 全网首发先锋雷达：院线抢先版/TC新片嗅探、TMDB 4K 建档与四大排序置顶..."
+          node scripts/sync-first-release-radar.mjs
+
           echo "📺 [3/6] 连载作品最新集数变更自动检测与角标回写..."
           node scripts/sync-episode-updates.mjs
 
