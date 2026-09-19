@@ -11,7 +11,7 @@ import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
 import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
 import { fetchJableVideoDetail } from '@/lib/server/jable-scraper';
 import { fetchIkanbotDetail } from '@/lib/server/ikanbot';
-
+import { parseEpisodes } from '@/lib/api/parsers';
 
 export const runtime = 'edge';
 
@@ -28,11 +28,14 @@ async function handleDetailRequest(id: string | null, source: any, method: strin
 
   const sourceId = typeof source === 'object' && source !== null ? source.id : source;
 
-  // 1. 专属支持 Jable 原生视频流直解与智能热备
-  if (sourceId === 'jable' || !sourceId) {
+  // 1. 专属支持 Jable 原生视频流直解与智能热备（严格限定：显式 jable 源，或无 source 且符合番号规范且非主站 ik 实体）
+  const codeMatch = id.match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
+  const isJableExplicit = sourceId === 'jable';
+  const isJableSource = isJableExplicit || (!sourceId && !!codeMatch && !id.startsWith('ik'));
+
+  if (isJableSource) {
     try {
       // 提取番号
-      const codeMatch = id.match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
       const videoCode = codeMatch ? codeMatch[0].toUpperCase() : id;
 
       // 尝试直解 Jable
@@ -253,7 +256,7 @@ async function handleDetailRequest(id: string | null, source: any, method: strin
   }
 
   try {
-    const videoDetail = await getVideoDetail(id, sourceConfig);
+    const videoDetail = await getVideoDetail(id, sourceConfig, titleParam || undefined);
 
     return NextResponse.json({
       success: true,
@@ -270,26 +273,75 @@ async function handleDetailRequest(id: string | null, source: any, method: strin
         const cleanTitle = titleParam.replace(/[《》【】\[\]（）()·\s:：\-]/g, ' ').trim();
         const searchRes = await searchVideos(cleanTitle, [sourceConfig], 1);
         const candidates = searchRes[0]?.results || [];
+
+        const isCleanTitleMatch = (candStr: string, tgtStr: string) => {
+          if (candStr === tgtStr) return true;
+          if (candStr.includes(tgtStr)) return true;
+          if (tgtStr.includes(candStr) && Math.abs(tgtStr.length - candStr.length) <= 1) return true;
+          return false;
+        };
+
         const matched = candidates.find(c => {
-          const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
+          const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').replace(/(19\d\d|20\d\d)$/g, '').toLowerCase();
           const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
           return cName === tName;
         }) || candidates.find(c => {
-          const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
+          const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').replace(/(19\d\d|20\d\d)$/g, '').toLowerCase();
           const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
-          return cName.includes(tName) || tName.includes(cName);
+          return isCleanTitleMatch(cName, tName);
         });
 
-        if (matched && matched.vod_id && String(matched.vod_id) !== String(id)) {
-          const healedDetail = await getVideoDetail(matched.vod_id, sourceConfig);
-          if (healedDetail && healedDetail.episodes && healedDetail.episodes.length > 0) {
-            return NextResponse.json({
-              success: true,
-              data: healedDetail,
-              healed: true,
-              healedSource: sourceConfig.id,
-              healedId: matched.vod_id,
-            });
+        if (matched) {
+          const matchedAny = matched as any;
+          // 若候选条目已自带播放流（如巨量资源自带完整 vod_play_url），直接解析返回，无需二次调不支持 ids 的接口
+          if (matchedAny.vod_play_url) {
+            const playFrom = (matchedAny.vod_play_from || '').split('$$$');
+            const playUrls = (matchedAny.vod_play_url || '').split('$$$');
+            let selectedIndex = 0;
+            for (let i = 0; i < playFrom.length; i++) {
+              if (playFrom[i].toLowerCase().includes('m3u8') && playUrls[i]?.trim()) {
+                selectedIndex = i;
+                break;
+              }
+            }
+            const episodes = parseEpisodes(playUrls[selectedIndex] || '');
+            if (episodes.length > 0) {
+              return NextResponse.json({
+                success: true,
+                data: {
+                  vod_id: matched.vod_id,
+                  vod_name: matched.vod_name,
+                  vod_pic: matched.vod_pic,
+                  vod_remarks: matched.vod_remarks,
+                  vod_year: matched.vod_year,
+                  vod_area: matched.vod_area,
+                  vod_actor: matched.vod_actor,
+                  vod_director: matched.vod_director,
+                  vod_content: matched.vod_content,
+                  type_name: matched.type_name,
+                  vod_lang: matched.vod_lang,
+                  episodes,
+                  source: sourceConfig.id,
+                  source_code: playFrom[selectedIndex] || '',
+                },
+                healed: true,
+                healedSource: sourceConfig.id,
+                healedId: matched.vod_id,
+              });
+            }
+          }
+
+          if (matched.vod_id && String(matched.vod_id) !== String(id)) {
+            const healedDetail = await getVideoDetail(matched.vod_id, sourceConfig, cleanTitle);
+            if (healedDetail && healedDetail.episodes && healedDetail.episodes.length > 0) {
+              return NextResponse.json({
+                success: true,
+                data: healedDetail,
+                healed: true,
+                healedSource: sourceConfig.id,
+                healedId: matched.vod_id,
+              });
+            }
           }
         }
 
@@ -299,14 +351,14 @@ async function handleDetailRequest(id: string | null, source: any, method: strin
         for (const res of crossSearchRes) {
           const crossCandidates = res.results || [];
           const crossMatched = crossCandidates.find(c => {
-            const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
+            const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').replace(/(19\d\d|20\d\d)$/g, '').toLowerCase();
             const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
-            return cName === tName || cName.includes(tName) || tName.includes(cName);
+            return isCleanTitleMatch(cName, tName);
           });
           if (crossMatched && crossMatched.vod_id) {
             const crossSource = getSourceById(res.source);
             if (crossSource) {
-              const crossDetail = await getVideoDetail(crossMatched.vod_id, crossSource);
+              const crossDetail = await getVideoDetail(crossMatched.vod_id, crossSource, cleanTitle);
               if (crossDetail && crossDetail.episodes && crossDetail.episodes.length > 0) {
                 return NextResponse.json({
                   success: true,

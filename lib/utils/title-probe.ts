@@ -27,16 +27,18 @@ const listeners = new Map<string, Set<(result: TitleProbeResult) => void>>();
 /**
  * 标准化标题缓存键
  */
-function getCacheKey(title: string): string {
-  return title.trim().toLowerCase();
+function getCacheKey(title: string, type?: string, year?: string | number): string {
+  const t = (type || '').trim().toLowerCase();
+  const y = (year ? String(year) : '').trim();
+  return `${title.trim().toLowerCase()}__${t}__${y}`;
 }
 
 /**
  * 同步检查是否已有探测成功的缓存结果
  */
-export function getCachedTitleProbe(title?: string | null): TitleProbeResult | null {
+export function getCachedTitleProbe(title?: string | null, type?: string, year?: string | number): TitleProbeResult | null {
   if (!title) return null;
-  const key = getCacheKey(title);
+  const key = getCacheKey(title, type, year);
   const cached = probeCache.get(key);
   if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
     return cached.data;
@@ -49,9 +51,11 @@ export function getCachedTitleProbe(title?: string | null): TitleProbeResult | n
  */
 export function subscribeTitleProbe(
   title: string,
-  callback: (result: TitleProbeResult) => void
+  callback: (result: TitleProbeResult) => void,
+  type?: string,
+  year?: string | number
 ): () => void {
-  const key = getCacheKey(title);
+  const key = getCacheKey(title, type, year);
   let set = listeners.get(key);
   if (!set) {
     set = new Set();
@@ -60,7 +64,7 @@ export function subscribeTitleProbe(
   set.add(callback);
 
   // 如果已有缓存，立即同步推送一次
-  const cached = getCachedTitleProbe(title);
+  const cached = getCachedTitleProbe(title, type, year);
   if (cached) {
     callback(cached);
   }
@@ -76,12 +80,16 @@ export function subscribeTitleProbe(
 /**
  * 异步获取/触发探测（单例并发合并，杜绝多次重复请求）
  */
-export async function fetchTitleProbe(title?: string | null): Promise<TitleProbeResult | null> {
+export async function fetchTitleProbe(
+  title?: string | null,
+  type?: string,
+  year?: string | number
+): Promise<TitleProbeResult | null> {
   if (!title || !title.trim()) return null;
-  const key = getCacheKey(title);
+  const key = getCacheKey(title, type, year);
 
   // 1. 命中内存缓存
-  const cached = getCachedTitleProbe(title);
+  const cached = getCachedTitleProbe(title, type, year);
   if (cached) {
     return cached;
   }
@@ -95,7 +103,11 @@ export async function fetchTitleProbe(title?: string | null): Promise<TitleProbe
   // 3. 发起新探测请求
   const promise = (async () => {
     try {
-      const res = await fetch(`/api/title-episodes?title=${encodeURIComponent(title.trim())}`, {
+      const params = new URLSearchParams({ title: title.trim() });
+      if (type) params.set('type', type);
+      if (year) params.set('year', String(year));
+
+      const res = await fetch(`/api/title-episodes?${params.toString()}`, {
         // 利用浏览器与 CDN 缓存
         cache: 'default',
       });
@@ -133,19 +145,21 @@ export async function fetchTitleProbe(title?: string | null): Promise<TitleProbe
  */
 export async function resolvePlayTarget(
   title?: string | null,
-  timeoutMs: number = 120
+  timeoutMs: number = 120,
+  type?: string,
+  year?: string | number
 ): Promise<{ id?: string | number; source?: string }> {
   if (!title || !title.trim()) return { source: 'juliang' };
 
   // 1. 0ms 同步直出
-  const cached = getCachedTitleProbe(title);
+  const cached = getCachedTitleProbe(title, type, year);
   if (cached && cached.id && cached.source) {
     return { id: cached.id, source: cached.source };
   }
 
   // 2. 超短微窗口竞速（默认最多 120ms，杜绝阻塞主线程）
   try {
-    const probePromise = fetchTitleProbe(title);
+    const probePromise = fetchTitleProbe(title, type, year);
     const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs));
     const winner = await Promise.race([probePromise, timeoutPromise]);
     if (winner && winner.id && winner.source) {

@@ -12,14 +12,22 @@ import { safeParseResponse } from '@/lib/utils/safe-json';
  */
 export async function getVideoDetail(
     id: string | number,
-    source: VideoSource
+    source: VideoSource,
+    title?: string
 ): Promise<VideoDetail> {
 
     const baseUrl = source.baseUrl.replace(/\/+$/, '');
     const detailPath = source.detailPath.startsWith('/') ? source.detailPath : `/${source.detailPath}`;
     const url = new URL(`${baseUrl}${detailPath}`);
     url.searchParams.set('ac', 'detail');
-    url.searchParams.set('ids', id.toString());
+
+    // 巨量资源 (juliang) API 不支持 ids 字段单条查询，但支持 wd 关键词查询且自带完整 vod_play_url
+    const isJuliang = source.id === 'juliang';
+    if (isJuliang && title) {
+        url.searchParams.set('wd', title.replace(/[《》【】\[\]（）()·\s:：\-]/g, ' ').trim());
+    } else {
+        url.searchParams.set('ids', id.toString());
+    }
 
     try {
         const response = await withRetry(async () => {
@@ -38,7 +46,26 @@ export async function getVideoDetail(
             return res;
         });
 
-        const data: ApiDetailResponse = await safeParseResponse(response);
+        let data: ApiDetailResponse = await safeParseResponse(response);
+
+        // 若常规 ids 查不到且提供了 title，尝试用 wd 关键词进行容错挽救
+        if ((!data.list || data.list.length === 0) && title && !isJuliang) {
+            try {
+                const fallbackUrl = new URL(`${baseUrl}${detailPath}`);
+                fallbackUrl.searchParams.set('ac', 'detail');
+                fallbackUrl.searchParams.set('wd', title.replace(/[《》【】\[\]（）()·\s:：\-]/g, ' ').trim());
+                const fbRes = await fetchWithTimeout(fallbackUrl.toString(), {
+                    method: 'GET',
+                    headers: { 'User-Agent': 'Mozilla/5.0', ...source.headers },
+                });
+                if (fbRes.ok) {
+                    const fbData = await safeParseResponse(fbRes);
+                    if (fbData.list && fbData.list.length > 0) {
+                        data = fbData;
+                    }
+                }
+            } catch { /* ignore fallback */ }
+        }
 
         if (data.code !== 1 && data.code !== 0) {
             throw new Error(data.msg || 'Invalid API response');
@@ -48,7 +75,8 @@ export async function getVideoDetail(
             throw new Error('Video not found');
         }
 
-        const videoData = data.list[0];
+        // 优先匹配 ID 相等的条目，否则取第一条
+        const videoData = data.list.find((it: any) => String(it.vod_id) === String(id)) || data.list[0];
 
         // Handle multiple sources (separated by $$$)
         const playFrom = (videoData.vod_play_from || '').split('$$$');

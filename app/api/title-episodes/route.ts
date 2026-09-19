@@ -77,6 +77,35 @@ function extractEpisodeNumber(name?: string): number | null {
 }
 
 /**
+ * 影视类型判断辅助函数
+ */
+function isSeriesType(typeName?: string): boolean {
+  if (!typeName) return false;
+  const tn = typeName.toLowerCase();
+  if (tn.endsWith('片') && !tn.includes('纪录片')) return false;
+  return (
+    tn.includes('连续剧') ||
+    tn.includes('电视剧') ||
+    tn.includes('动漫') ||
+    tn.includes('动画') ||
+    (tn.includes('剧') && !tn.includes('剧情') && !tn.includes('喜剧'))
+  );
+}
+
+/**
+ * 归一化清洗片名（去除特殊标点并剥离紧随片尾的4位年份数字，如"生化危机：爆发夜2026" -> "生化危机爆发夜"）
+ */
+function normalizeTitleClean(s?: string): string {
+  if (!s) return '';
+  return s
+    .replace(/[·・\-_:：\s+]/g, '')
+    .replace(/[《》【】\[\]（）()]/g, '')
+    .replace(/(19\d\d|20\d\d)$/g, '') // 剥离末尾贴着的4位年份
+    .toLowerCase()
+    .trim();
+}
+
+/**
  * 单源季播智能探测
  */
 async function probeSingleSource(
@@ -84,7 +113,9 @@ async function probeSingleSource(
   cleanTitle: string,
   baseTitle: string,
   targetSeason: number | null,
-  searchVariants: string[]
+  searchVariants: string[],
+  targetType?: string | null,
+  targetYear?: string | null
 ) {
   // 若有季数，尝试中文标准名（如"时光代理人第三季"）与无空格变体及母标题
   // 采集站（苹果CMS/帝国CMS）会将空格拆分成 OR 导致脱靶，因此搜索词去除多余空格
@@ -98,12 +129,16 @@ async function probeSingleSource(
       seenKws.add(compact);
       keywordsToTry.push(compact);
     }
+    const noPunctuation = compact.replace(/[:：·•\-_]/g, '').trim();
+    if (noPunctuation && !seenKws.has(noPunctuation)) {
+      seenKws.add(noPunctuation);
+      keywordsToTry.push(noPunctuation);
+    }
   }
 
-  // 尝试前 2 个最精准核心变体（母标题及去符号标准名），杜绝漫长轮询
-  const finalKeywords = keywordsToTry.slice(0, 2);
-  const cleanSymbols = (s: string) => (s || '').replace(/[·・\-_:：\s+]/g, '').toLowerCase();
-  const normalizedBase = cleanSymbols(baseTitle);
+  // 尝试前 3 个最精准核心变体（母标题及去符号标准名），杜绝漫长轮询
+  const finalKeywords = keywordsToTry.slice(0, 3);
+  const normalizedBase = normalizeTitleClean(baseTitle);
 
   for (const kw of finalKeywords) {
     try {
@@ -132,11 +167,35 @@ async function probeSingleSource(
 
       if (!data || !Array.isArray(data.list) || data.list.length === 0) continue;
 
-      // 🌟 强防线 1：过滤掉片名完全不包含母标题 baseTitle 的无关条目（支持中点·等标点符号容错）
+      // 🌟 强防线 1：过滤掉片名完全不包含母标题 baseTitle 的无关条目，并严格执行电影/剧集物理类型隔离
       const validItems = data.list.filter((item: any) => {
-        const rawName = cleanSymbols(item.vod_name);
-        if (rawName.includes(normalizedBase) || normalizedBase.includes(rawName)) return true;
-        // 若长标题包含复合词，只要核心关键词（后 4 个字）相互重合即视为同片
+        const rawName = normalizeTitleClean(item.vod_name);
+        const itemIsSeries = isSeriesType(item.type_name) || (item.vod_remarks && /更新|全\d+集|第\d+集|连载/i.test(item.vod_remarks));
+
+        // 电影类型隔离：若目标是电影，坚决剔除连续剧/剧集条目（杜绝误把2022美剧《生化危机》等剧集当成2026电影）
+        if (targetType === 'movie') {
+          if (isSeriesType(item.type_name)) return false;
+          const epLines = (item.vod_play_url || '').split('#').length;
+          if (epLines > 3) return false;
+        }
+
+        // 电视剧类型隔离：若目标是电视剧且有季数，过滤掉单部独立电影
+        if (targetType === 'tv' && targetSeason && !itemIsSeries && !(item.vod_remarks && /第|集|话|期/i.test(item.vod_remarks))) {
+          return false;
+        }
+
+        // 片名一致性核验：归一化后必须完全相等，或者长标题完全包含短标题且重合字数必须覆盖副标题
+        if (rawName === normalizedBase) return true;
+        if (rawName.includes(normalizedBase)) return true;
+        if (normalizedBase.includes(rawName)) {
+          // 若目标包含副标题（长度 >= 5），候选短词长度若差距超过 2 个字（如"生化危机" vs "生化危机爆发夜"），不可误吞！
+          if (normalizedBase.length >= 5 && rawName.length <= normalizedBase.length - 2) {
+            return false;
+          }
+          return true;
+        }
+
+        // 若长标题包含复合词，只要核心关键词（后 4 个字，如"爆发夜"）相互重合即视为同片
         if (normalizedBase.length >= 6) {
           const coreEnd = normalizedBase.slice(-4);
           if (rawName.includes(coreEnd)) return true;
@@ -148,7 +207,7 @@ async function probeSingleSource(
 
       let matched: any = null;
 
-      // 🌟 强防线 2：若有明确季数，优先在有效条目中挑选完全匹配目标季的条目（优先正统原版，降级日语/英配版，优先集数最多最新）
+      // 🌟 强防线 2：若有明确季数，优先在有效条目中挑选完全匹配目标季的条目
       if (targetSeason) {
         const seasonMatches = validItems.filter((item: any) => {
           const rawName = (item.vod_name || '').trim();
@@ -167,27 +226,40 @@ async function probeSingleSource(
         }
       }
 
-      // 🌟 强防线 3：若未匹配到季数专属条目，尝试与当前搜索词或原始标题精确匹配（若有同名条目，按更新切片数量与 remarks 排序，选最新最全的一条）
+      // 🌟 强防线 3：精确片名与年份对齐匹配（优先挑归一化片名完全一致且年份吻合的，如"生化危机：爆发夜2026"精准对齐"生化危机：爆发夜"）
       if (!matched) {
         const exactMatches = validItems.filter((item: any) => {
-          const rawName = cleanSymbols(item.vod_name);
-          return rawName === cleanSymbols(kw) || rawName === cleanSymbols(cleanTitle);
+          const rawName = normalizeTitleClean(item.vod_name);
+          return rawName === normalizedBase || rawName === normalizeTitleClean(cleanTitle);
         });
         if (exactMatches.length > 0) {
           exactMatches.sort((a: any, b: any) => {
+            // 年份吻合优先
+            if (targetYear) {
+              const aYearMatch = (a.vod_year === targetYear || (a.vod_name || '').includes(targetYear)) ? 1 : 0;
+              const bYearMatch = (b.vod_year === targetYear || (b.vod_name || '').includes(targetYear)) ? 1 : 0;
+              if (aYearMatch !== bYearMatch) return bYearMatch - aYearMatch;
+            }
+            // 抢先版/TC/HD等画质标签优先于预告花絮
+            const aIsGood = /(?:hd|tc|抢先|正片|4k|1080)/i.test(a.vod_remarks || '') ? 1 : 0;
+            const bIsGood = /(?:hd|tc|抢先|正片|4k|1080)/i.test(b.vod_remarks || '') ? 1 : 0;
+            if (aIsGood !== bIsGood) return bIsGood - aIsGood;
+
             const aEpsCount = (a.vod_play_url || '').split('#').length;
             const bEpsCount = (b.vod_play_url || '').split('#').length;
-            const aRem = extractEpisodeFromRemarks(a.vod_remarks) || 0;
-            const bRem = extractEpisodeFromRemarks(b.vod_remarks) || 0;
-            return Math.max(bEpsCount, bRem) - Math.max(aEpsCount, aRem);
+            return bEpsCount - aEpsCount;
           });
           matched = exactMatches[0];
         }
       }
 
-      // 🌟 强防线 4：若无季数要求且无精确片名，取有效条目中的第一条
+      // 🌟 强防线 4：若无季数要求且无完全精确片名，在过滤后的有效条目中挑选年份最吻合的一条
       if (!matched && !targetSeason) {
-        matched = validItems[0];
+        if (targetYear) {
+          const yearMatched = validItems.find((it: any) => it.vod_year === targetYear || (it.vod_name || '').includes(targetYear));
+          if (yearMatched) matched = yearMatched;
+        }
+        if (!matched) matched = validItems[0];
       }
 
       if (!matched || !matched.vod_play_url) continue;
@@ -269,6 +341,8 @@ async function probeSingleSource(
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const title = searchParams.get('title')?.trim();
+  const targetType = searchParams.get('type')?.trim() || null;
+  const targetYear = searchParams.get('year')?.trim() || null;
 
   if (!title) {
     return NextResponse.json({ success: false, error: 'Missing title parameter' }, { status: 400 });
@@ -307,7 +381,7 @@ export async function GET(request: NextRequest) {
       }, 2200);
 
       PROBE_SOURCES.forEach(src => {
-        probeSingleSource(src, cleanTitle, baseTitle, targetSeason, searchVariants)
+        probeSingleSource(src, cleanTitle, baseTitle, targetSeason, searchVariants, targetType, targetYear)
           .then(res => {
             completedCount++;
             if (res) {
@@ -351,8 +425,8 @@ export async function GET(request: NextRequest) {
 
     // 排序优先级：
     // 1. 命中目标季优先
-    // 2. 骨干线路权重仲裁：消除采集站预告片/花絮/特别篇切片虚高干扰（巨量 Anycast 纯净首选，光速全球高可用第二，暴风第三）
-    // 3. 连载正片集数显著领先（差异超过 5 集且非花絮预告误差）
+    // 2. 电影类型优先（若目标为电影，单集正片/TC/抢先版绝对优先）
+    // 3. 骨干线路权重仲裁：消除采集站预告片/花絮/特别篇切片虚高干扰（巨量 Anycast 纯净首选，光速全球高可用第二，暴风第三）
     const SOURCE_PROBE_WEIGHTS: Record<string, number> = {
       juliang: 100,
       guangsu: 95,
@@ -369,6 +443,15 @@ export async function GET(request: NextRequest) {
         }
       }
 
+      // 电影类型约束保护：单集优先
+      if (targetType === 'movie') {
+        const aIsMovie = (a.totalEpisodes || 0) <= 2 ? 1 : 0;
+        const bIsMovie = (b.totalEpisodes || 0) <= 2 ? 1 : 0;
+        if (aIsMovie !== bIsMovie) {
+          return bIsMovie - aIsMovie;
+        }
+      }
+
       const aEp = a.totalEpisodes || 0;
       const bEp = b.totalEpisodes || 0;
       const epDiff = Math.abs(aEp - bEp);
@@ -376,7 +459,7 @@ export async function GET(request: NextRequest) {
       const maxEp = Math.max(aEp, bEp, 1);
       const relativeDiff = epDiff / maxEp;
 
-      // 电影，或者剧集集数差异在 8 集以内，或相对误差在 10% 以内（长篇年番/连续剧预告、花絮、彩蛋、特别篇常见切片虚高），严格以黄金骨干线路优先级（巨量 > 光速 > 暴风）仲裁
+      // 电影，或者剧集集数差异在 8 集以内，或相对误差在 10% 以内，严格以黄金骨干线路优先级（巨量 > 光速 > 暴风）仲裁
       if (isMovie || epDiff <= 8 || relativeDiff <= 0.1) {
         const aWeight = SOURCE_PROBE_WEIGHTS[a.source] || 0;
         const bWeight = SOURCE_PROBE_WEIGHTS[b.source] || 0;

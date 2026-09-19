@@ -60,7 +60,8 @@ function analyzeTitle(titleStr: string): TitleAnalysis {
     .replace(/\bS\d{1,2}\b/gi, '')
     .replace(/(前篇|后篇|最终季|终章|完结篇|序章|特别篇|剧场版|番外篇|番外|大电影|电影版|真人版|动画版|重制版|重置版|精选版|典藏版)/gi, '')
     .replace(/(国语版|粤语版|双语版|原声版|中字版|纯享版|未删减版|加长版)/gi, '')
-    .replace(/[《》【】\[\]（）()·\s:：\-]/g, '')
+    .replace(/[《》【】\[\]（）()·\s:：\-—_]/g, '')
+    .replace(/(19\d\d|20\d\d)$/g, '') // 🌟 核心防线：剥离末尾紧随的4位年份（如"生化危机：爆发夜2026" -> "生化危机爆发夜"）
     .toLowerCase()
     .trim();
 
@@ -257,6 +258,16 @@ export function IkanPPPlayerContainer() {
 
                   const isSeriesItem = isSeriesTypeName(v.type_name || '') || (v.vod_remarks && /更新|全\d+集|第\d+集|连载/i.test(v.vod_remarks)) || candAnalysis.seasonNumber !== null;
 
+                  // 🌟 核心防线：影视类型硬性隔离门禁（电影与连续剧绝对隔离）
+                  let typeScore = 0;
+                  let isTypeMismatched = false;
+                  if (expectedType === 'movie' && isSeriesItem) {
+                    typeScore = -800;
+                    isTypeMismatched = true;
+                  } else if (expectedType === 'tv' && !isSeriesItem && !seasonParam) {
+                    typeScore = -120;
+                  }
+
                   let nameScore = 0;
                   let isExactName = false;
                   let isHighConfidenceMatch = false;
@@ -278,28 +289,32 @@ export function IkanPPPlayerContainer() {
                         }
                       }
                     } else {
-                      nameScore = 120;
+                      nameScore = 140;
                     }
                   } else {
                     // 二级高置信度模糊匹配：
-                    // A. 候选纯片名包含目标子标题（如包含了 "辣味英雄传"），或目标纯片名包含候选子标题
-                    const hasSharedSubtitle = targetAnalysis.subtitles.some(st => st.length >= 3 && candAnalysis.pureTitle.includes(st)) ||
-                                              candAnalysis.subtitles.some(sc => sc.length >= 3 && targetAnalysis.pureTitle.includes(sc));
-                    
-                    // B. 纯片名互相包含且重合长度 >= 3
-                    const isSubstringOverlap = (candAnalysis.pureTitle.length >= 3 && targetAnalysis.pureTitle.includes(candAnalysis.pureTitle)) ||
-                                               (targetAnalysis.pureTitle.length >= 3 && candAnalysis.pureTitle.includes(targetAnalysis.pureTitle));
+                    // A. 目标有特异副标题时，候选必须包含该特异副标题（如目标"生化危机：爆发夜"，候选必须包含"爆发夜"）
+                    const hasSharedSpecificSubtitle = targetAnalysis.subtitles.length > 1
+                      ? targetAnalysis.subtitles.slice(1).some(st => st.length >= 2 && candAnalysis.pureTitle.includes(st))
+                      : targetAnalysis.subtitles.some(st => st.length >= 3 && candAnalysis.pureTitle.includes(st));
 
-                    if (hasSharedSubtitle || isSubstringOverlap) {
+                    // B. 纯片名互相包含且重合长度 >= 3，但严格防范短母题吞噬长子题（杜绝4字"生化危机"冒充7字"生化危机爆发夜"）
+                    const lenDiff = Math.abs(candAnalysis.pureTitle.length - targetAnalysis.pureTitle.length);
+                    const isSubstringOverlap = 
+                      (candAnalysis.pureTitle.includes(targetAnalysis.pureTitle)) || // 候选比目标长且包含目标全部文字（如"生化危机爆发夜2026"）
+                      (targetAnalysis.pureTitle.includes(candAnalysis.pureTitle) && lenDiff <= 1); // 目标包含候选，但字数差距不得超过1个字
+
+                    if (hasSharedSpecificSubtitle || isSubstringOverlap) {
                       isHighConfidenceMatch = true;
-                      nameScore = hasSharedSubtitle ? 140 : 110;
+                      nameScore = hasSharedSpecificSubtitle ? 140 : 110;
                     } else if (
-                      (candAnalysis.pureTitle.length >= 2 && targetAnalysis.pureTitle.includes(candAnalysis.pureTitle)) ||
-                      (targetAnalysis.pureTitle.length >= 2 && candAnalysis.pureTitle.includes(candAnalysis.pureTitle))
+                      targetAnalysis.subtitles.length <= 1 &&
+                      ((candAnalysis.pureTitle.length >= 3 && targetAnalysis.pureTitle.includes(candAnalysis.pureTitle)) ||
+                       (targetAnalysis.pureTitle.length >= 3 && candAnalysis.pureTitle.includes(targetAnalysis.pureTitle)))
                     ) {
                       nameScore = 50;
                     } else {
-                      nameScore = -200;
+                      nameScore = -300;
                     }
                   }
 
@@ -347,15 +362,15 @@ export function IkanPPPlayerContainer() {
                   else if (v.source === 'modu') sourceScore = 60;
                   else if (v.source === 'zy360') sourceScore = 50;
 
-                  const totalScore = nameScore + yearScore + qualityScore + episodeScore + sourceScore;
+                  const totalScore = nameScore + yearScore + qualityScore + episodeScore + sourceScore + typeScore;
 
                   // 记录非预告片的所有相关备选源，用于最终兜底保障
-                  if (!isTrailer && !isCommentary && !isMusical && totalScore > 0) {
+                  if (!isTrailer && !isCommentary && !isMusical && !isTypeMismatched && totalScore > 0) {
                     fallbackCandidates.push({ _video: v, _score: totalScore, _isSeries: isSeriesItem });
                   }
 
                   const isNameMatched = isExactName || isHighConfidenceMatch;
-                  const isStrictCandidate = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isNameMatched && !isEpisodeInsufficient &&
+                  const isStrictCandidate = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && !isTypeMismatched && isNameMatched && !isEpisodeInsufficient &&
                     (isSeriesItem || !targetYear || !candYear || Math.abs(candYear - targetYear) <= 2);
 
                   if (isStrictCandidate) {
@@ -384,7 +399,7 @@ export function IkanPPPlayerContainer() {
                   // 极速秒播裁决：
                   // 1. 全站 No.1 黄金首选巨量资源 (juliang) 无论何时到达，只要匹配立即秒播直出；
                   // 2. 光速/暴风/最大等高质量骨干源 (totalScore >= 100)：给巨量 800ms 优先冲刺窗口，若巨量超时仍未到达则弹性秒播直出，拒绝白屏干等！
-                  const isQualified = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && isNameMatched && !isEpisodeInsufficient && totalScore >= 70;
+                  const isQualified = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && !isTypeMismatched && isNameMatched && !isEpisodeInsufficient && totalScore >= 70;
                   if (isQualified && !redirected && !cancelled) {
                     const isSeasonOrYearMatched = 
                       (isSeriesItem && (targetAnalysis.seasonNumber !== null ? candAnalysis.seasonNumber === targetAnalysis.seasonNumber : (candAnalysis.seasonNumber === 1 || candAnalysis.seasonNumber === null))) ||
@@ -550,6 +565,37 @@ export function IkanPPPlayerContainer() {
     }
   }, [videoError, videoData, title, source, groupedSources, searchParams, entityParam, episodeParam, expectedType, expectedYear, router]);
 
+  // === 终端自愈防线四：串台脱靶自愈拦截（杜绝电影误播放同名母题连续剧） ===
+  const misdirectHealTriggeredRef = useRef(false);
+  useEffect(() => {
+    if (!videoData || !title || misdirectHealTriggeredRef.current) return;
+
+    if (expectedType === 'movie') {
+      const loadedIsSeries = (videoData.episodes && videoData.episodes.length > 2) || isSeriesTypeName(videoData.type_name || '');
+      const targetAnalysis = analyzeTitle(title);
+      const loadedAnalysis = analyzeTitle(videoData.vod_name || '');
+
+      const hasSpecificSubtitle = targetAnalysis.subtitles.length > 1;
+      const loadedMatchesSubtitle = hasSpecificSubtitle
+        ? targetAnalysis.subtitles.slice(1).some(st => st.length >= 2 && loadedAnalysis.pureTitle.includes(st))
+        : loadedAnalysis.pureTitle === targetAnalysis.pureTitle;
+
+      if (loadedIsSeries && !loadedMatchesSubtitle) {
+        console.warn(`[Player] Detected series-movie mismatch: target '${title}' (movie) but loaded '${videoData.vod_name}'. Auto-healing...`);
+        misdirectHealTriggeredRef.current = true;
+        if (source) {
+          failedSourcesRef.current.add(source);
+        }
+        const params = new URLSearchParams();
+        params.set('title', title);
+        if (entityParam) params.set('entity', entityParam);
+        params.set('type', 'movie');
+        if (expectedYear) params.set('year', expectedYear);
+        router.replace(`/player?${params.toString()}`, { scroll: false });
+      }
+    }
+  }, [videoData, title, expectedType, expectedYear, source, entityParam, router]);
+
   // 后台补充更多可用源（无感异步）
   useEffect(() => {
     if (!title || needsTitleSearch) return;
@@ -603,12 +649,21 @@ export function IkanPPPlayerContainer() {
                 for (const v of data.videos) {
                   const rawName = (v.vod_name || '').trim();
                   const candAnalysis = analyzeTitle(rawName);
+                  const isSeriesItem = isSeriesTypeName(v.type_name || '') || (v.vod_remarks && /更新|全\d+集|第\d+集|连载/i.test(v.vod_remarks)) || candAnalysis.seasonNumber !== null;
+
+                  // 电影类型隔离：若期待电影，严禁把连续剧塞进备选线路
+                  if (expectedType === 'movie' && isSeriesItem) continue;
+
                   const isExact = candAnalysis.pureTitle === targetAnalysis.pureTitle;
-                  const hasSharedSubtitle = targetAnalysis.subtitles.some(st => st.length >= 3 && candAnalysis.pureTitle.includes(st)) ||
-                                            candAnalysis.subtitles.some(sc => sc.length >= 3 && targetAnalysis.pureTitle.includes(sc));
-                  const isSubstringOverlap = (candAnalysis.pureTitle.length >= 3 && targetAnalysis.pureTitle.includes(candAnalysis.pureTitle)) ||
-                                             (targetAnalysis.pureTitle.length >= 3 && candAnalysis.pureTitle.includes(targetAnalysis.pureTitle));
-                  if (isExact || hasSharedSubtitle || isSubstringOverlap) {
+                  const hasSharedSpecificSubtitle = targetAnalysis.subtitles.length > 1
+                    ? targetAnalysis.subtitles.slice(1).some(st => st.length >= 2 && candAnalysis.pureTitle.includes(st))
+                    : targetAnalysis.subtitles.some(st => st.length >= 3 && candAnalysis.pureTitle.includes(st));
+                  const lenDiff = Math.abs(candAnalysis.pureTitle.length - targetAnalysis.pureTitle.length);
+                  const isSubstringOverlap = 
+                    (candAnalysis.pureTitle.includes(targetAnalysis.pureTitle)) ||
+                    (targetAnalysis.pureTitle.includes(candAnalysis.pureTitle) && lenDiff <= 1);
+
+                  if (isExact || hasSharedSpecificSubtitle || isSubstringOverlap) {
                     const existingIdx = found.findIndex(s => s.source === v.source);
                     if (existingIdx === -1) {
                       found.push({

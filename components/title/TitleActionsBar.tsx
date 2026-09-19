@@ -54,8 +54,8 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
   const effectiveTitle = playTitle || entity.title;
 
   useEffect(() => {
-    // 提前在后台秒级拉取骨干源的真实 ID，打通 0ms 直达快车道
-    fetchTitleProbe(effectiveTitle);
+    // 提前在后台秒级拉取骨干源的真实 ID，打通 0ms 直达快车道（携带类型与年份硬核对齐）
+    fetchTitleProbe(effectiveTitle, entity.type, entity.year);
     const unsubscribe = subscribeTitleProbe(effectiveTitle, (res) => {
       if (res && res.id && res.source) {
         setProbedTarget({ id: res.id, source: res.source });
@@ -64,9 +64,9 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
         // 探测完成确认全网 0 源
         setIsClassicNoSource(true);
       }
-    });
+    }, entity.type, entity.year);
     return () => unsubscribe();
-  }, [effectiveTitle]);
+  }, [effectiveTitle, entity.type, entity.year]);
 
   useEffect(() => {
     // 检查收藏状态 (以 entityId 作为 videoId)
@@ -105,7 +105,7 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
       playSource = 'juliang';
     } else {
       // 2. 超短竞速 100ms 抢抓骨干源探测（优先巨量 Anycast 纯净源，杜绝主线程卡顿）
-      const fast = await resolvePlayTarget(effectiveTitle, 100);
+      const fast = await resolvePlayTarget(effectiveTitle, 100, entity.type, entity.year);
       if (fast.source === 'juliang' && fast.id) {
         playId = fast.id;
         playSource = 'juliang';
