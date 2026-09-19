@@ -62,8 +62,11 @@ jobs:
           echo "📚 [5/6] 全站 7 大专区预烘焙分类数据全量刷新..."
           node scripts/sync-category-prebaked.mjs
 
-          echo "🔍 [6/6] SEO Entity 自动入库与全网搜索引擎推送..."
+          echo "🔍 [6/7] SEO Entity 自动入库与全网搜索引擎推送..."
           node scripts/sync-seo-entities.mjs
+
+          echo "🏆 [7/7] 爱壹帆原生 4 大排序物理倒排索引（添加时间/更新时间/人气高低/评分高低）同步..."
+          node scripts/sync-iyf-four-rankings.mjs
 
       - name: Commit, push, and trigger deploy if data updated
         env:

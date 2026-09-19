@@ -391,10 +391,23 @@ export async function GET(req: NextRequest) {
   const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
   const limit = Math.min(48, Math.max(12, parseInt(searchParams.get('limit') || '36', 10)));
 
-  const isRankSort = sort === 'rank' || sort === 'rating' || genre === '豆瓣高分';
-  const isTimeSort = sort === 'time' || sort === 'time_added' || sort === 'time_updated';
+  const isRankSort = sort === 'rank' || sort === 'rating' || sort === 'score' || genre === '豆瓣高分';
   const isHitsSort = sort === 'popularity' || sort === 'hits';
+  const isUpdatedSort = sort === 'time_updated' || sort === 'updated';
+  const isAddedSort = sort === 'time_added' || sort === 'added' || sort === 'time' || sort === 'latest';
   const cleanGenre = (genre === '最新' || genre === '豆瓣高分' || genre === '热门' || genre === '全部') ? '' : genre;
+
+  // 映射为标准 4 大排序
+  let resolvedSort = 'time_added';
+  if (isRankSort) {
+    resolvedSort = 'rating';
+  } else if (isHitsSort) {
+    resolvedSort = 'popularity';
+  } else if (isUpdatedSort) {
+    resolvedSort = 'time_updated';
+  } else {
+    resolvedSort = 'time_added';
+  }
 
   // ── 1. 优先从 Cloudflare KV 自有结构化实体片库中查询 ───────────────────
   try {
@@ -405,7 +418,7 @@ export async function GET(req: NextRequest) {
       year: (year && year !== '全部') ? year : undefined,
       language: (lang && lang !== '全部') ? lang : undefined,
       status: (status && status !== '全部') ? status : undefined,
-      sort: isRankSort ? 'rating' : (isHitsSort ? 'popularity' : 'time'),
+      sort: resolvedSort,
       page,
       limit,
     });
@@ -537,7 +550,7 @@ export async function GET(req: NextRequest) {
   // 排序处理
   if (isRankSort) {
     normalizedList.sort((a, b) => parseFloat(b.rate || '0') - parseFloat(a.rate || '0'));
-  } else if (isTimeSort) {
+  } else if (isUpdatedSort || isAddedSort) {
     normalizedList.sort((a, b) => {
       const timeA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
       const timeB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;

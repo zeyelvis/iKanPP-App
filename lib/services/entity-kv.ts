@@ -742,9 +742,11 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
     };
   }
 
-  const sortMode = (filters.sort || 'time').toLowerCase();
+  const sortMode = (filters.sort || 'time_added').toLowerCase();
   const isScoreSort = sortMode === 'rank' || sortMode === 'rating' || sortMode === 'score';
   const isHitsSort = sortMode === 'hits' || sortMode === 'popularity' || sortMode === 'recommend';
+  const isUpdatedSort = sortMode === 'time_updated' || sortMode === 'updated';
+  const isAddedSort = sortMode === 'time_added' || sortMode === 'added' || sortMode === 'time' || sortMode === 'latest';
 
   // ── 核心性能革新：若用户未选择细化属性（纯专区切换排序），直接从全局物理倒排索引秒出 ──
   const targetChannel = (filters.channel && filters.channel !== 'all' && filters.channel !== '全部')
@@ -764,6 +766,10 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
       dedicatedIndexKey = `index:popularity:${targetChannel}`;
     } else if (isScoreSort) {
       dedicatedIndexKey = `index:score:${targetChannel}`;
+    } else if (isUpdatedSort) {
+      dedicatedIndexKey = `index:time_updated:${targetChannel}`;
+    } else if (isAddedSort) {
+      dedicatedIndexKey = `index:time_added:${targetChannel}`;
     }
 
     if (dedicatedIndexKey) {
@@ -791,8 +797,8 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
     }
   }
 
-  // ── 若存在多维组合筛选，使用真实 popularity 与真实 score 进行高精度全量排序 ──
-  if (isScoreSort || isHitsSort) {
+  // ── 若存在多维组合筛选，使用真实 popularity、score 与更新时间进行高精度全量排序 ──
+  if (isScoreSort || isHitsSort || isUpdatedSort) {
     // 根据交集结果切出当前页所需及后续候选池（最大支持 300 条深度精准排序）
     const candidateIds = matchedIds.slice(0, 300);
     const candidateEntities = (await Promise.all(candidateIds.map(id => getEntityById(id)))).filter(Boolean) as TitleEntity[];
@@ -808,6 +814,14 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
     } else if (isHitsSort) {
       // 人气排序：真实 popularity 降序
       candidateEntities.sort((a, b) => (Number(b.popularity) || 0) - (Number(a.popularity) || 0));
+    } else if (isUpdatedSort) {
+      // 更新时间排序：真实 updatedAt 降序，其次年份降序
+      candidateEntities.sort((a, b) => {
+        const tA = new Date(a.updatedAt || a.createdAt || '2000-01-01').getTime();
+        const tB = new Date(b.updatedAt || b.createdAt || '2000-01-01').getTime();
+        if (tB !== tA) return tB - tA;
+        return (Number(b.year) || 0) - (Number(a.year) || 0);
+      });
     }
 
     const startIndex = (page - 1) * limit;
