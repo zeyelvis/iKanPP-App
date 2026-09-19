@@ -134,28 +134,64 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
 
     // 如果变量缺失导致的空尾缀（如 "片名  电影"），清理后加入
     if (rendered && !rendered.endsWith('{country}') && !rendered.endsWith('{genre}') && !rendered.endsWith('{actor}')) {
-      keywordSet.add(rendered);
+      if (mediaLabel !== '电视剧' && isSeries) {
+        keywordSet.add(rendered.replace(/电视剧/g, mediaLabel));
+      } else {
+        keywordSet.add(rendered);
+      }
     }
   }
 
-  // 紧凑标题与变体
+  // 专属媒体类型标签补充（如 动漫 / 综艺 / 纪录片）
+  if (mediaLabel) {
+    keywordSet.add(`${primaryTitle} ${mediaLabel}`);
+  }
+
+  // 紧凑标题与年份变体
   if (compactTitle !== primaryTitle) keywordSet.add(compactTitle);
   if (year) keywordSet.add(`${primaryTitle} ${year}`);
 
-  // ====== 2. YAML 通用意图修饰词库 (GENERIC_MODIFIERS) ======
-  keywordSet.add(`${primaryTitle} 在线观看`);
-  keywordSet.add(`${primaryTitle} 免费观看`);
-  keywordSet.add(`${primaryTitle} 4K超清原画`);
-  keywordSet.add(`${primaryTitle} 1080P免VIP`);
-  keywordSet.add(`${primaryTitle} 完整版未删减`);
+  // ====== 2. 核心 6 大意图修饰词家族全面注入 (GENERIC_MODIFIERS) ======
+  // ① 观影意图 (watch_intent: 在线观看, 在线播放, 在线看, 在线观影)
+  for (const w of GENERIC_MODIFIERS.watch_intent) {
+    keywordSet.add(`${primaryTitle} ${w}`);
+  }
 
+  // ② 免费意图 (free_intent: 免费观看, 免费在线观看)
+  for (const f of GENERIC_MODIFIERS.free_intent) {
+    keywordSet.add(`${primaryTitle} ${f}`);
+  }
+
+  // ③ 画质规格 (quality: 高清, HD, 1080P, 4K, 4K超清原画)
+  for (const q of GENERIC_MODIFIERS.quality) {
+    keywordSet.add(`${primaryTitle} ${q}`);
+  }
+
+  // ④ 完结度与连载状态 (completion & freshness: 完整版, 全集, 大结局, 最新一集, 更新至)
+  for (const c of GENERIC_MODIFIERS.completion) {
+    keywordSet.add(`${primaryTitle} ${c}`);
+  }
   if (isSeries) {
-    keywordSet.add(`${primaryTitle} 全集`);
-    keywordSet.add(`${primaryTitle} 大结局`);
+    for (const fr of GENERIC_MODIFIERS.freshness) {
+      keywordSet.add(`${primaryTitle} ${fr}`);
+    }
     if (numberOfEpisodes && numberOfEpisodes > 1) {
       keywordSet.add(`${primaryTitle} 共${numberOfEpisodes}集`);
       keywordSet.add(`${primaryTitle} 更新至第${numberOfEpisodes}集`);
     }
+  }
+
+  // ⑤ 信息与决策 (information: 剧情, 剧情介绍, 简介, 演员表, 导演, 结局, 上映时间, 评分)
+  for (const info of GENERIC_MODIFIERS.information) {
+    keywordSet.add(`${primaryTitle} ${info}`);
+  }
+  keywordSet.add(`${primaryTitle} 豆瓣真实评分`);
+  keywordSet.add(`${primaryTitle} 结局解析`);
+  keywordSet.add(`${primaryTitle} 片尾彩蛋`);
+
+  // ⑥ 口碑推荐与问答意图 (recommendation: 推荐, 排行榜, 好看吗, 值得看吗)
+  for (const rec of GENERIC_MODIFIERS.recommendation) {
+    keywordSet.add(`${primaryTitle} ${rec}`);
   }
 
   // ====== 3. 网盘与下载截流词 (GENERIC_MODIFIERS.cloud_storage_intent - 核心转化洼地) ======
@@ -173,11 +209,6 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
     keywordSet.add(`${primaryTitle} 双语字幕`);
   }
 
-  // ====== 5. 观影决策与剧情衍生词 ======
-  keywordSet.add(`${primaryTitle} 豆瓣真实评分`);
-  keywordSet.add(`${primaryTitle} 结局解析`);
-  keywordSet.add(`${primaryTitle} 演员表阵容`);
-  keywordSet.add(`${primaryTitle} 片尾彩蛋`);
 
   // ====== 6. 拼音/同音/常见别名容错词 (Fuzzy & Phonetic Aliases) ======
   for (const [key, aliases] of Object.entries(COMMON_FUZZY_ALIASES)) {
@@ -204,15 +235,16 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
   keywordSet.add('iKanPP');
   keywordSet.add('爱看片片');
 
-  // 精选用于页面渲染的探索意图 Chips
+  // 精选用于页面渲染的探索意图 Chips (融入观影、画质、网盘、口碑等各维度代表)
   const intentChips = [
     `${primaryTitle} 在线观看`,
     `${primaryTitle} 4K超清`,
     `${primaryTitle} 百度网盘`,
     `${primaryTitle} 迅雷下载`,
     `${primaryTitle} 完整版未删减`,
-    `${primaryTitle} 夸克云盘`,
     `${primaryTitle} 豆瓣评分`,
+    `${primaryTitle} 好看吗`,
+    `${primaryTitle} 推荐`,
     `${primaryTitle} 结局彩蛋`,
   ];
 
@@ -254,10 +286,11 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
   const metaDescription = `${signalPrefix}${yamlNarrative} ${castStr}${cleanDesc ? `剧情：${cleanDesc} ` : ''}${hookCta}`;
 
   return {
-    keywords: Array.from(keywordSet).slice(0, 35),
+    keywords: Array.from(keywordSet).slice(0, 48),
     metaDescription,
     intentChips,
     cleanTitle: primaryTitle,
     discoveryChips,
   };
 }
+
