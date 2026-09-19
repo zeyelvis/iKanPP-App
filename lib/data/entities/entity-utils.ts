@@ -168,12 +168,9 @@ export function isCleanChineseTitle(title: string): boolean {
     return false;
   }
 
-  // 4. 识别并拦截纯日本生肉汉字片名（如《斬人斬馬剣》中的“剣”等日本新字体）
+  // 4. 识别并拦截纯日本生肉汉字片名（如《斬人斬馬剣》中的“剣”等日本新字体，一票物理否决）
   if (JAPANESE_KANJI_VARIANTS.test(t)) {
-    // 检查是否包含标准中文独有常用词汇；若整词特征符合日文且含日本专有汉字，直接判定为日文生肉
-    if (!/^(中国|华语|台湾|香港|澳门)/.test(t) && !/[的一是在不了有和人这中大国为上个]/g.test(t)) {
-      return false;
-    }
+    return false;
   }
 
   // 4. 华语平台核心底线：必须包含中文字符（彻底拦截 Bourek、Die Chefin、Unser Charly 等纯外文条目）
