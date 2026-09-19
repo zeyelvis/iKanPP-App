@@ -362,81 +362,81 @@ export async function saveEntity(entity: TitleEntity, options?: { syncGlobalInde
     } catch (err) {
       console.warn('[saveEntity] sitemap:catalog update warning:', err);
     }
-  }
 
-  // 6. 追加到分类索引
-  if (Array.isArray(entity.genres)) {
-    for (const g of entity.genres) {
-      const gKey = `genre:${g.trim()}`;
-      const rawG = await kvGet(gKey);
-      const gList: string[] = rawG ? JSON.parse(rawG) : [];
-      if (!gList.includes(id)) {
-        gList.push(id);
-        await kvPut(gKey, JSON.stringify(gList));
+    // 6. 追加到分类索引
+    if (Array.isArray(entity.genres)) {
+      for (const g of entity.genres) {
+        const gKey = `genre:${g.trim()}`;
+        const rawG = await kvGet(gKey);
+        const gList: string[] = rawG ? JSON.parse(rawG) : [];
+        if (!gList.includes(id)) {
+          gList.push(id);
+          await kvPut(gKey, JSON.stringify(gList));
+        }
       }
     }
-  }
 
-  // 7. 追加到导演索引（严禁脱口秀/综艺通告等非影视正片污染）
-  if (Array.isArray(entity.directors) && !isInvalidDramaOrMovie(entity)) {
-    for (const d of entity.directors) {
-      if (!d || d === '知名导演') continue;
-      const dKey = `director:${d.trim()}`;
-      const rawD = await kvGet(dKey);
-      const dList: string[] = rawD ? JSON.parse(rawD) : [];
-      if (!dList.includes(id)) {
-        dList.push(id);
-        await kvPut(dKey, JSON.stringify(dList));
+    // 7. 追加到导演索引（严禁脱口秀/综艺通告等非影视正片污染）
+    if (Array.isArray(entity.directors) && !isInvalidDramaOrMovie(entity)) {
+      for (const d of entity.directors) {
+        if (!d || d === '知名导演') continue;
+        const dKey = `director:${d.trim()}`;
+        const rawD = await kvGet(dKey);
+        const dList: string[] = rawD ? JSON.parse(rawD) : [];
+        if (!dList.includes(id)) {
+          dList.push(id);
+          await kvPut(dKey, JSON.stringify(dList));
+        }
       }
     }
-  }
 
-  // 8. 追加到演员索引（严禁脱口秀/综艺通告等非影视正片污染）
-  if (Array.isArray(entity.actors) && !isInvalidDramaOrMovie(entity)) {
-    for (const a of entity.actors) {
-      if (!a || a === '实力主演') continue;
-      const aKey = `actor:${a.trim()}`;
-      const rawA = await kvGet(aKey);
-      const aList: string[] = rawA ? JSON.parse(rawA) : [];
-      if (!aList.includes(id)) {
-        aList.push(id);
-        await kvPut(aKey, JSON.stringify(aList));
+    // 8. 追加到演员索引（严禁脱口秀/综艺通告等非影视正片污染）
+    if (Array.isArray(entity.actors) && !isInvalidDramaOrMovie(entity)) {
+      for (const a of entity.actors) {
+        if (!a || a === '实力主演') continue;
+        const aKey = `actor:${a.trim()}`;
+        const rawA = await kvGet(aKey);
+        const aList: string[] = rawA ? JSON.parse(rawA) : [];
+        if (!aList.includes(id)) {
+          aList.push(id);
+          await kvPut(aKey, JSON.stringify(aList));
+        }
       }
     }
-  }
 
-  // 9. 追加到专区频道索引 (channel:movie, channel:tv, channel:anime, etc.)
-  if (entity.type) {
-    const ch = entity.type.toLowerCase().trim();
-    await appendToIndex(`channel:${ch}`, id);
-    if (ch === 'short-drama' || ch === 'short') {
-      await appendToIndex('channel:short', id);
-      await appendToIndex('channel:short-drama', id);
+    // 9. 追加到专区频道索引 (channel:movie, channel:tv, channel:anime, etc.)
+    if (entity.type) {
+      const ch = entity.type.toLowerCase().trim();
+      await appendToIndex(`channel:${ch}`, id);
+      if (ch === 'short-drama' || ch === 'short') {
+        await appendToIndex('channel:short', id);
+        await appendToIndex('channel:short-drama', id);
+      }
     }
-  }
 
-  // 10. 追加到地区索引 (region:美国, region:泰国, etc.)
-  const regionTokens = getRegionTokens(entity.region);
-  for (const r of regionTokens) {
-    await appendToIndex(`region:${r}`, id);
-  }
+    // 10. 追加到地区索引 (region:美国, region:泰国, etc.)
+    const regionTokens = getRegionTokens(entity.region);
+    for (const r of regionTokens) {
+      await appendToIndex(`region:${r}`, id);
+    }
 
-  // 11. 追加到年份索引 (year:2026, year:2025, etc.)
-  if (entity.year) {
-    const y = String(entity.year).trim();
-    await appendToIndex(`year:${y}`, id);
-  }
+    // 11. 追加到年份索引 (year:2026, year:2025, etc.)
+    if (entity.year) {
+      const y = String(entity.year).trim();
+      await appendToIndex(`year:${y}`, id);
+    }
 
-  // 12. 追加到语言索引 (language:国语, language:英语, etc.)
-  const langTokens = getLanguageTokens(entity.language);
-  for (const l of langTokens) {
-    await appendToIndex(`language:${l}`, id);
-  }
+    // 12. 追加到语言索引 (language:国语, language:英语, etc.)
+    const langTokens = getLanguageTokens(entity.language);
+    for (const l of langTokens) {
+      await appendToIndex(`language:${l}`, id);
+    }
 
-  // 13. 追加到连载状态索引 (status:完结, status:连载中, etc.)
-  const statusTokens = getStatusTokens(entity.status);
-  for (const s of statusTokens) {
-    await appendToIndex(`status:${s}`, id);
+    // 13. 追加到连载状态索引 (status:完结, status:连载中, etc.)
+    const statusTokens = getStatusTokens(entity.status);
+    for (const s of statusTokens) {
+      await appendToIndex(`status:${s}`, id);
+    }
   }
 
   // 注：原第 14 步维护 recent:* 已彻底解耦移出。
