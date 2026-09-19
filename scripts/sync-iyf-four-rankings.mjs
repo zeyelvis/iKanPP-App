@@ -139,20 +139,7 @@ async function main() {
     }
   }
 
-  const masterCatalogPath = path.resolve(CACHE_DIR, 'iyf-master-catalog.json');
-  let nextIdNum = maxIdNum + 1;
-  if (fs.existsSync(masterCatalogPath)) {
-    const catalog = JSON.parse(fs.readFileSync(masterCatalogPath, 'utf-8'));
-    for (const item of catalog) {
-      if (item && item.title) {
-        if (!titleToEntityId.has(item.title)) {
-          titleToEntityId.set(item.title, `ik${String(nextIdNum).padStart(6, '0')}`);
-          nextIdNum++;
-        }
-      }
-    }
-  }
-  console.log(`✅ 片名映射字典装载完毕: ${titleToEntityId.size} 条 (最新最大分配 ID: ik${String(nextIdNum).padStart(6, '0')})`);
+  console.log(`✅ 片名映射字典装载完毕: ${titleToEntityId.size} 条真实建档实体`);
 
   // 6 大核心频道
   const CHANNELS = [
@@ -209,12 +196,10 @@ async function main() {
             if (!isCleanChineseTitle(title)) continue;
             seenTitles.add(title);
 
-            let entityId = titleToEntityId.get(title);
+            const entityId = titleToEntityId.get(title);
             if (!entityId) {
-              // 自动生成实体 ID
-              entityId = `ik${String(nextIdNum).padStart(6, '0')}`;
-              nextIdNum++;
-              titleToEntityId.set(title, entityId);
+              // 生产库中暂无该条目，安全跳过，绝不塞入虚空 ID 污染倒排索引
+              continue;
             }
 
             orderedIds.push(entityId);

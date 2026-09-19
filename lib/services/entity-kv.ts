@@ -783,23 +783,33 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
             const pageCount = Math.max(1, Math.ceil(realTotal / limit));
             const startIndex = (page - 1) * limit;
 
-            // 前 900 部由爱壹帆官方原生 4 大排序倒排索引高精度直出
-            let pageIds: string[] = [];
-            if (startIndex < list.length) {
-              pageIds = list.slice(startIndex, startIndex + limit);
-            }
-
-            // 若用户深度翻页超过倒排索引（或末页需补齐），从专区全量库 matchedIds 中无缝补充后续影片
-            if (pageIds.length < limit && matchedIds.length > list.length) {
+            // 统一构建候选 ID 池：倒排索引优先，不足或超深翻页时由专区全量库 matchedIds 无缝补充
+            const candidateIds: string[] = [...list];
+            if (matchedIds.length > list.length) {
               const seenIdSet = new Set<string>(list);
-              const remainingIds = matchedIds.filter(id => !seenIdSet.has(id));
-              const remainingOffset = Math.max(0, startIndex - list.length);
-              const needed = limit - pageIds.length;
-              const extraIds = remainingIds.slice(remainingOffset, remainingOffset + needed);
-              pageIds.push(...extraIds);
+              for (const id of matchedIds) {
+                if (!seenIdSet.has(id)) {
+                  candidateIds.push(id);
+                }
+              }
             }
 
-            const items = (await Promise.all(pageIds.map(id => getEntityById(id)))).filter(Boolean) as TitleEntity[];
+            // 🌟 核心防线：Auto-Replenish 缺额自愈填补流水线
+            // 无论遇到任何下架、空键或幽灵 ID，绝不允许返回少于 limit 个条目导致网格末行空缺
+            const items: TitleEntity[] = [];
+            let cursor = startIndex;
+            const CHUNK_SIZE = limit + 8;
+
+            while (items.length < limit && cursor < candidateIds.length) {
+              const nextSlice = candidateIds.slice(cursor, cursor + CHUNK_SIZE);
+              cursor += nextSlice.length;
+
+              const chunkEntities = (await Promise.all(nextSlice.map(id => getEntityById(id)))).filter(Boolean) as TitleEntity[];
+              for (const ent of chunkEntities) {
+                items.push(ent);
+                if (items.length === limit) break;
+              }
+            }
 
             return {
               items,
@@ -853,10 +863,22 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
     };
   }
 
-  // 默认或按最新上映（time / latest）：ID 数组内部最新实体居首，直接切片后按需并行加载
+  // 默认或按最新上映（time / latest）：ID 数组内部最新实体居首，直接切片后按需并行加载（带 Auto-Replenish 补齐）
   const startIndex = (page - 1) * limit;
-  const pageIds = matchedIds.slice(startIndex, startIndex + limit);
-  const items = (await Promise.all(pageIds.map(id => getEntityById(id)))).filter(Boolean) as TitleEntity[];
+  const items: TitleEntity[] = [];
+  let cursor = startIndex;
+  const CHUNK_SIZE = limit + 8;
+
+  while (items.length < limit && cursor < matchedIds.length) {
+    const nextSlice = matchedIds.slice(cursor, cursor + CHUNK_SIZE);
+    cursor += nextSlice.length;
+
+    const chunkEntities = (await Promise.all(nextSlice.map(id => getEntityById(id)))).filter(Boolean) as TitleEntity[];
+    for (const ent of chunkEntities) {
+      items.push(ent);
+      if (items.length === limit) break;
+    }
+  }
 
   return {
     items,
