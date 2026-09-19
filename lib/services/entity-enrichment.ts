@@ -470,6 +470,14 @@ export async function searchAndEnrichFromTMDB(
     const detail = await fetchTMDBDetails(firstHit.id, actualType, TMDB_API_KEY);
     if (!detail) return null;
 
+    const { mainTitle, originalTitle } = resolveCanonicalTitle(detail, title);
+
+    // 🌟 华语内容安全铁律门禁：非合法中文标题/日文假名/纯外文条目坚决拦截，绝不分配实体 ID 入库
+    if (!mainTitle || !isCleanChineseTitle(mainTitle)) {
+      console.warn(`[searchAndEnrichFromTMDB] 坚决阻断非华语/不安全条目入库: "${mainTitle}" (query: "${title}")`);
+      return null;
+    }
+
     // 生成新实体或升级现有残缺实体
     let entityId: string;
     let existingToUpdate: TitleEntity | null = null;
@@ -483,7 +491,6 @@ export async function searchAndEnrichFromTMDB(
       entityId = formatEntityId(nextSeq);
     }
 
-    const { mainTitle, originalTitle } = resolveCanonicalTitle(detail, title);
     const slug = generateSlug(mainTitle);
 
     const directors: string[] = [];
@@ -931,66 +938,45 @@ export async function searchAndEnrichPersonCredits(
     for (const item of validCandidates) {
       const mediaType: 'movie' | 'tv' = item.media_type === 'tv' ? 'tv' : 'movie';
       const tmdbIdStr = String(item.id);
+      const rawTitle = (item.title || item.name || '').trim();
 
-      // 检查是否已有该条目
+      // 🌟 铁律防线 1：严格华语内容安全门禁，凡纯外文、日文假名、泰文等未汉化冷门片坚决不纳管
+      if (!rawTitle || !isCleanChineseTitle(rawTitle)) {
+        continue;
+      }
+
+      // 🌟 铁律防线 2：安全熔断——仅优先匹配本站库中已存在的合法实体（通过 TMDB ID 或 中文标题）
       let entity = await getEntityByTmdb(mediaType, tmdbIdStr);
       if (!entity) {
-        // 创建新实体
-        const mainTitle = item.title || item.name;
-        const nextSeq = await getNextEntitySeq();
-        const entityId = formatEntityId(nextSeq);
-        const slug = generateSlug(mainTitle);
-        const releaseYear = (item.release_date || item.first_air_date || '2024').slice(0, 4);
+        entity = await getEntityByTitle(rawTitle);
+      }
 
-        entity = {
-          entityId,
-          slug,
-          tmdbId: tmdbIdStr,
-          tmdbType: mediaType,
-          title: mainTitle,
-          originalTitle: item.original_title || item.original_name,
-          type: mediaType,
-          year: releaseYear,
-          description: item.overview || `${mainTitle} 由 ${cleanName} ${role === 'director' ? '执导' : '主演'}，在 iKanPP 免费在线观看高清完整版。`,
-          cover: `https://image.tmdb.org/t/p/w500${item.poster_path}`,
-          backdrop: item.backdrop_path ? `https://image.tmdb.org/t/p/w1280${item.backdrop_path}` : `https://image.tmdb.org/t/p/w500${item.poster_path}`,
-          rate: item.vote_average ? item.vote_average.toFixed(1) : '8.5',
-          genres: [mediaType === 'movie' ? '电影' : '电视剧'],
-          directors: role === 'director' ? [cleanName] : [],
-          actors: role === 'actor' ? [cleanName] : [],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-
-        await saveEntity(entity);
-      } else {
-        // 如果实体已存在，确保其导演或演员列表中包含该人物，并更新索引
+      // 🌟 铁律防线 3：严禁影人页面向全局 index:all 凭空盲目创造无播放源的虚空死链！
+      // 仅当实体在本站库中已存在时，补充演职人员双向关联索引并回写
+      if (entity) {
         let needSave = false;
-        if (role === 'director' && !entity.directors.includes(cleanName)) {
+        if (role === 'director' && Array.isArray(entity.directors) && !entity.directors.includes(cleanName)) {
           entity.directors.push(cleanName);
           needSave = true;
         }
-        if (role === 'actor' && !entity.actors.includes(cleanName)) {
+        if (role === 'actor' && Array.isArray(entity.actors) && !entity.actors.includes(cleanName)) {
           entity.actors.push(cleanName);
           needSave = true;
         }
         if (needSave) {
           await saveEntity(entity);
         }
+        results.push(entity);
       }
-
-      results.push(entity);
     }
 
-    // 覆盖更新 KV 中的人物作品索引，彻底冲刷掉历史遗留的脱口秀等脏数据
-    if (results.length > 0) {
-      try {
-        const cleanIds = results.map(r => r.entityId);
-        await setPersonEntitiesIndex(role, cleanName, cleanIds);
-        await markPersonEnriched(role, cleanName);
-      } catch (e) {
-        console.warn(`[Failed to update person index] name=${cleanName}:`, e);
-      }
+    // 无论是否匹配到已有作品，均安全记录影人作品索引并标记已富化，彻底阻止爬虫下次重复探测
+    try {
+      const cleanIds = results.map(r => r.entityId);
+      await setPersonEntitiesIndex(role, cleanName, cleanIds);
+      await markPersonEnriched(role, cleanName);
+    } catch (e) {
+      console.warn(`[Failed to update person index] name=${cleanName}:`, e);
     }
 
       return results;
