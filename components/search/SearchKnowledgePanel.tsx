@@ -100,18 +100,37 @@ const KnowledgeCard = memo(function KnowledgeCard({
   const backdropUrl = entity.backdrop ? getOptimizedImageUrl(entity.backdrop) : '';
 
   const isSeries = entity.type === 'tv' || entity.type === 'anime';
+  const hasMultipleSeasons = Boolean(isSeries && entity.numberOfSeasons && entity.numberOfSeasons > 1);
   const episodeBadge = isSeries
     ? isSeasonSpecified
       ? `${targetSeasonTag} 连载正片`
-      : entity.numberOfEpisodes && entity.numberOfEpisodes > 0
-        ? `更新至 ${entity.numberOfEpisodes} 集`
-        : '连载剧集'
+      : hasMultipleSeasons
+        ? `全 ${entity.numberOfSeasons} 季`
+        : entity.numberOfEpisodes && entity.numberOfEpisodes > 0
+          ? `更新至 ${entity.numberOfEpisodes} 集`
+          : '连载剧集'
     : '高清电影';
+
+  const latestSeasonNum = entity.numberOfSeasons || 1;
+  const latestSeasonPlayUrl = `/player?${new URLSearchParams({
+    title: `${entity.title}第${latestSeasonNum}季`,
+    type: 'tv',
+    episode: '1',
+    season: String(latestSeasonNum),
+  }).toString()}`;
+
+  const season1PlayUrl = `/player?${new URLSearchParams({
+    title: entity.title,
+    type: 'tv',
+    episode: '1',
+    season: '1',
+  }).toString()}`;
 
   const playUrl = `/player?${new URLSearchParams({
     title: effectiveTitle,
     type: isSeries ? 'tv' : 'movie',
     episode: '1',
+    ...(userSeasonInfo ? { season: String(userSeasonInfo.seasonNumber) } : {}),
   }).toString()}`;
 
   return (
@@ -224,7 +243,11 @@ const KnowledgeCard = memo(function KnowledgeCard({
                 </div>
               )}
 
-              {entity.numberOfEpisodes ? (
+              {hasMultipleSeasons ? (
+                <span className="text-[11px] text-amber-300 font-semibold px-2 py-0.5 bg-amber-500/15 rounded-md border border-amber-500/30">
+                  全 {entity.numberOfSeasons} 季
+                </span>
+              ) : entity.numberOfEpisodes ? (
                 <span className="text-[11px] text-neutral-400 px-1.5 py-0.5 bg-neutral-800/80 rounded-md border border-neutral-700/60">
                   共 {entity.numberOfEpisodes} 集
                 </span>
@@ -265,13 +288,31 @@ const KnowledgeCard = memo(function KnowledgeCard({
 
           {/* 底部行动号召 (CTA) 区域 */}
           <div className="pt-2 flex flex-wrap items-center gap-2 border-t border-white/10 mt-auto">
-            <Link
-              href={playUrl}
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-red-600 hover:bg-red-500 text-white shadow-md shadow-red-600/30 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
-            >
-              <Icons.Play size={14} className="fill-white" />
-              <span>立即播放 · 查看全集</span>
-            </Link>
+            {hasMultipleSeasons && !isSeasonSpecified ? (
+              <>
+                <Link
+                  href={latestSeasonPlayUrl}
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-red-600 hover:bg-red-500 text-white shadow-md shadow-red-600/30 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
+                >
+                  <Icons.Play size={14} className="fill-white" />
+                  <span>播放 第{latestSeasonNum}季 (最新)</span>
+                </Link>
+                <Link
+                  href={season1PlayUrl}
+                  className="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl text-xs font-semibold text-neutral-200 bg-white/10 hover:bg-white/20 hover:text-white border border-white/15 transition-colors cursor-pointer"
+                >
+                  <span>从第 1 季看起</span>
+                </Link>
+              </>
+            ) : (
+              <Link
+                href={playUrl}
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-red-600 hover:bg-red-500 text-white shadow-md shadow-red-600/30 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
+              >
+                <Icons.Play size={14} className="fill-white" />
+                <span>{isSeasonSpecified ? `立即播放 ${targetSeasonTag}` : '立即播放 · 查看全集'}</span>
+              </Link>
+            )}
 
             <Link
               href={detailUrl}

@@ -7,6 +7,7 @@ import { VideoGroupCard, GroupedVideo } from './VideoGroupCard';
 import { settingsStore } from '@/lib/store/settings-store';
 import { Video } from '@/lib/types';
 import { extractCleanBaseTitle } from '@/lib/utils/search';
+import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 import { useUserStore } from '@/lib/store/user-store';
 
 // 黄金健康骨干源梯队优先（巨量1 > 光速2 > 暴风3 > 无尽4 > 最大5 > 极速6 > 新浪7 > 魔都8 > 360 9）
@@ -24,49 +25,75 @@ const SOURCE_PRIORITY_ORDER: Record<string, number> = {
 
 const RISKY_SOURCES = new Set(['subo', 'ikun', 'haitun', 'hongniu', 'huya', 'jinying', 'jingyu']);
 
+/**
+ * 智能提取片源聚合 Key（严格按「纯净母标题 + 季数」隔离，严禁多季互相吞并）
+ */
+function getGroupingKey(vodName: string): string {
+  const parsedSeason = parseSeasonFromTitle(vodName);
+  const seasonNum = parsedSeason ? parsedSeason.seasonNumber : 1;
+  const rawBase = parsedSeason ? parsedSeason.baseTitle : vodName;
+
+  // 清洗括号备注、画质与语言修饰词
+  const cleanBase = rawBase
+    .replace(/[\[\(（【].*?[\]\)）】]/g, '')
+    .replace(/\s*(?:国语|粤语|英语|韩语|日语|中字|双字|原声|TC|HD|4K|1080P|720P|蓝光|抢先版|完结版)\s*$/i, '')
+    .replace(/[:：\-—_]+$/, '')
+    .trim()
+    .toLowerCase();
+
+  return `${cleanBase || vodName.toLowerCase().trim()}__s${seasonNum}`;
+}
+
 interface VideoGridProps {
   videos: Video[];
   className?: string;
   isPremium?: boolean;
   latencies?: Record<string, number>;
+  onCardClick?: (videoId: string, videoUrl: string) => void;
 }
 
 export const VideoGrid = memo(function VideoGrid({
   videos,
   className = '',
   isPremium = false,
-  latencies = {}
+  latencies = {},
+  onCardClick: externalCardClick,
 }: VideoGridProps) {
-  const [activeCardId, setActiveCardId] = useState<string | null>(null);
-  const [visibleCount, setVisibleCount] = useState(24);
-  const [displayMode, setDisplayMode] = useState<'normal' | 'grouped'>('normal');
-  const gridRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const user = useUserStore(state => state.user);
 
-  // Load display mode from settings
+  const [displayMode, setDisplayMode] = useState<'normal' | 'grouped' | 'flat'>(() => {
+    return settingsStore.getSettings().searchDisplayMode;
+  });
+
+  const [activeCardId, setActiveCardId] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(24);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
   useEffect(() => {
-    const settings = settingsStore.getSettings();
-    setDisplayMode(settings.searchDisplayMode);
+    setVisibleCount(24);
+    setActiveCardId(null);
+  }, [videos.length]);
 
-    // Initial load: Check for saved scroll position to ensure we render enough items
-    const params = searchParams.toString();
-    const scrollKey = `scroll-pos:${pathname}${params ? '?' + params : ''}`;
-    const savedPos = sessionStorage.getItem(scrollKey);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isMobile = window.innerWidth < 768;
+      const isTv = (window as any).isTvPlatform ||
+        (user && (user as any).isTvDevice) ||
+        (typeof navigator !== 'undefined' && /smart-tv|android tv|googletv|appletv/i.test(navigator.userAgent));
 
-    if (savedPos && settings.rememberScrollPosition) {
-      const position = parseInt(savedPos, 10);
-      if (!isNaN(position) && position > 500) {
-        const estimatedRowsNeeded = Math.ceil(position / 300) + 2;
-        const itemsPerRow = window.innerWidth >= 1280 ? 6 :
-          (window.innerWidth >= 1024 ? 5 :
-            (window.innerWidth >= 768 ? 4 :
-              (window.innerWidth >= 640 ? 3 : 2)));
-        const neededCount = Math.min(videos.length, estimatedRowsNeeded * itemsPerRow);
-
-        if (neededCount > 24) {
-          setVisibleCount(Math.ceil(neededCount / 24) * 24);
+      if (isMobile) {
+        setDisplayMode('flat');
+      } else if (isTv) {
+        setDisplayMode('flat');
+      } else {
+        const urlMode = searchParams?.get('display');
+        if (urlMode === 'grouped' || urlMode === 'flat' || urlMode === 'normal') {
+          setDisplayMode(urlMode as any);
+        } else {
+          setDisplayMode(settingsStore.getSettings().searchDisplayMode);
         }
       }
     }
@@ -79,13 +106,13 @@ export const VideoGrid = memo(function VideoGrid({
     return () => unsubscribe();
   }, [pathname, searchParams, videos.length]);
 
-  // 搜索结果去重与智能排序：同名同年份的视频聚合为最优卡片，并严格按黄金骨干源与相关度排序
+  // 搜索结果去重与智能排序：同名同季同年份的视频聚合为最优卡片，并严格按黄金骨干源与相关度排序
   const deduplicatedVideos = useMemo(() => {
     const groups = new Map<string, Video[]>();
     for (const video of videos) {
-      const cleanName = extractCleanBaseTitle(video.vod_name) || video.vod_name.toLowerCase().trim();
+      const groupKey = getGroupingKey(video.vod_name);
       const year = video.vod_year || '';
-      const key = `${cleanName}__${year}`;
+      const key = `${groupKey}__${year}`;
 
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key)!.push(video);
@@ -146,18 +173,18 @@ export const VideoGrid = memo(function VideoGrid({
     return null;
   }
 
-  // Group videos by name when in grouped mode
+  // Group videos by name & season when in grouped mode
   const groupedVideos = useMemo<GroupedVideo[]>(() => {
     if (displayMode !== 'grouped') return [];
 
     const groups = new Map<string, Video[]>();
 
     videos.forEach(video => {
-      const cleanName = extractCleanBaseTitle(video.vod_name) || video.vod_name.toLowerCase().trim();
-      if (!groups.has(cleanName)) {
-        groups.set(cleanName, []);
+      const groupKey = getGroupingKey(video.vod_name);
+      if (!groups.has(groupKey)) {
+        groups.set(groupKey, []);
       }
-      groups.get(cleanName)!.push(video);
+      groups.get(groupKey)!.push(video);
     });
 
     const groupList = Array.from(groups.entries()).map(([, groupVideos]) => {
