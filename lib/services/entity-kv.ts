@@ -279,7 +279,7 @@ export async function getEntityByTitle(title: string): Promise<TitleEntity | nul
 /**
  * 保存或更新实体到 KV（并同步更新全套二级反向索引）
  */
-export async function saveEntity(entity: TitleEntity): Promise<void> {
+export async function saveEntity(entity: TitleEntity, options?: { syncGlobalIndex?: boolean }): Promise<void> {
   if (!entity || !entity.entityId) return;
 
   // 🌟 终极物理钢铁防线：华语流媒体主站内容安全底线
@@ -343,22 +343,25 @@ export async function saveEntity(entity: TitleEntity): Promise<void> {
   }
 
   // 5. 追加到全局所有 ID 列表与 Sitemap 轻量全量目录
-  const rawAll = await kvGet('index:all');
-  const allIds: string[] = rawAll ? JSON.parse(rawAll) : [];
-  if (!allIds.includes(id)) {
-    allIds.push(id);
-    await kvPut('index:all', JSON.stringify(allIds));
-  }
+  // 🌟 架构防线：仅在显式批量入库/管理模式下执行（严禁线上 Edge 运行时并发读改写全局大集合，杜绝竞态覆盖脏数据）
+  if (options?.syncGlobalIndex) {
+    const rawAll = await kvGet('index:all');
+    const allIds: string[] = rawAll ? JSON.parse(rawAll) : [];
+    if (!allIds.includes(id)) {
+      allIds.push(id);
+      await kvPut('index:all', JSON.stringify(allIds));
+    }
 
-  try {
-    const rawCatalog = await kvGet('sitemap:catalog');
-    let catalog: [string, string, string][] = rawCatalog ? JSON.parse(rawCatalog) : [];
-    const modDate = (entity.updatedAt || entity.createdAt || new Date().toISOString()).split('T')[0];
-    catalog = catalog.filter(c => c[0] !== id);
-    catalog.push([id, entity.slug || id, modDate]);
-    await kvPut('sitemap:catalog', JSON.stringify(catalog));
-  } catch (err) {
-    console.warn('[saveEntity] sitemap:catalog update warning:', err);
+    try {
+      const rawCatalog = await kvGet('sitemap:catalog');
+      let catalog: [string, string, string][] = rawCatalog ? JSON.parse(rawCatalog) : [];
+      const modDate = (entity.updatedAt || entity.createdAt || new Date().toISOString()).split('T')[0];
+      catalog = catalog.filter(c => c[0] !== id);
+      catalog.push([id, entity.slug || id, modDate]);
+      await kvPut('sitemap:catalog', JSON.stringify(catalog));
+    } catch (err) {
+      console.warn('[saveEntity] sitemap:catalog update warning:', err);
+    }
   }
 
   // 6. 追加到分类索引
