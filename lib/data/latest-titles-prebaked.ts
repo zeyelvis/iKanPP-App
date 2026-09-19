@@ -17,7 +17,9 @@ export interface LatestPrebakedItem {
   channelKey: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string;
   genres: string[];
   updateBadge: string;
+  qualityBadge?: string;
   createdAt: string;
+  [key: string]: any;
 }
 
 export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
