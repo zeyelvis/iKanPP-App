@@ -738,13 +738,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608102124022465304.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202608261125002570740.jpg",
-        "description": "《披荆斩棘2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260915(三公小考)。",
+        "description": "《披荆斩棘2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260919(三公观演区上)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260915(三公小考)",
+        "episodes_info": "更新至20260919(三公观演区上)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1237,111 +1237,69 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "八仙伏魔录",
-          "updateBadge": "56"
-      },
-      {
-          "title": "云归新生",
+          "title": "念念不相忘",
           "updateBadge": "全"
       },
       {
-          "title": "十里红妆",
+          "title": "穿越到虐文小说，我成了女主角！",
           "updateBadge": "全"
       },
       {
-          "title": "全宗上下，拼不出一个好人",
+          "title": "白狐甜宠之我家小狐狸成精了",
           "updateBadge": "全"
       },
       {
-          "title": "掌心陷落",
+          "title": "告别失败婚姻后我涅槃重生",
           "updateBadge": "全"
       },
       {
-          "title": "凤印谋",
+          "title": "开局解锁剑来名场面",
           "updateBadge": "全"
       },
       {
-          "title": "渔船变军舰：开局手搓近防炮",
+          "title": "河滩烧烤的不速之客",
           "updateBadge": "全"
       },
       {
-          "title": "全场震惊！我唤醒了华洲众神",
+          "title": "穿越宠崽，疯娘逆袭",
           "updateBadge": "全"
       },
       {
-          "title": "仙子慢点走：另类废柴",
+          "title": "将军有喜",
           "updateBadge": "全"
       },
       {
-          "title": "莫道佳人薄情",
+          "title": "我的迷糊女徒弟",
           "updateBadge": "全"
       },
       {
-          "title": "一梦惊华凤印加身",
+          "title": "带妹摆摊，我成了全球厨神",
           "updateBadge": "全"
       },
       {
-          "title": "前尘烬，此生安",
+          "title": "我许她半世荣光",
+          "updateBadge": "全"
+      },
+      {
+          "title": "拆CP不成，反成爸妈心尖宠宝贝",
           "updateBadge": "全"
       }
   ],
   hero: [
       {
-          "id": "jl_short_638029067118969000",
-          "title": "八仙伏魔录",
-          "rate": "8.7",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/11fca9ab495709c94ef95c327ee94f4013a79bb883740341f12a90f0e774a119.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/11fca9ab495709c94ef95c327ee94f4013a79bb883740341f12a90f0e774a119.jpg",
-          "description": "八仙功成赴天庭受封，吕洞宾目睹凡间疾苦，不满天道冷眼旁观，自碎纯阳仙剑舍弃天仙之位，钟离权、何仙姑追随下凡闯关清风山，剩余六仙接连燃元神驰援，与魔尊沈渡、司命天尊对峙，最终悟透人间道，八仙脱离天庭常驻凡尘济世。",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全111集·全56集",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_631538607550758900",
-          "title": "云归新生",
-          "rate": "9.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f4fa9aec1de97b82d0dcec60acf71f8f5da247c2a526ed3b62f86b67bd8946c4.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f4fa9aec1de97b82d0dcec60acf71f8f5da247c2a526ed3b62f86b67bd8946c4.jpg",
-          "description": "顾云在国外意外发现一名女人身上的标记，竟与自己亲手给女儿留下的标记高度吻合。她心生疑窦，立刻派人救下女子并暗中调查，最终发现女儿早在多年前被人恶意调换。如今养在身边的，是前夫与旁人的私生女顾雪，而自己的亲生女儿多年来受尽磨难。顾云强忍悲痛，凭借实力步步反击，揭穿前夫、顾雪及其同伙的阴谋，为女儿讨回公...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全89集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_631526461282910200",
-          "title": "十里红妆",
+          "id": "jl_short_638041132688802000",
+          "title": "穿越到虐文小说，我成了女主角！",
           "rate": "8.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/360e144f6a8e126201c1de5f5b191515587cbdec10749bf88706885a6e29b742.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/360e144f6a8e126201c1de5f5b191515587cbdec10749bf88706885a6e29b742.jpg",
-          "description": "沈家嫡女沈月华大婚受辱，当场斩断婚约，携十里红妆改嫁痴傻六王萧煜。一场看似自毁的抉择，实则是双强者的命运结缘。他伪装痴傻蛰伏深宫，只为拨乱朝局、守护家国；她智计百出临危破局，成为他最默契的知己与臂膀。深宫对弈、边关险境、金殿正名，二人步步为营，从互相试探到生死与共，最终澄清乱象，共守山河万里。",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/8d87962b43584031d00d74bdfa11aee84db85999755cc6268b2ea49b723f44ec.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/8d87962b43584031d00d74bdfa11aee84db85999755cc6268b2ea49b723f44ec.jpg",
+          "description": "现代社畜一朝穿书，成仙侠虐文里命运凄惨的炮灰女主江晚予，原著等待她的是被师尊利用、灵根被夺、沦为炉鼎、身死道消的全套虐心剧情。为逆天改命活下去，刑堂上她一句“爹”扭转局面，当众拆穿白莲花周妩的陷害。下山偶遇隐世顶尖仙君谢应诀，得知自己是雷神灵藕半神之躯。她脱离偏执师尊与偏心师兄，与谢应诀结伴闯秘境、...",
           "year": "2026",
           "types": [
               "短剧",
-              "古装仙侠",
+              "年代穿越",
               "全集连播"
           ],
-          "episodes_info": "全81集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1350,19 +1308,19 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_631526407193296900",
-          "title": "全宗上下，拼不出一个好人",
-          "rate": "8.8",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/c5c448ec1fb8685dae9d0ae37fd6136ec7e9f1957aae325fb3f018edae065957.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/c5c448ec1fb8685dae9d0ae37fd6136ec7e9f1957aae325fb3f018edae065957.jpg",
-          "description": "穿越者楚落修仙界激活护犊系统，拜宇宙顶尖的阴鸦大帝为师，凭师尊极致护短获得超强力量。他以老六战术横行三千大世界，打脸各路天骄、碾压反派势力，禁忌宗老祖全程兜底护犊子，一路爽点拉满，还逐步揭开宗门禁地百棺秘辛，第一季结尾神秘存在强势降临。",
+          "id": "jl_short_638041132688736500",
+          "title": "白狐甜宠之我家小狐狸成精了",
+          "rate": "8.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/77d1525abdd5fa86b3fb2d5019f901392f92e5621eb02abe2f09d68c28cd1c81.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/77d1525abdd5fa86b3fb2d5019f901392f92e5621eb02abe2f09d68c28cd1c81.jpg",
+          "description": "这部 AI 制作的奇幻甜宠剧一口气更新到 120 集，用新颖视觉呈现人狐恋的极致浪漫 。《 白狐甜宠之我家小狐狸成精了 》 讲述人类与化形白狐之间的甜蜜日常与羁绊守护，全剧围绕跨物种恋爱展开，情感线纯粹高糖无虐点 。 主角从初识试探到彼此交付真心的过程节奏轻快，互动细节充满灵气与萌感，没有复杂支线干...",
           "year": "2026",
           "types": [
               "短剧",
-              "古装仙侠",
+              "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全137集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1371,40 +1329,103 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_630114595960258600",
-          "title": "掌心陷落",
+          "id": "jl_short_638041132218974500",
+          "title": "告别失败婚姻后我涅槃重生",
+          "rate": "8.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/bc9d988b4bf38ffd7b4061c9526357f43d65a96cdfc0d1657b755d363a40c828.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/bc9d988b4bf38ffd7b4061c9526357f43d65a96cdfc0d1657b755d363a40c828.jpg",
+          "description": "秦牧穿越成中年油腻男，激活系统后果断离婚，体质改善。他带“舔狗”儿子去足浴城见世面，使其摆脱绿茶执念。随后秦牧职场逆袭，邂逅病娇总裁柳青青，凭系统股市能力赚60亿注资其公司并打脸王家。他助儿子感情升温，偶遇林芷汀并用按摩术治愈其宫寒，二人拍视频引发三位闺蜜冲突。最终秦牧化解情感修罗场，姜梦瑶悔悟，柳...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_638041132168773900",
+          "title": "开局解锁剑来名场面",
+          "rate": "8.5",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/a0d16582c1ea80b472667254eb0b4584bc9092c76f26c0ecbcd34f8937bdd7f6.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/a0d16582c1ea80b472667254eb0b4584bc9092c76f26c0ecbcd34f8937bdd7f6.jpg",
+          "description": "对于玄幻爱好者而言，这部还原度极高的 AI 短剧绝对是不容错过的视觉盛宴 。 全剧 71 集完整复刻了经典 IP 中的高光时刻，AI 技术精准捕捉了剑气纵横的战斗特效与宏大世界观，弥补了真人拍摄在特效预算上的局限 。 剧情直指核心冲突，从主角觉醒到各路高手登场，打斗场面流畅华丽，分镜设计极具电影感 ...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_638041132168708400",
+          "title": "河滩烧烤的不速之客",
+          "rate": "8.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/90a82a6a49b3ac7f9fadbc8472f1e801e7b3660b8a6e43fa588f78fc0c2f4cf2.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/90a82a6a49b3ac7f9fadbc8472f1e801e7b3660b8a6e43fa588f78fc0c2f4cf2.jpg",
+          "description": "夫妻自费筹备露营，表嫂一家蹭局超市还强行塞贵价食材让女主买单。露营当天表嫂私带十几名亲友不请自来，霸占场地打麻将，使唤女主干活。女主忍无可忍，带好友悄悄转移全部物资换场地尽兴游玩。当晚突降暴雨冰雹，蹭客被困野外狼狈不堪。表嫂一家道德绑架索要赔偿，女主甩出证据澄清，对方发帖抹黑反遭网友群嘲，自食恶果。",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_638041132168642800",
+          "title": "穿越宠崽，疯娘逆袭",
+          "rate": "8.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/c8da2faf7f8c5b15ebae440658bdd88057a9e01bbac4ada6b9bed37c69f6b94c.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/c8da2faf7f8c5b15ebae440658bdd88057a9e01bbac4ada6b9bed37c69f6b94c.jpg",
+          "description": "这部 2026 年上线的 AI 短剧一口气更到 94 集，主打穿越背景下母亲带娃逆袭的爽感体验 。 剧情围绕一位性格泼辣的母亲在异时空通过智慧与手段保护孩子并实现人生翻盘的故事展开，节奏紧凑且冲突密集 。 角色关系上，母子亲情是核心纽带，对外则是一路打脸反派 、 步步为营的强势姿态，叙事推进极快，几...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "年代穿越",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_638041132151865600",
+          "title": "将军有喜",
           "rate": "8.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/1262f89c13805705d949a68eb82241d71663c28759efa4ed0c32c43b53822c49.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/1262f89c13805705d949a68eb82241d71663c28759efa4ed0c32c43b53822c49.jpg",
-          "description": "大二学生夏知遥被亲叔叔以父母出事为由骗至东南亚，实则被卖入犯罪园区。在园区内，她与其他被拐女孩一同沦为待售的“商品”。当地头目巴塞为讨好军火大佬沈御，将夏知遥等女孩献上。沈御对谄媚或恐惧的女人毫无兴趣，却意外注意到夏知遥对他书房内一幅古地图的专注眼神，心生好奇。巴塞误以为沈御看中夏知遥，将她单独关押...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全151集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_630111496201896000",
-          "title": "凤印谋",
-          "rate": "9.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/2d520bbcfff561127f68ae40c5a38192596018c38381103baa276259318d17ec.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/2d520bbcfff561127f68ae40c5a38192596018c38381103baa276259318d17ec.jpg",
-          "description": "该剧讲述了皇后苏锦回家省亲途中，遭宫中平日称姐道妹的妃子们暗算，她们觊觎凤印已久，趁其离宫设下死局。此次陷害由贵妃及其党羽策划，对苏锦家族造成严重牵连。 [5]然而，苏锦怨气不散，意外借尸还魂，附身在刚病逝的民间舞姬方有仪身上。重生后的苏锦，化名方有仪，心中燃起滔天恨意，复仇成为她活下去的唯一目标。...",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/eeb7a76420ece30fba8aa52f8665ccbf70e37145a44536d668e31bf5e8b8e4ee.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/eeb7a76420ece30fba8aa52f8665ccbf70e37145a44536d668e31bf5e8b8e4ee.jpg",
+          "description": "女将军凌霜死里逃生，识破未婚夫方恒的阴谋，毅然撕毁婚约。为避开纷扰，她与纨绔方玉定下契约婚姻。世人皆嘲方玉不学无术，凌霜却察觉他身份暗藏玄机。二人从彼此试探走向携手同行，历经方家纷争、豫州扎根、南疆征战与皇城危局，两人渐生真情。无奇遇加持的凌霜以血肉搏战，尘埃落定后，她解甲归田，与心爱之人相守余生。",
           "year": "2026",
           "types": [
               "短剧",
               "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全93集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1413,40 +1434,19 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_630111417969672200",
-          "title": "渔船变军舰：开局手搓近防炮",
-          "rate": "9.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/4a261b33d4ad99ae7266265bee0e0acfa8167f72e68711ff285f9cb2163406b7.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/4a261b33d4ad99ae7266265bee0e0acfa8167f72e68711ff285f9cb2163406b7.jpg",
-          "description": "你敢信？一艘锈迹斑斑的破渔船，停在渔港第三天，就被军方围了——不是来查非法捕捞，是来敬礼的！原来渔民老陈表面补网晒鱼干，背地里用柴油机改电磁线圈、拿船厂废料手搓近防炮，连雷达都焊在桅杆顶上！起因就因为那天他亲眼看见外国舰艇在自家祖传渔场拖走整片珊瑚礁，还朝他船头开了一枪……没炸船，倒炸醒了他压箱底的...",
+          "id": "jl_short_638041132118311200",
+          "title": "我的迷糊女徒弟",
+          "rate": "9.5",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/6bce6e250a686d9d1b26f59ba3780c3d3dc9a2e4c9e6588ae749a2b8d11de102.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/6bce6e250a686d9d1b26f59ba3780c3d3dc9a2e4c9e6588ae749a2b8d11de102.jpg",
+          "description": "本资源主打师徒之间的趣味互动与成长故事，84 集的体量保证了剧情的充分展开 。《 我的迷糊女徒弟 》 是 2026 年上线的 AI 短剧，题材明确指向古装或玄幻背景下的师徒恋情或亲情 。 剧中女主角性格迷糊可爱，与师父之间形成鲜明的性格反差，这种设定天然带有喜剧色彩与宠溺感 。AI 生成的角色表情生...",
           "year": "2026",
           "types": [
               "短剧",
-              "现代都市",
+              "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全91集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_630064645759041500",
-          "title": "全场震惊！我唤醒了华洲众神",
-          "rate": "9.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/16118e6513403ac5d4a05065aed879546b6089fa6934f29cd5602ccf170dddef.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/16118e6513403ac5d4a05065aed879546b6089fa6934f29cd5602ccf170dddef.jpg",
-          "description": "2050年，诸神竞技场降临，各国须召唤神话神明对战，败者将被抹去国运。华洲因文化断层，神明传说尽数湮灭，在擂台上屡战屡败，濒临灭亡。穿越而来的2025年大学生周玄，成了唯一通晓华洲五千年神话的人。他从万神殿中唤醒猪八戒、嫦娥、杨戬、后羿等被遗忘的华夏众神，连败樱洲、北欧联洲、奥洲强敌。当祖龙咆哮、刑...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全141集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1458,19 +1458,19 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "八仙伏魔录",
-      rate: "8.7",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/11fca9ab495709c94ef95c327ee94f4013a79bb883740341f12a90f0e774a119.jpg",
+      title: "穿越到虐文小说，我成了女主角！",
+      rate: "8.5",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/8d87962b43584031d00d74bdfa11aee84db85999755cc6268b2ea49b723f44ec.jpg",
       year: "2026",
-      types: ["短剧","古装仙侠","全集连播"],
+      types: ["短剧","年代穿越","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: "云归新生",
-      rate: "9.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f4fa9aec1de97b82d0dcec60acf71f8f5da247c2a526ed3b62f86b67bd8946c4.jpg",
+      title: "白狐甜宠之我家小狐狸成精了",
+      rate: "8.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/77d1525abdd5fa86b3fb2d5019f901392f92e5621eb02abe2f09d68c28cd1c81.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1478,29 +1478,29 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_3',
-      title: "十里红妆",
-      rate: "8.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/360e144f6a8e126201c1de5f5b191515587cbdec10749bf88706885a6e29b742.jpg",
+      title: "告别失败婚姻后我涅槃重生",
+      rate: "8.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/bc9d988b4bf38ffd7b4061c9526357f43d65a96cdfc0d1657b755d363a40c828.jpg",
       year: "2026",
-      types: ["短剧","古装仙侠","全集连播"],
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_4',
-      title: "全宗上下，拼不出一个好人",
-      rate: "8.8",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/c5c448ec1fb8685dae9d0ae37fd6136ec7e9f1957aae325fb3f018edae065957.jpg",
+      title: "开局解锁剑来名场面",
+      rate: "8.5",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/a0d16582c1ea80b472667254eb0b4584bc9092c76f26c0ecbcd34f8937bdd7f6.jpg",
       year: "2026",
-      types: ["短剧","古装仙侠","全集连播"],
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_5',
-      title: "掌心陷落",
-      rate: "8.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/1262f89c13805705d949a68eb82241d71663c28759efa4ed0c32c43b53822c49.jpg",
+      title: "河滩烧烤的不速之客",
+      rate: "8.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/90a82a6a49b3ac7f9fadbc8472f1e801e7b3660b8a6e43fa588f78fc0c2f4cf2.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1508,31 +1508,31 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_6',
-      title: "凤印谋",
-      rate: "9.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/2d520bbcfff561127f68ae40c5a38192596018c38381103baa276259318d17ec.jpg",
+      title: "穿越宠崽，疯娘逆袭",
+      rate: "8.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/c8da2faf7f8c5b15ebae440658bdd88057a9e01bbac4ada6b9bed37c69f6b94c.jpg",
+      year: "2026",
+      types: ["短剧","年代穿越","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_7',
+      title: "将军有喜",
+      rate: "8.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/eeb7a76420ece30fba8aa52f8665ccbf70e37145a44536d668e31bf5e8b8e4ee.jpg",
       year: "2026",
       types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_7',
-      title: "渔船变军舰：开局手搓近防炮",
-      rate: "9.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/4a261b33d4ad99ae7266265bee0e0acfa8167f72e68711ff285f9cb2163406b7.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
       id: 'pb_s_top_8',
-      title: "全场震惊！我唤醒了华洲众神",
-      rate: "9.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/16118e6513403ac5d4a05065aed879546b6089fa6934f29cd5602ccf170dddef.jpg",
+      title: "我的迷糊女徒弟",
+      rate: "9.5",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/6bce6e250a686d9d1b26f59ba3780c3d3dc9a2e4c9e6588ae749a2b8d11de102.jpg",
       year: "2026",
-      types: ["短剧","现代都市","全集连播"],
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1599,7 +1599,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "id": "iyf_hero_movie_1",
         "title": "特立独行",
         "rate": "6.7",
-        "cover": "https://image.tmdb.org/t/p/w500/cyzcsp95W2Op3G5Gb8S2cPEnSc2.jpg",
+        "cover": "https://image.tmdb.org/t/p/w500/dWtKXfN97AMW5n3S6QoUVUMCU2S.jpg",
         "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
         "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
         "year": "2026",

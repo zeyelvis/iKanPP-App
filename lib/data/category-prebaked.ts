@@ -1208,7 +1208,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     {
       "id": "pb_cat_documentary_10",
       "title": "神兽猎局",
-      "rate": "7.3",
+      "rate": "7.2",
       "cover": "https://image.tmdb.org/t/p/w500/tZhx3eXEcaLnLJkITX85TsKCAod.jpg",
       "year": "2026",
       "types": [
