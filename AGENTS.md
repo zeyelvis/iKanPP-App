@@ -296,12 +296,16 @@ iKanPP 全域流媒体平台在应对院线新片、热播剧集与新番动漫�
 - **自然融入准则**：所有衍生关键词、网盘截流意图词与播放规格，必须作为正常语法自然融入页面的 Meta 标签、FAQ 展开项或底部探索 Chips，真实用户清晰可见；
 - **真实满足意图**：针对搜寻“网盘/下载”的用户，页面在 Meta Description 中说明“*寻找《xxx》网盘资源？无需繁琐转存解压与限速等待，iKanPP 支持 4K 超清 0ms 免VIP在线秒播*”，并在同页面直接提供秒级起播的真实播放入口，彻底满足用户终极观影需求，大幅提升停留时间（Dwell Time）。
 
-### 2. 全光谱意图长尾矩阵自动裂变机制 (Full-Spectrum Intent Matrix)
-- 详情页必须统一通过 `lib/utils/seo-keyword-generator.ts`（`generateFullSpectrumKeywords`）自动裂变 4 大类 30+ 精准长尾词：
-  1. **网盘/下载截流词**（百度网盘、迅雷下载、夸克云盘、磁力链接、网盘下载）；
-  2. **画质与音轨规格词**（4K超清原画、1080P免VIP、中文字幕、国语配音/粤语原声）；
-  3. **观影决策与剧情词**（豆瓣真实评分、结局解析、演员表阵容、片尾彩蛋）；
-  4. **同音错字与无标点容错词**（如“生活危机” ➔ “生化危机”，自动剔除冒号破折号）。
+### 2. 全光谱 6 大意图长尾矩阵自动裂变机制 (Full-Spectrum 6-Family Intent Matrix)
+- 详情页必须统一通过 `lib/utils/seo-keyword-generator.ts`（`generateFullSpectrumKeywords`）自动裂变包含 YAML 规范定义的 6 大意图修饰词家族（`GENERIC_MODIFIERS`）的 48 组精准长尾词：
+  1. **观影意图**（`watch_intent`：在线观看、在线播放、在线看、在线观影）；
+  2. **免费意图**（`free_intent`：免费观看、免费在线观看，配合 `isAccessibleForFree: true` 实体标记）；
+  3. **画质规格**（`quality`：高清、HD、1080P、4K、4K超清原画、中文字幕）；
+  4. **完结度与连载状态**（`completion` & `freshness`：完整版、全集、大结局、最新一集、更新至第X集、未删减版）；
+  5. **信息与决策**（`information`：剧情、剧情介绍、简介、演员表、导演、上映时间、豆瓣真实评分、结局解析、片尾彩蛋）；
+  6. **口碑推荐与问答意图**（`recommendation`：推荐、排行榜、好看吗、值得看吗）；
+  7. **核心截流与容错**：网盘/下载截流词（百度网盘、迅雷下载、夸克云盘、磁力链接）与拼音/同音错字容错词（如“生活危机” ➔ “生化危机”）；
+  8. **媒体类型自适应**：动漫、综艺、纪录片自动将通用模板标签自适应为专属媒体类型（如自动生成“动漫”而非“电视剧”）。
 
 ### 3. GEO 生成式 AI 搜索实体图谱深度对齐 (AI Search & GEO Grounding)
 - **机器可读 Schema 深度增强**：
@@ -311,21 +315,21 @@ iKanPP 全域流媒体平台在应对院线新片、热播剧集与新番动漫�
 
 ### 4. 自动化即时多引擎闪电广播流水线 (Instant Search Syndication Pipeline)
 - 每次构建部署完成后（`.github/workflows/deploy.yml`）或新片增量入库后，必须全自动并发触发两大广播链路：
-  1. **Google Indexing API 闪电广播**：通过 `scripts/push-google-indexing.mjs`，将最新上线影视的规范 URL 提交至 Google Indexing API，触发 Googlebot 在 5~15 分钟内入站抓取，抢占首发搜索红利；单日推送严格控制在 30~50 条以内以防超额；
+  1. **Google Indexing API 闪电广播**：通过 `scripts/push-google-indexing.mjs`，根据 Priority A 级策略将最新上线影视的规范 URL 提交至 Google Indexing API，触发 Googlebot 在 5~15 分钟内入站抓取，抢占首发搜索红利；单日推送严格控制在 30~50 条以内以防超额；
   2. **IndexNow 即时全网广播**：通过 `scripts/push-indexnow.mjs` 将全量 URL 广播给 Bing 与 Yandex，实现 1 小时内直通 OpenAI ChatGPT 联网搜索候选池。
 
 ### 5. 动态相关探索内链网络 (Dynamic Internal Linking Mesh)
-- 详情页底部的 `<RelatedSearchChips />` 严禁使用纯死板静态词，必须结合当前影片的题材、年份与全光谱意图词，动态裂变专属长尾探索内链，打破孤岛效应，使新片与全站内容形成高密度互联互通。
+- 详情页底部的 `<RelatedSearchChips />` 严禁使用纯死板静态词，必须结合当前影片的题材、年份、6 大意图与跨维度 Discovery 探索词（如 `2026热门动作电影`、`动作电影排行榜`），动态裂变专属长尾探索内链，打破孤岛效应，使新片与全站内容形成高密度互联互通。
 
 ### 6. 机器可读 YAML 全景规范与白帽索引门槛 (YAML Specification & Indexation Guardrails)
 - **基线规范**：全站 SEO 体系永久以 `docs/architecture/ikanpp_seo_keyword_system.yaml` 及 `lib/data/seo-rules/seo-keyword-system.ts` 为唯一权威规则库；
 - **白帽索引门槛 (`isEntityIndexable`)**：必须严密核验条目健康度，对缺失核心信息或非正常入库的空壳条目，强制输出 `robots: { index: false, follow: false }`，坚决杜绝薄弱内容（Thin Content）拉低整站域名信任度。
 
-
-
-
-
-
+### 7. 存量已收录页面零破坏平滑继承与长尾词扩容铁律 (Zero-Disruption Legacy Page Continuity)
+- **Edge SSR 动态按需赋能**：系统采用 Edge SSR 动态渲染架构，全站数十万存量老页面无需任何刷库或迁移，爬虫再次回访时自动无缝应用最新 6 大意图词库与结构化摘要；
+- **URL 绝对不改**：全站正常影视详情页的 URL 路由保持 100% 不变，历史所有已被搜索引擎收录的页面点击 100% 正常播放，零 404 死链风险；
+- **长尾词扩容红利**：原有主关键词排名保持不变，Google 重新抓取后将自动为同一个已收录 URL 追加绑定 48 组全新的 6 大意图搜索词，实现存量收录流量指数级扩容；
+- **历史非规范链接 301 权威传递**：任何历史旧格式或未规范化的 URL 访问时，必须 100% 触发 HTTP 301/308 规范重定向，将历史累积的 PageRank、权重与点击信号无损传递至标准规范 URL。
 
 
 
