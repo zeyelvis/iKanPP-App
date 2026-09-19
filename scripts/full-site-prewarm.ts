@@ -25,9 +25,72 @@ const CF_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfef
 const CF_AUTH_EMAIL = process.env.CLOUDFLARE_AUTH_EMAIL || 'zeyelvis@gmail.com';
 const CF_AUTH_KEY = process.env.CLOUDFLARE_AUTH_KEY || 'cfk_L8MzQDjTswTK4jBtvJjmcKjEnxTQ1dKNhzNyn4dQa33221aa';
 const R2_BUCKET = process.env.R2_BUCKET_NAME || 'ikanpp-images';
+
+// Cloudflare KV 配置
+const CF_KV_ACCOUNT_ID = process.env.CF_KV_ACCOUNT_ID || CF_ACCOUNT_ID;
+const CF_KV_NAMESPACE_ID = process.env.CF_KV_NAMESPACE_ID || process.env.CLOUDFLARE_NAMESPACE_ID || '42311924427747deaf00981d99d58998';
+const CF_KV_API_KEY = process.env.CF_KV_API_KEY || CF_AUTH_KEY;
+const CF_KV_EMAIL = process.env.CF_KV_EMAIL || CF_AUTH_EMAIL;
+
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957';
 const PROD_BASE_URL = process.env.SITE_URL || 'https://www.ikanpp.com';
+
+function generateSlug(title: string): string {
+  if (!title || typeof title !== 'string') return 'video';
+  const cleaned = title
+    .replace(/[（(][^）)]*[）)]/g, ' ')
+    .replace(/[【\[][^】\]]*[】\]]/g, ' ')
+    .replace(/[:：·•/／\\、，,。！？!?~～@#$%^&*+=|]/g, ' ')
+    .trim();
+  const slug = cleaned
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\u4e00-\u9fa5-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+  return slug || 'video';
+}
+
+function normalizeTitle(title: string): string {
+  if (!title) return '';
+  return title
+    .toLowerCase()
+    .replace(/[（(].*?[）)]/g, '')
+    .replace(/[【\[].*?[】\]]/g, '')
+    .replace(/[:：·•/／\\、，,。！？!?~～@#$%^&*+=|\s_-]/g, '')
+    .trim();
+}
+
+function generateDeterministicId(title: string): string {
+  let hash = 0;
+  for (let i = 0; i < title.length; i++) {
+    hash = ((hash << 5) - hash) + title.charCodeAt(i);
+    hash |= 0;
+  }
+  const pos = Math.abs(hash) % 900000 + 100000;
+  return `ik${pos}`;
+}
+
+async function bulkPutKV(items: Array<{ key: string; value: string }>): Promise<boolean> {
+  if (!items.length) return true;
+  const endpoint = `https://api.cloudflare.com/client/v4/accounts/${CF_KV_ACCOUNT_ID}/storage/kv/namespaces/${CF_KV_NAMESPACE_ID}/bulk`;
+
+  try {
+    const res = await fetch(endpoint, {
+      method: 'PUT',
+      headers: {
+        'X-Auth-Email': CF_KV_EMAIL,
+        'X-Auth-Key': CF_KV_API_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(items),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
 
 function getR2Key(rawUrl: string, width: number): string | null {
   try {
@@ -277,6 +340,74 @@ async function stepWarmupEdgeCDN(uniqueTitles: string[]) {
 }
 
 // ----------------------------------------------------
+// 步骤三：全站前台展示核心影视批量写入 Cloudflare 生产 KV
+// ----------------------------------------------------
+async function stepBulkIngestEntitiesToKV(entitiesMap: Map<string, any>) {
+  console.log(`\n========================================`);
+  console.log(`🗄️  步骤三：全站前台展示核心影视批量写入 Cloudflare 生产 KV`);
+  console.log(`========================================`);
+  console.log(`待写入实体总数: ${entitiesMap.size} 部影视作品`);
+
+  const kvPairs: Array<{ key: string; value: string }> = [];
+
+  for (const entity of entitiesMap.values()) {
+    const entityId = entity.entityId;
+    const rawSlug = entity.slug || generateSlug(entity.title);
+    const canonicalSlug = `${entityId}-${rawSlug}`.toLowerCase();
+    const cleanNormTitle = normalizeTitle(entity.title);
+
+    // 1. 实体主记录
+    kvPairs.push({
+      key: `entity:${entityId}`,
+      value: JSON.stringify(entity),
+    });
+
+    // 2. 权威 canonical slug
+    kvPairs.push({
+      key: `slug:${canonicalSlug}`,
+      value: entityId,
+    });
+
+    // 3. 原始 slug
+    if (rawSlug && rawSlug !== canonicalSlug) {
+      kvPairs.push({
+        key: `slug:${rawSlug}`,
+        value: entityId,
+      });
+    }
+
+    // 4. 中文纯净标题倒排索引
+    if (cleanNormTitle) {
+      kvPairs.push({
+        key: `title:${cleanNormTitle}`,
+        value: entityId,
+      });
+    }
+  }
+
+  console.log(`构建生产 KV 键值对总数: ${kvPairs.length} 条（含实体主记录、canonical别名、原生别名与标题索引）`);
+
+  const BATCH_SIZE = 150;
+  let successCount = 0;
+  let failCount = 0;
+
+  for (let i = 0; i < kvPairs.length; i += BATCH_SIZE) {
+    const batch = kvPairs.slice(i, i + BATCH_SIZE);
+    const ok = await bulkPutKV(batch);
+    if (ok) {
+      successCount += batch.length;
+      process.stdout.write(`\r  ✅ [${Math.min(i + BATCH_SIZE, kvPairs.length)}/${kvPairs.length}] 已写入 Cloudflare KV`);
+    } else {
+      failCount += batch.length;
+      console.warn(`\n  ⚠️ 批量写入失败 (${batch.length} 条)`);
+    }
+    await new Promise(r => setTimeout(r, 80));
+  }
+
+  console.log(`\n🎉 生产 KV 批量入库完毕！成功写入: ${successCount} 条，失败: ${failCount} 条\n`);
+}
+
+// ----------------------------------------------------
 // 主执行器
 // ----------------------------------------------------
 async function main() {
@@ -289,13 +420,58 @@ async function main() {
   const mediaTasks: Array<{ url: string; width: number; type: string }> = [];
   const uniqueTitles = new Set<string>();
   const seenImageUrls = new Set<string>();
+  const entitiesMap = new Map<string, any>();
+
+  const registerEntity = (rawItem: any, defaultType: string = 'tv') => {
+    const rawTitle = (rawItem.title || rawItem.name || '').trim();
+    if (!rawTitle) return;
+    uniqueTitles.add(rawTitle);
+
+    if (entitiesMap.has(rawTitle)) {
+      const existing = entitiesMap.get(rawTitle);
+      if (!existing.cover && rawItem.cover) existing.cover = rawItem.cover;
+      if (!existing.backdrop && rawItem.backdrop) existing.backdrop = rawItem.backdrop;
+      if (!existing.description && (rawItem.description || rawItem.overview)) {
+        existing.description = rawItem.description || rawItem.overview;
+      }
+      return;
+    }
+
+    const rawId = rawItem.entityId || rawItem.id;
+    const isStandardIkId = typeof rawId === 'string' && /^ik\d{6}$/i.test(rawId);
+    const entityId = isStandardIkId ? rawId : generateDeterministicId(rawTitle);
+    const rawSlug = rawItem.slug || generateSlug(rawTitle);
+    const itemType = rawItem.type || (rawItem.category === 'movie' ? 'movie' : defaultType);
+
+    const entity = {
+      entityId,
+      slug: rawSlug,
+      title: rawTitle,
+      type: itemType,
+      year: rawItem.year ? String(rawItem.year) : '2026',
+      rate: rawItem.rate ? String(rawItem.rate) : '8.5',
+      cover: rawItem.cover || '',
+      backdrop: rawItem.backdrop || rawItem.cover || '',
+      description: rawItem.description || rawItem.overview || `${rawTitle} 是一部优质精彩影视作品。提供全网多源纯直连极速播放，画质高清流畅，尽在 iKanPP 爱看片片。`,
+      genres: Array.isArray(rawItem.genres) && rawItem.genres.length > 0 ? rawItem.genres : [(itemType === 'movie' ? '电影' : '电视剧')],
+      directors: Array.isArray(rawItem.directors) ? rawItem.directors : [],
+      actors: Array.isArray(rawItem.actors) ? rawItem.actors : [],
+      numberOfEpisodes: rawItem.numberOfEpisodes || rawItem.episodes || (rawItem.badge ? parseInt(String(rawItem.badge).replace(/\D/g, ''), 10) || 1 : 1),
+      numberOfSeasons: rawItem.numberOfSeasons || rawItem.seasons || 1,
+      status: rawItem.status || rawItem.badge || rawItem.updateBadge || '正片',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    entitiesMap.set(rawTitle, entity);
+  };
 
   // 1. 扫描 7 大专区（all, movie, tv, anime, variety, documentary, short）
   for (const [catName, catData] of Object.entries(PREBAKED_HOME_DATA)) {
     for (const [sectionKey, subjects] of Object.entries(catData)) {
       if (Array.isArray(subjects) && sectionKey !== 'trendingNav') {
         subjects.forEach((s: any) => {
-          if (s.title) uniqueTitles.add(s.title);
+          registerEntity(s, s.type || (catName === 'movie' ? 'movie' : 'tv'));
 
           // 收集影人
           (s.directors || []).forEach((d: string) => d && allPeople.add(d.trim()));
@@ -320,7 +496,7 @@ async function main() {
 
   // 2. 扫描 SEO 核心代表作影人库
   PEOPLE_PREBAKED_ENTITIES.forEach(e => {
-    if (e.title) uniqueTitles.add(e.title);
+    registerEntity(e, e.type);
     (e.directors || []).forEach(d => d && allPeople.add(d.trim()));
     (e.actors || []).forEach(a => a && allPeople.add(a.trim()));
     if (e.cover && !seenImageUrls.has(e.cover)) {
@@ -347,7 +523,7 @@ async function main() {
   for (const [channelKey, items] of Object.entries(PREBAKED_LATEST_TITLES)) {
     if (Array.isArray(items)) {
       items.forEach((item: any) => {
-        if (item.title) uniqueTitles.add(item.title);
+        registerEntity(item, item.type);
         if (item.slug) {
           try {
             uniqueTitles.add(decodeURIComponent(item.slug));
@@ -371,13 +547,14 @@ async function main() {
   }
 
   console.log(`📊 数据汇总完成：`);
-  console.log(`  - 唯一影视作品: ${uniqueTitles.size} 部`);
+  console.log(`  - 唯一影视作品: ${uniqueTitles.size} 部 (实体映射: ${entitiesMap.size} 部)`);
   console.log(`  - 汇总演职员名单: ${allPeople.size} 位`);
   console.log(`  - 待预热核心图片: ${mediaTasks.length} 项`);
 
-  // 执行四大步骤
+  // 执行各大预热步骤
   const hasAvatarUpdates = await stepEnrichAvatars(allPeople);
   await stepPrewarmR2Images(mediaTasks);
+  await stepBulkIngestEntitiesToKV(entitiesMap);
   await stepWarmupEdgeCDN(Array.from(uniqueTitles));
 
   console.log(`\n====================================================`);

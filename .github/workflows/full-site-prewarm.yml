@@ -49,6 +49,8 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a' }}
           CLOUDFLARE_AUTH_EMAIL: ${{ secrets.CLOUDFLARE_AUTH_EMAIL || 'zeyelvis@gmail.com' }}
           CLOUDFLARE_AUTH_KEY: ${{ secrets.CLOUDFLARE_AUTH_KEY || 'cfk_L8MzQDjTswTK4jBtvJjmcKjEnxTQ1dKNhzNyn4dQa33221aa' }}
+          CF_KV_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a' }}
+          CF_KV_NAMESPACE_ID: ${{ secrets.CF_KV_NAMESPACE_ID || '42311924427747deaf00981d99d58998' }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME || 'ikanpp-images' }}
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957' }}
           SITE_URL: 'https://www.ikanpp.com'
