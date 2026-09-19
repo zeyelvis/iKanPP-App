@@ -74,11 +74,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "你我对抗全世界",
+                "title": "逃出绝命街",
                 "updateBadge": ""
         },
         {
-                "title": "逃出绝命街",
+                "title": "你我对抗全世界",
                 "updateBadge": ""
         },
         {
@@ -86,11 +86,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "蜂鸟行动",
+                "title": "夜王",
                 "updateBadge": ""
         },
         {
-                "title": "夜王",
+                "title": "打生桩",
                 "updateBadge": ""
         },
         {
@@ -98,7 +98,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "怒之杀(听译)",
+                "title": "蜂鸟行动",
                 "updateBadge": ""
         }
       ],
@@ -1828,14 +1828,6 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "挑情丑闻",
-                "updateBadge": "8"
-        },
-        {
-                "title": "交锋",
-                "updateBadge": ""
-        },
-        {
                 "title": "早春晴朗",
                 "updateBadge": ""
         },
@@ -1844,8 +1836,16 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "交锋",
+                "updateBadge": ""
+        },
+        {
                 "title": "生逢其时",
-                "updateBadge": "5"
+                "updateBadge": ""
+        },
+        {
+                "title": "挑情丑闻",
+                "updateBadge": ""
         },
         {
                 "title": "冬城猎凶",
@@ -1853,14 +1853,14 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "死有对证",
-                "updateBadge": "1"
-        },
-        {
-                "title": "深渊无间",
                 "updateBadge": ""
         },
         {
                 "title": "飞到我心上",
+                "updateBadge": ""
+        },
+        {
+                "title": "深渊无间",
                 "updateBadge": ""
         },
         {
@@ -1876,7 +1876,7 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_tv_1",
                 "title": "一瓯春",
-                "rate": "9.0",
+                "rate": "9.5",
                 "cover": "https://image.tmdb.org/t/p/w500/7KjVhRaarZ5L3CBirQEmt89ioiz.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/qLZQnTiQxkBOid9tVLWC1CmoOcu.jpg",
                 "description": "“杀伐千面腹黑男”沈润与“人间清醒黑莲花”谢清圆互为刀刃交错，在理智与情感中携手复仇，于高门大户里明争暗斗，立朝堂官场上搅弄风云。最终他们走出暗流深渊，奔赴璀璨新生。",
@@ -1995,7 +1995,7 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_tv_8",
                 "title": "早春晴朗",
-                "rate": "8.3",
+                "rate": "8.4",
                 "cover": "https://image.tmdb.org/t/p/w500/nLWFbYv1r99Yy7dWvjoxMRegoe0.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/oUFUvEMCBP80e4eYsfVfxC8n7ih.jpg",
                 "description": "这是一段十年交锋，敬于才华，合于性格、久于平等的禁忌之恋。北漂伊始的尚之桃与极具天赋的“鬼才”栾念狭路相逢。热烈勇敢的尚之桃亦步亦趋地蜕变成长，撬碎了栾念世故坚硬的心防，互相吸引的二人在都市丛林中极限拉扯、分分合合。爱情，就是用光所有勇气，再无遗憾。爱，则是互相修复，共同成长。但情和爱之间，她选择生存。当她独当一面，他收敛锋芒，势均力敌的他们将会为彼此写下了新的结局……",
