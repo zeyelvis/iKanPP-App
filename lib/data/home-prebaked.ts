@@ -1885,7 +1885,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至08集 | 共30集",
+                "episodes_info": "更新至10集 | 共30集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1902,7 +1902,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至18集 | 共47集",
+                "episodes_info": "更新至20集 | 共47集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1919,7 +1919,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至14集 | 共18集",
+                "episodes_info": "18集全",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1953,7 +1953,7 @@ export const PREBAKED_HOME_DATA: {
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至28集 | 共40集",
+                "episodes_info": "更新至30集 | 共40集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
