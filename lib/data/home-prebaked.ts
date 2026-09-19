@@ -70,11 +70,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "特立独行",
+                "title": "逃出绝命街",
                 "updateBadge": ""
         },
         {
-                "title": "逃出绝命街",
+                "title": "特立独行",
                 "updateBadge": ""
         },
         {
@@ -86,7 +86,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "夜王",
+                "title": "求救信号",
                 "updateBadge": ""
         },
         {
@@ -94,7 +94,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "求救信号",
+                "title": "海洋奇缘：启航",
                 "updateBadge": ""
         },
         {
@@ -1840,11 +1840,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "生逢其时",
+                "title": "挑情丑闻",
                 "updateBadge": ""
         },
         {
-                "title": "挑情丑闻",
+                "title": "生逢其时",
                 "updateBadge": ""
         },
         {

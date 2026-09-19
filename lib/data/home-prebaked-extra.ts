@@ -13,11 +13,15 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "仙逆",
-        "updateBadge": ""
+        "title": "光阴之外",
+        "updateBadge": "1"
     },
     {
-        "title": "光阴之外",
+        "title": "择日飞升",
+        "updateBadge": "1"
+    },
+    {
+        "title": "仙逆",
         "updateBadge": ""
     },
     {
@@ -25,12 +29,20 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "斗破苍穹年番",
-        "updateBadge": ""
+        "title": "妖神记第4季",
+        "updateBadge": "2"
     },
     {
         "title": "海贼王",
         "updateBadge": ""
+    },
+    {
+        "title": "斗破苍穹年番",
+        "updateBadge": ""
+    },
+    {
+        "title": "万界独尊",
+        "updateBadge": "1"
     },
     {
         "title": "牧神记",
@@ -42,18 +54,6 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "诛仙4",
-        "updateBadge": ""
-    },
-    {
-        "title": "择日飞升",
-        "updateBadge": ""
-    },
-    {
-        "title": "万界独尊",
-        "updateBadge": "1"
-    },
-    {
-        "title": "吞噬星空",
         "updateBadge": ""
     }
   ],
@@ -659,7 +659,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "你好星期六",
+        "title": "地球超新鲜第2季",
         "updateBadge": ""
     }
   ],
@@ -1237,174 +1237,69 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "全球死考：刚下刑场你让我去考试3",
+          "title": "手撕绑匪后我成了锦衣卫夫人3完结篇",
           "updateBadge": "全"
       },
       {
-          "title": "帝后千年一念山河，一念情深",
+          "title": "山间野浪小兰花，冷情王爷他先动心了",
           "updateBadge": "全"
       },
       {
-          "title": "被高岭大佬反钓了",
+          "title": "你别笑的那么勾人",
           "updateBadge": "全"
       },
       {
-          "title": "别惹小农女，她真敢抄家",
+          "title": "我在贵族学院经营呆萌日常",
           "updateBadge": "全"
       },
       {
-          "title": "系统要我死，我偏要活到大结局",
+          "title": "甜甜误惹",
           "updateBadge": "全"
       },
       {
-          "title": "侯阙归来时",
+          "title": "说好一千块，他偏要给我一辈子",
           "updateBadge": "全"
       },
       {
-          "title": "偏偏心动是宿敌",
+          "title": "饲养夜色",
           "updateBadge": "全"
       },
       {
-          "title": "诡灯窃命录",
+          "title": "惹心",
           "updateBadge": "全"
       },
       {
-          "title": "绿植侦探",
+          "title": "缘起三生",
           "updateBadge": "全"
       },
       {
-          "title": "一朝穿成驸马爷，公主谁爱娶谁娶",
+          "title": "爱恨与你共赴东流",
           "updateBadge": "全"
       },
       {
-          "title": "朕的娘娘耳力欠佳",
+          "title": "与君朝暮",
           "updateBadge": "全"
       },
       {
-          "title": "福满盈：摄政王府的锦鲤小王妃",
+          "title": "许你不二之臣",
           "updateBadge": "全"
       }
   ],
   hero: [
       {
-          "id": "jl_short_637708679872840400",
-          "title": "全球死考：刚下刑场你让我去考试3",
-          "rate": "9.0",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/b6a298f2eaae8f065fa4896d0e1c6a512df6288e1346c8f8aaecdef528412d7a.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/b6a298f2eaae8f065fa4896d0e1c6a512df6288e1346c8f8aaecdef528412d7a.jpg",
-          "description": "十八岁死刑犯夜林在行刑前被特调征用，卷入席卷全球的“死亡轮回”。每场死考都以诡异规则逼迫考生在限时绝境中寻找唯一生路。面对异种、尸潮与人心算计，夜林凭惊人观察力和近乎冷酷的推演屡破死局，并与隐藏身份的安可从相互试探走向并肩。可当积分足以兑换力量、甚至离开轮回，他们却发现，所谓考试只是筛选，失踪者、神...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_637968601562742800",
-          "title": "帝后千年一念山河，一念情深",
-          "rate": "8.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/908178734df1b4f868baf31bfac49413bd76dec689785d41077bbef719c591d9.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/908178734df1b4f868baf31bfac49413bd76dec689785d41077bbef719c591d9.jpg",
-          "description": "又是千年之恋的设定？但这回真不一样 。 这部今年新上的 AI 短剧 《 帝后千年一念山河，一念情深 》 一口气更到 63 集，把帝王与皇后的情感纠葛放在山河变迁的大背景里，一念之间江山与深情难以两全 。 剧中的帝后关系不是简单的情爱拉扯，而是权力与爱意交织的宿命感，每一集都在天平两端反复摇摆 。AI...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_637968601495633900",
-          "title": "被高岭大佬反钓了",
-          "rate": "8.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/29db1ad24cd91d0110e6c373bf75de771a0a38bb82c2e119779ae9d0b53e4926.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/29db1ad24cd91d0110e6c373bf75de771a0a38bb82c2e119779ae9d0b53e4926.jpg",
-          "description": "看完心里五味杂陈，既心疼女主的勇敢，又惊叹于男主的深沉 。《 被高岭大佬反钓了 》 讲述了一段势均力敌的爱情博弈，女主原本以为自己在追逐光芒，没想到早已落入对方的网中 。 这部 78 集的 AI 短剧在 2026 年推出，凭借精致的画面和紧凑的节奏，将都市情感中的拉扯感演绎得淋漓尽致 。 角色之间的...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_637968601294307300",
-          "title": "别惹小农女，她真敢抄家",
-          "rate": "8.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/4e1dea9fc4a9fcf7c35e38e9876e278c973c4a0abcdbdacb49a822d6b8518f8c.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/4e1dea9fc4a9fcf7c35e38e9876e278c973c4a0abcdbdacb49a822d6b8518f8c.jpg",
-          "description": "现代习武懂医术的少女容忬，穿越进古早小说，成为结局悲惨的炮灰容大丫。为避开死亡命运，她在雪洞救下身负重伤、满心戒备的重生世子翟青祤，以酬金为条件收留照料对方。两人相处摩擦不断，六岁弟弟容曜充当缓和关系的小纽带。容忬靠打猎劳作谋生，性情和过往原主截然不同，让翟青祤渐渐放下心中成见。往后众人携手面对乡间...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_637968600941985800",
-          "title": "系统要我死，我偏要活到大结局",
-          "rate": "9.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/9751e19be98e4e99ae657d32597039099324cdf321b25c00b14414a05226e752.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/9751e19be98e4e99ae657d32597039099324cdf321b25c00b14414a05226e752.jpg",
-          "description": "看完这部剧，只觉得浑身舒畅，那种对抗命运的爽感直击灵魂 。《 系统要我死，我偏要活到大结局 》 是一部典型的逆袭题材 AI 短剧，长达 137 集的内容充分展现了主角不屈不挠的生命力 。 剧情设定大胆，主角在系统的死亡倒计时下疯狂求生，每一个关卡都是对智慧与勇气的考验 。AI 生成的画面随着剧情推进...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_637968600908431400",
-          "title": "侯阙归来时",
+          "id": "jl_short_637279609955549400",
+          "title": "山间野浪小兰花，冷情王爷他先动心了",
           "rate": "9.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/a3bacaf7861fe51f6bf37aed2d8ced14676304f1df5b115c9878b59a9775b06d.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/a3bacaf7861fe51f6bf37aed2d8ced14676304f1df5b115c9878b59a9775b06d.jpg",
-          "description": "结局落幕，余韵悠长，《 侯阙归来时 》 让人久久不能平静，那份家国情怀与个人命运的交织令人动容 。 这部 25 集的 AI 短剧以宏大的历史背景为底色，讲述主角历经磨难后重返权力中心的故事 。 剧情层层递进，权谋斗争与情感纠葛并重，展现了人物在时代洪流中的挣扎与坚守 。 画面虽由 AI 生成，却营造...",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f01ed9b09fa573d575e35e91f0187223beffbc43162733595cc77440559cca0f.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f01ed9b09fa573d575e35e91f0187223beffbc43162733595cc77440559cca0f.jpg",
+          "description": "陆九畹拒绝皇后身份离宫出走，江城剿匪救下李萱儿与淮容。发现怀孕后，她捣毁无影门，解救三十四名受虐孩童，改造旧址建起陆家山庄，广招贤才，带领众人开荒办学，重建生活。登基的帝江四处追查，获知她怀有子嗣。山庄入口显露访客痕迹，陆九畹预判帝江将至，爱恨纠葛的重逢近在眼前。",
           "year": "2026",
           "types": [
               "短剧",
               "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全80集·已完结",
+          "episodes_info": "全251集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1413,12 +1308,117 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_637968600858099700",
-          "title": "偏偏心动是宿敌",
-          "rate": "8.9",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/fdaa0a2fa01288065214af805f033d2e5224fa82a3740d6ebdc71dd3b03bf4a0.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/fdaa0a2fa01288065214af805f033d2e5224fa82a3740d6ebdc71dd3b03bf4a0.jpg",
-          "description": "又是欢喜冤家题材？但这回真不一样，宿敌变恋人的设定张力十足 。 剧中男女主从针锋相对到互生情愫，每一次交锋都火花四溅，情感拉扯细腻动人 。 长达 71 集的篇幅让两人的关系转变更加自然可信，没有突兀的转折，只有层层递进的暧昧与心动 。 如果你厌倦了千篇一律的套路，这部充满反转与趣味的作品绝对能刷新你...",
+          "id": "jl_short_637279608915362000",
+          "title": "我在贵族学院经营呆萌日常",
+          "rate": "9.0",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/0cca483cd84c16b3ec898b0ffd45be6f934977d19852b904051ee1fc2a2649a6.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/0cca483cd84c16b3ec898b0ffd45be6f934977d19852b904051ee1fc2a2649a6.jpg",
+          "description": "一场高烧让方青梨心智发展迟缓，进入贵族学院后屡屡遭到同学排挤。万般无奈之下，她向全校耀眼的傅景川寻求保护。患有异性接触障碍的傅景川，唯独对她没有异样反应，便将她收在身边护她周全。温润的医学生宋北辰、身世特别的谢临，以及傅景川的兄长傅寒川，纷纷被她的纯粹打动。在众人的陪伴照料下，方青梨一点点蜕变成长，...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全223集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637273634397749500",
+          "title": "甜甜误惹",
+          "rate": "9.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/078e7937c27bd6311aa6dece2cffa4c2f20634f509e41a50cbd505f24d3353a6.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/078e7937c27bd6311aa6dece2cffa4c2f20634f509e41a50cbd505f24d3353a6.jpg",
+          "description": "沐甜甜为凑养母的救命治疗费，误打错一通电话，意外联系上傅氏集团掌权人傅政霆。原本一场阴差阳错的纠葛，却让向来冷情克制的商界总裁，对温柔坚韧的沐甜甜动了心。他默默为她兜底解难，还答应假扮她的男友安抚住院的养母。",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全131集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637297727167791500",
+          "title": "魏家逆子成首辅 ：谋攻篇",
+          "rate": "9.0",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/ee8c5cd8da880759fd108fc7579e3e1d501117fffff8f04607a8a17095065e57.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/ee8c5cd8da880759fd108fc7579e3e1d501117fffff8f04607a8a17095065e57.jpg",
+          "description": "魏逆生呈上清查寺庙、请求调兵的奏疏，京城朝堂爆发激烈博弈，王堪在廷议上智斗沈党。天子折中，拨付八百杭州卫兵力入苏。苏州城内各方人心惶惶，谢临、何彦明、李进、沈明轩各怀算计。魏逆生借力打力，斡旋武将熊晖，张载外出查案偶遇百姓鸣冤，揭开万民伞背后的黑暗。从寺院旧档挖出贪腐底簿，魏逆生抓住实据，当众戳破何...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全245集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637273634246820100",
+          "title": "浮灯星糖砚遇浅夏时分",
+          "rate": "8.8",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/7a8b71534ea697ad7a0f89dc63dc7a60601f59ab2c2ef9079721e76e91918405.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/7a8b71534ea697ad7a0f89dc63dc7a60601f59ab2c2ef9079721e76e91918405.jpg",
+          "description": "谢砚池，清冷矜贵，始终与人保持着恰到好处的距离。直到数学系少女宋浅闯入他的生活，一次偶然的相遇，让原本毫无交集的两个人渐渐有了交集。没人知道，多年前的一次相遇，早已在谢砚池心里留下了难以忘记的印记。多年后再次相逢，他们从陌生到熟悉，从误会到理解，也在一次次相处中重新认识彼此。原来命运兜兜转转，有些未...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全185集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_636721668034658400",
+          "title": "先婚蜜爱，他的偏爱藏不住",
+          "rate": "8.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/468b012fe85c4c6d5b0aa28fd294fb13f316a62e4809cd1ca4f038a59040b0f7.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/468b012fe85c4c6d5b0aa28fd294fb13f316a62e4809cd1ca4f038a59040b0f7.jpg",
+          "description": "前期有多甜蜜宠溺，后期就有多让人心跳加速。《先婚蜜爱，他的偏爱藏不住》这部都市情感剧由韩旭与苏子浠主演，两人默契十足的演绎让角色间的张力拉满。故事围绕一场先婚后爱的契约展开，看似冰冷的婚姻背后，男主逐渐暴露出深藏的深情与占有欲。全剧一口气更到87集，节奏紧凑不注水，适合喜欢高甜互动和细腻情感拉扯的观...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全175集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637986700773032100",
+          "title": "签完竞业协议，前夫成了我的顶头上司",
+          "rate": "9.1",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/2d4e8cbceca3d05964d207ef3152c538218b699bab57666a83b0d519f1203223.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/2d4e8cbceca3d05964d207ef3152c538218b699bab57666a83b0d519f1203223.jpg",
+          "description": "职场与情场的双重博弈，让这段破镜重圆的故事充满戏剧张力 。 这部 2026 年上线的九十四集 AI 短剧，精准切入都市情感痛点，讲述女主在签署竞业协议后，意外发现前夫竟成为自己的顶头上司 。 剧情围绕两人在职场中的权力拉扯与旧情复燃展开，角色关系从对立到暧昧再到和解，矛盾冲突兼具职场竞争与情感纠葛 ...",
           "year": "2026",
           "types": [
               "短剧",
@@ -1434,53 +1434,53 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_637968600740659200",
-          "title": "诡灯窃命录",
-          "rate": "8.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/e31740c08dfdab546b6998ac0e48766b98d2751e9045452ad6e57c4d7ae2d659.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/e31740c08dfdab546b6998ac0e48766b98d2751e9045452ad6e57c4d7ae2d659.jpg",
-          "description": "看完这部 《 诡灯窃命录 》，心里久久不能平静，那种细思极恐的氛围至今萦绕在脑海 。 作为一部 60 集的 AI 短剧，它并未依赖传统恐怖音效，而是通过诡异的光影变幻和扭曲的空间构图，营造出令人窒息的压迫感 。 故事围绕一盏神秘的古灯展开，每一帧画面都仿佛在诉说被遗忘的诅咒，节奏沉稳却暗藏杀机 。 ...",
-          "year": "2026",
+          "id": "jl_short_630064143583477800",
+          "title": "乡野小神农",
+          "rate": "8.7",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/333445/poster/9335f9a76a7230d55a7e679ac6118d90c2cfa8ba925938b167dcbc70cf40b317.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/333445/poster/9335f9a76a7230d55a7e679ac6118d90c2cfa8ba925938b167dcbc70cf40b317.webp",
+          "description": "民国年间，清河村的顾青野遭人暗算变得痴傻，与盲母相依为命。濒死之际，他意外恢复神智并获得识百草、养万物的异能。凭借这项能力，他改良农作物，带领村民改善生活，却也因此卷入当地势力的争斗。",
+          "year": "2025",
           "types": [
               "短剧",
-              "古装仙侠",
+              "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全80集·已完结",
+          "episodes_info": "全143集·更新至22集",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "短剧实力派"
+              "刘轩 / 韩录锦"
           ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "全球死考：刚下刑场你让我去考试3",
-      rate: "9.0",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/b6a298f2eaae8f065fa4896d0e1c6a512df6288e1346c8f8aaecdef528412d7a.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_2',
-      title: "帝后千年一念山河，一念情深",
-      rate: "8.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/908178734df1b4f868baf31bfac49413bd76dec689785d41077bbef719c591d9.jpg",
+      title: "山间野浪小兰花，冷情王爷他先动心了",
+      rate: "9.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f01ed9b09fa573d575e35e91f0187223beffbc43162733595cc77440559cca0f.jpg",
       year: "2026",
       types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
+      id: 'pb_s_top_2',
+      title: "我在贵族学院经营呆萌日常",
+      rate: "9.0",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/0cca483cd84c16b3ec898b0ffd45be6f934977d19852b904051ee1fc2a2649a6.jpg",
+      year: "2026",
+      types: ["短剧","现代都市","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
       id: 'pb_s_top_3',
-      title: "被高岭大佬反钓了",
-      rate: "8.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/29db1ad24cd91d0110e6c373bf75de771a0a38bb82c2e119779ae9d0b53e4926.jpg",
+      title: "甜甜误惹",
+      rate: "9.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/078e7937c27bd6311aa6dece2cffa4c2f20634f509e41a50cbd505f24d3353a6.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1488,9 +1488,9 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_4',
-      title: "别惹小农女，她真敢抄家",
-      rate: "8.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/4e1dea9fc4a9fcf7c35e38e9876e278c973c4a0abcdbdacb49a822d6b8518f8c.jpg",
+      title: "魏家逆子成首辅 ：谋攻篇",
+      rate: "9.0",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/ee8c5cd8da880759fd108fc7579e3e1d501117fffff8f04607a8a17095065e57.jpg",
       year: "2026",
       types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
@@ -1498,29 +1498,29 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_5',
-      title: "系统要我死，我偏要活到大结局",
-      rate: "9.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9751e19be98e4e99ae657d32597039099324cdf321b25c00b14414a05226e752.jpg",
+      title: "浮灯星糖砚遇浅夏时分",
+      rate: "8.8",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/7a8b71534ea697ad7a0f89dc63dc7a60601f59ab2c2ef9079721e76e91918405.jpg",
       year: "2026",
-      types: ["短剧","古装仙侠","全集连播"],
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_6',
-      title: "侯阙归来时",
-      rate: "9.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/a3bacaf7861fe51f6bf37aed2d8ced14676304f1df5b115c9878b59a9775b06d.jpg",
+      title: "先婚蜜爱，他的偏爱藏不住",
+      rate: "8.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/468b012fe85c4c6d5b0aa28fd294fb13f316a62e4809cd1ca4f038a59040b0f7.jpg",
       year: "2026",
-      types: ["短剧","古装仙侠","全集连播"],
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_7',
-      title: "偏偏心动是宿敌",
-      rate: "8.9",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/fdaa0a2fa01288065214af805f033d2e5224fa82a3740d6ebdc71dd3b03bf4a0.jpg",
+      title: "签完竞业协议，前夫成了我的顶头上司",
+      rate: "9.1",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/2d4e8cbceca3d05964d207ef3152c538218b699bab57666a83b0d519f1203223.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1528,11 +1528,11 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_8',
-      title: "诡灯窃命录",
-      rate: "8.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/e31740c08dfdab546b6998ac0e48766b98d2751e9045452ad6e57c4d7ae2d659.jpg",
-      year: "2026",
-      types: ["短剧","古装仙侠","全集连播"],
+      title: "乡野小神农",
+      rate: "8.7",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/333445/poster/9335f9a76a7230d55a7e679ac6118d90c2cfa8ba925938b167dcbc70cf40b317.webp",
+      year: "2025",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1566,11 +1566,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "生逢其时",
+        "title": "挑情丑闻",
         "updateBadge": ""
     },
     {
-        "title": "挑情丑闻",
+        "title": "生逢其时",
         "updateBadge": ""
     },
     {
@@ -1582,15 +1582,15 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "光阴之外",
+        "updateBadge": "1"
+    },
+    {
         "title": "飞到我心上",
         "updateBadge": ""
     },
     {
         "title": "花儿与少年第8季",
-        "updateBadge": ""
-    },
-    {
-        "title": "心动的信号第9季",
         "updateBadge": ""
     }
   ],
@@ -2163,7 +2163,15 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "克拉克森的农场第5季",
+        "updateBadge": ""
+    },
+    {
         "title": "克拉克森的农场第3季",
+        "updateBadge": ""
+    },
+    {
+        "title": "中国通史",
         "updateBadge": ""
     },
     {
@@ -2171,7 +2179,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第5季",
+        "title": "克拉克森的农场第4季",
         "updateBadge": ""
     },
     {
@@ -2179,15 +2187,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第4季",
-        "updateBadge": ""
-    },
-    {
         "title": "若泽·穆里尼奥：特立之道",
-        "updateBadge": ""
-    },
-    {
-        "title": "爱达荷州血案：大学梦魇",
         "updateBadge": ""
     }
   ],
