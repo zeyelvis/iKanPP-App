@@ -136,44 +136,68 @@ export function hasTitleOverlap(a: string, b: string): boolean {
  */
 export const ADULT_BLACKLIST_WORDS = [
   '痴漢', '痴汉', '調教', '调教', '発情', '发情', '近親', '近亲', '乱倫', '乱伦',
-  '性奴', '小股', '沙龙病院', '中出し', '潮吹き', '巨乳', '美乳', '素人',
+  '性奴', '小股', '沙龙病院', '中出し', '潮吹き', '巨乳', '美乳', '爆乳', '素人',
   '熟女', '人妻', '淫乱', '淫', '絶頂', '绝顶', '強姦', '强奸', '輪姦', '轮奸', '肉便器',
   '風俗', '风俗', '無修正', '无修正', 'エロ', 'AV', 'JAV', 'FC2', 'SM', '変態', '变态',
   '制服誘惑', '制服诱惑', '女教師', '女教师', '看護婦', '看护妇', '盗撮', '覗き', '偷窥',
   '性交', '做爱', '自慰', '色情', '三级', '露点', '情色', '偷拍', '色誘', '色诱', '情欲', '欲女',
   '売春', '愛汁', '肉しびれ', '女囚', '痴情', '快辱', '乱交', 'ポルノ', '半熟売春',
-  '肉体', '迷奸', '性爱', '野合', '春药', '偷欢', '私通', '肉欲', '性虐', '援交', '内射', '潮吹'
+  '肉体', '迷奸', '性爱', '野合', '春药', '偷欢', '私通', '肉欲', '性虐', '援交', '内射', '潮吹',
+  '抽插', '颜射', '绿帽', '绿帽奴', '寝取', 'ntr', '中出', '口交', '乳交', '打炮', '手淫',
+  '高潮', '风俗娘', '精液', '精子', '射精', '催情', '开苞', '破处', '拘束', '凌辱', '皮鞭', '滴蜡',
+  '本庄铃', '本庄鈴', '三上悠亚', '三上悠亞', '波多野结衣', '波多野結衣', '相泽南', '相澤南',
+  '河北彩花', '河北彩伽', '深田咏美', '深田詠美', '桃乃木香奈', '小仓由菜', '小倉由菜',
+  'sod', 'idea pocket', 'attackers', 'prestige', 'madonna',
+  'start-', 'ipx-', 'ssis-', 'midv-', 'stars-', 'mide-', 'miaa-', 'abp-', 'snis-', 'jul-',
+  'fc2-ppv', 'heyzo', 'caribbeancom', '一本道', '1pondo', 'pacopacomama', 'tokyo-hot',
+  '美神列传', '美神列伝', '击溃屋', '脱衣麻将', '脱衣', '见异思迁', '浮気', '野性之女', '女杀手绘里香',
+  '靓女俏医生', '粉红电影', '日活粉红', '粉红肉体', '思春期诱惑', '赤裸三姐妹', '豚鼠1', '豚鼠2', '恶魔实验', '血肉之花',
+  '勃起', '性关系'
 ];
 
 // 日本特有新字体汉字（和制汉字/国字，在中文正规汉字中不存在或已被规范简化，出现通常代表生肉日文片名）
-const JAPANESE_KANJI_VARIANTS = /[剣気駅図竜絵鉄悪戦沢浜黒広恵毎歯寿対専拠抜拝捜検栄様歩殺殻浄浅]/;
+const JAPANESE_KANJI_VARIANTS = /[剣気駅図竜絵鉄悪戦沢浜黑广恵毎齿寿对专拠抜拝捜検栄様歩杀殻浄浅]/;
+
+// 成人番号特征识别（如 START-205, IPX-123 等）
+const ADULT_CODE_REGEX = /\b[A-Z]{2,6}[-_]?\d{2,5}\b/i;
 
 export function isCleanChineseTitle(title: string): boolean {
   if (!title || typeof title !== 'string') return false;
   const t = title.trim();
   if (!t) return false;
 
-  // 1. 命中成人低俗违禁词直接拦截
+  // 1. 命中成人低俗违禁词直接拦截（排除星球大战等名作误杀）
+  const lower = t.toLowerCase();
   for (const w of ADULT_BLACKLIST_WORDS) {
-    if (t.includes(w)) return false;
+    if (lower.includes(w.toLowerCase())) {
+      if (t.includes('星球大战') || t.includes('野战排') || t.includes('大雨将至') || t.includes('辉煌的意外') || t.includes('我的恐怖妻子') || t.includes('魔法少女与邪恶') || t.includes('亲爱的小美人鱼')) {
+        continue;
+      }
+      return false;
+    }
   }
 
-  // 2. 日文平假名/片假名绝对零容忍（无论夹杂多少汉字，如“銭の踊り”、“悪魔からの勲章”，一律拦截）
+  // 2. 命中番号格式直接拦截
+  if (ADULT_CODE_REGEX.test(t)) {
+    return false;
+  }
+
+  // 3. 日文平假名/片假名绝对零容忍（无论夹杂多少汉字，如“銭の踊り”、“悪魔からの勲章”，一律拦截）
   if (/[\u3040-\u309f\u30a0-\u30ff]/.test(t)) {
     return false;
   }
 
-  // 3. 韩文音节绝对零容忍（韩剧必须有中文译名）
+  // 4. 韩文音节绝对零容忍（韩剧必须有中文译名）
   if (/[\uac00-\ud7af]/.test(t)) {
     return false;
   }
 
-  // 4. 识别并拦截纯日本生肉汉字片名（如《斬人斬馬剣》中的“剣”等日本新字体，一票物理否决）
+  // 5. 识别并拦截纯日本生肉汉字片名（如《斬人斬馬剣》中的“剣”等日本新字体，一票物理否决）
   if (JAPANESE_KANJI_VARIANTS.test(t)) {
     return false;
   }
 
-  // 4. 华语平台核心底线：必须包含中文字符（彻底拦截 Bourek、Die Chefin、Unser Charly 等纯外文条目）
+  // 6. 华语平台核心底线：必须包含中文字符（彻底拦截 Bourek、Die Chefin、Unser Charly 等纯外文条目）
   if (!/[\u4e00-\u9fa5]/.test(t)) {
     return false;
   }
@@ -181,3 +205,52 @@ export function isCleanChineseTitle(title: string): boolean {
   return true;
 }
 
+/**
+ * 🌟 严格全维度影视实体安全铁律（覆盖标题、原名、剧情简介、番号格式与成人标记）
+ * 彻底杜绝伪装成普通剧情片的成人 AV、粉红电影、低俗露骨条目与日文生肉条目渗透！
+ */
+export function isStrictSafeEntity(entity: {
+  title?: string;
+  originalTitle?: string;
+  description?: string;
+  adult?: boolean;
+}): { safe: boolean; reason?: string } {
+  if (!entity) return { safe: false, reason: '空实体' };
+
+  // 1. TMDB 官方成人标识一票否决
+  if (entity.adult === true) {
+    return { safe: false, reason: 'TMDB adult=true' };
+  }
+
+  const title = (entity.title || '').trim();
+  const orig = (entity.originalTitle || '').trim();
+  const desc = (entity.description || '').trim();
+
+  // 2. 标题基础华语合规性核验
+  if (!isCleanChineseTitle(title)) {
+    return { safe: false, reason: '标题非规范华语或命中违禁词' };
+  }
+
+  // 3. 原名若含成人番号格式，坚决拦截
+  if (ADULT_CODE_REGEX.test(orig)) {
+    return { safe: false, reason: '外文原名包含成人番号格式' };
+  }
+
+  // 4. 简介严禁出现日文平假名/片假名（正规华语引进片简介绝不含生肉假名）
+  if (/[\u3040-\u309f\u30a0-\u30ff]/.test(desc)) {
+    return { safe: false, reason: '剧情简介包含日文假名' };
+  }
+
+  // 5. 简介与原名深度敏感词命中
+  const combined = `${orig} ${desc}`.toLowerCase();
+  for (const w of ADULT_BLACKLIST_WORDS) {
+    if (combined.includes(w.toLowerCase())) {
+      if (title.includes('星球大战') || title.includes('野战排') || title.includes('大雨将至') || title.includes('辉煌的意外') || title.includes('我的恐怖妻子') || title.includes('魔法少女与邪恶') || title.includes('亲爱的小美人鱼')) {
+        continue;
+      }
+      return { safe: false, reason: `原名或简介命中敏感词: ${w}` };
+    }
+  }
+
+  return { safe: true };
+}

@@ -1,5 +1,5 @@
 import { TitleEntity } from '@/lib/types/entity';
-import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie, hasTitleOverlap, isCleanChineseTitle } from '@/lib/data/entities/entity-utils';
+import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie, hasTitleOverlap, isCleanChineseTitle, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
 
 /**
  * 影视实体精简卡片项（用于「最新上线」货架与 RSS Feed 0ms 瞬间直出）
@@ -283,9 +283,10 @@ export async function saveEntity(entity: TitleEntity, options?: { syncGlobalInde
   if (!entity || !entity.entityId) return;
 
   // 🌟 终极物理钢铁防线：华语流媒体主站内容安全底线
-  // 任何非纯正中文标题、日文假名、韩文字符、纯外文或命中违禁词的条目，底层直接物理拒之门外，绝不入库
-  if (!entity.title || !isCleanChineseTitle(entity.title)) {
-    console.warn(`[saveEntity 物理熔断] 坚决阻断非华语/不合规条目入库: id="${entity.entityId}", title="${entity.title}"`);
+  // 任何非纯正中文标题、日文假名、韩文字符、纯外文、日文原名含番号/假名、或原名/简介命中违禁词的条目，底层直接物理拒之门外，绝不入库
+  const safeCheck = isStrictSafeEntity(entity);
+  if (!safeCheck.safe) {
+    console.warn(`[saveEntity 物理熔断] 坚决阻断违规/成人/非合规条目入库: id="${entity.entityId}", title="${entity.title}", 原因: ${safeCheck.reason}`);
     return;
   }
 

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Star, Clock, Calendar, Film, ArrowLeft, Clapperboard, User, Sparkles, CheckCircle2, Play } from 'lucide-react';
 import { getEntityBySlug, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity, isSafeRecentTitleItem } from '@/lib/services/entity-kv';
 import { getGenreBySlug } from '@/lib/data/genres';
-import { parseEntitySlug, normalizeTitle } from '@/lib/data/entities/entity-utils';
+import { parseEntitySlug, normalizeTitle, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, fetchTMDBDetails, fetchTMDBAiredEpisodeCount, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
 import { getFastPersonAvatars } from '@/lib/services/person-avatar';
 import { getOptimizedImageUrl, isRestrictedRegion } from '@/lib/utils/image-utils';
@@ -348,6 +348,10 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
   const entity = await resolveEntityRaw(rawSlugParam);
   if (!entity) return null;
   if (!isSafeRecentTitleItem(entity as any)) {
+    return null;
+  }
+  const safeCheck = isStrictSafeEntity(entity);
+  if (!safeCheck.safe) {
     return null;
   }
   return entity;
