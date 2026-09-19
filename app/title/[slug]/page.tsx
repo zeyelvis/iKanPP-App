@@ -113,50 +113,73 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
   }
 
   // 🌟 优先级 2：若 URL 未带 ID 但存在明确中文标题，尝试 100% 精准中文标题匹配
-  const yearMatch = cleanTitle.match(/(.*?)(?:[\s_—\-]+)?((?:19|20)\d{2})$/);
-  const baseCleanTitle = yearMatch ? yearMatch[1].trim() : cleanTitle;
+  // 智能季数提取：分离季数后缀（如 "黑帮领地第2季" ➔ baseTitle: "黑帮领地", seasonNum: 2）
+  const seasonParsed = parseSeasonFromTitle(cleanTitle);
+  const baseTitleWithoutSeason = seasonParsed ? seasonParsed.baseTitle.trim() : cleanTitle;
+
+  // 年份后缀匹配（针对母标题如 "求救信号 2026"）
+  const yearMatch = baseTitleWithoutSeason.match(/(.*?)(?:[\s_—\-]+)?((?:19|20)\d{2})$/);
+  const baseCleanTitle = yearMatch ? yearMatch[1].trim() : baseTitleWithoutSeason;
   const yearSuffix = yearMatch ? yearMatch[2] : undefined;
 
   const hasChinese = /[\u4e00-\u9fff]/.test(cleanTitle);
 
   if (cleanTitle && !/^ik\d{6}$/i.test(cleanTitle) && (hasChinese || cleanTitle.length > 8)) {
-    const titleMatch = await getEntityByTitle(cleanTitle);
-    if (titleMatch && titleMatch.cover && normalizeTitle(titleMatch.title) === normalizeTitle(cleanTitle)) {
-      return enrichEpisodeCount(titleMatch);
+    const titleCandidates = [cleanTitle];
+    if (baseTitleWithoutSeason && baseTitleWithoutSeason !== cleanTitle) {
+      titleCandidates.push(baseTitleWithoutSeason);
     }
-    // 若原标题未命中且包含年份后缀（如 "求救信号2026"），回退使用去年的纯标题匹配
-    if (baseCleanTitle && baseCleanTitle !== cleanTitle) {
-      const baseMatch = await getEntityByTitle(baseCleanTitle);
-      if (baseMatch && baseMatch.cover && normalizeTitle(baseMatch.title) === normalizeTitle(baseCleanTitle)) {
-        return enrichEpisodeCount(baseMatch);
+    if (baseCleanTitle && !titleCandidates.includes(baseCleanTitle)) {
+      titleCandidates.push(baseCleanTitle);
+    }
+
+    for (const candidate of titleCandidates) {
+      const titleMatch = await getEntityByTitle(candidate);
+      if (titleMatch && titleMatch.cover && normalizeTitle(titleMatch.title) === normalizeTitle(candidate)) {
+        return enrichEpisodeCount(titleMatch);
       }
     }
   }
 
   // 🌟 优先级 3：如果本地按标题反向索引有匹配（仅限含中文字符查询，防止纯英文词根误伤）
   if (cleanTitle && hasChinese && !/^ik\d{6}$/i.test(cleanTitle)) {
-    entity = await getEntityByTitle(cleanTitle);
-    if (!entity && baseCleanTitle && baseCleanTitle !== cleanTitle) {
-      entity = await getEntityByTitle(baseCleanTitle);
+    const titleCandidates = [cleanTitle];
+    if (baseTitleWithoutSeason && baseTitleWithoutSeason !== cleanTitle) {
+      titleCandidates.push(baseTitleWithoutSeason);
     }
-    if (entity && (hasTitleOverlap(entity.title, cleanTitle) || (baseCleanTitle && hasTitleOverlap(entity.title, baseCleanTitle)))) {
-      if (!entity.cover || entity.cover.trim() === '') {
-        const healed = await searchAndEnrichFromTMDB(entity.title || cleanTitle, entity.type, entity.year || yearSuffix, true);
-        if (healed && healed.cover) return enrichEpisodeCount(healed);
+    if (baseCleanTitle && !titleCandidates.includes(baseCleanTitle)) {
+      titleCandidates.push(baseCleanTitle);
+    }
+
+    for (const candidate of titleCandidates) {
+      entity = await getEntityByTitle(candidate);
+      if (entity && hasTitleOverlap(entity.title, candidate)) {
+        if (!entity.cover || entity.cover.trim() === '') {
+          const healed = await searchAndEnrichFromTMDB(entity.title || candidate, entity.type, entity.year || yearSuffix, true);
+          if (healed && healed.cover) return enrichEpisodeCount(healed);
+        }
+        return enrichEpisodeCount(entity);
       }
-      return enrichEpisodeCount(entity);
     }
   }
 
-  // 🌟 优先级 4：若本地/预置库未命中，使用中文纯净标题到 TMDB 搜索并自愈入库（仅全新冷门词条触发）
-  const queryTitle = cleanTitle || decodedSlug;
-  if (queryTitle && hasChinese && !/^ik\d{6}$/i.test(queryTitle)) {
-    entity = await searchAndEnrichFromTMDB(queryTitle, undefined, yearSuffix);
-    if (!entity && baseCleanTitle && baseCleanTitle !== queryTitle) {
-      entity = await searchAndEnrichFromTMDB(baseCleanTitle, undefined, yearSuffix);
-    }
-    if (entity) {
-      return enrichEpisodeCount(entity);
+  // 🌟 优先级 4：若本地/预置库未命中，使用纯净母标题到 TMDB 搜索并自愈入库（仅全新冷门词条触发）
+  if (hasChinese && !/^ik\d{6}$/i.test(cleanTitle)) {
+    // 优先使用去除了季数和年份的纯母标题检索 TMDB（如 "黑帮领地"），极大提高母剧匹配率
+    const searchQueries = Array.from(new Set([
+      baseCleanTitle,
+      baseTitleWithoutSeason,
+      cleanTitle,
+      decodedSlug
+    ].filter(Boolean)));
+
+    for (const q of searchQueries) {
+      if (q && hasChinese && !/^ik\d{6}$/i.test(q)) {
+        entity = await searchAndEnrichFromTMDB(q, undefined, yearSuffix);
+        if (entity) {
+          return enrichEpisodeCount(entity);
+        }
+      }
     }
   }
 

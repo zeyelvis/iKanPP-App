@@ -1,5 +1,5 @@
 import { TitleEntity } from '@/lib/types/entity';
-import { generateSlug, formatEntityId, normalizeTitle } from '@/lib/data/entities/entity-utils';
+import { generateSlug, formatEntityId, normalizeTitle, isCleanChineseTitle } from '@/lib/data/entities/entity-utils';
 import { getEntityByTitle, getEntityByTmdb, getNextEntitySeq, saveEntity, setPersonEntitiesIndex, markPersonEnriched } from '@/lib/services/entity-kv';
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957';
@@ -36,6 +36,19 @@ interface TMDBDetailResponse {
     keywords?: { id: number; name: string }[];
     results?: { id: number; name: string }[];
   };
+  translations?: {
+    translations?: {
+      iso_3166_1: string;
+      iso_639_1: string;
+      name?: string;
+      english_name?: string;
+      data?: {
+        name?: string;
+        title?: string;
+        overview?: string;
+      };
+    }[];
+  };
 }
 
 /**
@@ -63,7 +76,7 @@ export async function fetchTMDBDetails(
   if (!apiKey || !tmdbId) return null;
 
   try {
-    const url = `${TMDB_BASE}/${type}/${tmdbId}?api_key=${apiKey}&language=zh-CN&append_to_response=credits,keywords`;
+    const url = `${TMDB_BASE}/${type}/${tmdbId}?api_key=${apiKey}&language=zh-CN&append_to_response=credits,keywords,translations`;
     const res = await fetch(url, {
       headers: { Accept: 'application/json' },
       next: { revalidate: 86400 * 7 }, // 7天缓存
@@ -75,6 +88,50 @@ export async function fetchTMDBDetails(
     console.warn(`[TMDB fetch error] id=${tmdbId}:`, err);
     return null;
   }
+}
+
+/**
+ * 智能确立华语流媒体规范的权威主标题与原名
+ * 解决海外美剧/英剧/韩剧（如 MobLand）TMDB zh-CN 主标题仍为英文导致被误杀或无法中文直达的问题
+ */
+function resolveCanonicalTitle(
+  detail: TMDBDetailResponse,
+  fallbackTitle: string
+): { mainTitle: string; originalTitle?: string } {
+  const orig = (detail.original_title || detail.original_name || '').trim();
+  let rawTitle = (detail.title || detail.name || '').trim();
+  const hasChineseRaw = /[\u4e00-\u9fff]/.test(rawTitle);
+
+  // 1. 若 TMDB 官方主标题本身包含中文，优先使用
+  if (hasChineseRaw) {
+    return { mainTitle: rawTitle, originalTitle: orig || rawTitle };
+  }
+
+  // 2. 检查 translations 接口中是否存在中文译名（涵盖中国大陆、台湾、香港）
+  let zhTranslation = '';
+  if (detail.translations?.translations && Array.isArray(detail.translations.translations)) {
+    const zhList = detail.translations.translations.filter((t: any) => t.iso_639_1 === 'zh');
+    const bestZh =
+      zhList.find((t: any) => t.iso_3166_1 === 'CN' && (t.data?.name || t.data?.title)) ||
+      zhList.find((t: any) => (t.data?.name || t.data?.title));
+    if (bestZh?.data?.name || bestZh?.data?.title) {
+      zhTranslation = (bestZh.data.name || bestZh.data.title || '').trim();
+    }
+  }
+
+  // 3. 校验调用方传入的 fallbackTitle（如中文搜索词 "黑帮领地"）
+  const cleanFallback = sanitizeSearchTitle(fallbackTitle);
+  if (cleanFallback && isCleanChineseTitle(cleanFallback)) {
+    return { mainTitle: cleanFallback, originalTitle: orig || rawTitle };
+  }
+  if (zhTranslation && isCleanChineseTitle(zhTranslation)) {
+    return { mainTitle: zhTranslation, originalTitle: orig || rawTitle };
+  }
+  if (cleanFallback && /[\u4e00-\u9fff]/.test(cleanFallback)) {
+    return { mainTitle: cleanFallback, originalTitle: orig || rawTitle };
+  }
+
+  return { mainTitle: rawTitle || fallbackTitle, originalTitle: orig };
 }
 
 /**
@@ -266,11 +323,19 @@ export async function searchAndEnrichFromTMDB(
     const hasChineseQuery = /[\u4e00-\u9fff]/.test(cleanQuery);
 
     if (hasChineseQuery) {
-      // 中文搜索：要求候选标题至少包含搜索词中的 1 个中文字符
+      // 中文搜索：要求候选标题至少包含搜索词中的 1 个中文字符，
+      // 或其剧情简介 overview 包含中文字符，
+      // 或 TMDB 综合搜索高置信度命中（条目通过中文别名/译名在 TMDB 索引，但原名为外文）
       const queryChars = cleanQuery.match(/[\u4e00-\u9fff]/g) || [];
       const combinedTitle = bestTitle + bestOrig;
       const hasOverlap = queryChars.some(ch => combinedTitle.includes(ch));
-      if (!hasOverlap) return null;
+      const overviewText = best.hit.overview || '';
+      const hasOverviewOverlap = queryChars.some(ch => overviewText.includes(ch));
+      const hasChineseOverview = /[\u4e00-\u9fff]/.test(overviewText);
+
+      if (!hasOverlap && !hasOverviewOverlap && !(best.score >= 40 && hasChineseOverview)) {
+        return null;
+      }
     } else {
       // 英文搜索：最低分数门槛，排除得分极低的无关条目
       if (best.score < 50) return null;
@@ -314,7 +379,7 @@ export async function searchAndEnrichFromTMDB(
       entityId = formatEntityId(nextSeq);
     }
 
-    const mainTitle = detail.title || detail.name || title;
+    const { mainTitle, originalTitle } = resolveCanonicalTitle(detail, title);
     const slug = generateSlug(mainTitle);
 
     const directors: string[] = [];
@@ -366,7 +431,7 @@ export async function searchAndEnrichFromTMDB(
       tmdbId: String(detail.id),
       tmdbType: actualType,
       title: mainTitle,
-      originalTitle: detail.original_title || detail.original_name,
+      originalTitle: originalTitle || detail.original_title || detail.original_name,
       type: actualType,
       year: releaseYear,
       description: detail.overview || `${mainTitle} 在线观看，支持海外华人免翻墙极速高清播放。`,
@@ -441,7 +506,7 @@ async function convertHitToEntity(
     const nextSeq = await getNextEntitySeq();
     const entityId = formatEntityId(nextSeq);
 
-    const mainTitle = detail.title || detail.name || fallbackTitle;
+    const { mainTitle, originalTitle } = resolveCanonicalTitle(detail, fallbackTitle);
     const slug = generateSlug(mainTitle);
 
     const directors: string[] = [];
@@ -493,7 +558,7 @@ async function convertHitToEntity(
       tmdbId: String(detail.id),
       tmdbType: actualType,
       title: mainTitle,
-      originalTitle: detail.original_title || detail.original_name,
+      originalTitle: originalTitle || detail.original_title || detail.original_name,
       type: actualType,
       year: releaseYear,
       description: detail.overview || `${mainTitle} 在线观看，支持海外华人免翻墙极速高清播放。`,

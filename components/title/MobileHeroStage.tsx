@@ -8,6 +8,7 @@ import { resolvePlayTarget } from '@/lib/utils/title-probe';
 import { isValidSourceId } from '@/lib/api/video-sources';
 import { useHistoryStore } from '@/lib/store/history-store';
 import { getEpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
+import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 
 interface MobileHeroStageProps {
   entityId: string;
@@ -40,6 +41,8 @@ export function MobileHeroStage({
       const displayInfo = getEpisodeDisplayInfo(historyItem.episodes, historyItem.episodeIndex);
       playEpisode = displayInfo.paramValue;
       playSeason = displayInfo.seasonNumber;
+    } else {
+      playSeason = parseSeasonFromTitle(title)?.seasonNumber;
     }
 
     let playId: string | number | undefined = undefined;

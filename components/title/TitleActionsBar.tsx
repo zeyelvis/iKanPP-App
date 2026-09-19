@@ -9,6 +9,7 @@ import { TitleEntity } from '@/lib/types/entity';
 import { getEpisodeDisplayInfo, EpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
 import { fetchTitleProbe, subscribeTitleProbe, resolvePlayTarget } from '@/lib/utils/title-probe';
 import { isValidSourceId } from '@/lib/api/video-sources';
+import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 import { ClassicDemandModal } from './ClassicDemandModal';
 
 interface TitleActionsBarProps {
@@ -133,7 +134,8 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
         episode: String(param),
       });
       if (entity.year) params.set('year', String(entity.year));
-      if (lastEpisodeInfo.seasonNumber) params.set('season', String(lastEpisodeInfo.seasonNumber));
+      const effectiveSeason = lastEpisodeInfo.seasonNumber || parseSeasonFromTitle(effectiveTitle)?.seasonNumber;
+      if (effectiveSeason) params.set('season', String(effectiveSeason));
       if (playId && playSource) {
         params.set('id', String(playId));
         params.set('source', playSource);
