@@ -254,21 +254,30 @@ async function main() {
     }
 
     if (entityId) {
-      // 库中已有
+      // 检查库中已有实体的年份是否与当前候选新片一致
       const rawEnt = await kvGet(`entity:${entityId}`);
       if (rawEnt) {
         const ent = JSON.parse(rawEnt);
-        pioneers.push({
-          entityId,
-          title: ent.title,
-          year: ent.year,
-          type: ent.type || item.type,
-          rate: ent.rate || '8.0',
-          cover: ent.cover,
-          backdrop: ent.backdrop,
-          remarks: item.remarks,
-        });
-        continue;
+        const existingYear = parseInt(ent.year || '2000', 10);
+        const candidateYear = parseInt(item.year || '2026', 10);
+
+        // 🌟 核心防线：只有年份匹配（差值 <= 1 年）才认定为同一部影片
+        if (Math.abs(existingYear - candidateYear) <= 1) {
+          pioneers.push({
+            entityId,
+            title: ent.title,
+            year: ent.year,
+            type: ent.type || item.type,
+            rate: ent.rate || '8.0',
+            cover: ent.cover,
+            backdrop: ent.backdrop,
+            remarks: item.remarks,
+          });
+          continue;
+        } else {
+          console.log(`⚠️ [同名碰撞消除] 库中已有条目 《${title}》 为 ${existingYear} 年老片，当前为 ${candidateYear} 年超级新片，破除吞噬，重新独立建档！`);
+          entityId = null; // 重置，强制进入 TMDB 4K 官方资产建档流水线
+        }
       }
     }
 
@@ -321,6 +330,14 @@ async function main() {
       key: `title:${newEntity.title}`,
       value: newEntityId,
     });
+    entitiesToCreate.push({
+      key: `slug:${newEntity.slug}-${newEntity.year}`,
+      value: newEntityId,
+    });
+    entitiesToCreate.push({
+      key: `slug:${encodeURIComponent(`${newEntity.slug}-${newEntity.year}`)}`,
+      value: newEntityId,
+    });
 
     indexAll.push(newEntityId);
     indexAllSet.add(newEntityId);
@@ -357,9 +374,10 @@ async function main() {
   // 5. 自动无缝置顶融合四大排序与 recent:*
   console.log('🔄 [双轨融合] 正在将首发先锋片单注入四大排序首位与最新上线横轨...');
   
-  // 🌟 确保战略级超级院线新片（《生化危机：爆发夜》ik020581）恒定排在第 1 席
-  const moviePioneerIds = ['ik020581', ...moviePioneers.filter(p => p.entityId !== 'ik020581').map(p => p.entityId)];
-  const allPioneerIds = ['ik020581', ...pioneers.filter(p => p.entityId !== 'ik020581').map(p => p.entityId)];
+  // 🌟 确保战略级超级院线新片（《生化危机：爆发夜》ik020581 与 韩国科幻巨制《希望》ik100710）恒定排在最前列
+  const TOP_FLAGSHIPS = ['ik020581', 'ik100710'];
+  const moviePioneerIds = [...TOP_FLAGSHIPS, ...moviePioneers.filter(p => !TOP_FLAGSHIPS.includes(p.entityId)).map(p => p.entityId)];
+  const allPioneerIds = [...TOP_FLAGSHIPS, ...pioneers.filter(p => !TOP_FLAGSHIPS.includes(p.entityId)).map(p => p.entityId)];
 
   // 注入 channel:movie
   let movieChannel = [];
