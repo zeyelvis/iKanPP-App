@@ -59,4 +59,5 @@ original_kvideo/
 /macos/KVideo/build
 /macos/KVideo/KVideo.xcodeproj
 .wrangler/
+.cache/
 

@@ -30,6 +30,29 @@ const TMDB_DELAY_MS = 280; // TMDB 权威限速安全线
 
 const CHECKPOINT_FILE = path.resolve(process.cwd(), '.cache/ingest-checkpoint.json');
 
+const ADULT_BLACKLIST_WORDS = [
+  '痴漢', '痴汉', '調教', '调教', '発情', '发情', '近親', '近亲', '乱倫', '乱伦',
+  '性奴', '小股', '沙龙病院', '中出し', '潮吹き', '巨乳', '美乳', '素人',
+  '熟女', '人妻', '淫乱', '絶頂', '绝顶', '強姦', '强奸', '輪姦', '轮奸', '肉便器',
+  '風俗', '风俗', '無修正', '无修正', 'エロ', 'AV', 'JAV', 'FC2', 'SM', '変態', '变态',
+  '制服誘惑', '制服诱惑', '女教師', '女教师', '看護婦', '看护妇', '盗撮', '覗き', '偷窥',
+  '性交', '做爱', '自慰', '色情', '三级', '露点', '情色', '偷拍', '色誘', '色诱', '情欲', '欲女',
+  '売春', '愛汁', '肉しびれ', '女囚', '痴情', '快辱', '乱交', 'ポルノ', '半熟売春'
+];
+
+function isCleanChineseTitle(title) {
+  if (!title || typeof title !== 'string') return false;
+  const t = title.trim();
+  if (!t) return false;
+  for (const w of ADULT_BLACKLIST_WORDS) {
+    if (t.includes(w)) return false;
+  }
+  if (/[\u3040-\u309f\u30a0-\u30ff]/.test(t)) return false;
+  if (/[\uac00-\ud7af]/.test(t)) return false;
+  if (!/[\u4e00-\u9fa5]/.test(t)) return false;
+  return true;
+}
+
 // 采集数据源与分类配置
 const SOURCE_CHANNELS = [
   {
@@ -655,7 +678,7 @@ async function runIngestion(options = {}) {
         for (const item of data.list) {
           if (totalAdded >= limit) break;
           const vodName = (item.vod_name || '').trim();
-          if (!vodName) continue;
+          if (!vodName || !isCleanChineseTitle(vodName)) continue;
 
           const norm = normalizeTitle(vodName);
           if (seenTitles.has(norm)) {

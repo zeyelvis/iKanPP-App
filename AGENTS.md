@@ -212,11 +212,13 @@ iKanPP 作为面向全球华人的高品质流媒体平台，主站（轨道 A�
 ### 4. 低俗与成人违禁词一票否决
 - 严格执行 `ADULT_BLACKLIST_WORDS` 敏感词黑名单，地下色情录像、成人番号、露骨低俗条目一律直接物理抹除。
 
-### 5. 四重立体防线协同闭环
+### 5. 六重立体防线协同闭环（永不复发钢铁长城）
 - **底层算法基线**：统一调用 `lib/data/entities/entity-utils.ts` 中的 `isCleanChineseTitle`；
-- **自动化入库门禁**：`app/api/seo/entity-pipeline/route.ts` 与 `app/api/seo/tmdb-changes/route.ts` 在拉取 TMDB 时必须执行 `if (!isCleanChineseTitle(mainTitle)) continue;`；
+- **底层存储终极硬锁**：`lib/services/entity-kv.ts` 中的 `saveEntity` 入口强制执行 `if (!isCleanChineseTitle(entity.title)) return;` 物理拦截，任何未汉化、假名或违规条目底层直接拒收，绝不写入 `index:all`；
+- **影人履历彻底脱钩**：`lib/services/entity-enrichment.ts` 中的 `searchAndEnrichPersonCredits` 仅关联本站已收录的影视，**严禁盲目为 TMDB 外部履历分配新实体 ID 并调用 saveEntity**，彻底消除爬虫递归造片漏洞；
+- **采集源头门禁**：`scripts/ingest-entity-catalog.mjs`、`app/api/seo/entity-pipeline/route.ts` 与 `app/api/seo/tmdb-changes/route.ts` 必须在前置循环中强制校验 `isCleanChineseTitle`；
 - **KV 存储自愈**：`lib/services/entity-kv.ts` 中的 `isSafeRecentTitleItem` 严密把关 `recent:*` 的写入与下发；
-- **前端组件穿透**：`components/home/LatestTitlesRail.tsx` 保持客户端多重过滤，版本升级（`v6`）彻底丢弃旧缓存。
+- **自动化免疫巡检引擎**：常驻运行 `scripts/sanitize-ghost-entities.mjs`，定期扫描并原子修剪可能渗透的异常空键与死链，守护全局主索引 100% 纯净。
 
 ---
 

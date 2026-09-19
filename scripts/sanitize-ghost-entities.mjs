@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import fs from 'fs';
+import path from 'path';
 
 /**
  * 🧹 生产环境 Cloudflare KV 幽灵/纯外文/违规影视实体安全排查与修剪引擎
@@ -49,17 +51,25 @@ function isCleanChineseTitle(title) {
   return true;
 }
 
-async function kvGet(key) {
+async function kvGet(key, retries = 2) {
   const url = `https://api.cloudflare.com/client/v4/accounts/${CF_KV_ACCOUNT_ID}/storage/kv/namespaces/${CF_KV_NAMESPACE_ID}/values/${encodeURIComponent(key)}`;
-  const res = await fetch(url, {
-    headers: {
-      'X-Auth-Email': CF_KV_EMAIL,
-      'X-Auth-Key': CF_KV_API_KEY,
-    },
-  });
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`KV Get ${key} error: ${res.status}`);
-  return await res.text();
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, {
+        headers: {
+          'X-Auth-Email': CF_KV_EMAIL,
+          'X-Auth-Key': CF_KV_API_KEY,
+        },
+      });
+      if (res.status === 404) return null;
+      if (!res.ok) throw new Error(`KV Get ${key} status: ${res.status}`);
+      return await res.text();
+    } catch (err) {
+      if (attempt === retries) throw err;
+      await new Promise(r => setTimeout(r, 100 * (attempt + 1)));
+    }
+  }
+  return null;
 }
 
 async function kvPut(key, value) {
@@ -78,7 +88,7 @@ async function kvPut(key, value) {
 
 async function runSanitization() {
   console.log('====================================================');
-  console.log(`🛡️  iKanPP 实体库幽灵与非华语条目排查审计引擎`);
+  console.log(`🛡️  iKanPP 全站实体库幽灵与非华语条目全量排查清洗引擎`);
   console.log(`模式: ${isApplyMode ? '⚡ [APPLY 生产实际修剪]' : '🔍 [DRY-RUN 仅只读排查统计]'}`);
   console.log('====================================================\n');
 
@@ -91,13 +101,13 @@ async function runSanitization() {
   }
   const allIds = JSON.parse(indexAllRaw);
   const targetIds = tailLimit > 0 ? allIds.slice(-tailLimit) : allIds;
-  console.log(`📊 现有 index:all 总条目数: ${allIds.length} | 本次扫描目标数: ${targetIds.length}${tailLimit > 0 ? ` (最新 ${tailLimit} 条)` : ' (全量)'}`);
+  console.log(`📊 现有 index:all 总条目数: ${allIds.length} | 本次扫描目标数: ${targetIds.length}${tailLimit > 0 ? ` (最新 ${tailLimit} 条)` : ' (全站全量)'}`);
 
   // 2. 批量读取并检测实体标题
-  console.log('\n🔍 [2/4] 正在并发扫描实体健康度与语言合规性 (每批 50 条)...');
+  console.log('\n🔍 [2/4] 正在并发扫描实体健康度与语言合规性 (每批 120 条)...');
   const validIds = [];
   const invalidItems = [];
-  const BATCH_SIZE = 50;
+  const BATCH_SIZE = 120;
 
   for (let i = 0; i < targetIds.length; i += BATCH_SIZE) {
     const chunk = targetIds.slice(i, i + BATCH_SIZE);
@@ -136,10 +146,17 @@ async function runSanitization() {
       }
     }));
 
-    if ((i + BATCH_SIZE) % 5000 === 0 || i + BATCH_SIZE >= allIds.length) {
-      console.log(`   - 已扫描: ${Math.min(i + BATCH_SIZE, allIds.length)} / ${allIds.length} | 发现不合规条目: ${invalidItems.length}`);
+    if ((i + BATCH_SIZE) % 5000 === 0 || i + BATCH_SIZE >= targetIds.length) {
+      console.log(`   - 已扫描: ${Math.min(i + BATCH_SIZE, targetIds.length)} / ${targetIds.length} | 累计发现不合规条目: ${invalidItems.length}`);
     }
   }
+
+  // 持久化不合规清单以供留档与复核
+  try {
+    const cacheDir = path.resolve(process.cwd(), '.cache');
+    if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
+    fs.writeFileSync(path.join(cacheDir, 'sanitized-invalid-ids.json'), JSON.stringify(invalidItems, null, 2));
+  } catch {}
 
   // 3. 输出排查统计报告
   console.log('\n📊 [3/4] 排查审计统计报告:');

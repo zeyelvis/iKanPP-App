@@ -282,6 +282,13 @@ export async function getEntityByTitle(title: string): Promise<TitleEntity | nul
 export async function saveEntity(entity: TitleEntity): Promise<void> {
   if (!entity || !entity.entityId) return;
 
+  // 🌟 终极物理钢铁防线：华语流媒体主站内容安全底线
+  // 任何非纯正中文标题、日文假名、韩文字符、纯外文或命中违禁词的条目，底层直接物理拒之门外，绝不入库
+  if (!entity.title || !isCleanChineseTitle(entity.title)) {
+    console.warn(`[saveEntity 物理熔断] 坚决阻断非华语/不合规条目入库: id="${entity.entityId}", title="${entity.title}"`);
+    return;
+  }
+
   const id = entity.entityId.toLowerCase();
   const slugKey = `${id}-${entity.slug}`.toLowerCase();
   const normTitle = normalizeTitle(entity.title);
