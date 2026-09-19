@@ -12,13 +12,15 @@ export interface TitleEntity {
   cover: string;               // 海报图片 URL (推荐 w500)
   backdrop?: string;           // 剧照大图横版背景图 URL (推荐 w1280，用于 OG 与 Discover)
   rate: string;                // 评分，例如 "9.7"
+  score?: string;               // 权威打分 (同 rate)
   genres: string[];            // 题材分类，例如 ["剧情", "犯罪"]
   directors: string[];         // 导演列表
   actors: string[];            // 主演列表 (前 5 位)
   region?: string;             // 制片国家/地区，例如 "美国"
   language?: string;           // 主要语言，例如 "国语"、"英语"、"泰语"
   status?: string;             // 连载状态，例如 "完结"、"更新至第12集"
-  popularity?: number;         // TMDB 人气指数（用于综合热度排序）
+  popularity?: number;         // TMDB/全网人气指数（用于综合热度排序）
+  hot?: number;                // 真实全网播放/关注热度值（如 60802000）
   runtime?: number;            // 片长（分钟）
   numberOfSeasons?: number;    // 电视剧季数
   numberOfEpisodes?: number;   // 电视剧总集数

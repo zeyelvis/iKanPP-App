@@ -746,20 +746,68 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
   const isScoreSort = sortMode === 'rank' || sortMode === 'rating' || sortMode === 'score';
   const isHitsSort = sortMode === 'hits' || sortMode === 'popularity' || sortMode === 'recommend';
 
-  // 如果需要按高分或综合热度排序：
+  // ── 核心性能革新：若用户未选择细化属性（纯专区切换排序），直接从全局物理倒排索引秒出 ──
+  const targetChannel = (filters.channel && filters.channel !== 'all' && filters.channel !== '全部')
+    ? filters.channel.toLowerCase().trim()
+    : 'all';
+  const hasDetailedFilters = Boolean(
+    (filters.genre && filters.genre !== 'all' && filters.genre !== '全部') ||
+    (filters.region && filters.region !== 'all' && filters.region !== '全部') ||
+    (filters.year && filters.year !== 'all' && filters.year !== '全部') ||
+    (filters.language && filters.language !== 'all' && filters.language !== '全部') ||
+    (filters.status && filters.status !== 'all' && filters.status !== '全部')
+  );
+
+  if (!hasDetailedFilters) {
+    let dedicatedIndexKey = '';
+    if (isHitsSort) {
+      dedicatedIndexKey = `index:popularity:${targetChannel}`;
+    } else if (isScoreSort) {
+      dedicatedIndexKey = `index:score:${targetChannel}`;
+    }
+
+    if (dedicatedIndexKey) {
+      const rawDedicated = await kvGet(dedicatedIndexKey);
+      if (rawDedicated) {
+        try {
+          const list = JSON.parse(rawDedicated);
+          if (Array.isArray(list) && list.length > 0) {
+            const dedicatedTotal = list.length;
+            const dedicatedPageCount = Math.max(1, Math.ceil(dedicatedTotal / limit));
+            const startIndex = (page - 1) * limit;
+            const pageIds = list.slice(startIndex, startIndex + limit);
+            const items = (await Promise.all(pageIds.map(id => getEntityById(id)))).filter(Boolean) as TitleEntity[];
+
+            return {
+              items,
+              total: dedicatedTotal,
+              page,
+              pageCount: dedicatedPageCount,
+              limit,
+            };
+          }
+        } catch { /* 容灾降级 */ }
+      }
+    }
+  }
+
+  // ── 若存在多维组合筛选，使用真实 popularity 与真实 score 进行高精度全量排序 ──
   if (isScoreSort || isHitsSort) {
-    // 限制加载前 150 条候选 ID 进行精确加权排序
-    const candidateIds = matchedIds.slice(0, 150);
+    // 根据交集结果切出当前页所需及后续候选池（最大支持 300 条深度精准排序）
+    const candidateIds = matchedIds.slice(0, 300);
     const candidateEntities = (await Promise.all(candidateIds.map(id => getEntityById(id)))).filter(Boolean) as TitleEntity[];
 
     if (isScoreSort) {
-      candidateEntities.sort((a, b) => parseFloat(b.rate || '0') - parseFloat(a.rate || '0'));
-    } else if (isHitsSort) {
+      // 评分排序：真实 rate 降序，同分时真实 popularity 降序
       candidateEntities.sort((a, b) => {
-        const popA = a.popularity || (parseFloat(a.rate || '0') * 10 + (a.year ? parseInt(a.year, 10) : 0));
-        const popB = b.popularity || (parseFloat(b.rate || '0') * 10 + (b.year ? parseInt(b.year, 10) : 0));
-        return popB - popA;
+        const sA = parseFloat(a.rate || a.score || '0');
+        const sB = parseFloat(b.rate || b.score || '0');
+        if (sB !== sA) return sB - sA;
+        return (Number(b.popularity) || 0) - (Number(a.popularity) || 0);
       });
+    } else if (isHitsSort) {
+      // 人气排序：真实 popularity 降序
+      candidateEntities.sort((a, b) => (Number(b.popularity) || 0) - (Number(a.popularity) || 0));
     }
 
     const startIndex = (page - 1) * limit;

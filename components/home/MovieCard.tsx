@@ -116,6 +116,21 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
               <p className="text-sm text-(--text-muted)">暂无图片</p>
             </div>
           )}
+          {/* 真实全网热度角标 */}
+          {(() => {
+            const hotVal = (movie as any).hot || (movie as any).popularity;
+            if (!hotVal || hotVal < 10000) return null;
+            const fmtHot = hotVal >= 10000000
+              ? `${(hotVal / 10000000).toFixed(1)}千万`
+              : (hotVal >= 10000 ? `${Math.round(hotVal / 10000)}万` : String(hotVal));
+            return (
+              <div className="absolute top-2 left-2 bg-red-600/85 px-2 py-0.5 flex items-center gap-1 rounded-(--radius-full) backdrop-blur-sm text-[10px] font-bold text-white shadow-sm">
+                <span>🔥</span>
+                <span>{fmtHot}</span>
+              </div>
+            );
+          })()}
+
           {/* 评分标签 */}
           {movie.rate && parseFloat(movie.rate) > 0 ? (
             <div

@@ -414,8 +414,8 @@ export async function GET(req: NextRequest) {
     // 1. 全库 (all)、电影与电视剧为成熟主力库（已有万级实体），只要有匹配结果即由 KV 毫秒级直出；
     // 2. 动漫、综艺、纪录片、短剧等专区若当前收录量较少（< 100 部），说明尚未完成全量灌入，
     //    自动降级至第三方采集站全网实时接口，确保大厅呈现数千部完整片源！
-    const isMatureChannel = type === 'movie' || type === 'tv' || type === 'all';
-    const hasSufficientEntities = kvResult && kvResult.total >= 100;
+    const isMatureChannel = type === 'movie' || type === 'tv' || type === 'anime' || type === 'variety' || type === 'documentary' || type === 'all';
+    const hasSufficientEntities = kvResult && kvResult.total >= 50;
     const shouldServeKV = kvResult && kvResult.total > 0 && (isMatureChannel || hasSufficientEntities);
 
     if (shouldServeKV) {
@@ -423,7 +423,10 @@ export async function GET(req: NextRequest) {
         id: entity.entityId,
         title: entity.title,
         cover: entity.cover,
-        rate: entity.rate || '8.8',
+        rate: entity.rate || entity.score || '8.8',
+        score: entity.score || entity.rate || '8.8',
+        popularity: entity.popularity || entity.hot || 0,
+        hot: entity.hot || entity.popularity || 0,
         year: entity.year || '2026',
         types: entity.genres || [],
         remarks: entity.status || (entity.numberOfEpisodes ? `${entity.numberOfEpisodes}集全` : '全高清'),
