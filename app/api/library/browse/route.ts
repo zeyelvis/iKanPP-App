@@ -360,8 +360,8 @@ function matchesYear(item: any, yearStr: string): boolean {
 
 // 板块映射表
 const CHANNEL_MAP: Record<string, string> = {
-  '全部': 'movie',
-  'all': 'movie',
+  '全部': 'all',
+  'all': 'all',
   '电影': 'movie',
   'movie': 'movie',
   '电视剧': 'tv',
@@ -411,10 +411,10 @@ export async function GET(req: NextRequest) {
     });
 
     // 频道实体库成熟度仲裁：
-    // 1. 电影与电视剧为成熟主力库（已有万级实体），只要有匹配结果即由 KV 毫秒级直出；
+    // 1. 全库 (all)、电影与电视剧为成熟主力库（已有万级实体），只要有匹配结果即由 KV 毫秒级直出；
     // 2. 动漫、综艺、纪录片、短剧等专区若当前收录量较少（< 100 部），说明尚未完成全量灌入，
     //    自动降级至第三方采集站全网实时接口，确保大厅呈现数千部完整片源！
-    const isMatureChannel = type === 'movie' || type === 'tv';
+    const isMatureChannel = type === 'movie' || type === 'tv' || type === 'all';
     const hasSufficientEntities = kvResult && kvResult.total >= 100;
     const shouldServeKV = kvResult && kvResult.total > 0 && (isMatureChannel || hasSufficientEntities);
 

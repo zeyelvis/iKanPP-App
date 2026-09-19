@@ -362,7 +362,7 @@ function isSameList(a: any[], b: any[]): boolean {
         const targetChannel = activeFilters.channel || activeNav;
         const browseType =
           targetChannel === 'all'
-            ? NAV_TO_BROWSE_TYPE[activeNav] || 'movie'
+            ? 'all'
             : NAV_TO_BROWSE_TYPE[targetChannel] || targetChannel || doubanType;
 
         const targetPage = pageNum + 1;
