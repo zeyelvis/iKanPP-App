@@ -51,6 +51,26 @@ interface TMDBDetailResponse {
   };
 }
 
+// 常用影视多地译名简繁字映射（覆盖港台常见影视译名音译字符）
+const S2T_MAP: Record<string, string> = {
+  '丽': '麗', '兹': '茲', '顿': '頓', '齐': '齊', '莉': '莉', '博': '博', '登': '登',
+  '特': '特', '斯': '斯', '尔': '爾', '曼': '曼', '德': '德', '格': '格', '拉': '拉',
+  '维': '維', '杰': '傑', '克': '克', '逊': '遜', '里': '裏', '亚': '亞', '诺': '諾',
+  '兰': '蘭', '罗': '羅', '伯': '伯', '理': '理', '查': '查', '弗': '弗', '雷': '雷',
+  '战': '戰', '杀': '殺', '爱': '愛', '恋': '戀', '恶': '惡', '魔': '魔', '异': '異',
+  '录': '錄', '传': '傳', '说': '說', '记': '記', '历': '歷', '险': '險', '门': '門',
+  '间': '間', '发': '發', '复': '復', '仇': '仇', '绝': '絕', '对': '對', '极': '極',
+  '风': '風', '暴': '暴', '云': '雲', '梦': '夢', '灵': '靈', '魂': '魂', '灭': '滅',
+  '无': '無', '尽': '盡', '终': '終', '结': '結', '形': '形', '体': '體', '国': '國',
+  '度': '度', '时': '時', '代': '代', '头': '頭', '号': '號', '玩': '玩', '家': '家',
+  '总': '總', '动': '動', '员': '員', '神': '神', '偷': '偷', '爸': '爸', '机': '機',
+  '器': '器', '人': '人', '黑': '黑', '客': '客', '帝': '帝'
+};
+
+export function toTraditional(str: string): string {
+  return str.split('').map(ch => S2T_MAP[ch] || ch).join('');
+}
+
 /**
  * 清理标题中的杂质提高 TMDB 命中率
  */
@@ -62,7 +82,49 @@ function sanitizeSearchTitle(title: string): string {
     .replace(/\s*(?:更新至|全)\d+集?/, '')
     .replace(/\s*(?:19|20)\d{2}\s*$/, '') // 移除末尾年份（如 2026、2021）
     .replace(/^(?:19|20)\d{2}\s+/, '')    // 移除开头的年份
+    .replace(/[·・•]/g, ' ')             // 间隔号转换为空格
+    .replace(/[\-_—–]+/g, ' ')           // 连字符/破折号转换为空格
+    .replace(/[：:]+/g, ' ')             // 冒号转换为空格
+    .replace(/\s+/g, ' ')
     .trim();
+}
+
+/**
+ * 针对复杂复合片名（如带副标题、连字符、多地音译差异）生成多级候选搜索词
+ */
+export function generateSearchQueries(title: string): string[] {
+  const queries = new Set<string>();
+  const sanitized = sanitizeSearchTitle(title);
+  if (sanitized) queries.add(sanitized);
+
+  // 紧凑无空格版本
+  const compact = sanitized.replace(/\s+/g, '');
+  if (compact && compact !== sanitized) queries.add(compact);
+
+  // 主副标题拆分（遇到空格/标点拆分）
+  const parts = sanitized.split(/\s+/).filter(p => p.length > 0);
+  if (parts.length >= 2) {
+    const mainPart = parts[0].trim();
+    if (mainPart.length >= 2) queries.add(mainPart);
+
+    const subPart = parts.slice(1).join(' ').trim();
+    if (subPart.length >= 2) queries.add(subPart);
+
+    const compactSub = parts.slice(1).join('').trim();
+    if (compactSub.length >= 2) queries.add(compactSub);
+  }
+
+  // 补充繁体版本（极大提高港台/美剧译名在 TMDB 中的命中率）
+  const tradList: string[] = [];
+  for (const q of queries) {
+    const trad = toTraditional(q);
+    if (trad !== q) tradList.push(trad);
+  }
+  for (const t of tradList) {
+    queries.add(t);
+  }
+
+  return Array.from(queries);
 }
 
 /**
@@ -262,9 +324,45 @@ export async function searchAndEnrichFromTMDB(
       }
     }
 
+    if (candidates.length === 0) {
+      // 触发多级退避候选词检索（覆盖繁体、主标题、副标题拆解）
+      const alternativeQueries = generateSearchQueries(title).filter(q => q !== cleanQuery);
+      for (const altQ of alternativeQueries) {
+        if (candidates.length >= 3) break;
+        const altEps = preferredType === 'tv'
+          ? ['search/tv', 'search/multi', 'search/movie']
+          : ['search/multi', 'search/movie', 'search/tv'];
+        for (const ep of altEps) {
+          if (candidates.length >= 3) break;
+          let aUrl = `${TMDB_BASE}/${ep}?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(altQ)}`;
+          if (effectiveYear) {
+            const y = effectiveYear.match(/\d{4}/)?.[0];
+            if (y) aUrl += ep.includes('tv') ? `&first_air_date_year=${y}` : `&year=${y}`;
+          }
+          try {
+            const aRes = await fetch(aUrl, {
+              headers: { Accept: 'application/json' },
+              next: { revalidate: 86400 * 7 }
+            });
+            if (aRes.ok) {
+              const aData = await aRes.json();
+              if (Array.isArray(aData.results)) {
+                for (const r of aData.results) {
+                  if (!candidates.some(c => c.id === r.id)) {
+                    candidates.push({ ...r, media_type: r.media_type || (ep.includes('tv') ? 'tv' : 'movie') });
+                  }
+                }
+              }
+            }
+          } catch {}
+        }
+      }
+    }
+
     if (candidates.length === 0) return null;
 
     // 智能多维打分排序（依据：标题精准度 + 海报剧照完整度 + 热度人气 + 评分人数）
+    const allQueryCandidates = generateSearchQueries(title);
     const ranked = candidates
       .filter(r => r && (r.media_type === 'movie' || r.media_type === 'tv' || !r.media_type))
       .map(hit => {
@@ -274,9 +372,17 @@ export async function searchAndEnrichFromTMDB(
         const cleanQ = cleanQuery.toLowerCase();
 
         // 1. 标题匹配度 (权重高)
+        const matchesAnyQuery = allQueryCandidates.some(q => {
+          const qLow = q.toLowerCase();
+          return hitTitle.toLowerCase().includes(qLow) ||
+            origTitle.toLowerCase().includes(qLow) ||
+            qLow.includes(hitTitle.toLowerCase());
+        });
+
         if (hitTitle.toLowerCase() === cleanQ) score += 100;
         else if (origTitle.toLowerCase() === cleanQ) score += 90;
         else if (hitTitle.toLowerCase().includes(cleanQ)) score += 50;
+        else if (matchesAnyQuery) score += 60;
 
         // 2. 海报与剧照完整度 (权重极高！坚决淘汰无图空壳条目)
         if (hit.poster_path) score += 70;
@@ -323,10 +429,8 @@ export async function searchAndEnrichFromTMDB(
     const hasChineseQuery = /[\u4e00-\u9fff]/.test(cleanQuery);
 
     if (hasChineseQuery) {
-      // 中文搜索：要求候选标题至少包含搜索词中的 1 个中文字符，
-      // 或其剧情简介 overview 包含中文字符，
-      // 或 TMDB 综合搜索高置信度命中（条目通过中文别名/译名在 TMDB 索引，但原名为外文）
-      const queryChars = cleanQuery.match(/[\u4e00-\u9fff]/g) || [];
+      // 包含原始查询词以及所有多级候选词中的中文字符（兼容简繁、音译别名与主副标题）
+      const queryChars = Array.from(new Set(generateSearchQueries(title).join('').match(/[\u4e00-\u9fff]/g) || []));
       const combinedTitle = bestTitle + bestOrig;
       const hasOverlap = queryChars.some(ch => combinedTitle.includes(ch));
       const overviewText = best.hit.overview || '';

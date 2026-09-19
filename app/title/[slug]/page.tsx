@@ -24,6 +24,7 @@ import { CastRail } from '@/components/title/CastRail';
 import { Navbar } from '@/components/layout/Navbar';
 import { normalizeVideoType } from '@/lib/utils/taxonomy';
 import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
+import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
 
 /**
  * 智能频道归属识别器
@@ -112,6 +113,34 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
     return enrichEpisodeCount(entity);
   }
 
+  // 🌟 优先级 1.5：若 KV 未命中，检查全站预烘焙最新上线雷达库（PREBAKED_LATEST_TITLES）
+  // 彻底杜绝首页/频道大厅卡片已展示但点入出现 404 的问题
+  const prebakedItems = Object.values(PREBAKED_LATEST_TITLES).flat();
+  const prebakedHit = prebakedItems.find(item => {
+    if (!item) return false;
+    const itemSlugDecoded = decodeURIComponent(item.slug || '');
+    return (
+      item.slug === decodedSlug ||
+      itemSlugDecoded === decodedSlug ||
+      item.title === cleanTitle ||
+      normalizeTitle(item.title) === normalizeTitle(cleanTitle) ||
+      (item.entityId && entityId && item.entityId.toLowerCase() === entityId.toLowerCase())
+    );
+  });
+
+  if (prebakedHit) {
+    // 优先以预烘焙的权威中文标题发起增强自愈
+    const healed = await searchAndEnrichFromTMDB(
+      prebakedHit.title,
+      prebakedHit.type,
+      prebakedHit.year,
+      true
+    );
+    if (healed && healed.cover) {
+      return enrichEpisodeCount(healed);
+    }
+  }
+
   // 🌟 优先级 2：若 URL 未带 ID 但存在明确中文标题，尝试 100% 精准中文标题匹配
   // 智能季数提取：分离季数后缀（如 "黑帮领地第2季" ➔ baseTitle: "黑帮领地", seasonNum: 2）
   const seasonParsed = parseSeasonFromTitle(cleanTitle);
@@ -165,8 +194,10 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
 
   // 🌟 优先级 4：若本地/预置库未命中，使用纯净母标题到 TMDB 搜索并自愈入库（仅全新冷门词条触发）
   if (hasChinese && !/^ik\d{6}$/i.test(cleanTitle)) {
-    // 优先使用去除了季数和年份的纯母标题检索 TMDB（如 "黑帮领地"），极大提高母剧匹配率
+    // 候选词生成：去连字符、去季数母词、原标题等
+    const unhyphenated = cleanTitle.replace(/[\-_—–]+/g, ' ').replace(/[·・•]/g, ' ').replace(/\s+/g, ' ').trim();
     const searchQueries = Array.from(new Set([
+      unhyphenated,
       baseCleanTitle,
       baseTitleWithoutSeason,
       cleanTitle,
