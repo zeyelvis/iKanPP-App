@@ -260,6 +260,34 @@ iKanPP 全域视频播放器（包含桌面端、移动端、网页全屏与系�
   2. 主站普通公网影视（轨道 A，`isPremium: false`）严禁渲染任何 56px/36px 强高斯消融台标层，必须且只能展示轻量纯 CSS 渐变微晶台标；
   3. 56px/36px 双通道强力高斯模糊滤镜**必须且只能在午夜特区 Jable 去水印模式（轨道 B，`isPremium: true`）中按需使用**。
 
+---
+
+## 15. 全站前台展示影视 100% 深度预热与详情页 0ms 秒开铁律 (Full-Site Display Titles Prewarm & 0ms Detail Instant Spec)
+
+iKanPP 全域流媒体详情页与片库分发中枢必须永久恪守“展示即必达、点击即秒开、零等待”的工程铁律，任何后续开发、组件重构或自动化巡检脚本严禁违反以下原则：
+
+### 1. 服务端 0ms 内存直出守护网铁律 (Zero TMDB Sync Blocking on Main Render)
+- **绝对禁忌**：**严禁在影视详情页服务端主渲染路径（`resolveEntityRaw`）中，为了获取未预热影视的元数据而同步阻塞等待海外第三方 API（如 TMDB 串行调用 3~5 次耗时 3~6 秒）！**
+- **必须 0ms 内存直出**：
+  1. 凡是出现在全站前台 7 大专区（全站大厅、电影、电视剧、动漫、综艺、纪录片、短剧）的任何 Hero 通栏巨幕、热播速报或分类货架影视（`PREBAKED_HOME_DATA` 与 `PREBAKED_LATEST_TITLES`），在 KV 未命中时，**必须且只能在 0ms 内瞬间由内存预置数据提取标题、4K 海报、全景剧照、年份、类型、集数、评分与简介，组装为规范的 `TitleEntity` 先行直出首屏**；
+  2. 演职员深度肖像、多语言译名与真实 TMDB ID 必须且只能转入后台非阻塞异步任务进行自愈并持久化写回 KV，彻底消灭前端骨架屏/转圈等待。
+
+### 2. 生产 Cloudflare KV 实体与反向索引批量自动就位铁律 (Automated KV Bulk Ingestion)
+- **核心规范**：
+  1. 自动化全站预热脚本（`scripts/full-site-prewarm.ts`）在汇总全站 7 大专区前台影视后，**必须自动调用 Cloudflare KV `/bulk` API 批量并发写入生产环境**；
+  2. 必须且只能 100% 强一致就位四大核心键：
+     - `entity:${entityId}`：完整的影视实体 JSON 字符串；
+     - `slug:${canonicalSlug}`：标准权威规范别名反查索引；
+     - `slug:${rawSlug}`：原生别名反查索引；
+     - `title:${normalizedTitle}`：中文纯净标题倒排索引；
+  3. 确保用户点击前台任何卡片时，直接命中生产 KV，首字节响应（TTFB）维持在 20ms ~ 40ms 极速水准。
+
+### 3. 三维静态资产 R2 持久化与 Edge CDN 预热闭环 (R2 Ingestion & Edge Prefetch)
+- **资产推流**：前台所有条目的 `w342`（卡片海报）、`w1280`（全景巨幕）、`w780`（详情页主画幅大图）和 `w185`（演职员肖像）必须预先推流至亚太自建 R2（`img.ikanpp.com`），确保中国大陆及全球受限网络环境下同域 0 延迟秒开与 100% 防裂图；
+- **边缘预取**：每次全站预热必须并发触发核心频道路由与前台影视详情页的 Edge CDN 预取（`Accept: text/html` 与 `RSC: 1`），让全球 Anycast 边缘节点提前就绪缓存；
+- **无人值守**：由 `.github/workflows/full-site-prewarm.yml` 每日 2 次固定巡检（北京时间 04:00 与 16:30）及新片同步后自动联动执行，形成 100% 无人值守的自动化上线闭环。
+
+
 
 
 
