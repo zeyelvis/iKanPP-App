@@ -639,9 +639,9 @@
     background: transparent !important;
     display: block !important;
     z-index: 1 !important;
-    transform: translateZ(0) !important;
-    -webkit-transform: translateZ(0) !important;
-    will-change: transform !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+    will-change: auto !important;
 }
 
 /* 2. WebKit 前缀 (macOS Safari & 旧版 Chromium) - 必须独立书写以防选择器整块作废 */
@@ -732,9 +732,9 @@
     background: transparent !important;
     display: block !important;
     z-index: 1 !important;
-    transform: translateZ(0) !important;
-    -webkit-transform: translateZ(0) !important;
-    will-change: transform !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+    will-change: auto !important;
 }
 
 /* 3. 纯 CSS 类名保底 (.is-native-fullscreen) - 保证即使伪类延迟生效，布局也恒定坚不可摧 */
@@ -825,15 +825,29 @@
     background: transparent !important;
     display: block !important;
     z-index: 1 !important;
-    transform: translateZ(0) !important;
-    -webkit-transform: translateZ(0) !important;
-    will-change: transform !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+    will-change: auto !important;
 }
 
 /* 全屏纯黑 backdrop */
 .kvideo-container::backdrop,
 .kvideo-container::-webkit-backdrop {
     background-color: #000 !important;
+}
+
+/* 全屏硬件叠加层安全防线：强制禁用全屏容器内所有元素的 backdrop-filter，防止 GPU Back-buffer 显存读取死锁导致视频置黑 */
+:fullscreen *[class*="backdrop-blur"],
+:fullscreen *[style*="backdropFilter"],
+:fullscreen *[style*="backdrop-filter"],
+:-webkit-full-screen *[class*="backdrop-blur"],
+:-webkit-full-screen *[style*="backdropFilter"],
+:-webkit-full-screen *[style*="backdrop-filter"],
+.kvideo-container.is-native-fullscreen *[class*="backdrop-blur"],
+.kvideo-container.is-native-fullscreen *[style*="backdropFilter"],
+.kvideo-container.is-native-fullscreen *[style*="backdrop-filter"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
 }
 
 

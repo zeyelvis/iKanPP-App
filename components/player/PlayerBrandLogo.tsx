@@ -114,34 +114,39 @@ export function PlayerBrandLogo({
       }}
       aria-hidden="true"
     >
-      {/* 1. 【第一道强力高斯消融】：56px 广域卷积揉碎文字字符 */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backdropFilter: 'blur(56px) brightness(0.9) saturate(140%)',
-          WebkitBackdropFilter: 'blur(56px) brightness(0.9) saturate(140%)',
-          background: 'rgba(0, 0, 0, 0.08)',
-          maskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 55%, rgba(0,0,0,0.5) 80%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 55%, rgba(0,0,0,0.5) 80%, transparent 100%)',
-        }}
-      />
+      {/* 仅在午夜特区 (isPremium) 且需要消融水印时，才开启 56px/36px 双通道高斯模糊，普通主站绝不浪费 GPU 资源 */}
+      {isPremium && (
+        <>
+          {/* 1. 【第一道强力高斯消融】：56px 广域卷积揉碎文字字符 */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backdropFilter: 'blur(56px) brightness(0.9) saturate(140%)',
+              WebkitBackdropFilter: 'blur(56px) brightness(0.9) saturate(140%)',
+              background: 'rgba(0, 0, 0, 0.08)',
+              maskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 55%, rgba(0,0,0,0.5) 80%, transparent 100%)',
+              WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 55%, rgba(0,0,0,0.5) 80%, transparent 100%)',
+            }}
+          />
 
-      {/* 2. 【第二道微晶光雾中和层】：彻底消除高反差残影 */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backdropFilter: 'blur(36px)',
-          WebkitBackdropFilter: 'blur(36px)',
-          background: 'radial-gradient(ellipse 90% 90% at 0% 0%, rgba(255,255,255,0.05) 0%, transparent 80%)',
-          maskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 40%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 40%, transparent 100%)',
-        }}
-      />
+          {/* 2. 【第二道微晶光雾中和层】：彻底消除高反差残影 */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backdropFilter: 'blur(36px)',
+              WebkitBackdropFilter: 'blur(36px)',
+              background: 'radial-gradient(ellipse 90% 90% at 0% 0%, rgba(255,255,255,0.05) 0%, transparent 80%)',
+              maskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 40%, transparent 100%)',
+              WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 40%, transparent 100%)',
+            }}
+          />
+        </>
+      )}
 
       {/* 3. 【极简纯净原厂台标】：无黑框，通透悬浮 */}
       <div className="relative h-full flex items-start pt-2.5 pl-3.5 gap-2.5 z-10">
         {/* 通透微晶皇冠底座 */}
-        <div className="w-6 h-6 rounded-xl bg-black/20 border border-white/25 backdrop-blur-2xl flex items-center justify-center shadow-md shadow-black/40 mt-0.5 shrink-0">
+        <div className="w-6 h-6 rounded-xl bg-black/40 border border-white/25 flex items-center justify-center shadow-md shadow-black/40 mt-0.5 shrink-0">
           <Crown size={12} className="text-amber-400 font-black drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]" />
         </div>
 

@@ -535,8 +535,8 @@ export function DesktopVideoPlayer({
             ref={videoRef}
             className="w-full h-full object-contain"
             style={{
-              transform: 'translateZ(0)',
-              WebkitTransform: 'translateZ(0)',
+              transform: 'none',
+              WebkitTransform: 'none',
             }}
             poster={poster}
             preload="auto"

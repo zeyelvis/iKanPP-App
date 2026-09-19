@@ -407,15 +407,11 @@ export function useFullscreenControls({
                 setIsFullscreen(true);
                 setFullscreenMode('native');
                 lockLandscape().catch(() => { });
-                // macOS / WebKit 关键自愈：进入全屏瞬间双帧微形变，强制 GPU 重新送显视频解码表面 (Blit Framebuffer)
+                // 彻底杜绝 3D Transform 导致的 Chromium / WebKit 硬件叠加层丢帧黑屏：确保 video 保持原生 transform: none
                 if (videoRef.current) {
                     const v = videoRef.current;
+                    v.style.transform = '';
                     void v.offsetHeight;
-                    v.style.transform = 'translateZ(0) scale(1.00001)';
-                    requestAnimationFrame(() => {
-                        v.style.transform = 'translateZ(0)';
-                        void v.offsetHeight;
-                    });
                 }
                 if (typeof window !== 'undefined') {
                     window.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
@@ -429,7 +425,7 @@ export function useFullscreenControls({
                 setFullscreenMode('none');
                 if (videoRef.current) {
                     const v = videoRef.current;
-                    v.style.transform = 'translateZ(0)';
+                    v.style.transform = '';
                     void v.offsetHeight;
                 }
             }
