@@ -105,12 +105,19 @@ export function CategoryHub({
   });
   const [totalCount, setTotalCount] = useState<number>(0);
 
-// ── SWR 频道大厅本地瞬间缓存（升级至 v7，彻底清除旧版错误缓存） ────────
-const CATHUB_CACHE_KEY = 'kvideo-cathub-v7-';
+// ── SWR 频道大厅本地瞬间缓存（升级至 v8，彻底清除旧版假封面与错误缓存） ────────
+const CATHUB_CACHE_KEY = 'kvideo-cathub-v8-';
 
 function getLocalCatHub(key: string): Record<string, RailMovie[]> | null {
   if (typeof window === 'undefined') return null;
   try {
+    // 自动自愈清理历史旧版本缓存
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('kvideo-cathub-') && !k.startsWith(CATHUB_CACHE_KEY)) {
+        localStorage.removeItem(k);
+      }
+    }
     const raw = localStorage.getItem(CATHUB_CACHE_KEY + key);
     if (!raw) return null;
     return JSON.parse(raw);

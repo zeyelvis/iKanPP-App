@@ -1817,19 +1817,19 @@ export function getPrebakedCategoryShelves(
         result[key] = VARIETY_HOME_DATA.s4;
       } else if (key === 'v_kshow' || tag === '韩国' || title.includes('韩国') || title.includes('韩综')) {
         result[key] = [
-          { id: 'v_k_1', title: 'Running Man', rate: '9.2', cover: 'https://image.tmdb.org/t/p/w500/y0Lp6H2VbX4n4D7N8S6b0.jpg', year: '2024', types: ['韩国综艺', '真人秀', '搞笑'], playable: true },
-          { id: 'v_k_2', title: '黑白大厨：料理阶级大战', rate: '8.8', cover: 'https://image.tmdb.org/t/p/w500/qQ4dGfV1X3t4Z5m7Y8w9A.jpg', year: '2024', types: ['韩国综艺', '美食', '竞演'], playable: true },
-          { id: 'v_k_3', title: '单身即地狱 第三季', rate: '7.8', cover: 'https://image.tmdb.org/t/p/w500/3x9vKiUombbUvpVxdxSxcBDxrqB.jpg', year: '2024', types: ['韩国综艺', '恋爱', '真人秀'], playable: true },
-          { id: 'v_k_4', title: '换乘恋爱 第三季', rate: '8.1', cover: 'https://image.tmdb.org/t/p/w500/gttK2vQTd52txo54xrYFdVg1fbS.jpg', year: '2024', types: ['韩国综艺', '情感', '真人秀'], playable: true },
-          { id: 'v_k_5', title: '新西游记 第八季', rate: '9.6', cover: 'https://image.tmdb.org/t/p/w500/42KdZo0AtIxGtdeEe0Z5uStiPYQ.jpg', year: '2020', types: ['韩国综艺', '搞笑', '旅行'], playable: true },
-          { id: 'v_k_6', title: '无限挑战', rate: '9.7', cover: 'https://image.tmdb.org/t/p/w500/vl5WKVXgL1tQs9D9wGE2ido6dwW.jpg', year: '2018', types: ['韩国综艺', '真人秀'], playable: true },
+          { id: 'v_k_1', title: 'Running Man', rate: '9.2', cover: 'https://image.tmdb.org/t/p/w500/15SMnscZqd7HZ0bzruatOcKUlOV.jpg', year: '2024', types: ['韩国综艺', '真人秀', '搞笑'], playable: true },
+          { id: 'v_k_2', title: '黑白大厨：料理阶级大战', rate: '8.8', cover: 'https://image.tmdb.org/t/p/w500/xTsIjti0IAvYOSl54IDMdoih1kK.jpg', year: '2024', types: ['韩国综艺', '美食', '竞演'], playable: true },
+          { id: 'v_k_3', title: '单身即地狱 第三季', rate: '7.8', cover: 'https://image.tmdb.org/t/p/w500/9DFSAW2HUgoEyQDByGcyGyCOgQM.jpg', year: '2024', types: ['韩国综艺', '恋爱', '真人秀'], playable: true },
+          { id: 'v_k_4', title: '换乘恋爱 第三季', rate: '8.1', cover: 'https://image.tmdb.org/t/p/w500/nOlMvBzNngyYQx9gwRl9rBGGpk7.jpg', year: '2024', types: ['韩国综艺', '情感', '真人秀'], playable: true },
+          { id: 'v_k_5', title: '新西游记 第八季', rate: '9.6', cover: 'https://image.tmdb.org/t/p/w500/okkkjEgQmFMet2Er5jkvi1pmD68.jpg', year: '2020', types: ['韩国综艺', '搞笑', '旅行'], playable: true },
+          { id: 'v_k_6', title: '无限挑战', rate: '9.7', cover: 'https://image.tmdb.org/t/p/w500/fpXfEfcZu5uDTOKqjwXSGgrL4iY.jpg', year: '2018', types: ['韩国综艺', '真人秀'], playable: true },
         ];
       } else if (key === 'v_detective' || title.includes('推理') || title.includes('大侦探') || title.includes('密逃')) {
         result[key] = [
-          { id: 'v_det_1', title: '大侦探 第九季', rate: '8.8', cover: 'https://image.tmdb.org/t/p/w500/jOl12DTFiMcp9ga2KaEKwt5H8oo.jpg', year: '2024', types: ['推理', '悬疑'], playable: true },
-          { id: 'v_det_2', title: '密室大逃脱 第六季', rate: '7.8', cover: 'https://image.tmdb.org/t/p/w500/jOl12DTFiMcp9ga2KaEKwt5H8oo.jpg', year: '2024', types: ['解密', '惊悚'], playable: true },
-          { id: 'v_det_3', title: '明星大侦探 第八季', rate: '8.9', cover: 'https://image.tmdb.org/t/p/w500/jOl12DTFiMcp9ga2KaEKwt5H8oo.jpg', year: '2023', types: ['推理', '悬疑'], playable: true },
-          { id: 'v_det_4', title: '森林进化论', rate: '9.0', cover: 'https://image.tmdb.org/t/p/w500/vl5WKVXgL1tQs9D9wGE2ido6dwW.jpg', year: '2023', types: ['博弈', '推理'], playable: true },
+          { id: 'v_det_1', title: '大侦探 第九季', rate: '8.8', cover: 'https://image.tmdb.org/t/p/w500/dmWr4vJgvGMH8m60fuTh0wzYGde.jpg', year: '2024', types: ['推理', '悬疑'], playable: true },
+          { id: 'v_det_2', title: '密室大逃脱 第六季', rate: '7.8', cover: 'https://image.tmdb.org/t/p/w500/qQ221G1KxusTIotpTi4cxDk6O13.jpg', year: '2024', types: ['解密', '惊悚'], playable: true },
+          { id: 'v_det_3', title: '明星大侦探 第八季', rate: '8.9', cover: 'https://image.tmdb.org/t/p/w500/dmWr4vJgvGMH8m60fuTh0wzYGde.jpg', year: '2023', types: ['推理', '悬疑'], playable: true },
+          { id: 'v_det_4', title: '森林进化论', rate: '9.0', cover: 'https://image.tmdb.org/t/p/w500/tCwhXVa4Mige8L71XD46iZNUdDd.jpg', year: '2023', types: ['博弈', '推理'], playable: true },
         ];
       } else {
         result[key] = VARIETY_HOME_DATA.s1;
@@ -1855,10 +1855,10 @@ export function getPrebakedCategoryShelves(
         result[key] = ANIME_HOME_DATA.s3;
       } else if (key === 'a_us' || title.includes('欧美')) {
         result[key] = [
-          { id: 'a_us_1', title: '爱，死亡和机器人 第三季', rate: '8.6', cover: 'https://image.tmdb.org/t/p/w500/1TtrtRIwXz5BB0gXEl8zgBypl9c.jpg', year: '2022', types: ['欧美动画', '科幻'], playable: true },
-          { id: 'a_us_2', title: '英雄联盟：双城之战 第二季', rate: '9.2', cover: 'https://image.tmdb.org/t/p/w500/sSE8DZr44URZccaKtdU8BZyEU6Q.jpg', year: '2024', types: ['欧美动画', '动作'], playable: true },
-          { id: 'a_us_3', title: '瑞克和莫蒂 第七季', rate: '8.5', cover: 'https://image.tmdb.org/t/p/w500/kdE1ALF5G6DFMyDU67AyyUklEtn.jpg', year: '2023', types: ['欧美动画', '科幻'], playable: true },
-          { id: 'a_us_4', title: '蜘蛛侠：纵横宇宙', rate: '8.5', cover: 'https://image.tmdb.org/t/p/w500/1TtrtRIwXz5BB0gXEl8zgBypl9c.jpg', year: '2023', types: ['欧美动画', '科幻'], playable: true },
+          { id: 'a_us_1', title: '爱，死亡和机器人 第三季', rate: '8.6', cover: 'https://image.tmdb.org/t/p/w500/ooSYCehJ3nJh3UywyKSmHXALDyA.jpg', year: '2022', types: ['欧美动画', '科幻'], playable: true },
+          { id: 'a_us_2', title: '英雄联盟：双城之战 第二季', rate: '9.2', cover: 'https://image.tmdb.org/t/p/w500/kvfrEnWVgNIBIVWDmxGALZv7mZW.jpg', year: '2024', types: ['欧美动画', '动作'], playable: true },
+          { id: 'a_us_3', title: '瑞克和莫蒂 第七季', rate: '8.5', cover: 'https://image.tmdb.org/t/p/w500/nbLginNBtPaqz12tSvMjzvxuPFJ.jpg', year: '2023', types: ['欧美动画', '科幻'], playable: true },
+          { id: 'a_us_4', title: '蜘蛛侠：纵横宇宙', rate: '8.5', cover: 'https://image.tmdb.org/t/p/w500/rilpPMoF4LbKcBPb4omiqm7Zjw0.jpg', year: '2023', types: ['欧美动画', '科幻'], playable: true },
         ];
       } else {
         result[key] = ANIME_HOME_DATA.s1;
