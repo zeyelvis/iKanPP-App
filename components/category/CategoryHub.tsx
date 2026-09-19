@@ -162,12 +162,12 @@ function isSameList(a: any[], b: any[]): boolean {
   });
   const [loadingShelves, setLoadingShelves] = useState<boolean>(false);
 
-  // 全库网格数据（每页展示 36 部，完美填满 6/4/3/2 列排版）
+  // 全库网格数据（每页展示 24 部，完美填满 8/6/4/3/2 列排版）
   const [gridMovies, setGridMovies] = useState<any[]>([]);
   const [loadingGrid, setLoadingGrid] = useState(false);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const PAGE_SIZE = 36;
+  const PAGE_SIZE = 24;
 
   // 顶部焦点大片（从第一个货架中选取第一部）
   const heroMovie = useMemo(() => {
@@ -589,6 +589,8 @@ function isSameList(a: any[], b: any[]): boolean {
             loading={loadingGrid}
             page={page}
             hasMore={hasMore}
+            totalCount={totalCount}
+            pageSize={PAGE_SIZE}
             onMovieClick={handleMovieClick}
             onPageChange={loadGridPage}
           />

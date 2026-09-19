@@ -17,8 +17,10 @@ interface DoubanMovie {
 interface MovieGridProps {
   movies: DoubanMovie[];
   loading: boolean;
-  page: number;
+  page: number; // 0-indexed
   hasMore: boolean;
+  totalCount?: number;
+  pageSize?: number;
   onMovieClick: (movie: DoubanMovie) => void;
   onPageChange: (page: number) => void;
 }
@@ -28,12 +30,72 @@ export function MovieGrid({
   loading,
   page,
   hasMore,
+  totalCount,
+  pageSize = 24,
   onMovieClick,
   onPageChange,
 }: MovieGridProps) {
   if (movies.length === 0 && !loading) {
     return <MovieGridEmpty />;
   }
+
+  const handlePageSelect = (targetPageZeroIndexed: number) => {
+    onPageChange(targetPageZeroIndexed);
+    if (typeof window !== 'undefined') {
+      const anchor = document.getElementById('movie-grid-top') || document.getElementById('cathub-universal-filter');
+      if (anchor) {
+        anchor.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
+  const currentPage = page + 1; // 1-indexed
+  const totalPages = totalCount && totalCount > 0
+    ? Math.max(1, Math.ceil(totalCount / pageSize))
+    : (hasMore ? currentPage + 1 : currentPage);
+
+  // 🌟 精准实现图 2 ~ 图 5 经典滑动窗口分页算法
+  const paginationItems: Array<number | 'ellipsis-left' | 'ellipsis-right'> = (() => {
+    if (totalPages <= 7) {
+      const items: number[] = [];
+      for (let i = 1; i <= totalPages; i++) items.push(i);
+      return items;
+    }
+
+    // 状态 A（图 2）：当前页处于前部（1~4） -> 1 2 3 4 5 ... totalPages
+    if (currentPage <= 4) {
+      return [1, 2, 3, 4, 5, 'ellipsis-right', totalPages];
+    }
+
+    // 状态 B（图 4）：当前页处于后部（倒数前4） -> 1 ... 1206 1207 1208 1209 1210
+    if (currentPage >= totalPages - 3) {
+      return [
+        1,
+        'ellipsis-left',
+        totalPages - 4,
+        totalPages - 3,
+        totalPages - 2,
+        totalPages - 1,
+        totalPages,
+      ];
+    }
+
+    // 状态 C（图 3 & 图 5）：当前页居中 -> 1 ... cur-2 cur-1 [cur] cur+1 cur+2 ... totalPages
+    return [
+      1,
+      'ellipsis-left',
+      currentPage - 2,
+      currentPage - 1,
+      currentPage,
+      currentPage + 1,
+      currentPage + 2,
+      'ellipsis-right',
+      totalPages,
+    ];
+  })();
+
+  const isPrevDisabled = currentPage <= 1;
+  const isNextDisabled = currentPage >= totalPages;
 
   return (
     <div>
@@ -57,73 +119,64 @@ export function MovieGrid({
         </div>
       )}
 
-      {/* 分页控制栏 */}
+      {/* 🌟 图 2 ~ 图 5 极简专业流媒体分页控制栏 */}
       {!loading && movies.length > 0 && (
-        <div className="flex items-center justify-center gap-3 py-8 mt-4">
+        <div className="flex items-center justify-center gap-2 sm:gap-4 py-10 mt-6 select-none flex-wrap">
           {/* 上一页 */}
           <button
-            onClick={() => onPageChange(page - 1)}
-            disabled={page === 0}
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed bg-(--glass-bg) border border-(--glass-border) text-(--text-color) hover:bg-(--glass-bg-hover) active:scale-95"
+            onClick={() => !isPrevDisabled && handlePageSelect(page - 1)}
+            disabled={isPrevDisabled}
+            className={`px-3 py-2 text-sm sm:text-base font-normal transition-colors cursor-pointer ${
+              isPrevDisabled
+                ? 'text-gray-600 opacity-40 cursor-not-allowed'
+                : 'text-gray-300 hover:text-white'
+            }`}
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
             上一页
           </button>
 
-          {/* 页码组（最多显示 5 个） */}
-          <div className="flex items-center gap-1.5">
-            {(() => {
-              // 计算显示的页码范围（滑动窗口，当前页尽量居中）
-              const currentPage = page + 1;
-              const windowSize = 5;
-              // hasMore 意味着至少还有下一页，所以已知页数至少是 currentPage + 1
-              const knownPages = hasMore ? currentPage + 1 : currentPage;
-              const totalVisible = Math.min(windowSize, knownPages);
-
-              let startPage = Math.max(1, currentPage - Math.floor(totalVisible / 2));
-              let endPage = startPage + totalVisible - 1;
-              if (endPage > knownPages) {
-                endPage = knownPages;
-                startPage = Math.max(1, endPage - totalVisible + 1);
-              }
-
-              const pages = [];
-              for (let i = startPage; i <= endPage; i++) {
-                const isActive = i === currentPage;
-                pages.push(
-                  <button
-                    key={i}
-                    onClick={() => !isActive && onPageChange(i - 1)}
-                    className={`w-10 h-10 rounded-xl text-sm font-bold transition-all duration-200 cursor-pointer active:scale-95 ${
-                      isActive
-                        ? 'text-white shadow-lg'
-                        : 'bg-(--glass-bg) border border-(--glass-border) text-(--text-color) hover:bg-(--glass-bg-hover)'
-                    }`}
-                    style={isActive ? {
-                      background: 'var(--accent-color)',
-                      boxShadow: '0 0 15px color-mix(in srgb, var(--accent-color) 40%, transparent)',
-                    } : undefined}
+          {/* 页码与省略号组件 */}
+          <div className="flex items-center gap-1 sm:gap-2">
+            {paginationItems.map((item, idx) => {
+              if (item === 'ellipsis-left' || item === 'ellipsis-right') {
+                return (
+                  <span
+                    key={`${item}-${idx}`}
+                    className="w-8 sm:w-10 text-center text-gray-400 font-medium tracking-widest"
                   >
-                    {i}
-                  </button>
+                    ...
+                  </span>
                 );
               }
-              return pages;
-            })()}
+
+              const isCurrent = item === currentPage;
+              return (
+                <button
+                  key={item}
+                  onClick={() => !isCurrent && handlePageSelect(item - 1)}
+                  className={`min-w-[34px] sm:min-w-[42px] h-9 sm:h-10 px-2 rounded-lg text-sm sm:text-base font-medium transition-all duration-150 cursor-pointer active:scale-95 flex items-center justify-center ${
+                    isCurrent
+                      ? 'bg-[#00b2ff] text-white font-bold shadow-md shadow-[#00b2ff]/20'
+                      : 'text-gray-300 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  {item}
+                </button>
+              );
+            })}
           </div>
 
           {/* 下一页 */}
           <button
-            onClick={() => onPageChange(page + 1)}
-            disabled={!hasMore}
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed bg-(--glass-bg) border border-(--glass-border) text-(--text-color) hover:bg-(--glass-bg-hover) active:scale-95"
+            onClick={() => !isNextDisabled && handlePageSelect(page + 1)}
+            disabled={isNextDisabled}
+            className={`px-3 py-2 text-sm sm:text-base font-normal transition-colors cursor-pointer ${
+              isNextDisabled
+                ? 'text-gray-600 opacity-40 cursor-not-allowed'
+                : 'text-gray-300 hover:text-white'
+            }`}
           >
             下一页
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
           </button>
         </div>
       )}
