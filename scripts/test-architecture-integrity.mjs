@@ -161,6 +161,24 @@ if (fs.existsSync(browseRoutePath)) {
   );
 }
 
+// 7. iKanPP 原创品牌与去机器感门禁：严禁在前台展示组件中暴露 AI/Thin Content 标签
+const reviewCompPath = path.resolve('components/title/AiUniqueReview.tsx');
+if (fs.existsSync(reviewCompPath)) {
+  const content = fs.readFileSync(reviewCompPath, 'utf-8');
+  assert(
+    !content.includes('AI 独家解析') && !content.includes('Thin Content'),
+    'AiUniqueReview.tsx 必须使用 iKanPP 独家视点，严禁暴露 AI 独家解析或 Thin Content 内部黑话'
+  );
+}
+const faqCompPath = path.resolve('components/title/AiFaqSection.tsx');
+if (fs.existsSync(faqCompPath)) {
+  const content = fs.readFileSync(faqCompPath, 'utf-8');
+  assert(
+    content.includes('iKanPP 观影指南与答疑') && content.includes('官方 FAQ'),
+    'AiFaqSection.tsx 必须使用 iKanPP 官方观影指南与答疑，建立第一方品牌权威'
+  );
+}
+
 console.log('\n====================================================');
 if (failed) {
   console.error('🚨 架构契约巡检失败！存在破坏全局稳定性的违规回退，请根据上述报错整改后再行提交！');
