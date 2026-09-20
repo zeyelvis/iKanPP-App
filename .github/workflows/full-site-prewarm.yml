@@ -58,21 +58,33 @@ jobs:
           echo "🚀 启动 iKanPP 全站全维度全量自动化预热..."
           npx tsx scripts/full-site-prewarm.ts
 
-      - name: Commit and push new avatars if updated
+      - name: Run Full-Site Cast & Metadata Batch Healer
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_AUTH_EMAIL: ${{ secrets.CLOUDFLARE_AUTH_EMAIL }}
+          CLOUDFLARE_AUTH_KEY: ${{ secrets.CLOUDFLARE_AUTH_KEY }}
+          CF_KV_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_KV_NAMESPACE_ID: ${{ secrets.CF_KV_NAMESPACE_ID }}
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+        run: |
+          echo "🩺 启动全站演职员与核心元数据全量批量自愈..."
+          npx tsx scripts/seo/full-site-cast-healer.mjs
+
+      - name: Commit and push updates if any
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-          if [[ -n $(git status --porcelain lib/data/prebaked-avatars.ts) ]]; then
-            echo "✅ 检测到新增演职员肖像数据，正在提交入库..."
-            git add lib/data/prebaked-avatars.ts
-            git commit -m "chore(prewarm): 自动增量入库新版演职员官方肖像库"
+          git add lib/data/prebaked-avatars.ts scripts/seo/.healer-checkpoint.json 2>/dev/null || true
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "✅ 检测到演职员自愈与肖像库更新，正在提交入库..."
+            git commit -m "chore(healer): 增量持久化演职员肖像与全库自愈断点进度"
             git push
             echo "🚀 正在触发生产环境重新部署..."
             gh workflow run deploy.yml --ref main
-            echo "🎉 新头像资产已更新至生产环境！"
+            echo "🎉 资产与自愈数据已更新至生产环境！"
           else
-            echo "✨ 现有演职员肖像库已是最新，无新增改动。"
+            echo "✨ 当前无新增改动，保持最新状态。"
           fi
