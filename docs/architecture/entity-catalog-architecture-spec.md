@@ -132,15 +132,15 @@ export interface TitleEntity {
 - 严禁跳过 ID 拿 URL 尾部的英文短词反查同名其他剧集。
 
 ### 5. SEO 规范 URL 308 永久重定向 (Canonical 308 Permanent Redirect)
-- 任何非权威规范 Slug，在详情页元数据与主体渲染阶段，统一触发 HTTP 308 (Permanent Redirect) 单跳重定向：
+- 任何非权威规范 Slug，在详情页元数据与主体渲染阶段，统一通过服务端 `permanentRedirect` 触发 HTTP 308 单跳永久重定向：
   ```typescript
-  const canonicalSlug = `${entity.entityId}-${entity.slug}`.toLowerCase();
+  const canonicalSlug = getEntityCanonicalSlug(entity);
   const currentCleanSlug = decodedSlug.toLowerCase();
-  if (currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
-    redirect(`/title/${encodeURIComponent(`${entity.entityId}-${entity.slug}`)}`, RedirectType.replace);
+  if (canonicalSlug && currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
+    permanentRedirect(`/title/${encodeURIComponent(canonicalSlug)}`);
   }
   ```
-- 将历史外链权重 100% 汇聚到规范地址。
+- 将历史外链权重 100% 汇聚到规范地址，严禁使用客户端 307 软重定向。
 
 ---
 
@@ -150,3 +150,24 @@ export interface TitleEntity {
 2. **多维证据加权评分**：标题 35% + 原名 20% + 年代 15% + 导演 15% + 主演 10% + 片长 5%。综合分 ≥ 0.88 判为 `same`，≤ 0.55 判为 `different`，中间状态进入 `review` 队列；
 3. **确定性 Winner 选举**：外链权重 > 外部 ID 完整度 > 字段丰富度 > 早期 ID > 字典序，保证去重作业 100% 幂等；
 4. **四阶段安全执行**：`scripts/seo/dedupe-backfill.mjs` 依次执行 `scan` ➔ `plan` ➔ `apply`（需 `--confirm`）➔ `verify`，自动建立 308 重定向与外链合并。
+
+---
+
+## 七、全站新片雷达零 404 与 URL 编码防撕裂架构 (Zero-404 & Anti-Mangle Spec)
+
+### 1. 核心教训与防撕裂红线 (No Percent Mangling)
+- **教训复盘**：曾因离线脚本对片名做了 `encodeURIComponent`，导致 `PREBAKED_LATEST_TITLES` 存储了 `%xx%xx` 编码串，随后前台 `getTitleCanonicalHref` 传给 `generateSlug` 时，`%` 被错当作非英数字符过滤并替换为连字符 `-`，把汉字彻底撕裂成十六进制连字符乱码（如 `/title/e9-98-bf-e6-b3-a2...`），引发全站最新上线模块大规模 404；
+- **生成端铁律**：全站通用 `getTitleCanonicalHref(item)` 必须恒以真实中文片名（`item.title || item.name`）为第一基准生成标准 URL；对任何输入 slug 必须先执行 `decodeURIComponent` 解码，严禁将未解码的百分号编码串传入 `generateSlug`；
+- **标准 6 位实体 ID 门禁**：必须且只能在实体具备标准 6 位 `ik\d{6}` 实体 ID 时才拼接 `${id}-${slug}`；对于未分配标准 ID 的雷达新片（临时内部 ID 如 `ik_radar_...` 或 `ik_pre_...`），对外 URL 恒为规范中文 URL `/title/片名`，严禁将临时内部 ID 拼入对外 URL 或触发伪 308 重定向。
+
+### 2. 详情页预烘焙匹配三维防线与存量死链 100% 自动自愈
+- **前台即必达**：凡是在首页大厅或各专区「最新上线」展示的卡片，详情页服务端路由（`app/title/[slug]/page.tsx`）的优先级 1.5 预烘焙命中引擎必须 100% 秒级匹配直出，彻底消灭“前台能看、点入 404”的断层；
+- **历史死链自动自愈**：预烘焙匹配引擎必须内置对连字符十六进制碎片（`/[0-9a-f]{2}-[0-9a-f]{2}-[0-9a-f]{2}/i`）的自动识别与双向反解，任何因历史缓存或外部爬虫已收录的撕裂死链，进入详情页必须 100% 瞬间命中对应影片，并由服务端 `permanentRedirect`（HTTP 308）重定向至规范中文 URL，实现存量死链 100% 自动自愈；
+- **数据生产源头纯净**：所有离线与增量同步脚本中的 `simpleSlug` 严禁使用 `encodeURIComponent`，必须直接输出纯净中文 slug。
+
+### 3. 全自动回归测试门禁
+- 凡修改 URL 生成、slug 解析或详情页匹配逻辑，必须运行：
+  ```bash
+  npx tsx scripts/test-latest-titles-404.mjs
+  ```
+  自动化断言全专区所有新片 100% 命中、历史死链 100% 自愈、0 个 404 后方可提交上线。

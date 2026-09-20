@@ -246,6 +246,22 @@ iKanPP 全域流媒体影视分发中枢必须永久恪守“前台展示即必�
 - 详情页在执行 301/308 SEO 规范重定向时，**必须且只能在 `effectiveEntityId && /^ik\d{6}$/i.test(effectiveEntityId)` 严格成立时方可执行**。
 - 坚决杜绝因实体 ID 字段不一致或缺失而拼接出 `/title/undefined-...` 的非法 URL，从源头消灭伪重定向引发的二次 404。
 
+### 4. Canonical URL 生成端绝对纯净铁律（No Percent Mangling）
+- **真实片名优先**：全站通用 URL 生成器 `getTitleCanonicalHref(item)` 必须永远优先以真实中文片名（`item.title || item.name`）为第一基准生成标准 URL；
+- **防撕裂绝对红线**：严禁将未经 `decodeURIComponent` 的百分号编码串（如 `%E9%98%...`）直接传入 `generateSlug`。`generateSlug` 会将 `%` 作为非英数字符过滤并替换为连字符 `-`，导致 URL 被破坏性撕裂为十六进制碎片（如 `/title/e9-98-bf-e6-b3-a2-e7-bd-97-e9-99-b7-e8-90-bd`）从而直接引发全网 404；对任何输入的外部 slug 必须先通过 `decodeURIComponent` 安全解码；
+- **防伪 ID 污染门禁**：仅在条目拥有合法的标准 6 位实体 ID（`/^ik\d{6}$/i.test(rawId)`）时才输出带 ID 的规范 URL（`/title/ik000123-片名`）。对于未分配标准 ID 的雷达新片（临时内部 ID 如 `ik_radar_...` 或 `ik_pre_...`），必须输出规范中文 URL `/title/片名`，严禁将临时内部 ID 拼入对外 URL 或进行伪 308 重定向。
+
+### 5. 详情页预烘焙匹配三维防线与历史受损死链 100% 自动自愈（Three-Dimensional Matching & Hex Self-Healing）
+- **双向自愈防线**：在 `app/title/[slug]/page.tsx` 的优先级 1.5 匹配引擎中，必须具备对连字符十六进制碎片（`/[0-9a-f]{2}-[0-9a-f]{2}-[0-9a-f]{2}/i`）的自动识别与双向反解；
+- **存量死链零容忍**：任何因历史代码缺陷、用户浏览器缓存或搜索引擎抓取产生的撕裂死链，进入详情页必须 100% 瞬间命中对应影片，直出内容并由服务端 `permanentRedirect`（HTTP 308）重定向至规范中文 URL，实现存量死链 100% 自动治愈，0 个 404；
+- **服务端重定向协议**：规范重定向必须使用 `permanentRedirect`（HTTP 308），禁止使用默认 307 的客户端软跳转。
+
+### 6. 数据入库与预烘焙源头纯净中文铁律（Clean Data Ingestion）
+- **入库规范**：所有离线与增量同步脚本（如 `sync-latest-titles.mjs`、`sync-release-radar.mjs` 等）中的 `simpleSlug`，严禁执行 `encodeURIComponent`，必须直接输出纯净中文 slug；全站预烘焙数据集（`PREBAKED_LATEST_TITLES`）中的 `slug` 字段必须与真实片名保持语义一致，从数据生产源头杜绝污染。
+
+### 7. 变更自动化全量回归测试铁律（Automated Regression Gate）
+- 凡涉及 `getTitleCanonicalHref`、`generateSlug`、`parseEntitySlug` 或详情页匹配逻辑的修改，必须运行 `npx tsx scripts/test-latest-titles-404.mjs`，断言全专区全部影片 100% 命中、历史受损死链 100% 自愈、0 个 404 后方可提交部署。
+
 ---
 
 ## 14. 全屏硬件直通覆盖层与零 3D Transform 渲染铁律 (Hardware Overlay & Native Fullscreen Spec)
