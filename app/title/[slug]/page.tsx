@@ -622,14 +622,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const seasonTag = seasonInfo ? (seasonInfo.rawSeasonMatch || `第${seasonInfo.seasonNumber}季`) : '';
   const isSeasonSpecified = Boolean(seasonTag && !entity.title.includes(seasonTag));
 
-  // 🌟 SEO 301 权威规范重定向：在 Metadata 生成阶段立即发起 308/301 永久重定向
-  // 铁律：只要请求的 URL（currentCleanSlug）与实体的权威规范 Slug（canonicalSlug）不完全一致，
-  // 且不是合法的季数变体，100% 强制发起 301 永久重定向，彻底消灭任何错位 ID、纯片名短链或重复 URL 抢词！
+  // 权威规范 Slug 计算（用于规范 Canonical URL 声明，重定向由 TitlePage 组件主体统一触发）
   const canonicalSlug = getEntityCanonicalSlug(entity);
-  const currentCleanSlug = decodedSlug.toLowerCase();
-  if (canonicalSlug && currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
-    redirect(`/title/${encodeURIComponent(canonicalSlug)}`, RedirectType.replace);
-  }
 
   // 多分类智能识别：动漫也属于「有剧集」形态
   const isSeriesLike = entity.type === 'tv' || entity.type === 'anime';
