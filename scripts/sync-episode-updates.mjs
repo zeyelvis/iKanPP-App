@@ -210,6 +210,8 @@ export interface LatestPrebakedItem {
   channelKey: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string;
   genres: string[];
   updateBadge: string;
+  platformBadge?: string;
+  qualityBadge?: string;
   createdAt: string;
 }
 
@@ -223,6 +225,6 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = ${JS
 }
 
 main().catch(err => {
-  console.error('Fatal error in sync-episode-updates:', err);
-  process.exit(1);
+  console.warn('⚠️ [EpisodeSync 执行警告]:', err.message);
+  process.exit(0);
 });

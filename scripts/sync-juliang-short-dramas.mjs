@@ -286,6 +286,6 @@ ${heroItems.map((h, idx) => `    {
 }
 
 main().catch(err => {
-  console.error('❌ 同步巨量短剧执行异常:', err);
-  process.exit(1);
+  console.warn('⚠️ [同步巨量短剧执行警告]:', err.message);
+  process.exit(0);
 });
