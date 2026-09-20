@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { HeroSlideshow } from './TmdbSlideshow';
 import { Top10Rail } from './Top10Rail';
+import LatestTitlesRail from './LatestTitlesRail';
 import { ContentRail } from './ContentRail';
 import { ContinueWatchingRail } from './ContinueWatchingRail';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
@@ -30,10 +31,6 @@ const PersonalizedForYouRail = dynamic(
 const ExploreHubFooterBanner = dynamic(
   () => import('./ExploreHubFooterBanner').then((m) => m.ExploreHubFooterBanner),
   { loading: () => <div className="h-36 rounded-2xl bg-white/5 animate-pulse border border-white/5" /> }
-);
-const LatestTitlesRail = dynamic(
-  () => import('./LatestTitlesRail'),
-  { loading: () => <div className="h-56 rounded-2xl bg-white/5 animate-pulse border border-white/5" /> }
 );
 
 export type HomeContentType = 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | 'short';

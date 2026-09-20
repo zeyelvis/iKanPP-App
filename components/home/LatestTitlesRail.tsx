@@ -7,6 +7,7 @@ import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl, getFallbackProxiedImageUrl } from '@/lib/utils/image-utils';
 import { generateSlug, isCleanChineseTitle, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 import { RecentTitleItem } from '@/lib/services/entity-kv';
+import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
 
 interface LatestTitlesRailProps {
   type?: 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string;
@@ -192,8 +193,9 @@ export default function LatestTitlesRail({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-  const [items, setItems] = useState<RecentTitleItem[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const prebakedList = ((PREBAKED_LATEST_TITLES as any)[type || 'all'] || PREBAKED_LATEST_TITLES.all || []) as RecentTitleItem[];
+  const [items, setItems] = useState<RecentTitleItem[]>(() => prebakedList.slice(0, 20));
+  const [isLoaded, setIsLoaded] = useState(true);
 
   const CACHE_KEY = `kvideo-latest-titles-v8-${type || 'all'}`;
 
@@ -289,15 +291,10 @@ export default function LatestTitlesRail({
     scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   };
 
-  // 如果尚未加载且无任何缓存数据，静默占位，避免 CLS
-  if (!isLoaded && items.length === 0) {
-    return null;
-  }
-
   return (
-    <section className={`below-fold-rail relative my-6 sm:my-8 group/rail select-none ${className}`}>
+    <section className={`below-fold-rail relative space-y-3 group/rail select-none ${className}`}>
       {/* 标题栏 */}
-      <div className="flex items-center justify-between mb-3 px-1 sm:px-2">
+      <div className="flex items-center justify-between px-1 sm:px-2">
         <div className="flex items-center gap-2 sm:gap-2.5">
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />

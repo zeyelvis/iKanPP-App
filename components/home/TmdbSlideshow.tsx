@@ -311,10 +311,10 @@ export function HeroSlideshow({
     setActiveIndex(prev => (prev - 1 + currentData.length) % currentData.length);
   }, [currentData.length]);
 
-  // 自动轮播：首屏首部大片停留 10 秒，给予充足观赏时间并彻底杜绝过早切换杀死 LCP 指标；后续每 8 秒平滑切换
+  // 自动轮播：首屏首部大片停留 30 秒，给予充足沉浸观赏时间并彻底杜绝过早切换篡改 LCP 指标；后续每 8 秒平滑切换
   useEffect(() => {
     if (isPaused || currentData.length <= 1) return;
-    const delay = activeIndex === 0 ? 10000 : 8000;
+    const delay = activeIndex === 0 ? 30000 : 8000;
     const timer = setTimeout(() => {
       setActiveIndex(prev => (prev + 1) % currentData.length);
     }, delay);

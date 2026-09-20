@@ -151,11 +151,18 @@ export function HomePageSkeleton() {
       {/* 3. 核心货架骨架区 (采用与 PopularFeatures 严格 1:1 对齐的货架顺序，彻底消灭 CLS 布局跳动) */}
       <div className="fluid-container space-y-6 sm:space-y-8 mt-2 sm:mt-4 relative z-20 pb-20">
         {/* 最新上线 · 实时收录横轨骨架（与 LatestTitlesRail 结构严格 1:1 对齐，杜绝水合下推位移） */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/50 animate-pulse" />
-              <div className="w-32 h-6 rounded bg-white/10 animate-pulse" />
+        <section className="below-fold-rail relative space-y-3 group/rail select-none">
+          <div className="flex items-center justify-between px-1 sm:px-2">
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                <h2 className="text-base sm:text-xl font-black tracking-tight text-white flex items-center gap-2">
+                  🆕 最新上线 · 实时收录
+                </h2>
+              </div>
+              <span className="hidden sm:inline-block text-[11px] text-emerald-400/80 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                全网源站自动巡检增量入库
+              </span>
             </div>
             <div className="w-16 h-4 rounded bg-white/5 animate-pulse" />
           </div>
@@ -167,7 +174,7 @@ export function HomePageSkeleton() {
               />
             ))}
           </div>
-        </div>
+        </section>
 
         {/* 口碑榜胶囊条占位 */}
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 border-b border-white/10 pb-3">
