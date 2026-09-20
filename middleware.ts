@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 /**
  * Middleware — 多域名智能路由 + SEO 域名物理隔离
@@ -131,8 +131,7 @@ export function middleware(request: NextRequest) {
     if (pathname === '/player' && url.searchParams.has('title') && !hasPlaySourceParams) {
         const rawTitle = url.searchParams.get('title') || '';
         if (rawTitle.trim()) {
-            const slug = generateSlug(rawTitle);
-            url.pathname = `/title/${slug}`;
+            url.pathname = getTitleCanonicalHref({ title: rawTitle });
             url.search = '';
             return NextResponse.redirect(url, 301);
         }

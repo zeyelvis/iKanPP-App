@@ -755,7 +755,7 @@ export default async function TitlePage({ params }: Props) {
   const canonicalSlug = getEntityCanonicalSlug(entity);
   const currentCleanSlug = decodedSlug.toLowerCase();
   if (canonicalSlug && currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
-    redirect(`/title/${encodeURIComponent(canonicalSlug)}`, RedirectType.replace);
+    redirect(`/title/${canonicalSlug}`, RedirectType.replace);
   }
 
   // 质量自愈保障：若当前实体缺少封面海报（如历史残缺数据），强制在线触发重新丰润
