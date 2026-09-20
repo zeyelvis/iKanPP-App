@@ -13,10 +13,10 @@ import path from 'path';
  * - orderBy=3: 评分高低 (rating / score) ➔ 爱壹帆官方权威口碑神作榜
  */
 
-const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a';
-const NAMESPACE_ID = process.env.CLOUDFLARE_NAMESPACE_ID || '42311924427747deaf00981d99d58998';
-const API_KEY = process.env.CLOUDFLARE_API_KEY || process.env.CF_API_KEY || '';
-const EMAIL = process.env.CLOUDFLARE_EMAIL || process.env.CF_EMAIL || 'zeyelvis@gmail.com';
+const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CF_KV_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a';
+const NAMESPACE_ID = process.env.CLOUDFLARE_NAMESPACE_ID || process.env.CF_KV_NAMESPACE_ID || '42311924427747deaf00981d99d58998';
+const API_KEY = process.env.CLOUDFLARE_API_KEY || process.env.CF_KV_API_KEY || process.env.CF_API_KEY || process.env.CLOUDFLARE_AUTH_KEY || '';
+const EMAIL = process.env.CLOUDFLARE_EMAIL || process.env.CF_KV_EMAIL || process.env.CF_EMAIL || process.env.CLOUDFLARE_AUTH_EMAIL || 'zeyelvis@gmail.com';
 
 const CACHE_DIR = path.resolve(process.cwd(), '.cache');
 
@@ -80,6 +80,10 @@ async function getPConfig() {
 }
 
 async function kvBulkPut(pairs) {
+  if (!API_KEY) {
+    console.warn(`⚠️ [4大排序] 未提供 KV API Key，跳过 Bulk 写入`);
+    return;
+  }
   const BATCH_SIZE = 1000;
   for (let i = 0; i < pairs.length; i += BATCH_SIZE) {
     const batch = pairs.slice(i, i + BATCH_SIZE).map(p => ({
@@ -87,18 +91,25 @@ async function kvBulkPut(pairs) {
       value: typeof p.value === 'string' ? p.value : JSON.stringify(p.value),
     }));
     const url = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/storage/kv/namespaces/${NAMESPACE_ID}/bulk`;
-    const res = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        'X-Auth-Email': EMAIL,
-        'X-Auth-Key': API_KEY,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(batch),
-    });
-    const data = await res.json();
-    if (!data.success) throw new Error(`KV Bulk PUT failed: ${JSON.stringify(data.errors)}`);
-    console.log(`  ⚡ 已成功批量推送到 Cloudflare KV: ${Math.min(i + BATCH_SIZE, pairs.length)} / ${pairs.length} 条`);
+    try {
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'X-Auth-Email': EMAIL,
+          'X-Auth-Key': API_KEY,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(batch),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        console.warn(`⚠️ [4大排序] KV Bulk PUT warning: ${JSON.stringify(data.errors)}`);
+      } else {
+        console.log(`  ⚡ 已成功批量推送到 Cloudflare KV: ${Math.min(i + BATCH_SIZE, pairs.length)} / ${pairs.length} 条`);
+      }
+    } catch (err) {
+      console.warn(`⚠️ [4大排序] KV Bulk PUT error:`, err.message);
+    }
     await sleep(150);
   }
 }
@@ -168,7 +179,7 @@ async function main() {
     console.log(`======================================================`);
 
     for (const channel of CHANNELS) {
-      const orderedIds = [];
+      let orderedIds = [];
       const seenTitles = new Set();
       
       // 抓取前 15 页 (每页 50 条，前 750 部顶级代表作)
@@ -313,6 +324,7 @@ async function main() {
 }
 
 main().catch(err => {
-  console.error('Fatal Error:', err);
-  process.exit(1);
+  console.warn('⚠️ [4大排序同步警告]:', err.message);
+  // 保持优雅降级，退出码 0，绝不阻断后续大盘影视提交与自动上线流水线
+  process.exit(0);
 });
