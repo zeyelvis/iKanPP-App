@@ -98,13 +98,13 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607051354305436152.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202607201048254853458.jpg",
-        "description": "《世界最强的后卫 迷宫国的新人探索者》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至11集。",
+        "description": "《世界最强的后卫 迷宫国的新人探索者》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至12集。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至11集",
+        "episodes_info": "更新至12集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -738,13 +738,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608102124022465304.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202608261125002570740.jpg",
-        "description": "《披荆斩棘2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260919(三公观演区上)。",
+        "description": "《披荆斩棘2026》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20260920(第6期下)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260919(三公观演区上)",
+        "episodes_info": "更新至20260920(第6期下)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1237,6 +1237,26 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
+          "title": "清欢人间路",
+          "updateBadge": "60"
+      },
+      {
+          "title": "年下弟弟白月光",
+          "updateBadge": "30"
+      },
+      {
+          "title": "重生2014",
+          "updateBadge": "全"
+      },
+      {
+          "title": "开局暴打村霸，狂飙1988",
+          "updateBadge": "全"
+      },
+      {
+          "title": "捡闺女后受气王爷被旺成了皇帝",
+          "updateBadge": "60"
+      },
+      {
           "title": "风华鉴",
           "updateBadge": "20"
       },
@@ -1263,29 +1283,72 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       {
           "title": "谋她为妻",
           "updateBadge": "全"
-      },
-      {
-          "title": "倒计时",
-          "updateBadge": "13"
-      },
-      {
-          "title": "黑色月光",
-          "updateBadge": "25"
-      },
-      {
-          "title": "竹马非良人我自登高门",
-          "updateBadge": "37"
-      },
-      {
-          "title": "无法抗拒的你",
-          "updateBadge": "16"
-      },
-      {
-          "title": "黑心郡主：世子和王府我都要",
-          "updateBadge": "全"
       }
   ],
   hero: [
+      {
+          "id": "jl_short_629514083883810800",
+          "title": "年下弟弟白月光",
+          "rate": "8.8",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/1867ba047997409c07debec9d3c8dca2a817c4b6518a76a32bb4db9e3440bf98.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/1867ba047997409c07debec9d3c8dca2a817c4b6518a76a32bb4db9e3440bf98.jpg",
+          "description": "女主一怒之下让闺蜜帮自己找牛郎去父留子，没想到出现在床上的竟是男主。原来多年前一场大火，女主救了男主还照顾他，男主暗恋女主多年，留学归来得知女主重金求子，为防她被别人抢走，便化身“男模”相伴。女主不知他身份，沉浸甜蜜恋爱。渣男前任来搅局，男主一边隐瞒身份守护，一边应对女主公司危机，结果身份意外曝光，...",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "女频恋爱",
+              "全集连播"
+          ],
+          "episodes_info": "全61集·全30集",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "吴思腾 / 曹铭晗"
+          ]
+      },
+      {
+          "id": "jl_short_629445723439497200",
+          "title": "开局暴打村霸，狂飙1988",
+          "rate": "8.8",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/fd1c517167356ec08f83c1e13b94ef1edb83000791934d9944fb8e95047fb354.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/fd1c517167356ec08f83c1e13b94ef1edb83000791934d9944fb8e95047fb354.jpg",
+          "description": "亿万富翁魂穿1988年，不仅家徒四壁还要照料五个小姨子，遭村霸欺辱，全村鄙夷。不过他凭超前的商业头脑，倒辣椒，卖服装狂赚数万元，布局奶牛养殖抢占先机，却被眼红小人频频下死手，他能否在黄金年代逆天翻盘呢？",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "年代穿越",
+              "全集连播"
+          ],
+          "episodes_info": "全159集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "孙钰哲 / 郭佑"
+          ]
+      },
+      {
+          "id": "jl_short_629505945289883600",
+          "title": "捡闺女后受气王爷被旺成了皇帝",
+          "rate": "9.0",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/31553e62970ca65fb11db44671b82eb0ffacfb06a2635b32db8ebb2be10e17e9.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/31553e62970ca65fb11db44671b82eb0ffacfb06a2635b32db8ebb2be10e17e9.jpg",
+          "description": "赐福神女谢幼薇投胎转世，被太子所遗弃，被路过的跛脚闲王谢之逊救下收为了女儿。谢之逊本是被皇帝忽视、人人可欺的废柴闲王，自从捡了谢幼薇，在她的福运加持下，不仅跛脚康复，还一步步获得了皇帝的认可和重视。最终，谢之逊在谢幼薇通的帮助下，最终取代了太子，成为了一国之君。",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全121集·全60集",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "李雨桐 / 刘泽宇 / 黄子淇 / 艾江山"
+          ]
+      },
       {
           "id": "jl_short_629472125626875900",
           "title": "风华鉴",
@@ -1390,74 +1453,41 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           "actors": [
               "何善凯 / 卢鹿鹿"
           ]
-      },
-      {
-          "id": "jl_short_629690889970647000",
-          "title": "倒计时",
-          "rate": "9.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/244270/poster/47042e09ca2f6bbca822fc4ac904c23a8b96a500675b2a2f947d19c7d0cae7d3.webp",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/244270/poster/47042e09ca2f6bbca822fc4ac904c23a8b96a500675b2a2f947d19c7d0cae7d3.webp",
-          "description": "一名国土安全部官员光天化日之下被暗杀，洛杉矶警探马克·米查姆（詹森·阿克斯 Jensen Ackles 饰）因此被招募加入一个由各大执法机构卧底组成的秘密特别小组，展开了调查。但随着调查深入，这场谋杀背后隐藏着远比他们想象中更加险恶的阴谋。",
-          "year": "2023",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全25集·全13集",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "詹森·阿克斯 / 埃里克·迪恩 / 杰西卡·卡马乔 / Bogdan Yasinski / Merrick McCartha / 乔纳森·冯·梅林 / 帕沙·D.林奇尼科夫 / 马特·卡明斯基 / 卡米·D·布鲁德尔 / 瑞恩·德昆塔尔 / Scot Ruggles / Nas Akkerman / 朱尔斯·威尔科克斯 / 库尔特·岳 / 约瑟夫·朱利安·索里亚 / Lily Keene / 萨姆·戴利 / 艾莉克斯·斯甘巴蒂 / 罗尼·吉恩·贝尔维斯 / 提姆·阿贝尔"
-          ]
-      },
-      {
-          "id": "jl_short_629451866031259600",
-          "title": "黑色月光",
-          "rate": "9.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/b8da826e0d9f79c0950432ff2207d0edb1eaa2cfbeb5bd32980fcf92a9c153e0.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/b8da826e0d9f79c0950432ff2207d0edb1eaa2cfbeb5bd32980fcf92a9c153e0.jpg",
-          "description": "人前光采亮丽的余满月，背负着一段不堪回首的可怕过去……满月当年惨遭富三代蒋基俊施暴蹂躏、妹妹曦晨受创变成残废，及后父母受牵连丧命、姐姐漫星疏远离弃。十八年过去，满月成上流圈炙手可热的危机公关，处心积虑推行复仇大计，要将蒋家父子与共犯绳之于法。孤寂的复仇路上，满月取得卓家千金慧云信任，获同路人成风支持...",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全155集·全25集",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "杨茜尧 / 王浩信 / 林夏薇 / 马志威 / 黄翠如"
-          ]
-      },
-      {
-          "id": "jl_short_637158737966072300",
-          "title": "契约恋人：我的联姻对象沦陷",
-          "rate": "9.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/db363e12a246ddef74ef45772521952389cba2544b95e22986b79219021db25f.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/db363e12a246ddef74ef45772521952389cba2544b95e22986b79219021db25f.jpg",
-          "description": "滂沱雨夜，姜幼笙遭人构陷，被逐出家门，狼狈无助之际，幸得父亲旧友顾思墨出手相救，自此寄居顾家。顾思墨身处帝都顶层，性情清冷寡淡，素与旁人保持距离，外界皆言其心如磐石。姜幼笙乖巧懂事，事事安分，顾思墨出于关照，对她的起居出行、社交圈子多有叮嘱。日久相处，那份长辈般的照拂悄然变质，克制的情愫在他心底生根...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全249集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
+      title: "年下弟弟白月光",
+      rate: "8.8",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/1867ba047997409c07debec9d3c8dca2a817c4b6518a76a32bb4db9e3440bf98.jpg",
+      year: "2025",
+      types: ["短剧","女频恋爱","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_2',
+      title: "开局暴打村霸，狂飙1988",
+      rate: "8.8",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/fd1c517167356ec08f83c1e13b94ef1edb83000791934d9944fb8e95047fb354.jpg",
+      year: "2026",
+      types: ["短剧","年代穿越","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_3',
+      title: "捡闺女后受气王爷被旺成了皇帝",
+      rate: "9.0",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/31553e62970ca65fb11db44671b82eb0ffacfb06a2635b32db8ebb2be10e17e9.jpg",
+      year: "2025",
+      types: ["短剧","古装仙侠","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_4',
       title: "风华鉴",
       rate: "8.6",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/b50230ec9470deaf29bdbd31849703030d6e76e34fb5afbfd6c5380ed5e535d2.jpg",
@@ -1467,7 +1497,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_2',
+      id: 'pb_s_top_5',
       title: "山野归来的小千金",
       rate: "9.0",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/ab128ec0b88aa7df384f7df670668f5ca22409ce98cf67001ebe6126560b37d4.png",
@@ -1477,7 +1507,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_3',
+      id: 'pb_s_top_6',
       title: "狼祭 2",
       rate: "8.4",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/57053131254f9ffe8a0647fe96f4a06ee2925c9f4d0d6a58ddd8373bea44b53a.jpg",
@@ -1487,7 +1517,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_4',
+      id: 'pb_s_top_7',
       title: "只愿昭昭伴君侧",
       rate: "8.3",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/a1e245e44ba6d33d4c28ed50f3e7352355f51f76c8476d5ce388b9209fc8dec7.png",
@@ -1497,40 +1527,10 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_5',
+      id: 'pb_s_top_8',
       title: "谋她为妻",
       rate: "8.8",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/889d1d8d522c2489f5b1f2dbc897d8b47866a2584bfd3e26dc49980d0db331be.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_6',
-      title: "倒计时",
-      rate: "9.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/244270/poster/47042e09ca2f6bbca822fc4ac904c23a8b96a500675b2a2f947d19c7d0cae7d3.webp",
-      year: "2023",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_7',
-      title: "黑色月光",
-      rate: "9.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/b8da826e0d9f79c0950432ff2207d0edb1eaa2cfbeb5bd32980fcf92a9c153e0.jpg",
-      year: "2024",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_8',
-      title: "契约恋人：我的联姻对象沦陷",
-      rate: "9.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/db363e12a246ddef74ef45772521952389cba2544b95e22986b79219021db25f.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
