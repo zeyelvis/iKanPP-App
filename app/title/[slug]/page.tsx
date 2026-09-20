@@ -202,27 +202,32 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
   let entity = await getEntityBySlug(decodedSlug);
 
   if (entity) {
-    const isMissingCover = !entity.cover || entity.cover.trim() === '';
-    const isMissingCast = (!entity.directors || entity.directors.length === 0) && (!entity.actors || entity.actors.length === 0);
-    const hasDirtyPinyinCast = (entity.actors || []).some(a => /^[A-Za-z\s]{4,}$/.test(a));
+    // 确保实体通过基础安全审核，否则不提前返回，放行至后续片名自愈
+    if (!isSafeRecentTitleItem(entity as any) || !isStrictSafeEntity(entity).safe) {
+      entity = null;
+    } else {
+      const isMissingCover = !entity.cover || entity.cover.trim() === '';
+      const isMissingCast = (!entity.directors || entity.directors.length === 0) && (!entity.actors || entity.actors.length === 0);
+      const hasDirtyPinyinCast = (entity.actors || []).some(a => /^[A-Za-z\s]{4,}$/.test(a));
 
-    if (isMissingCover || isMissingCast || hasDirtyPinyinCast) {
-      try {
-        const healed = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
-        if (healed) {
-          if (healed.directors && healed.directors.length > 0) entity.directors = healed.directors;
-          if (healed.actors && healed.actors.length > 0) entity.actors = healed.actors;
-          if (healed.cover && isMissingCover) entity.cover = healed.cover;
-          if (healed.backdrop && !entity.backdrop) entity.backdrop = healed.backdrop;
-          if (healed.tmdbId && !entity.tmdbId) {
-            entity.tmdbId = healed.tmdbId;
-            entity.tmdbType = healed.tmdbType;
+      if (isMissingCover || isMissingCast || hasDirtyPinyinCast) {
+        try {
+          const healed = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
+          if (healed) {
+            if (healed.directors && healed.directors.length > 0) entity.directors = healed.directors;
+            if (healed.actors && healed.actors.length > 0) entity.actors = healed.actors;
+            if (healed.cover && isMissingCover) entity.cover = healed.cover;
+            if (healed.backdrop && !entity.backdrop) entity.backdrop = healed.backdrop;
+            if (healed.tmdbId && !entity.tmdbId) {
+              entity.tmdbId = healed.tmdbId;
+              entity.tmdbType = healed.tmdbType;
+            }
+            saveEntity(entity).catch(() => {});
           }
-          saveEntity(entity).catch(() => {});
-        }
-      } catch {}
+        } catch {}
+      }
+      return enrichEpisodeCount(entity);
     }
-    return enrichEpisodeCount(entity);
   }
 
   // 🌟 优先级 1.5：若 KV 未命中，检查全站预烘焙前台展示片库（HOME_DATA + LATEST_TITLES）
@@ -439,13 +444,37 @@ export function getEntityCanonicalSlug(entity: TitleEntity): string {
  */
 async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> {
   let entity = await resolveEntityRaw(rawSlugParam);
-  if (!entity) return null;
-  if (!isSafeRecentTitleItem(entity as any)) {
-    return null;
-  }
-  const safeCheck = isStrictSafeEntity(entity);
-  if (!safeCheck.safe) {
-    return null;
+
+  // 🌟 终极自愈降级防线（Zero-404 钢铁长城）：
+  // 如果 resolveEntityRaw 未命中，或者解析出的实体不安全（如误中历史外文/违规废弃条目），
+  // 坚决尝试从 rawSlugParam 中提取中文片名（如历史死链/错链 ik068315-流浪地球2），
+  // 通过片名从 KV 救回真正合法权威的实体，自动 308 重定向到权威页面，杜绝 404！
+  if (!entity || !isSafeRecentTitleItem(entity as any) || !isStrictSafeEntity(entity).safe) {
+    let cleanKey = rawSlugParam.trim();
+    try {
+      cleanKey = decodeURIComponent(cleanKey).trim();
+    } catch {}
+    const { slug: innerSlug } = parseEntitySlug(cleanKey);
+    let candidateTitle = innerSlug || cleanKey;
+    candidateTitle = candidateTitle.replace(/^[-\s]+|[-\s]+$/g, '');
+    if (/^[a-zA-Z0-9_]+-/.test(candidateTitle)) {
+      candidateTitle = candidateTitle.replace(/^[a-zA-Z0-9_]+-/, '');
+    }
+
+    if (candidateTitle && /[\u4e00-\u9fff]/.test(candidateTitle)) {
+      try {
+        const healed = await getEntityByTitle(candidateTitle);
+        if (healed && isSafeRecentTitleItem(healed as any) && isStrictSafeEntity(healed).safe) {
+          entity = healed;
+        } else {
+          return null;
+        }
+      } catch {
+        return null;
+      }
+    } else {
+      return null;
+    }
   }
 
   // 🌟 核心规范化：若命中的实体 ID 不是标准 6 位 ik\d{6}（例如 ik_radar_... 或豆瓣数字 ID），

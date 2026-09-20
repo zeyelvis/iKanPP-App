@@ -202,8 +202,32 @@ export async function getEntityBySlug(slugKey: string): Promise<TitleEntity | nu
   if (explicitTargetId) {
     const ent = await getEntityById(explicitTargetId);
     if (ent) {
-      // 显式映射属于权威别名路由，直接返回实体，无需再因 URL 拼写差异丢弃
-      return ent;
+      // 🌟 强一致防毒化核验：核验实体安全性与标题语义相关性，杜绝历史毒化别名
+      const safeCheck = isStrictSafeEntity(ent);
+      const parts = cleanKey.split('-');
+      const urlTitlePart = parts.length > 1 ? parts.slice(1).join('-') : '';
+      const hasChineseInKey = /[\u4e00-\u9fff]/.test(cleanKey);
+
+      const isMismatch =
+        (urlTitlePart &&
+          !hasTitleOverlap(ent.title, urlTitlePart) &&
+          (!ent.originalTitle || !hasTitleOverlap(ent.originalTitle, urlTitlePart)) &&
+          (!ent.slug || !hasTitleOverlap(ent.slug, urlTitlePart))) ||
+        (hasChineseInKey && !hasTitleOverlap(ent.title, cleanKey));
+
+      if (!safeCheck.safe || isMismatch) {
+        console.warn(`[getEntityBySlug 毒化映射自动修剪]: slug:${cleanKey} -> ${explicitTargetId} (title="${ent.title}", safe=${safeCheck.safe}, mismatch=${isMismatch})`);
+        try {
+          await kvDelete(`slug:${cleanKey}`);
+        } catch {}
+      } else {
+        return ent;
+      }
+    } else {
+      // 虚空实体，物理清除死链
+      try {
+        await kvDelete(`slug:${cleanKey}`);
+      } catch {}
     }
   }
 
@@ -213,6 +237,12 @@ export async function getEntityBySlug(slugKey: string): Promise<TitleEntity | nu
     const targetId = match[1].toLowerCase();
     const ent = await getEntityById(targetId);
     if (ent) {
+      // 🌟 安全合规核验：若实体本身不安全（外文无中文/成人低俗/假名），坚决不按此 ID 返回
+      if (!isStrictSafeEntity(ent).safe) {
+        console.warn(`[getEntityBySlug Unsafe Discarded]: entity="${ent.title}" is unsafe (targetId=${targetId})`);
+        return null;
+      }
+
       // 🌟 强一致防线：如果 slugKey 带有附加标题部分（例如 ik002001-仙逆剧场版-弑仙之战），
       // 校验 URL 中的标题部分与实体（中文标题、原名、实体slug）是否具有语义相关性
       const parts = cleanKey.split('-');

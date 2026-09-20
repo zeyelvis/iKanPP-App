@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getEntityByTitle, kvGet, kvPut, kvDelete } from '@/lib/services/entity-kv';
 import { searchMultipleEntitiesFromTMDB, enrichEpisodeCount } from '@/lib/services/entity-enrichment';
-import { normalizeTitle, hasTitleOverlap } from '@/lib/data/entities/entity-utils';
+import { normalizeTitle, hasTitleOverlap, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
 import { TitleEntity } from '@/lib/types/entity';
 
 export const runtime = 'edge';
@@ -14,7 +14,7 @@ const MEMORY_TTL_MS = 10 * 60 * 1000; // 10分钟节点内热存
  * 权威影视实体极速搜索接口（四级火箭加速引擎 + 防毒化强一致安全防线）
  * 
  * 加速与安全架构：
- * 1. L1 内存热缓存 (0ms) -> 校验 TitleOverlap，原地秒出
+ * 1. L1 内存热缓存 (0ms) -> 校验 TitleOverlap 与 isStrictSafeEntity，原地秒出
  * 2. L2 Cloudflare KV 关键词倒排索引 (5~15ms) -> 强一致校验，毒化键自动抹除
  * 3. L3 本站 KV 精准标题索引检索 (5~15ms) -> 命中已收录条目并核验证实
  * 4. L4 TMDB 在线多源发现 + 3500ms 超时熔断守卫 -> 异步透写回填 KV 倒排索引
@@ -36,7 +36,9 @@ export async function GET(request: NextRequest) {
     const mem = MEMORY_CACHE.get(normQuery);
     if (mem && mem.expireAt > Date.now()) {
       const validEntities = mem.entities.filter(ent =>
-        ent && (hasTitleOverlap(query, ent.title) || (ent.originalTitle && hasTitleOverlap(query, ent.originalTitle)))
+        ent &&
+        isStrictSafeEntity(ent).safe &&
+        (hasTitleOverlap(query, ent.title) || (ent.originalTitle && hasTitleOverlap(query, ent.originalTitle)))
       );
       if (validEntities.length > 0) {
         return NextResponse.json(
@@ -65,9 +67,26 @@ export async function GET(request: NextRequest) {
         const cachedEntities: TitleEntity[] = JSON.parse(cachedRaw);
         if (Array.isArray(cachedEntities) && cachedEntities.length > 0) {
           const validEntities = cachedEntities.filter(ent =>
-            ent && (hasTitleOverlap(query, ent.title) || (ent.originalTitle && hasTitleOverlap(query, ent.originalTitle)))
+            ent &&
+            isStrictSafeEntity(ent).safe &&
+            (hasTitleOverlap(query, ent.title) || (ent.originalTitle && hasTitleOverlap(query, ent.originalTitle)))
           );
-          if (validEntities.length > 0) {
+
+          // 🌟 强一致防毒化核验：如果当前精准片名在 KV 中有权威主键，比对缓存首条 entityId 是否一致
+          let isStale = false;
+          try {
+            const directTitleEntity = await getEntityByTitle(query);
+            if (
+              directTitleEntity &&
+              directTitleEntity.entityId &&
+              validEntities[0] &&
+              directTitleEntity.entityId.toLowerCase() !== validEntities[0].entityId.toLowerCase()
+            ) {
+              isStale = true;
+            }
+          } catch {}
+
+          if (validEntities.length > 0 && !isStale) {
             MEMORY_CACHE.set(normQuery, { entities: validEntities, expireAt: Date.now() + MEMORY_TTL_MS });
             return NextResponse.json(
               {
@@ -82,7 +101,7 @@ export async function GET(request: NextRequest) {
               }
             );
           } else {
-            console.warn(`[Entity Search L2 Purge] Mismatched cache for query "${query}". Purging!`);
+            console.warn(`[Entity Search L2 Purge] Mismatched or stale cache for query "${query}". Purging!`);
             await kvDelete(kvCacheKey);
           }
         }
@@ -96,7 +115,7 @@ export async function GET(request: NextRequest) {
     // ──────────────────────────────────────────
     try {
       const localSingle = await getEntityByTitle(query);
-      if (localSingle && localSingle.cover) {
+      if (localSingle && localSingle.cover && isStrictSafeEntity(localSingle).safe) {
         // 若本地条目是年代久远(<1980)且无主要演员的冷门早期作品，不直接拦截，放行至 L4 TMDB 在线多源检索现代主流大片
         const isAncientCold = Number(localSingle.year) < 1980 && (!localSingle.actors || localSingle.actors.length === 0);
         if (!isAncientCold && (hasTitleOverlap(query, localSingle.title) || (localSingle.originalTitle && hasTitleOverlap(query, localSingle.originalTitle)))) {
@@ -141,17 +160,19 @@ export async function GET(request: NextRequest) {
       console.warn(`[Entity Search TMDB Race Fail] query=${query}:`, err);
     }
 
-    // 强一致安全防线：严格过滤未通过 hasTitleOverlap 校验的条目
+    // 强一致安全防线：严格过滤未通过 hasTitleOverlap 与 isStrictSafeEntity 校验的条目
     if (Array.isArray(entities) && entities.length > 0) {
       entities = entities.filter(ent =>
-        ent && (hasTitleOverlap(query, ent.title) || (ent.originalTitle && hasTitleOverlap(query, ent.originalTitle)))
+        ent &&
+        isStrictSafeEntity(ent).safe &&
+        (hasTitleOverlap(query, ent.title) || (ent.originalTitle && hasTitleOverlap(query, ent.originalTitle)))
       );
     }
 
-    // 若 TMDB 熔断超时或未命中，再次宽容尝试本地已收录条目（严格保证标题交集）
+    // 若 TMDB 熔断超时或未命中，再次宽容尝试本地已收录条目（严格保证标题交集与安全性）
     if (entities.length === 0) {
       const fallbackSingle = await getEntityByTitle(query);
-      if (fallbackSingle && fallbackSingle.cover) {
+      if (fallbackSingle && fallbackSingle.cover && isStrictSafeEntity(fallbackSingle).safe) {
         if (hasTitleOverlap(query, fallbackSingle.title) || (fallbackSingle.originalTitle && hasTitleOverlap(query, fallbackSingle.originalTitle))) {
           const enriched = await enrichEpisodeCount(fallbackSingle);
           entities = [enriched];
