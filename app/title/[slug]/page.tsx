@@ -30,6 +30,7 @@ import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 import { generateFullSpectrumKeywords } from '@/lib/utils/seo-keyword-generator';
 import { isEntityIndexable } from '@/lib/data/seo-rules/seo-keyword-system';
+import { FlagTW, FlagHK } from '@/components/ui/RegionFlags';
 
 interface PrebakedDisplayItem {
   entityId?: string;
@@ -1086,14 +1087,16 @@ export default async function TitlePage({ params }: Props) {
               {(entity.aiContent?.taiwanTitle || entity.aiContent?.hongkongTitle) && (
                 <div className="w-full flex flex-wrap items-center gap-2 mb-2 sm:mb-4 text-xs sm:text-sm font-medium">
                   {entity.aiContent.taiwanTitle && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
-                      <span>🇹🇼 台译：</span>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
+                      <FlagTW className="w-3.5 h-2.5 sm:w-4 sm:h-3" />
+                      <span>台译：</span>
                       <strong className="font-bold text-white">{entity.aiContent.taiwanTitle}</strong>
                     </span>
                   )}
                   {entity.aiContent.hongkongTitle && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
-                      <span>🇭🇰 港译：</span>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+                      <FlagHK className="w-3.5 h-2.5 sm:w-4 sm:h-3" />
+                      <span>港译：</span>
                       <strong className="font-bold text-white">{entity.aiContent.hongkongTitle}</strong>
                     </span>
                   )}
