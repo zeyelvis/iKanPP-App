@@ -106,10 +106,10 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_movie_1",
                 "title": "特立独行",
-                "rate": "6.7",
-                "cover": "https://image.tmdb.org/t/p/w500/dWtKXfN97AMW5n3S6QoUVUMCU2S.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
-                "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202609041101050133022.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202609051300230076622.jpg",
+                "description": "《特立独行》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -125,9 +125,9 @@ export const PREBAKED_HOME_DATA: {
                 "id": "iyf_hero_movie_2",
                 "title": "给阿嬷的情书",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/AwmlL79nKTcX5tzAhyoV298xXlz.jpg",
-                "description": "潮汕阿嬷叶淑柔一直守着平淡的日子，安享晚年。孙子晓伟因债务缠身，瞒着家人远赴泰国，寻找传闻中已成亿万富豪的阿公郑木生。然而，一个令人意外的消息打破了整个家庭的平静：多年来一直通过跨国信件与阿嬷“谈情说爱”诉说思念的人，竟然并非阿嬷的丈夫郑木生。随着晓伟的调查，一个感人的真相被缓缓揭开。",
+                "cover": "https://static.iyf.tv/upload/video/202608310955385526438.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202608311427362725454.jpg",
+                "description": "《给阿嬷的情书》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -142,10 +142,10 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_movie_3",
                 "title": "玩具总动员5",
-                "rate": "8.4",
-                "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
-                "description": "胡迪、巴斯光年、翠斯等“元老级”玩具将跟随小主人邦妮的成长脚步，共同迎接数字时代下的全新挑战。随着无所不能的科技产品逐渐走进童年世界，一批充满科技感的崭新角色也随之重磅亮相：青蛙造型的智能平板小荷、憨态可掬的导航玩具小不丢、活力十足的抓拍好手小拍侠，以及自带笑点的臭屁小机灵。当身边的同龄朋友们开始沉浸在科技玩具带来的“电子陪伴”中，而玩具伙伴们也迎来了前所未有的生存难题：在屏幕占据注意力的时代，玩具的时代真的结束了吗？在“被取代”危机的当下，这群玩具伙伴还能否携手，帮助邦妮找回属于自己的真实友谊与快乐？",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202608172352485267834.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202608181642524253486.jpg",
+                "description": "《玩具总动员5》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·动画。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -160,10 +160,10 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_movie_4",
                 "title": "寒战1994",
-                "rate": "6.5",
-                "cover": "https://image.tmdb.org/t/p/w500/8NaaLrhXbhuXmjndCKmgaJvLTb1.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/gIpIMTZKhDNqFsoSj04sKZfV0g0.jpg",
-                "description": "2017年，李文彬突然失踪，与此同时，蔡元祺在英国遭到暗杀。为了查明两起事件背后的关联，刘杰辉向简奥伟寻求帮助，一份尘封多年的1994年档案也由此被重新打开。时间回到香港回归前夕，随着政治部即将解散，一宗震动全城的富商绑架案将年轻的O记警司李文彬与蔡元祺卷入其中。案件背后，英方、警队、富商与黑道等多方势力彼此角力，在权力即将重新洗牌的时代节点，各方都试图为自己争取位置。随着调查深入，李文彬与蔡元祺之间的分歧也逐渐扩大，而这段发生在1994年的往事，似乎与多年后的“寒战”风波有着更深的联系……",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202607241043194354365.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202607241720422033874.jpg",
+                "description": "《寒战1994》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -178,10 +178,10 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_movie_5",
                 "title": "穿普拉达的女王2",
-                "rate": "7.0",
-                "cover": "https://image.tmdb.org/t/p/w500/zGQyw7v2dvb2FNDdVUJFcaPrD5y.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/Af907x5h9W1wVis8XrSd7ynTWuy.jpg",
-                "description": "　　随着传统出版业的式微，时尚女王米兰达在职业生涯中迎来新挑战。她不得不与手握广告预算的曾经的助理，如今已是奢侈品牌集团高管的艾米莉正面交锋。两人在行业变局中展开了一场关乎权力与生存的较量。",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202606301118241864513.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202606301708240855863.jpg",
+                "description": "《穿普拉达的女王2》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -196,10 +196,10 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_movie_6",
                 "title": "我的妈耶",
-                "rate": "6.3",
-                "cover": "https://image.tmdb.org/t/p/w500/cE15hXnCv6VfADRCo69n83BRNsS.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/tRg0CIV7HQVKcdd2Jabv4GdhEVF.jpg",
-                "description": "十一（黄明昊 饰）从小由父亲张永勋（白客 饰）独自抚养长大，自出生时就离世的妈妈东玉（马思纯 饰）对于他而言则是陌生人般的存在。处于青春叛逆期的十一，在自己18岁生日这天意外发现了一本「妈妈的日记」。在好奇心的驱使下，十一翻开日记，开启了一段“认识妈妈”的旅程——十一跟随着妈妈的成长经历，邂逅了她人生不同阶段的重要人物——霹雳舞学长（梁靖康 饰）、高中闺蜜彩霞（嵇嘉禾 饰）、发小刘皮孩（王天放 饰）、初恋小哥（孙阳 饰）以及老公张永勋。这些人物串联起东玉一生所经历的友谊、爱情与亲情…… 透过这本「日记」，十一看见了东玉短暂却向阳的一生，也终于感受到了她对自己从始至终不曾缺席的爱……",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202606121444314431704.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202606140101110171431.jpg",
+                "description": "《我的妈耶》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -214,10 +214,10 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_movie_7",
                 "title": "镖人：风起大漠",
-                "rate": "8.2",
-                "cover": "https://image.tmdb.org/t/p/w500/ki0ilBYgbOZKUuE1NN53FYWK9zQ.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/wHwoA0K8GO5vTcOSro8viyfxf6m.jpg",
-                "description": "大漠之上，镖人、官府、西域五大家族等多方势力盘根错节、暗潮涌动。“天字第二号逃犯”刀马受恩人莫族长所托，接下一趟特殊的押镖任务，护送神秘人物知世郎从西域前往长安。然而，他很快发现自己护送的竟是“天字第一号逃犯”。随着消息传开，各方势力纷纷闻风而动，一场围绕这趟神秘押镖展开的争夺席卷大漠。面对接踵而来的追杀与危机，刀马也逐渐发现，这趟任务背后还隐藏着与自己和小七有关的秘密……",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202606102054405426178.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202606140100400053007.jpg",
+                "description": "《镖人：风起大漠》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·动作。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -232,10 +232,10 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_movie_8",
                 "title": "迈克尔·杰克逊：巨星之路",
-                "rate": "8.6",
-                "cover": "https://image.tmdb.org/t/p/w500/1hPSbiyfAhtWAIBf2XtDPA0NyvS.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/ufSwlnECLoUbBjPrFqEQcWBzHwc.jpg",
-                "description": "　　本片将通过一段从未展现过的深度视角，真实记录传奇巨星迈克尔·杰克逊的复杂人生。影片不仅再现了他最具标志性的艺术表演瞬间，更深入挖掘了他的内心世界——从天才神童的成长阵痛到全球偶像背后的争议与坚韧，全面呈现这位伟大艺术家的辉煌与坎坷。",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202606090333563351804.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202606091956235603344.jpg",
+                "description": "《迈克尔·杰克逊：巨星之路》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -1876,16 +1876,16 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_tv_1",
                 "title": "一瓯春",
-                "rate": "9.5",
-                "cover": "https://image.tmdb.org/t/p/w500/7KjVhRaarZ5L3CBirQEmt89ioiz.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/qLZQnTiQxkBOid9tVLWC1CmoOcu.jpg",
-                "description": "“杀伐千面腹黑男”沈润与“人间清醒黑莲花”谢清圆互为刀刃交错，在理智与情感中携手复仇，于高门大户里明争暗斗，立朝堂官场上搅弄风云。最终他们走出暗流深渊，奔赴璀璨新生。",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
+                "backdrop": "https://static.iyf.tv/upload/user/202609171141024107110.jpg",
+                "description": "《一瓯春》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至12集 | 共30集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至10集 | 共30集",
+                "episodes_info": "更新至12集 | 共30集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1893,16 +1893,16 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_tv_2",
                 "title": "兰香如故",
-                "rate": "7.2",
-                "cover": "https://image.tmdb.org/t/p/w500/kfurXRMH1ZkUoyT5HN72zLTQxzZ.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/mZSewqVlY4F2F2Axm7hiG6KBOBp.jpg",
-                "description": "大学士府长孙女沈嘉兰与吏部尚书林家的长孙林锦岐订下婚约，然而朝堂风云突变，祖父沈大学士被判谋逆之罪，沈家惨遭灭门。林家为了自保，与沈家退婚，另与御前新贵赵家结亲。沈嘉兰母亲崔氏曾接济过的林家家奴许万全夫妇用刚病亡的女儿许兰香替下嘉兰。嘉兰从此顶着许兰香的身份，成为林府的一名三等丫鬟。在艰难的境遇中，兰香没有向命运低头，始终为自己和家人的幸福生活努力着，反抗一切不公与压迫。最终，兰香凭借自己的善良与聪慧，突破阶级身份的束缚，赢得林锦岐倾心的同时也获得了林家上下的信服与尊重，成为林家的当家人，将命运牢牢掌控在自己的手中，为沈家洗刷冤屈讨回公道。",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202609111404160476768.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202609111848394812246.jpg",
+                "description": "《兰香如故》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至22集 | 共47集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至20集 | 共47集",
+                "episodes_info": "更新至22集 | 共47集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1910,10 +1910,10 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_tv_3",
                 "title": "冬城猎凶",
-                "rate": "8.0",
-                "cover": "https://image.tmdb.org/t/p/w500/8nenduIuctLj2YBjWHG8pFs1X6R.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/28u4q3fPzXmbyf3BoiWweUOuuzj.jpg",
-                "description": "银行大劫案，搅动大城风云；儿童拐卖案，重起罪恶迷雾。双时空、案中案，极致追凶。",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202609100710231001184.jpg",
+                "backdrop": "https://static.iyf.tv/upload/user/202609101250115060466.jpg",
+                "description": "《冬城猎凶》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：18集全。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -1927,10 +1927,10 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_tv_4",
                 "title": "深渊无间",
-                "rate": "9.0",
-                "cover": "https://image.tmdb.org/t/p/w500/b9ngtGNgaHBbLihRrT0MsPRY0GW.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/s9YSQAJtXjimsjBVsqLtJNnIjEs.jpg",
-                "description": "　　一篇名为《深渊》的推理网文悄然上线，打破了保守小城多年来的平静。文中诸多情节与警方未曾公布的多年前“三一二”连环奸杀案案情有着惊人的相似，作案手法、现场痕迹、凶手心理侧写，竟与尘封的卷宗几乎一字不差。\n\n　　热血正义的新警李成（任嘉伦 饰）以“网瘾少年”身份潜入网吧卧底，逐步接近案件关键嫌疑人——网吧老板韩品木（秦俊杰 饰）。韩品木表面温和，实则身份成谜，他既是当年受害者的家属，又是小说《深渊》的幕后上传者。在调查过程中，李成与暗中追查旧案的前刑警辛吉然（田小洁 饰）、刑侦队长赵干哲（王砚辉 饰）结成同盟，共同重启这桩尘封八年的悬案。\n\n　　随着一众人等接连登场——行动诡秘的老警察、暗中窥探的酒店保安、口风严密的职场经理、游走灰色地带的边缘人，以及案件幸存者陈春丽（倪虹洁 饰），全员皆藏秘密，人人皆有疑点。李成与多方嫌疑人一次次上演高智对弈，最终拨开迷雾，侦查出掩藏在令人扼腕的亲情和友情之下的真相。\n\n　　一念之差，有的人走向了绿洲，有的人永远被困在了深渊。",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202609091238023882533.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202609100713461377387.jpg",
+                "description": "《深渊无间》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至13集 | 共16集。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -1944,16 +1944,16 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_tv_5",
                 "title": "交锋",
-                "rate": "9.0",
-                "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/lYDwHYOR8PROQfSJGZ8LqvwUVcW.jpg",
-                "description": "一宗世纪之交的泄密大案扣动两岸局势脉搏，同时还掩藏着一场境外势力与我方在隐蔽战线上的针锋较量。二十世纪九十年代末，闽州市国家安全局一对性格迥异的师徒，因机缘巧合的命运安排，为了共同的使命与信仰并肩作战。他们联手挫败了各种阴谋，也与敌手在横跨二十年的命运长河里不断纠缠。当时间流转，新世纪的潮流剧变席卷而来，国家安全局势攻防易势，隐蔽战线上的较量却不止不休。在一次次关乎人性的考验中，这三人的命运关系因不同抉择，在岁月洗礼中悄然改变着。",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202609061321182110656.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202609062012101288405.jpg",
+                "description": "《交锋》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至32集 | 共40集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至30集 | 共40集",
+                "episodes_info": "更新至32集 | 共40集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1961,10 +1961,10 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_tv_6",
                 "title": "生逢其时",
-                "rate": "9.0",
-                "cover": "https://image.tmdb.org/t/p/w500/q2ulZwiuO9Gg0bVziimr8CXHdpk.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/7HXIhc3aRr1v7KmOrCulszXf3YP.jpg",
-                "description": "　　八十年代初，北方厂矿小镇青梧镇，住着齐家和曹家两户比邻而居的人家——齐爱华（郭涛 饰）与霍青莲（刘琳 饰）性格迥异但彼此包容；曹东方（郭晓东 饰）在妻子去世后与爸爸曹本顺（霍青 饰）两个男人一起撑起家，日子艰难但乐在其中。两家在同一天诞下孩子，却因医院疏忽，将两个婴儿抱错——齐家健康的男婴成了曹家的曹信，曹家患有白化病的女婴成了齐家的齐时。长辈们约定互不声张，两个孩子便在各自家庭中错位成长。\n\n　　身患白化病的齐时（关晓彤 饰）自小便意识到自己的“与众不同”。一头白发让她在小镇受尽旁人异样的目光，她喝酱油、戴假发，试图成为和普通人一样的存在。另一边的曹信（王子奇 饰），一路走来都是家长口中“别人家的孩子”，然而光环之下却始终伴随着父亲的严苛要求，他始终向往遵从本心的活法。\n\n　　当特立独行、勇敢倔强的齐时，遇上乖巧听话、优秀自律的曹信，两个家庭在邻里间日积月累的相处中，因荒唐的“换子”碰撞出了眼泪的故事和“新生”的契机。孩子们经历着关于亲情、友情、爱情的考验，大人们也在面对关于事业、婚姻、家庭的难题。在时代洪流中，纵使生活跌跌撞撞，他们亦携手缝缝补补修炼人生，共同找寻属于自己的人生和幸福。",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202609031658525831647.jpg",
+                "backdrop": "https://static.iyf.tv/upload/user/202609031729152940543.jpg",
+                "description": "《生逢其时》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至23集 | 共26集。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -1978,10 +1978,10 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_tv_7",
                 "title": "重案六组:消失的警号",
-                "rate": "8.0",
-                "cover": "https://image.tmdb.org/t/p/w500/xiq23i6XsryjJvxYvqQsyE9Nzen.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/nr1uqvJs4kqtGcBTwIAew5OiSXI.jpg",
-                "description": "剧情核心围绕“消失的警号”展开，通过“老警号传承”设计致敬原版角色，并融入科技办案、新老刑侦理念碰撞等创新元素。",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202608310534563487003.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202608311450075058045.jpg",
+                "description": "《重案六组:消失的警号》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20集 | 共26集。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -1995,10 +1995,10 @@ export const PREBAKED_HOME_DATA: {
         {
                 "id": "iyf_hero_tv_8",
                 "title": "早春晴朗",
-                "rate": "8.4",
-                "cover": "https://image.tmdb.org/t/p/w500/nLWFbYv1r99Yy7dWvjoxMRegoe0.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/oUFUvEMCBP80e4eYsfVfxC8n7ih.jpg",
-                "description": "这是一段十年交锋，敬于才华，合于性格、久于平等的禁忌之恋。北漂伊始的尚之桃与极具天赋的“鬼才”栾念狭路相逢。热烈勇敢的尚之桃亦步亦趋地蜕变成长，撬碎了栾念世故坚硬的心防，互相吸引的二人在都市丛林中极限拉扯、分分合合。爱情，就是用光所有勇气，再无遗憾。爱，则是互相修复，共同成长。但情和爱之间，她选择生存。当她独当一面，他收敛锋芒，势均力敌的他们将会为彼此写下了新的结局……",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202608260600250038853.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202608262134513470253.jpg",
+                "description": "《早春晴朗》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：24集全。",
                 "year": "2026",
                 "types": [
                         "热门",
