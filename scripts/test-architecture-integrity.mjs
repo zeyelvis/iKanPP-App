@@ -97,6 +97,11 @@ if (fs.existsSync(videoCssPath)) {
     !/\.spinner-glass\s*\{[^}]*backdrop-filter/s.test(cssContent),
     'video-player.css 的 .spinner-glass 旋转加载指示器严禁包含 backdrop-filter，防止全屏卡顿缓冲时瞬间触发显卡黑屏'
   );
+  assert(
+    cssContent.includes('.kvideo-container:fullscreen {') &&
+    cssContent.includes('background: transparent !important;'),
+    'video-player.css 的全屏容器必须设置 background: transparent，由 ::backdrop 呈现黑底，杜绝显卡 Hardware Overlay 发生遮蔽剔除 (Occlusion Culling) 黑屏'
+  );
 }
 
 // 递归扫描 components/player/desktop 及相关全屏弹窗组件，杜绝任何 backdrop-blur 渗入
@@ -109,6 +114,7 @@ const playerComponentFiles = [
   'components/player/desktop/NextEpisodeOverlay.tsx',
   'components/player/desktop/KeyboardShortcutsModal.tsx',
   'components/player/ShareCardModal.tsx',
+  'components/player/PlayerBrandLogo.tsx',
 ];
 
 for (const relPath of playerComponentFiles) {

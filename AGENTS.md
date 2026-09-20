@@ -294,11 +294,16 @@ iKanPP 全域视频播放器（包含桌面端、移动端、网页全屏与系�
      - `NextEpisodeOverlay.tsx`（倒计时自动下一集悬浮卡片）
      - `KeyboardShortcutsModal.tsx`（快捷键指南弹窗及遮罩）
      - `ShareCardModal.tsx`（海报分享弹窗及遮罩）
+     - `PlayerBrandLogo.tsx`（午夜消融台标：必须使用高级暗夜纯色径向渐变遮盖原站水印，严禁注入 `backdropFilter` 行内样式）
      - `app/styles/video-player.css`（`.spinner-glass` 旋转加载指示器与 `.loading-overlay-glass`）
-  3. **全屏状态切换绝对禁止同步重排死锁 (No Sync Reflow on Fullscreen Handshake)**：在 `useFullscreenControls.ts` 及任何全屏监听逻辑中，**严禁执行 `void v.offsetHeight;` 或读取任何几何布局属性**。全屏切换时操作系统正在分配硬件渲染平面，强制同步重排会导致显卡 Surface Swap 上下文丢失并死锁置黑；
-  4. 主站普通公网影视（轨道 A，`isPremium: false`）严禁渲染任何 56px/36px 强高斯消融台标层，必须且只能展示轻量纯 CSS 渐变微晶台标；
-  5. 56px/36px 双通道强力高斯模糊滤镜**必须且只能在午夜特区 Jable 去水印模式（轨道 B，`isPremium: true`）中按需使用**；
-  6. **自动化门禁全域覆盖永久守护**：由 `scripts/test-architecture-integrity.mjs` 在代码提交与 CI 构建中自动扫描上述所有播放器组件、CSS 伪类块及全屏 Hook，任何类名或属性违规立即强制阻断发布。
+  3. **全屏容器透明直通铁律 (Transparent Fullscreen Container)**：
+     - 全屏容器 `.kvideo-container:fullscreen`、`:-webkit-full-screen` 及 `.is-native-fullscreen` **必须恒为 `background: transparent !important; background-color: transparent !important;`**；
+     - 严禁在全屏容器上设置不透明纯黑背景（`background: #000`），否则显卡 Compositor 会触发 Occlusion Culling（遮挡剔除）误判视频被遮挡而停止渲染，导致黑屏有声音；
+     - 全屏黑底 100% 委托给浏览器底层的伪元素 `::backdrop` 呈现，确保硬件直通层（Hardware Overlay Plane）绝对透光可见；
+  4. **全屏状态切换零重排 GPU 唤醒机制 (Zero-Reflow Compositor Wakeup)**：
+     - 在 `useFullscreenControls.ts` 及任何全屏监听逻辑中，**严禁执行 `void v.offsetHeight;` 或读取任何几何布局属性**，杜绝显卡在申请与切换 Hardware Overlay Plane 的毫秒级窗口期被强制重排死锁；
+     - 统一采用 W3C 原生 `video.requestVideoFrameCallback()` 与 `requestAnimationFrame` 微调 `opacity: 0.999 -> 1`，纯 Compositor 线程标记脏图层，解决 macOS Space 动画后 Framebuffer 挂起未 SwapBuffers 的问题；
+  5. **自动化门禁全域覆盖永久守护**：由 `scripts/test-architecture-integrity.mjs` 在代码提交与 CI 构建中自动扫描上述所有播放器组件、全屏容器透明度、CSS 伪类块及全屏 Hook，任何类名或属性违规立即强制阻断发布。
 
 
 ---

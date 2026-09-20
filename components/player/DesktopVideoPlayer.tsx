@@ -507,8 +507,8 @@ export function DesktopVideoPlayer({
   return (
     <div
       ref={containerRef}
-      className={`kvideo-container relative bg-black group ${
-        data.isFullscreen ? 'w-full h-full is-fullscreen' : 'aspect-video'
+      className={`kvideo-container relative group ${
+        data.isFullscreen ? 'bg-transparent w-full h-full is-fullscreen' : 'bg-black aspect-video'
       } ${
         data.fullscreenMode === 'window' ? 'is-web-fullscreen' : ''
       } ${

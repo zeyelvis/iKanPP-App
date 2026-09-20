@@ -572,7 +572,8 @@
     margin: 0 !important;
     padding: 0 !important;
     overflow: visible !important;
-    background: #000 !important;
+    background: transparent !important;
+    background-color: transparent !important;
     z-index: 2147483647 !important;
     display: block !important;
 }
@@ -592,6 +593,8 @@
     margin: 0 !important;
     padding: 0 !important;
     overflow: visible !important;
+    background: transparent !important;
+    background-color: transparent !important;
     display: block !important;
 }
 
@@ -606,6 +609,8 @@
     width: 100% !important;
     height: 100% !important;
     overflow: visible !important;
+    background: transparent !important;
+    background-color: transparent !important;
     display: block !important;
 }
 
@@ -620,6 +625,8 @@
     width: 100% !important;
     height: 100% !important;
     overflow: visible !important;
+    background: transparent !important;
+    background-color: transparent !important;
     display: block !important;
 }
 
@@ -635,6 +642,7 @@
     object-fit: contain !important;
     border-radius: 0 !important;
     background: transparent !important;
+    background-color: transparent !important;
     display: block !important;
     z-index: 1 !important;
     transform: none !important;
@@ -665,7 +673,8 @@
     margin: 0 !important;
     padding: 0 !important;
     overflow: visible !important;
-    background: #000 !important;
+    background: transparent !important;
+    background-color: transparent !important;
     z-index: 2147483647 !important;
     display: block !important;
 }
@@ -685,6 +694,8 @@
     margin: 0 !important;
     padding: 0 !important;
     overflow: visible !important;
+    background: transparent !important;
+    background-color: transparent !important;
     display: block !important;
 }
 
@@ -699,6 +710,8 @@
     width: 100% !important;
     height: 100% !important;
     overflow: visible !important;
+    background: transparent !important;
+    background-color: transparent !important;
     display: block !important;
 }
 
@@ -713,6 +726,8 @@
     width: 100% !important;
     height: 100% !important;
     overflow: visible !important;
+    background: transparent !important;
+    background-color: transparent !important;
     display: block !important;
 }
 
@@ -728,6 +743,7 @@
     object-fit: contain !important;
     border-radius: 0 !important;
     background: transparent !important;
+    background-color: transparent !important;
     display: block !important;
     z-index: 1 !important;
     transform: none !important;
@@ -758,7 +774,8 @@
     margin: 0 !important;
     padding: 0 !important;
     overflow: visible !important;
-    background: #000 !important;
+    background: transparent !important;
+    background-color: transparent !important;
     z-index: 2147483647 !important;
     display: block !important;
 }
@@ -778,6 +795,8 @@
     margin: 0 !important;
     padding: 0 !important;
     overflow: visible !important;
+    background: transparent !important;
+    background-color: transparent !important;
     display: block !important;
 }
 
@@ -792,6 +811,8 @@
     width: 100% !important;
     height: 100% !important;
     overflow: visible !important;
+    background: transparent !important;
+    background-color: transparent !important;
     display: block !important;
 }
 
@@ -806,6 +827,8 @@
     width: 100% !important;
     height: 100% !important;
     overflow: visible !important;
+    background: transparent !important;
+    background-color: transparent !important;
     display: block !important;
 }
 
@@ -821,6 +844,7 @@
     object-fit: contain !important;
     border-radius: 0 !important;
     background: transparent !important;
+    background-color: transparent !important;
     display: block !important;
     z-index: 1 !important;
     transform: none !important;

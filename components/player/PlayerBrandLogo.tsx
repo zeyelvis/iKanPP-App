@@ -114,30 +114,22 @@ export function PlayerBrandLogo({
       }}
       aria-hidden="true"
     >
-      {/* 仅在午夜特区 (isPremium) 且需要消融水印时，才开启 56px/36px 双通道高斯模糊，普通主站绝不浪费 GPU 资源 */}
+      {/* 仅在午夜特区 (isPremium) 且需要消融水印时，开启高级微晶消融渐变，彻底消除 GPU 显存回读死锁 */}
       {isPremium && (
         <>
-          {/* 1. 【第一道强力高斯消融】：56px 广域卷积揉碎文字字符 */}
+          {/* 1. 【第一道强力消融渐变底座】：高级暗夜纯色渐变遮盖原站水印，100% 消除显卡硬件直通回读死锁 */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              backdropFilter: 'blur(56px) brightness(0.9) saturate(140%)',
-              WebkitBackdropFilter: 'blur(56px) brightness(0.9) saturate(140%)',
-              background: 'rgba(0, 0, 0, 0.08)',
-              maskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 55%, rgba(0,0,0,0.5) 80%, transparent 100%)',
-              WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 55%, rgba(0,0,0,0.5) 80%, transparent 100%)',
+              background: 'radial-gradient(ellipse 100% 100% at 0% 0%, rgba(18, 18, 22, 0.96) 0%, rgba(18, 18, 22, 0.75) 65%, transparent 100%)',
             }}
           />
 
-          {/* 2. 【第二道微晶光雾中和层】：彻底消除高反差残影 */}
+          {/* 2. 【第二道微晶光雾中和层】：柔化高反差边缘 */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              backdropFilter: 'blur(36px)',
-              WebkitBackdropFilter: 'blur(36px)',
-              background: 'radial-gradient(ellipse 90% 90% at 0% 0%, rgba(255,255,255,0.05) 0%, transparent 80%)',
-              maskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 40%, transparent 100%)',
-              WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 0% 0%, black 40%, transparent 100%)',
+              background: 'radial-gradient(ellipse 90% 90% at 0% 0%, rgba(255,255,255,0.03) 0%, transparent 80%)',
             }}
           />
         </>

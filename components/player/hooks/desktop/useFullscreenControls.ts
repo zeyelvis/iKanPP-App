@@ -409,7 +409,27 @@ export function useFullscreenControls({
                 lockLandscape().catch(() => { });
                 // 彻底杜绝 3D Transform 导致的 Chromium / WebKit 硬件叠加层丢帧黑屏：确保 video 保持原生 transform: none
                 if (videoRef.current) {
-                    videoRef.current.style.transform = '';
+                    videoRef.current.style.transform = 'none';
+                    (videoRef.current.style as any).webkitTransform = 'none';
+
+                    // 显卡硬件表面零开销安全握手 (Hardware Overlay Compositor Wakeup)
+                    // 解决 macOS Metal / CoreAnimation 在 Space 切换动画完成后未能及时 SwapBuffers 导致黑屏有声音的硬件挂起问题
+                    // 采用 W3C 原生 requestVideoFrameCallback，零同步重排 (0 reflow)，唤醒显卡提交视频解码帧
+                    if ('requestVideoFrameCallback' in videoRef.current && typeof (videoRef.current as any).requestVideoFrameCallback === 'function') {
+                        (videoRef.current as any).requestVideoFrameCallback(() => {});
+                    }
+
+                    // 纯 Compositor 线程轻量标记脏图层，安全恢复首帧视频表面
+                    window.requestAnimationFrame(() => {
+                        if (videoRef.current && !videoRef.current.paused) {
+                            videoRef.current.style.opacity = '0.999';
+                            window.requestAnimationFrame(() => {
+                                if (videoRef.current) {
+                                    videoRef.current.style.opacity = '1';
+                                }
+                            });
+                        }
+                    });
                 }
                 if (typeof window !== 'undefined') {
                     window.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
@@ -422,7 +442,9 @@ export function useFullscreenControls({
                 setIsFullscreen(false);
                 setFullscreenMode('none');
                 if (videoRef.current) {
-                    videoRef.current.style.transform = '';
+                    videoRef.current.style.transform = 'none';
+                    (videoRef.current.style as any).webkitTransform = 'none';
+                    videoRef.current.style.opacity = '1';
                 }
             }
         };
