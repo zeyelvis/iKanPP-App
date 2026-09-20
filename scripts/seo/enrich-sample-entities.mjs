@@ -12,14 +12,17 @@ async function main() {
   console.log('⚡ 正在为《肖申克的救赎》注入 5 大场景完整示范资产...');
 
   // 1. 读取或构造《肖申克的救赎》实体
-  const entityId = 'ik000001';
+  let entityId = await kvGet('title:肖申克的救赎');
+  if (!entityId) {
+    entityId = 'ik461747';
+  }
   const raw = await kvGet(`entity:${entityId}`);
   let entity = raw ? JSON.parse(raw) : null;
 
   if (!entity) {
     entity = {
       entityId,
-      canonicalSlug: 'ik000001-xiao-shen-ke-de-jiu-shu',
+      canonicalSlug: `${entityId}-xiao-shen-ke-de-jiu-shu`,
       slug: 'xiao-shen-ke-de-jiu-shu',
       tmdbId: '278',
       tmdbType: 'movie',
@@ -89,8 +92,9 @@ async function main() {
   await kvPut(`title:肖申克的救赎`, entityId);
   await kvPut(`title:刺激1995`, entityId);
   await kvPut(`title:月黑高飛`, entityId);
-  await kvPut(`slug:ik000001-xiao-shen-ke-de-jiu-shu`, entityId);
-  await kvPut(`slug:ik000001`, entityId);
+  await kvPut(`slug:${entityId}-xiao-shen-ke-de-jiu-shu`, entityId);
+  await kvPut(`slug:${entityId}`, entityId);
+  await kvPut(`slug:xiao-shen-ke-de-jiu-shu`, entityId);
 
   console.log('✅ 成功注入！');
   console.log('  - 实体 ID:', entityId);

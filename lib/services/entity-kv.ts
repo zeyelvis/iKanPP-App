@@ -45,10 +45,10 @@ function getCloudflareKV(): any | null {
   return null;
 }
 
-const CF_KV_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '';
-const CF_KV_NAMESPACE_ID = process.env.CLOUDFLARE_NAMESPACE_ID || '';
-const CF_KV_API_KEY = process.env.CLOUDFLARE_API_KEY || process.env.CF_API_KEY || '';
-const CF_KV_EMAIL = process.env.CLOUDFLARE_EMAIL || process.env.CF_EMAIL || '';
+const CF_KV_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CF_KV_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a';
+const CF_KV_NAMESPACE_ID = process.env.CLOUDFLARE_NAMESPACE_ID || process.env.CF_KV_NAMESPACE_ID || '42311924427747deaf00981d99d58998';
+const CF_KV_API_KEY = process.env.CLOUDFLARE_API_KEY || process.env.CF_API_KEY || process.env.CLOUDFLARE_AUTH_KEY || '';
+const CF_KV_EMAIL = process.env.CLOUDFLARE_EMAIL || process.env.CF_EMAIL || process.env.CLOUDFLARE_AUTH_EMAIL || 'zeyelvis@gmail.com';
 
 /**
  * 读取 KV 中的原始字符串（优先原生 Cloudflare Binding，本地环境透明走 REST API + 内存缓存）
@@ -105,6 +105,24 @@ export async function kvPut(key: string, value: string): Promise<void> {
       await kv.put(key, value);
     } catch (e) {
       console.warn(`[KV put] error for key ${key}:`, e);
+    }
+    return;
+  }
+
+  // 本地开发或非 Worker 环境：透明通过 Cloudflare REST API 直连写入
+  if (!kv && typeof fetch === 'function' && CF_KV_API_KEY && CF_KV_EMAIL) {
+    try {
+      const url = `https://api.cloudflare.com/client/v4/accounts/${CF_KV_ACCOUNT_ID}/storage/kv/namespaces/${CF_KV_NAMESPACE_ID}/values/${encodeURIComponent(key)}`;
+      await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'X-Auth-Email': CF_KV_EMAIL,
+          'X-Auth-Key': CF_KV_API_KEY,
+        },
+        body: value,
+      });
+    } catch (err) {
+      console.warn(`[KV put REST] error for key ${key}:`, err);
     }
   }
 }
