@@ -123,16 +123,17 @@ export function MobileBottomNav() {
 
           if (item.isExternal) {
             return (
-              <a
+              <button
                 key={item.id}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer nofollow"
+                type="button"
+                onClick={() => {
+                  window.open(item.href, '_blank', 'noopener,noreferrer');
+                }}
                 className={tabClassName}
                 title="进入 iKanX 午夜专区"
               >
                 {tabContent}
-              </a>
+              </button>
             );
           }
 

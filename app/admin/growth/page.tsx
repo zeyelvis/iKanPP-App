@@ -1596,7 +1596,7 @@ export default function AdminGrowthPage() {
               <a
                 href="https://www.notion.so"
                 target="_blank"
-                rel="noreferrer"
+                rel="nofollow noopener noreferrer"
                 className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 flex items-center gap-1"
               >
                 Notion Sites <ExternalLink className="w-3 h-3 text-slate-500" />
@@ -1604,7 +1604,7 @@ export default function AdminGrowthPage() {
               <a
                 href="https://medium.com/new-story"
                 target="_blank"
-                rel="noreferrer"
+                rel="nofollow noopener noreferrer"
                 className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 flex items-center gap-1"
               >
                 Medium 专栏 <ExternalLink className="w-3 h-3 text-slate-500" />
@@ -1612,7 +1612,7 @@ export default function AdminGrowthPage() {
               <a
                 href="https://telegra.ph/"
                 target="_blank"
-                rel="noreferrer"
+                rel="nofollow noopener noreferrer"
                 className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 flex items-center gap-1"
               >
                 Telegraph (免翻墙极速排版) <ExternalLink className="w-3 h-3 text-slate-500" />
@@ -1620,7 +1620,7 @@ export default function AdminGrowthPage() {
               <a
                 href="https://substack.com/"
                 target="_blank"
-                rel="noreferrer"
+                rel="nofollow noopener noreferrer"
                 className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 flex items-center gap-1"
               >
                 Substack <ExternalLink className="w-3 h-3 text-slate-500" />
