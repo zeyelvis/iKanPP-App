@@ -44,9 +44,9 @@ function LatestPosterCard({
   const [imageError, setImageError] = useState(false);
   const [useProxyFallback, setUseProxyFallback] = useState(false);
 
-  const initialCover = getOptimizedImageUrl(item.cover, { variant: 'poster' });
+  const initialCover = getOptimizedImageUrl(item.cover, { variant: 'thumb' });
   const proxiedCover = useProxyFallback
-    ? getFallbackProxiedImageUrl(item.cover, { variant: 'poster' })
+    ? getFallbackProxiedImageUrl(item.cover, { variant: 'thumb' })
     : initialCover;
 
   useEffect(() => {

@@ -47,17 +47,17 @@
    ══════════════════════════════════════════════════════════════ */
 .below-fold-section {
   content-visibility: auto;
-  contain-intrinsic-size: 0 420px;
+  contain-intrinsic-size: auto none auto 420px;
 }
 
 .below-fold-rail {
   content-visibility: auto;
-  contain-intrinsic-size: 0 320px;
+  contain-intrinsic-size: auto none auto 320px;
 }
 
 .below-fold-footer {
   content-visibility: auto;
-  contain-intrinsic-size: 0 200px;
+  contain-intrinsic-size: auto none auto 200px;
 }
 
 /* ══════════════════════════════════════════════════════════════

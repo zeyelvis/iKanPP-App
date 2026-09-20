@@ -181,8 +181,44 @@ const TABS: Array<{ id: HomeContentType | 'iptv'; label: string; isRoute?: boole
   { id: 'iptv', label: '📡 直播', isRoute: true, href: '/iptv' },
 ];
 
+function DeferredShelfPlaceholder() {
+  return (
+    <div className="space-y-3 py-1">
+      <div className="flex items-center justify-between">
+        <div className="h-5 w-36 sm:w-48 rounded bg-white/5 animate-pulse" />
+        <div className="h-4 w-12 rounded bg-white/5 animate-pulse" />
+      </div>
+      <div className="flex gap-2.5 sm:gap-4 overflow-hidden py-1">
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <div
+            key={i}
+            className="shrink-0 w-[118px] sm:w-40 aspect-2/3 rounded-2xl bg-white/5 border border-white/5 animate-pulse"
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
   const router = useRouter();
+
+  // 🚀 TBT 极速攻坚：首屏水合优先执行 Hero 与 Top10，屏下货架在主线程空闲后平滑挂载，释放 500ms 阻塞
+  const [isBelowFoldMounted, setIsBelowFoldMounted] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if ('requestIdleCallback' in window) {
+      const handle = (window as any).requestIdleCallback(
+        () => setIsBelowFoldMounted(true),
+        { timeout: 350 }
+      );
+      return () => (window as any).cancelIdleCallback(handle);
+    } else {
+      const timer = setTimeout(() => setIsBelowFoldMounted(true), 150);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   // 🌟 排行榜分类独立状态：点击仅驱动紧随其后的 Top 10 口碑榜联动，不干扰整页其他货架
   const [top10Category, setTop10Category] = useState<HomeContentType>('movie');
@@ -509,85 +545,105 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       />
 
       {/* 5. 🎯 猜你喜欢 · 智能定制推荐（全站综合推荐，不受上方排行榜切换影响） */}
-      <div className="below-fold-rail">
-        <PersonalizedForYouRail
-          onMovieClick={handleMovieClick}
-          contentType="movie"
-          excludeTitles={deduplicatedContent.seenSnapshot}
-        />
+      <div className="below-fold-rail min-h-[280px]">
+        {isBelowFoldMounted ? (
+          <PersonalizedForYouRail
+            onMovieClick={handleMovieClick}
+            contentType="movie"
+            excludeTitles={deduplicatedContent.seenSnapshot}
+          />
+        ) : (
+          <DeferredShelfPlaceholder />
+        )}
       </div>
 
       {/* 6. 货架 1 */}
-      <div className="below-fold-rail">
-        <ContentRail
-          title={m1.title}
-          icon={m1.icon}
-          badge={m1.badge}
-          movies={deduplicatedContent.s1}
-          loading={loadingShelves}
-          isPriority={true}
-          onMovieClick={handleMovieClick}
-          onViewAll={() => router.push(m1.viewAll)}
-        />
+      <div className="below-fold-rail min-h-[280px]">
+        {isBelowFoldMounted ? (
+          <ContentRail
+            title={m1.title}
+            icon={m1.icon}
+            badge={m1.badge}
+            movies={deduplicatedContent.s1}
+            loading={loadingShelves}
+            isPriority={true}
+            onMovieClick={handleMovieClick}
+            onViewAll={() => router.push(m1.viewAll)}
+          />
+        ) : (
+          <DeferredShelfPlaceholder />
+        )}
       </div>
 
       {/* 7. 货架 2 */}
-      <div className="below-fold-rail">
-        <ContentRail
-          title={m2.title}
-          icon={m2.icon}
-          badge={m2.badge}
-          movies={deduplicatedContent.s2}
-          loading={loadingShelves}
-          onMovieClick={handleMovieClick}
-          onViewAll={() => router.push(m2.viewAll)}
-        />
+      <div className="below-fold-rail min-h-[280px]">
+        {isBelowFoldMounted ? (
+          <ContentRail
+            title={m2.title}
+            icon={m2.icon}
+            badge={m2.badge}
+            movies={deduplicatedContent.s2}
+            loading={loadingShelves}
+            onMovieClick={handleMovieClick}
+            onViewAll={() => router.push(m2.viewAll)}
+          />
+        ) : (
+          <DeferredShelfPlaceholder />
+        )}
       </div>
 
       {/* 8. 📡 电视直播精选频道（在推荐主干展示） */}
-      <div className="below-fold-section">
-        <LiveChannelsPreview />
+      <div className="below-fold-section min-h-[180px]">
+        {isBelowFoldMounted ? <LiveChannelsPreview /> : null}
       </div>
 
       {/* 8.5 📚 精选片单 · 官方策展（常驻独立版位，不受品类 Tab 切换干扰） */}
-      <div className="below-fold-rail">
-        <CollectionsRail />
+      <div className="below-fold-rail min-h-[220px]">
+        {isBelowFoldMounted ? <CollectionsRail /> : null}
       </div>
 
       {/* 9. 货架 3 */}
-      <div className="below-fold-rail">
-        <ContentRail
-          title={m3.title}
-          icon={m3.icon}
-          badge={m3.badge}
-          movies={deduplicatedContent.s3}
-          loading={loadingShelves}
-          onMovieClick={handleMovieClick}
-          onViewAll={() => router.push(m3.viewAll)}
-        />
+      <div className="below-fold-rail min-h-[280px]">
+        {isBelowFoldMounted ? (
+          <ContentRail
+            title={m3.title}
+            icon={m3.icon}
+            badge={m3.badge}
+            movies={deduplicatedContent.s3}
+            loading={loadingShelves}
+            onMovieClick={handleMovieClick}
+            onViewAll={() => router.push(m3.viewAll)}
+          />
+        ) : (
+          <DeferredShelfPlaceholder />
+        )}
       </div>
 
       {/* 10. 货架 4 */}
-      <div className="below-fold-rail">
-        <ContentRail
-          title={m4.title}
-          icon={m4.icon}
-          badge={m4.badge}
-          movies={deduplicatedContent.s4}
-          loading={loadingShelves}
-          onMovieClick={handleMovieClick}
-          onViewAll={() => router.push(m4.viewAll)}
-        />
+      <div className="below-fold-rail min-h-[280px]">
+        {isBelowFoldMounted ? (
+          <ContentRail
+            title={m4.title}
+            icon={m4.icon}
+            badge={m4.badge}
+            movies={deduplicatedContent.s4}
+            loading={loadingShelves}
+            onMovieClick={handleMovieClick}
+            onViewAll={() => router.push(m4.viewAll)}
+          />
+        ) : (
+          <DeferredShelfPlaceholder />
+        )}
       </div>
 
       {/* 11. 🛡️ 平台核心特性与极速播放优势 */}
-      <div className="below-fold-section">
-        <PlatformFeaturesStrip />
+      <div className="below-fold-section min-h-[120px]">
+        {isBelowFoldMounted ? <PlatformFeaturesStrip /> : null}
       </div>
 
       {/* 12. 🧭 全库多维分类检索大厅导航卡片 */}
-      <div className="below-fold-footer">
-        <ExploreHubFooterBanner />
+      <div className="below-fold-footer min-h-[140px]">
+        {isBelowFoldMounted ? <ExploreHubFooterBanner /> : null}
       </div>
       </div>
     </div>

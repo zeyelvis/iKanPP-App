@@ -90,20 +90,18 @@ function HeroBackdrop({
   title: string;
   isShortDrama?: boolean;
 }) {
-  // 构建候选重试容灾链：
-  // 1. 优化版 Backdrop（自适应地域路由，移动端自动请求 780px 宽幅图节省 75% 流量）
-  // 2. 强制 R2 镜像代理版 Backdrop（避开海外局部防火墙阻断）
-  // 3. 原生 Backdrop 直连
-  // 4. 优化版 Cover（海报大图降级）
-  // 5. 强制 R2 镜像代理版 Cover
+  const desktopBackdrop = backdrop ? getOptimizedImageUrl(backdrop, { width: 1280, noFallback: true }) : '';
+  const mobileBackdrop = backdrop ? getOptimizedImageUrl(backdrop, { width: 780, noFallback: true }) : '';
+
+  // 构建候选重试容灾链
   const candidates = useMemo(() => {
     const list: string[] = [];
     const isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
     const backdropWidth = isMobile ? 780 : 1280;
 
     if (backdrop) {
-      const optBackdrop = getOptimizedImageUrl(backdrop, { width: backdropWidth, noFallback: true });
-      list.push(optBackdrop);
+      const optBackdrop = isMobile ? mobileBackdrop : desktopBackdrop;
+      if (optBackdrop) list.push(optBackdrop);
       const fallbackProxy = getFallbackProxiedImageUrl(backdrop, { width: backdropWidth });
       if (!list.includes(fallbackProxy)) list.push(fallbackProxy);
       if (backdrop !== optBackdrop && backdrop.startsWith('http') && !list.includes(backdrop)) {
@@ -120,28 +118,26 @@ function HeroBackdrop({
       }
     }
     return list;
-  }, [backdrop, cover]);
+  }, [backdrop, cover, desktopBackdrop, mobileBackdrop]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [loaded, setLoaded] = useState(false);
-  const [displaySrc, setDisplaySrc] = useState<string>('');
+  const [displaySrc, setDisplaySrc] = useState<string>(() => candidates[0] || desktopBackdrop || '');
   const [prevSrc, setPrevSrc] = useState<string>('');
+  const [isSwapped, setIsSwapped] = useState(false);
 
   const currentSrc = candidates[currentIndex] || '';
 
   useEffect(() => {
     setCurrentIndex(0);
-    setLoaded(false);
   }, [backdrop, cover]);
 
   useEffect(() => {
     if (currentSrc && currentSrc !== displaySrc) {
-      // 切换新图源时，将当前已加载的图像沉降为底衬 prevSrc，避免任何白屏、黑屏与闪烁
       if (displaySrc) {
         setPrevSrc(displaySrc);
+        setIsSwapped(true);
       }
       setDisplaySrc(currentSrc);
-      setLoaded(false);
     }
   }, [currentSrc, displaySrc]);
 
@@ -152,60 +148,52 @@ function HeroBackdrop({
     }
   };
 
-  const handleLoaded = () => {
-    setLoaded(true);
-  };
-
-  // 底层即时氛围图（用封面海报高斯模糊铺底，0秒呈现，彻底杜绝任何黑屏）
-  const ambientSrc = cover ? getOptimizedImageUrl(cover) : (backdrop ? getOptimizedImageUrl(backdrop) : '');
+  // 底层即时氛围图：仅在短剧（竖版）模式下才渲染，大片模式下纯 CSS 底色铺底，0 额外网络消耗
+  const ambientSrc = isShortDrama && cover ? getOptimizedImageUrl(cover, { variant: 'thumb' }) : '';
 
   return (
     <div className="absolute inset-0 bg-[#0A0A0F] ambient-mesh-glow overflow-hidden select-none">
-      {/* 1. 底层：即时电影色彩氛围层（极小体积海报 + 高斯模糊，0 秒呈现，彻底告别黑屏） */}
+      {/* 1. 底层短剧色彩氛围层（仅短剧模式渲染，且使用 thumb 规格，绝不争抢 LCP 带宽） */}
       {ambientSrc && (
         <div className="absolute inset-0 -m-8 pointer-events-none">
           <img
             src={ambientSrc}
             alt=""
-            className={`w-full h-full object-cover ${isShortDrama ? 'blur-3xl opacity-60 scale-125 saturate-150' : 'blur-3xl opacity-40 scale-125 saturate-150'} transition-opacity duration-1000`}
-            loading="eager"
+            className="w-full h-full object-cover blur-3xl opacity-60 scale-125 saturate-150 transition-opacity duration-1000"
+            loading="lazy"
+            decoding="async"
           />
         </div>
       )}
 
       {/* 2. 底层前一帧剧照（保留至新图完全加载，彻底根除切换瞬间的黑屏/闪烁；短剧模式下免除） */}
       {!isShortDrama && prevSrc && prevSrc !== displaySrc && (
-        <Image
+        <img
           src={prevSrc}
           alt=""
-          fill
-          sizes="100vw"
-          unoptimized
-          priority
-          referrerPolicy="no-referrer"
-          className="object-cover scale-105"
+          className="absolute inset-0 w-full h-full object-cover scale-105 pointer-events-none"
           style={{ objectPosition: 'center 20%' }}
         />
       )}
 
-      {/* 3. 顶层：当前最新巨幕高清剧照（非短剧模式下全景呈现） */}
+      {/* 3. 顶层最新巨幕高清剧照：首屏首帧原生 <picture> 响应式直出，fetchPriority="high" 零水合延迟 */}
       {!isShortDrama && displaySrc && (
-        <Image
-          key={displaySrc}
-          src={displaySrc}
-          alt={title}
-          fill
-          priority
-          sizes="100vw"
-          unoptimized
-          referrerPolicy="no-referrer"
-          onLoad={handleLoaded}
-          onError={handleBackdropError}
-          className={`object-cover scale-105 transition-opacity duration-700 ease-out ${
-            loaded ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{ objectPosition: 'center 20%' }}
-        />
+        <picture className="absolute inset-0 w-full h-full">
+          {mobileBackdrop && <source media="(max-width: 640px)" srcSet={mobileBackdrop} />}
+          <img
+            key={displaySrc}
+            src={displaySrc}
+            alt={title}
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+            onError={handleBackdropError}
+            className={`w-full h-full object-cover scale-105 ${
+              isSwapped ? 'animate-fade-in duration-700' : 'opacity-100'
+            }`}
+            style={{ objectPosition: 'center 20%' }}
+          />
+        </picture>
       )}
 
       {/* 4. 纯净极简电影级自然羽化系统（仅保留头部与底部自然平滑渐变，还原大片通透沉浸感） */}

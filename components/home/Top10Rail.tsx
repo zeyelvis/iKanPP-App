@@ -101,8 +101,7 @@ function Top10Item({
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-110"
             sizes="180px"
-            loading={idx < 3 ? 'eager' : 'lazy'}
-            priority={idx < 1}
+            loading="lazy"
             decoding="async"
             unoptimized
             referrerPolicy="no-referrer"
