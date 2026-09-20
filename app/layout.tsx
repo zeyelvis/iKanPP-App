@@ -4,7 +4,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./styles/tmdb-slideshow.css";
 import "./styles/skeleton.css";
-import "./styles/about.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { TVProvider } from "@/lib/contexts/TVContext";
 import { TVNavigationInitializer } from "@/components/TVNavigationInitializer";
@@ -21,6 +20,8 @@ import { Footer } from "@/components/layout/Footer";
 import { Suspense } from 'react';
 import { ReferralCapture } from '@/components/auth/ReferralCapture';
 import { JsonLd, generateWebSiteJsonLd } from '@/components/seo/JsonLd';
+import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -119,12 +120,41 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const hero = ALL_HOME_DATA.hero[0];
+  const desktopBackdropUrl = hero?.backdrop
+    ? getOptimizedImageUrl(hero.backdrop, { width: 1280, noFallback: true })
+    : '';
+  const mobileBackdropUrl = hero?.backdrop
+    ? getOptimizedImageUrl(hero.backdrop, { width: 500, noFallback: true })
+    : '';
+
   return (
     <html lang="zh-CN" className="dark" suppressHydrationWarning>
       <head>
-        {/* 🚀 外部与自建图片 CDN 预连接 — 消除 DNS+TLS 延迟，直接提升 LCP */}
+        {/* 🚀 LCP 极速攻坚：首屏巨幕剧照全站最高优先级预加载，彻底消灭 850ms Resource Load Delay */}
+        {desktopBackdropUrl && (
+          <link
+            rel="preload"
+            as="image"
+            href={desktopBackdropUrl}
+            media="(min-width: 641px)"
+            fetchPriority="high"
+          />
+        )}
+        {mobileBackdropUrl && (
+          <link
+            rel="preload"
+            as="image"
+            href={mobileBackdropUrl}
+            media="(max-width: 640px)"
+            fetchPriority="high"
+          />
+        )}
+
+        {/* 🚀 外部与自建图片 CDN 预连接 — 消除 DNS+TLS 延迟，双栈对齐普通 img 与 cors 握手 */}
         <link rel="preconnect" href="https://img.ikanpp.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://img.ikanpp.com" />
+        <link rel="preconnect" href="https://image.tmdb.org" />
         <link rel="preconnect" href="https://image.tmdb.org" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://img2.doubanio.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://img9.doubanio.com" crossOrigin="anonymous" />

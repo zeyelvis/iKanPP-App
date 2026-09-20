@@ -17,64 +17,69 @@ export function ImagePrefetchObserver() {
       return;
     }
 
+    let observer: IntersectionObserver | null = null;
     const prefetchQueue: string[] = [];
     let isProcessing = false;
 
-    const processQueue = () => {
-      if (prefetchQueue.length === 0) {
-        isProcessing = false;
-        return;
-      }
+    // 🚀 LCP & TBT 极速攻坚：推迟 2 秒再启动超视口预热，把首屏带宽 100% 留给 Hero 首图
+    const timer = setTimeout(() => {
+      const processQueue = () => {
+        if (prefetchQueue.length === 0) {
+          isProcessing = false;
+          return;
+        }
 
-      isProcessing = true;
-      const url = prefetchQueue.shift();
-      if (!url) {
-        processQueue();
-        return;
-      }
+        isProcessing = true;
+        const url = prefetchQueue.shift();
+        if (!url) {
+          processQueue();
+          return;
+        }
 
-      const schedule = window.requestIdleCallback || ((cb) => setTimeout(cb, 100));
-      schedule(() => {
-        const img = new Image();
-        img.decoding = 'async';
-        img.src = url;
-        img.onload = () => {
-          setTimeout(processQueue, 50); // 间隔 50ms 处理下一个
-        };
-        img.onerror = () => {
-          setTimeout(processQueue, 50);
-        };
-      });
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const el = entry.target as HTMLElement;
-            const src = el.getAttribute('data-prefetch-src') || el.getAttribute('data-src');
-            if (src && !prefetchQueue.includes(src)) {
-              prefetchQueue.push(src);
-              if (!isProcessing) {
-                processQueue();
-              }
-            }
-            observer.unobserve(el);
-          }
+        const schedule = window.requestIdleCallback || ((cb) => setTimeout(cb, 150));
+        schedule(() => {
+          const img = new Image();
+          img.decoding = 'async';
+          img.src = url;
+          img.onload = () => {
+            setTimeout(processQueue, 80); // 间隔 80ms 平滑处理下一个
+          };
+          img.onerror = () => {
+            setTimeout(processQueue, 80);
+          };
         });
-      },
-      {
-        rootMargin: '600px 0px', // 提前 600 像素开始预热
-        threshold: 0.01,
-      }
-    );
+      };
 
-    // 扫描页面所有待加载卡片
-    const elements = document.querySelectorAll('[data-prefetch-src]');
-    elements.forEach((el) => observer.observe(el));
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const el = entry.target as HTMLElement;
+              const src = el.getAttribute('data-prefetch-src') || el.getAttribute('data-src');
+              if (src && !prefetchQueue.includes(src)) {
+                prefetchQueue.push(src);
+                if (!isProcessing) {
+                  processQueue();
+                }
+              }
+              observer?.unobserve(el);
+            }
+          });
+        },
+        {
+          rootMargin: '300px 0px', // 精准缩减至提前 300 像素，避免超远预热
+          threshold: 0.01,
+        }
+      );
+
+      // 扫描页面所有待加载卡片
+      const elements = document.querySelectorAll('[data-prefetch-src]');
+      elements.forEach((el) => observer?.observe(el));
+    }, 2000);
 
     return () => {
-      observer.disconnect();
+      clearTimeout(timer);
+      observer?.disconnect();
     };
   }, []);
 

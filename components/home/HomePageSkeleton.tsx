@@ -20,7 +20,7 @@ export function HomePageSkeleton() {
     ? getOptimizedImageUrl(hero.backdrop, { width: 1280, noFallback: true })
     : '';
   const mobileBackdropUrl = hero.backdrop
-    ? getOptimizedImageUrl(hero.backdrop, { width: 780, noFallback: true })
+    ? getOptimizedImageUrl(hero.backdrop, { width: 500, noFallback: true })
     : '';
 
   return (

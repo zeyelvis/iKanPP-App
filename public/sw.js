@@ -33,18 +33,7 @@ const IMG_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 const API_MAX_AGE = 5 * 60 * 1000;
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(PAGE_CACHE).then((cache) => {
-      // 预缓存核心页面（容错模式，避免单个页面失败阻断安装）
-      return Promise.allSettled(
-        PRECACHE_URLS.map((url) =>
-          fetch(url, { cache: 'no-cache' }).then((response) => {
-            if (response.ok) return cache.put(url, response);
-          }).catch(() => null)
-        )
-      );
-    })
-  );
+  // 🚀 极速静默安装：跳过首屏瞬间并发拉取全站页面的网络风暴，由 fetch 拦截按需自动缓存
   self.skipWaiting();
 });
 

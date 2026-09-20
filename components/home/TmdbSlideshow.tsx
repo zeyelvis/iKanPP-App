@@ -91,13 +91,13 @@ function HeroBackdrop({
   isShortDrama?: boolean;
 }) {
   const desktopBackdrop = backdrop ? getOptimizedImageUrl(backdrop, { width: 1280, noFallback: true }) : '';
-  const mobileBackdrop = backdrop ? getOptimizedImageUrl(backdrop, { width: 780, noFallback: true }) : '';
+  const mobileBackdrop = backdrop ? getOptimizedImageUrl(backdrop, { width: 500, noFallback: true }) : '';
 
   // 构建候选重试容灾链
   const candidates = useMemo(() => {
     const list: string[] = [];
     const isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
-    const backdropWidth = isMobile ? 780 : 1280;
+    const backdropWidth = isMobile ? 500 : 1280;
 
     if (backdrop) {
       const optBackdrop = isMobile ? mobileBackdrop : desktopBackdrop;
@@ -390,7 +390,7 @@ export function HeroSlideshow({
         const isMobile = window.innerWidth <= 640;
         const img = new window.Image();
         img.referrerPolicy = 'no-referrer';
-        img.src = getOptimizedImageUrl(targetBackdrop, { width: isMobile ? 780 : 1280, noFallback: true });
+        img.src = getOptimizedImageUrl(targetBackdrop, { width: isMobile ? 500 : 1280, noFallback: true });
       }
     }, 4000);
 

@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
+import '@/app/styles/about.css';
 
 export const metadata: Metadata = {
   title: '关于我们 — 爱看片片的故事 | iKanPP',
