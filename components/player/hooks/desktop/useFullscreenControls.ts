@@ -409,9 +409,7 @@ export function useFullscreenControls({
                 lockLandscape().catch(() => { });
                 // 彻底杜绝 3D Transform 导致的 Chromium / WebKit 硬件叠加层丢帧黑屏：确保 video 保持原生 transform: none
                 if (videoRef.current) {
-                    const v = videoRef.current;
-                    v.style.transform = '';
-                    void v.offsetHeight;
+                    videoRef.current.style.transform = '';
                 }
                 if (typeof window !== 'undefined') {
                     window.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
@@ -424,9 +422,7 @@ export function useFullscreenControls({
                 setIsFullscreen(false);
                 setFullscreenMode('none');
                 if (videoRef.current) {
-                    const v = videoRef.current;
-                    v.style.transform = '';
-                    void v.offsetHeight;
+                    videoRef.current.style.transform = '';
                 }
             }
         };

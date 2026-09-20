@@ -44,14 +44,14 @@ export function InPlayerSourceDrawer({
 
   return (
     <div
-      className="absolute inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-xs transition-opacity duration-300 animate-fade-in"
+      className="absolute inset-0 z-50 flex justify-end bg-black/60 transition-opacity duration-300 animate-fade-in"
       onClick={(e) => {
         e.stopPropagation();
         onClose();
       }}
     >
       <div
-        className="w-72 sm:w-80 h-full bg-black/90 backdrop-blur-2xl border-l border-white/10 shadow-2xl flex flex-col pointer-events-auto text-white"
+        className="w-72 sm:w-80 h-full bg-[#141416]/98 border-l border-white/10 shadow-2xl flex flex-col pointer-events-auto text-white"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 顶部标题栏 */}

@@ -281,14 +281,24 @@ iKanPP 全域视频播放器（包含桌面端、移动端、网页全屏与系�
   2. 全屏事件监听中（`useFullscreenControls.ts`），严禁执行任何 `scale(1.00001)` 等抖动黑客代码，进入和退出全屏时必须且只能安全重置 `v.style.transform = ''`；
   3. `video-player.css` 中所有全屏选择器（`:fullscreen video`, `:-webkit-full-screen video`, `.is-native-fullscreen video`）必须恒定声明 `transform: none !important; -webkit-transform: none !important; will-change: auto !important;`。
 
-### 2. 全屏状态下绝对禁止 `backdrop-filter` 显存回读死锁 (No Fullscreen Backdrop-Filters)
-- **核心判定**：全屏硬件加速覆盖层在安全沙箱和性能保护下，严禁上层 DOM 元素对正在硬件解码的显存进行反向像素回读（GPU Back-buffer Readback）。
+### 2. 全屏状态下绝对禁止 `backdrop-filter` 显存回读死锁与全域组件清零
+- **核心判定**：全屏硬件加速覆盖层（Hardware Overlay Plane）在安全沙箱和性能保护下，严禁上层 DOM 元素对正在硬件解码的显存进行反向像素回读（GPU Back-buffer Readback），一旦检测到任何 backdrop 滤镜，显卡驱动将直接触发保护性 Surface Detach，导致“声音正常、画面全黑”。
 - **防线规范**：
-  1. **CSS 选择器绝对禁止逗号合写 (No Comma-Separated Vendor Pseudo-Classes)**：W3C 规范规定选择器列表中若存在浏览器未识别的前缀伪类，整组规则会被整块作废！`video-player.css` 中 `:fullscreen *`、`:-webkit-full-screen *`、`.kvideo-container.is-native-fullscreen *` **必须拆分为各自完全独立的 CSS 规则块**，强制将内部子元素的 `backdrop-filter` 降级为 `none !important`；
-  2. **全屏浮层 DOM 级物理剥离 (DOM-Level Backdrop Removal)**：`DesktopOverlay.tsx` 全屏时钟、快进/快退/播放按钮、Toast 提示及 `DesktopVideoPlayer.tsx` 快捷返回胶囊，**严禁携带 `backdrop-blur-*` 类名**，必须使用高级纯色暗夜底色（如 `bg-[#141416]/90`），从 DOM 源头彻底杜绝 GPU 反向回读需求；
-  3. 主站普通公网影视（轨道 A，`isPremium: false`）严禁渲染任何 56px/36px 强高斯消融台标层，必须且只能展示轻量纯 CSS 渐变微晶台标；
-  4. 56px/36px 双通道强力高斯模糊滤镜**必须且只能在午夜特区 Jable 去水印模式（轨道 B，`isPremium: true`）中按需使用**；
-  5. **自动化门禁永久守护**：由 `scripts/test-architecture-integrity.mjs` 在提交与 CI 构建中自动扫描 CSS 规则与全屏组件，一旦发现合写伪类或全屏类名残留 `backdrop-blur` 立即强制阻断发布。
+  1. **CSS 选择器与伪元素绝对禁止逗号合写 (No Comma-Separated Vendor Pseudo-Classes/Elements)**：W3C 规范规定选择器列表中若存在浏览器未识别的前缀伪类或伪元素，整组规则会被整块作废！`video-player.css` 中 `:fullscreen *`、`:-webkit-full-screen *`、`.kvideo-container.is-native-fullscreen *` 以及 `::backdrop` / `::-webkit-backdrop` **必须拆分为各自完全独立的 CSS 规则块**，强制将内部子元素的 `backdrop-filter` 降级为 `none !important`；
+  2. **播放器全域浮层组件地毯式物理剥离 (Full-Domain DOM Backdrop Removal)**：播放器容器内可能挂载的所有子组件必须从 JSX 源代码级别彻底剔除 `backdrop-blur-*` 与行内 `backdropFilter`，统一使用高级暗夜深色底色（如 `bg-[#141416]/95` 或 `rgba(18, 18, 22, 0.95)`）：
+     - `DesktopOverlay.tsx`（全屏时钟、快进快退指示器、播放暂停按钮、Toast 提示）
+     - `DesktopSpeedMenu.tsx`（右上角倍速选择浮窗与按钮）
+     - `DesktopMoreMenu.tsx`（左上角更多设置主面板与画质/比例/按键子菜单）
+     - `InPlayerEpisodesDrawer.tsx`（右侧全屏快速选集抽屉及半透明遮罩）
+     - `InPlayerSourceDrawer.tsx`（右侧全屏换源专线抽屉及半透明遮罩）
+     - `NextEpisodeOverlay.tsx`（倒计时自动下一集悬浮卡片）
+     - `KeyboardShortcutsModal.tsx`（快捷键指南弹窗及遮罩）
+     - `ShareCardModal.tsx`（海报分享弹窗及遮罩）
+     - `app/styles/video-player.css`（`.spinner-glass` 旋转加载指示器与 `.loading-overlay-glass`）
+  3. **全屏状态切换绝对禁止同步重排死锁 (No Sync Reflow on Fullscreen Handshake)**：在 `useFullscreenControls.ts` 及任何全屏监听逻辑中，**严禁执行 `void v.offsetHeight;` 或读取任何几何布局属性**。全屏切换时操作系统正在分配硬件渲染平面，强制同步重排会导致显卡 Surface Swap 上下文丢失并死锁置黑；
+  4. 主站普通公网影视（轨道 A，`isPremium: false`）严禁渲染任何 56px/36px 强高斯消融台标层，必须且只能展示轻量纯 CSS 渐变微晶台标；
+  5. 56px/36px 双通道强力高斯模糊滤镜**必须且只能在午夜特区 Jable 去水印模式（轨道 B，`isPremium: true`）中按需使用**；
+  6. **自动化门禁全域覆盖永久守护**：由 `scripts/test-architecture-integrity.mjs` 在代码提交与 CI 构建中自动扫描上述所有播放器组件、CSS 伪类块及全屏 Hook，任何类名或属性违规立即强制阻断发布。
 
 
 ---

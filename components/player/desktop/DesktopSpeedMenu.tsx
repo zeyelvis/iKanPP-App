@@ -220,7 +220,7 @@ export function DesktopSpeedMenu({
     const MenuContent = (
         <div
             ref={menuRef}
-            className={`absolute z-[2147483647] bg-[var(--glass-bg)] backdrop-blur-[25px] saturate-[180%] rounded-[var(--radius-2xl)] border border-[var(--glass-border)] shadow-[var(--shadow-md)] p-1 sm:p-1.5 w-fit ${isRotated ? 'min-w-[2.5rem]' : 'min-w-[3.5rem] sm:min-w-[4.5rem]'} animate-in fade-in zoom-in-95 duration-200 overflow-y-auto`}
+            className={`absolute z-[2147483647] bg-[#141416]/95 rounded-[var(--radius-2xl)] border border-white/20 shadow-[0_12px_40px_rgba(0,0,0,0.8)] p-1 sm:p-1.5 w-fit ${isRotated ? 'min-w-[2.5rem]' : 'min-w-[3.5rem] sm:min-w-[4.5rem]'} animate-in fade-in zoom-in-95 duration-200 overflow-y-auto`}
             style={{
                 ...(isRotated ? {
                     // In Rotated Mode:
@@ -274,7 +274,7 @@ export function DesktopSpeedMenu({
                 onClick={handleToggle}
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
-                className="group flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm transition-all duration-300 hover:scale-110 active:scale-95 text-white/90 font-medium text-xs sm:text-sm"
+                className="group flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#141416]/80 hover:bg-[#141416]/95 border border-white/15 transition-all duration-300 hover:scale-110 active:scale-95 text-white/90 font-medium text-xs sm:text-sm"
                 aria-label="播放速度"
             >
                 {playbackRate}x

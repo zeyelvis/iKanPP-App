@@ -194,7 +194,7 @@
     /* Allow interaction with controls during loading */
 }
 
-/* Spinner with Floating Dark Capsule Background */
+/* Spinner with Floating Dark Capsule Background (物理级移除 backdrop-filter 消除显卡硬件直通回读死锁) */
 .spinner-glass {
     width: clamp(44px, 8vw, 60px);
     height: clamp(44px, 8vw, 60px);
@@ -202,10 +202,8 @@
     border-top-color: var(--accent-color);
     border-radius: var(--radius-full);
     animation: spin 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    background: rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 122, 255, 0.25);
+    background: rgba(18, 18, 22, 0.88);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 122, 255, 0.25);
 }
 
 /* Next Episode Loading Indicator */
@@ -830,9 +828,20 @@
     will-change: auto !important;
 }
 
-/* 全屏纯黑 backdrop */
-.kvideo-container::backdrop,
+/* 全屏纯黑 backdrop (拆分独立声明，严禁逗号合写导致整组规则被废弃) */
+.kvideo-container::backdrop {
+    background-color: #000 !important;
+}
+
 .kvideo-container::-webkit-backdrop {
+    background-color: #000 !important;
+}
+
+:fullscreen::backdrop {
+    background-color: #000 !important;
+}
+
+:-webkit-full-screen::backdrop {
     background-color: #000 !important;
 }
 
@@ -843,35 +852,45 @@
 :fullscreen * {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+    filter: none !important;
 }
 
-/* 2. WebKit / Safari / 旧版 Chrome 私有全屏伪类 (必须独立成块) */
+/* 2. WebKit / Safari / 旧版 Chrome 私有全屏伪类 (必须独立成块，严禁逗号合写) */
 :-webkit-full-screen * {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+    filter: none !important;
 }
 
 /* 3. 类名物理保底 (.is-native-fullscreen) */
 .kvideo-container.is-native-fullscreen * {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+    filter: none !important;
 }
 
 /* 4. 网页全屏与通用全屏类名保底 (.is-fullscreen) */
 .kvideo-container.is-fullscreen * {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+    filter: none !important;
 }
 
-/* 5. 针对显式包含 backdrop-blur 的浮层给予深色高质感底色垫底，防止移除滤镜后发虚 */
-:fullscreen *[class*="backdrop-blur"],
+/* 5. 针对显式包含 backdrop-blur 的浮层给予深色高质感底色垫底 (各伪类完全独立成块) */
+:fullscreen *[class*="backdrop-blur"] {
+    background-color: rgba(18, 18, 22, 0.95) !important;
+}
+
 :-webkit-full-screen *[class*="backdrop-blur"] {
-    background-color: rgba(18, 18, 22, 0.92) !important;
+    background-color: rgba(18, 18, 22, 0.95) !important;
 }
 
-.kvideo-container.is-native-fullscreen *[class*="backdrop-blur"],
+.kvideo-container.is-native-fullscreen *[class*="backdrop-blur"] {
+    background-color: rgba(18, 18, 22, 0.95) !important;
+}
+
 .kvideo-container.is-fullscreen *[class*="backdrop-blur"] {
-    background-color: rgba(18, 18, 22, 0.92) !important;
+    background-color: rgba(18, 18, 22, 0.95) !important;
 }
 
 

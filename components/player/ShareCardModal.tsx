@@ -62,7 +62,7 @@ export function ShareCardModal({
   };
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in select-none">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/85 animate-fade-in select-none">
       <div className="relative w-full max-w-md bg-neutral-900/95 border border-white/15 rounded-3xl p-5 sm:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.8)] flex flex-col gap-4 text-white overflow-hidden">
         {/* 背景氛围流光 */}
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-red-600/20 rounded-full blur-3xl pointer-events-none" />

@@ -271,7 +271,7 @@ export function DesktopMoreMenu({
     const MenuContent = (
         <div
             ref={menuRef}
-            className={`absolute z-[2147483647] bg-[var(--glass-bg)] backdrop-blur-[25px] saturate-[180%] rounded-[var(--radius-2xl)] border border-[var(--glass-border)] shadow-[var(--shadow-md)] p-1.5 sm:p-2 w-fit ${isRotated ? 'min-w-[170px]' : 'min-w-[200px] sm:min-w-[240px]'} animate-in fade-in zoom-in-95 duration-200 overflow-y-auto`}
+            className={`absolute z-[2147483647] bg-[#141416]/95 rounded-[var(--radius-2xl)] border border-white/20 shadow-[0_12px_40px_rgba(0,0,0,0.8)] p-1.5 sm:p-2 w-fit ${isRotated ? 'min-w-[170px]' : 'min-w-[200px] sm:min-w-[240px]'} animate-in fade-in zoom-in-95 duration-200 overflow-y-auto`}
             style={{
                 ...(isRotated ? {
                     // In Rotated Mode:
@@ -412,7 +412,7 @@ export function DesktopMoreMenu({
                     {isAdFilterOpen && (
                         <>
                             <div className="fixed inset-0 z-10 cursor-default" onClick={() => setAdFilterOpen(false)} />
-                            <div className="absolute right-0 top-full mt-2 w-28 sm:w-32 bg-[var(--glass-bg)] backdrop-blur-[25px] saturate-[180%] border border-[var(--glass-border)] rounded-[var(--radius-2xl)] shadow-[var(--shadow-md)] p-1 overflow-hidden z-20 flex flex-col animate-in fade-in zoom-in-95 duration-200">
+                            <div className="absolute right-0 top-full mt-2 w-28 sm:w-32 bg-[#141416]/95 border border-white/20 rounded-[var(--radius-2xl)] shadow-[0_12px_40px_rgba(0,0,0,0.8)] p-1 overflow-hidden z-20 flex flex-col animate-in fade-in zoom-in-95 duration-200">
                                 {Object.entries(AD_FILTER_LABELS).map(([mode, label]) => (
                                     <button
                                         key={mode}
@@ -640,7 +640,7 @@ export function DesktopMoreMenu({
                 onClick={handleToggle}
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
-                className="group flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm transition-all duration-300 hover:scale-110 active:scale-95"
+                className="group flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#141416]/80 hover:bg-[#141416]/95 border border-white/15 transition-all duration-300 hover:scale-110 active:scale-95 text-white/90"
                 aria-label="更多选项"
                 title="更多选项"
             >

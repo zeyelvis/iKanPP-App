@@ -55,7 +55,7 @@ export function NextEpisodeOverlay({
       className="absolute bottom-20 right-6 z-40 max-w-sm pointer-events-auto select-none"
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="relative overflow-hidden rounded-2xl bg-black/90 backdrop-blur-2xl border border-white/20 p-4 shadow-[0_12px_40px_rgba(0,0,0,0.85)] text-white flex flex-col gap-3">
+      <div className="relative overflow-hidden rounded-2xl bg-[#141416]/95 border border-white/20 p-4 shadow-[0_12px_40px_rgba(0,0,0,0.85)] text-white flex flex-col gap-3">
         {/* 顶部标签与取消按钮 */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-xs font-bold text-red-500 tracking-wider uppercase">

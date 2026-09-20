@@ -83,7 +83,7 @@ for (const relPath of auxiliaryScripts) {
   }
 }
 
-// 5. 全屏硬件覆盖层与显卡防黑屏规范验证：杜绝跨浏览器伪类逗号合写失效，杜绝全屏组件包含 backdrop-blur
+// 5. 全屏硬件覆盖层与显卡防黑屏规范验证：杜绝跨浏览器伪类逗号合写失效，杜绝全屏组件包含 backdrop-blur 与同步重排死锁
 const videoCssPath = path.resolve('app/styles/video-player.css');
 if (fs.existsSync(videoCssPath)) {
   const cssContent = fs.readFileSync(videoCssPath, 'utf-8');
@@ -93,16 +93,42 @@ if (fs.existsSync(videoCssPath)) {
     cssContent.includes('.kvideo-container.is-native-fullscreen * {'),
     'video-player.css 必须独立声明 :fullscreen * 与 :-webkit-full-screen *，严禁跨引擎逗号合写导致整组规则被浏览器废弃'
   );
+  assert(
+    !/\.spinner-glass\s*\{[^}]*backdrop-filter/s.test(cssContent),
+    'video-player.css 的 .spinner-glass 旋转加载指示器严禁包含 backdrop-filter，防止全屏卡顿缓冲时瞬间触发显卡黑屏'
+  );
 }
 
-const desktopOverlayPath = path.resolve('components/player/desktop/DesktopOverlay.tsx');
-if (fs.existsSync(desktopOverlayPath)) {
-  const overlayContent = fs.readFileSync(desktopOverlayPath, 'utf-8');
+// 递归扫描 components/player/desktop 及相关全屏弹窗组件，杜绝任何 backdrop-blur 渗入
+const playerComponentFiles = [
+  'components/player/desktop/DesktopOverlay.tsx',
+  'components/player/desktop/DesktopSpeedMenu.tsx',
+  'components/player/desktop/DesktopMoreMenu.tsx',
+  'components/player/desktop/InPlayerEpisodesDrawer.tsx',
+  'components/player/desktop/InPlayerSourceDrawer.tsx',
+  'components/player/desktop/NextEpisodeOverlay.tsx',
+  'components/player/desktop/KeyboardShortcutsModal.tsx',
+  'components/player/ShareCardModal.tsx',
+];
+
+for (const relPath of playerComponentFiles) {
+  const fullPath = path.resolve(relPath);
+  if (fs.existsSync(fullPath)) {
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    assert(
+      !content.includes('backdrop-blur') && !content.includes('backdropFilter'),
+      `${relPath} 严禁包含 backdrop-blur 或 backdropFilter，全屏模式下必须使用高级纯色暗夜底色，杜绝 GPU Back-buffer 显存回读黑屏`
+    );
+  }
+}
+
+// 全屏控制器严禁同步触发强制重排 (void v.offsetHeight)
+const fullscreenHookPath = path.resolve('components/player/hooks/desktop/useFullscreenControls.ts');
+if (fs.existsSync(fullscreenHookPath)) {
+  const hookContent = fs.readFileSync(fullscreenHookPath, 'utf-8');
   assert(
-    !overlayContent.includes('backdrop-blur-md') &&
-    !overlayContent.includes('backdrop-blur-sm') &&
-    !overlayContent.includes('backdrop-blur-[25px]'),
-    'DesktopOverlay.tsx 全屏浮层与时钟组件严禁携带 backdrop-blur-* 类名，必须使用纯色高级底色，消除 GPU 硬件回读死锁'
+    !hookContent.includes('offsetHeight'),
+    'useFullscreenControls.ts 严禁在全屏切换事件中调用 offsetHeight 强行触发同步重排，杜绝显卡 Hardware Surface 交接时发生渲染死锁'
   );
 }
 

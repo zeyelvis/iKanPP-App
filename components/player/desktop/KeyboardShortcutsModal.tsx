@@ -38,14 +38,14 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsMod
 
   return (
     <div
-      className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-fade-in"
+      className="absolute inset-0 z-50 flex items-center justify-center bg-black/75 p-4 animate-fade-in"
       onClick={(e) => {
         e.stopPropagation();
         onClose();
       }}
     >
       <div
-        className="w-full max-w-md rounded-2xl bg-black/90 backdrop-blur-2xl border border-white/20 p-6 shadow-2xl text-white pointer-events-auto"
+        className="w-full max-w-md rounded-2xl bg-[#141416]/98 border border-white/20 p-6 shadow-2xl text-white pointer-events-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between pb-4 border-b border-white/10">
