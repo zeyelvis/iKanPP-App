@@ -1599,9 +1599,9 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "id": "iyf_hero_movie_1",
         "title": "特立独行",
         "rate": "8.8",
-        "cover": "https://static.iyf.tv/upload/video/202609041101050133022.gif",
-        "backdrop": "https://static.iyf.tv/upload/user/202609051300230076622.jpg",
-        "description": "《特立独行》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
+        "cover": "https://image.tmdb.org/t/p/w342/dWtKXfN97AMW5n3S6QoUVUMCU2S.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
+        "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
         "year": "2026",
         "types": [
             "热门",
@@ -1617,8 +1617,8 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "id": "iyf_hero_movie_2",
         "title": "给阿嬷的情书",
         "rate": "8.8",
-        "cover": "https://static.iyf.tv/upload/video/202608310955385526438.gif",
-        "backdrop": "https://static.iyf.tv/upload/user/202608311427362725454.jpg",
+        "cover": "https://image.tmdb.org/t/p/w342/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/dzWGnIAjUafpmY57F6vnm44FwWB.jpg",
         "description": "《给阿嬷的情书》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
         "year": "2026",
         "types": [
