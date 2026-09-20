@@ -728,7 +728,7 @@ body.tv-mode [class*="Pagination"] button {
     font-size: 1.2rem !important;
 }
 
-/* --- 21. 爱壹帆（iyf.tv）1:1 轮播巨幕经典三栏布局控制 --- */
+/* --- 21. 经典三栏通栏巨幕布局控制 --- */
 .iyf-hero-bar {
     display: flex;
     flex-direction: column;

@@ -48,10 +48,14 @@ async function main() {
 
   let match;
   while ((match = titleRegex.exec(content)) !== null && items.length < 15) {
+    let safeCover = match[3];
+    if (safeCover.includes('iyf.tv')) {
+      safeCover = `https://www.ikanpp.com/api/img-proxy?url=${encodeURIComponent(safeCover)}`;
+    }
     items.push({
       title: match[1],
       slug: match[2],
-      cover: match[3],
+      cover: safeCover,
       type: match[4],
       updateBadge: match[5] || '全集',
       qualityBadge: match[6] || '1080P/4K',
@@ -130,8 +134,16 @@ ${itemsText}
     throw new Error('AI 返回内容为空');
   }
 
+  // 终极防线：出口全量清洗，100% 抹杀任何可能逃逸的第三方域名与竞品品牌
+  let cleanMarkdown = markdown.replace(/https?:\/\/static\.iyf\.tv\/[^\s)"]+/g, (matched) => {
+    return `https://www.ikanpp.com/api/img-proxy?url=${encodeURIComponent(matched)}`;
+  });
+  cleanMarkdown = cleanMarkdown.replace(/static\.iyf\.tv/gi, 'img.ikanpp.com');
+  cleanMarkdown = cleanMarkdown.replace(/\biyf\.tv\b/gi, 'ikanpp.com');
+  cleanMarkdown = cleanMarkdown.replace(/爱壹帆/g, 'iKanPP');
+
   const outputPath = path.join(projectRoot, 'docs/seo/latest-parasite-article.md');
-  fs.writeFileSync(outputPath, markdown, 'utf8');
+  fs.writeFileSync(outputPath, cleanMarkdown, 'utf8');
 
   console.log(`\n🎉 深度爆款专栏文章生成成功！`);
   console.log(`📁 已写入文件: ${outputPath}`);

@@ -109,7 +109,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609041101050133022.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609051300230076622.jpg",
-                "description": "《特立独行》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
+                "description": "《特立独行》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -127,7 +127,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202608310955385526438.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202608311427362725454.jpg",
-                "description": "《给阿嬷的情书》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
+                "description": "《给阿嬷的情书》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -145,7 +145,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202608172352485267834.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202608181642524253486.jpg",
-                "description": "《玩具总动员5》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·动画。",
+                "description": "《玩具总动员5》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：电影·动画。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -163,7 +163,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202607241043194354365.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202607241720422033874.jpg",
-                "description": "《寒战1994》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
+                "description": "《寒战1994》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -181,7 +181,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202606301118241864513.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202606301708240855863.jpg",
-                "description": "《穿普拉达的女王2》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
+                "description": "《穿普拉达的女王2》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -199,7 +199,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202606121444314431704.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202606140101110171431.jpg",
-                "description": "《我的妈耶》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
+                "description": "《我的妈耶》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -217,7 +217,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202606102054405426178.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202606140100400053007.jpg",
-                "description": "《镖人：风起大漠》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·动作。",
+                "description": "《镖人：风起大漠》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：电影·动作。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -235,7 +235,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202606090333563351804.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202606091956235603344.jpg",
-                "description": "《迈克尔·杰克逊：巨星之路》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
+                "description": "《迈克尔·杰克逊：巨星之路》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -1879,7 +1879,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
                 "backdrop": "https://static.iyf.tv/upload/user/202609171141024107110.jpg",
-                "description": "《一瓯春》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至12集 | 共30集。",
+                "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：更新至12集 | 共30集。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -1896,7 +1896,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609111404160476768.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609111848394812246.jpg",
-                "description": "《兰香如故》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至22集 | 共47集。",
+                "description": "《兰香如故》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：更新至22集 | 共47集。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -1913,7 +1913,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609100710231001184.jpg",
                 "backdrop": "https://static.iyf.tv/upload/user/202609101250115060466.jpg",
-                "description": "《冬城猎凶》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：18集全。",
+                "description": "《冬城猎凶》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：18集全。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -1930,7 +1930,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609091238023882533.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609100713461377387.jpg",
-                "description": "《深渊无间》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至13集 | 共16集。",
+                "description": "《深渊无间》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：更新至13集 | 共16集。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -1947,7 +1947,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609061321182110656.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609062012101288405.jpg",
-                "description": "《交锋》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至32集 | 共40集。",
+                "description": "《交锋》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：更新至32集 | 共40集。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -1964,7 +1964,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609031658525831647.jpg",
                 "backdrop": "https://static.iyf.tv/upload/user/202609031729152940543.jpg",
-                "description": "《生逢其时》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至23集 | 共26集。",
+                "description": "《生逢其时》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：更新至23集 | 共26集。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -1981,7 +1981,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202608310534563487003.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202608311450075058045.jpg",
-                "description": "《重案六组:消失的警号》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至20集 | 共26集。",
+                "description": "《重案六组:消失的警号》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：更新至20集 | 共26集。",
                 "year": "2026",
                 "types": [
                         "热门",
@@ -1998,7 +1998,7 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202608260600250038853.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202608262134513470253.jpg",
-                "description": "《早春晴朗》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：24集全。",
+                "description": "《早春晴朗》由 iKanPP 官方编辑精选推荐，全集高清极速秒播。当前状态：24集全。",
                 "year": "2026",
                 "types": [
                         "热门",

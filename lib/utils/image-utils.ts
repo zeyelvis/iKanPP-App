@@ -94,6 +94,7 @@ export function getOptimizedImageUrl(
 
   const isTmdb = url.includes('image.tmdb.org') || url.includes('tmdb.org');
   const isDouban = url.includes('doubanio.com') || url.includes('douban.com');
+  const isIyf = url.includes('iyf.tv');
 
   // 3. 处理 TMDB 资源
   if (isTmdb) {
@@ -111,8 +112,8 @@ export function getOptimizedImageUrl(
     return resizedTmdbUrl;
   }
 
-  // 4. 处理豆瓣资源 (防盗链强限制，全球统一走 img-proxy)
-  if (isDouban) {
+  // 4. 处理防盗链与第三方源（豆瓣、爱壹帆等：防防盗链并杜绝客户端暴露第三方源站，全球统一走 img-proxy 接入 R2 镜像）
+  if (isDouban || isIyf) {
     const noFallbackQuery = options?.noFallback ? '&nofallback=1' : '';
     return `/api/img-proxy?url=${encodeURIComponent(url)}&w=${targetWidth}${noFallbackQuery}`;
   }

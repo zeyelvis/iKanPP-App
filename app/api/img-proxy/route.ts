@@ -85,6 +85,8 @@ export async function GET(request: NextRequest) {
                 const parsedUrl = new URL(candidate);
                 if (candidate.includes('douban')) {
                     refererHeader = 'https://movie.douban.com/';
+                } else if (candidate.includes('iyf')) {
+                    refererHeader = 'https://www.iyf.tv/';
                 } else {
                     refererHeader = `${parsedUrl.protocol}//${parsedUrl.host}/`;
                 }

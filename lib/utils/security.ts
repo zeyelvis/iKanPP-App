@@ -20,6 +20,8 @@ const DOUBAN_IMAGE_WHITELIST = [
     'themoviedb.org',
     'image.tmdb.org',
     'api.themoviedb.org',
+    'static.iyf.tv',
+    'iyf.tv',
 ];
 
 /** 禁止访问的内网 IP 段与危险主机名 */

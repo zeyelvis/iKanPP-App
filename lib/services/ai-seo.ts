@@ -246,7 +246,19 @@ export async function generateAiParasiteArticle(
 5. 解决痛点：重点强调“海外免翻墙极速直连”、“4K 超清 0 缓冲”、“100% 拒绝任何低俗博彩弹窗广告”的影院级体验；
 6. 严禁生成空洞模板废话，每部剧要有真实的亮点和剧情钩子，吸引读者一口气读完并点击观看。`;
 
-  const itemsText = items.map((it, idx) => `
+  // 🌟 品牌隔离与 0 外链铁律：彻底阻断任何第三方域名（如 iyf.tv）泄露，全部转换为 iKanPP 同域安全镜像
+  const sanitizedItems = items.map((it) => {
+    let safeCover = it.coverUrl || '';
+    if (safeCover.includes('iyf.tv')) {
+      safeCover = `https://www.ikanpp.com/api/img-proxy?url=${encodeURIComponent(safeCover)}`;
+    }
+    return {
+      ...it,
+      coverUrl: safeCover,
+    };
+  });
+
+  const itemsText = sanitizedItems.map((it, idx) => `
 ${idx + 1}. 《${it.title}》
 - 类型: ${it.type === 'tv' ? '电视剧/网剧' : '电影'}
 - 状态: ${it.qualityBadge || '1080P/4K'} · ${it.updateBadge || '全集'}
@@ -261,7 +273,7 @@ ${itemsText}
 
 请直接输出 Markdown 全文（包含主标题 #、引言、每部电影/剧集的图文评析、以及结语），无需额外的前后寒暄说明。`;
 
-  const markdown = await callAiCompletion({
+  const rawMarkdown = await callAiCompletion({
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt },
@@ -271,12 +283,19 @@ ${itemsText}
     maxTokens: 4000,
   });
 
-  const firstLine = markdown.split('\n')[0].replace(/^#+\s*/, '').trim();
-  const articleTitle = firstLine || `【2026最新片单】海外免翻墙免费看国产剧与院线大片指南（${today}实时更新）`;
+  // 终极防线：出口全量正则清洗，100% 抹杀任何可能逃逸的第三方域名
+  let cleanMarkdown = rawMarkdown.replace(/https?:\/\/static\.iyf\.tv\/[^\s)"]+/g, (matched) => {
+    return `https://www.ikanpp.com/api/img-proxy?url=${encodeURIComponent(matched)}`;
+  });
+  cleanMarkdown = cleanMarkdown.replace(/static\.iyf\.tv/gi, 'img.ikanpp.com');
+  cleanMarkdown = cleanMarkdown.replace(/\biyf\.tv\b/gi, 'ikanpp.com');
+
+  const titleMatch = cleanMarkdown.match(/^#\s+(.+)$/m);
+  const articleTitle = titleMatch ? titleMatch[1].trim() : `2026年最新爆款影视指南（${today}更新）`;
 
   return {
     title: articleTitle,
-    markdown,
+    markdown: cleanMarkdown,
     modelUsed: model,
   };
 }

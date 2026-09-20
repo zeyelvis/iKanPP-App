@@ -38,7 +38,15 @@ export function getR2KeyFromUrl(rawUrl: string, requestedWidth: number = 342): s
       return `douban/${widthPrefix}/${filename}`;
     }
 
-    // 3. 其它合法外部源
+    // 3. 第三方源（iyf.tv等）静态物料标准化映射（杜绝暴露外部域名前缀）
+    if (parsed.hostname.includes('iyf.tv')) {
+      const match = parsed.pathname.match(/([^/]+\.(jpg|jpeg|png|webp|avif|gif))$/i);
+      const filename = match ? match[1] : parsed.pathname.split('/').pop() || 'cover.jpg';
+      const widthPrefix = requestedWidth > 0 ? `w${requestedWidth}` : 'w342';
+      return `iyf/${widthPrefix}/${filename}`;
+    }
+
+    // 4. 其它合法外部源
     const cleanPath = parsed.pathname.replace(/[^a-zA-Z0-9_.-]/g, '_').slice(-64);
     return `misc/w${requestedWidth}/${cleanPath}`;
   } catch {

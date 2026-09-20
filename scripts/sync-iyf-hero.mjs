@@ -154,7 +154,7 @@ async function enrichMovieData(slideItem, index, forceType = null) {
   const cover = tmdbData?.poster || slideItem.verticalImg || slideItem.image || '';
   const rate = tmdbData?.rate || '8.8';
   const year = tmdbData?.year || '2026';
-  const description = tmdbData?.overview || `《${title}》由爱壹帆实时高分精选推荐，全集高清极速秒播。${subTitle ? `当前状态：${subTitle}。` : ''}`;
+  const description = tmdbData?.overview || `《${title}》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。${subTitle ? `当前状态：${subTitle}。` : ''}`;
 
   // 提取分类标签
   let types = ['热门'];
