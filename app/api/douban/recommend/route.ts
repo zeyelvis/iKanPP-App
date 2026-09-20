@@ -77,7 +77,7 @@ async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number,
   }
 }
 
-const TMDB_API_KEY = process.env.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957';
+const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 
 /**

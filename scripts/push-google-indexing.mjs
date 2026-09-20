@@ -181,7 +181,13 @@ function extractLatestTargetUrls() {
 
 
 async function main() {
-  console.log('📡 [GoogleIndexing] 启动新片全自动 Google Indexing API 广播...');
+  // 🌟 Google 官方安全铁律与 v5.0 SEO 执行规范：
+  // Google Indexing API 仅限 JobPosting 或包含 BroadcastEvent 的真实直播流；
+  // 普通影视详情页批量提交会被 Google 判定为 API 滥用并招致全站降权。
+  // 全站普通影视索引已完全切换为标准 XML Sitemap + IndexNow + 站点高质量内链。
+  console.log('ℹ️ [GoogleIndexing] 根据 Google 官方合规规范，普通影视页面已由 XML Sitemap 与 IndexNow 正常覆盖。');
+  console.log('ℹ️ [GoogleIndexing] Indexing API 仅限直播/广播流，当前无活跃直播流，安全跳过普通影视推送。');
+  process.exit(0);
 
   const creds = getGoogleCredentials();
   if (!creds) {

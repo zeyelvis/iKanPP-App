@@ -40,11 +40,12 @@ jobs:
 
       - name: Execute Full Auto-Update & SEO Pipeline
         env:
-          CF_KV_ACCOUNT_ID: ${{ secrets.CF_KV_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a' }}
-          CF_KV_NAMESPACE_ID: ${{ secrets.CF_KV_NAMESPACE_ID || '42311924427747deaf00981d99d58998' }}
-          CF_KV_API_KEY: ${{ secrets.CF_KV_API_KEY || 'cfk_L8MzQDjTswTK4jBtvJjmcKjEnxTQ1dKNhzNyn4dQa33221aa' }}
-          CF_KV_EMAIL: ${{ secrets.CF_KV_EMAIL || 'zeyelvis@gmail.com' }}
-          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957' }}
+          CF_KV_ACCOUNT_ID: ${{ secrets.CF_KV_ACCOUNT_ID }}
+          CF_KV_NAMESPACE_ID: ${{ secrets.CF_KV_NAMESPACE_ID }}
+          CF_KV_API_KEY: ${{ secrets.CF_KV_API_KEY || secrets.CLOUDFLARE_AUTH_KEY }}
+          CF_KV_EMAIL: ${{ secrets.CF_KV_EMAIL || secrets.CLOUDFLARE_AUTH_EMAIL }}
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+
         run: |
           TARGET="${{ github.event.inputs.channel || 'all_channels' }}"
           echo "🚀 [1/6] 爱壹帆专区轮播与速报同步，目标板块: $TARGET..."

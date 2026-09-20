@@ -3,13 +3,12 @@ import { getEntityByTmdb, getEntityByTitle, getNextEntitySeq, saveEntity } from 
 import { fetchTMDBDetails } from '@/lib/services/entity-enrichment';
 import { formatEntityId, generateSlug, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
 import { TitleEntity } from '@/lib/types/entity';
-import { batchPublishGoogleIndexing } from '@/lib/services/google-indexing';
 
 export const runtime = 'edge';
 
-const TMDB_API_KEY = process.env.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957';
+const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
-const CRON_SECRET = process.env.CRON_SECRET || 'ikanpp-cron-sync-secret';
+const CRON_SECRET = process.env.CRON_SECRET;
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 
 interface TMDBChangeItem {
@@ -21,7 +20,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get('secret') || request.headers.get('x-cron-secret');
 
-  if (secret !== CRON_SECRET) {
+  if (!CRON_SECRET || secret !== CRON_SECRET) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -203,7 +202,7 @@ export async function GET(request: Request) {
     }
   }
 
-  // 若有新实体入库，立即触发 IndexNow 与 Google Indexing 推送
+  // 若有新实体入库，立即触发 IndexNow (Bing / Yandex 等合规搜索引擎即时收录网络)
   if (newUrls.length > 0) {
     try {
       // 1. IndexNow (Bing / Yandex)
@@ -213,10 +212,7 @@ export async function GET(request: Request) {
         body: JSON.stringify({ urls: newUrls }),
       }).catch(() => {});
 
-      // 2. Google Indexing API
-      batchPublishGoogleIndexing(newUrls, 30).catch(() => {});
-
-      // 3. Bing Sitemap Ping
+      // 2. Bing Sitemap Ping
       const sitemapUrl = encodeURIComponent(`${BASE_URL}/sitemap.xml`);
       fetch(`https://www.bing.com/ping?sitemap=${sitemapUrl}`).catch(() => {});
     } catch {

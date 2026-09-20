@@ -2,7 +2,7 @@ import { TitleEntity } from '@/lib/types/entity';
 import { generateSlug, formatEntityId, normalizeTitle, isCleanChineseTitle, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
 import { getEntityByTitle, getEntityByTmdb, getNextEntitySeq, saveEntity, setPersonEntitiesIndex, markPersonEnriched } from '@/lib/services/entity-kv';
 
-const TMDB_API_KEY = process.env.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957';
+const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 
 interface TMDBDetailResponse {

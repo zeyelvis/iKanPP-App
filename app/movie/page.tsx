@@ -36,8 +36,10 @@ export default function MoviePage() {
     <>
       <JsonLd data={breadcrumbs} />
       <ItemListJsonLd name="热门电影精选" items={topMovies} />
+      <h1 className="sr-only">电影大厅 - 4K 院线大片 & 豆瓣高分神作在线观看 | iKanPP 爱看片片</h1>
       <MovieClient />
     </>
   );
+
 }
 

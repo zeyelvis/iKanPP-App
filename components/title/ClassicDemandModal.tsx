@@ -15,6 +15,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { TitleEntity } from '@/lib/types/entity';
+import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 interface RelatedTitleItem {
   entityId: string;
@@ -297,7 +298,7 @@ export function ClassicDemandModal({
                 {relatedTitles.slice(0, 3).map((item) => (
                   <Link
                     key={item.entityId}
-                    href={`/title/${item.entityId}-${item.slug}`}
+                    href={getTitleCanonicalHref(item)}
                     onClick={onClose}
                     className="group block bg-white/[0.02] border border-white/10 hover:border-red-500/50 rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                   >

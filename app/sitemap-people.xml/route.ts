@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getKnownPeople } from '@/lib/services/entity-kv';
+import { getKnownPeople, getEntitiesByDirector, getEntitiesByActor } from '@/lib/services/entity-kv';
 
 export const runtime = 'edge';
 
@@ -19,27 +19,42 @@ export async function GET() {
   const { directors, actors } = await getKnownPeople();
   const urlElements: string[] = [];
 
+  // 🌟 规范第 7.2 节与第 21.4 节：人物收录门槛（在库影视作品数 >= 1，0 空人物页坚决不上地图）
+  const validDirectors = (
+    await Promise.all(
+      directors.map(async (d) => {
+        if (!d) return null;
+        const works = await getEntitiesByDirector(d, 1);
+        return works.length > 0 ? d : null;
+      })
+    )
+  ).filter((d): d is string => Boolean(d));
+
+  const validActors = (
+    await Promise.all(
+      actors.map(async (a) => {
+        if (!a) return null;
+        const works = await getEntitiesByActor(a, 1);
+        return works.length > 0 ? a : null;
+      })
+    )
+  ).filter((a): a is string => Boolean(a));
+
   // 导演专栏
-  for (const director of directors) {
-    if (!director) continue;
+  for (const director of validDirectors) {
     const fullUrl = `${BASE_URL}/director/${encodeURIComponent(director)}`;
     urlElements.push(`  <url>
     <loc>${escapeXml(fullUrl)}</loc>
     <lastmod>${lastModDate}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
   </url>`);
   }
 
   // 演员专栏
-  for (const actor of actors) {
-    if (!actor) continue;
+  for (const actor of validActors) {
     const fullUrl = `${BASE_URL}/actor/${encodeURIComponent(actor)}`;
     urlElements.push(`  <url>
     <loc>${escapeXml(fullUrl)}</loc>
     <lastmod>${lastModDate}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
   </url>`);
   }
 

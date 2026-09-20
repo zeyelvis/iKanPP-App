@@ -20,6 +20,8 @@ import {
   Radio,
 } from 'lucide-react';
 import { TitleEntity } from '@/lib/types/entity';
+import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
+import { isEntityIndexable } from '@/lib/data/seo-rules/seo-keyword-system';
 
 export default function AdminEntitiesPage() {
   const [items, setItems] = useState<TitleEntity[]>([]);
@@ -32,6 +34,7 @@ export default function AdminEntitiesPage() {
   const [search, setSearch] = useState('');
   const [channel, setChannel] = useState('all');
   const [scoreRange, setScoreRange] = useState('all');
+  const [indexFilter, setIndexFilter] = useState<'all' | 'indexable' | 'thin'>('all');
   const [sort, setSort] = useState('latest');
 
   // 批量勾选
@@ -270,6 +273,17 @@ export default function AdminEntitiesPage() {
             <option value="needsWork">待优化 (&lt;60分)</option>
           </select>
 
+          {/* 收录准入门禁 */}
+          <select
+            value={indexFilter}
+            onChange={(e) => setIndexFilter(e.target.value as any)}
+            className="px-3 py-2.5 rounded-xl bg-[#12121A] border border-white/10 text-xs text-slate-300 focus:outline-hidden focus:border-red-500/50"
+          >
+            <option value="all">收录准入状态 (全部)</option>
+            <option value="indexable">🟢 准入收录 (Indexable)</option>
+            <option value="thin">🟡 薄内容保护 (noindex)</option>
+          </select>
+
           {/* 排序方式 */}
           <select
             value={sort}
@@ -340,6 +354,7 @@ export default function AdminEntitiesPage() {
                 <th className="py-3 px-3 w-20">分类</th>
                 <th className="py-3 px-3 w-20">年份</th>
                 <th className="py-3 px-3 w-20">评分</th>
+                <th className="py-3 px-3 w-28">收录准入</th>
                 <th className="py-3 px-3 w-24">SEO 质量分</th>
                 <th className="py-3 px-4 w-32 text-right">操作</th>
               </tr>
@@ -348,7 +363,7 @@ export default function AdminEntitiesPage() {
             <tbody className="divide-y divide-white/5">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="py-16 text-center text-slate-400">
+                  <td colSpan={9} className="py-16 text-center text-slate-400">
                     <div className="inline-flex items-center gap-2">
                       <RefreshCw className="w-4 h-4 animate-spin text-red-500" />
                       <span>正在加载实体数据...</span>
@@ -357,12 +372,18 @@ export default function AdminEntitiesPage() {
                 </tr>
               ) : items.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-16 text-center text-slate-400">
+                  <td colSpan={9} className="py-16 text-center text-slate-400">
                     未检索到符合条件的影视实体。请调整关键词或清除筛选条件。
                   </td>
                 </tr>
               ) : (
-                items.map((item) => {
+                items
+                  .filter((item) => {
+                    if (indexFilter === 'indexable') return isEntityIndexable(item);
+                    if (indexFilter === 'thin') return !isEntityIndexable(item);
+                    return true;
+                  })
+                  .map((item) => {
                   const isSelected = selectedIds.includes(item.entityId);
                   const score = item.seoScore ?? 75;
                   const scoreColor =
@@ -420,7 +441,7 @@ export default function AdminEntitiesPage() {
                               </Link>
                             </div>
                             <div className="text-[11px] font-mono text-slate-400 truncate">
-                              /title/{item.entityId}-{item.slug}
+                              {getTitleCanonicalHref(item)}
                             </div>
                           </div>
                         </div>
@@ -441,6 +462,20 @@ export default function AdminEntitiesPage() {
                       </td>
 
                       <td className="py-3 px-3">
+                        {isEntityIndexable(item) ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                            <CheckCircle2 className="w-3 h-3" />
+                            <span>准入收录</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono" title="信息量不足，输出保护性 noindex 保护爬取预算">
+                            <AlertCircle className="w-3 h-3" />
+                            <span>薄内容保护</span>
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="py-3 px-3">
                         <span
                           className={`px-2 py-0.5 rounded-full border text-[11px] font-mono font-semibold ${scoreColor}`}
                         >
@@ -451,7 +486,7 @@ export default function AdminEntitiesPage() {
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <Link
-                            href={`/title/${item.entityId}-${item.slug}`}
+                            href={getTitleCanonicalHref(item)}
                             target="_blank"
                             className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
                             title="前台详情页预览"

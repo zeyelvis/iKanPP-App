@@ -36,7 +36,9 @@ export default function DocumentaryPage() {
     <>
       <JsonLd data={breadcrumbs} />
       <ItemListJsonLd name="高分经典纪录片精选" items={topDocs} />
+      <h1 className="sr-only">纪录片大厅 - 豆瓣高分神作 & BBC/国家地理巨制在线观看 | iKanPP 爱看片片</h1>
       <DocumentaryClient />
     </>
   );
+
 }

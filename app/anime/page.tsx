@@ -30,8 +30,10 @@ export default function AnimePage() {
     <>
       <JsonLd data={breadcrumbs} />
       <ItemListJsonLd name="热门动漫精选" items={topAnime} />
+      <h1 className="sr-only">动漫专区 - 2026 最新热门日本动漫与国漫在线观看 | iKanPP 爱看片片</h1>
       <AnimeClient />
     </>
   );
+
 }
 

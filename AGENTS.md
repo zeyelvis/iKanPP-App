@@ -170,8 +170,13 @@
 3. **详情页路由解析 ID 优先与权威别名路由**：
    - `/title/[slug]` 解析必须遵循：显式别名映射（`slug:*`）最高优先 ➔ 实体 ID（`ik\d{6}`）物理主键优先 ➔ 纯中文标题检索 ➔ TMDB 在线冷门自愈。
    - 严禁跳过 ID 拿 URL 尾部的英文短词反查同名其他剧集（如误把 `the-bill` 查成英剧）。
-4. **SEO 规范 URL 301 永久重定向**：
+4. **SEO 规范 URL 301/308 永久重定向**：
    - 任何历史非规范 URL（包括旧版别名、纯 ID、历史带连字符 URL），一旦解析出正确实体且当前 slug 与规范 `canonicalSlug` 不一致，必须 100% 触发 301/308 永久重定向，将搜索引擎与外链权重全量转移到标准规范 URL。
+5. **候选证据评分与长期去重铁律 (Entity Resolver & Dedupe Spec)**：
+   - **外部权威 ID 绝对优先**：TMDB(type, id) 与豆瓣 ID 一致者判定为同一实体（`decision: same`，置信度 1.0）；
+   - **多维证据加权评分**：当无权威外部 ID 时，统一由 `lib/server/entity-resolver.ts` 计算复合证据分（标题 35% + 原名 20% + 年代 15% + 导演 15% + 主演 10% + 片长 5%）。综合评分 $\ge 0.88$ 判为 `same`，$\le 0.55$ 判为 `different`，中间状态进入 `review` 隔离队列；严禁单纯按同名和年份差 $\le 1$ 盲目强行合并不同影视作品；
+   - **确定性 Winner 选举与幂等性**：依据规范 5.2 节的 6 级确定性规则（外链权威度 ➔ 外部 ID 完整度 ➔ 内容字段丰富度 ➔ 早期稳定 ID ➔ 字典序平局保底）选出 winner，确保去重作业 100% 幂等；
+   - **四阶段安全去重闭环**：历史重复条目治理必须经由 `scripts/seo/dedupe-backfill.mjs` 依次执行 `scan` 扫描 ➔ `plan` 规划 ➔ `apply` 确认应用 ➔ `verify` 验证闭环，生成单跳 308 重定向，杜绝循环跳转与误删。
 
 ---
 
@@ -376,7 +381,7 @@ iKanPP 全域流媒体片单调度中枢必须永久恪守超越爱壹帆的独�
 - **SEO 权重永久沉淀**：页面规范 URL 恒定不变，院线首发期积累的 Google 自然搜索排名、外链和用户播放历史 100% 永久保留。
 
 ### 5. 全流程 100% 无人值守自动化
-- 挂载于 `.github/workflows/sync-iyf-channels.yml`，**每小时整点全自动巡检（`0 * * * *`）**，自动触发“全网嗅探 ➔ 4K建档 ➔ 物理置顶 ➔ IndexNow & Google Indexing 闪电广播”闭环。
+- 挂载于 `.github/workflows/sync-iyf-channels.yml`，**每小时整点全自动巡检（`0 * * * *`）**，自动触发“全网嗅探 ➔ 4K建档 ➔ 物理置顶 ➔ IndexNow 增量广播”闭环。
 
 ---
 
@@ -404,6 +409,30 @@ iKanPP 全域流媒体片单调度中枢必须永久恪守超越爱壹帆的独�
 
 ### 4. 真实全量片库总数基线 (Authentic Total Metric)
 - 分类大厅返回的 `total` 总数，必须严格以底层对应频道全量有效实体数（如电影专区 11,500+ 部、全站 68,500+ 部）为基准，坚决杜绝因截取倒排索引切片而将总数误标为 800 或 1000 部。
+
+---
+
+## 19. 白帽真实性、D1 权威控制与主动广播铁律 (White-Hat SEO & D1 Authority Spec)
+
+全站 SEO 体系与数据管理中枢必须永久恪守以下白帽合规与权威存储工程基线，坚决杜绝任何引发搜索引擎降权或数据竞争的违规操作：
+
+### 1. 结构化数据与可见事实真实性铁律 (Truth Parity Guard)
+- **单一规范 `@graph`**：详情页仅输出包含 `WebSite`、`WebPage`、`Movie`/`TVSeries` 与 `BreadcrumbList` 的单一规范 `@graph`；
+- **伪造数据零容忍**：严禁伪造 `1520` 等固定评分人数；严禁机械注入伪造的 `FAQPage`；严禁在无内嵌可播放视频的页面输出 `VideoObject`；
+- **可见事实一致**：AI Overview 胶囊与详情页文案中，未探测的数据（如年份、评分、画质、地区）必须直接隐藏或优雅省略，绝对禁止写死默认值（如 `2024`、`8.5`、`4K超清`、`免VIP`）或虚假宣称。
+
+### 2. 索引控制与 Robots 穿透感知铁律 (Crawling & Indexing Spec)
+- **`/player` 穿透感知**：播放器页面输出 `robots: { index: false, follow: false }`；`robots.txt` 必须放行 `/player`，确保爬虫能正常读取并遵守 `noindex` 指令，杜绝索引黑盒；
+- **薄内容与空人物页绝对隔离**：收录作品数为 0 的演职员专栏（`/actor/*`、`/director/*`）及分类题材页（`/genre/*`）必须严格输出 `noindex`；`sitemap-people.xml` 与 `sitemap-genres.xml` 必须执行在库作品数 $\ge 1$ 门禁，实现“0 空页面入地图”。
+
+### 3. D1 强一致权威层与 Edge KV 只读投影铁律 (D1 Authority & Edge Read Spec)
+- **权威真理源**：实体主数据、外部权威 ID 映射、演职员关系与事实断言统一由 Cloudflare D1 关系型数据库（`db/schema.sql`）作为唯一真理源，负责全局 ID 分配与强一致性；
+- **KV 仅作只读投影**：Cloudflare KV 严格作为 Edge 端高速只读缓存，禁止在 KV 中执行并发原子自增或全局大数组读改写；
+- **实质内容哈希**：由 `PublishProjectionService` 计算 64 位 SHA-256 内容哈希，仅当实质性内容变更时方可触发增量发布与 sitemap `lastmod` 刷新。
+
+### 4. 搜索引擎广播安全合规铁律 (Push Safety Spec)
+- **普通影视停用 Google Indexing API**：根据 Google 官方政策，Indexing API 仅限招聘与直播流，普通影视 URL 100% 停用，服务端硬锁阻断；
+- **IndexNow POST 安全鉴权**：IndexNow 路由彻底封禁 GET 方法的外部推送副作用，仅允许携带 `CRON_SECRET` Bearer Token 的受控 POST 请求进行增量广播。
 
 
 

@@ -15,7 +15,7 @@ import path from 'path';
  * 7. 形成「全网采集 ➔ 自动入库 ➔ 秒级提交搜索引擎」的无人值守 SEO 闭环
  */
 
-const TMDB_API_KEY = '82eaf0e14803590730e45c2123c90957';
+const TMDB_API_KEY = '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const HOST = 'www.ikanpp.com';
 const BASE_URL = `https://${HOST}`;

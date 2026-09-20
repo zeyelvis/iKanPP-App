@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Star, Film, ArrowLeft } from 'lucide-react';
 import { getGenreBySlug, GENRE_MAP } from '@/lib/data/genres';
 import { getEntitiesByGenre } from '@/lib/services/entity-kv';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { Navbar } from '@/components/layout/Navbar';
 
@@ -29,8 +30,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const title = `${genre.name}片大全 - 免费高清在线观看 | iKanPP 爱看片片`;
-  const description = `iKanPP 汇聚全网最新高分${genre.name}影视大全。${genre.desc}，多源秒播，海外华人免翻墙极速超清直连播放。`;
+  // 检查收录数量，薄内容输出 noindex
+  const entities = await getEntitiesByGenre(genre.name, 12);
+  if (entities.length === 0) {
+    return {
+      title: `${genre.name}片大全 - iKanPP 爱看片片`,
+      description: `查看${genre.name}类影视作品精选档案。`,
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const title = `${genre.name}片大全 - 热门高分影视作品精选 | iKanPP 爱看片片`;
+  const description = `iKanPP 汇聚热门高分${genre.name}影视作品精选。${genre.desc}，共收录精选影视档案，支持在线极速直连播放。`;
   const canonicalUrl = `${BASE_URL}/genre/${genre.slug}`;
 
   return {
@@ -67,7 +78,7 @@ export default async function GenrePage({ params }: Props) {
 
   const itemList = entities.map((e, idx) => ({
     position: idx + 1,
-    url: `${BASE_URL}/title/${e.entityId}-${e.slug}`,
+    url: `${BASE_URL}${e.canonicalSlug ? `/title/${e.canonicalSlug}` : getTitleCanonicalHref(e)}`,
     name: e.title,
     image: e.cover,
   }));
@@ -146,43 +157,46 @@ export default async function GenrePage({ params }: Props) {
         {/* 影视卡片网格（直通 /title/ 实体详情页） */}
         {entities.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
-            {entities.map(item => (
-              <Link
-                key={item.entityId}
-                href={`/title/${item.entityId}-${item.slug}`}
-                className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-200 hover:-translate-y-1"
-              >
-                <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
-                  {item.cover ? (
-                    <Image
-                      src={item.cover}
-                      alt={item.title}
-                      fill
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white/20">
-                      <Film className="w-8 h-8" />
-                    </div>
-                  )}
-                  {item.rate && (
-                    <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-black/70 text-amber-400 text-xs font-bold flex items-center gap-0.5">
-                      <Star className="w-3 h-3 fill-amber-400" />
-                      {item.rate}
-                    </div>
-                  )}
-                </div>
-                <div className="p-2.5">
-                  <h2 className="font-semibold text-sm text-white/90 truncate group-hover:text-red-400 transition-colors">
-                    {item.title}
-                  </h2>
-                  <p className="text-xs text-white/40 mt-0.5">
-                    {item.year || '2024'} · {item.type === 'tv' ? '电视剧' : '电影'}
-                  </p>
-                </div>
-              </Link>
-            ))}
+            {entities.map(item => {
+              const targetHref = item.canonicalSlug ? `/title/${item.canonicalSlug}` : getTitleCanonicalHref(item);
+              return (
+                <Link
+                  key={item.entityId}
+                  href={targetHref}
+                  className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-200 hover:-translate-y-1"
+                >
+                  <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
+                    {item.cover ? (
+                      <Image
+                        src={item.cover}
+                        alt={item.title}
+                        fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-white/20">
+                        <Film className="w-8 h-8" />
+                      </div>
+                    )}
+                    {item.rate && (
+                      <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-black/70 text-amber-400 text-xs font-bold flex items-center gap-0.5">
+                        <Star className="w-3 h-3 fill-amber-400" />
+                        {item.rate}
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-2.5">
+                    <h2 className="font-semibold text-sm text-white/90 truncate group-hover:text-red-400 transition-colors">
+                      {item.title}
+                    </h2>
+                    <p className="text-xs text-white/40 mt-0.5">
+                      {item.year ? `${item.year} · ` : ''}{item.type === 'tv' ? '电视剧' : '电影'}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         ) : (
           <div className="py-20 text-center text-white/40">

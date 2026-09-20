@@ -14,7 +14,7 @@ import path from 'path';
  * 6. 导出新片片名列表至 lib/data/new-scraped-titles.json 供 SEO Entity 模块自动化消费
  */
 
-const TMDB_API_KEY = '82eaf0e14803590730e45c2123c90957';
+const TMDB_API_KEY = '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const GUANGSU_API = 'https://api.guangsuapi.com/api.php/provide/vod';
 const JISU_API = 'https://jszyapi.com/api.php/provide/vod';

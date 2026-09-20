@@ -7,9 +7,9 @@
  * 3. 异步非阻塞 Write-Through 透写上传至 R2 存储桶 (永久持久化，零出站费)
  */
 
-const CF_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a';
-const CF_AUTH_EMAIL = process.env.CLOUDFLARE_AUTH_EMAIL || 'zeyelvis@gmail.com';
-const CF_AUTH_KEY = process.env.CLOUDFLARE_AUTH_KEY || 'cfk_L8MzQDjTswTK4jBtvJjmcKjEnxTQ1dKNhzNyn4dQa33221aa';
+const CF_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '';
+const CF_AUTH_EMAIL = process.env.CLOUDFLARE_AUTH_EMAIL || '';
+const CF_AUTH_KEY = process.env.CLOUDFLARE_AUTH_KEY || '';
 const R2_BUCKET = process.env.R2_BUCKET_NAME || 'ikanpp-images';
 // 优先使用 R2 亚太专属托管 CDN 域名，确保 100% 畅通直出
 const R2_PUBLIC_BASE = (process.env.NEXT_PUBLIC_R2_DOMAIN || 'https://pub-e83e5b0b8f9348079dd0676e6c0c0563.r2.dev').replace(/\/+$/, '');

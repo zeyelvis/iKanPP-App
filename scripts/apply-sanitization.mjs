@@ -2,7 +2,7 @@ import fs from 'fs';
 
 const CF_KV_ACCOUNT_ID = '172a13185bd6e694bfefc089b12cad6a';
 const CF_KV_NAMESPACE_ID = '42311924427747deaf00981d99d58998';
-const CF_KV_API_KEY = 'cfk_L8MzQDjTswTK4jBtvJjmcKjEnxTQ1dKNhzNyn4dQa33221aa';
+const CF_KV_API_KEY = process.env.CLOUDFLARE_API_KEY || process.env.CF_KV_API_KEY || process.env.CF_API_KEY || process.env.CLOUDFLARE_AUTH_KEY || '';
 const CF_KV_EMAIL = 'zeyelvis@gmail.com';
 
 async function kvGet(key) {

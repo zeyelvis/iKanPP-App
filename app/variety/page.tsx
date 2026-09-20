@@ -30,8 +30,10 @@ export default function VarietyPage() {
     <>
       <JsonLd data={breadcrumbs} />
       <ItemListJsonLd name="热门综艺精选" items={topShows} />
+      <h1 className="sr-only">综艺大厅 - 2026 最新热门真人秀与脱口秀在线观看 | iKanPP 爱看片片</h1>
       <VarietyClient />
     </>
   );
+
 }
 

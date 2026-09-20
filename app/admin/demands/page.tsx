@@ -18,6 +18,7 @@ import {
   Check,
 } from 'lucide-react';
 import { TitleDemandRecord } from '@/lib/services/entity-kv';
+import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export default function AdminDemandsPage() {
   const [demands, setDemands] = useState<TitleDemandRecord[]>([]);
@@ -247,7 +248,7 @@ export default function AdminDemandsPage() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <Link
-                          href={`/title/${item.entityId}`}
+                          href={getTitleCanonicalHref({ entityId: item.entityId, title: item.title })}
                           target="_blank"
                           className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-medium text-slate-200 transition-colors cursor-pointer border border-white/10"
                         >

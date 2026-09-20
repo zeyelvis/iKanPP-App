@@ -3,7 +3,7 @@ import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 
 const avatarMemoryCache = new Map<string, string>();
 const TMDB_BASE = 'https://api.themoviedb.org/3';
-const TMDB_API_KEY = process.env.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957';
+const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 
 /**
  * 获取单个影人（导演/演员）的真实官方高清肖像头像

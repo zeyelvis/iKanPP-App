@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const TMDB_API_KEY = '82eaf0e14803590730e45c2123c90957';
+const TMDB_API_KEY = '';
 
 async function checkUrl(url) {
   if (!url || !url.startsWith('http')) return false;

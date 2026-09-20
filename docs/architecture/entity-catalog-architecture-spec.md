@@ -1,32 +1,36 @@
-# iKanPP "详情页即片库" (Title-Entity-as-Database) 架构规范
+# iKanPP "详情页即片库" (Title-Entity-as-Database) 架构规范 (v5.0 权威升级版)
 
 本文档确立 iKanPP 自有结构化实体片库与多维筛选大厅的统一架构规范。
 
 ---
 
-## 一、架构定位与双核驱动
+## 一、架构定位与权威/边缘双层模型
 
-iKanPP 采用**双核驱动**的流媒体与片库模型：
+iKanPP 采用**D1 权威存储 + KV 边缘只读投影**的现代化实体片库与流媒体模型：
 
-1. **全网穿透搜索（Search Core）**：
-   - 用户发起搜索时，并发向全网 25+ 采集源发起查询。
-   - 搜到结果后，通过后台异步任务 `searchAndEnrichFromTMDB()` 自动对实体进行 TMDB 丰润并沉淀至 Cloudflare KV。
-   - 实现“用户搜一次，片库自愈沉淀一次”的飞轮效应。
+1. **强一致权威控制层（D1 / DO Authoritative Layer）**：
+   - 解决纯 KV 存储在并发写入时缺乏强一致性、自增 ID 竞态断号、外键缺乏完整性约束的固有缺陷；
+   - 全网影视实体主数据（`titles`）、外源映射（`title_external_ids`）、演职员关系（`people` / `title_people`）、多维分类（`title_genres`）、事实断言与版本溯源（`fact_assertions` / `schema_migrations`）统一由 Cloudflare D1 关系型数据库作为唯一真理源（Single Source of Truth）；
+   - 由权威层生成全局唯一的 `entityId` 序列（如 `ik000001`）。
 
-2. **自有结构化片库（Entity Catalog Core）**：
-   - 影视详情页与分类筛选大厅（`/api/library/browse`）统一依托于 Cloudflare KV 自有 `TitleEntity` 实体库。
+2. **边缘只读投影层（Edge Read-Only Projection Layer）**：
+   - 影视详情页与分类筛选大厅（`/api/library/browse`）统一依托于 Cloudflare KV 高速只读缓存投影；
+   - 保证多维精准筛选（频道 + 题材 + 地区 + 年份 + 语言 + 连载状态 + 排序）具备毫秒级响应（15~35ms），CLS 恒为 0；
    - 彻底解除筛选大厅对第三方采集站单次分页内存过滤的脆弱依赖。
-   - 保证多维精准筛选（频道 + 题材 + 地区 + 年份 + 语言 + 连载状态 + 排序）具备 100% 真实总数统计与毫秒级交集响应。
+
+3. **全网穿透搜索与异步沉淀（Search Core）**：
+   - 用户发起搜索时，并发向全网采集源发起查询；
+   - 搜到结果后，通过后台异步作业 `searchAndEnrichFromTMDB()` 自动对实体进行 TMDB 事实丰润，经过 `entity-resolver` 评分去重后写入权威层并原子投影至 KV，形成飞轮效应。
 
 ---
 
-## 二、实体数据结构规范 (`TitleEntity`)
+## 二、实体数据结构规范 (`TitleEntity` 与 `PublishedTitleEntity`)
 
 存储键：`entity:{entityId}`（如 `entity:ik000100`）
 
 ```typescript
 export interface TitleEntity {
-  entityId: string;            // "ik000001" (全局唯一不可变自增序号)
+  entityId: string;            // "ik000001" (全局唯一不可变序号)
   slug: string;                // 拼音别名，例如 "xiao-shen-ke-de-jiu-shu"
   tmdbId: string;              // TMDB 官方条目 ID，例如 "278"
   tmdbType: 'movie' | 'tv';    // TMDB 媒体类型
@@ -35,22 +39,23 @@ export interface TitleEntity {
   originalTitle?: string;      // 原语言标题，例如 "The Shawshank Redemption"
   type: 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string; // 归属专区频道
   year: string;                // 上映或播出年份，例如 "2026"
-  description: string;         // 中文完整剧情梗概 (SEO 与 AI 引用)
+  description: string;         // 中文完整剧情梗概 (真实事实)
   cover: string;               // 海报图片 URL (w500 / R2持久化镜像)
   backdrop?: string;           // 剧照横版背景图 URL (w1280)
-  rate: string;                // 评分，例如 "9.7"
+  rate: string;                // 真实评分
   genres: string[];            // 题材分类，例如 ["剧情", "科幻"]
   directors: string[];         // 导演列表
   actors: string[];            // 主演列表
-  region?: string;             // 制片国家/地区，例如 "中国大陆"、"美国"、"泰国"
-  language?: string;           // 主要语言，例如 "国语"、"英语"、"泰语"
-  status?: string;             // 连载状态，例如 "完结"、"更新至第12集"
-  popularity?: number;         // TMDB 真实热度指数（用于综合热度排序）
+  region?: string;             // 制片国家/地区
+  language?: string;           // 主要语言
+  status?: string;             // 连载状态
+  popularity?: number;         // TMDB 真实热度指数
   runtime?: number;            // 片长（分钟）
   numberOfSeasons?: number;    // 电视剧季数
   numberOfEpisodes?: number;   // 电视剧总集数
   keywords?: string[];         // 核心标签与长尾关键词
   relatedEntityIds?: string[]; // 站内强关联影片 entityId 列表
+  contentHash?: string;        // SHA-256 内容指纹 (用于 304 协商与增量发布)
   createdAt: string;           // 初次入库 ISO 8601 时间戳
   updatedAt: string;           // 最后更新 ISO 8601 时间戳
 }
@@ -58,9 +63,9 @@ export interface TitleEntity {
 
 ---
 
-## 三、多维反向索引架构
+## 三、多维反向索引架构 (KV 只读投影)
 
-为了在边缘无服务器环境实现极致性能的多维筛选，系统基于 Cloudflare KV 维护以下原子反向索引表：
+为了在边缘无服务器环境实现极致性能的多维筛选，发布投影服务（`PublishProjectionService`）基于 D1 权威数据派生并维护以下原子反向索引表：
 
 | 索引键模式 | 示例 | 存储值 | 作用 |
 |-----------|------|--------|------|
@@ -70,6 +75,8 @@ export interface TitleEntity {
 | `language:{token}` | `language:国语`, `language:英语` | `string[]` (entityIds) | 语言过滤 |
 | `status:{token}` | `status:完结`, `status:连载中` | `string[]` (entityIds) | 连载状态过滤 |
 | `genre:{genre}` | `genre:科幻`, `genre:动作` | `string[]` (entityIds) | 题材分类过滤 |
+| `actor:{name}` | `actor:沈腾` | `string[]` (entityIds) | 演员作品索引 |
+| `director:{name}` | `director:克里斯托弗·诺兰` | `string[]` (entityIds) | 导演作品索引 |
 | `index:all` | `index:all` | `string[]` (all entityIds) | 全量实体主索引 |
 | `sitemap:catalog` | `sitemap:catalog` | `[id, slug, modDate][]` | Sitemap 毫秒级直出精简目录 |
 
@@ -85,31 +92,18 @@ export interface TitleEntity {
 ## 四、短剧专区源站扩充矩阵
 
 短剧专区（`/short`）全面纳入全站实体片库体系，接入以下高权重源站：
-
-1. **巨量短剧专线**（优先级 1，6.2 万+ 部，原生真实分集）
-2. **魔都短剧专线**（优先级 2，3.4 万+ 部，原生分集）
-3. **红牛短剧专线**（优先级 6，3.7 万+ 部，涵盖古装仙侠/现代都市等 8 大细分子分类）
-   - **海豚容灾镜像**：配置 `fallbackBaseUrl: 'https://hhzyapi.com'`（子分类 ID 偏移 +2）。当红牛遭遇网络波动时自动无感切到海豚资源。
-4. **非凡短剧专线**（优先级 7，2.0 万+ 部，通过关键词精准划分爽剧/言情/都市/古装等子专区）
-5. **暴风短剧专线**（优先级 8，1.2 万+ 部，独有「女恋总裁」「闪婚离婚」特色专区）
-
----
-
-## 五、自动化入库与更新闭环
-
-1. **增量自动巡检（每周两次）**：
-   - 由 `.github/workflows/ingest-entity-catalog.yml` 于每周日与周三 UTC 20:00 自动触发。
-   - 自动扫描采集站新片，对接 TMDB 智能补齐元数据。
-   - 自动更新反向索引，并触发 IndexNow 搜索引擎推送与全站预热。
-2. **每小时连载追踪**：
-   - 由 `.github/workflows/sync-iyf-channels.yml` 每小时整点触发 `sync-episode-updates.mjs`。
-   - 实时同步连载剧集的更新状态（`status`）与播出集数（`numberOfEpisodes`）。
+1. **巨量短剧专线**（优先级 1，原生真实分集）
+2. **魔都短剧专线**（优先级 2，原生分集）
+3. **红牛短剧专线**（优先级 6，涵盖古装仙侠/现代都市等 8 大细分子分类）
+   - **海豚容灾镜像**：配置 `fallbackBaseUrl: 'https://hhzyapi.com'`。当红牛遭遇网络波动时自动无感切到海豚资源。
+4. **非凡短剧专线**（优先级 7，爽剧/言情/都市/古装等子专区）
+5. **暴风短剧专线**（优先级 8，独有特色专区）
 
 ---
 
-## 六、反向索引自愈、防毒化校验与 URL 语义冲突解决铁律 (Auto-Purge & Anti-Poisoning Spec)
+## 五、反向索引自愈、防毒化校验与 URL 语义冲突解决铁律 (Auto-Purge & Anti-Poisoning Spec)
 
-为了杜绝搜索引擎流量落地页张冠李戴、站内搜索头部推荐卡片错乱等恶性体验事故，全站必须永久恪守以下五大防毒化与自愈架构铁律：
+全站必须永久恪守以下五大防毒化与自愈架构铁律：
 
 ### 1. 反向索引读取时强一致校验 (On-Access Strong Verification)
 - 任何通过 `getEntityByTmdb(tmdbType, tmdbId)` 读取实体的地方，系统必须且只能在内存中强一致核验读出实体的实际属性：
@@ -118,7 +112,7 @@ export interface TitleEntity {
     // 判定为毒化键，拒绝向调用方返回
   }
   ```
-- 严禁盲目信任反向索引指向的实体，防止历史脏数据或脚本错误导致跨影片关联。
+- 严禁盲目信任反向索引指向的实体，防止历史脏数据导致跨影片关联。
 
 ### 2. 读取时自动物理净化 (On-Access Auto-Purge)
 - 一旦检测到反向索引指向了错误的实体（或指向了已删除的虚空实体），系统必须立即调用 `kvDelete` 物理删除该毒化键：
@@ -127,21 +121,18 @@ export interface TitleEntity {
   await kvDelete(key);
   return null;
   ```
-- 绝不允许“知错留错”，实现任意请求只要触碰到脏数据，即可在毫秒级全自动完成单点物理清理，阻止毒化数据二次蔓延。
+- 绝不允许“知错留错”，实现任意请求触碰脏数据时全自动单点物理清理。
 
 ### 3. 片名语义重叠门槛防线 (Title Overlap Guard)
-- 在 `searchAndEnrichFromTMDB` 与 `convertHitToEntity` 中，从本地 KV 命中缓存实体后，必须校验该实体的 `title`、`originalTitle` 或 `slug` 是否与当前的搜索命中候选项（Hit Title / Original Title / Query）具备实质语义重叠（`hasTitleOverlap`）；
-- 若标题风马牛不相及（例如以《杀死比尔》检索命中历史毒化条目《我的宝贝四千金》），坚决予以丢弃，强制进入 TMDB 官方 API 深度元数据抓取并重写入库，杜绝搜索推荐卡片“指鹿为马”。
+- 在命中缓存实体后，必须校验该实体的 `title`、`originalTitle` 或 `slug` 是否与搜索命中项具备实质语义重叠（`hasTitleOverlap`）；
+- 若标题无交集，坚决丢弃缓存并重新拉取官方最新精准详情。
 
-### 4. URL 路由解析实体 ID 优先与显式别名路由 (ID-First & Explicit Alias Routing)
-- 影视详情页路由 `/title/[slug]` 的解析必须严格遵循权威层级优先级：
-  1. **显式别名路由优先**：检查 `slug:${cleanKey}` 是否在 KV 中具有显式映射（如历史被 Google 收录的旧链接 `slug:ik002038-the-bill -> ik007343`）。显式映射代表系统权威意志，直接返回正确实体；
-  2. **实体物理 ID 优先**：若 URL 含有标准 ID（`ik\d{6}`），直接以该 ID 检索实体，并比对 URL 尾部的标题片段。若尾部仅为英文拼写或外语原名，绝不可跳过 ID 直接拿英文尾缀去按片名全局反查，杜绝英文短词（如 `the-bill`）撞车同名其他剧集的恶性 Bug；
-  3. **中文纯净标题检索**：仅当 URL 不含 ID 且包含中文字符时，才允许执行 `getEntityByTitle`；
-  4. **TMDB 在线冷门自愈**：仅对含中文字符的新鲜词条执行在线搜索自愈。
+### 4. URL 路由解析 ID 优先与权威别名路由
+- `/title/[slug]` 解析严格遵循：显式别名映射（`slug:*`）最高优先 ➔ 实体物理 ID（`ik\d{6}`）优先 ➔ 纯中文标题检索 ➔ TMDB 在线冷门自愈；
+- 严禁跳过 ID 拿 URL 尾部的英文短词反查同名其他剧集。
 
-### 5. SEO 规范 URL 301 永久重定向 (Canonical 301 Permanent Redirect)
-- 任何非权威规范 Slug（包含带 `-` 的历史别名 URL、纯 ID URL、拼音不规范 URL），在详情页元数据与主体渲染阶段，必须统一触发 301 / 308 永久重定向：
+### 5. SEO 规范 URL 308 永久重定向 (Canonical 308 Permanent Redirect)
+- 任何非权威规范 Slug，在详情页元数据与主体渲染阶段，统一触发 HTTP 308 (Permanent Redirect) 单跳重定向：
   ```typescript
   const canonicalSlug = `${entity.entityId}-${entity.slug}`.toLowerCase();
   const currentCleanSlug = decodedSlug.toLowerCase();
@@ -149,30 +140,13 @@ export interface TitleEntity {
     redirect(`/title/${encodeURIComponent(`${entity.entityId}-${entity.slug}`)}`, RedirectType.replace);
   }
   ```
-- 彻底移除 `!currentCleanSlug.includes('-')` 限制，确保所有历史旧链接（即使带连字符）均能无缝永久重定向至标准 Canonical URL，将外链权重 100% 汇聚，彻底解决 Google Search Console 备用网页报警与流量落地错位。
+- 将历史外链权重 100% 汇聚到规范地址。
 
 ---
 
-## 六、实体大脑先行与智能分词两阶段聚合检索规范 (Entity-Brain-First & Smart Two-Phase Search)
+## 六、实体解析评分与去重作业体系 (Entity Resolver & Deduplication)
 
-为彻底解决传统流媒体“原词硬撞采集站、无切片即显示空结果”的痛点，对齐并超越 ikanbot 等主流聚合平台的检索体验，全站检索核心确立以下三大铁律：
-
-### 1. 实体图谱大脑解耦先行铁律 (Entity Knowledge First)
-- **绝对禁忌**：严禁以第三方采集站切片数量（`results.length === 0`）作为拦截展示结果面板的门禁！
-- **优先渲染**：只要用户发起检索（`hasSearched: true`），前端必须立即挂载 `SearchKnowledgePanel`，并发向 `/api/entity-search` 发起图谱检索；
-- **冷门馆藏自愈**：当第三方源站返回 0 个切片，但实体库命中了条目（如 1951 年《法蒂玛圣母》）时，必须置顶展示 4K 巨幕剧照、豆瓣真实评分、剧情简介与演职员阵容，并提供沉浸式「🏛️ 经典馆藏 · 预约求片」入口，彻底杜绝冰冷的“未找到相关内容”报错。
-
-### 2. 中文影视智能分词与两阶段回退引擎 (Two-Phase Fallback Search)
-- **智能分词 (`lib/utils/chinese-segmenter.ts`)**：
-  - 自动识别并剥离冗余修饰词（如“电影版”、“全集”、“高清”等）；
-  - 复合长标题语义切分，提取高召回核心主词（如“法蒂玛圣母”提取出主词“法蒂玛”）。
-- **两阶段调度 (`app/api/search-parallel/route.ts`)**：
-  - **Phase 1（精准匹配）**：优先以原始全词全网并发检索；
-  - **Phase 2（智能回退）**：若 Phase 1 切片数 < 2，在服务端自动无缝触发智能主词回退检索，通过 SSE 流式追加推送《法蒂玛 (2020)》、《法蒂玛 (2015)》等相关正片切片，标明 `isFallback: true` 与 `fallbackTerm`，彻底消灭空结果死胡同。
-
-### 3. 多线路归一化聚合与精致角标规范 (Line Aggregation & Badges)
-- **同名同年代智能折叠**：多个源站返回的重复片源按 `vod_name + vod_year` 自动归一聚合为单张标准卡片；
-- **线路总数徽章**：当可用线路 `sourceCount > 1` 时，海报右下角与卡片信息栏必须醒目标注 **`[xx条线路]`** 翡翠绿呼吸光点角标（如 `22条线路`、`16条线路`），向用户传递强大的资源储备与高可用信心；
-- **播放无感秒切**：点击进入播放器后，用户可在内置线路抽屉中自由无感切源，既享受 ikanbot 级的线路聚合体验，又保留 iKanPP 播放器原画直连的高性能。
-
-
+1. **权威 ID 优先规则**：TMDB(type, id) 或 豆瓣 ID 一致直接确认为同一实体；
+2. **多维证据加权评分**：标题 35% + 原名 20% + 年代 15% + 导演 15% + 主演 10% + 片长 5%。综合分 ≥ 0.88 判为 `same`，≤ 0.55 判为 `different`，中间状态进入 `review` 队列；
+3. **确定性 Winner 选举**：外链权重 > 外部 ID 完整度 > 字段丰富度 > 早期 ID > 字典序，保证去重作业 100% 幂等；
+4. **四阶段安全执行**：`scripts/seo/dedupe-backfill.mjs` 依次执行 `scan` ➔ `plan` ➔ `apply`（需 `--confirm`）➔ `verify`，自动建立 308 重定向与外链合并。

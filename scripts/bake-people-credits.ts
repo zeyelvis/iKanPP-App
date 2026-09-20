@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { POPULAR_DIRECTORS, POPULAR_ACTORS } from '../lib/data/popular-people';
 
-const TMDB_API_KEY = process.env.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957';
+const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 
 async function sleep(ms: number) {

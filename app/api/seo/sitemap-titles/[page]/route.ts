@@ -31,19 +31,35 @@ export async function GET(
 ) {
   const { page: rawPage } = await context.params;
   const pageParam = (rawPage || '1').replace(/\.xml$/i, '');
-  const page = Math.max(1, parseInt(pageParam, 10) || 1);
+  const page = parseInt(pageParam, 10);
+
+  if (isNaN(page) || page < 1) {
+    return new NextResponse('Invalid sitemap page', { status: 404 });
+  }
 
   const catalog = await getSitemapCatalog();
+  const totalTitles = catalog.length;
+  const pageCount = Math.max(1, Math.ceil(totalTitles / TITLES_PER_SITEMAP));
+
+  // 🌟 规范第 11.3 节：越界或不存在的分片严格返回 404，绝不返回空的 200 XML
+  if (page > pageCount || totalTitles === 0) {
+    return new NextResponse('Sitemap page not found', { status: 404 });
+  }
+
   const start = (page - 1) * TITLES_PER_SITEMAP;
   const end = start + TITLES_PER_SITEMAP;
   const slice = catalog.slice(start, end);
+
+  if (slice.length === 0) {
+    return new NextResponse('Sitemap page not found', { status: 404 });
+  }
 
   const urlElements: string[] = [];
   let latestDate = '';
 
   for (const item of slice) {
     if (!item || !item.id) continue;
-    // 权威 SEO 规范 URL：与 canonicalSlug 100% 保持一致，杜绝多余 URL 编码或 301 重定向
+    // 权威 SEO 规范 URL：与 canonicalSlug 100% 保持一致，杜绝多余 URL 编码或 301 重定向跳跃
     const baseSlug = (item.slug || item.id).trim();
     const cleanSlug = generateSlug(baseSlug);
     const fullUrl = `${BASE_URL}/title/${item.id}-${cleanSlug}`;
@@ -52,11 +68,10 @@ export async function GET(
       latestDate = lastMod;
     }
 
+    // 移除 Google 忽略的 priority 与 changefreq 标签
     urlElements.push(`  <url>
     <loc>${escapeXml(fullUrl)}</loc>
     <lastmod>${lastMod}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
   </url>`);
   }
 

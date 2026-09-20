@@ -31,3 +31,82 @@ export interface TitleEntity {
   createdAt: string;           // 初次入库 ISO 8601 时间戳
   updatedAt: string;           // 最后更新 ISO 8601 时间戳
 }
+
+/**
+ * 事实来源溯源模型 (对应规范 4.3 节)
+ */
+export interface FactProvenance {
+  source: 'tmdb' | 'douban' | 'provider' | 'editorial' | 'derived';
+  sourceId?: string;
+  fetchedAt: string;
+  confidence: number; // 0.0 - 1.0 置信度
+}
+
+/**
+ * 权威评分事实
+ */
+export interface RatingFact {
+  value: number;       // 10分制打分
+  scale: 10;
+  count?: number;      // 真实评价人数 (严禁硬编码或假造)
+  source: string;      // 评分数据来源 (如 'TMDB'、'Douban')
+  observedAt: string;  // 观测时间戳
+}
+
+/**
+ * 片源可用性事实 (播放能力探测)
+ */
+export interface AvailabilityFact {
+  sourceId: string;
+  playable: boolean;
+  checkedAt: string;
+  maxResolution?: 'SD' | '720p' | '1080p' | '4K';
+  hdr?: boolean;
+  audioFormats?: string[];
+  regionsAllowed?: string[];
+}
+
+/**
+ * 生产发布态实体读取模型 (KV 只读投影)
+ */
+export interface PublishedTitleEntity {
+  entityId: string;
+  canonicalSlug: string;
+  identityVersion: number;
+  title: string;
+  originalTitle?: string;
+  aliases: string[];
+  mediaType: string;
+  releaseDate?: string;
+  releaseDatePrecision: 'day' | 'month' | 'year' | 'unknown';
+  description?: string;
+  cover?: string;
+  backdrop?: string;
+  rating?: RatingFact;
+  availability: AvailabilityFact[];
+  factProvenance: Record<string, FactProvenance>;
+  indexState: 'noindex' | 'indexable' | 'suppressed';
+  seoScore: number;
+  contentHash: string;
+  materialUpdatedAt?: string;
+  publishedAt?: string;
+}
+
+/**
+ * 事实准出函数 (对应规范 4.4 节)
+ * 每一个会进入正文、metadata 或 Schema 的事实必须通过严格来源置信度校验
+ */
+export function canPublishFact(fact: unknown, provenance?: FactProvenance): boolean {
+  if (fact === undefined || fact === null || fact === '') {
+    return false;
+  }
+  if (!provenance) {
+    return false;
+  }
+  // 置信度低于 0.8 不予作为权威事实宣称
+  if (provenance.confidence < 0.8) {
+    return false;
+  }
+  return true;
+}
+

@@ -12,7 +12,7 @@ import path from 'path';
  * 4. 预烘焙写入 lib/data/latest-titles-prebaked.ts，全站 0ms 秒开直出
  */
 
-const TMDB_API_KEY = '82eaf0e14803590730e45c2123c90957';
+const TMDB_API_KEY = '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 
 const CHANNELS = [

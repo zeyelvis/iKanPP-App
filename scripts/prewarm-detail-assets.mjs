@@ -18,7 +18,7 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 
 const CF_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a';
 const CF_AUTH_EMAIL = process.env.CLOUDFLARE_AUTH_EMAIL || 'zeyelvis@gmail.com';
-const CF_AUTH_KEY = process.env.CLOUDFLARE_AUTH_KEY || 'cfk_L8MzQDjTswTK4jBtvJjmcKjEnxTQ1dKNhzNyn4dQa33221aa';
+const CF_AUTH_KEY = process.env.CLOUDFLARE_AUTH_KEY || '';
 const R2_BUCKET = process.env.R2_BUCKET_NAME || 'ikanpp-images';
 
 function getR2Key(rawUrl, width) {

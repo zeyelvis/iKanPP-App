@@ -194,13 +194,9 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
     keywordSet.add(`${primaryTitle} ${rec}`);
   }
 
-  // ====== 3. 网盘与下载截流词 (GENERIC_MODIFIERS.cloud_storage_intent - 核心转化洼地) ======
-  for (const mod of GENERIC_MODIFIERS.cloud_storage_intent) {
-    keywordSet.add(`${primaryTitle} ${mod}`);
-  }
-
-  // ====== 4. 音轨与地域规格词 ======
+  // ====== 3. 音轨与地域真实规格词 ======
   keywordSet.add(`${primaryTitle} 中文字幕`);
+
   if (region?.includes('港') || region?.includes('台') || region?.includes('粤')) {
     keywordSet.add(`${primaryTitle} 粤语中字`);
     keywordSet.add(`${primaryTitle} 国语配音`);
@@ -235,17 +231,14 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
   keywordSet.add('iKanPP');
   keywordSet.add('爱看片片');
 
-  // 精选用于页面渲染的探索意图 Chips (融入观影、画质、网盘、口碑等各维度代表)
+  // 真实信息意图 Chips (移除网盘/迅雷/0ms等虚假营销词)
   const intentChips = [
+    `${primaryTitle} 剧情介绍`,
+    `${primaryTitle} 演职员阵容`,
+    `${primaryTitle} 评分口碑`,
     `${primaryTitle} 在线观看`,
-    `${primaryTitle} 4K超清`,
-    `${primaryTitle} 百度网盘`,
-    `${primaryTitle} 迅雷下载`,
-    `${primaryTitle} 完整版未删减`,
-    `${primaryTitle} 豆瓣评分`,
-    `${primaryTitle} 好看吗`,
-    `${primaryTitle} 推荐`,
-    `${primaryTitle} 结局彩蛋`,
+    `${primaryTitle} 播放线路`,
+    `${primaryTitle} 正片全集`,
   ];
 
   // ====== 8. YAML 跨维度探索标签 (Discovery Chips) ======
@@ -256,34 +249,29 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
   if (primaryDirector) discoveryChips.push(`${primaryDirector}导演代表作`);
   if (primaryGenre) discoveryChips.push(`${primaryGenre}${mediaLabel}排行榜`);
 
-  // ====== 9. YAML 标准元数据语法 + 网盘截流 CTA ======
+  // ====== 9. 真实可信 Meta Description 构造 (依循规范第 9.2 节) ======
   const tagParts = [year, primaryCountry, primaryGenre, mediaLabel].filter(Boolean);
   const signalPrefix = tagParts.length > 0 ? `【${tagParts.join('·')}】` : '';
 
   const castParts: string[] = [];
-  if (validDirs.length > 0) castParts.push(`由${validDirs.slice(0, 2).join('、')}执导`);
-  if (validActs.length > 0) castParts.push(`${validActs.slice(0, 3).join('、')}领衔主演`);
-  const castStr = castParts.length > 0 ? `${castParts.join('，')}。` : '';
+  if (validDirs.length > 0) castParts.push(`导演：${validDirs.slice(0, 2).join('、')}`);
+  if (validActs.length > 0) castParts.push(`主演：${validActs.slice(0, 3).join('、')}`);
+  const castStr = castParts.length > 0 ? `${castParts.join('；')}。` : '';
 
   let cleanDesc = description
     .replace(/(?:导演|主演)\s*[:：]\s*(?:知名导演|实力主演)[，。、\s]*/g, '')
     .replace(/在线观看，支持海外华人免翻墙极速高清播放。/g, '')
     .replace(/在线观看，全网高清影视资源。/g, '')
     .trim();
-  if (cleanDesc.length > 80) {
-    cleanDesc = cleanDesc.slice(0, 80) + '...';
+  if (cleanDesc.length > 85) {
+    cleanDesc = cleanDesc.slice(0, 85) + '...';
   }
 
-  // YAML 描述主干 + 网盘截流钩子
-  const yamlNarrative = isSeries
-    ? `在线观看《${primaryTitle}》，查看最新更新、剧情介绍、演职员表${numberOfEpisodes ? `与全网共${numberOfEpisodes}集更新状态` : ''}。`
-    : `在线观看《${primaryTitle}》，查看${year ? `${year}年` : ''}${primaryCountry}${primaryGenre}${mediaLabel}的剧情简介、演员表阵容与导演信息。`;
+  const narrative = isSeries
+    ? `在线观看《${primaryTitle}》${year ? `(${year})` : ''}：${cleanDesc ? `${cleanDesc} ` : ''}${castStr}${numberOfEpisodes ? `共${numberOfEpisodes}集。` : ''}查看当前剧情梗概与可用播放线路。`
+    : `在线观看《${primaryTitle}》${year ? `(${year})` : ''}：${cleanDesc ? `${cleanDesc} ` : ''}${castStr}查看完整剧情介绍与可用播放线路信息。`;
 
-  const hookCta = isSeries
-    ? (numberOfEpisodes ? `寻找《${primaryTitle}》百度网盘/迅雷下载？iKanPP 无需繁琐转存解压，全网首发 4K 超清 0ms 纯直连秒播。` : `寻找《${primaryTitle}》网盘资源？iKanPP 支持全集 4K 原画免VIP极速在线观看。`)
-    : `寻找《${primaryTitle}》百度网盘/迅雷资源？无需转存解压与限速等待，iKanPP 提供 1080P/4K 超清原画完整版 0ms 免VIP在线秒播。`;
-
-  const metaDescription = `${signalPrefix}${yamlNarrative} ${castStr}${cleanDesc ? `剧情：${cleanDesc} ` : ''}${hookCta}`;
+  const metaDescription = `${signalPrefix}${narrative}`;
 
   return {
     keywords: Array.from(keywordSet).slice(0, 48),

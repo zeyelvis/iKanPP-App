@@ -37,8 +37,8 @@ export const GENERIC_MODIFIERS = {
   completion: ['完整版', '全集', '全季', '大结局', '未删减版'],
   information: ['剧情', '剧情介绍', '简介', '演员表', '导演', '结局', '上映时间', '更新时间', '评分'],
   recommendation: ['推荐', '排行榜', '好看吗', '值得看吗'],
-  cloud_storage_intent: ['百度网盘', '迅雷下载', '夸克网盘资源', '夸克云盘', '磁力链接', '阿里云盘', '网盘下载'],
 } as const;
+
 
 /**
  * 影视关键词衍生模板矩阵 (Keyword Templates)

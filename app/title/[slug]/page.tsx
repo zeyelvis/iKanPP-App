@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Star, Clock, Calendar, Film, ArrowLeft, Clapperboard, User, Sparkles, CheckCircle2, Play } from 'lucide-react';
 import { getEntityBySlug, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity, isSafeRecentTitleItem } from '@/lib/services/entity-kv';
 import { getGenreBySlug } from '@/lib/data/genres';
-import { parseEntitySlug, normalizeTitle, isStrictSafeEntity, generateSlug } from '@/lib/data/entities/entity-utils';
+import { parseEntitySlug, normalizeTitle, isStrictSafeEntity, generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, fetchTMDBDetails, fetchTMDBAiredEpisodeCount, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
 import { getFastPersonAvatars } from '@/lib/services/person-avatar';
 import { getOptimizedImageUrl, isRestrictedRegion } from '@/lib/utils/image-utils';
@@ -625,11 +625,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // 权威规范 Slug 计算（用于规范 Canonical URL 声明，重定向由 TitlePage 组件主体统一触发）
   const canonicalSlug = getEntityCanonicalSlug(entity);
 
-  // 多分类智能识别：动漫也属于「有剧集」形态
+  // 多分类与真实标题定义（依循规范第 9.2 节：杜绝机械堆砌“免费、全集、4K、免翻墙、秒播”）
   const isSeriesLike = entity.type === 'tv' || entity.type === 'anime';
-  const typeText = isSeriesLike ? '全集' : '免费高清完整版';
   const displayTitle = seasonTag && !entity.title.includes(seasonTag) ? `${entity.title} ${seasonTag}` : entity.title;
-  const pageTitle = `${displayTitle} (${entity.year}) 在线观看 - ${typeText} | iKanPP 爱看片片`;
+  const yearSuffix = entity.year ? ` (${entity.year})` : '';
+  const pageTitle = `${displayTitle}${yearSuffix} - 剧情、演职员与在线观看信息 | iKanPP 爱看片片`;
   // 动态构建高信息密度、千人千面的 Meta Description（杜绝模板化被 Google 惩罚）
   const regionText = entity.region ? entity.region.slice(0, 4) : '';
   const primaryGenre = (entity.genres && entity.genres.length > 0) ? entity.genres[0] : '';
@@ -681,9 +681,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const metaDescription = seoSpectrum.metaDescription;
 
   return {
-    title: pageTitle,
-    description: metaDescription,
-    keywords: seoSpectrum.keywords,
+    // 依循规范 21.3 节：仅输出少量核心实体词，彻底杜绝 meta keyword 堆叠
+    keywords: seoSpectrum.keywords.slice(0, 5),
     alternates: {
       canonical: canonicalUrl,
     },
@@ -1130,7 +1129,7 @@ export default async function TitlePage({ params }: Props) {
               {combinedRelated.slice(0, 12).map(rel => (
                 <Link
                   key={rel.entityId}
-                  href={`/title/${rel.entityId}-${rel.slug}`}
+                  href={getTitleCanonicalHref(rel)}
                   className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-black"
                   style={{ contentVisibility: 'auto', containIntrinsicSize: '160px 240px' }}
                 >

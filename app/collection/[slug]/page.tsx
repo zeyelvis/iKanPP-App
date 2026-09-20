@@ -9,6 +9,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { CollectionDetailClient } from './CollectionDetailClient';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
+import { toAbsoluteUrl } from '@/lib/utils/canonical';
 
 export function generateStaticParams() {
   return CURATED_COLLECTIONS.map(c => ({ slug: c.slug }));
@@ -31,8 +32,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  const filmCount = collection.films?.length || collection.totalCount || 0;
   const title = `${collection.title} - 精选片单推荐 | iKanPP 爱看片片`;
-  const description = `${collection.description}。iKanPP 官方编辑部精选策展，收录 ${collection.totalCount} 部殿堂级佳作，超清多源秒播。`;
+  const description = `${collection.description}。iKanPP 收录 ${filmCount} 部精选影视作品，查看在线剧情简介与深度推荐。`;
   const canonicalUrl = `${BASE_URL}/collection/${collection.slug}`;
 
   return {
@@ -76,10 +78,12 @@ export default async function CollectionPage({ params }: Props) {
 
   const itemList = collection.films.map((f: CollectionSubject, idx: number) => ({
     position: idx + 1,
-    url: `${BASE_URL}${getTitleCanonicalHref(f)}`,
+    url: toAbsoluteUrl(getTitleCanonicalHref(f)),
     name: f.title,
     image: f.cover,
   }));
+
+
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',

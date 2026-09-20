@@ -9,9 +9,13 @@
  */
 
 const HOST = process.env.SITE_URL || 'https://www.ikanpp.com';
-const SECRET = process.env.CRON_SECRET || 'ikanpp-cron-sync-secret';
+const SECRET = process.env.CRON_SECRET;
 
 async function main() {
+  if (!SECRET) {
+    console.warn('⚠️ [TMDB-Sniffer] 未配置 CRON_SECRET 环境变量，跳过执行以确保安全');
+    process.exit(0);
+  }
   console.log('🔍 [TMDB-Sniffer] 启动 TMDB Changes 全球影视新增嗅探器...');
   const targetUrl = `${HOST}/api/seo/tmdb-changes?secret=${encodeURIComponent(SECRET)}`;
 

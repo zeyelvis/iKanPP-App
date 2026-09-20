@@ -20,93 +20,54 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
   const channelPath = isAnime ? '/anime' : isDocumentary ? '/documentary' : isVariety ? '/variety' : entity.type === 'tv' ? '/tv' : '/movie';
   const channelName = isAnime ? '动漫' : isDocumentary ? '纪录片' : isVariety ? '综艺' : entity.type === 'tv' ? '电视剧' : '电影';
 
-  // 1. Movie / TVSeries 结构化数据
   const isTv = entity.type === 'tv' || entity.type === 'anime';
   const sameAsUrls: string[] = [];
   if (entity.tmdbId && /^\d+$/.test(entity.tmdbId)) {
     sameAsUrls.push(`https://www.themoviedb.org/${isTv ? 'tv' : 'movie'}/${entity.tmdbId}`);
   }
 
-  const mediaSchema: Record<string, any> = {
-    '@context': 'https://schema.org',
+  // 过滤不可信的默认占位词
+  const validDirectors = (entity.directors || []).filter(d => d && !['知名导演', '未知', '暂无'].includes(d.trim()));
+  const validActors = (entity.actors || []).filter(a => a && !['实力主演', '未知', '暂无'].includes(a.trim()));
+
+  // 1. 作品节点 (Movie / TVSeries)
+  const workNode: Record<string, any> = {
+    '@id': `${currentUrl}#work`,
     '@type': isTv ? 'TVSeries' : 'Movie',
     name: entity.title,
     alternateName: entity.originalTitle || undefined,
     url: currentUrl,
     image: entity.cover,
     description: entity.description,
-    dateCreated: entity.year,
-    genre: entity.genres,
-    isAccessibleForFree: true,
+    datePublished: entity.year ? String(entity.year) : undefined,
+    genre: entity.genres && entity.genres.length > 0 ? entity.genres : undefined,
     inLanguage: 'zh-CN',
     sameAs: sameAsUrls.length > 0 ? sameAsUrls : undefined,
-    director: entity.directors?.map(d => ({
+    director: validDirectors.map(d => ({
       '@type': 'Person',
       name: d,
     })),
-    actor: entity.actors?.map(a => ({
+    actor: validActors.map(a => ({
       '@type': 'Person',
       name: a,
     })),
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: entity.rate || '9.0',
-      bestRating: '10',
-      worstRating: '1',
-      ratingCount: 1520,
-    },
     countryOfOrigin: entity.region ? {
       '@type': 'Country',
       name: entity.region,
     } : undefined,
     duration: entity.runtime ? `PT${entity.runtime}M` : undefined,
-    potentialAction: {
-      '@type': 'WatchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${siteUrl}/player?entity=${entity.entityId}`,
-        actionPlatform: [
-          'http://schema.org/DesktopWebPlatform',
-          'http://schema.org/MobileWebPlatform',
-        ],
-      },
-    },
   };
 
   if (isTv && entity.numberOfEpisodes) {
-    mediaSchema.numberOfEpisodes = entity.numberOfEpisodes;
+    workNode.numberOfEpisodes = entity.numberOfEpisodes;
   }
   if (isTv && entity.numberOfSeasons) {
-    mediaSchema.numberOfSeasons = entity.numberOfSeasons;
+    workNode.numberOfSeasons = entity.numberOfSeasons;
   }
 
-  // 2. VideoObject 结构化数据（符合 Google 视频结构化数据规范）
-  const playerUrl = `${siteUrl}/player?entity=${entity.entityId}`;
-  const videoSchema: Record<string, any> = {
-    '@context': 'https://schema.org',
-    '@type': 'VideoObject',
-    name: `${entity.title} 在线高清完整版`,
-    description: entity.description || `${entity.title} 在线观看，全网高清影视资源。`,
-    thumbnailUrl: [entity.cover].filter(Boolean),
-    uploadDate: entity.year ? `${entity.year}-01-01T08:00:00+08:00` : new Date().toISOString(),
-    embedUrl: playerUrl,
-    contentUrl: playerUrl,
-    inLanguage: 'zh-CN',
-    requiresSubscription: false,
-    potentialAction: {
-      '@type': 'SeekToAction',
-      target: `${playerUrl}&t={seek_to_second_number}`,
-      'startOffset-input': 'required name=seek_to_second_number',
-    },
-  };
-
-  if (entity.runtime) {
-    videoSchema.duration = `PT${entity.runtime}M`;
-  }
-
-  // 3. BreadcrumbList 结构化数据
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
+  // 2. 面包屑节点 (BreadcrumbList)
+  const breadcrumbNode = {
+    '@id': `${currentUrl}#breadcrumb`,
     '@type': 'BreadcrumbList',
     itemListElement: [
       {
@@ -130,63 +91,25 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
     ],
   };
 
-  // 4. FAQPage 结构化数据（触发 Google 下拉展开式富媒体问答卡片 + AI Overview 权威知识注入）
-  const validDirectors = (entity.directors || []).filter(d => d && !['知名导演', '未知', '暂无'].includes(d.trim()));
-  const validActors = (entity.actors || []).filter(a => a && !['实力主演', '未知', '暂无'].includes(a.trim()));
-  const castDesc = [
-    validDirectors.length > 0 ? `由${validDirectors.slice(0, 2).join('、')}执导` : '',
-    validActors.length > 0 ? `${validActors.slice(0, 3).join('、')}领衔主演` : '',
-  ].filter(Boolean).join('，');
-
-  const faqSchema = {
+  // 3. 规范单一 @graph 结构，消除虚假评分人数、伪造 VideoObject 及机械 FAQ
+  const graphSchema = {
     '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
+    '@graph': [
       {
-        '@type': 'Question',
-        name: `《${entity.title}》可以在线免费观看吗？`,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: `可以。在 iKanPP (爱看片片) 可以免费在线观看《${entity.title}》完整版高清视频，支持多线路智能秒播，海外华人免翻墙极速畅享。`,
-        },
+        '@id': `${siteUrl}/#website`,
+        '@type': 'WebSite',
+        name: 'iKanPP 爱看片片',
+        url: siteUrl,
       },
-      {
-        '@type': 'Question',
-        name: `《${entity.title}》的演职员阵容和评分是多少？`,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: `《${entity.title}》(${entity.year})${castDesc ? `${castDesc}，` : ''}当前全网真实评分约 ${entity.rate || '8.5'} 分，属于高口碑的${channelName}作品。`,
-        },
-      },
-      {
-        '@type': 'Question',
-        name: `观看《${entity.title}》需要下载网盘或客户端吗？`,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: `不需要。在 iKanPP 平台无需转存百度网盘或夸克网盘，亦无需安装任何客户端，直接在手机或电脑浏览器中即可 0ms 纯直连开启 4K 超清秒播。`,
-        },
-      },
+      workNode,
+      breadcrumbNode,
     ],
   };
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(mediaSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(videoSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-    </>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(graphSchema) }}
+    />
   );
 }

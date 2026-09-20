@@ -108,11 +108,11 @@ export default function AdminDashboardPage() {
           <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
             <span>SEO Mission Control 仪表盘</span>
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-red-600/20 text-red-400 border border-red-500/30 font-mono">
-              v3.0
+              v5.0 白帽版
             </span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            监控全域影视实体质量、Google Indexing 促抓消耗、IndexNow 广播与高潜词排名
+            监控全域影视实体质量、D1 权威事实控制、IndexNow 全网多引擎秒级广播与 GSC 地图健康度
           </p>
         </div>
 
@@ -159,7 +159,7 @@ export default function AdminDashboardPage() {
             </div>
             <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-400">
               <span className="text-emerald-400 font-medium">100% 直连源站</span>
-              <span>• KV 纳管</span>
+              <span>• D1/KV 双层纳管</span>
             </div>
           </div>
           <Link
@@ -174,7 +174,7 @@ export default function AdminDashboardPage() {
         {/* 卡片 2: 今日 Google Indexing 配额 */}
         <div className="admin-glass-panel admin-card-hover p-5 rounded-2xl relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">今日 Google Indexing 配额</span>
+            <span className="text-xs font-medium text-slate-400">Google 配额 (仅限直播实况)</span>
             <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
               <Zap className="w-4 h-4" />
             </div>

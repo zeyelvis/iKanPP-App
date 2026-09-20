@@ -17,7 +17,7 @@ import path from 'path';
  * 4. 自动更新写入 lib/data/home-prebaked.ts 与 lib/data/home-prebaked-extra.ts 预热数据库
  */
 
-const TMDB_API_KEY = '82eaf0e14803590730e45c2123c90957';
+const TMDB_API_KEY = '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 
 /**

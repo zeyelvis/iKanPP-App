@@ -4,7 +4,7 @@ import { PEOPLE_PREBAKED_ENTITIES } from '../lib/data/people-prebaked';
 import { PREBAKED_AVATARS } from '../lib/data/prebaked-avatars';
 
 const TMDB_BASE = 'https://api.themoviedb.org/3';
-const TMDB_API_KEY = process.env.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957';
+const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 
 // 常见热门影视明星补充库（包含《绅士们》、《驯龙高手》等高频片目）
 const EXTRA_POPULAR_PEOPLE = [

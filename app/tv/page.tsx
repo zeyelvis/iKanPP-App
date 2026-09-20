@@ -36,8 +36,10 @@ export default function TvPage() {
     <>
       <JsonLd data={breadcrumbs} />
       <ItemListJsonLd name="热门热播剧集" items={topShows} />
+      <h1 className="sr-only">电视剧频道 - 热门华语陆剧 & 美剧韩剧全集在线观看 | iKanPP 爱看片片</h1>
       <TvClient />
     </>
   );
+
 }
 

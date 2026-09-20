@@ -307,7 +307,7 @@ const EXACT_DOC_MAPPING = [
   }
 ];
 
-const TMDB_API_KEY = '82eaf0e14803590730e45c2123c90957';
+const TMDB_API_KEY = '';
 
 async function fetchTmdbPoster(tmdbType, tmdbId) {
   const url = `https://api.themoviedb.org/3/${tmdbType}/${tmdbId}?api_key=${TMDB_API_KEY}&language=zh-CN`;

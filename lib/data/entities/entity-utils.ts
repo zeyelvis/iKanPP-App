@@ -67,8 +67,11 @@ export function parseEntitySlug(param: string): { entityId: string | null; slug:
  * 优先生成标准权威规范 URL: /title/ik000001-slug
  * 若无标准 ik ID，则回退为 /title/slug（由服务端 301 自愈升级）
  */
-export function getTitleCanonicalHref(item: { entityId?: string; id?: string | number; title?: string; name?: string; slug?: string } | null | undefined): string {
+export function getTitleCanonicalHref(item: { entityId?: string; id?: string | number; title?: string; name?: string; slug?: string; canonicalSlug?: string } | null | undefined): string {
   if (!item) return '/';
+  if (item.canonicalSlug && item.canonicalSlug.trim()) {
+    return `/title/${item.canonicalSlug.trim()}`;
+  }
   const title = (item.title || item.name || '').trim();
   if (!title) return '/';
   const rawId = (item.entityId || item.id || '').toString().trim().toLowerCase();

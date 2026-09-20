@@ -176,8 +176,19 @@ async function getGoogleAccessToken(creds: GoogleServiceAccount): Promise<string
  */
 export async function publishGoogleIndexingUrl(
   url: string,
-  type: 'URL_UPDATED' | 'URL_DELETED' = 'URL_UPDATED'
+  type: 'URL_UPDATED' | 'URL_DELETED' = 'URL_UPDATED',
+  options?: { isLiveBroadcast?: boolean }
 ): Promise<IndexingPublishResult> {
+  // 🌟 Google 官方规范与合规铁律：Google Indexing API 仅限 JobPosting 或含 BroadcastEvent 的真实直播
+  // 严禁用于普通影视详情页，否则会触发 Google 算法反垃圾与全站降权
+  if (!options?.isLiveBroadcast && !url.includes('/live/')) {
+    return {
+      url,
+      success: false,
+      error: 'Google Indexing API is strictly reserved for BroadcastEvent / JobPosting. Ordinary title URLs are rejected to prevent domain penalties.',
+    };
+  }
+
   const creds = getServiceAccountCredentials();
   if (!creds) {
     return {
@@ -244,6 +255,19 @@ export async function batchPublishGoogleIndexing(
   const uniqueUrls = Array.from(new Set(urls.filter(Boolean))).slice(0, maxCount);
   if (uniqueUrls.length === 0) {
     return { total: 0, successful: 0, results: [] };
+  }
+
+  const eligibleUrls = uniqueUrls.filter(u => u.includes('/live/'));
+  if (eligibleUrls.length === 0) {
+    return {
+      total: uniqueUrls.length,
+      successful: 0,
+      results: uniqueUrls.map(u => ({
+        url: u,
+        success: false,
+        error: 'Skipped: Google Indexing API is strictly reserved for BroadcastEvent / JobPosting. Ordinary titles rely on XML Sitemap and IndexNow.',
+      })),
+    };
   }
 
   const creds = getServiceAccountCredentials();

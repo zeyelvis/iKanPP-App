@@ -36,7 +36,9 @@ export default function ShortPage() {
     <>
       <JsonLd data={breadcrumbs} />
       <ItemListJsonLd name="热门精品短剧精选" items={topShort} />
+      <h1 className="sr-only">微短剧专区 - 2026 爆款爽剧全集免费在线看 | iKanPP 爱看片片</h1>
       <ShortClient />
     </>
   );
+
 }

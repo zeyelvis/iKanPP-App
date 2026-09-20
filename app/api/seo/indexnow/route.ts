@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 
-const INDEXNOW_KEY = '7f2e1b4c9a8d3e5f6a1b2c3d4e5f6071';
 const HOST = 'www.ikanpp.com';
 const BASE_URL = `https://${HOST}`;
-const KEY_LOCATION = `${BASE_URL}/${INDEXNOW_KEY}.txt`;
 
 // IndexNow 官方与主流合作伙伴广播网关
 const SEARCH_ENGINES = [
@@ -14,64 +12,89 @@ const SEARCH_ENGINES = [
   'https://yandex.com/indexnow',
 ];
 
-async function handleIndexNowPush(req: NextRequest) {
+/**
+ * 校验鉴权凭据 (CRON_SECRET)
+ */
+function verifyAuth(req: NextRequest): boolean {
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret) {
+    // 规范安全铁律：未配置 secret 时 Fail-Closed
+    return false;
+  }
+  const authHeader = req.headers.get('authorization');
+  if (authHeader && authHeader === `Bearer ${cronSecret}`) {
+    return true;
+  }
+  const querySecret = req.nextUrl.searchParams.get('secret');
+  if (querySecret && querySecret === cronSecret) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * GET 方法：纯健康状态查询，严禁产生外部推送副作用 (规范 21.4 节)
+ */
+export async function GET() {
+  return NextResponse.json({
+    service: 'iKanPP IndexNow Gateway',
+    status: 'operational',
+    method: 'POST only (GET side-effects prohibited)',
+    documentation: 'https://www.indexnow.org',
+  });
+}
+
+/**
+ * POST 方法：安全消费内容变动事件并执行 IndexNow 广播
+ */
+export async function POST(req: NextRequest) {
+  if (!verifyAuth(req)) {
+    return NextResponse.json(
+      { error: 'Unauthorized: Valid CRON_SECRET or bearer token required' },
+      { status: 401 }
+    );
+  }
+
+  const indexNowKey = process.env.INDEXNOW_KEY;
+  if (!indexNowKey) {
+    return NextResponse.json(
+      { error: 'Server misconfiguration: INDEXNOW_KEY not set. Fail-Closed.' },
+      { status: 500 }
+    );
+  }
+
+  const keyLocation = `${BASE_URL}/${indexNowKey}.txt`;
+
   try {
     let urls: string[] = [];
-    if (req.method === 'POST') {
-      try {
-        const body = await req.json();
-        if (Array.isArray(body?.urls) && body.urls.length > 0) {
-          urls = body.urls;
-        }
-      } catch { /* ignore empty body */ }
+    try {
+      const body = await req.json();
+      if (Array.isArray(body?.urls) && body.urls.length > 0) {
+        urls = body.urls;
+      }
+    } catch {
+      // ignore JSON parse error
     }
 
-    // 若无直接传入 URL，从网站 sitemap.xml 动态提取
+    // 若无明确 URL 列表，拒绝全量盲目推送以节省搜索引擎配额与反滥用
     if (urls.length === 0) {
-      const origin = req.nextUrl.origin || BASE_URL;
-      const sitemapRes = await fetch(`${origin}/sitemap.xml`, {
-        cache: 'no-store',
-      });
-
-      if (!sitemapRes.ok) {
-        throw new Error(`无法获取 sitemap.xml: HTTP ${sitemapRes.status}`);
-      }
-
-      const xml = await sitemapRes.text();
-      const locMatches = xml.matchAll(/<loc>([^<]+)<\/loc>/gi);
-      for (const match of locMatches) {
-        if (match[1]) {
-          urls.push(match[1].trim());
-        }
-      }
-    }
-
-    // 确保至少有基础核心大厅
-    if (urls.length === 0) {
-      urls.push(
-        `${BASE_URL}/`,
-        `${BASE_URL}/movie`,
-        `${BASE_URL}/tv`,
-
-        `${BASE_URL}/anime`,
-        `${BASE_URL}/variety`,
-        `${BASE_URL}/short`,
-        `${BASE_URL}/ranking`,
-        `${BASE_URL}/iptv`
+      return NextResponse.json(
+        { error: 'Bad Request: "urls" array of changed entities required' },
+        { status: 400 }
       );
     }
 
-    // IndexNow 每次最多支持 10,000 个 URL，选取最新的前 1,000 条
+    // 规范单次批次上限 1000 条
     const urlList = Array.from(new Set(urls)).slice(0, 1000);
 
     const payload = {
       host: HOST,
-      key: INDEXNOW_KEY,
-      keyLocation: KEY_LOCATION,
+      key: indexNowKey,
+      keyLocation,
       urlList,
     };
 
-    // 2. 并行向各大搜索引擎广播推送
+    // 并行向各大搜索引擎广播推送
     const pushResults = await Promise.allSettled(
       SEARCH_ENGINES.map(async (endpoint) => {
         const res = await fetch(endpoint, {
@@ -111,7 +134,7 @@ async function handleIndexNowPush(req: NextRequest) {
       totalUrls: urlList.length,
       sampleUrls: urlList.slice(0, 5),
       results: detailedResults,
-      message: 'IndexNow 自动广播完成，搜索引擎将在数分钟内启动抓取与建库',
+      message: 'IndexNow 变更广播完成',
     });
   } catch (error: unknown) {
     const errMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -125,10 +148,3 @@ async function handleIndexNowPush(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
-  return handleIndexNowPush(req);
-}
-
-export async function POST(req: NextRequest) {
-  return handleIndexNowPush(req);
-}

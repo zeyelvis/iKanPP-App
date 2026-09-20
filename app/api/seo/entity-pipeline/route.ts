@@ -4,13 +4,12 @@ import { fetchTMDBDetails } from '@/lib/services/entity-enrichment';
 import { formatEntityId, generateSlug, isCleanChineseTitle, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
 import { TitleEntity } from '@/lib/types/entity';
 import { isJuliangExcludedCategory } from '@/lib/api/juliang-category-map';
-import { batchPublishGoogleIndexing } from '@/lib/services/google-indexing';
 
 export const runtime = 'edge';
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
-const CRON_SECRET = process.env.CRON_SECRET || 'ikanpp-cron-sync-secret';
+const CRON_SECRET = process.env.CRON_SECRET;
 
 interface TrendingItem {
   id: number;
@@ -78,7 +77,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get('secret') || request.headers.get('x-cron-secret');
 
-  if (secret !== CRON_SECRET) {
+  if (!CRON_SECRET || secret !== CRON_SECRET) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -280,19 +279,14 @@ export async function GET(request: Request) {
   // 若有新入库实体，异步触发 IndexNow (Bing / Yandex) 与 Google Indexing API 实时推送
   if (newUrls.length > 0) {
     try {
-      // 1. 广播至 IndexNow (Bing / Yandex 等)
+      // 1. 广播至 IndexNow (Bing / Yandex 等标准搜索引擎即时收录网络)
       fetch(`${BASE_URL}/api/seo/indexnow`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ urls: newUrls }),
       }).catch(() => {});
 
-      // 2. 实时推送至 Google Indexing API（替代已废弃的 google.com/ping）
-      batchPublishGoogleIndexing(newUrls, 50).catch(err => {
-        console.warn('[Pipeline GoogleIndexing Error]:', err);
-      });
-
-      // 3. 通知 Bing 重新抓取 Sitemap（Bing 依然有效支持 Sitemap Ping）
+      // 2. 通知 Bing 重新抓取 Sitemap（Bing 依然有效支持 Sitemap Ping）
       const sitemapUrl = encodeURIComponent(`${BASE_URL}/sitemap.xml`);
       fetch(`https://www.bing.com/ping?sitemap=${sitemapUrl}`).catch(() => {});
     } catch {

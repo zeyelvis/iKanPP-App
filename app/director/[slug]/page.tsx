@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Star, Film, Clapperboard } from 'lucide-react';
 import { getEntitiesByDirector, isPersonEnriched, markPersonEnriched } from '@/lib/services/entity-kv';
 import { searchAndEnrichPersonCredits } from '@/lib/services/entity-enrichment';
-import { isInvalidDramaOrMovie } from '@/lib/data/entities/entity-utils';
+import { isInvalidDramaOrMovie, generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 import { getPersonAvatar } from '@/lib/services/person-avatar';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
@@ -31,8 +31,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const title = `${directorName} 导演执导作品大全 - 免费高清在线观看 | iKanPP 爱看片片`;
-  const description = `iKanPP 汇聚${directorName}导演执导的高分电影与热门剧集全集。高清多源秒播，海外华人免翻墙极速超清直连播放。`;
+  // 1. 获取作品列表，评估内容薄厚门禁
+  const entities = await getEntitiesByDirector(directorName, 12);
+  const cleanEntities = entities.filter(e => !isInvalidDramaOrMovie(e));
+
+  // 🌟 规范第 7 节与第 18 节：薄内容门禁（Thin Content Guard）
+  // 库中暂无收录作品的演职员，输出 noindex，坚决杜绝空内容页面浪费爬取预算或遭降权
+  if (cleanEntities.length === 0) {
+    return {
+      title: `${directorName} - 影视作品与演职员资料 | iKanPP 爱看片片`,
+      description: `查看${directorName}的演职员资料与影视作品档案。`,
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const topWorks = cleanEntities.slice(0, 3).map(e => `《${e.title}》`).join('、');
+  const title = `${directorName} - 影视作品与演职员资料 | iKanPP 爱看片片`;
+  const description = `iKanPP 收录${directorName}执导的高口碑影视作品，包含${topWorks}等共${cleanEntities.length}部影视档案。查看在线剧情梗概与演职员详细资料。`;
   const canonicalUrl = `${BASE_URL}/director/${encodeURIComponent(directorName)}`;
 
   return {
@@ -111,7 +126,7 @@ export default async function DirectorPage({ params }: Props) {
 
   const itemList = entities.map((e, idx) => ({
     position: idx + 1,
-    url: `${BASE_URL}/title/${e.entityId}-${e.slug}`,
+    url: `${BASE_URL}${e.canonicalSlug ? `/title/${e.canonicalSlug}` : getTitleCanonicalHref(e)}`,
     name: e.title,
     image: e.cover,
   }));
@@ -217,109 +232,115 @@ export default async function DirectorPage({ params }: Props) {
           <div className="space-y-4 sm:space-y-6">
             {/* 首屏前 12 部作品 */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
-              {entities.slice(0, 12).map(item => (
-                <Link
-                  key={item.entityId}
-                  href={`/title/${item.entityId}-${item.slug}`}
-                  className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-200 hover:-translate-y-1"
-                >
-                  <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
-                    {item.cover ? (
-                      <Image
-                        src={getOptimizedImageUrl(item.cover)}
-                        alt={item.title}
-                        fill
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-white/20">
-                        <Film className="w-8 h-8" />
-                      </div>
-                    )}
-                    {item.rate && (
-                      <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm border border-amber-500/30 flex items-center gap-1">
-                        <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                        <span className="font-bold text-amber-400 text-xs">{item.rate}</span>
-                      </div>
-                    )}
-                    {item.year && (
-                      <div className="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[11px] text-white/70">
-                        {item.year}
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-3">
-                    <div className="font-semibold text-sm text-white/90 group-hover:text-white truncate">
-                      {item.title}
-                    </div>
-                    <div className="flex items-center gap-1.5 mt-1 text-xs text-white/40">
-                      <span>{item.type === 'movie' ? '电影' : '剧集'}</span>
-                      {item.genres && item.genres.length > 0 && (
-                        <>
-                          <span>•</span>
-                          <span className="truncate">{item.genres.slice(0, 2).join('/')}</span>
-                        </>
+              {entities.slice(0, 12).map(item => {
+                const targetHref = item.canonicalSlug ? `/title/${item.canonicalSlug}` : getTitleCanonicalHref(item);
+                return (
+                  <Link
+                    key={item.entityId}
+                    href={targetHref}
+                    className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-200 hover:-translate-y-1"
+                  >
+                    <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
+                      {item.cover ? (
+                        <Image
+                          src={getOptimizedImageUrl(item.cover)}
+                          alt={item.title}
+                          fill
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-white/20">
+                          <Film className="w-8 h-8" />
+                        </div>
+                      )}
+                      {item.rate && (
+                        <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm border border-amber-500/30 flex items-center gap-1">
+                          <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                          <span className="font-bold text-amber-400 text-xs">{item.rate}</span>
+                        </div>
+                      )}
+                      {item.year && (
+                        <div className="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[11px] text-white/70">
+                          {item.year}
+                        </div>
                       )}
                     </div>
-                  </div>
-                </Link>
-              ))}
+                    <div className="p-3">
+                      <div className="font-semibold text-sm text-white/90 group-hover:text-white truncate">
+                        {item.title}
+                      </div>
+                      <div className="flex items-center gap-1.5 mt-1 text-xs text-white/40">
+                        <span>{item.type === 'movie' ? '电影' : '剧集'}</span>
+                        {item.genres && item.genres.length > 0 && (
+                          <>
+                            <span>•</span>
+                            <span className="truncate">{item.genres.slice(0, 2).join('/')}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
 
             {/* 非首屏后续作品 (content-visibility: auto 渲染剪枝) */}
             {entities.length > 12 && (
               <div className="below-fold-section">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
-                  {entities.slice(12).map(item => (
-                    <Link
-                      key={item.entityId}
-                      href={`/title/${item.entityId}-${item.slug}`}
-                      className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-200 hover:-translate-y-1"
-                    >
-                      <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
-                        {item.cover ? (
-                          <Image
-                            src={getOptimizedImageUrl(item.cover)}
-                            alt={item.title}
-                            fill
-                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-white/20">
-                            <Film className="w-8 h-8" />
-                          </div>
-                        )}
-                        {item.rate && (
-                          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm border border-amber-500/30 flex items-center gap-1">
-                            <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                            <span className="font-bold text-amber-400 text-xs">{item.rate}</span>
-                          </div>
-                        )}
-                        {item.year && (
-                          <div className="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[11px] text-white/70">
-                            {item.year}
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <div className="font-semibold text-sm text-white/90 group-hover:text-white truncate">
-                          {item.title}
-                        </div>
-                        <div className="flex items-center gap-1.5 mt-1 text-xs text-white/40">
-                          <span>{item.type === 'movie' ? '电影' : '剧集'}</span>
-                          {item.genres && item.genres.length > 0 && (
-                            <>
-                              <span>•</span>
-                              <span className="truncate">{item.genres.slice(0, 2).join('/')}</span>
-                            </>
+                  {entities.slice(12).map(item => {
+                    const targetHref = item.canonicalSlug ? `/title/${item.canonicalSlug}` : getTitleCanonicalHref(item);
+                    return (
+                      <Link
+                        key={item.entityId}
+                        href={targetHref}
+                        className="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-200 hover:-translate-y-1"
+                      >
+                        <div className="relative aspect-2/3 w-full bg-black/40 overflow-hidden">
+                          {item.cover ? (
+                            <Image
+                              src={getOptimizedImageUrl(item.cover)}
+                              alt={item.title}
+                              fill
+                              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                              className="object-cover group-hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-white/20">
+                              <Film className="w-8 h-8" />
+                            </div>
+                          )}
+                          {item.rate && (
+                            <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm border border-amber-500/30 flex items-center gap-1">
+                              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                              <span className="font-bold text-amber-400 text-xs">{item.rate}</span>
+                            </div>
+                          )}
+                          {item.year && (
+                            <div className="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[11px] text-white/70">
+                              {item.year}
+                            </div>
                           )}
                         </div>
-                      </div>
-                    </Link>
-                  ))}
+                        <div className="p-3">
+                          <div className="font-semibold text-sm text-white/90 group-hover:text-white truncate">
+                            {item.title}
+                          </div>
+                          <div className="flex items-center gap-1.5 mt-1 text-xs text-white/40">
+                            <span>{item.type === 'movie' ? '电影' : '剧集'}</span>
+                            {item.genres && item.genres.length > 0 && (
+                              <>
+                                <span>•</span>
+                                <span className="truncate">{item.genres.slice(0, 2).join('/')}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             )}

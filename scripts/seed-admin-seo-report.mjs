@@ -3,7 +3,7 @@ import path from 'path';
 
 const cfAccount = '172a13185bd6e694bfefc089b12cad6a';
 const cfNamespace = '42311924427747deaf00981d99d58998';
-const cfKey = 'cfk_L8MzQDjTswTK4jBtvJjmcKjEnxTQ1dKNhzNyn4dQa33221aa';
+const cfKey = process.env.CLOUDFLARE_API_KEY || process.env.CF_KV_API_KEY || process.env.CF_API_KEY || process.env.CLOUDFLARE_AUTH_KEY || '';
 const cfEmail = 'zeyelvis@gmail.com';
 
 const today = new Date().toISOString().split('T')[0];

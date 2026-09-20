@@ -18,6 +18,7 @@ import {
   Film,
 } from 'lucide-react';
 import { TitleEntity } from '@/lib/types/entity';
+import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 import { SerpPreview } from '@/components/admin/SerpPreview';
 
 export function EntityEditClient({ id }: { id: string }) {
@@ -213,7 +214,7 @@ export function EntityEditClient({ id }: { id: string }) {
         {/* 右侧动作按钮组 */}
         <div className="flex flex-wrap items-center gap-2">
           <Link
-            href={`/title/${entity.entityId}-${entity.slug}`}
+            href={getTitleCanonicalHref(entity)}
             target="_blank"
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-medium text-slate-200 border border-white/10 transition-colors"
           >

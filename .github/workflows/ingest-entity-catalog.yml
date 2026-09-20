@@ -55,11 +55,12 @@ jobs:
 
       - name: Run Entity Catalog Ingestion & Indexing Engine
         env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a' }}
-          CLOUDFLARE_NAMESPACE_ID: ${{ secrets.CLOUDFLARE_NAMESPACE_ID || '42311924427747deaf00981d99d58998' }}
-          CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_AUTH_EMAIL || 'zeyelvis@gmail.com' }}
-          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_AUTH_KEY || 'cfk_L8MzQDjTswTK4jBtvJjmcKjEnxTQ1dKNhzNyn4dQa33221aa' }}
-          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957' }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_NAMESPACE_ID: ${{ secrets.CLOUDFLARE_NAMESPACE_ID }}
+          CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_AUTH_EMAIL }}
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_AUTH_KEY }}
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+
         run: |
           MODE="${{ github.event.inputs.mode || 'incremental' }}"
           LIMIT="${{ github.event.inputs.limit || '1000' }}"

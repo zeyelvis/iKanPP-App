@@ -23,7 +23,7 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 // Cloudflare 凭证与配置
 const CF_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a';
 const CF_AUTH_EMAIL = process.env.CLOUDFLARE_AUTH_EMAIL || 'zeyelvis@gmail.com';
-const CF_AUTH_KEY = process.env.CLOUDFLARE_AUTH_KEY || 'cfk_L8MzQDjTswTK4jBtvJjmcKjEnxTQ1dKNhzNyn4dQa33221aa';
+const CF_AUTH_KEY = process.env.CLOUDFLARE_AUTH_KEY || '';
 const R2_BUCKET = process.env.R2_BUCKET_NAME || 'ikanpp-images';
 
 // Cloudflare KV 配置
@@ -33,7 +33,7 @@ const CF_KV_API_KEY = process.env.CF_KV_API_KEY || CF_AUTH_KEY;
 const CF_KV_EMAIL = process.env.CF_KV_EMAIL || CF_AUTH_EMAIL;
 
 const TMDB_BASE = 'https://api.themoviedb.org/3';
-const TMDB_API_KEY = process.env.TMDB_API_KEY || '82eaf0e14803590730e45c2123c90957';
+const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const PROD_BASE_URL = process.env.SITE_URL || 'https://www.ikanpp.com';
 
 function generateSlug(title: string): string {
