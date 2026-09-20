@@ -905,7 +905,7 @@ export default function AdminGrowthPage() {
                   今日院线首发与热播专栏 Markdown (实时自动组装)
                 </h2>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  已内嵌自然反向锚文本，复制后直接发布到以下万亿级超级大厂平台，借 DR 90+ 域名权重秒排 Google 首页
+                  已内嵌 4K 高清封面海报与自然反向锚文本，复制后直接发布到以下万亿级超级大厂平台，图文并茂借 DR 90+ 域名权重秒排 Google 首页
                 </p>
               </div>
 

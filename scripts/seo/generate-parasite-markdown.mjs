@@ -26,26 +26,30 @@ async function main() {
   const latestTitlesPath = path.join(projectRoot, 'lib/data/latest-titles-prebaked.ts');
   const content = fs.readFileSync(latestTitlesPath, 'utf8');
 
-  // 正则提取标题与关键信息
+  // 正则提取标题、图片与关键信息
   const items = [];
-  const titleRegex = /"title":\s*"([^"]+)",[\s\S]*?"slug":\s*"([^"]+)",[\s\S]*?"type":\s*"([^"]+)",[\s\S]*?"updateBadge":\s*"([^"]*)",[\s\S]*?"qualityBadge":\s*"([^"]*)"/g;
+  const titleRegex = /"title":\s*"([^"]+)",[\s\S]*?"slug":\s*"([^"]+)",[\s\S]*?"cover":\s*"([^"]+)",[\s\S]*?"type":\s*"([^"]+)",[\s\S]*?"updateBadge":\s*"([^"]*)",[\s\S]*?"qualityBadge":\s*"([^"]*)"/g;
   
   let match;
   while ((match = titleRegex.exec(content)) !== null && items.length < 15) {
     items.push({
       title: match[1],
       slug: match[2],
-      type: match[3],
-      updateBadge: match[4] || '全集',
-      qualityBadge: match[5] || '1080P/4K',
+      cover: match[3],
+      type: match[4],
+      updateBadge: match[5] || '全集',
+      qualityBadge: match[6] || '1080P/4K',
     });
   }
 
   const today = new Date().toISOString().slice(0, 10);
   const articleTitle = `【2026最新片单】海外免翻墙免费看国产剧与院线大片指南（${today}实时更新）`;
 
+  const topBanner = items[0]?.cover;
+
   const markdown = `# ${articleTitle}
 
+${topBanner ? `![今日热播影视大作速报](${topBanner})\n` : ''}
 > 人在海外（北美、欧洲、澳洲、日韩、东南亚），想看最新的国产热播剧和院线新片，却频频遭遇“由于版权限制，您所在的地区无法播放”？各大平台满屏的充值套路与低俗弹窗更让人不胜其扰。
 > 
 > 本文为您深度盘点 **2026 年最新上线的热门影视大作**，并推荐支持 **海外 4K 直连、0 弹窗广告、秒开不卡顿** 的高分观影途径。
@@ -57,6 +61,7 @@ async function main() {
 ${items.map((item, index) => {
   const watchUrl = `https://www.ikanpp.com/title/${encodeURIComponent(item.slug)}`;
   return `### ${index + 1}. 《${item.title}》
+${item.cover ? `\n![《${item.title}》官方高清海报](${item.cover})\n` : ''}
 - **当前状态**：${item.qualityBadge} · ${item.updateBadge}
 - **影视类型**：${item.type === 'tv' ? '精品热播电视剧' : '院线高分电影'}
 - **剧情亮点**：2026 年度备受瞩目的重磅巨作，全网热度持续霸榜，反转不断，口碑极佳。
