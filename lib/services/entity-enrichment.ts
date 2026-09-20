@@ -398,19 +398,49 @@ export async function searchAndEnrichFromTMDB(
         if (votes > 10) score += 10;
         if (votes > 100) score += 10;
 
-        // 5. 指定年份匹配
+        // 5. 指定年份契合度匹配与阶梯惩罚
         if (effectiveYear) {
           const hitYear = (hit.release_date || hit.first_air_date || '').slice(0, 4);
-          if (hitYear === effectiveYear.slice(0, 4)) score += 50;
+          if (hitYear) {
+            const diff = Math.abs(parseInt(hitYear, 10) - parseInt(effectiveYear.slice(0, 4), 10));
+            if (diff === 0) score += 70;
+            else if (diff === 1) score += 30;
+            else if (diff > 3) score -= 60;
+          }
         }
 
-        // 6. 类型偏好匹配
+        // 6. 媒体类型强契约（电视剧严禁配电影，电影严禁配电视剧！）
         const hitType = hit.media_type || (hit.title ? 'movie' : 'tv');
-        if (preferredType && preferredType === hitType) {
-          score += 25;
+        if (preferredType) {
+          if (preferredType === hitType) {
+            score += 80;
+          } else {
+            score -= 160; // 严惩类型错配，杜绝电影侵占电视剧！
+          }
         }
 
-        // 7. 严厉惩罚项：如果完全没有海报封面且热度低于 2.5，扣除 120 分
+        // 7. 华语原生语言与国家绝对优先防线（杜绝海外同名电影如《潜伏》Insidious 侵占国产剧！）
+        const isChineseQuery = /[\u4e00-\u9fff]/.test(cleanQuery);
+        if (isChineseQuery) {
+          const isChineseOrigin = hit.original_language === 'zh' || 
+            (Array.isArray(hit.origin_country) && hit.origin_country.some((c: string) => ['CN', 'HK', 'TW'].includes(c)));
+          if (isChineseOrigin) {
+            score += 130; // 华语本土作品压倒性加分
+          } else {
+            score -= 90;  // 翻译同名的海外外语作品严重扣分
+          }
+        }
+
+        // 8. 动画与真人实拍严格隔离防线（杜绝《三体》电视剧被误配为 2022 动画版！）
+        const isAnimation = Array.isArray(hit.genre_ids) && hit.genre_ids.includes(16);
+        const queryWantsAnime = preferredType === 'anime' || /动画|动漫|番剧/.test(cleanQuery);
+        if (isAnimation && !queryWantsAnime) {
+          score -= 110; // 普通影视坚决不选动画条目
+        } else if (!isAnimation && queryWantsAnime) {
+          score -= 110;
+        }
+
+        // 9. 严厉惩罚项：如果完全没有海报封面且热度低于 2.5，扣除 120 分
         if (!hit.poster_path && pop < 2.5) {
           score -= 120;
         }

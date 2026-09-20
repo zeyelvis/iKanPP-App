@@ -13,12 +13,16 @@ interface CastRailProps {
 }
 
 export function CastRail({ directors, actors, initialAvatars = {} }: CastRailProps) {
+  // 过滤无效占位名与纯拼音英文字符
+  const cleanDirectors = (directors || []).filter(d => d && !['未知', '知名导演', '佚名'].includes(d) && !/^[A-Za-z\s]{4,}$/.test(d));
+  const cleanActors = (actors || []).filter(a => a && !['未知', '实力主演', '佚名', '群演', '网络主播'].includes(a) && !/^[A-Za-z\s]{4,}$/.test(a));
+
   const [avatars, setAvatars] = useState<Record<string, string>>(initialAvatars);
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     // 找出当前尚未获取到头像的演职员
-    const allNames = [...directors, ...actors];
+    const allNames = [...cleanDirectors, ...cleanActors];
     const missing = allNames.filter(name => !avatars[name] && !initialAvatars[name]);
 
     if (missing.length === 0) return;
@@ -47,9 +51,9 @@ export function CastRail({ directors, actors, initialAvatars = {} }: CastRailPro
     return () => {
       isMounted = false;
     };
-  }, [directors, actors]);
+  }, [cleanDirectors, cleanActors]);
 
-  if (directors.length === 0 && actors.length === 0) {
+  if (cleanDirectors.length === 0 && cleanActors.length === 0) {
     return null;
   }
 
@@ -66,7 +70,7 @@ export function CastRail({ directors, actors, initialAvatars = {} }: CastRailPro
 
       <div className="cast-rail-scroll flex items-center gap-3.5 overflow-x-auto pb-4 overscroll-x-contain scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         {/* 导演卡片 */}
-        {directors.map(d => {
+        {cleanDirectors.map(d => {
           const avatarUrl = avatars[d] || initialAvatars[d];
           const hasValidAvatar = Boolean(avatarUrl) && !failedImages[d];
 
@@ -104,7 +108,7 @@ export function CastRail({ directors, actors, initialAvatars = {} }: CastRailPro
         })}
 
         {/* 演员卡片 */}
-        {actors.map(a => {
+        {cleanActors.map(a => {
           const avatarUrl = avatars[a] || initialAvatars[a];
           const hasValidAvatar = Boolean(avatarUrl) && !failedImages[a];
 

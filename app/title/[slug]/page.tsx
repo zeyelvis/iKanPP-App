@@ -202,9 +202,25 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
   let entity = await getEntityBySlug(decodedSlug);
 
   if (entity) {
-    if (!entity.cover || entity.cover.trim() === '') {
-      const healed = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
-      if (healed && healed.cover) return enrichEpisodeCount(healed);
+    const isMissingCover = !entity.cover || entity.cover.trim() === '';
+    const isMissingCast = (!entity.directors || entity.directors.length === 0) && (!entity.actors || entity.actors.length === 0);
+    const hasDirtyPinyinCast = (entity.actors || []).some(a => /^[A-Za-z\s]{4,}$/.test(a));
+
+    if (isMissingCover || isMissingCast || hasDirtyPinyinCast) {
+      try {
+        const healed = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
+        if (healed) {
+          if (healed.directors && healed.directors.length > 0) entity.directors = healed.directors;
+          if (healed.actors && healed.actors.length > 0) entity.actors = healed.actors;
+          if (healed.cover && isMissingCover) entity.cover = healed.cover;
+          if (healed.backdrop && !entity.backdrop) entity.backdrop = healed.backdrop;
+          if (healed.tmdbId && !entity.tmdbId) {
+            entity.tmdbId = healed.tmdbId;
+            entity.tmdbType = healed.tmdbType;
+          }
+          saveEntity(entity).catch(() => {});
+        }
+      } catch {}
     }
     return enrichEpisodeCount(entity);
   }
