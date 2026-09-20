@@ -16,6 +16,9 @@ import { batchPublishGoogleIndexing, publishGoogleIndexingUrl } from '@/lib/serv
 import highPotentialData from '@/lib/data/seo-high-potential.json';
 import keywordMatrixData from '@/lib/data/seo-keyword-matrix.json';
 import { TitleEntity } from '@/lib/types/entity';
+import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
+import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
+import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export const runtime = 'edge';
 
@@ -236,6 +239,83 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
       return NextResponse.json({
         success: true,
         data: demands,
+      });
+    }
+
+    // 3.2 全域增长与外链中枢：/api/admin/growth
+    if (path === 'growth' || slug[0] === 'growth') {
+      const today = new Date().toISOString().slice(0, 10);
+      const isTgConfigured = !!process.env.TELEGRAM_BOT_TOKEN;
+
+      const latestItems = (PREBAKED_LATEST_TITLES.all || []).slice(0, 15);
+
+      const parasiteMarkdown = `# 【2026最新片单】海外免翻墙免费看国产剧与院线大片指南（${today}实时更新）
+
+> 人在海外（北美、欧洲、澳洲、日韩、东南亚），想看最新的国产热播剧和院线新片，却频频遭遇“由于版权限制，您所在的地区无法播放”？各大平台满屏的充值套路与低俗弹窗更让人不胜其扰。
+> 
+> 本文为您深度盘点 **2026 年最新上线的热门影视大作**，并推荐支持 **海外 4K 直连、0 弹窗广告、秒开不卡顿** 的高分观影途径。
+
+---
+
+## 🌟 今日全网院线与连载更新热榜
+
+${latestItems.map((item, index) => {
+  const watchUrl = `https://www.ikanpp.com${getTitleCanonicalHref(item)}`;
+  return `### ${index + 1}. 《${item.title}》
+- **当前状态**：${item.qualityBadge || '1080P/4K'} · ${item.updateBadge || '全集'}
+- **影视类型**：${item.type === 'tv' ? '精品热播电视剧' : '院线高分电影'}
+- **剧情亮点**：2026 年度备受瞩目的重磅巨作，全网热度持续霸榜，反转不断，口碑极佳。
+- **👉 4K 免翻墙正片直达**：[点击立即在 iKanPP 免费观看完整版](${watchUrl})
+`;
+}).join('\n')}
+
+---
+
+## 💡 为什么推荐通过 iKanPP (爱看片片) 追剧？
+
+对于身处海外的华人朋友与留学生来说，寻找一个稳定干净的平台至关重要：
+1. **海外免翻墙极速直连**：全球部署 Anycast 边缘 CDN，无论身在美加还是欧澳，首屏 **0.8 秒神速秒开**，彻底告别缓冲转圈；
+2. **绝对 0 弹窗广告**：真正纯净的影院级体验，坚决杜绝任何诱导点击与低俗悬浮广告；
+3. **海量 4.3 万部正片库**：从当下热播的《凡人修仙传》、《仙逆》，到院线热映大片，甚至 4K 纪录片全覆盖；
+4. **全端适配与 PWA 桌面支持**：手机、平板、电脑、电视浏览器全适配，可直接添加到手机桌面像 App 一样免翻墙一秒看剧。
+
+---
+
+> 收藏官方永久发布页：[iKanPP — 海外华人影视聚合平台 (https://www.ikanpp.com)](https://www.ikanpp.com)
+> 祝您观影愉快！
+`;
+
+      const directories = [
+        { id: '1', name: '一亩三分地', region: '北美', category: '留学生第一高知论坛', url: 'https://www.1point3acres.com/bbs/', weight: 'DR 85 (极高)' },
+        { id: '2', name: '文学城 (Wenxuecity)', region: '北美', category: '历史最悠久华人门户', url: 'https://bbs.wenxuecity.com/', weight: 'DR 82 (极高)' },
+        { id: '3', name: '北美微论坛 (MoonBBS)', region: '北美', category: '华人高频生活消费论坛', url: 'https://www.moonbbs.com/', weight: 'DR 76 (高)' },
+        { id: '4', name: '新足迹 (OurSteps)', region: '澳洲', category: '澳洲第一华人社区', url: 'https://www.oursteps.com.au/bbs/', weight: 'DR 78 (高)' },
+        { id: '5', name: '天维网 (Skykiwi)', region: '新西兰', category: '新西兰最大中文门户', url: 'https://bbs.skykiwi.com/', weight: 'DR 74 (高)' },
+        { id: '6', name: '欧洲华人街', region: '欧洲', category: '法意西华人生活枢纽', url: 'https://www.huarenjie.com/', weight: 'DR 72 (高)' },
+        { id: '7', name: 'V2EX (分享创造)', region: '极客', category: '海外程序员独立开发者社区', url: 'https://www.v2ex.com/go/create', weight: 'DR 88 (极高)' },
+        { id: '8', name: 'GitHub Awesome-Lists', region: '开源', category: '开发者顶级信任背书', url: 'https://github.com/', weight: 'DR 96 (神级)' },
+      ];
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          today,
+          tgBot: {
+            isConfigured: isTgConfigured,
+            webhookUrl: 'https://www.ikanpp.com/api/tg-bot',
+            botUsername: '@ikanpp_bot',
+          },
+          geo: {
+            llmsTxtUrl: 'https://www.ikanpp.com/llms.txt',
+            llmsFullTxtUrl: 'https://www.ikanpp.com/llms-full.txt',
+          },
+          parasite: {
+            title: `【2026最新片单】海外免翻墙免费看国产剧与院线大片指南（${today}实时更新）`,
+            itemCount: latestItems.length,
+            markdown: parasiteMarkdown,
+          },
+          directories,
+        },
       });
     }
 

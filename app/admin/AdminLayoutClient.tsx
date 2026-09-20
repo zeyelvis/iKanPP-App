@@ -17,6 +17,7 @@ import {
   ChevronRight,
   Sparkles,
   Inbox,
+  Rocket,
 } from 'lucide-react';
 import './admin.css';
 
@@ -33,6 +34,7 @@ const NAV_ITEMS: NavItem[] = [
   { name: '用户求片工单', href: '/admin/demands', icon: Inbox },
   { name: 'SEO 智能监控', href: '/admin/seo', icon: Search },
   { name: '促抓控制台', href: '/admin/indexing', icon: Zap },
+  { name: '全域增长中枢', href: '/admin/growth', icon: Rocket, badge: 'HOT' },
   { name: 'GSC 数据分析', href: '/admin/analytics', icon: BarChart3 },
   { name: '系统配置与审计', href: '/admin/system', icon: Settings },
 ];
