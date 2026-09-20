@@ -25,8 +25,11 @@ export function CategoryHubSkeleton({
   };
 
   const trendingNav = channelData.trendingNav || [];
-  const backdropUrl = hero.backdrop
+  const desktopBackdropUrl = hero.backdrop
     ? `/api/img-proxy?url=${encodeURIComponent(hero.backdrop)}&w=1280`
+    : '';
+  const mobileBackdropUrl = hero.backdrop
+    ? `/api/img-proxy?url=${encodeURIComponent(hero.backdrop)}&w=780`
     : '';
 
   const navKey = activeNav || channelKey;
@@ -126,14 +129,17 @@ export function CategoryHubSkeleton({
 
       {/* 2. 影院级全景巨幕 Hero 区域 */}
       <section className="relative w-full h-[68vh] min-h-140 sm:h-[75vh] lg:h-[82vh] max-h-210 overflow-hidden select-none">
-        {backdropUrl && (
-          <img
-            src={backdropUrl}
-            alt={hero.title}
-            fetchPriority="high"
-            decoding="sync"
-            className="absolute inset-0 w-full h-full object-cover object-center transform scale-102"
-          />
+        {desktopBackdropUrl && (
+          <picture className="absolute inset-0 w-full h-full">
+            <source media="(max-width: 640px)" srcSet={mobileBackdropUrl} />
+            <img
+              src={desktopBackdropUrl}
+              alt={hero.title}
+              fetchPriority="high"
+              decoding="sync"
+              className="w-full h-full object-cover object-center transform scale-102"
+            />
+          </picture>
         )}
 
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/40 to-transparent z-10" />
@@ -149,7 +155,7 @@ export function CategoryHubSkeleton({
                     {hero.title}
                   </h2>
                   <div className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] h-6">
-                    <span className="truncate">{hero.episodes_info || (categoryTitle ? `${categoryTitle} · 热门` : '热门推荐')}</span>
+                    <span className="truncate">{hero.episodes_info || '精选'}</span>
                     {hero.rate && (
                       <span className="text-amber-400 font-bold text-sm sm:text-base flex items-center gap-0.5 shrink-0">
                         ★ {hero.rate}
@@ -158,15 +164,15 @@ export function CategoryHubSkeleton({
                   </div>
                 </div>
 
-                <div className="inline-flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 xl:px-6 xl:py-3 bg-white/20 backdrop-blur-md text-white rounded-full text-sm sm:text-base xl:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] shrink-0">
-                  <span>立即播放</span>
-                  <span className="text-sm sm:text-base">▷</span>
+                <div className="w-28 sm:w-32 h-10 sm:h-11 rounded-full bg-(--accent-color,theme(colors.red.600)) flex items-center justify-center font-bold text-white text-sm shadow-lg shadow-red-600/30">
+                  立即播放
                 </div>
               </div>
 
-              {/* 中栏：TrendingNav 速报标签栏 (爱壹帆专区专属：电影/剧集/动漫 6+6，综艺/纪录片 4+4) */}
+              {/* 中栏：全专区 100% 绝对对齐爱壹帆官方原生的二级速报标签栏 */}
               {trendingNav.length > 0 && (() => {
-                const isWide4 = channelKey === 'variety' || channelKey === 'documentary';
+                const total = trendingNav.length;
+                const isWide4 = total === 8;
                 const splitIdx = isWide4 ? 4 : 6;
                 const line1 = trendingNav.slice(0, splitIdx);
                 const line2 = trendingNav.slice(splitIdx, splitIdx * 2);
@@ -178,7 +184,7 @@ export function CategoryHubSkeleton({
                   >
                     <span className={`font-bold tracking-tight whitespace-nowrap leading-snug truncate shrink-0 ${
                       isWide4
-                        ? 'text-[12px] lg:text-[12.5px] xl:text-[14.5px] 2xl:text-[16px] max-w-[110px] lg:max-w-[130px] xl:max-w-[185px] 2xl:max-w-[220px]'
+                        ? 'text-xs lg:text-[13px] xl:text-[15px] 2xl:text-[16px] max-w-[110px] lg:max-w-[130px] xl:max-w-[180px] 2xl:max-w-[210px]'
                         : 'text-[11px] lg:text-[11.5px] xl:text-[13px] 2xl:text-[14.5px] max-w-[74px] lg:max-w-[82px] xl:max-w-[120px] 2xl:max-w-[150px]'
                     }`}>
                       {item.title}
@@ -229,20 +235,19 @@ export function CategoryHubSkeleton({
         </div>
       </section>
 
-      {/* 3. 频道大厅专属内容货架骨架区 */}
+      {/* 3. 频道大厅专属内容货架骨架区 (采用单行水平滚动滑轨，100% 杜绝 CLS 布局跳动) */}
       <div className="fluid-container space-y-8 mt-4 relative z-20 pb-20">
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-36 h-6 rounded bg-white/10 animate-pulse" />
             <div className="w-16 h-5 rounded-full bg-white/5 animate-pulse" />
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="space-y-2">
-                <div className="aspect-[2/3] rounded-xl bg-white/5 animate-pulse border border-white/5" />
-                <div className="w-3/4 h-4 rounded bg-white/10 animate-pulse" />
-                <div className="w-1/2 h-3 rounded bg-white/5 animate-pulse" />
-              </div>
+          <div className="flex gap-2.5 sm:gap-4 overflow-hidden pb-4 pt-1 items-center">
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <div
+                key={i}
+                className="w-[118px] sm:w-40 lg:w-46 shrink-0 aspect-[2/3] rounded-2xl bg-white/5 animate-pulse border border-white/5"
+              />
             ))}
           </div>
         </div>
@@ -252,13 +257,12 @@ export function CategoryHubSkeleton({
             <div className="w-44 h-6 rounded bg-white/10 animate-pulse" />
             <div className="w-16 h-5 rounded-full bg-white/5 animate-pulse" />
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="space-y-2">
-                <div className="aspect-[2/3] rounded-xl bg-white/5 animate-pulse border border-white/5" />
-                <div className="w-3/4 h-4 rounded bg-white/10 animate-pulse" />
-                <div className="w-1/2 h-3 rounded bg-white/5 animate-pulse" />
-              </div>
+          <div className="flex gap-2.5 sm:gap-4 overflow-hidden pb-4 pt-1 items-center">
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <div
+                key={i}
+                className="w-[118px] sm:w-40 lg:w-46 shrink-0 aspect-[2/3] rounded-2xl bg-white/5 animate-pulse border border-white/5"
+              />
             ))}
           </div>
         </div>

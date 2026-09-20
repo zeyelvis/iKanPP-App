@@ -15,8 +15,11 @@ export function HomePageSkeleton() {
   };
 
   const trendingNav = ALL_HOME_DATA.trendingNav || [];
-  const backdropUrl = hero.backdrop
+  const desktopBackdropUrl = hero.backdrop
     ? `/api/img-proxy?url=${encodeURIComponent(hero.backdrop)}&w=1280`
+    : '';
+  const mobileBackdropUrl = hero.backdrop
+    ? `/api/img-proxy?url=${encodeURIComponent(hero.backdrop)}&w=780`
     : '';
 
   return (
@@ -50,15 +53,18 @@ export function HomePageSkeleton() {
 
       {/* 2. 影院级全景巨幕 Hero 区域 (与 HeroSlideshow 高度与结构绝对 1:1 对齐) */}
       <section className="relative w-full h-[68vh] min-h-140 sm:h-[75vh] lg:h-[82vh] max-h-210 overflow-hidden select-none">
-        {/* 原生 <img> 高优先级预渲染背景图，绕过 Next/Image JS 运行时，0ms 启动网络流 */}
-        {backdropUrl && (
-          <img
-            src={backdropUrl}
-            alt={hero.title}
-            fetchPriority="high"
-            decoding="sync"
-            className="absolute inset-0 w-full h-full object-cover object-center transform scale-102"
-          />
+        {/* 原生 <picture> 响应式自适应预渲染背景图，移动端 780px 极速加载，桌面端 1280px 超清呈现，0ms 启动网络流 */}
+        {desktopBackdropUrl && (
+          <picture className="absolute inset-0 w-full h-full">
+            <source media="(max-width: 640px)" srcSet={mobileBackdropUrl} />
+            <img
+              src={desktopBackdropUrl}
+              alt={hero.title}
+              fetchPriority="high"
+              decoding="sync"
+              className="w-full h-full object-cover object-center transform scale-102"
+            />
+          </picture>
         )}
 
         {/* 电影级暗黑羽化与渐变遮罩系统 */}
@@ -78,34 +84,34 @@ export function HomePageSkeleton() {
                   <div className="text-white/90 text-sm sm:text-base font-medium flex items-center gap-2 whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] h-6">
                     <span className="truncate">{hero.episodes_info || '电影 · 剧情'}</span>
                     {hero.rate && (
-                      <span className="text-amber-400 font-bold text-sm sm:text-base flex items-center gap-0.5 shrink-0">
+                      <span className="text-amber-400 font-bold flex items-center gap-1">
                         ★ {hero.rate}
                       </span>
                     )}
                   </div>
                 </div>
 
-                <div className="inline-flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 xl:px-6 xl:py-3 bg-white/20 backdrop-blur-md text-white rounded-full text-sm sm:text-base xl:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] shrink-0">
-                  <span>立即播放</span>
-                  <span className="text-sm sm:text-base">▷</span>
+                <div className="w-28 sm:w-32 h-10 sm:h-11 rounded-full bg-(--accent-color,theme(colors.red.600)) flex items-center justify-center font-bold text-white text-sm shadow-lg shadow-red-600/30">
+                  立即播放
                 </div>
               </div>
 
-              {/* 中栏：TrendingNav 速报标签栏 (爱壹帆 6+6 绝对对称排布) */}
-              {trendingNav.length > 0 && (() => {
-                const line1 = trendingNav.slice(0, 6);
-                const line2 = trendingNav.slice(6, 12);
-                const renderItem = (item: { title: string; updateBadge?: string }, idx: number) => (
+              {/* 中栏：全专区 100% 绝对对齐爱壹帆官方原生的二级速报标签栏 */}
+              {(() => {
+                const total = trendingNav.length;
+                const half = Math.ceil(total / 2);
+                const line1 = trendingNav.slice(0, half);
+                const line2 = trendingNav.slice(half);
+
+                const renderItem = (item: { title: string; hot_score?: string }, index: number) => (
                   <div
-                    key={idx}
-                    className="flex items-center justify-start text-left text-white/90 select-none shrink-0"
+                    key={index}
+                    className="flex items-baseline gap-1 text-xs lg:text-[13px] 2xl:text-sm font-medium text-white/80"
                   >
-                    <span className="font-bold tracking-tight whitespace-nowrap leading-snug truncate shrink-0 text-[11px] lg:text-[11.5px] xl:text-[13px] 2xl:text-[14.5px] max-w-[74px] lg:max-w-[82px] xl:max-w-[120px] 2xl:max-w-[150px]">
-                      {item.title}
-                    </span>
-                    {item.updateBadge ? (
-                      <span className="inline-flex items-center justify-center bg-[#E50914] text-white text-[8.5px] xl:text-[9.5px] 2xl:text-[10px] font-black rounded-xs px-1 py-0.2 min-w-3.5 h-3.5 leading-none ml-1 shrink-0 shadow-md">
-                        {item.updateBadge}
+                    <span className="truncate max-w-[120px] 2xl:max-w-[150px]">{item.title}</span>
+                    {item.hot_score ? (
+                      <span className="text-[10px] 2xl:text-xs text-amber-400 font-bold shrink-0">
+                        {item.hot_score}
                       </span>
                     ) : null}
                   </div>
@@ -114,11 +120,11 @@ export function HomePageSkeleton() {
                 return (
                   <div className="hidden lg:flex flex-1 min-w-0 flex-col items-center justify-end px-2 xl:px-6 pb-1">
                     <div className="flex flex-col items-center gap-y-2 xl:gap-y-3 w-full max-w-fit">
-                      <div className="flex items-center justify-center whitespace-nowrap shrink-0 gap-x-2 lg:gap-x-2.5 xl:gap-x-5 2xl:gap-x-7">
+                      <div className="flex items-center justify-center whitespace-nowrap shrink-0 gap-x-4 lg:gap-x-6 xl:gap-x-8">
                         {line1.map(renderItem)}
                       </div>
-                      <div className="flex items-center justify-center whitespace-nowrap shrink-0 gap-x-2 lg:gap-x-2.5 xl:gap-x-5 2xl:gap-x-7">
-                        {line2.map((item, idx) => renderItem(item, idx + 6))}
+                      <div className="flex items-center justify-center whitespace-nowrap shrink-0 gap-x-4 lg:gap-x-6 xl:gap-x-8">
+                        {line2.map((item, idx) => renderItem(item, idx + half))}
                       </div>
                     </div>
                   </div>
@@ -141,14 +147,14 @@ export function HomePageSkeleton() {
         </div>
       </section>
 
-      {/* 3. 核心货架骨架区 */}
+      {/* 3. 核心货架骨架区 (采用与 Top10Rail 和 ContentRail 严格对齐的单行水平滚动滑轨，彻底消灭 CLS 布局跳动) */}
       <div className="fluid-container space-y-8 mt-4 relative z-20 pb-20">
         {/* 口碑榜胶囊条占位 */}
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 border-b border-white/10 pb-3">
           {['全部', '电影', '电视剧', '动漫', '综艺', '纪录片', '短剧'].map((tab, idx) => (
             <div
               key={idx}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold ${
+              className={`px-4 py-1.5 rounded-full text-xs font-bold shrink-0 ${
                 idx === 0 ? 'bg-white/20 text-white' : 'bg-white/5 text-white/40'
               }`}
             >
@@ -157,19 +163,18 @@ export function HomePageSkeleton() {
           ))}
         </div>
 
-        {/* 货架 1 骨架 (Top 10 / 热门) */}
+        {/* 货架 1 骨架 (Top 10 / 热门：严格物理锁死单行滑轨尺寸) */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-32 h-6 rounded bg-white/10 animate-pulse" />
             <div className="w-16 h-5 rounded-full bg-white/5 animate-pulse" />
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="space-y-2">
-                <div className="aspect-[2/3] rounded-xl bg-white/5 animate-pulse border border-white/5" />
-                <div className="w-3/4 h-4 rounded bg-white/10 animate-pulse" />
-                <div className="w-1/2 h-3 rounded bg-white/5 animate-pulse" />
-              </div>
+          <div className="flex gap-2.5 sm:gap-4 overflow-hidden pb-4 pt-1 items-center">
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <div
+                key={i}
+                className="w-[118px] sm:w-40 lg:w-46 shrink-0 aspect-[2/3] rounded-2xl bg-white/5 animate-pulse border border-white/5"
+              />
             ))}
           </div>
         </div>
@@ -180,13 +185,12 @@ export function HomePageSkeleton() {
             <div className="w-40 h-6 rounded bg-white/10 animate-pulse" />
             <div className="w-16 h-5 rounded-full bg-white/5 animate-pulse" />
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="space-y-2">
-                <div className="aspect-[2/3] rounded-xl bg-white/5 animate-pulse border border-white/5" />
-                <div className="w-3/4 h-4 rounded bg-white/10 animate-pulse" />
-                <div className="w-1/2 h-3 rounded bg-white/5 animate-pulse" />
-              </div>
+          <div className="flex gap-2.5 sm:gap-4 overflow-hidden pb-4 pt-1 items-center">
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <div
+                key={i}
+                className="w-[118px] sm:w-40 lg:w-46 shrink-0 aspect-[2/3] rounded-2xl bg-white/5 animate-pulse border border-white/5"
+              />
             ))}
           </div>
         </div>

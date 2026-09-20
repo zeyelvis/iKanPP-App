@@ -18,9 +18,9 @@ interface PosterImageProps {
 }
 
 /**
- * 缩略图海报组件（支持代理与直连双通道容灾）
+ * 缩略图海报组件（支持代理与直连双通道容灾，强制使用 thumb 185px 规格，杜绝 100vw 冗余开销）
  */
-function PosterImage({ src, alt, className = '', style, sizes = '100vw', priority = false }: PosterImageProps) {
+function PosterImage({ src, alt, className = '', style, sizes = '80px', priority = false }: PosterImageProps) {
   const [useFallback, setUseFallback] = useState(false);
   const [error, setError] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -31,7 +31,7 @@ function PosterImage({ src, alt, className = '', style, sizes = '100vw', priorit
     setLoaded(false);
   }, [src]);
 
-  const proxiedSrc = getOptimizedImageUrl(src, { noFallback: true });
+  const proxiedSrc = getOptimizedImageUrl(src, { variant: 'thumb', noFallback: true });
   const fallbackSrc = proxiedSrc.includes('/api/img-proxy')
     ? (src.startsWith('http') ? src : proxiedSrc)
     : getFallbackProxiedImageUrl(src, { variant: 'thumb' });
@@ -77,7 +77,7 @@ function PosterImage({ src, alt, className = '', style, sizes = '100vw', priorit
 }
 
 /**
- * 电影巨幕专属背景组件（双图层架构 + 多级容灾回退 + 即时氛围光晕，彻底根除偶发黑屏）
+ * 电影巨幕专属背景组件（双图层架构 + 多级容灾回退 + 移动端自适应响应式降维 780px，彻底根除 LCP 阻塞）
  */
 function HeroBackdrop({
   backdrop,
@@ -91,17 +91,20 @@ function HeroBackdrop({
   isShortDrama?: boolean;
 }) {
   // 构建候选重试容灾链：
-  // 1. 优化版 Backdrop（自适应地域路由）
+  // 1. 优化版 Backdrop（自适应地域路由，移动端自动请求 780px 宽幅图节省 75% 流量）
   // 2. 强制 R2 镜像代理版 Backdrop（避开海外局部防火墙阻断）
   // 3. 原生 Backdrop 直连
   // 4. 优化版 Cover（海报大图降级）
   // 5. 强制 R2 镜像代理版 Cover
   const candidates = useMemo(() => {
     const list: string[] = [];
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
+    const backdropWidth = isMobile ? 780 : 1280;
+
     if (backdrop) {
-      const optBackdrop = getOptimizedImageUrl(backdrop, { variant: 'backdrop', noFallback: true });
+      const optBackdrop = getOptimizedImageUrl(backdrop, { width: backdropWidth, noFallback: true });
       list.push(optBackdrop);
-      const fallbackProxy = getFallbackProxiedImageUrl(backdrop, { variant: 'backdrop' });
+      const fallbackProxy = getFallbackProxiedImageUrl(backdrop, { width: backdropWidth });
       if (!list.includes(fallbackProxy)) list.push(fallbackProxy);
       if (backdrop !== optBackdrop && backdrop.startsWith('http') && !list.includes(backdrop)) {
         list.push(backdrop);

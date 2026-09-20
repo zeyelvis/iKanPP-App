@@ -43,9 +43,11 @@ function RailPosterItem({
   const [imageError, setImageError] = useState(false);
   const [useProxyFallback, setUseProxyFallback] = useState(false);
 
-  const initialCover = getOptimizedImageUrl(movie.cover, { variant: 'poster' });
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
+  const cardVariant = isMobile ? 'thumb' : 'poster';
+  const initialCover = getOptimizedImageUrl(movie.cover, { variant: cardVariant });
   const proxiedCover = useProxyFallback
-    ? getFallbackProxiedImageUrl(movie.cover, { variant: 'poster' })
+    ? getFallbackProxiedImageUrl(movie.cover, { variant: cardVariant })
     : initialCover;
 
   useEffect(() => {
