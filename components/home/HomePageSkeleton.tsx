@@ -1,4 +1,5 @@
 import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
+import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 
 /**
  * 首页首屏高保真 SSR 骨架 (HomePageSkeleton)
@@ -16,10 +17,10 @@ export function HomePageSkeleton() {
 
   const trendingNav = ALL_HOME_DATA.trendingNav || [];
   const desktopBackdropUrl = hero.backdrop
-    ? `/api/img-proxy?url=${encodeURIComponent(hero.backdrop)}&w=1280`
+    ? getOptimizedImageUrl(hero.backdrop, { width: 1280, noFallback: true })
     : '';
   const mobileBackdropUrl = hero.backdrop
-    ? `/api/img-proxy?url=${encodeURIComponent(hero.backdrop)}&w=780`
+    ? getOptimizedImageUrl(hero.backdrop, { width: 780, noFallback: true })
     : '';
 
   return (

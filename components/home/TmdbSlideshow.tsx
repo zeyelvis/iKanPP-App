@@ -177,12 +177,11 @@ function HeroBackdrop({
       )}
 
       {/* 3. 顶层最新巨幕高清剧照：首屏首帧原生 <picture> 响应式直出，fetchPriority="high" 零水合延迟 */}
-      {!isShortDrama && displaySrc && (
+      {!isShortDrama && (desktopBackdrop || displaySrc) && (
         <picture className="absolute inset-0 w-full h-full">
-          {mobileBackdrop && <source media="(max-width: 640px)" srcSet={mobileBackdrop} />}
+          {mobileBackdrop && currentIndex === 0 && <source media="(max-width: 640px)" srcSet={mobileBackdrop} />}
           <img
-            key={displaySrc}
-            src={displaySrc}
+            src={currentIndex === 0 ? desktopBackdrop : displaySrc}
             alt={title}
             fetchPriority="high"
             loading="eager"
