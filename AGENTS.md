@@ -217,9 +217,14 @@ iKanPP 作为面向全球华人的高品质流媒体平台，主站（轨道 A�
 ### 4. 低俗与成人违禁词一票否决
 - 严格执行 `ADULT_BLACKLIST_WORDS` 敏感词黑名单，地下色情录像、成人番号、露骨低俗条目一律直接物理抹除。
 
-### 5. 六重立体防线协同闭环（永不复发钢铁长城）
+### 5. 二手短视频与解说类搬运条目绝对零容忍 (No Commentary or Short Snippets)
+- **正片底线**：iKanPP 唯一定位为高端 4K 完整影视正片流媒体，严禁任何短视频营销号二次搬运的“电影解说”、“影视解说”、“一口气看完”、“几分钟看懂”、“速看”、“先导片”、“精彩片段”、“纯享版”等非正片条目渗透片库。
+- **一票否决**：严格执行 `COMMENTARY_BLACKLIST_WORDS`，统一在 `lib/data/entities/entity-utils.ts` 的 `isCleanChineseTitle` 中执行一票否决。无论在采集源端（`ingest-entity-catalog.mjs`）、增量雷达（`sync-first-release-radar.mjs`、`sync-release-radar.mjs`）、多维检索接口（`app/api/library/browse`）、还是底层存储（`saveEntity`），只要标题或分类命中解说特征，一律坚决物理阻断与丢弃！
+
+### 6. 六重立体防线协同闭环（永不复发钢铁长城）
 - **底层算法基线**：统一调用 `lib/data/entities/entity-utils.ts` 中的 `isCleanChineseTitle`；
-- **底层存储终极硬锁**：`lib/services/entity-kv.ts` 中的 `saveEntity` 入口强制执行 `if (!isCleanChineseTitle(entity.title)) return;` 物理拦截，任何未汉化、假名或违规条目底层直接拒收，绝不写入 `index:all`；
+- **底层存储终极硬锁**：`lib/services/entity-kv.ts` 中的 `saveEntity` 入口强制执行 `if (!isCleanChineseTitle(entity.title)) return;` 物理拦截，任何未汉化、假名、解说类或违规条目底层直接拒收，绝不写入 `index:all`；
+
 - **影人履历彻底脱钩**：`lib/services/entity-enrichment.ts` 中的 `searchAndEnrichPersonCredits` 仅关联本站已收录的影视，**严禁盲目为 TMDB 外部履历分配新实体 ID 并调用 saveEntity**，彻底消除爬虫递归造片漏洞；
 - **采集源头门禁**：`scripts/ingest-entity-catalog.mjs`、`app/api/seo/entity-pipeline/route.ts` 与 `app/api/seo/tmdb-changes/route.ts` 必须在前置循环中强制校验 `isCleanChineseTitle`；
 - **KV 存储自愈**：`lib/services/entity-kv.ts` 中的 `isSafeRecentTitleItem` 严密把关 `recent:*` 的写入与下发；

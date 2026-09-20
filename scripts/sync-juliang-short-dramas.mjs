@@ -19,8 +19,9 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 
 const JULIANG_API_BASE = 'https://api.juliang.live/api/provide/vod/';
-const EXCLUDED_TYPE_IDS = new Set([190, 191]);
-const EXCLUDED_KEYWORDS = ['伦理', '写真', '福利', '限制级', '18禁', '三级'];
+const EXCLUDED_TYPE_IDS = new Set([190, 191, 199]); // 199 为电影解说二手短视频分类
+const EXCLUDED_KEYWORDS = ['伦理', '写真', '福利', '限制级', '18禁', '三级', '解说', '说电影', '速看', '影视剪辑', '混剪'];
+
 
 function cleanHtmlText(raw) {
   if (!raw) return '';

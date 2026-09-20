@@ -204,8 +204,14 @@ export const ADULT_BLACKLIST_WORDS = [
   '勃起', '性关系'
 ];
 
+export const COMMENTARY_BLACKLIST_WORDS = [
+  '解说', '说电影', '几分钟看', '一口气看', '速看', '看懂',
+  '纯享版', '先导片', '幕后花絮', '独家花絮', '精彩看点', '正片片段',
+  '电影解说', '影视解说', '剧情解说', '短剧解说', '影视剪辑', '混剪'
+];
+
 // 日本特有新字体汉字（和制汉字/国字，在中文正规汉字中不存在或已被规范简化，出现通常代表生肉日文片名）
-const JAPANESE_KANJI_VARIANTS = /[剣気駅図竜絵鉄悪戦沢浜黑广恵毎齿寿对专拠抜拝捜検栄様歩杀殻浄浅]/;
+const JAPANESE_KANJI_VARIANTS = /[剣気駅図竜絵铁悪戦沢浜黑广恵毎齿寿对专拠抜拝捜検栄様歩杀殻浄浅]/;
 
 // 成人番号特征识别（如 START-205, IPX-123 等）
 const ADULT_CODE_REGEX = /\b[A-Z]{2,6}[-_]?\d{2,5}\b/i;
@@ -222,6 +228,13 @@ export function isCleanChineseTitle(title: string): boolean {
       if (t.includes('星球大战') || t.includes('野战排') || t.includes('大雨将至') || t.includes('辉煌的意外') || t.includes('我的恐怖妻子') || t.includes('魔法少女与邪恶') || t.includes('亲爱的小美人鱼')) {
         continue;
       }
+      return false;
+    }
+  }
+
+  // 1.5 绝对拦截二手搬运、短视频剪辑与各类影视解说（守护 4K 完整正片底线）
+  for (const cw of COMMENTARY_BLACKLIST_WORDS) {
+    if (t.includes(cw)) {
       return false;
     }
   }

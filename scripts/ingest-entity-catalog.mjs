@@ -53,6 +53,12 @@ const ADULT_BLACKLIST_WORDS = [
 
 const ADULT_CODE_REGEX = /\b[A-Z]{2,6}[-_]?\d{2,5}\b/i;
 
+const COMMENTARY_BLACKLIST_WORDS = [
+  '解说', '说电影', '几分钟看', '一口气看', '速看', '看懂',
+  '纯享版', '先导片', '幕后花絮', '独家花絮', '精彩看点', '正片片段',
+  '电影解说', '影视解说', '剧情解说', '短剧解说', '影视剪辑', '混剪'
+];
+
 function isCleanChineseTitle(title) {
   if (!title || typeof title !== 'string') return false;
   const t = title.trim();
@@ -66,6 +72,10 @@ function isCleanChineseTitle(title) {
       return false;
     }
   }
+  for (const cw of COMMENTARY_BLACKLIST_WORDS) {
+    if (t.includes(cw)) return false;
+  }
+
   if (ADULT_CODE_REGEX.test(t)) return false;
   if (/[\u3040-\u309f\u30a0-\u30ff]/.test(t)) return false;
   if (/[\uac00-\ud7af]/.test(t)) return false;

@@ -106,12 +106,36 @@ if (fs.existsSync(desktopOverlayPath)) {
   );
 }
 
+// 6. 纯正正片内容安全门禁：严禁任何解说类、短视频二手搬运条目渗透片库
+const entityUtilsPath = path.resolve('lib/data/entities/entity-utils.ts');
+if (fs.existsSync(entityUtilsPath)) {
+  const utilsContent = fs.readFileSync(entityUtilsPath, 'utf-8');
+  assert(
+    utilsContent.includes('COMMENTARY_BLACKLIST_WORDS') &&
+    utilsContent.includes("'解说'") &&
+    utilsContent.includes("'说电影'") &&
+    utilsContent.includes("'一口气看'"),
+    'entity-utils.ts 必须声明 COMMENTARY_BLACKLIST_WORDS，并在 isCleanChineseTitle 中执行解说类一票否决'
+  );
+}
+
+const browseRoutePath = path.resolve('app/api/library/browse/route.ts');
+if (fs.existsSync(browseRoutePath)) {
+  const browseContent = fs.readFileSync(browseRoutePath, 'utf-8');
+  assert(
+    browseContent.includes("typeName.includes('解说')") &&
+    browseContent.includes('isCleanChineseTitle(cleanTitle)'),
+    'app/api/library/browse/route.ts 必须对采集站数据执行 isCleanChineseTitle 与解说类分类物理过滤'
+  );
+}
+
 console.log('\n====================================================');
 if (failed) {
   console.error('🚨 架构契约巡检失败！存在破坏全局稳定性的违规回退，请根据上述报错整改后再行提交！');
   process.exit(1);
 } else {
-  console.log('🎉 恭喜！全站架构契约、单一真理源、全屏防黑屏与流水线韧性 100% 严格达标！');
+  console.log('🎉 恭喜！全站架构契约、单一真理源、全屏防黑屏、正片纯净度与流水线韧性 100% 严格达标！');
   console.log('====================================================\n');
 }
+
 

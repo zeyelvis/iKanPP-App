@@ -54,6 +54,12 @@ const ADULT_BLACKLIST_WORDS = [
   '売春', '愛汁', '肉しびれ', '女囚', '痴情', '快辱', '乱交', 'ポルノ', '半熟売春'
 ];
 
+const COMMENTARY_BLACKLIST_WORDS = [
+  '解说', '说电影', '几分钟看', '一口气看', '速看', '看懂',
+  '纯享版', '先导片', '幕后花絮', '独家花絮', '精彩看点', '正片片段',
+  '电影解说', '影视解说', '剧情解说', '短剧解说', '影视剪辑', '混剪'
+];
+
 /**
  * 严格遵循 AGENTS.md 准则 12：华语流媒体内容安全绝对防线
  */
@@ -65,6 +71,10 @@ function isCleanChineseTitle(title) {
   for (const w of ADULT_BLACKLIST_WORDS) {
     if (t.includes(w)) return false;
   }
+  for (const cw of COMMENTARY_BLACKLIST_WORDS) {
+    if (t.includes(cw)) return false;
+  }
+
 
   // 1. 日文假名绝对零容忍（平假名/片假名，无论是否夹带汉字）
   if (/[\u3040-\u309f\u30a0-\u30ff]/.test(t)) {

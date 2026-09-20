@@ -51,6 +51,12 @@ const ADULT_BLACKLIST = [
   '三级', '露点', '情色', '偷拍'
 ];
 
+const COMMENTARY_BLACKLIST = [
+  '解说', '说电影', '几分钟看', '一口气看', '速看', '看懂',
+  '纯享版', '先导片', '幕后花絮', '独家花絮', '精彩看点', '正片片段',
+  '电影解说', '影视解说', '剧情解说', '短剧解说', '影视剪辑', '混剪'
+];
+
 function isCleanChineseTitle(title) {
   if (!title || typeof title !== 'string') return false;
   const t = title.trim();
@@ -58,6 +64,10 @@ function isCleanChineseTitle(title) {
   for (const w of ADULT_BLACKLIST) {
     if (t.includes(w)) return false;
   }
+  for (const cw of COMMENTARY_BLACKLIST) {
+    if (t.includes(cw)) return false;
+  }
+
   // 日文假名绝对零容忍
   if (/[\u3040-\u309f\u30a0-\u30ff]/.test(t)) return false;
   // 韩文字符绝对零容忍

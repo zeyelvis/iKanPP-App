@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DOCUMENTARY_DATASET } from '@/lib/data/documentary-data';
 import { queryEntities } from '@/lib/services/entity-kv';
-import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
+import { getTitleCanonicalHref, isCleanChineseTitle } from '@/lib/data/entities/entity-utils';
 
 export const runtime = 'edge';
+
 
 const FETCH_TIMEOUT_MS = 3500;
 
@@ -518,7 +519,19 @@ export async function GET(req: NextRequest) {
     if (seenTitles.has(cleanTitle)) continue;
     seenTitles.add(cleanTitle);
 
+    // 核心门禁：坚决阻断任何解说类、短视频营销号二手搬运与违规片名
+    const typeName = (item.type_name || '').toLowerCase();
+    const vodClass = (item.vod_class || '').toLowerCase();
+    if (
+      typeName.includes('解说') ||
+      vodClass.includes('解说') ||
+      !isCleanChineseTitle(cleanTitle)
+    ) {
+      continue;
+    }
+
     // 内存过滤年份
+
     if (!matchesYear(item, year)) {
       continue;
     }
