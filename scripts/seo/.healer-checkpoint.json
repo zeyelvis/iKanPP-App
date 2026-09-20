@@ -1,10 +1,10 @@
 {
   "tier1Done": true,
-  "globalIndexOffset": 0,
+  "globalIndexOffset": 500,
   "stats": {
-    "scanned": 124,
-    "healthy": 22,
-    "healed": 70,
-    "unresolvable": 32
+    "scanned": 624,
+    "healthy": 89,
+    "healed": 463,
+    "unresolvable": 72
   }
 }
