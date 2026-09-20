@@ -312,13 +312,14 @@ export function HeroSlideshow({
     setActiveIndex(prev => (prev - 1 + currentData.length) % currentData.length);
   }, [currentData.length]);
 
-  // 自动轮播（每 7 秒切换一次，用户手动滑动或点击后智能重置完整 7 秒，悬停时暂停）
+  // 自动轮播：首屏首部大片停留 10 秒，给予充足观赏时间并彻底杜绝过早切换杀死 LCP 指标；后续每 8 秒平滑切换
   useEffect(() => {
     if (isPaused || currentData.length <= 1) return;
-    const timer = setInterval(() => {
+    const delay = activeIndex === 0 ? 10000 : 8000;
+    const timer = setTimeout(() => {
       setActiveIndex(prev => (prev + 1) % currentData.length);
-    }, 7000);
-    return () => clearInterval(timer);
+    }, delay);
+    return () => clearTimeout(timer);
   }, [isPaused, currentData.length, activeIndex]);
 
   const activeTrendingNav = trendingNav || (PREBAKED_HOME_DATA as any)[contentType]?.trendingNav || (contentType === 'all' ? PREBAKED_HOME_DATA.all?.trendingNav : undefined);
@@ -378,27 +379,23 @@ export function HeroSlideshow({
     }
   };
 
-  // 智能预加载上一部与下一部大片的巨幕背景与海报，实现切换瞬间 0 延迟秒开
+  // 智能延迟预加载下一部大片的巨幕背景（延迟 4 秒，移动端仅拉取 780px，彻底释放首屏网络通道）
   useEffect(() => {
     if (typeof window === 'undefined' || currentData.length <= 1) return;
-    const nextIdx = (activeIndex + 1) % currentData.length;
-    const prevIdx = (activeIndex - 1 + currentData.length) % currentData.length;
-
-    [nextIdx, prevIdx].forEach(idx => {
-      const item = currentData[idx];
+    const timer = setTimeout(() => {
+      const nextIdx = (activeIndex + 1) % currentData.length;
+      const item = currentData[nextIdx];
       if (!item) return;
       const targetBackdrop = item.backdrop || backdrops[item.title] || item.cover;
       if (targetBackdrop) {
+        const isMobile = window.innerWidth <= 640;
         const img = new window.Image();
         img.referrerPolicy = 'no-referrer';
-        img.src = getOptimizedImageUrl(targetBackdrop, { noFallback: true });
+        img.src = getOptimizedImageUrl(targetBackdrop, { width: isMobile ? 780 : 1280, noFallback: true });
       }
-      if (item.cover) {
-        const coverImg = new window.Image();
-        coverImg.referrerPolicy = 'no-referrer';
-        coverImg.src = getOptimizedImageUrl(item.cover, { noFallback: true });
-      }
-    });
+    }, 4000);
+
+    return () => clearTimeout(timer);
   }, [activeIndex, currentData, backdrops]);
 
   return (

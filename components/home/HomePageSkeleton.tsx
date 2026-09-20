@@ -147,8 +147,27 @@ export function HomePageSkeleton() {
         </div>
       </section>
 
-      {/* 3. 核心货架骨架区 (采用与 Top10Rail 和 ContentRail 严格对齐的单行水平滚动滑轨，彻底消灭 CLS 布局跳动) */}
-      <div className="fluid-container space-y-8 mt-4 relative z-20 pb-20">
+      {/* 3. 核心货架骨架区 (采用与 PopularFeatures 严格 1:1 对齐的货架顺序，彻底消灭 CLS 布局跳动) */}
+      <div className="fluid-container space-y-6 sm:space-y-8 mt-2 sm:mt-4 relative z-20 pb-20">
+        {/* 最新上线 · 实时收录横轨骨架（与 LatestTitlesRail 结构严格 1:1 对齐，杜绝水合下推位移） */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/50 animate-pulse" />
+              <div className="w-32 h-6 rounded bg-white/10 animate-pulse" />
+            </div>
+            <div className="w-16 h-4 rounded bg-white/5 animate-pulse" />
+          </div>
+          <div className="flex gap-2.5 sm:gap-4 overflow-hidden pb-4 pt-1 items-center">
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <div
+                key={i}
+                className="w-[122px] sm:w-42 lg:w-48 shrink-0 aspect-2/3 rounded-2xl bg-white/5 animate-pulse border border-emerald-500/10"
+              />
+            ))}
+          </div>
+        </div>
+
         {/* 口碑榜胶囊条占位 */}
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 border-b border-white/10 pb-3">
           {['全部', '电影', '电视剧', '动漫', '综艺', '纪录片', '短剧'].map((tab, idx) => (
