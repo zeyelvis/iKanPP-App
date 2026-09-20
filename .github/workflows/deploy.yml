@@ -23,8 +23,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Zero-404 & SEO Integrity Gate
-        run: npx tsx scripts/test-latest-titles-404.mjs
+      - name: Run Architecture Contract & Zero-404 Integrity Gate
+        run: |
+          node scripts/test-architecture-integrity.mjs
+          npx tsx scripts/test-latest-titles-404.mjs
 
       - name: Build Next.js application for Cloudflare Pages
         run: npm run pages:build

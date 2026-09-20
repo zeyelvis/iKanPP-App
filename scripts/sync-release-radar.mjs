@@ -698,23 +698,8 @@ async function main() {
  * 物料规范：TMDB 4K 原版无水印海报与 4K 宽屏剧照
  */
 
-export interface LatestPrebakedItem {
-  entityId: string;
-  tmdbId?: string;
-  title: string;
-  slug: string;
-  cover: string;
-  backdrop: string;
-  rate: string;
-  year: string;
-  type: 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string;
-  channelKey: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string;
-  genres: string[];
-  updateBadge: string;
-  platformBadge?: string;
-  qualityBadge?: string;
-  createdAt: string;
-}
+import type { LatestPrebakedItem } from '../types/prebaked';
+export type { LatestPrebakedItem };
 
 export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = ${JSON.stringify(prebakedData, null, 2)};
 `;

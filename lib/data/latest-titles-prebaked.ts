@@ -4,23 +4,8 @@
  * 涵盖全站、电影、电视剧、动漫、综艺、纪录片 6 大专区真实 24h 最新入库影视
  */
 
-export interface LatestPrebakedItem {
-  entityId: string;
-  tmdbId?: string;
-  title: string;
-  slug: string;
-  cover: string;
-  backdrop: string;
-  rate: string;
-  year: string;
-  type: 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string;
-  channelKey: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string;
-  genres: string[];
-  updateBadge: string;
-  platformBadge?: string;
-  qualityBadge?: string;
-  createdAt: string;
-}
+import type { LatestPrebakedItem } from '../types/prebaked';
+export type { LatestPrebakedItem };
 
 export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
   "all": [

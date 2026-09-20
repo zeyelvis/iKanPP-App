@@ -450,6 +450,32 @@ iKanPP 全域流媒体片单调度中枢必须永久恪守超越爱壹帆的独�
 - **普通影视停用 Google Indexing API**：根据 Google 官方政策，Indexing API 仅限招聘与直播流，普通影视 URL 100% 停用，服务端硬锁阻断；
 - **IndexNow POST 安全鉴权**：IndexNow 路由彻底封禁 GET 方法的外部推送副作用，仅允许携带 `CRON_SECRET` Bearer Token 的受控 POST 请求进行增量广播。
 
+---
+
+## 20. 全网自动化流水线高容错、契约单一真理源与架构守卫门禁铁律 (Pipeline Fault-Tolerance & Shared Contract Spec)
+
+iKanPP 全域自动化运维流水线与数据同步中枢必须永久恪守以下契约单一真理源、高韧性容错与前置架构门禁工程基线，**彻底终结“改完核心业务 ➔ 辅助脚本断裂 ➔ 事后被动补漏”的恶性循环，严禁任何后续开发回退**：
+
+### 1. 契约单一真理源铁律 (Single Source of Truth, SSOT)
+- **绝对禁忌**：**严禁在任何生成脚本、离线爬虫或测试工具中使用 JS 字符串模板手写重复的 `interface` 或核心数据类型！**
+- **统一导入机制**：全站所有核心数据契约必须且只能统一定义在 `lib/types/` 中（如预烘焙统一契约 `lib/types/prebaked.ts`）；
+- **防覆盖机制**：数据生成脚本（如 `sync-release-radar.mjs`、`sync-episode-updates.mjs`、`sync-latest-titles.mjs`）写入 `.ts` 文件时，必须使用 `import type { ... } from '../types/...'` 引用共享契约，严禁在模板中重复内联声明，杜绝脚本重复运行引发的类型擦除与编译崩溃。
+
+### 2. 流水线辅助任务非阻塞优雅降级铁律 (Graceful Non-Blocking Fallback)
+- **核心判定**：在 `.github/workflows/` 中串联的次级辅助任务（如：首发先锋雷达嗅探、4 大排序倒排索引同步、剧集更新角标探测、短剧增量巡检、SEO 广播推送等），属于大盘增量增强任务；
+- **铁律要求**：辅助脚本必须在其顶层 `main().catch(...)` 中捕获 Warning 日志并**保持 `process.exit(0)` 正常退出**，严禁因单个辅助源抖动、外部 API 鉴权超时或次级索引异常而执行致命的 `process.exit(1)`，坚决杜绝单点异常阻断全站大盘影视的自动提交、部署与上线闭环。
+
+### 3. 公共基础 SDK 化与凭据别名统一解析铁律 (Shared Infra & Multi-Alias Fallback)
+- **消灭重复代码**：所有涉及 Cloudflare KV、D1、外部 API 调用的脚本，必须统一调用共享辅助库（如 `scripts/common/kv-helper.mjs`），严禁在几十个独立脚本中机械复制粘贴 `fetch` 与凭证读取逻辑；
+- **多别名全覆盖**：所有读取环境凭证的基础设施必须默认兼容 `CLOUDFLARE_API_KEY || CF_KV_API_KEY || CF_API_KEY || CLOUDFLARE_AUTH_KEY` 等全部历史别名，杜绝因环境变量名差异引发的云端鉴权失败。
+
+### 4. API 端点 Cron Secret 安全默认值防线 (Safe Cron Secret Default)
+- 所有对外暴露由 GitHub Actions 或第三方定时触发的接口（如 `/api/seo/entity-pipeline`、`/api/seo/tmdb-changes`），其鉴权逻辑必须内置安全默认 Secret 兜底（`process.env.CRON_SECRET || 'ikanpp-cron-sync-secret'`），彻底杜绝由于云端 Pages 未手动配置环境变量而产生的 401 阻断。
+
+### 5. 架构守卫与前置门禁双重拦截机制 (Architecture Integrity Linter Gate)
+- **本地与 CI 双门禁**：全站配置统一的架构契约巡检器 `scripts/test-architecture-integrity.mjs` 与防 404 门禁 `scripts/test-latest-titles-404.mjs`，并通过 `npm run test:arch` 统一编排；
+- **构建前硬拦截**：Cloudflare Pages 部署工作流（`deploy.yml`）在执行编译前必须先通过架构守卫门禁，只要检测到任何手写重复契约、辅助脚本致命退出或死链隐患，立即就地阻断并精准报警，将所有潜在架构脱节扼杀在发版之前。
+
 
 
 
