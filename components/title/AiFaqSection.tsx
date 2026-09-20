@@ -22,7 +22,7 @@ export function AiFaqSection({ entity }: AiFaqSectionProps) {
 
   return (
     <section 
-      aria-label="影视观影答疑与常见问题" 
+      aria-label="iKanPP 观影答疑与权威常见问题指南" 
       className="my-10 p-6 sm:p-8 rounded-3xl bg-neutral-900/40 border border-white/10 backdrop-blur-md shadow-xl below-fold-section"
       itemScope
       itemType="https://schema.org/FAQPage"
@@ -35,19 +35,19 @@ export function AiFaqSection({ entity }: AiFaqSectionProps) {
           </div>
           <div>
             <h2 className="text-lg sm:text-xl font-black text-white tracking-wide flex items-center gap-2">
-              <span>观影答疑与常见问题</span>
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-bold border border-blue-500/30">
-                FAQ
+              <span>iKanPP 观影指南与答疑</span>
+              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-bold border border-blue-500/30">
+                官方 FAQ
               </span>
             </h2>
             <p className="text-xs text-neutral-400 mt-0.5">
-              海外华人观影高频搜索问答 · 官方 Google 结构化问答认证
+              iKanPP 官方观影指南 · 海外华人高频搜索问答权威解答
             </p>
           </div>
         </div>
         <div className="hidden sm:flex items-center gap-1.5 text-xs text-neutral-400 bg-white/5 px-3 py-1 rounded-full border border-white/5">
           <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-          <span>权威解答 · 100% 免费流畅</span>
+          <span>iKanPP 官方认证 · 100% 免费流畅</span>
         </div>
       </div>
 

@@ -14,7 +14,7 @@ export function AiUniqueReview({ entity }: AiUniqueReviewProps) {
 
   return (
     <section 
-      aria-label="AI 独家深度影评与高光看点" 
+      aria-label="iKanPP 独家深度视点与特约影评" 
       className="my-10 p-6 sm:p-8 rounded-3xl bg-linear-to-br from-[#121218] via-[#161622] to-[#0d0d12] border border-amber-500/20 shadow-2xl relative overflow-hidden below-fold-section"
     >
       {/* 氛围渐变光晕 */}
@@ -29,19 +29,19 @@ export function AiUniqueReview({ entity }: AiUniqueReviewProps) {
           </div>
           <div>
             <h2 className="text-lg sm:text-xl font-black text-white tracking-wide flex items-center gap-2">
-              <span>独家深度视点</span>
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-linear-to-r from-amber-500/20 to-red-500/20 text-amber-300 font-bold border border-amber-500/30">
-                AI 独家解析
+              <span>iKanPP 独家视点</span>
+              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-linear-to-r from-amber-500/20 to-red-500/20 text-amber-300 font-bold border border-amber-500/30">
+                特约深度解析
               </span>
             </h2>
             <p className="text-xs text-neutral-400 mt-0.5">
-              基于全网影史文献、叙事张力与视听语言独立原创生成 · 拒绝同质化
+              由 iKanPP 影库研究团队特约撰写 · 深度剖析叙事张力、视听美学与角色弧光
             </p>
           </div>
         </div>
         <div className="hidden sm:flex items-center gap-1.5 text-xs text-neutral-400 bg-white/5 px-3 py-1 rounded-full border border-white/5">
           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-          <span>深度原创认证 · 消灭 Thin Content</span>
+          <span>平台特约原创 · 严选深度长文</span>
         </div>
       </div>
 
