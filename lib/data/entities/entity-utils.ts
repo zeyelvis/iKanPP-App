@@ -70,17 +70,41 @@ export function parseEntitySlug(param: string): { entityId: string | null; slug:
 export function getTitleCanonicalHref(item: { entityId?: string; id?: string | number; title?: string; name?: string; slug?: string; canonicalSlug?: string } | null | undefined): string {
   if (!item) return '/';
   if (item.canonicalSlug && item.canonicalSlug.trim()) {
-    return `/title/${item.canonicalSlug.trim()}`;
+    const cleanCanonical = item.canonicalSlug.trim().replace(/^\/?(title\/)?/, '');
+    if (cleanCanonical) {
+      return `/title/${cleanCanonical}`;
+    }
   }
   const title = (item.title || item.name || '').trim();
-  if (!title) return '/';
+  if (!title && !item.slug) return '/';
   const rawId = (item.entityId || item.id || '').toString().trim().toLowerCase();
   const hasStandardId = /^ik\d{6}$/i.test(rawId);
-  const baseText = item.slug || title;
+
+  // 核心基线：优先以真实中文标题生成 cleanSlug；若无 title 才回退 item.slug
+  let baseText = title;
+  if (!baseText && item.slug) {
+    try {
+      baseText = decodeURIComponent(item.slug).trim();
+    } catch {
+      baseText = item.slug.trim();
+    }
+  }
+  // 若 baseText 含有 % 转码，先行安全解码，保护中文字符不被 generateSlug 撕裂成连字符十六进制乱码
+  if (baseText.includes('%')) {
+    try {
+      baseText = decodeURIComponent(baseText).trim();
+    } catch {}
+  }
+
   let cleanSlug = generateSlug(baseText).toLowerCase();
+  // 清洗可能重复的 ID 前缀（如 ik000001- 或 ik_radar_...-）
   if (hasStandardId && cleanSlug.startsWith(`${rawId}-`)) {
     cleanSlug = cleanSlug.slice(rawId.length + 1);
   }
+  if (cleanSlug.startsWith('ik') && /^[a-zA-Z0-9_]+-/.test(cleanSlug)) {
+    cleanSlug = cleanSlug.replace(/^[a-zA-Z0-9_]+-/, '');
+  }
+
   if (hasStandardId) {
     return `/title/${rawId}-${cleanSlug}`;
   }

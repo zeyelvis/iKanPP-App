@@ -172,12 +172,13 @@ function detectBadges(item) {
  * 拼音 Slug 简易安全生成
  */
 function simpleSlug(title) {
-  return encodeURIComponent(
-    title
-      .toLowerCase()
-      .replace(/[\s:：·•\-_—]+/g, '-')
-      .replace(/[^\w\u4e00-\u9fa5\-]/g, '')
-  );
+  if (!title) return 'video';
+  return title
+    .toLowerCase()
+    .replace(/[\s:：·•\-_—]+/g, '-')
+    .replace(/[^\w\u4e00-\u9fa5\-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '') || 'video';
 }
 
 // ── 爱壹帆（IYF）动态签名与自愈网络层 ──────────────────────────────────────────

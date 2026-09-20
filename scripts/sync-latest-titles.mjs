@@ -62,12 +62,13 @@ function normalizeIsoDate(dateStr) {
  * 拼音 Slug 简易生成
  */
 function simpleSlug(title) {
-  return encodeURIComponent(
-    title
-      .toLowerCase()
-      .replace(/[\s:：·•\-_—]+/g, '-')
-      .replace(/[^\w\u4e00-\u9fa5\-]/g, '')
-  );
+  if (!title) return 'video';
+  return title
+    .toLowerCase()
+    .replace(/[\s:：·•\-_—]+/g, '-')
+    .replace(/[^\w\u4e00-\u9fa5\-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '') || 'video';
 }
 
 /**

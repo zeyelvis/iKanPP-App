@@ -1,6 +1,6 @@
 import { cache } from 'react';
 import { Metadata } from 'next';
-import { notFound, redirect, RedirectType } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, Clock, Calendar, Film, ArrowLeft, Clapperboard, User, Sparkles, CheckCircle2, Play } from 'lucide-react';
@@ -212,14 +212,45 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
   const prebakedItems = getAllPrebakedDisplayItems();
   const prebakedHit = prebakedItems.find(item => {
     if (!item) return false;
-    const itemSlugDecoded = decodeURIComponent(item.slug || '');
-    return (
+    let itemSlugDecoded = '';
+    try {
+      itemSlugDecoded = decodeURIComponent(item.slug || '');
+    } catch {}
+
+    const cleanTitleLower = cleanTitle.toLowerCase();
+    const decodedSlugLower = decodedSlug.toLowerCase();
+    const itemTitleNorm = normalizeTitle(item.title);
+    const cleanTitleNorm = normalizeTitle(cleanTitle);
+    const decodedSlugNorm = normalizeTitle(decodedSlug);
+
+    // 1. 标准匹配：原值/解码值/标题/归一化标题/实体ID完全一致
+    if (
       item.slug === decodedSlug ||
       itemSlugDecoded === decodedSlug ||
       item.title === cleanTitle ||
-      normalizeTitle(item.title) === normalizeTitle(cleanTitle) ||
+      item.title === decodedSlug ||
+      (itemTitleNorm && (itemTitleNorm === cleanTitleNorm || itemTitleNorm === decodedSlugNorm)) ||
       (item.entityId && entityId && item.entityId.toLowerCase() === entityId.toLowerCase())
-    );
+    ) {
+      return true;
+    }
+
+    // 2. Slug 生成器双向一致性比对（例如古战场传奇-吾血之亲第2季 vs 古战场传奇：吾血之亲第2季）
+    const itemTitleSlug = generateSlug(item.title).toLowerCase();
+    if (itemTitleSlug === cleanTitleLower || itemTitleSlug === decodedSlugLower) {
+      return true;
+    }
+
+    // 3. 历史受损 hex-slug 自愈比对（将连字符十六进制碎片与 item.title/item.slug 的编码形式精准比对自愈）
+    if (/[0-9a-f]{2}-[0-9a-f]{2}-[0-9a-f]{2}/i.test(decodedSlugLower) || /[0-9a-f]{2}-[0-9a-f]{2}-[0-9a-f]{2}/i.test(cleanTitleLower)) {
+      const hex1 = generateSlug(encodeURIComponent(itemTitleSlug)).toLowerCase();
+      const hex2 = generateSlug(encodeURIComponent(item.title)).toLowerCase();
+      if (hex1 === cleanTitleLower || hex1 === decodedSlugLower || hex2 === cleanTitleLower || hex2 === decodedSlugLower) {
+        return true;
+      }
+    }
+
+    return false;
   });
 
   if (prebakedHit) {
@@ -350,16 +381,35 @@ export function getEntityCanonicalSlug(entity: TitleEntity): string {
     return entity.canonicalSlug.trim().toLowerCase();
   }
   const id = (entity.entityId || (entity as any).id || '').toLowerCase();
-  let baseText = entity.slug || entity.title;
+  const hasStandardId = /^ik\d{6}$/i.test(id);
 
-  // 清洗 baseText 开头可能重复的 id 前缀（如 ik000009-一饭封神）
+  let baseText = (entity.title || '').trim();
+  if (!baseText && entity.slug) {
+    try {
+      baseText = decodeURIComponent(entity.slug).trim();
+    } catch {
+      baseText = entity.slug.trim();
+    }
+  }
+  if (baseText.includes('%')) {
+    try {
+      baseText = decodeURIComponent(baseText).trim();
+    } catch {}
+  }
+
+  // 清洗 baseText 开头可能重复的 id 前缀（如 ik000009-一饭封神 或 ik_radar_...-阿波罗陷落）
   if (id && baseText.toLowerCase().startsWith(`${id}-`)) {
     baseText = baseText.slice(id.length + 1);
+  }
+  if (baseText.startsWith('ik') && /^[a-zA-Z0-9_]+-/.test(baseText)) {
+    baseText = baseText.replace(/^[a-zA-Z0-9_]+-/, '');
   }
 
   const cleanSlugPart = generateSlug(baseText).toLowerCase();
 
-  if (id) {
+  // 准则 13 铁律：必须且只能在具有标准 6 位 ik\d{6} 实体 ID 时拼接 ID
+  // 严禁将临时内部 ID（如 ik_radar_...）拼入 canonicalSlug 触发非法 308 重定向
+  if (hasStandardId) {
     return `${id}-${cleanSlugPart}`;
   }
   return cleanSlugPart;
@@ -749,12 +799,12 @@ export default async function TitlePage({ params }: Props) {
   const isSeasonSpecified = Boolean(seasonTag && !entity.title.includes(seasonTag));
   const effectiveSearchTitle = isSeasonSpecified ? `${entity.title}${seasonTag}` : entity.title;
 
-  // 🌟 SEO 301 权威规范重定向：若请求的 URL 不是权威规范 Slug（如纯 ID ik000001 或历史非规范别名），
-  // 强制发起 308/301 永久重定向，将爬虫与外链权重 100% 汇聚于标准规范 URL，彻底根治 GSC 2130+ 备用网页报警
+  // 🌟 SEO 308 权威规范重定向：若请求的 URL 不是权威规范 Slug（如纯 ID ik000001 或历史非规范别名），
+  // 强制发起 308 永久重定向，将爬虫与外链权重 100% 汇聚于标准规范 URL，彻底根治 GSC 2130+ 备用网页报警
   const canonicalSlug = getEntityCanonicalSlug(entity);
   const currentCleanSlug = decodedSlug.toLowerCase();
   if (canonicalSlug && currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
-    redirect(`/title/${canonicalSlug}`, RedirectType.replace);
+    permanentRedirect(`/title/${encodeURIComponent(canonicalSlug)}`);
   }
 
   // 质量自愈保障：若当前实体缺少封面海报（如历史残缺数据），强制在线触发重新丰润
