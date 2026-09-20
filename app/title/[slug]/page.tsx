@@ -211,13 +211,13 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
       const isMissingCast = (!entity.directors || entity.directors.length === 0) && (!entity.actors || entity.actors.length === 0);
       const hasDirtyPinyinCast = (entity.actors || []).some(a => /^[A-Za-z\s]{4,}$/.test(a));
 
-      if (isMissingCover || isMissingCast || hasDirtyPinyinCast) {
+      if (isMissingCover) {
         try {
           const healed = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
           if (healed) {
             if (healed.directors && healed.directors.length > 0) entity.directors = healed.directors;
             if (healed.actors && healed.actors.length > 0) entity.actors = healed.actors;
-            if (healed.cover && isMissingCover) entity.cover = healed.cover;
+            if (healed.cover) entity.cover = healed.cover;
             if (healed.backdrop && !entity.backdrop) entity.backdrop = healed.backdrop;
             if (healed.tmdbId && !entity.tmdbId) {
               entity.tmdbId = healed.tmdbId;
@@ -226,6 +226,9 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
             saveEntity(entity).catch(() => {});
           }
         } catch {}
+      } else if (isMissingCast || hasDirtyPinyinCast) {
+        // 🚀 0ms 秒开守卫：已有封面与基础数据的影片，演职员质量与拼音清洗转入后台异步非阻塞自愈，首屏主渲染路径绝不挂起等待海外 TMDB
+        healCreditsInBackground(entity);
       }
       return enrichEpisodeCount(entity);
     }
@@ -884,10 +887,16 @@ export default async function TitlePage({ params }: Props) {
   // 0ms 同步获取预置/内存缓存人物肖像（首屏秒开直出，绝不阻塞网络）
   const peopleAvatars = getFastPersonAvatars(allPeopleNames);
 
-  const [genreRelated, directorRelated, actorRelated] = await Promise.all([
-    getEntitiesByGenre(primaryGenre, 8),
-    primaryDirector ? getEntitiesByDirector(primaryDirector, 6) : Promise.resolve([]),
-    primaryActor ? getEntitiesByActor(primaryActor, 6) : Promise.resolve([]),
+  // 🚀 0ms 秒开守卫：为次级推荐设置 400ms 超时熔断，绝不拖慢主首屏 HTML 吐出
+  const [genreRelated, directorRelated, actorRelated] = await Promise.race([
+    Promise.all([
+      getEntitiesByGenre(primaryGenre, 8),
+      primaryDirector ? getEntitiesByDirector(primaryDirector, 6) : Promise.resolve([]),
+      primaryActor ? getEntitiesByActor(primaryActor, 6) : Promise.resolve([]),
+    ]),
+    new Promise<[TitleEntity[], TitleEntity[], TitleEntity[]]>((resolve) =>
+      setTimeout(() => resolve([[], [], []]), 400)
+    ),
   ]);
 
   // 过滤自身
@@ -911,7 +920,26 @@ export default async function TitlePage({ params }: Props) {
       }
     }
   }
-  const combinedRelated = [...boostedRelated, ...normalRelated];
+  let combinedRelated = [...boostedRelated, ...normalRelated];
+
+  // 若推荐列表为空（如极端弱网熔断或新入库影视），0ms 预烘焙兜底填充，确保 SEO 内链与推荐货架永不空白
+  if (combinedRelated.length === 0) {
+    const fallbackList = (entity.type === 'tv' ? PREBAKED_HOME_DATA.tv?.s1 : PREBAKED_HOME_DATA.movie?.s1) || [];
+    const fallbackItems = fallbackList.filter((item: any) => item.title !== entity.title).slice(0, 6);
+    combinedRelated = fallbackItems.map((item: any, idx: number) => ({
+      entityId: item.id || `ik_rel_${idx}`,
+      title: item.title,
+      cover: item.cover,
+      backdrop: item.backdrop || item.cover,
+      year: item.year || '2026',
+      type: (item.type || entity.type) as 'movie' | 'tv' | 'anime',
+      genres: item.types || [primaryGenre],
+      directors: item.directors || [],
+      actors: item.actors || [],
+      description: item.description || '',
+      slug: item.id ? `${item.id}-${generateSlug(item.title)}` : generateSlug(item.title),
+    })) as TitleEntity[];
+  }
 
   // 多分类智能识别：根据 entity.type + genres 精准定位所属频道
   const resolvedChannel = resolveEntityChannel(entity);

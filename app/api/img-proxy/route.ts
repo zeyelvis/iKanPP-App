@@ -124,23 +124,18 @@ export async function GET(request: NextRequest) {
 
             const imageData = await response.arrayBuffer();
 
-            // 4. 【全自动透写写入 R2】：在 Edge 运行时安全写入落盘（带 1200ms 熔断保护，通常仅耗时 30~50ms）
-            try {
-                await Promise.race([
-                    saveToR2Async(r2Key, imageData, contentType),
-                    new Promise((resolve) => setTimeout(resolve, 1200)),
-                ]);
-            } catch (err) {
+            // 4. 【全自动透写写入 R2】：完全异步非阻塞（Fire-and-forget），绝不阻塞当前用户连接
+            saveToR2Async(r2Key, imageData, contentType).catch((err) => {
                 console.warn('[R2 Sync Worker Warning]', err);
-            }
+            });
 
-            // 5. 立即返回给当前用户
+            // 5. 立即 0ms 返回给当前用户
             return new NextResponse(imageData, {
                 status: 200,
                 headers: {
                     'Content-Type': contentType,
                     'Access-Control-Allow-Origin': '*',
-                    'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable',
+                    'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, stale-while-revalidate=86400, immutable',
                     'CDN-Cache-Control': 'public, max-age=31536000',
                     'Cloudflare-CDN-Cache-Control': 'public, max-age=31536000',
                     'X-Cache-Status': 'MISS-AND-STORED',

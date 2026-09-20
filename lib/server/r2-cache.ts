@@ -69,7 +69,7 @@ export async function fetchFromR2(key: string): Promise<Response | null> {
   try {
     const publicUrl = getR2PublicUrl(key);
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 2500);
+    const timeout = setTimeout(() => controller.abort(), 800);
 
     const res = await fetch(publicUrl, {
       method: 'GET',

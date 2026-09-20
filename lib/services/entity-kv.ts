@@ -197,7 +197,31 @@ export async function getEntityBySlug(slugKey: string): Promise<TitleEntity | nu
   if (!slugKey) return null;
   const cleanKey = slugKey.toLowerCase();
 
-  // 1. 优先尝试从 slug 显式映射取 entityId（如旧 URL 301 映射、历史别名权威路由）
+  // 1. 【极速路径】：若带有标准 ik[6位数字] 前缀，直接优先提取实体 ID 并直查实体（消灭多余的 slug: 网络往返）
+  const idMatch = cleanKey.match(/^(ik\d{6})/i);
+  if (idMatch) {
+    const targetId = idMatch[1].toLowerCase();
+    const ent = await getEntityById(targetId);
+    if (ent && isStrictSafeEntity(ent).safe) {
+      const parts = cleanKey.split('-');
+      if (parts.length > 1) {
+        const urlTitlePart = parts.slice(1).join('-');
+        const isMatch =
+          !urlTitlePart ||
+          hasTitleOverlap(ent.title, urlTitlePart) ||
+          (ent.originalTitle && hasTitleOverlap(ent.originalTitle, urlTitlePart)) ||
+          (ent.slug && hasTitleOverlap(ent.slug, urlTitlePart));
+
+        if (isMatch) {
+          return ent;
+        }
+      } else {
+        return ent;
+      }
+    }
+  }
+
+  // 2. 若直查未命中或非标准 ID 前缀，查询 slug 显式映射（如旧 URL 301 映射、历史别名权威路由）
   const explicitTargetId = await kvGet(`slug:${cleanKey}`);
   if (explicitTargetId) {
     const ent = await getEntityById(explicitTargetId);
@@ -228,38 +252,6 @@ export async function getEntityBySlug(slugKey: string): Promise<TitleEntity | nu
       try {
         await kvDelete(`slug:${cleanKey}`);
       } catch {}
-    }
-  }
-
-  // 2. 如果无显式 slug 映射，解析是否带有 ik[6位数字] 前缀
-  const match = cleanKey.match(/^(ik\d{6})/i);
-  if (match) {
-    const targetId = match[1].toLowerCase();
-    const ent = await getEntityById(targetId);
-    if (ent) {
-      // 🌟 安全合规核验：若实体本身不安全（外文无中文/成人低俗/假名），坚决不按此 ID 返回
-      if (!isStrictSafeEntity(ent).safe) {
-        console.warn(`[getEntityBySlug Unsafe Discarded]: entity="${ent.title}" is unsafe (targetId=${targetId})`);
-        return null;
-      }
-
-      // 🌟 强一致防线：如果 slugKey 带有附加标题部分（例如 ik002001-仙逆剧场版-弑仙之战），
-      // 校验 URL 中的标题部分与实体（中文标题、原名、实体slug）是否具有语义相关性
-      const parts = cleanKey.split('-');
-      if (parts.length > 1) {
-        const urlTitlePart = parts.slice(1).join('-');
-        const isMatch =
-          !urlTitlePart ||
-          hasTitleOverlap(ent.title, urlTitlePart) ||
-          (ent.originalTitle && hasTitleOverlap(ent.originalTitle, urlTitlePart)) ||
-          (ent.slug && hasTitleOverlap(ent.slug, urlTitlePart));
-
-        if (!isMatch) {
-          console.warn(`[getEntityBySlug Mismatch Discarded]: URL part="${urlTitlePart}" does not match entity.title="${ent.title}" (targetId=${targetId})`);
-          return null;
-        }
-      }
-      return ent;
     }
   }
 
@@ -1196,8 +1188,9 @@ export async function getEntitiesByDirector(director: string, limit = 48): Promi
 
   if (!ids || ids.length === 0) return [];
 
-  // 取更多条目以应对脱口秀过滤
-  const selectedIds = ids.slice(0, Math.max(limit * 2, 60));
+  // 精准截取候选条目：最多只拉取 (limit + 4) 部，既留出脱口秀过滤余量，又杜绝成倍并发网络风暴
+  const candidateCount = Math.min(ids.length, Math.max(limit + 4, 10));
+  const selectedIds = ids.slice(0, candidateCount);
   const results = await Promise.all(selectedIds.map(id => getEntityById(id)));
   const valid = results
     .filter((e): e is TitleEntity => e !== null)
@@ -1237,8 +1230,9 @@ export async function getEntitiesByActor(actor: string, limit = 48): Promise<Tit
 
   if (!ids || ids.length === 0) return [];
 
-  // 取更多条目以应对脱口秀过滤
-  const selectedIds = ids.slice(0, Math.max(limit * 2, 60));
+  // 精准截取候选条目：最多只拉取 (limit + 4) 部，既留出脱口秀过滤余量，又杜绝成倍并发网络风暴
+  const candidateCount = Math.min(ids.length, Math.max(limit + 4, 10));
+  const selectedIds = ids.slice(0, candidateCount);
   const results = await Promise.all(selectedIds.map(id => getEntityById(id)));
   const valid = results
     .filter((e): e is TitleEntity => e !== null)
