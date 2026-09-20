@@ -185,10 +185,10 @@ function HeroBackdrop({
             alt={title}
             fetchPriority="high"
             loading="eager"
-            decoding="async"
+            decoding="sync"
             onError={handleBackdropError}
             className={`w-full h-full object-cover scale-105 ${
-              isSwapped ? 'animate-fade-in duration-700' : 'opacity-100'
+              currentIndex > 0 && isSwapped ? 'animate-fade-in duration-700' : 'opacity-100'
             }`}
             style={{ objectPosition: 'center 20%' }}
           />
