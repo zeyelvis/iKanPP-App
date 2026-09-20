@@ -1237,62 +1237,104 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "马年大吉之心想事成",
+          "title": "当我觉醒之后",
           "updateBadge": "全"
       },
       {
-          "title": "重生83：掌山为王，富甲东北",
+          "title": "降妻为妾，我踹了负心夫君",
           "updateBadge": "全"
       },
       {
-          "title": "你只是我纸上的名字",
+          "title": "软饭硬吃，我专撩顶级千金",
           "updateBadge": "全"
       },
       {
-          "title": "一品布衣3：朝堂篇",
+          "title": "我一孤儿院长，真没想当武林盟主",
           "updateBadge": "全"
       },
       {
-          "title": "穿越成土匪，抢个女帝当老婆",
+          "title": "残疾大佬的八十八号小保姆",
           "updateBadge": "全"
       },
       {
-          "title": "冷案组新人，我能听见凶手心跳",
+          "title": "过年好太子妃",
           "updateBadge": "全"
       },
       {
-          "title": "重生七零好时光",
+          "title": "寻宝黄金瞳，从挖掘机开始",
           "updateBadge": "全"
       },
       {
-          "title": "那年那雪那刀",
+          "title": "重回八零，我破了命案九千宗",
           "updateBadge": "全"
       },
       {
-          "title": "赵铁柱的热血人生",
+          "title": "沉睡万年的我，被直播曝光了",
           "updateBadge": "全"
       },
       {
-          "title": "冤家宜婚不宜分",
+          "title": "乱世宠妻就变高，大郎翻身定天下",
           "updateBadge": "全"
       },
       {
-          "title": "从此星辰是路人",
+          "title": "恶毒假千金被读心后，剧情崩了",
           "updateBadge": "全"
       },
       {
-          "title": "捡闺女后受气王爷被旺成了皇帝",
-          "updateBadge": "60"
+          "title": "妆台秋思",
+          "updateBadge": "全"
       }
   ],
   hero: [
       {
-          "id": "jl_short_629607298196570100",
-          "title": "马年大吉之心想事成",
-          "rate": "9.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/802a8930dad842923a7b87d2454baf321076146f9f25d1daace28f64ed6b9975.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/802a8930dad842923a7b87d2454baf321076146f9f25d1daace28f64ed6b9975.jpg",
-          "description": "28岁单亲社畜叶蓁年底遭遇裁员、催婚与男友赵宇劈腿，绝望中祭拜“赛博财神”OK马激活“男友心想事成系统”，因赵宇的羞辱许愿瞬间暴富暴美并与之分手，为保住奖励情急之下强吻追尾自己的前老板江砚绑定为合约男友，之后受她资助的陈星宇、暗恋过的学长温景淮相继闯入，四人上演爆笑同居修罗场，叶蓁在应对反派陷害的过...",
+          "id": "jl_short_629613552574922800",
+          "title": "当我觉醒之后",
+          "rate": "8.9",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/313f0789ea5569257190b181c428038fb9241912ae2c63e357e594a0eb39037e.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/313f0789ea5569257190b181c428038fb9241912ae2c63e357e594a0eb39037e.jpg",
+          "description": "暂无简介，敬请期待",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "其他",
+              "全集连播"
+          ],
+          "episodes_info": "全131集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "王小明 / 翟成露"
+          ]
+      },
+      {
+          "id": "jl_short_629607227010842600",
+          "title": "降妻为妾，我踹了负心夫君",
+          "rate": "9.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/3163928bcb851d20c0bb183f0108b299307a1c449c19d7a1c7d9c36ffba312ce.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/3163928bcb851d20c0bb183f0108b299307a1c449c19d7a1c7d9c36ffba312ce.jpg",
+          "description": "暂无简介，敬请期待",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全99集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "高铭晞 / 梁翊程"
+          ]
+      },
+      {
+          "id": "jl_short_629605788565897200",
+          "title": "软饭硬吃，我专撩顶级千金",
+          "rate": "8.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/5d0808d3b309f04eca3b3c3fcac7382853eac5069f11fb79cd7f8e267b48f0a9.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/5d0808d3b309f04eca3b3c3fcac7382853eac5069f11fb79cd7f8e267b48f0a9.jpg",
+          "description": "暂无简介，敬请期待",
           "year": "2026",
           "types": [
               "短剧",
@@ -1304,83 +1346,20 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           "is_new": true,
           "playable": true,
           "actors": [
-              "王名扬 / 宋禧"
+              "孙昊 / 邰靖懿"
           ]
       },
       {
-          "id": "jl_short_629572146087067600",
-          "title": "你只是我纸上的名字",
-          "rate": "9.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/e8d932a19cc31e1eecf80fc59e57513bd8bf4613a6b308f6cde92a7c321a007f.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/e8d932a19cc31e1eecf80fc59e57513bd8bf4613a6b308f6cde92a7c321a007f.jpg",
-          "description": "该剧讲述了一个关于遗憾、成长与自我救赎的情感故事。主角林小满是个爱写日记的普通女孩，意外发现自己日记中的“纸上名字”竟藏着一个神秘男人的灵魂。随着剧情发展，这个“纸上名字”逐渐变成真实存在，闯入她的生活，带来混乱、欢笑与心动。刘博洋细腻演绎了角色从虚幻到真实的转变，崔秀子则诠释了现代女性在情感中的迷...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全137集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "刘博洋 / 崔秀子"
-          ]
-      },
-      {
-          "id": "jl_short_629572073609494500",
-          "title": "一品布衣3：朝堂篇",
-          "rate": "9.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/b7f441347d4ad81303a1f5f0dec86576459599f9a719c07a02d133eb7ed0c378.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/b7f441347d4ad81303a1f5f0dec86576459599f9a719c07a02d133eb7ed0c378.jpg",
-          "description": "剧集讲述徐牧携银入宫设局，联合袁陶、司虎等志士铲除奸相、稳定朝堂，却因谋划遭人猜忌的故事。男主徐牧的扮演者潘子剑精准演绎角色，胡家荣在剧中也有出色表现",
+          "id": "jl_short_629557577323118600",
+          "title": "我一孤儿院长，真没想当武林盟主",
+          "rate": "9.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/17d1e6f3cc18dbf587e9eb84f92da501415df77f59a1df1e533172deba191651.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/17d1e6f3cc18dbf587e9eb84f92da501415df77f59a1df1e533172deba191651.jpg",
+          "description": "暂无简介，敬请期待",
           "year": "2026",
           "types": [
               "短剧",
               "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全155集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "潘子剑 / 胡家荣"
-          ]
-      },
-      {
-          "id": "jl_short_629557586567364600",
-          "title": "穿越成土匪，抢个女帝当老婆",
-          "rate": "9.0",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f63e8eb78c8d1c94d42b21322fc0d344651c66cf85a4a11010019951b3e4f467.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f63e8eb78c8d1c94d42b21322fc0d344651c66cf85a4a11010019951b3e4f467.jpg",
-          "description": "现代青年陈霆穿越大乾，投效朝廷遭辱后占山为王，觉醒“装逼换科技”系统，将黑风寨打造成富庶之地。意外救下遭奸相追杀的女帝李星辰，误将其视为落难女子，携她率军造反。一路凭加特林、终结者等现代科技碾压敌军，直逼京城。最终揭穿奸相阴谋，陈霆才知身边人竟是女帝，二人携手平定内乱，开启大乾新纪元。",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "年代穿越",
-              "全集连播"
-          ],
-          "episodes_info": "全199集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "秘秘 / 苏泽林"
-          ]
-      },
-      {
-          "id": "jl_short_629544631436050400",
-          "title": "冷案组新人，我能听见凶手心跳",
-          "rate": "8.9",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/b5ccc96d41b27436e5615c6a3cfaf338171bc4cec8ca1c229a349ca8f4020930.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/b5ccc96d41b27436e5615c6a3cfaf338171bc4cec8ca1c229a349ca8f4020930.jpg",
-          "description": "学院之耻陈默理论满分、实践零分，毕业进了冷案档案室。同事当他混子，领导视他废物，警花学霸也不屑。但其实他是从生死对决穿越而来的顶级犯罪心理学家。他触摸第一份卷宗，激活罪恶共鸣系统，拥有思维同步亲历凶案现场、心跳定位让凶手无所遁形的能力。他轻松破获“十年前校园女尸案”“雨夜屠夫连环案”“富商密室被杀案...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
               "全集连播"
           ],
           "episodes_info": "全159集·已完结",
@@ -1388,16 +1367,79 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           "is_new": true,
           "playable": true,
           "actors": [
-              "郭嘉琦 / 宋宇欣"
+              "王冠彭 / 刘雪婷"
           ]
       },
       {
-          "id": "jl_short_629528255078072300",
-          "title": "重生七零好时光",
+          "id": "jl_short_629528049976606700",
+          "title": "残疾大佬的八十八号小保姆",
           "rate": "9.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/4d8e81c0b3868dc9710dc5446c401e274a914b932ada9770aa7de437e332ff24.webp",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/4d8e81c0b3868dc9710dc5446c401e274a914b932ada9770aa7de437e332ff24.webp",
-          "description": "现代都市女性黎兮意外穿越至1973年，成为面临包办婚姻困境的农村少女。她机智逃离家乡投奔军营中的兄长，与正直坚毅的军官墨池与从误会相识到相知相守。在特殊年代里，黎兮以现代思维带领军嫂创业致富，历经流言中伤与小人陷害，终与墨池与携手克服困难、收获真挚爱情，在质朴岁月中书写出属于自己的幸福篇章。",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/5b0a37637d245a9d0ba6ba7757f82621048142e5f648c4ec5ff574eb2119199e.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/5b0a37637d245a9d0ba6ba7757f82621048142e5f648c4ec5ff574eb2119199e.jpg",
+          "description": "暂无简介，敬请期待",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "女频恋爱",
+              "全集连播"
+          ],
+          "episodes_info": "全137集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "恩灿 / 黄雅雯"
+          ]
+      },
+      {
+          "id": "jl_short_629521450910351400",
+          "title": "过年好太子妃",
+          "rate": "8.7",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/413a5d0157763cfa6ad76079a92cba35d404a83e7f97fcdda89c4287cd151276.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/413a5d0157763cfa6ad76079a92cba35d404a83e7f97fcdda89c4287cd151276.jpg",
+          "description": "暂无简介，敬请期待",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全105集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "韩明熙 / 伊晨"
+          ]
+      },
+      {
+          "id": "jl_short_629512442753318900",
+          "title": "寻宝黄金瞳，从挖掘机开始",
+          "rate": "8.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/0151c1dd6566292f972ef824b87e14bc2c0fa409b9a91da997c30acf55de5ff7.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/0151c1dd6566292f972ef824b87e14bc2c0fa409b9a91da997c30acf55de5ff7.jpg",
+          "description": "暂无简介，敬请期待",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全205集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "大飞 / 攸灵"
+          ]
+      },
+      {
+          "id": "jl_short_629508573356884000",
+          "title": "重回八零，我破了命案九千宗",
+          "rate": "9.0",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/23b912b9f30a42637a9ee455892e845dffa05a7ed8ed2b82795635ee2bfe1679.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/23b912b9f30a42637a9ee455892e845dffa05a7ed8ed2b82795635ee2bfe1679.jpg",
+          "description": "暂无简介，敬请期待",
           "year": "2026",
           "types": [
               "短剧",
@@ -1409,118 +1451,76 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           "is_new": true,
           "playable": true,
           "actors": [
-              "马禀元 / 夏乐桃"
-          ]
-      },
-      {
-          "id": "jl_short_629525037560954900",
-          "title": "赵铁柱的热血人生",
-          "rate": "8.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/72ad4ea7f363f882300971c17d9fc06482ee1c59f7bab0cc7304ae56c979c481.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/72ad4ea7f363f882300971c17d9fc06482ee1c59f7bab0cc7304ae56c979c481.jpg",
-          "description": "上一世，吃百家饭长大的赵铁柱，为报村长一饭之恩落入陷阱，被设计扣上流氓罪名，含冤惨死狱中。一朝重生，他重回阴谋开端，将计就计破掉假结婚死局，救下被当作商品买卖的王翠花。凭借前世记忆，他抢占时代风口，靠菌菇培育赚得第一桶金，一路逆袭成乡村传奇首富，与心爱之人活成了最圆满的模样。",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全121集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "袁文硕 / 何佳妮"
-          ]
-      },
-      {
-          "id": "jl_short_629516039352221700",
-          "title": "冤家宜婚不宜分",
-          "rate": "9.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/779a246cfb24c14001e3e6c3d13468e4e1f34c547e6e774e08da377868a22dca.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/779a246cfb24c14001e3e6c3d13468e4e1f34c547e6e774e08da377868a22dca.jpg",
-          "description": "豪门千金沈晏宁被父亲和丈夫合谋害死。临死前，她发现母亲当年的车祸竟是父亲的谋杀！重生回到五年前，她和前世误会的“仇人”傅沉舟领证结婚，揭示未婚夫周砚深和妹妹沈安安的奸情，并夺回裴氏集团的继承权。随着复仇的推进，沈晏宁渐渐发现了傅沉舟的真心，也逐渐放下怀疑，两人一步步揭开沈母死亡真相、沈晏宁身世的真相...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "女频恋爱",
-              "全集连播"
-          ],
-          "episodes_info": "全161集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "张凌尘 / 王祉溢"
+              "王梓潇 / 王佳迪"
           ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "马年大吉之心想事成",
-      rate: "9.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/802a8930dad842923a7b87d2454baf321076146f9f25d1daace28f64ed6b9975.jpg",
+      title: "当我觉醒之后",
+      rate: "8.9",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/313f0789ea5569257190b181c428038fb9241912ae2c63e357e594a0eb39037e.jpg",
       year: "2026",
-      types: ["短剧","现代都市","全集连播"],
+      types: ["短剧","其他","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: "你只是我纸上的名字",
-      rate: "9.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/e8d932a19cc31e1eecf80fc59e57513bd8bf4613a6b308f6cde92a7c321a007f.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_3',
-      title: "一品布衣3：朝堂篇",
-      rate: "9.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/b7f441347d4ad81303a1f5f0dec86576459599f9a719c07a02d133eb7ed0c378.jpg",
+      title: "降妻为妾，我踹了负心夫君",
+      rate: "9.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/3163928bcb851d20c0bb183f0108b299307a1c449c19d7a1c7d9c36ffba312ce.jpg",
       year: "2026",
       types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_4',
-      title: "穿越成土匪，抢个女帝当老婆",
-      rate: "9.0",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f63e8eb78c8d1c94d42b21322fc0d344651c66cf85a4a11010019951b3e4f467.jpg",
-      year: "2026",
-      types: ["短剧","年代穿越","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_5',
-      title: "冷案组新人，我能听见凶手心跳",
-      rate: "8.9",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/b5ccc96d41b27436e5615c6a3cfaf338171bc4cec8ca1c229a349ca8f4020930.jpg",
+      id: 'pb_s_top_3',
+      title: "软饭硬吃，我专撩顶级千金",
+      rate: "8.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/5d0808d3b309f04eca3b3c3fcac7382853eac5069f11fb79cd7f8e267b48f0a9.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_6',
-      title: "重生七零好时光",
-      rate: "9.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/4d8e81c0b3868dc9710dc5446c401e274a914b932ada9770aa7de437e332ff24.webp",
+      id: 'pb_s_top_4',
+      title: "我一孤儿院长，真没想当武林盟主",
+      rate: "9.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/17d1e6f3cc18dbf587e9eb84f92da501415df77f59a1df1e533172deba191651.jpg",
       year: "2026",
-      types: ["短剧","年代穿越","全集连播"],
+      types: ["短剧","古装仙侠","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_5',
+      title: "残疾大佬的八十八号小保姆",
+      rate: "9.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/5b0a37637d245a9d0ba6ba7757f82621048142e5f648c4ec5ff574eb2119199e.jpg",
+      year: "2026",
+      types: ["短剧","女频恋爱","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_6',
+      title: "过年好太子妃",
+      rate: "8.7",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/413a5d0157763cfa6ad76079a92cba35d404a83e7f97fcdda89c4287cd151276.jpg",
+      year: "2026",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_7',
-      title: "赵铁柱的热血人生",
-      rate: "8.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/72ad4ea7f363f882300971c17d9fc06482ee1c59f7bab0cc7304ae56c979c481.jpg",
+      title: "寻宝黄金瞳，从挖掘机开始",
+      rate: "8.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/0151c1dd6566292f972ef824b87e14bc2c0fa409b9a91da997c30acf55de5ff7.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1528,11 +1528,11 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_8',
-      title: "冤家宜婚不宜分",
-      rate: "9.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/779a246cfb24c14001e3e6c3d13468e4e1f34c547e6e774e08da377868a22dca.jpg",
+      title: "重回八零，我破了命案九千宗",
+      rate: "9.0",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/23b912b9f30a42637a9ee455892e845dffa05a7ed8ed2b82795635ee2bfe1679.jpg",
       year: "2026",
-      types: ["短剧","女频恋爱","全集连播"],
+      types: ["短剧","年代穿越","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1599,9 +1599,9 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "id": "iyf_hero_movie_1",
         "title": "特立独行",
         "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w342/dWtKXfN97AMW5n3S6QoUVUMCU2S.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
-        "description": "三十年前，以超人王长海为首的超英协会击溃了外星人，多年后，王长海被任命回乡建立战斗小队，但在这个多年和平的莱茵镇上，人情世故和礼尚往来让王长海手足无措，给王长海完成任务造成了层层阻碍。",
+        "cover": "https://static.iyf.tv/upload/video/202609041101050133022.gif",
+        "backdrop": "https://static.iyf.tv/upload/user/202609051300230076622.jpg",
+        "description": "《特立独行》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
         "year": "2026",
         "types": [
             "热门",
@@ -1617,8 +1617,8 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "id": "iyf_hero_movie_2",
         "title": "给阿嬷的情书",
         "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w342/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/dzWGnIAjUafpmY57F6vnm44FwWB.jpg",
+        "cover": "https://static.iyf.tv/upload/video/202608310955385526438.gif",
+        "backdrop": "https://static.iyf.tv/upload/user/202608311427362725454.jpg",
         "description": "《给阿嬷的情书》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
         "year": "2026",
         "types": [
@@ -1635,8 +1635,8 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "id": "iyf_hero_movie_3",
         "title": "玩具总动员5",
         "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w342/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/qjTqY5coNiz6sVtPng40IzltsoN.jpg",
+        "cover": "https://static.iyf.tv/upload/video/202608172352485267834.gif",
+        "backdrop": "https://static.iyf.tv/upload/user/202608181642524253486.jpg",
         "description": "《玩具总动员5》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·动画。",
         "year": "2026",
         "types": [
@@ -1653,8 +1653,8 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "id": "iyf_hero_movie_4",
         "title": "寒战1994",
         "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w342/8NaaLrhXbhuXmjndCKmgaJvLTb1.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/gIpIMTZKhDNqFsoSj04sKZfV0g0.jpg",
+        "cover": "https://static.iyf.tv/upload/video/202607241043194354365.gif",
+        "backdrop": "https://static.iyf.tv/upload/user/202607241720422033874.jpg",
         "description": "《寒战1994》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：电影·剧情。",
         "year": "2026",
         "types": [
@@ -1671,8 +1671,8 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "id": "iyf_hero_tv_5",
         "title": "一瓯春",
         "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w342/tKRrmAkEcawusqrLMYAkE0uOcXI.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/qLZQnTiQxkBOid9tVLWC1CmoOcu.jpg",
+        "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
+        "backdrop": "https://static.iyf.tv/upload/user/202609171141024107110.jpg",
         "description": "《一瓯春》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至12集 | 共30集。",
         "year": "2026",
         "types": [
@@ -1688,8 +1688,8 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "id": "iyf_hero_tv_6",
         "title": "兰香如故",
         "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w342/kfurXRMH1ZkUoyT5HN72zLTQxzZ.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/mZSewqVlY4F2F2Axm7hiG6KBOBp.jpg",
+        "cover": "https://static.iyf.tv/upload/video/202609111404160476768.gif",
+        "backdrop": "https://static.iyf.tv/upload/user/202609111848394812246.jpg",
         "description": "《兰香如故》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：更新至22集 | 共47集。",
         "year": "2026",
         "types": [
@@ -1705,8 +1705,8 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "id": "iyf_hero_tv_7",
         "title": "冬城猎凶",
         "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w342/8nenduIuctLj2YBjWHG8pFs1X6R.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w1280/28u4q3fPzXmbyf3BoiWweUOuuzj.jpg",
+        "cover": "https://static.iyf.tv/upload/video/202609100710231001184.jpg",
+        "backdrop": "https://static.iyf.tv/upload/user/202609101250115060466.jpg",
         "description": "《冬城猎凶》由爱壹帆实时高分精选推荐，全集高清极速秒播。当前状态：18集全。",
         "year": "2026",
         "types": [
