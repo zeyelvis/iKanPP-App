@@ -2,8 +2,8 @@ name: Auto Sync IYF Channels & Drama Hero Slides
 
 on:
   schedule:
-    # 全站每小时整点全自动巡检同步（电视剧、新番等快节奏连载实施小时级极速感知）
-    - cron: '0 * * * *'
+    # 每 3 小时整点全自动巡检同步（高效感知电视剧、热门新番更新，同时大幅节省 Actions 运行额度）
+    - cron: '0 */3 * * *'
   workflow_dispatch:
     inputs:
       channel:
@@ -91,11 +91,7 @@ jobs:
             git add $MODIFIED_FILES
             git commit -m "chore(sync): 自动同步全站专区 [$TARGET] 轮播、集数更新、分类大厅与 SEO 实体"
             git push
-            echo "🚀 正在触发 Cloudflare Pages 编译部署工作流..."
-            gh workflow run deploy.yml --ref main
-            echo "⚡ 正在自动联动全站全维度全量预热工作流..."
-            gh workflow run full-site-prewarm.yml --ref main
-            echo "🎉 数据已推送到远程仓库并成功触发自动部署与全量预热！"
+            echo "🎉 数据已成功推送到远程仓库（git push 将自然触发 Cloudflare Pages 自动部署，杜绝重复触发浪费配额）！"
           else
             echo "✨ 现有影视数据已是最新，无变动。"
           fi

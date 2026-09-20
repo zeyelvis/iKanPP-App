@@ -2,17 +2,11 @@ name: Full-Site Auto Prewarm & CDN Edge Ingestion
 
 on:
   schedule:
-    # 每天 2 次全站全量预热巡检：
+    # 每天 2 次全站全量预热巡检（低峰期稳定预热，杜绝每次无脑联动耗尽配额）：
     # 1. UTC 20:00 (北京时间凌晨 04:00，夜间全网低峰全量预热)
     # 2. UTC 08:30 (北京时间下午 16:30，午后档新片更新后预热)
     - cron: '0 20 * * *'
     - cron: '30 8 * * *'
-
-  # 监听爱壹帆新片同步工作流完成：一旦有新片同步，自动执行全量预热
-  workflow_run:
-    workflows: ["Auto Sync IYF Channels & Drama Hero Slides"]
-    types:
-      - completed
 
   # 支持在 GitHub Actions 页面随时手动一键点击触发
   workflow_dispatch:

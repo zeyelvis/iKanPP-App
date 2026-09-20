@@ -2,8 +2,8 @@ name: SEO Entity Pipeline & IndexNow Broadcast
 
 on:
   schedule:
-    # 每 2 小时定时增量同步并全网广播（覆盖全天院线新片与海外热播剧上新）
-    - cron: '0 */2 * * *'
+    # 每 4 小时定时增量同步并全网广播（平衡院线上新与 Actions 额度节省）
+    - cron: '0 */4 * * *'
   workflow_dispatch:
 
 jobs:
