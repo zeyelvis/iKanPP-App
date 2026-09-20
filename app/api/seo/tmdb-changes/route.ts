@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getEntityByTmdb, getNextEntitySeq, saveEntity } from '@/lib/services/entity-kv';
+import { getEntityByTmdb, getEntityByTitle, getNextEntitySeq, saveEntity } from '@/lib/services/entity-kv';
 import { fetchTMDBDetails } from '@/lib/services/entity-enrichment';
 import { formatEntityId, generateSlug, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
 import { TitleEntity } from '@/lib/types/entity';
@@ -118,6 +118,18 @@ export async function GET(request: Request) {
       }
 
       const displayTitle = mainTitle;
+
+      // 🌟 强一致防重线：查验是否已存在同名影视实体，坚决杜绝重复建档造 ID
+      const existingByTitle = await getEntityByTitle(displayTitle);
+      if (existingByTitle) {
+        if (!existingByTitle.tmdbId && tmdbIdStr) {
+          existingByTitle.tmdbId = tmdbIdStr;
+          existingByTitle.tmdbType = candidate.type;
+          await saveEntity(existingByTitle);
+        }
+        continue;
+      }
+
       const nextSeq = await getNextEntitySeq();
       const entityId = formatEntityId(nextSeq);
       const slug = generateSlug(displayTitle);

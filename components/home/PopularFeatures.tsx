@@ -8,7 +8,7 @@ import { Top10Rail } from './Top10Rail';
 import { ContentRail } from './ContentRail';
 import { ContinueWatchingRail } from './ContinueWatchingRail';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 // 🚀 八层极速秒开架构：非首屏重量级组件按需动态加载，首屏 JS 包体积直降 30%
 const LiveChannelsPreview = dynamic(
@@ -444,7 +444,7 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
       router.push(`/short/player?${query.toString()}`);
       return;
     }
-    router.push(`/title/${generateSlug(movie.title)}`);
+    router.push(getTitleCanonicalHref(movie));
   };
 
   const [m1, m2, m3, m4] = shelvesMeta;

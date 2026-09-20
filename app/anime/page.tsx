@@ -3,17 +3,11 @@ import AnimeClient from './AnimeClient';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { JsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export const metadata: Metadata = {
-  title: '动漫专区 - 当季新番连载 & 国创动画巅峰之作在线看 | iKanPP 爱看片片',
-  description: 'iKanPP 动漫专区覆盖 2026 日本当季热血新番、国创动画巅峰、剧场版动画与影史经典动漫。鬼灭之刃、咒术回战、海贼王、进击的巨人高清全集极速播放。',
-  openGraph: {
-    title: '动漫专区 - 当季新番连载 & 国创动画巅峰 | iKanPP',
-    description: '当季新番连载 · 国创新巅峰 · 经典剧场版动画，4K 蓝光画质畅享。',
-    type: 'website',
-    url: 'https://www.ikanpp.com/anime',
-  },
+  title: '动漫大全 - 2026最新热门日本动漫与国漫在线观看 | iKanPP 爱看片片',
+  description: 'iKanPP 动漫频道收录最新热播日本新番、经典国创动画、热血修仙全集高清流媒体资源。免VIP全网纯直连超清速播。',
   alternates: {
     canonical: 'https://www.ikanpp.com/anime',
   },
@@ -23,7 +17,7 @@ export default function AnimePage() {
   const topAnime = PREBAKED_HOME_DATA.tv.s3.slice(0, 10).map((a, idx) => ({
     position: idx + 1,
     name: a.title,
-    url: `https://www.ikanpp.com/title/${generateSlug(a.title)}`,
+    url: `https://www.ikanpp.com${getTitleCanonicalHref(a)}`,
     image: a.cover,
   }));
 

@@ -11,7 +11,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl, getFallbackProxiedImageUrl } from '@/lib/utils/image-utils';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export interface DoubanMovie {
   id: string;
@@ -73,7 +73,7 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
         poster: movie.cover || (movie as any).poster || '',
         ...(movie.id ? { id: String(movie.id) } : {})
       }).toString()}`
-    : `/title/${generateSlug(movie.title)}`;
+    : getTitleCanonicalHref(movie);
 
   // 年份与分类提取
   const displayYear = movie.year || '2026';

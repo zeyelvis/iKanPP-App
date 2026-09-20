@@ -3,14 +3,14 @@ import ShortClient from './ShortClient';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { JsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export const metadata: Metadata = {
-  title: '精品微短剧专区 - 2026 最火AI短剧 & 62,000+ 热门爆款微短剧全集免费播放 | iKanPP 爱看片片',
-  description: 'iKanPP 微短剧频道汇聚 62,000+ 部全网微短剧与 2026 最新爆款生成式 AI 短剧/AI 漫剧，巨量专线主力，涵盖反转爽剧、言情总裁、现代都市、古装仙侠、穿越年代、重生民国、脑洞悬疑等。支持 9:16 沉浸式竖屏上下滑动切集与免费连播。',
+  title: '微短剧专区 - 2026 爆款爽剧全集免费在线看 | iKanPP 爱看片片',
+  description: 'iKanPP 微短剧频道收录全网热门都市热血、逆袭战神、甜宠虐恋、悬疑古装竖屏短剧。全集高清秒播，极速直连，海外华人无限制免费畅享追剧。',
   openGraph: {
-    title: '精品微短剧专区 - 2026 最火AI短剧 & 62,000+ 部爆款爽剧沉浸式免费看 | iKanPP',
-    description: '2026 最火 AI 短剧 · 反转爽剧 · 言情总裁 · 古装仙侠 · 穿越重生全集连播，9:16 沉浸式竖屏播放免 VIP 畅享。',
+    title: '微短剧专区 - 2026 爆款爽剧全集免费在线看 | iKanPP',
+    description: '全网爆款爽剧 · 战神逆袭 · 甜宠古装，全集高清极速连播。',
     type: 'website',
     url: 'https://www.ikanpp.com/short',
   },
@@ -23,7 +23,7 @@ export default function ShortPage() {
   const topShort = (PREBAKED_HOME_DATA.short?.top10 || []).slice(0, 10).map((a, idx) => ({
     position: idx + 1,
     name: a.title,
-    url: `https://www.ikanpp.com/title/${generateSlug(a.title)}`,
+    url: `https://www.ikanpp.com${getTitleCanonicalHref(a)}`,
     image: a.cover,
   }));
 

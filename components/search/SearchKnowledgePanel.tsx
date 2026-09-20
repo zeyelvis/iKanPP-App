@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Icons } from '@/components/ui/Icon';
 import { TitleEntity } from '@/lib/types/entity';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
-import { generateSlug, hasTitleOverlap } from '@/lib/data/entities/entity-utils';
+import { generateSlug, hasTitleOverlap, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 
 interface SearchKnowledgePanelProps {
@@ -94,8 +94,10 @@ const KnowledgeCard = memo(function KnowledgeCard({
   const targetSeasonTag = userSeasonInfo ? (userSeasonInfo.rawSeasonMatch || `第${userSeasonInfo.seasonNumber}季`) : '';
   const effectiveTitle = isSeasonSpecified ? `${entity.title}${targetSeasonTag}` : entity.title;
 
-  // 统一使用全局规范的纯净 slug 地址，确保跳转到包含目标季的精准详情页
-  const detailUrl = `/title/${generateSlug(effectiveTitle)}`;
+  // 规范详情页地址：指定季数时透传带季数slug，否则优先使用全局权威规范 URL /title/ik000001-slug
+  const detailUrl = isSeasonSpecified
+    ? `/title/${generateSlug(effectiveTitle)}`
+    : getTitleCanonicalHref(entity);
   const posterUrl = getOptimizedImageUrl(entity.cover);
   const backdropUrl = entity.backdrop ? getOptimizedImageUrl(entity.backdrop) : '';
 

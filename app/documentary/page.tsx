@@ -3,14 +3,14 @@ import DocumentaryClient from './DocumentaryClient';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { JsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export const metadata: Metadata = {
-  title: '纪录片大厅 - BBC 顶级自然生态 & 华夏史诗人文纪录片免费在线观看 | iKanPP 爱看片片',
-  description: 'iKanPP 纪录片大厅精选 BBC 史诗级自然与宇宙大片（地球脉动、蓝色星球）、央视顶级华夏人文历史（河西走廊、如果国宝会说话）、人间烟火风味美食（舌尖、风味人间）与豆瓣 9.5+ 殿堂神作。全网超清极速播放。',
+  title: '纪录片大厅 - 豆瓣高分神作 & BBC/国家地理 4K 巨制在线观看 | iKanPP 爱看片片',
+  description: 'iKanPP 纪录片频道收录全球自然风光、历史人文、宇宙天文、社会纪实顶级纪录片。汇聚 BBC、国家地理、Discovery 4K 高清珍藏，无广告流畅直连播放。',
   openGraph: {
-    title: '纪录片大厅 - BBC 顶级自然 & 华夏人文史诗神作 | iKanPP',
-    description: '全球 4K 自然生态 · 华夏史诗人文 · 舌尖风味图鉴，豆瓣高分神作畅享。',
+    title: '纪录片大厅 - 豆瓣高分神作 & BBC/国家地理 4K 巨制 | iKanPP',
+    description: '全球顶级神作 · 探索自然宇宙 · 洞悉历史文明，4K 震撼视界畅享。',
     type: 'website',
     url: 'https://www.ikanpp.com/documentary',
   },
@@ -23,7 +23,7 @@ export default function DocumentaryPage() {
   const topDocs = (PREBAKED_HOME_DATA.documentary?.top10 || PREBAKED_HOME_DATA.documentary?.hero || []).slice(0, 10).map((m, idx) => ({
     position: idx + 1,
     name: m.title,
-    url: `https://www.ikanpp.com/title/${generateSlug(m.title)}`,
+    url: `https://www.ikanpp.com${getTitleCanonicalHref(m)}`,
     image: m.cover,
   }));
 

@@ -3,7 +3,7 @@ import MovieClient from './MovieClient';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { JsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export const metadata: Metadata = {
   title: '电影大厅 - 4K 院线大片 & 豆瓣高分神作免费在线观看 | iKanPP 爱看片片',
@@ -23,7 +23,7 @@ export default function MoviePage() {
   const topMovies = PREBAKED_HOME_DATA.movie.top10.slice(0, 10).map((m, idx) => ({
     position: idx + 1,
     name: m.title,
-    url: `https://www.ikanpp.com/title/${generateSlug(m.title)}`,
+    url: `https://www.ikanpp.com${getTitleCanonicalHref(m)}`,
     image: m.cover,
   }));
 

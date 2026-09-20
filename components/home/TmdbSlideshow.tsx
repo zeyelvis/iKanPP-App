@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getOptimizedImageUrl, getFallbackProxiedImageUrl } from '@/lib/utils/image-utils';
 import { PREBAKED_HOME_DATA, type PrebakedSubject, type TrendingNavItem } from '@/lib/data/home-prebaked';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 interface PosterImageProps {
   src: string;
@@ -337,7 +337,7 @@ export function HeroSlideshow({
     if (onMovieClick) {
       onMovieClick({ title: item.title, id: item.title, rate: '', cover: '' });
     } else {
-      router.push(`/title/${generateSlug(item.title)}`);
+      router.push(getTitleCanonicalHref(item));
     }
   };
 
@@ -346,7 +346,7 @@ export function HeroSlideshow({
       onMovieClick(movie);
       return;
     }
-    router.push(`/title/${generateSlug(movie.title)}`);
+    router.push(getTitleCanonicalHref(movie));
   };
 
   if (currentData.length === 0) {
@@ -472,7 +472,7 @@ export function HeroSlideshow({
 
               {/* 下方：流媒体播放大按钮（iPad与桌面高度协调，位置与底线恒定） */}
               <Link
-                href={`/title/${generateSlug(active.title)}`}
+                href={getTitleCanonicalHref(active)}
                 prefetch={true}
                 className="inline-flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 xl:px-6 xl:py-3 bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md text-white rounded-full text-sm sm:text-base xl:text-lg font-bold border border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all cursor-pointer hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:border-white/60 hover:scale-102 shrink-0"
               >
@@ -494,7 +494,7 @@ export function HeroSlideshow({
               const renderItem = (item: TrendingNavItem, idx: number) => (
                 <Link
                   key={idx}
-                  href={`/title/${generateSlug(item.title)}`}
+                  href={getTitleCanonicalHref(item)}
                   prefetch={idx < 6}
                   className="group flex items-center justify-start text-left cursor-pointer text-white/90 hover:text-white hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.75)] hover:scale-103 transition-all duration-200 select-none shrink-0"
                   title={`${item.title}${item.updateBadge ? ` (更新${item.updateBadge}集)` : ''}`}

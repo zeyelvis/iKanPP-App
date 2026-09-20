@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getEntityByTmdb, getNextEntitySeq, saveEntity } from '@/lib/services/entity-kv';
+import { getEntityByTmdb, getEntityByTitle, getNextEntitySeq, saveEntity } from '@/lib/services/entity-kv';
 import { fetchTMDBDetails } from '@/lib/services/entity-enrichment';
 import { formatEntityId, generateSlug, isCleanChineseTitle, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
 import { TitleEntity } from '@/lib/types/entity';
@@ -130,6 +130,17 @@ export async function GET(request: Request) {
       const mainTitle = detail.title || detail.name || item.title || item.name;
       if (!mainTitle || !isCleanChineseTitle(mainTitle)) continue;
 
+      // 🌟 强一致防重线：查验是否已存在同名影视实体，坚决杜绝重复建档造 ID
+      const existingByTitle = await getEntityByTitle(mainTitle);
+      if (existingByTitle) {
+        if (!existingByTitle.tmdbId && tmdbIdStr) {
+          existingByTitle.tmdbId = tmdbIdStr;
+          existingByTitle.tmdbType = type;
+          await saveEntity(existingByTitle);
+        }
+        continue;
+      }
+
       const nextSeq = await getNextEntitySeq();
       const entityId = formatEntityId(nextSeq);
       const slug = generateSlug(mainTitle);
@@ -220,6 +231,10 @@ export async function GET(request: Request) {
           const tmdbPseudoId = `jl_${it.vod_id}`;
           const existing = await getEntityByTmdb('tv', tmdbPseudoId);
           if (existing) continue;
+
+          // 🌟 强一致防重线：查验是否已存在同名短剧实体，坚决杜绝重复建档造 ID
+          const existingTitleEnt = await getEntityByTitle(title);
+          if (existingTitleEnt) continue;
 
           const slug = generateSlug(title);
           const nextSeq = await getNextEntitySeq();

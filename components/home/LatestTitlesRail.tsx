@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl, getFallbackProxiedImageUrl } from '@/lib/utils/image-utils';
-import { generateSlug, isCleanChineseTitle } from '@/lib/data/entities/entity-utils';
+import { generateSlug, isCleanChineseTitle, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 import { RecentTitleItem } from '@/lib/services/entity-kv';
 
 interface LatestTitlesRailProps {
@@ -68,7 +68,7 @@ function LatestPosterCard({
         title: item.title,
         poster: item.cover || '',
       }).toString()}`
-    : `/title/${generateSlug(item.title)}`;
+    : getTitleCanonicalHref(item);
   const relativeTime = formatRelativeTime(item.createdAt);
   const statusBadge = item.updateBadge || relativeTime;
   const displayGenre = item.genres?.[0] || (isShortDrama ? '短剧' : item.type === 'movie' ? '电影' : '剧集');

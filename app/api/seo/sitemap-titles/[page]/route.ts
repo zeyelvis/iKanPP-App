@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSitemapCatalog } from '@/lib/services/entity-kv';
+import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 export const runtime = 'edge';
 
@@ -43,7 +44,8 @@ export async function GET(
   for (const item of slice) {
     if (!item || !item.id) continue;
     // 权威 SEO 规范 URL：与 canonicalSlug 100% 保持一致，杜绝多余 URL 编码或 301 重定向
-    const cleanSlug = (item.slug || item.id).trim();
+    const baseSlug = (item.slug || item.id).trim();
+    const cleanSlug = generateSlug(baseSlug);
     const fullUrl = `${BASE_URL}/title/${item.id}-${cleanSlug}`;
     const lastMod = item.updatedAt || new Date().toISOString().split('T')[0];
     if (lastMod > latestDate) {

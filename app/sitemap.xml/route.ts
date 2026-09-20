@@ -78,8 +78,8 @@ export async function GET() {
 
         for (const ent of topEntities) {
             if (!ent || !ent.id) continue;
-            const slug = ent.slug || ent.id;
-            const fullUrl = `${BASE_URL}/title/${ent.id}-${encodeURIComponent(slug)}`;
+            const cleanSlug = generateSlug(ent.slug || ent.id);
+            const fullUrl = `${BASE_URL}/title/${ent.id}-${cleanSlug}`;
             if (seenUrls.has(fullUrl)) continue;
             seenUrls.add(fullUrl);
 

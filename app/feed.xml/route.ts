@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { listRecentEntities } from '@/lib/services/entity-kv';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export const runtime = 'edge';
 
@@ -26,8 +26,7 @@ export async function GET() {
   const dynamicItems = recentEntities.map((item) => {
     const itemDate = item.createdAt ? new Date(item.createdAt) : now;
     const typeLabel = item.type === 'movie' ? '院线电影' : '热播剧集';
-    const slug = item.slug || generateSlug(item.title);
-    const detailUrl = `${BASE_URL}/title/${item.entityId}-${slug}`;
+    const detailUrl = `${BASE_URL}${getTitleCanonicalHref(item)}`;
     const desc = `iKanPP 今日增量收录《${item.title}》(${item.year || '2026'})，评分 ${item.rate || '8.8'}，类型：${(item.genres || []).join('/') || typeLabel}。支持海外华人免翻墙 4K/1080P 超清秒播。`;
 
     return {
@@ -45,14 +44,14 @@ export async function GET() {
       title: m.title,
       type: '院线精选',
       desc: `iKanPP 4K 院线精选《${m.title}》，评分 ${m.rate || '9.0'}，海外免翻墙超清极速流畅播放。`,
-      url: `${BASE_URL}/title/${generateSlug(m.title)}`,
+      url: `${BASE_URL}${getTitleCanonicalHref(m)}`,
       pubDate: new Date(now.getTime() - (idx + 1) * 86400000).toUTCString(),
     })),
     ...PREBAKED_HOME_DATA.tv.s1.slice(0, 6).map((t, idx) => ({
       title: t.title,
       type: '热播连续剧',
       desc: `iKanPP 全网热播剧集《${t.title}》，评分 ${t.rate || '8.8'}，全集极速免 VIP 连播。`,
-      url: `${BASE_URL}/title/${generateSlug(t.title)}`,
+      url: `${BASE_URL}${getTitleCanonicalHref(t)}`,
       pubDate: new Date(now.getTime() - (idx + 1) * 86400000).toUTCString(),
     })),
   ];

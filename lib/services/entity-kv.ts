@@ -253,7 +253,10 @@ export async function getEntityByTitle(title: string): Promise<TitleEntity | nul
   if (!title) return null;
   const norm = normalizeTitle(title);
   if (!norm) return null;
-  const entityId = await kvGet(`title:${norm}`);
+  let entityId = await kvGet(`title:${norm}`);
+  if (!entityId && norm !== title.trim()) {
+    entityId = await kvGet(`title:${title.trim()}`);
+  }
   if (!entityId) return null;
   const ent = await getEntityById(entityId);
   if (!ent) {
@@ -291,8 +294,47 @@ export async function saveEntity(entity: TitleEntity, options?: { syncGlobalInde
   }
 
   const id = entity.entityId.toLowerCase();
+  // 权威规范 Slug 强制预热与持久化
+  if (!entity.canonicalSlug) {
+    const cleanSlug = generateSlug(entity.slug || entity.title);
+    entity.canonicalSlug = `${id}-${cleanSlug}`.toLowerCase();
+  }
+
   const slugKey = `${id}-${entity.slug}`.toLowerCase();
+  const canonicalSlugKey = entity.canonicalSlug.toLowerCase();
   const normTitle = normalizeTitle(entity.title);
+  // 🌟 终极防重防线：同一影片唯一权威 ID 绝对保护
+  // 无论上层脚本或新功能如何调用，只要片名相同且确系同一部作品，严禁分配并保存第二个独立 ID！
+  if (normTitle) {
+    const existingId = await kvGet(`title:${normTitle}`);
+    if (existingId && existingId.toLowerCase() !== id) {
+      const existingEnt = await getEntityById(existingId);
+      if (existingEnt && normalizeTitle(existingEnt.title) === normTitle) {
+        const yearDiff = Math.abs((Number(existingEnt.year) || 0) - (Number(entity.year) || 0));
+        const isSameFilm = !existingEnt.year || !entity.year || yearDiff <= 1;
+        if (isSameFilm) {
+          console.warn(`[saveEntity 终极防重锁] 检测到重复实体入库尝试: title="${entity.title}", 权威ID=${existingId}, 传入新ID=${id}. 自动转为 301 别名映射，坚决拒绝分裂 URL！`);
+          await kvPut(`slug:${id}`, existingId);
+          await kvPut(`slug:${slugKey}`, existingId);
+          await kvPut(`slug:${canonicalSlugKey}`, existingId);
+
+          let mutated = false;
+          if ((!existingEnt.backdrop || existingEnt.backdrop.includes('doubanio.com')) && entity.backdrop && entity.backdrop.includes('tmdb.org')) {
+            existingEnt.backdrop = entity.backdrop;
+            mutated = true;
+          }
+          if ((!existingEnt.actors || existingEnt.actors.length === 0) && entity.actors && entity.actors.length > 0) {
+            existingEnt.actors = entity.actors;
+            mutated = true;
+          }
+          if (mutated) {
+            await kvPut(`entity:${existingId}`, JSON.stringify(existingEnt));
+          }
+          return;
+        }
+      }
+    }
+  }
 
   // 1. 保存主键实体
   await kvPut(`entity:${id}`, JSON.stringify(entity));
@@ -300,6 +342,9 @@ export async function saveEntity(entity: TitleEntity, options?: { syncGlobalInde
   // 2. 保存 Slug 索引
   await kvPut(`slug:${slugKey}`, id);
   await kvPut(`slug:${id}`, id);
+  if (canonicalSlugKey !== slugKey) {
+    await kvPut(`slug:${canonicalSlugKey}`, id);
+  }
 
   // 3. 保存 TMDB 索引
   if (entity.tmdbId) {

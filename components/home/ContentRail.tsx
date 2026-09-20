@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl, getFallbackProxiedImageUrl } from '@/lib/utils/image-utils';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export interface RailMovie {
   id: string;
@@ -69,7 +69,7 @@ function RailPosterItem({
         poster: movie.cover || '',
         ...(movie.id ? { id: String(movie.id) } : {})
       }).toString()}`
-    : `/title/${generateSlug(movie.title)}`;
+    : getTitleCanonicalHref(movie);
 
   return (
     <Link

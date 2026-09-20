@@ -259,7 +259,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2026-09-19T11:09:37.140Z"
     },
     {
-      "entityId": "ik_radar_all_14",
+      "entityId": "ik277239",
       "tmdbId": "1541125",
       "title": "年会不能停！2",
       "slug": "%E5%B9%B4%E4%BC%9A%E4%B8%8D%E8%83%BD%E5%81%9C2",
@@ -532,7 +532,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2026-09-19T15:40:17.153Z"
     },
     {
-      "entityId": "ik_radar_movie_5",
+      "entityId": "ik277239",
       "tmdbId": "1541125",
       "title": "年会不能停！2",
       "slug": "%E5%B9%B4%E4%BC%9A%E4%B8%8D%E8%83%BD%E5%81%9C2",

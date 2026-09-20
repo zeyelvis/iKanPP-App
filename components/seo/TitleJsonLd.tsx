@@ -1,4 +1,5 @@
 import { TitleEntity } from '@/lib/types/entity';
+import { generateSlug } from '@/lib/data/entities/entity-utils';
 
 interface TitleJsonLdProps {
   entity: TitleEntity;
@@ -6,7 +7,8 @@ interface TitleJsonLdProps {
 }
 
 export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: TitleJsonLdProps) {
-  const currentUrl = `${siteUrl}/title/${entity.entityId}-${entity.slug}`;
+  const slugPart = entity.canonicalSlug || `${entity.entityId}-${generateSlug(entity.slug || entity.title)}`;
+  const currentUrl = `${siteUrl}/title/${slugPart}`;
 
   // 多分类频道映射（与详情页面包屑保持一致）
   const genreStr = (entity.genres || []).join(',');

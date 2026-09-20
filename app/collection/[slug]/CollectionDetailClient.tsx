@@ -9,7 +9,7 @@ import {
   CURATED_COLLECTIONS,
   CollectionSubject,
 } from '@/lib/data/collections-prebaked';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { Icons } from '@/components/ui/Icon';
 
@@ -23,7 +23,7 @@ function CollectionFilmCard({ film, idx }: { film: CollectionSubject; idx: numbe
   const proxiedCover = getOptimizedImageUrl(film.cover);
 
   const handleClick = () => {
-    router.push(`/title/${generateSlug(film.title)}`);
+    router.push(getTitleCanonicalHref(film));
   };
 
   return (
@@ -153,7 +153,7 @@ export function CollectionDetailClient({ collection }: CollectionDetailClientPro
 
   const handlePlayFirst = () => {
     if (collection.films.length > 0) {
-      router.push(`/title/${generateSlug(collection.films[0].title)}`);
+      router.push(getTitleCanonicalHref(collection.films[0]));
     }
   };
 

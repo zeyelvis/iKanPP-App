@@ -16,6 +16,7 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
+import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 interface ClassicNoSourceStateProps {
   title: string;
@@ -89,7 +90,7 @@ export function ClassicNoSourceState({
     }
   };
 
-  const detailUrl = entityId ? `/title/${entityId}` : `/title/${encodeURIComponent(title)}`;
+  const detailUrl = getTitleCanonicalHref({ entityId: entityId || undefined, title });
 
   return (
     <div className="space-y-10 animate-fade-in">

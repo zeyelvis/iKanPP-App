@@ -8,7 +8,7 @@ import {
 import { Navbar } from '@/components/layout/Navbar';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { CollectionDetailClient } from './CollectionDetailClient';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export function generateStaticParams() {
   return CURATED_COLLECTIONS.map(c => ({ slug: c.slug }));
@@ -76,7 +76,7 @@ export default async function CollectionPage({ params }: Props) {
 
   const itemList = collection.films.map((f: CollectionSubject, idx: number) => ({
     position: idx + 1,
-    url: `${BASE_URL}/title/${generateSlug(f.title)}`,
+    url: `${BASE_URL}${getTitleCanonicalHref(f)}`,
     name: f.title,
     image: f.cover,
   }));

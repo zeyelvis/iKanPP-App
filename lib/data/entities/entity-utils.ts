@@ -63,6 +63,28 @@ export function parseEntitySlug(param: string): { entityId: string | null; slug:
 }
 
 /**
+ * 客户端与组件层权威详情页 URL 生成器
+ * 优先生成标准权威规范 URL: /title/ik000001-slug
+ * 若无标准 ik ID，则回退为 /title/slug（由服务端 301 自愈升级）
+ */
+export function getTitleCanonicalHref(item: { entityId?: string; id?: string | number; title?: string; name?: string; slug?: string } | null | undefined): string {
+  if (!item) return '/';
+  const title = (item.title || item.name || '').trim();
+  if (!title) return '/';
+  const rawId = (item.entityId || item.id || '').toString().trim().toLowerCase();
+  const hasStandardId = /^ik\d{6}$/i.test(rawId);
+  const baseText = item.slug || title;
+  let cleanSlug = generateSlug(baseText).toLowerCase();
+  if (hasStandardId && cleanSlug.startsWith(`${rawId}-`)) {
+    cleanSlug = cleanSlug.slice(rawId.length + 1);
+  }
+  if (hasStandardId) {
+    return `/title/${rawId}-${cleanSlug}`;
+  }
+  return `/title/${cleanSlug}`;
+}
+
+/**
  * 标题规范化比对键（用于旧 URL 301 命中或名称模糊去重）
  */
 export function normalizeTitle(title: string): string {

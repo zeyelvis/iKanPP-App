@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRankingData } from './hooks/useRankingData';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 interface RankingCarouselProps {
     /** 当前内容类型，与 PopularFeatures 的三联按钮联动 */
@@ -88,7 +88,7 @@ export function RankingCarousel({ contentType }: RankingCarouselProps) {
     };
 
     const handleMovieClick = (movie: any) => {
-        router.push(`/title/${generateSlug(movie.title)}`);
+        router.push(getTitleCanonicalHref(movie));
     };
 
     // 骨架屏
@@ -124,7 +124,7 @@ export function RankingCarousel({ contentType }: RankingCarouselProps) {
 
                 {/* 左侧 Hero 区域 */}
                 <Link
-                    href={`/title/${generateSlug(active.title)}`}
+                    href={getTitleCanonicalHref(active)}
                     prefetch={true}
                     className="relative w-[38%] min-w-[280px] rounded-2xl overflow-hidden cursor-pointer group block"
                     style={{ isolation: 'isolate' }}
@@ -282,7 +282,7 @@ export function RankingCarousel({ contentType }: RankingCarouselProps) {
                         {currentData.map((movie, idx) => (
                             <Link
                                 key={movie.id || idx}
-                                href={`/title/${generateSlug(movie.title)}`}
+                                href={getTitleCanonicalHref(movie)}
                                 prefetch={idx < 4}
                                 className={`relative shrink-0 w-[130px] lg:w-[145px] rounded-xl overflow-hidden cursor-pointer group/card transition-all duration-300 block ${idx === activeIndex
                                         ? 'ring-2 ring-[var(--accent-color)] shadow-lg shadow-[var(--accent-color)]/20'
@@ -362,7 +362,7 @@ export function RankingCarousel({ contentType }: RankingCarouselProps) {
                     {currentData.map((movie, idx) => (
                         <Link
                             key={movie.id || idx}
-                            href={`/title/${generateSlug(movie.title)}`}
+                            href={getTitleCanonicalHref(movie)}
                             prefetch={idx < 3}
                             className="relative shrink-0 w-[120px] h-[180px] rounded-xl overflow-hidden cursor-pointer group/mcard block"
                         >

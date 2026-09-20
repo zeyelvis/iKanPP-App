@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Star, Clock, Calendar, Film, ArrowLeft, Clapperboard, User, Sparkles, CheckCircle2, Play } from 'lucide-react';
 import { getEntityBySlug, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity, isSafeRecentTitleItem } from '@/lib/services/entity-kv';
 import { getGenreBySlug } from '@/lib/data/genres';
-import { parseEntitySlug, normalizeTitle, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
+import { parseEntitySlug, normalizeTitle, isStrictSafeEntity, generateSlug } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, fetchTMDBDetails, fetchTMDBAiredEpisodeCount, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
 import { getFastPersonAvatars } from '@/lib/services/person-avatar';
 import { getOptimizedImageUrl, isRestrictedRegion } from '@/lib/utils/image-utils';
@@ -341,11 +341,36 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
 }
 
 /**
+ * 权威标准 Slug 计算器
+ * 确保全站任何影视作品，有且仅有一个合法的标准规范 Slug：
+ * 格式恒为: ${entityId}-${slug}
+ */
+export function getEntityCanonicalSlug(entity: TitleEntity): string {
+  if (entity.canonicalSlug && entity.canonicalSlug.trim()) {
+    return entity.canonicalSlug.trim().toLowerCase();
+  }
+  const id = (entity.entityId || (entity as any).id || '').toLowerCase();
+  let baseText = entity.slug || entity.title;
+
+  // 清洗 baseText 开头可能重复的 id 前缀（如 ik000009-一饭封神）
+  if (id && baseText.toLowerCase().startsWith(`${id}-`)) {
+    baseText = baseText.slice(id.length + 1);
+  }
+
+  const cleanSlugPart = generateSlug(baseText).toLowerCase();
+
+  if (id) {
+    return `${id}-${cleanSlugPart}`;
+  }
+  return cleanSlugPart;
+}
+
+/**
  * 影视详情页最终守门员：
  * 任何历史遗留的假名片、低俗录像、成人违规条目强制拦截返回 null（自动触发 404 与 noindex）
  */
 async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> {
-  const entity = await resolveEntityRaw(rawSlugParam);
+  let entity = await resolveEntityRaw(rawSlugParam);
   if (!entity) return null;
   if (!isSafeRecentTitleItem(entity as any)) {
     return null;
@@ -354,6 +379,19 @@ async function resolveEntity(rawSlugParam: string): Promise<TitleEntity | null> 
   if (!safeCheck.safe) {
     return null;
   }
+
+  // 🌟 核心规范化：若命中的实体 ID 不是标准 6 位 ik\d{6}（例如 ik_radar_... 或豆瓣数字 ID），
+  // 强制通过片名从 KV 查出其真正的 6 位标准实体，保证前台 URL 与 301 重定向基线 100% 为纯净的 ik\d{6}
+  const currentId = entity.entityId || (entity as any).id || '';
+  if (!/^ik\d{6}$/i.test(currentId)) {
+    try {
+      const realEntity = await getEntityByTitle(entity.title);
+      if (realEntity && realEntity.entityId && /^ik\d{6}$/i.test(realEntity.entityId)) {
+        entity = realEntity;
+      }
+    } catch {}
+  }
+
   return entity;
 }
 
@@ -585,13 +623,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const isSeasonSpecified = Boolean(seasonTag && !entity.title.includes(seasonTag));
 
   // 🌟 SEO 301 权威规范重定向：在 Metadata 生成阶段立即发起 308/301 永久重定向
-  const effectiveEntityId = entity.entityId || (entity as any).id || '';
-  if (effectiveEntityId && /^ik\d{6}$/i.test(effectiveEntityId) && entity.slug) {
-    const canonicalSlug = `${effectiveEntityId}-${entity.slug}`.toLowerCase();
-    const currentCleanSlug = decodedSlug.toLowerCase();
-    if (currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
-      redirect(`/title/${encodeURIComponent(`${effectiveEntityId}-${entity.slug}`)}`, RedirectType.replace);
-    }
+  // 铁律：只要请求的 URL（currentCleanSlug）与实体的权威规范 Slug（canonicalSlug）不完全一致，
+  // 且不是合法的季数变体，100% 强制发起 301 永久重定向，彻底消灭任何错位 ID、纯片名短链或重复 URL 抢词！
+  const canonicalSlug = getEntityCanonicalSlug(entity);
+  const currentCleanSlug = decodedSlug.toLowerCase();
+  if (canonicalSlug && currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
+    redirect(`/title/${encodeURIComponent(canonicalSlug)}`, RedirectType.replace);
   }
 
   // 多分类智能识别：动漫也属于「有剧集」形态
@@ -627,7 +664,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? (entity.numberOfEpisodes ? `共${entity.numberOfEpisodes}集全网纯直连超清速播。` : '全集无删减完整版免VIP极速秒播。')
     : '1080P超清原画免VIP在线观看。';
 
-  const canonicalUrl = `${BASE_URL}/title/${entity.entityId}-${entity.slug}`;
+  const canonicalUrl = `${BASE_URL}/title/${encodeURIComponent(canonicalSlug)}`;
   let resolvedBackdrop = entity.backdrop;
   if (isFakeBackdrop(entity.backdrop, entity.cover)) {
     healBackdropInBackground(entity);
@@ -721,13 +758,10 @@ export default async function TitlePage({ params }: Props) {
 
   // 🌟 SEO 301 权威规范重定向：若请求的 URL 不是权威规范 Slug（如纯 ID ik000001 或历史非规范别名），
   // 强制发起 308/301 永久重定向，将爬虫与外链权重 100% 汇聚于标准规范 URL，彻底根治 GSC 2130+ 备用网页报警
-  const effectiveEntityId = entity.entityId || (entity as any).id || '';
-  if (effectiveEntityId && /^ik\d{6}$/i.test(effectiveEntityId) && entity.slug) {
-    const canonicalSlug = `${effectiveEntityId}-${entity.slug}`.toLowerCase();
-    const currentCleanSlug = decodedSlug.toLowerCase();
-    if (currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
-      redirect(`/title/${encodeURIComponent(`${effectiveEntityId}-${entity.slug}`)}`, RedirectType.replace);
-    }
+  const canonicalSlug = getEntityCanonicalSlug(entity);
+  const currentCleanSlug = decodedSlug.toLowerCase();
+  if (canonicalSlug && currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
+    redirect(`/title/${encodeURIComponent(canonicalSlug)}`, RedirectType.replace);
   }
 
   // 质量自愈保障：若当前实体缺少封面海报（如历史残缺数据），强制在线触发重新丰润

@@ -73,6 +73,16 @@ function isCleanChineseTitle(title) {
   return true;
 }
 
+function normalizeTitle(title) {
+  if (!title || typeof title !== 'string') return '';
+  return title
+    .toLowerCase()
+    .replace(/[（(][^）)]*[）)]/g, '')
+    .replace(/[【\[][^】\]]*[】\]]/g, '')
+    .replace(/\s+/g, '')
+    .replace(/[^\w\u4e00-\u9fa5]/g, '');
+}
+
 /**
  * 纯化片名：剥离抢先版、TC、枪版、HD、国粤双语、字幕等杂质
  */
@@ -245,11 +255,13 @@ async function main() {
   for (const [title, item] of uniqueTitles.entries()) {
     // 检查生产库是否已有此实体
     let entityId = null;
+    const norm = normalizeTitle(title);
     const rawSlugId = await kvGet(`slug:${encodeURIComponent(title)}`) || await kvGet(`slug:${title}`);
     if (rawSlugId) {
       entityId = rawSlugId.trim();
     } else {
-      const rawTitleId = await kvGet(`title:${title}`);
+      let rawTitleId = norm ? await kvGet(`title:${norm}`) : null;
+      if (!rawTitleId) rawTitleId = await kvGet(`title:${title}`);
       if (rawTitleId) entityId = rawTitleId.trim();
     }
 
@@ -290,6 +302,19 @@ async function main() {
     }
     if (!isCleanChineseTitle(tmdbData.title)) {
       console.log(`   ⛔ TMDB 片名非纯净华语标题，拒绝建档: 《${tmdbData.title}》`);
+      continue;
+    }
+
+    // 🌟 TMDB 反向索引与片名二次查重：坚决复用已有 entityId，杜绝重复建档
+    const existingTmdbEntityId = await kvGet(`tmdb:${tmdbData.tmdbType}:${tmdbData.tmdbId}`);
+    if (existingTmdbEntityId) {
+      console.log(`   ♻️ 发现 TMDB 已有关联实体 (${existingTmdbEntityId.trim()})，坚决复用已有主键，杜绝重复造号！`);
+      continue;
+    }
+    const tmdbTitleNorm = normalizeTitle(tmdbData.title);
+    const existingTmdbTitleId = tmdbTitleNorm ? await kvGet(`title:${tmdbTitleNorm}`) : null;
+    if (existingTmdbTitleId) {
+      console.log(`   ♻️ 发现片名已有关联实体 (${existingTmdbTitleId.trim()})，坚决复用已有主键，杜绝重复造号！`);
       continue;
     }
 

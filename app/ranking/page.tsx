@@ -5,7 +5,7 @@ import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { JsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export const metadata: Metadata = {
   title: '影视风云榜 - 实时全网热播榜 & 豆瓣高分榜 TOP50 | iKanPP 爱看片片',
@@ -28,7 +28,7 @@ export default function RankingPage() {
   ].map((item, idx) => ({
     position: idx + 1,
     name: item.title,
-    url: `https://www.ikanpp.com/title/${generateSlug(item.title)}`,
+    url: `https://www.ikanpp.com${getTitleCanonicalHref(item)}`,
     image: item.cover,
   }));
 

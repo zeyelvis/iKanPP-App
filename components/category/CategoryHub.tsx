@@ -11,7 +11,7 @@ import { MovieGrid } from '@/components/home/MovieGrid';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { getPrebakedCategoryShelves, PREBAKED_CATEGORY_ITEMS } from '@/lib/data/category-prebaked';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 import { HeroSlideshow } from '@/components/home/TmdbSlideshow';
 import type { PrebakedSubject, TrendingNavItem } from '@/lib/data/home-prebaked';
 import { UniversalFilterMatrix, FilterParams } from '@/components/category/UniversalFilterMatrix';
@@ -430,7 +430,7 @@ function isSameList(a: any[], b: any[]): boolean {
       router.push(`/short/player?${query.toString()}`);
       return;
     }
-    router.push(`/title/${generateSlug(movie.title)}`);
+    router.push(getTitleCanonicalHref(movie));
   };
 
   const handleSearch = (query: string) => {
@@ -506,7 +506,7 @@ function isSameList(a: any[], b: any[]): boolean {
                         source: (heroMovie as any).sourceId || 'juliang',
                         ...((heroMovie as any).id ? { id: String((heroMovie as any).id) } : {})
                       }).toString()}`
-                    : `/title/${generateSlug(heroMovie.title)}`
+                    : getTitleCanonicalHref(heroMovie)
                   }
                   prefetch={true}
                   className="flex-1 sm:flex-none justify-center px-5 sm:px-7 py-2.5 sm:py-3 bg-(--accent-color) hover:brightness-110 active:scale-95 text-white rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-1.5 sm:gap-2 shadow-2xl transition-all cursor-pointer"

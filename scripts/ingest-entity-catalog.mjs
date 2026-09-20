@@ -733,6 +733,24 @@ async function runIngestion(options = {}) {
 
           // TMDB 智能匹配
           const tmdbDetail = await searchTMDB(vodName, chConfig.channel, item.vod_year);
+
+          // 🌟 强一致防重：如果 TMDB 命中，先查 tmdb 反向索引是否已有实体
+          if (tmdbDetail) {
+            const tmdbType = chConfig.channel === 'tv' || chConfig.channel === 'anime' ? 'tv' : 'movie';
+            const existingByTmdb = await kvGet(`tmdb:${tmdbType}:${tmdbDetail.id}`);
+            if (existingByTmdb) {
+              totalSkipped++;
+              continue;
+            }
+          }
+
+          // 🌟 强一致防重：查 title 归一化索引是否已有实体
+          const existingByTitle = await kvGet(`title:${norm}`);
+          if (existingByTitle) {
+            totalSkipped++;
+            continue;
+          }
+
           const entityId = formatEntityId(seq++);
           const slug = generateSlug(vodName);
           const nowIso = new Date().toISOString();

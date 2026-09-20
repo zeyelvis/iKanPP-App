@@ -1,6 +1,7 @@
 export interface TitleEntity {
   entityId: string;            // "ik000001" (全局唯一不可变序号)
   slug: string;                // 拼音别名，例如 "xiao-shen-ke-de-jiu-shu"
+  canonicalSlug?: string;       // 唯一权威规范 URL Slug，例如 "ik000001-肖申克的救赎"
   tmdbId: string;              // TMDB 官方条目 ID，例如 "278"
   tmdbType: 'movie' | 'tv';    // TMDB 媒体类型
   doubanId?: string;           // 豆瓣 ID，可选

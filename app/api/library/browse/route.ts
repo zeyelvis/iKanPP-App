@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DOCUMENTARY_DATASET } from '@/lib/data/documentary-data';
 import { queryEntities } from '@/lib/services/entity-kv';
+import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export const runtime = 'edge';
 
@@ -230,7 +231,7 @@ function normalizeVodItem(item: any) {
     remarks: item.vod_remarks || '',
     area: item.vod_area || '',
     updatedAt: item.vod_time || '',
-    url: `/title/${encodeURIComponent((item.vod_name || '').trim())}`,
+    url: getTitleCanonicalHref({ title: item.vod_name }),
   };
 }
 
@@ -445,7 +446,7 @@ export async function GET(req: NextRequest) {
         remarks: entity.status || (entity.numberOfEpisodes ? `${entity.numberOfEpisodes}集全` : '全高清'),
         area: entity.region || '华语',
         updatedAt: (entity.updatedAt || entity.createdAt || '').split('T')[0],
-        url: `/title/${encodeURIComponent(entity.slug || entity.title)}`,
+        url: getTitleCanonicalHref(entity),
       }));
 
       return NextResponse.json(
@@ -506,7 +507,7 @@ export async function GET(req: NextRequest) {
         remarks: doc.episodes_info || '经典高分',
         area: '全球',
         updatedAt: '',
-        url: `/title/${encodeURIComponent(doc.title)}`,
+        url: getTitleCanonicalHref(doc),
       });
     }
   }
