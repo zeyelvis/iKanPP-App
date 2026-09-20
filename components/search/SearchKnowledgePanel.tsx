@@ -360,7 +360,7 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
 
     // 2. 命中客户端 sessionStorage 缓存 (0ms 秒开)
     try {
-      const ssKey = `sq_ent_${cleanQuery}`;
+      const ssKey = `sq_ent_v2_${cleanQuery}`;
       const rawSession = sessionStorage.getItem(ssKey);
       if (rawSession) {
         const cached = JSON.parse(rawSession);
@@ -407,7 +407,7 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
         if (found.length > 0) {
           entitiesMemoryCache.set(cleanQuery, found);
           try {
-            sessionStorage.setItem(`sq_ent_${cleanQuery}`, JSON.stringify(found));
+            sessionStorage.setItem(`sq_ent_v2_${cleanQuery}`, JSON.stringify(found));
           } catch {}
         }
 
