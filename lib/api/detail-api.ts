@@ -21,9 +21,9 @@ export async function getVideoDetail(
     const url = new URL(`${baseUrl}${detailPath}`);
     url.searchParams.set('ac', 'detail');
 
-    // 巨量资源 (juliang) API 不支持 ids 字段单条查询，但支持 wd 关键词查询且自带完整 vod_play_url
-    const isJuliang = source.id === 'juliang';
-    if (isJuliang && title) {
+    // 若 id 为纯数字（采集站原始 vod_id），优先通过 ids 精准单条直查；若为站内实体 ID (如 ik100710) 且有 title，使用 wd 关键词查询
+    const isStationEntityId = String(id).startsWith('ik') || !/^\d+$/.test(String(id).trim());
+    if (isStationEntityId && title) {
         url.searchParams.set('wd', title.replace(/[《》【】\[\]（）()·\s:：\-]/g, ' ').trim());
     } else {
         url.searchParams.set('ids', id.toString());
@@ -49,7 +49,7 @@ export async function getVideoDetail(
         let data: ApiDetailResponse = await safeParseResponse(response);
 
         // 若常规 ids 查不到且提供了 title，尝试用 wd 关键词进行容错挽救
-        if ((!data.list || data.list.length === 0) && title && !isJuliang) {
+        if ((!data.list || data.list.length === 0) && title) {
             try {
                 const fallbackUrl = new URL(`${baseUrl}${detailPath}`);
                 fallbackUrl.searchParams.set('ac', 'detail');
@@ -75,8 +75,49 @@ export async function getVideoDetail(
             throw new Error('Video not found');
         }
 
-        // 优先匹配 ID 相等的条目，否则取第一条
-        const videoData = data.list.find((it: any) => String(it.vod_id) === String(id)) || data.list[0];
+        // 候选条目多级精准决选：
+        // 1. 若列表中存在与传入 id 完全相等的条目，直接采纳
+        let videoData = data.list.find((it: any) => String(it.vod_id) === String(id));
+
+        // 2. 若未按 ID 命中且提供了片名 title，按片名精确匹配
+        if (!videoData && title) {
+            const cleanTarget = title.replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
+            
+            // 2.1 第一优先级：清洗后标题完全相等（精确匹配）
+            const exactMatches = data.list.filter((it: any) => {
+                const cleanCand = (it.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
+                return cleanCand === cleanTarget;
+            });
+
+            if (exactMatches.length > 0) {
+                // 若有多个同名，优先挑有年份且年份最新的
+                exactMatches.sort((a: any, b: any) => {
+                    const yA = parseInt(a.vod_year || '0', 10) || 0;
+                    const yB = parseInt(b.vod_year || '0', 10) || 0;
+                    return yB - yA;
+                });
+                videoData = exactMatches[0];
+            } else if (cleanTarget.length > 3) {
+                // 2.2 第二优先级：严防短片名被反向吞噬！仅当目标标题长度 > 3 时允许受限子串匹配
+                const subMatches = data.list.filter((it: any) => {
+                    const cleanCand = (it.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
+                    return cleanCand.includes(cleanTarget) && Math.abs(cleanCand.length - cleanTarget.length) <= 3;
+                });
+                if (subMatches.length > 0) {
+                    videoData = subMatches[0];
+                }
+            }
+        }
+
+        // 3. 兜底保障：若未提供 title 且未命中 ID，才回退到第一条
+        if (!videoData) {
+            if (!title) {
+                videoData = data.list[0];
+            } else {
+                // 提供了 title 却未能精确匹配，坚决不张冠李戴返回错误影片
+                throw new Error(`Video not found for title "${title}" in source ${source.name || source.id}`);
+            }
+        }
 
         // Handle multiple sources (separated by $$$)
         const playFrom = (videoData.vod_play_from || '').split('$$$');

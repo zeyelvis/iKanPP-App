@@ -298,19 +298,24 @@ export function IkanPPPlayerContainer() {
                       ? targetAnalysis.subtitles.slice(1).some(st => st.length >= 2 && candAnalysis.pureTitle.includes(st))
                       : targetAnalysis.subtitles.some(st => st.length >= 3 && candAnalysis.pureTitle.includes(st));
 
-                    // B. 纯片名互相包含且重合长度 >= 3，但严格防范短母题吞噬长子题（杜绝4字"生化危机"冒充7字"生化危机爆发夜"）
+                    // B. 纯片名互相包含且重合长度 >= 3，但严格防范短母题吞噬长子题与短片名被长片名反向吞噬（杜绝 2 字"希望"被 6 字"有希望的男人"冒充）
                     const lenDiff = Math.abs(candAnalysis.pureTitle.length - targetAnalysis.pureTitle.length);
-                    const isSubstringOverlap = 
-                      (candAnalysis.pureTitle.includes(targetAnalysis.pureTitle)) || // 候选比目标长且包含目标全部文字（如"生化危机爆发夜2026"）
-                      (targetAnalysis.pureTitle.includes(candAnalysis.pureTitle) && lenDiff <= 1); // 目标包含候选，但字数差距不得超过1个字
+                    const isCandValidLonger = candAnalysis.pureTitle.includes(targetAnalysis.pureTitle) && (
+                      targetAnalysis.pureTitle.length > 3
+                        ? lenDiff <= 4
+                        : (lenDiff <= 1 || candAnalysis.pureTitle.replace(/(19\d\d|20\d\d)$/, '') === targetAnalysis.pureTitle)
+                    );
+                    const isTargetValidLonger = targetAnalysis.pureTitle.includes(candAnalysis.pureTitle) && lenDiff <= 1;
+                    const isSubstringOverlap = isCandValidLonger || isTargetValidLonger;
 
                     if (hasSharedSpecificSubtitle || isSubstringOverlap) {
                       isHighConfidenceMatch = true;
                       nameScore = hasSharedSpecificSubtitle ? 140 : 110;
                     } else if (
                       targetAnalysis.subtitles.length <= 1 &&
-                      ((candAnalysis.pureTitle.length >= 3 && targetAnalysis.pureTitle.includes(candAnalysis.pureTitle)) ||
-                       (targetAnalysis.pureTitle.length >= 3 && candAnalysis.pureTitle.includes(targetAnalysis.pureTitle)))
+                      targetAnalysis.pureTitle.length > 3 &&
+                      ((candAnalysis.pureTitle.length >= 4 && targetAnalysis.pureTitle.includes(candAnalysis.pureTitle)) ||
+                       (targetAnalysis.pureTitle.length >= 4 && candAnalysis.pureTitle.includes(targetAnalysis.pureTitle)))
                     ) {
                       nameScore = 50;
                     } else {
@@ -654,27 +659,59 @@ export function IkanPPPlayerContainer() {
                   // 电影类型隔离：若期待电影，严禁把连续剧塞进备选线路
                   if (expectedType === 'movie' && isSeriesItem) continue;
 
+                  // 年份核验（若期待特定年份，且候选年份相差超过 2 年，直接硬性隔离）
+                  let candYear: number | null = null;
+                  if (v.vod_year) {
+                    const parsed = parseInt(String(v.vod_year).trim(), 10);
+                    if (!isNaN(parsed) && parsed > 1900 && parsed < 2100) candYear = parsed;
+                  }
+                  if (!candYear) {
+                    const ym = rawName.match(/\b(19\d\d|20\d\d)\b/);
+                    if (ym) candYear = parseInt(ym[1], 10);
+                  }
+                  const targetYearNum = expectedYear ? parseInt(expectedYear, 10) : null;
+                  if (targetYearNum && candYear && Math.abs(candYear - targetYearNum) > 2) {
+                    continue;
+                  }
+
                   const isExact = candAnalysis.pureTitle === targetAnalysis.pureTitle;
                   const hasSharedSpecificSubtitle = targetAnalysis.subtitles.length > 1
                     ? targetAnalysis.subtitles.slice(1).some(st => st.length >= 2 && candAnalysis.pureTitle.includes(st))
                     : targetAnalysis.subtitles.some(st => st.length >= 3 && candAnalysis.pureTitle.includes(st));
                   const lenDiff = Math.abs(candAnalysis.pureTitle.length - targetAnalysis.pureTitle.length);
-                  const isSubstringOverlap = 
-                    (candAnalysis.pureTitle.includes(targetAnalysis.pureTitle)) ||
-                    (targetAnalysis.pureTitle.includes(candAnalysis.pureTitle) && lenDiff <= 1);
+                  
+                  // 严格防范短片名被长片名反向吞噬（杜绝 2 字"希望"被 6 字"有希望的男人"冒充）
+                  const isCandValidLonger = candAnalysis.pureTitle.includes(targetAnalysis.pureTitle) && (
+                    targetAnalysis.pureTitle.length > 3
+                      ? lenDiff <= 4
+                      : (lenDiff <= 1 || candAnalysis.pureTitle.replace(/(19\d\d|20\d\d)$/, '') === targetAnalysis.pureTitle)
+                  );
+                  const isTargetValidLonger = targetAnalysis.pureTitle.includes(candAnalysis.pureTitle) && lenDiff <= 1;
+                  const isSubstringOverlap = isCandValidLonger || isTargetValidLonger;
 
                   if (isExact || hasSharedSpecificSubtitle || isSubstringOverlap) {
+                    const candidateScore = (isExact ? 200 : 0) + (hasSharedSpecificSubtitle ? 100 : 0) + (isSubstringOverlap ? 50 : 0) + (targetYearNum && candYear && candYear === targetYearNum ? 50 : 0);
                     const existingIdx = found.findIndex(s => s.source === v.source);
+                    const newFoundItem = {
+                      id: v.vod_id,
+                      source: v.source,
+                      sourceName: v.sourceDisplayName || getSourceName(v.source),
+                      latency: v.latency,
+                      pic: v.vod_pic,
+                      typeName: v.type_name,
+                      _score: candidateScore,
+                    };
+
                     if (existingIdx === -1) {
-                      found.push({
-                        id: v.vod_id,
-                        source: v.source,
-                        sourceName: v.sourceDisplayName || getSourceName(v.source),
-                        latency: v.latency,
-                        pic: v.vod_pic,
-                        typeName: v.type_name,
-                      });
+                      found.push(newFoundItem as any);
                       setDiscoveredSources([...found]);
+                    } else {
+                      // 同源择优替换：若后到达的候选完全精确同名或匹配分更高，立即覆盖劣质占位候选！
+                      const prevItem = found[existingIdx] as any;
+                      if (candidateScore > (prevItem._score || 0)) {
+                        found[existingIdx] = newFoundItem as any;
+                        setDiscoveredSources([...found]);
+                      }
                     }
                   }
                 }

@@ -225,7 +225,10 @@ async function handleDetailRequest(id: string | null, source: any, method: strin
           }) || candidates.find(c => {
             const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
             const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
-            return cName.includes(tName) || tName.includes(cName);
+            const lenDiff = Math.abs(cName.length - tName.length);
+            if (cName.includes(tName)) return tName.length > 3 ? lenDiff <= 4 : lenDiff <= 1;
+            if (tName.includes(cName)) return lenDiff <= 1;
+            return false;
           });
 
           if (matched && matched.vod_id) {
@@ -276,8 +279,11 @@ async function handleDetailRequest(id: string | null, source: any, method: strin
 
         const isCleanTitleMatch = (candStr: string, tgtStr: string) => {
           if (candStr === tgtStr) return true;
-          if (candStr.includes(tgtStr)) return true;
-          if (tgtStr.includes(candStr) && Math.abs(tgtStr.length - candStr.length) <= 1) return true;
+          const lenDiff = Math.abs(candStr.length - tgtStr.length);
+          if (candStr.includes(tgtStr)) {
+            return tgtStr.length > 3 ? lenDiff <= 4 : lenDiff <= 1;
+          }
+          if (tgtStr.includes(candStr) && lenDiff <= 1) return true;
           return false;
         };
 
