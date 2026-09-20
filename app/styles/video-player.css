@@ -837,17 +837,42 @@
 }
 
 /* 全屏硬件叠加层安全防线：强制禁用全屏容器内所有元素的 backdrop-filter，防止 GPU Back-buffer 显存读取死锁导致视频置黑 */
-:fullscreen *[class*="backdrop-blur"],
-:fullscreen *[style*="backdropFilter"],
-:fullscreen *[style*="backdrop-filter"],
-:-webkit-full-screen *[class*="backdrop-blur"],
-:-webkit-full-screen *[style*="backdropFilter"],
-:-webkit-full-screen *[style*="backdrop-filter"],
-.kvideo-container.is-native-fullscreen *[class*="backdrop-blur"],
-.kvideo-container.is-native-fullscreen *[style*="backdropFilter"],
-.kvideo-container.is-native-fullscreen *[style*="backdrop-filter"] {
+/* 核心规范：绝不可将标准伪类与前缀伪类用逗号合写在同一规则中，否则浏览器遇未识别伪类将整组丢弃！ */
+
+/* 1. 标准 W3C 全屏伪类 */
+:fullscreen * {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
 }
+
+/* 2. WebKit / Safari / 旧版 Chrome 私有全屏伪类 (必须独立成块) */
+:-webkit-full-screen * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* 3. 类名物理保底 (.is-native-fullscreen) */
+.kvideo-container.is-native-fullscreen * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* 4. 网页全屏与通用全屏类名保底 (.is-fullscreen) */
+.kvideo-container.is-fullscreen * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* 5. 针对显式包含 backdrop-blur 的浮层给予深色高质感底色垫底，防止移除滤镜后发虚 */
+:fullscreen *[class*="backdrop-blur"],
+:-webkit-full-screen *[class*="backdrop-blur"] {
+    background-color: rgba(18, 18, 22, 0.92) !important;
+}
+
+.kvideo-container.is-native-fullscreen *[class*="backdrop-blur"],
+.kvideo-container.is-fullscreen *[class*="backdrop-blur"] {
+    background-color: rgba(18, 18, 22, 0.92) !important;
+}
+
 
 

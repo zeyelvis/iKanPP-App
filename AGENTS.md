@@ -279,9 +279,12 @@ iKanPP 全域视频播放器（包含桌面端、移动端、网页全屏与系�
 ### 2. 全屏状态下绝对禁止 `backdrop-filter` 显存回读死锁 (No Fullscreen Backdrop-Filters)
 - **核心判定**：全屏硬件加速覆盖层在安全沙箱和性能保护下，严禁上层 DOM 元素对正在硬件解码的显存进行反向像素回读（GPU Back-buffer Readback）。
 - **防线规范**：
-  1. `video-player.css` 必须全局配置全屏安全防护规则，在全屏激活时强制将容器内部所有子元素的 `backdrop-filter` 降级为 `none !important`；
-  2. 主站普通公网影视（轨道 A，`isPremium: false`）严禁渲染任何 56px/36px 强高斯消融台标层，必须且只能展示轻量纯 CSS 渐变微晶台标；
-  3. 56px/36px 双通道强力高斯模糊滤镜**必须且只能在午夜特区 Jable 去水印模式（轨道 B，`isPremium: true`）中按需使用**。
+  1. **CSS 选择器绝对禁止逗号合写 (No Comma-Separated Vendor Pseudo-Classes)**：W3C 规范规定选择器列表中若存在浏览器未识别的前缀伪类，整组规则会被整块作废！`video-player.css` 中 `:fullscreen *`、`:-webkit-full-screen *`、`.kvideo-container.is-native-fullscreen *` **必须拆分为各自完全独立的 CSS 规则块**，强制将内部子元素的 `backdrop-filter` 降级为 `none !important`；
+  2. **全屏浮层 DOM 级物理剥离 (DOM-Level Backdrop Removal)**：`DesktopOverlay.tsx` 全屏时钟、快进/快退/播放按钮、Toast 提示及 `DesktopVideoPlayer.tsx` 快捷返回胶囊，**严禁携带 `backdrop-blur-*` 类名**，必须使用高级纯色暗夜底色（如 `bg-[#141416]/90`），从 DOM 源头彻底杜绝 GPU 反向回读需求；
+  3. 主站普通公网影视（轨道 A，`isPremium: false`）严禁渲染任何 56px/36px 强高斯消融台标层，必须且只能展示轻量纯 CSS 渐变微晶台标；
+  4. 56px/36px 双通道强力高斯模糊滤镜**必须且只能在午夜特区 Jable 去水印模式（轨道 B，`isPremium: true`）中按需使用**；
+  5. **自动化门禁永久守护**：由 `scripts/test-architecture-integrity.mjs` 在提交与 CI 构建中自动扫描 CSS 规则与全屏组件，一旦发现合写伪类或全屏类名残留 `backdrop-blur` 立即强制阻断发布。
+
 
 ---
 

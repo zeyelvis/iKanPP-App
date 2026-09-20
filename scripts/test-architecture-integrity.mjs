@@ -83,11 +83,35 @@ for (const relPath of auxiliaryScripts) {
   }
 }
 
+// 5. 全屏硬件覆盖层与显卡防黑屏规范验证：杜绝跨浏览器伪类逗号合写失效，杜绝全屏组件包含 backdrop-blur
+const videoCssPath = path.resolve('app/styles/video-player.css');
+if (fs.existsSync(videoCssPath)) {
+  const cssContent = fs.readFileSync(videoCssPath, 'utf-8');
+  assert(
+    cssContent.includes(':fullscreen * {') &&
+    cssContent.includes(':-webkit-full-screen * {') &&
+    cssContent.includes('.kvideo-container.is-native-fullscreen * {'),
+    'video-player.css 必须独立声明 :fullscreen * 与 :-webkit-full-screen *，严禁跨引擎逗号合写导致整组规则被浏览器废弃'
+  );
+}
+
+const desktopOverlayPath = path.resolve('components/player/desktop/DesktopOverlay.tsx');
+if (fs.existsSync(desktopOverlayPath)) {
+  const overlayContent = fs.readFileSync(desktopOverlayPath, 'utf-8');
+  assert(
+    !overlayContent.includes('backdrop-blur-md') &&
+    !overlayContent.includes('backdrop-blur-sm') &&
+    !overlayContent.includes('backdrop-blur-[25px]'),
+    'DesktopOverlay.tsx 全屏浮层与时钟组件严禁携带 backdrop-blur-* 类名，必须使用纯色高级底色，消除 GPU 硬件回读死锁'
+  );
+}
+
 console.log('\n====================================================');
 if (failed) {
   console.error('🚨 架构契约巡检失败！存在破坏全局稳定性的违规回退，请根据上述报错整改后再行提交！');
   process.exit(1);
 } else {
-  console.log('🎉 恭喜！全站架构契约、单一真理源与流水线韧性 100% 严格达标！');
+  console.log('🎉 恭喜！全站架构契约、单一真理源、全屏防黑屏与流水线韧性 100% 严格达标！');
   console.log('====================================================\n');
 }
+

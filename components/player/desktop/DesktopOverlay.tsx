@@ -110,7 +110,7 @@ export function DesktopOverlay({
                     className={`absolute top-8 left-1/2 -translate-x-1/2 z-40 transition-opacity duration-300 ${showFullscreenClock ? 'opacity-100' : 'opacity-0'}`}
                     style={{ pointerEvents: 'none' }}
                 >
-                    <div className="min-w-22 px-4 py-2 rounded-full bg-black/45 backdrop-blur-md border border-white/15 text-center shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+                    <div className="min-w-22 px-4 py-2 rounded-full bg-[#141416]/90 border border-white/15 text-center shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
                         <div className="flex items-center justify-center gap-2 text-white">
                             <Icons.Clock size={14} className="opacity-80" />
                             <span className="text-sm font-semibold tracking-[0.18em] tabular-nums">
@@ -181,7 +181,7 @@ export function DesktopOverlay({
                         e.stopPropagation();
                         onSkipBackward();
                     }}
-                    className="group flex items-center justify-center w-10 h-10 md:w-16 md:h-16 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
+                    className="group flex items-center justify-center w-10 h-10 md:w-16 md:h-16 rounded-full bg-[#141416]/75 hover:bg-[#141416]/95 border border-white/10 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
                     aria-label={`后退 ${seekStepSeconds} 秒`}
                 >
                     <Icons.SkipBack className="w-5 h-5 md:w-8 md:h-8 text-white/80 group-hover:text-white" />
@@ -199,7 +199,7 @@ export function DesktopOverlay({
                         e.stopPropagation();
                         onSkipForward();
                     }}
-                    className="group flex items-center justify-center w-10 h-10 md:w-16 md:h-16 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
+                    className="group flex items-center justify-center w-10 h-10 md:w-16 md:h-16 rounded-full bg-[#141416]/75 hover:bg-[#141416]/95 border border-white/10 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
                     aria-label={`前进 ${seekStepSeconds} 秒`}
                 >
                     <Icons.FastForward className="w-5 h-5 md:w-8 md:h-8 text-white/80 group-hover:text-white" />
@@ -211,7 +211,7 @@ export function DesktopOverlay({
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                     <button
                         onClick={onTogglePlay}
-                        className="pointer-events-auto w-12 h-12 md:w-20 md:h-20 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
+                        className="pointer-events-auto w-12 h-12 md:w-20 md:h-20 rounded-full bg-[#141416]/80 hover:bg-[#141416]/95 border border-white/15 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
                         aria-label="播放"
                     >
                         <Icons.Play className="w-6 h-6 md:w-10 md:h-10 text-white ml-1" />
@@ -222,7 +222,7 @@ export function DesktopOverlay({
             {/* Toast Notification */}
             {showToast && toastMessage && (
                 <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-200 animate-slide-up">
-                    <div className="bg-[rgba(28,28,30,0.95)] backdrop-blur-[25px] rounded-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.6)] px-6 py-3 flex items-center gap-3 min-w-50">
+                    <div className="bg-[#1c1c1e]/95 rounded-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.6)] px-6 py-3 flex items-center gap-3 min-w-50">
                         <Icons.Check size={18} className="text-[#34c759] shrink-0" />
                         <span className="text-white text-sm font-medium">{toastMessage}</span>
                     </div>

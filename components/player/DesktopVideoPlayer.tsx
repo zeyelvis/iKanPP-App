@@ -583,7 +583,7 @@ export function DesktopVideoPlayer({
           {/* iPad / 移动端画中画操作指引 Toast（消除“无法随意移动”误解） */}
           {showPiPGuideToast && (
             <div className="absolute top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-scale-in max-w-[90vw]">
-              <div className="bg-black/90 backdrop-blur-xl border border-white/25 px-4 py-2 rounded-full flex items-center gap-2 shadow-[0_12px_36px_rgba(0,0,0,0.85)]">
+              <div className="bg-[#141416]/95 border border-white/25 px-4 py-2 rounded-full flex items-center gap-2 shadow-[0_12px_36px_rgba(0,0,0,0.85)]">
                 <span className="text-amber-400 text-sm">💡</span>
                 <span className="text-xs font-bold text-white tracking-wide">
                   画中画已开启：支持在 iPad 四角磁吸停靠与双指缩放画幅
@@ -595,7 +595,7 @@ export function DesktopVideoPlayer({
           {/* Long Press 2X Fast Forward Capsule Badge */}
           {isLongPressFastForward && (
             <div className="absolute top-4 sm:top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-scale-in">
-              <div className="bg-black/85 backdrop-blur-xl border border-white/20 px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-[0_8px_32px_rgba(0,0,0,0.8)]">
+              <div className="bg-[#141416]/95 border border-white/20 px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-[0_8px_32px_rgba(0,0,0,0.8)]">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-(--accent-color) opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-(--accent-color)"></span>
@@ -642,7 +642,7 @@ export function DesktopVideoPlayer({
                 e.stopPropagation();
                 onBack();
               }}
-              className={`absolute top-4 left-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/75 hover:bg-black/95 backdrop-blur-xl border border-white/20 text-white/90 hover:text-white transition-all cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.6)] hover:scale-105 active:scale-95 text-xs font-bold ${
+              className={`absolute top-4 left-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#141416]/85 hover:bg-black/95 border border-white/20 text-white/90 hover:text-white transition-all cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.6)] hover:scale-105 active:scale-95 text-xs font-bold ${
                 data.showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
               }`}
               title={isPremium ? '返回午夜版' : '返回'}
