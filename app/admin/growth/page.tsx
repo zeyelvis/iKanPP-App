@@ -911,6 +911,52 @@ export default function AdminGrowthPage() {
             </div>
           </div>
 
+          {/* 全自动 AI SEO 协同流水线监控卡片 */}
+          <div className="p-5 rounded-2xl bg-linear-to-r from-purple-950/40 via-indigo-950/20 to-black/60 border border-purple-500/30 backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1.5 max-w-2xl">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <span>全自动 AI SEO 晨间协同流水线 (Autonomous Engine)</span>
+                  <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-md border border-emerald-500/30 font-mono">
+                    已激活 · 每日 05:00 定时
+                  </span>
+                </h3>
+              </div>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                每天清晨由 GitHub Actions 全自动巡检今日重点新片，自动生成<strong>独家深度影评 + Google FAQ 胶囊 + 港台公映译名</strong>直写数据库；每周五自动上线全新<strong>口语化专题</strong>；每日万字爆款长文自动推送到您的手机 <strong>Telegram Bot</strong>。
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0">
+              <button
+                onClick={async () => {
+                  if (confirm('确定立即在 GitHub Actions 云端触发一次全自动 AI SEO 巡检流水线吗？')) {
+                    try {
+                      const res = await fetch('/api/admin/actions/trigger', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ workflow: 'ai-seo-autonomous.yml' }),
+                      });
+                      const json = await res.json();
+                      if (json.success) {
+                        alert('✅ 云端全自动 AI SEO 流水线已成功启动！稍后请留意 Telegram 速报推送。');
+                      } else {
+                        alert('启动失败: ' + (json.error || '未知错误'));
+                      }
+                    } catch (e: any) {
+                      alert('请求失败: ' + e.message);
+                    }
+                  }
+                }}
+                className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-purple-900/30 transition-all cursor-pointer"
+              >
+                <Zap className="w-4 h-4" />
+                <span>立即触发云端全自动流水线</span>
+              </button>
+            </div>
+          </div>
+
           {/* 5 大场景选择胶囊条 */}
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
             <button

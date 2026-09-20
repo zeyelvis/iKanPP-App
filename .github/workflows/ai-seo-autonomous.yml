@@ -1,0 +1,53 @@
+name: Autonomous AI SEO Engine (Daily Pipeline)
+
+on:
+  schedule:
+    # 每天 UTC 21:00 (北京时间清晨 05:00) 自动执行，抢占晨间 Google 抓取与新片搜索第一波流量
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+
+jobs:
+  autonomous-ai-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Run Autonomous AI SEO Engine
+        env:
+          AI_BASE_URL: ${{ secrets.AI_BASE_URL }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_MODEL: ${{ secrets.AI_MODEL || 'gpt-5.6-sol' }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
+          CLOUDFLARE_KV_NAMESPACE_ID: ${{ secrets.CLOUDFLARE_KV_NAMESPACE_ID }}
+          NEXT_PUBLIC_SITE_URL: https://www.ikanpp.com
+        run: |
+          npx tsx scripts/seo/ai-seo-autonomous.mjs
+
+      - name: Commit and Push Generated Articles and Archives
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/seo/
+          if git diff --staged --quiet; then
+            echo "没有产生文章更新，跳过提交"
+          else
+            git commit -m "chore(ai-seo): autonomous daily parasite article generation [skip ci]"
+            git push
+          fi

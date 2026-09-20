@@ -45,6 +45,7 @@ const ALLOWED_WORKFLOWS = [
   'sync-iyf-channels.yml',
   'full-site-prewarm.yml',
   'generate-sitemaps.yml',
+  'ai-seo-autonomous.yml',
 ];
 
 interface RouteContext {
