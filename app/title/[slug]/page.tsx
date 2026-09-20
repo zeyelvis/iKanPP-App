@@ -21,6 +21,8 @@ import { EpisodesSelector } from '@/components/title/EpisodesSelector';
 import { StickyBottomPlayCTA } from '@/components/title/StickyBottomPlayCTA';
 import { MobileHeroStage } from '@/components/title/MobileHeroStage';
 import { CastRail } from '@/components/title/CastRail';
+import { AiUniqueReview } from '@/components/title/AiUniqueReview';
+import { AiFaqSection } from '@/components/title/AiFaqSection';
 import { Navbar } from '@/components/layout/Navbar';
 import { normalizeVideoType } from '@/lib/utils/taxonomy';
 import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
@@ -1035,6 +1037,24 @@ export default async function TitlePage({ params }: Props) {
                 )}
               </h1>
 
+              {/* 港台公映译名徽章 (场景 5：通吃全球泛华语搜索流量) */}
+              {(entity.aiContent?.taiwanTitle || entity.aiContent?.hongkongTitle) && (
+                <div className="w-full flex flex-wrap items-center gap-2 mb-2 sm:mb-4 text-xs sm:text-sm font-medium">
+                  {entity.aiContent.taiwanTitle && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
+                      <span>🇹🇼 台译：</span>
+                      <strong className="font-bold text-white">{entity.aiContent.taiwanTitle}</strong>
+                    </span>
+                  )}
+                  {entity.aiContent.hongkongTitle && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+                      <span>🇭🇰 港译：</span>
+                      <strong className="font-bold text-white">{entity.aiContent.hongkongTitle}</strong>
+                    </span>
+                  )}
+                </div>
+              )}
+
               {/* Netflix 风格视听规格徽章行 */}
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2.5 text-xs sm:text-sm text-white/80 mb-2 sm:mb-6">
                 {/* 评分胶囊 */}
@@ -1138,6 +1158,12 @@ export default async function TitlePage({ params }: Props) {
             <span>最新核验于 {entity.year || '2024'} 年</span>
           </div>
         </section>
+
+        {/* 场景 1：AI 独家深度影评与高光剧情看点 (消灭 Thin Content) */}
+        <AiUniqueReview entity={entity} />
+
+        {/* 场景 2：Google FAQPage 常见问题与观影答疑折叠胶囊 */}
+        <AiFaqSection entity={entity} />
 
         {/* 电视剧/动漫专用选集控制台 (Episodes Selector) */}
         {isTv && (

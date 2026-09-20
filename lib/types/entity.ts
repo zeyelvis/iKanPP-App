@@ -28,8 +28,32 @@ export interface TitleEntity {
   keywords?: string[];         // 核心标签与长尾关键词
   relatedEntityIds?: string[]; // 站内强关联影片 entityId 列表 (内链网络拓扑)
   seoScore?: number;           // SEO 质量评分 (0-100)，≥60 分方可进入搜索引擎主动推送池
+  aliases?: string[];          // 别名与外地公映译名库（用于搜索命中与301跳转）
+  aiContent?: TitleAiContent;  // AI 生成的 5 大场景增强资产（独家深度影评、高光看点、FAQ、港台译名等）
   createdAt: string;           // 初次入库 ISO 8601 时间戳
   updatedAt: string;           // 最后更新 ISO 8601 时间戳
+}
+
+/**
+ * AI 赋能的 5 大 SEO 超级场景实体数据模型
+ */
+export interface TitleAiContent {
+  // 场景 1：独家原创深度影评与高光剧情
+  uniqueSynopsis?: string;      // 300~400字独家深度剖析
+  highlights?: string[];        // 3大剧情高光核心看点
+  characterAnalysis?: string;   // 角色博弈与主演演技点评
+  audienceFit?: string;         // 适宜受众画像
+
+  // 场景 2：Google FAQPage 结构化问答
+  faqs?: Array<{ question: string; answer: string }>;
+
+  // 场景 5：全球繁体与港台本地化译名库
+  taiwanTitle?: string;         // 台湾院线公映名 (如: 刺激1995)
+  hongkongTitle?: string;       // 香港院线公映名 (如: 月黑高飛)
+  traditionalMetaDescription?: string; // 港台繁体搜索摘要
+  traditionalKeywords?: string[];      // 港台繁体长尾关键词
+
+  generatedAt?: string;         // 生成时间
 }
 
 /**

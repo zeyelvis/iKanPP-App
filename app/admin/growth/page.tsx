@@ -22,10 +22,14 @@ import {
   ArrowRight,
   TrendingUp,
   Square,
-  CheckSquare,
   Shield,
   Layers,
-  ChevronRight,
+  Cpu,
+  HelpCircle,
+  BookOpen,
+  Languages,
+  Terminal,
+  Share2,
 } from 'lucide-react';
 
 interface DirectoryItem {
@@ -364,16 +368,35 @@ const SOP_TASKS: SopTask[] = [
 export default function AdminGrowthPage() {
   const [data, setData] = useState<GrowthData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'sop' | 'parasite' | 'directories' | 'tg-bot' | 'geo'>('sop');
+  const [activeTab, setActiveTab] = useState<'sop' | 'ai-engine' | 'parasite' | 'directories' | 'tg-bot' | 'geo'>('sop');
 
   // SOP 专属子筛选
   const [sopFilter, setSopFilter] = useState<'all' | 'daily' | 'weekly' | 'monthly' | 'longterm'>('daily');
   // SOP 打卡状态字典: { [taskId]: boolean }
   const [sopChecks, setSopChecks] = useState<Record<string, boolean>>({});
 
+  // AI 智能引擎全场景状态
+  const [aiScenario, setAiScenario] = useState<'review' | 'faq' | 'article' | 'collection' | 'localize'>('review');
+  const [aiModel, setAiModel] = useState('gpt-5.6-sol');
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiResult, setAiResult] = useState<any>(null);
+  const [aiCopied, setAiCopied] = useState(false);
+
+  // 场景输入框状态
+  const [aiReviewTitle, setAiReviewTitle] = useState('美国人质');
+  const [aiReviewType, setAiReviewType] = useState('tv');
+  const [aiFaqTitle, setAiFaqTitle] = useState('凡人修仙传');
+  const [aiArticleStyle, setAiArticleStyle] = useState<'review' | 'xiaohongshu' | 'medium' | 'v2ex'>('review');
+  const [aiThemeKeyword, setAiThemeKeyword] = useState('2026反转烧脑悬疑神剧');
+  const [aiLocalizeTitle, setAiLocalizeTitle] = useState('肖申克的救赎');
+
   // 复制状态
   const [copiedParasite, setCopiedParasite] = useState(false);
   const [copiedTemplate, setCopiedTemplate] = useState(false);
+
+  // AI 落地动作执行状态 (一键生效到前台 / 发布专题 / 导出)
+  const [aiActionLoading, setAiActionLoading] = useState(false);
+  const [aiActionMsg, setAiActionMsg] = useState<{ text: string; url?: string; isError?: boolean } | null>(null);
 
   // 本地持久化的导航站提交状态字典: { [id]: 'pending' | 'submitted' | 'approved' }
   const [submissionStatus, setSubmissionStatus] = useState<Record<string, string>>({});
@@ -441,6 +464,135 @@ export default function AdminGrowthPage() {
     setTimeout(() => {}, 2000);
   };
 
+  // AI 场景统一执行
+  const handleRunAi = async () => {
+    setAiLoading(true);
+    setAiResult(null);
+    setAiCopied(false);
+
+    let params: Record<string, any> = { model: aiModel };
+    if (aiScenario === 'review') {
+      params = { ...params, title: aiReviewTitle, type: aiReviewType };
+    } else if (aiScenario === 'faq') {
+      params = { ...params, title: aiFaqTitle, type: 'tv' };
+    } else if (aiScenario === 'article') {
+      params = { ...params, style: aiArticleStyle };
+    } else if (aiScenario === 'collection') {
+      params = { ...params, theme: aiThemeKeyword };
+    } else if (aiScenario === 'localize') {
+      params = { ...params, title: aiLocalizeTitle };
+    }
+
+    try {
+      const res = await fetch('/api/admin/ai/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scenario: aiScenario, params }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setAiResult(json.data);
+      } else {
+        alert('AI 执行失败: ' + (json.error || '未知错误'));
+      }
+    } catch (e: any) {
+      alert('请求失败: ' + e.message);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  // 一键应用 AI 资产到前台影视实体 (场景 1、2、5)
+  const handleApplyToEntity = async () => {
+    if (!aiResult) return;
+    setAiActionLoading(true);
+    setAiActionMsg(null);
+
+    try {
+      let targetTitle = '';
+      let aiContent: Record<string, any> = {};
+
+      if (aiScenario === 'review') {
+        targetTitle = aiReviewTitle;
+        aiContent = {
+          uniqueSynopsis: aiResult.uniqueSynopsis,
+          highlights: aiResult.highlights,
+          characterAnalysis: aiResult.characterAnalysis,
+          audienceFit: aiResult.audienceFit,
+        };
+      } else if (aiScenario === 'faq') {
+        targetTitle = aiFaqTitle;
+        aiContent = {
+          faqs: aiResult.faqs,
+        };
+      } else if (aiScenario === 'localize') {
+        targetTitle = aiLocalizeTitle;
+        aiContent = {
+          taiwanTitle: aiResult.taiwanTitle,
+          hongkongTitle: aiResult.hongkongTitle,
+          traditionalMetaDescription: aiResult.traditionalMetaDescription,
+          traditionalKeywords: aiResult.traditionalKeywords,
+        };
+      }
+
+      const res = await fetch('/api/admin/ai/apply-entity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: targetTitle, aiContent }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setAiActionMsg({ text: json.message, url: json.canonicalUrl });
+      } else {
+        setAiActionMsg({ text: json.error || '保存失败', isError: true });
+      }
+    } catch (e: any) {
+      setAiActionMsg({ text: e.message || '网络请求异常', isError: true });
+    } finally {
+      setAiActionLoading(false);
+    }
+  };
+
+  // 一键发布上线为前台专题页 (场景 4)
+  const handlePublishTopic = async () => {
+    if (!aiResult) return;
+    setAiActionLoading(true);
+    setAiActionMsg(null);
+
+    try {
+      const res = await fetch('/api/admin/ai/publish-topic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic: aiResult }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setAiActionMsg({ text: json.message, url: json.topicUrl });
+      } else {
+        setAiActionMsg({ text: json.error || '发布专题失败', isError: true });
+      }
+    } catch (e: any) {
+      setAiActionMsg({ text: e.message || '网络请求异常', isError: true });
+    } finally {
+      setAiActionLoading(false);
+    }
+  };
+
+  // 一键下载 Markdown 文件 (场景 3)
+  const handleDownloadMarkdown = () => {
+    if (!aiResult) return;
+    const content = typeof aiResult === 'object' && aiResult.markdown ? aiResult.markdown : typeof aiResult === 'string' ? aiResult : JSON.stringify(aiResult, null, 2);
+    const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ikanpp-parasite-article-${new Date().toISOString().split('T')[0]}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   // 统计计算
   const dailyTasks = SOP_TASKS.filter((t) => t.category === 'daily');
   const weeklyTasks = SOP_TASKS.filter((t) => t.category === 'weekly');
@@ -476,13 +628,13 @@ export default function AdminGrowthPage() {
             </div>
             <div>
               <h1 className="text-xl font-black tracking-wide text-white flex items-center gap-2">
-                全域增长中枢与运营 SOP
+                全域增长中枢与 AI SEO 矩阵
                 <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30">
                   Growth 5.0
                 </span>
               </h1>
               <p className="text-xs text-slate-400">
-                融合每日/每周/每月执行计划、Parasite SEO 万亿大厂借壳与 GEO 知识图谱渗透
+                融合大模型 5 大 SEO 场景、SOP 每日执行看板、Parasite 借壳外链与 GEO 知识图谱渗透
               </p>
             </div>
           </div>
@@ -656,6 +808,21 @@ export default function AdminGrowthPage() {
         </button>
 
         <button
+          onClick={() => setActiveTab('ai-engine')}
+          className={`pb-3 px-1 text-sm font-bold flex items-center gap-2 border-b-2 transition-all shrink-0 ${
+            activeTab === 'ai-engine'
+              ? 'border-purple-500 text-white'
+              : 'border-transparent text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Sparkles className="w-4 h-4 text-purple-400" />
+          🤖 AI 增长引擎 (5 大场景)
+          <span className="text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded-md border border-purple-500/30">
+            HOT
+          </span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('parasite')}
           className={`pb-3 px-1 text-sm font-bold flex items-center gap-2 border-b-2 transition-all shrink-0 ${
             activeTab === 'parasite'
@@ -664,7 +831,7 @@ export default function AdminGrowthPage() {
           }`}
         >
           <Rocket className="w-4 h-4 text-red-400" />
-          🚀 寄生虫专栏一键生成
+          🚀 寄生虫专栏
         </button>
 
         <button
@@ -676,7 +843,7 @@ export default function AdminGrowthPage() {
           }`}
         >
           <Compass className="w-4 h-4 text-amber-400" />
-          🧭 全球华人导航站提交看板
+          🧭 全球华人导航看板
         </button>
 
         <button
@@ -688,7 +855,7 @@ export default function AdminGrowthPage() {
           }`}
         >
           <Bot className="w-4 h-4 text-blue-400" />
-          🤖 Telegram 机器人控制台
+          🤖 Telegram 机器人
         </button>
 
         <button
@@ -700,11 +867,448 @@ export default function AdminGrowthPage() {
           }`}
         >
           <Globe className="w-4 h-4 text-emerald-400" />
-          🧠 GEO / LLMS 知识库中枢
+          🧠 GEO / LLMS 知识库
         </button>
       </div>
 
-      {/* 4. Tab 内容：SOP 运营执行看板 */}
+      {/* 4. Tab 内容：AI 全场景生成引擎 (5 大场景) */}
+      {activeTab === 'ai-engine' && (
+        <div className="space-y-6">
+          {/* 模型设置与状态顶栏 */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-[#0D0D14]/80 border border-white/10 backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center justify-center">
+                <Cpu className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="text-sm font-bold text-white flex items-center gap-2">
+                  当前大模型与接口状态
+                  <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    已连接 http://127.0.0.1:8080/v1
+                  </span>
+                </div>
+                <div className="text-xs text-slate-400">
+                  支持超长上下文与深度推理，自动生成独家影评、FAQ 问答与爆款文章
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-400">选择调度模型：</span>
+              <select
+                value={aiModel}
+                onChange={(e) => setAiModel(e.target.value)}
+                className="bg-black/80 border border-white/15 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-purple-500"
+              >
+                <option value="gpt-5.6-sol">GPT-5.6-Sol (默认主力推荐)</option>
+                <option value="gpt-6-astra">GPT-6-Astra (高阶深度推理)</option>
+                <option value="gpt-5.6-terra">GPT-5.6-Terra (极速轻量)</option>
+                <option value="gpt-5.6-luna">GPT-5.6-Luna (超快输出)</option>
+                <option value="gpt-5.5">GPT-5.5 (标准稳定)</option>
+                <option value="gpt-6-astra-aeon">GPT-6-Astra-Aeon (百万上下文)</option>
+              </select>
+            </div>
+          </div>
+
+          {/* 5 大场景选择胶囊条 */}
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+            <button
+              onClick={() => {
+                setAiScenario('review');
+                setAiResult(null);
+              }}
+              className={`p-3 rounded-xl border text-left transition-all ${
+                aiScenario === 'review'
+                  ? 'bg-purple-500/20 border-purple-500/50 text-white shadow-lg shadow-purple-500/20'
+                  : 'bg-white/5 border-white/5 text-slate-400 hover:text-white'
+              }`}
+            >
+              <div className="text-xs font-bold flex items-center gap-1.5">
+                🎬 场景 1
+              </div>
+              <div className="text-[11px] font-medium mt-1">独家原创深度影评</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">消灭全网重复内容</div>
+            </button>
+
+            <button
+              onClick={() => {
+                setAiScenario('faq');
+                setAiResult(null);
+              }}
+              className={`p-3 rounded-xl border text-left transition-all ${
+                aiScenario === 'faq'
+                  ? 'bg-purple-500/20 border-purple-500/50 text-white shadow-lg shadow-purple-500/20'
+                  : 'bg-white/5 border-white/5 text-slate-400 hover:text-white'
+              }`}
+            >
+              <div className="text-xs font-bold flex items-center gap-1.5">
+                ⚡ 场景 2
+              </div>
+              <div className="text-[11px] font-medium mt-1">Google FAQ 胶囊</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">霸占首屏下拉问答框</div>
+            </button>
+
+            <button
+              onClick={() => {
+                setAiScenario('article');
+                setAiResult(null);
+              }}
+              className={`p-3 rounded-xl border text-left transition-all ${
+                aiScenario === 'article'
+                  ? 'bg-purple-500/20 border-purple-500/50 text-white shadow-lg shadow-purple-500/20'
+                  : 'bg-white/5 border-white/5 text-slate-400 hover:text-white'
+              }`}
+            >
+              <div className="text-xs font-bold flex items-center gap-1.5">
+                🚀 场景 3
+              </div>
+              <div className="text-[11px] font-medium mt-1">万字爆款长文创作</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">知乎/小红书/Medium</div>
+            </button>
+
+            <button
+              onClick={() => {
+                setAiScenario('collection');
+                setAiResult(null);
+              }}
+              className={`p-3 rounded-xl border text-left transition-all ${
+                aiScenario === 'collection'
+                  ? 'bg-purple-500/20 border-purple-500/50 text-white shadow-lg shadow-purple-500/20'
+                  : 'bg-white/5 border-white/5 text-slate-400 hover:text-white'
+              }`}
+            >
+              <div className="text-xs font-bold flex items-center gap-1.5">
+                📚 场景 4
+              </div>
+              <div className="text-[11px] font-medium mt-1">程序化专题裂变</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">口语化搜索词集合</div>
+            </button>
+
+            <button
+              onClick={() => {
+                setAiScenario('localize');
+                setAiResult(null);
+              }}
+              className={`p-3 rounded-xl border text-left transition-all ${
+                aiScenario === 'localize'
+                  ? 'bg-purple-500/20 border-purple-500/50 text-white shadow-lg shadow-purple-500/20'
+                  : 'bg-white/5 border-white/5 text-slate-400 hover:text-white'
+              }`}
+            >
+              <div className="text-xs font-bold flex items-center gap-1.5">
+                🌏 场景 5
+              </div>
+              <div className="text-[11px] font-medium mt-1">港台繁体与多地译名</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">通吃泛华语搜索词</div>
+            </button>
+          </div>
+
+          {/* 交互工作区 */}
+          <div className="p-5 rounded-2xl bg-[#0D0D14]/80 border border-white/10 backdrop-blur-xl space-y-5">
+            {/* 场景 1 输入 */}
+            {aiScenario === 'review' && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <BookOpen className="w-4 h-4 text-purple-400" />
+                    场景 1：为影视生成 100% 独家原创影评与高光剧情看点
+                  </h3>
+                  <span className="text-xs text-slate-400">彻底根治全网千篇一律的 TMDB 短简介</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="sm:col-span-2">
+                    <label className="text-xs text-slate-400 block mb-1">影视作品名称：</label>
+                    <input
+                      type="text"
+                      value={aiReviewTitle}
+                      onChange={(e) => setAiReviewTitle(e.target.value)}
+                      className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500 font-mono"
+                      placeholder="如：美国人质、凡人修仙传"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs text-slate-400 block mb-1">影视类型：</label>
+                    <select
+                      value={aiReviewType}
+                      onChange={(e) => setAiReviewType(e.target.value)}
+                      className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500"
+                    >
+                      <option value="tv">精品电视剧 / 网剧</option>
+                      <option value="movie">院线大片 / 电影</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleRunAi}
+                  disabled={aiLoading}
+                  className="px-4 py-2.5 rounded-xl bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-purple-600/30 transition-all disabled:opacity-50"
+                >
+                  <Sparkles className={`w-4 h-4 ${aiLoading ? 'animate-spin' : ''}`} />
+                  {aiLoading ? '正在调用 GPT-5.6-Sol 深度创作中...' : '开始生成独家原创剧情高光'}
+                </button>
+              </div>
+            )}
+
+            {/* 场景 2 输入 */}
+            {aiScenario === 'faq' && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <HelpCircle className="w-4 h-4 text-purple-400" />
+                    场景 2：生成符合 Google FAQPage 标准的折叠问答胶囊
+                  </h3>
+                  <span className="text-xs text-slate-400">输出 JSON-LD 结构化数据，垄断移动端搜索卡片</span>
+                </div>
+
+                <div>
+                  <label className="text-xs text-slate-400 block mb-1">影视作品名称：</label>
+                  <input
+                    type="text"
+                    value={aiFaqTitle}
+                    onChange={(e) => setAiFaqTitle(e.target.value)}
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500 font-mono"
+                    placeholder="如：凡人修仙传、庆余年"
+                  />
+                </div>
+
+                <button
+                  onClick={handleRunAi}
+                  disabled={aiLoading}
+                  className="px-4 py-2.5 rounded-xl bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-purple-600/30 transition-all disabled:opacity-50"
+                >
+                  <Zap className={`w-4 h-4 ${aiLoading ? 'animate-spin' : ''}`} />
+                  {aiLoading ? '正在生成 4 组权威问答...' : '生成 Google FAQ 结构化胶囊'}
+                </button>
+              </div>
+            )}
+
+            {/* 场景 3 输入 */}
+            {aiScenario === 'article' && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <Rocket className="w-4 h-4 text-purple-400" />
+                    场景 3：根据今日 15 部新片一键创作多风格爆款长文
+                  </h3>
+                  <span className="text-xs text-slate-400">自动内嵌 4K 官方封面海报与自然反向锚文本</span>
+                </div>
+
+                <div className="flex items-center gap-3 flex-wrap">
+                  <span className="text-xs text-slate-400">文章受众调性：</span>
+                  {(['review', 'xiaohongshu', 'medium', 'v2ex'] as const).map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => setAiArticleStyle(s)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                        aiArticleStyle === s
+                          ? 'bg-purple-600/30 border-purple-500 text-purple-200'
+                          : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {s === 'review' && '🧐 知乎/豆瓣高知影评风'}
+                      {s === 'xiaohongshu' && '📕 小红书爆款种草风'}
+                      {s === 'medium' && '🌐 Medium 深度特稿风'}
+                      {s === 'v2ex' && '💻 V2EX 极客技术推介'}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={handleRunAi}
+                  disabled={aiLoading}
+                  className="px-4 py-2.5 rounded-xl bg-linear-to-r from-red-600 to-purple-600 hover:from-red-500 hover:to-purple-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-purple-600/30 transition-all disabled:opacity-50"
+                >
+                  <Sparkles className={`w-4 h-4 ${aiLoading ? 'animate-spin' : ''}`} />
+                  {aiLoading ? '大模型正在万字深度构思撰写中 (约需1分钟)...' : '调用 GPT-5.6-Sol 创作万字深度大作'}
+                </button>
+              </div>
+            )}
+
+            {/* 场景 4 输入 */}
+            {aiScenario === 'collection' && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-purple-400" />
+                    场景 4：口语化自然搜索词 ➔ 自动裂变程序化精选专题页
+                  </h3>
+                  <span className="text-xs text-slate-400">生成 Slug、策展导语、搜索意图标签与专属推荐片单</span>
+                </div>
+
+                <div>
+                  <label className="text-xs text-slate-400 block mb-1">口语化搜索主题词：</label>
+                  <input
+                    type="text"
+                    value={aiThemeKeyword}
+                    onChange={(e) => setAiThemeKeyword(e.target.value)}
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500 font-mono"
+                    placeholder="如：2026反转烧脑悬疑神剧、适合情侣一起看的高分甜剧"
+                  />
+                </div>
+
+                <button
+                  onClick={handleRunAi}
+                  disabled={aiLoading}
+                  className="px-4 py-2.5 rounded-xl bg-linear-to-r from-emerald-600 to-purple-600 hover:from-emerald-500 hover:to-purple-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-purple-600/30 transition-all disabled:opacity-50"
+                >
+                  <Layers className={`w-4 h-4 ${aiLoading ? 'animate-spin' : ''}`} />
+                  {aiLoading ? '正在程序化裂变专题中...' : '生成专属聚合专题页面'}
+                </button>
+              </div>
+            )}
+
+            {/* 场景 5 输入 */}
+            {aiScenario === 'localize' && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <Languages className="w-4 h-4 text-purple-400" />
+                    场景 5：全球港台繁体与海外公映译名/搜索同义词本地化
+                  </h3>
+                  <span className="text-xs text-slate-400">自动补齐台湾/香港公映名称与全繁体 Meta 描述</span>
+                </div>
+
+                <div>
+                  <label className="text-xs text-slate-400 block mb-1">大陆中文片名：</label>
+                  <input
+                    type="text"
+                    value={aiLocalizeTitle}
+                    onChange={(e) => setAiLocalizeTitle(e.target.value)}
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500 font-mono"
+                    placeholder="如：肖申克的救赎、泰坦尼克号、盗梦空间"
+                  />
+                </div>
+
+                <button
+                  onClick={handleRunAi}
+                  disabled={aiLoading}
+                  className="px-4 py-2.5 rounded-xl bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-purple-600/30 transition-all disabled:opacity-50"
+                >
+                  <Languages className={`w-4 h-4 ${aiLoading ? 'animate-spin' : ''}`} />
+                  {aiLoading ? '正在检索港台公映数据库...' : '一键补齐港台译名与繁体元数据'}
+                </button>
+              </div>
+            )}
+
+            {/* 结果展示区 */}
+            {aiResult && (
+              <div className="mt-5 p-4 rounded-xl bg-black/60 border border-purple-500/30 space-y-3">
+                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                  <span className="text-xs font-bold text-purple-300 flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-emerald-400" />
+                    AI 深度生成结果 ({aiModel})
+                  </span>
+
+                  <div className="flex items-center gap-2">
+                    {/* 场景 1、2、5：一键保存并生效到前台影视实体 */}
+                    {(aiScenario === 'review' || aiScenario === 'faq' || aiScenario === 'localize') && (
+                      <button
+                        onClick={handleApplyToEntity}
+                        disabled={aiActionLoading}
+                        className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1 shadow-md shadow-emerald-900/30 transition-all disabled:opacity-50"
+                      >
+                        <Zap className={`w-3.5 h-3.5 ${aiActionLoading ? 'animate-spin' : ''}`} />
+                        {aiActionLoading ? '正在写入实体...' : '⚡ 一键写入前台实体'}
+                      </button>
+                    )}
+
+                    {/* 场景 4：一键发布上线为前台专题页 */}
+                    {aiScenario === 'collection' && (
+                      <button
+                        onClick={handlePublishTopic}
+                        disabled={aiActionLoading}
+                        className="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1 shadow-md shadow-blue-900/30 transition-all disabled:opacity-50"
+                      >
+                        <Layers className={`w-3.5 h-3.5 ${aiActionLoading ? 'animate-spin' : ''}`} />
+                        {aiActionLoading ? '正在发布专题...' : '🚀 一键发布为前台专题'}
+                      </button>
+                    )}
+
+                    {/* 场景 3：一键导出 Markdown 文件 */}
+                    {aiScenario === 'article' && (
+                      <button
+                        onClick={handleDownloadMarkdown}
+                        className="px-3 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center gap-1 shadow-md shadow-purple-900/30 transition-all"
+                      >
+                        <Rocket className="w-3.5 h-3.5" />
+                        📥 导出 .md 文件
+                      </button>
+                    )}
+
+                    {/* 复制全文 */}
+                    <button
+                      onClick={() =>
+                        copyToClipboard(
+                          typeof aiResult === 'string'
+                            ? aiResult
+                            : JSON.stringify(aiResult, null, 2),
+                          () => setAiCopied(true)
+                        )
+                      }
+                      className="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10 text-xs font-medium text-slate-200 flex items-center gap-1 transition-all"
+                    >
+                      {aiCopied ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          已复制到剪贴板！
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          一键复制全文
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* 落地操作成功/失败反馈提示卡片 */}
+                {aiActionMsg && (
+                  <div
+                    className={`p-3 rounded-xl text-xs flex items-center justify-between gap-3 border ${
+                      aiActionMsg.isError
+                        ? 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+                        : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 shrink-0" />
+                      <span>{aiActionMsg.text}</span>
+                    </div>
+                    {aiActionMsg.url && (
+                      <a
+                        href={aiActionMsg.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline font-bold text-white hover:text-emerald-200 shrink-0"
+                      >
+                        立刻直达前台查看 ↗
+                      </a>
+                    )}
+                  </div>
+                )}
+
+                {/* 格式化展示 */}
+                <div className="font-mono text-xs text-slate-300 whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto">
+                  {typeof aiResult === 'object' && aiResult.markdown ? (
+                    aiResult.markdown
+                  ) : typeof aiResult === 'object' ? (
+                    JSON.stringify(aiResult, null, 2)
+                  ) : (
+                    aiResult
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 5. Tab 内容：SOP 运营执行看板 */}
       {activeTab === 'sop' && (
         <div className="space-y-5">
           {/* 子筛选胶囊与打卡控制栏 */}
@@ -894,7 +1498,7 @@ export default function AdminGrowthPage() {
         </div>
       )}
 
-      {/* 5. Tab 内容：寄生虫专栏一键生成 */}
+      {/* 6. Tab 内容：寄生虫专栏一键生成 */}
       {activeTab === 'parasite' && (
         <div className="space-y-4">
           <div className="p-5 rounded-2xl bg-[#0D0D14]/80 border border-white/10 backdrop-blur-xl space-y-4">
@@ -909,22 +1513,35 @@ export default function AdminGrowthPage() {
                 </p>
               </div>
 
-              <button
-                onClick={() => copyToClipboard(data?.parasite.markdown || '', () => setCopiedParasite(true))}
-                className="px-4 py-2.5 rounded-xl bg-linear-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 font-bold text-xs text-white flex items-center justify-center gap-1.5 shadow-lg shadow-red-600/30 transition-all active:scale-95"
-              >
-                {copiedParasite ? (
-                  <>
-                    <Check className="w-4 h-4 text-emerald-300" />
-                    已成功复制全文 Markdown！
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    一键复制专栏全文
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setActiveTab('ai-engine');
+                    setAiScenario('article');
+                  }}
+                  className="px-3.5 py-2.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500 text-purple-200 font-bold text-xs flex items-center gap-1.5 transition-all"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                  调用 AI 智能润色
+                </button>
+
+                <button
+                  onClick={() => copyToClipboard(data?.parasite.markdown || '', () => setCopiedParasite(true))}
+                  className="px-4 py-2.5 rounded-xl bg-linear-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 font-bold text-xs text-white flex items-center justify-center gap-1.5 shadow-lg shadow-red-600/30 transition-all active:scale-95"
+                >
+                  {copiedParasite ? (
+                    <>
+                      <Check className="w-4 h-4 text-emerald-300" />
+                      已成功复制全文 Markdown！
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      一键复制专栏全文
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* 万亿大厂一键直达通道 */}
@@ -972,7 +1589,7 @@ export default function AdminGrowthPage() {
         </div>
       )}
 
-      {/* 6. Tab 内容：全球华人导航站提交看板 */}
+      {/* 7. Tab 内容：全球华人导航站提交看板 */}
       {activeTab === 'directories' && (
         <div className="space-y-4">
           <div className="p-5 rounded-2xl bg-[#0D0D14]/80 border border-white/10 backdrop-blur-xl space-y-4">
@@ -1061,7 +1678,7 @@ export default function AdminGrowthPage() {
         </div>
       )}
 
-      {/* 7. Tab 内容：Telegram 机器人控制台 */}
+      {/* 8. Tab 内容：Telegram 机器人控制台 */}
       {activeTab === 'tg-bot' && (
         <div className="space-y-4">
           <div className="p-5 rounded-2xl bg-[#0D0D14]/80 border border-white/10 backdrop-blur-xl space-y-5">
@@ -1110,7 +1727,7 @@ export default function AdminGrowthPage() {
         </div>
       )}
 
-      {/* 8. Tab 内容：GEO / LLMS 知识库中枢 */}
+      {/* 9. Tab 内容：GEO / LLMS 知识库中枢 */}
       {activeTab === 'geo' && (
         <div className="space-y-4">
           <div className="p-5 rounded-2xl bg-[#0D0D14]/80 border border-white/10 backdrop-blur-xl space-y-4">

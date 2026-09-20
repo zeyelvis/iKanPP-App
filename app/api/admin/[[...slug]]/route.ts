@@ -7,10 +7,12 @@ import {
   kvDelete,
   queryEntities,
   getEntityById,
+  getEntityByTitle,
   getEntityByTmdb,
   saveEntity,
   getTitleDemandLeaderboard,
 } from '@/lib/services/entity-kv';
+import { saveTopic } from '@/lib/services/topic-service';
 import { calculateSeoScore } from '@/app/api/seo/entity-pipeline/route';
 import { batchPublishGoogleIndexing, publishGoogleIndexingUrl } from '@/lib/services/google-indexing';
 import highPotentialData from '@/lib/data/seo-high-potential.json';
@@ -19,6 +21,13 @@ import { TitleEntity } from '@/lib/types/entity';
 import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
 import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
+import {
+  generateAiUniqueReview,
+  generateAiFaq,
+  generateAiParasiteArticle,
+  generateAiCollectionTopic,
+  generateAiLocalization,
+} from '@/lib/services/ai-seo';
 
 export const runtime = 'edge';
 
@@ -559,6 +568,191 @@ ${posterUrl ? `\n![《${item.title}》官方高清海报](${posterUrl})\n` : ''}
 export async function POST(request: NextRequest, { params }: RouteContext) {
   const { slug = [] } = await params;
   const path = slug.join('/');
+
+  // 0. AI SEO 5 大全场景生成中枢：/api/admin/ai/execute
+  if (path === 'ai/execute') {
+    const authError = await requireAdminAuth(request);
+    if (authError) return authError;
+
+    try {
+      const body = await request.json();
+      const { scenario, params: p = {} } = body;
+
+      if (scenario === 'review') {
+        const data = await generateAiUniqueReview({
+          title: p.title || '美国人质',
+          type: p.type || 'tv',
+          overview: p.overview,
+          cast: p.cast,
+          genres: p.genres,
+          model: p.model,
+        });
+        return NextResponse.json({ success: true, data });
+      }
+
+      if (scenario === 'faq') {
+        const data = await generateAiFaq({
+          title: p.title || '凡人修仙传',
+          type: p.type || 'tv',
+          overview: p.overview,
+          model: p.model,
+        });
+        return NextResponse.json({ success: true, data });
+      }
+
+      if (scenario === 'article') {
+        const latestItems = (PREBAKED_LATEST_TITLES.all || []).slice(0, 15).map((it) => ({
+          title: it.title,
+          type: it.type,
+          qualityBadge: it.qualityBadge,
+          updateBadge: it.updateBadge,
+          watchUrl: `https://www.ikanpp.com${getTitleCanonicalHref(it)}`,
+          coverUrl: it.cover || it.backdrop,
+        }));
+        const data = await generateAiParasiteArticle(latestItems, {
+          style: p.style || 'review',
+          model: p.model,
+        });
+        return NextResponse.json({ success: true, data });
+      }
+
+      if (scenario === 'collection') {
+        const candidateTitles = (PREBAKED_LATEST_TITLES.all || []).slice(0, 15).map((it) => it.title);
+        const data = await generateAiCollectionTopic({
+          themeKeyword: p.theme || '2026反转烧脑悬疑神剧',
+          candidateTitles,
+          model: p.model,
+        });
+        return NextResponse.json({ success: true, data });
+      }
+
+      if (scenario === 'localize') {
+        const data = await generateAiLocalization({
+          title: p.title || '肖申克的救赎',
+          originalName: p.originalName,
+          year: p.year,
+          model: p.model,
+        });
+        return NextResponse.json({ success: true, data });
+      }
+
+      return NextResponse.json({ success: false, error: '未知的 AI 场景' }, { status: 400 });
+    } catch (err: any) {
+      return NextResponse.json({ success: false, error: err.message || 'AI 执行异常' }, { status: 500 });
+    }
+  }
+
+  // 0.1 将 AI 资产一键保存应用到影视实体：/api/admin/ai/apply-entity
+  if (path === 'ai/apply-entity') {
+    const authError = await requireAdminAuth(request);
+    if (authError) return authError;
+
+    try {
+      const body = await request.json();
+      const { title, entityId, aiContent } = body;
+      if (!title && !entityId) {
+        return NextResponse.json({ success: false, error: '缺少影片名称或 entityId' }, { status: 400 });
+      }
+
+      let entity: TitleEntity | null = null;
+      if (entityId) {
+        entity = await getEntityById(entityId);
+      }
+      if (!entity && title) {
+        entity = await getEntityByTitle(title);
+      }
+
+      if (!entity) {
+        // 如果实体尚未落库，从预烘焙片库查找以完成初始化
+        const allPrebaked = Object.values(PREBAKED_LATEST_TITLES).flat();
+        const found = allPrebaked.find(p => p && p.title === title) as any;
+        if (found) {
+          entity = {
+            entityId: found.entityId || `ik${Math.floor(100000 + Math.random() * 900000)}`,
+            title: found.title,
+            slug: found.slug || found.title,
+            type: (found.type as any) || 'tv',
+            year: found.year || '2024',
+            description: found.description || '',
+            cover: found.cover || '',
+            backdrop: found.backdrop || '',
+            rate: found.rate || '8.5',
+            genres: found.genres || ['影视'],
+            directors: found.directors || [],
+            actors: found.actors || [],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          } as TitleEntity;
+        }
+      }
+
+      if (!entity) {
+        return NextResponse.json({ success: false, error: `未找到影片《${title}》的对应实体` }, { status: 404 });
+      }
+
+      // 深度合并 AI 资产
+      entity.aiContent = {
+        ...(entity.aiContent || {}),
+        ...aiContent,
+        generatedAt: new Date().toISOString(),
+      };
+
+      // 场景 5：若是港台译名，自动同步到别名数组
+      const aliases = new Set(entity.aliases || []);
+      if (aiContent.taiwanTitle) aliases.add(aiContent.taiwanTitle.trim());
+      if (aiContent.hongkongTitle) aliases.add(aiContent.hongkongTitle.trim());
+      entity.aliases = Array.from(aliases);
+
+      entity.updatedAt = new Date().toISOString();
+      await saveEntity(entity);
+
+      await recordAuditLog({
+        actor: 'Admin',
+        action: 'UPDATE_AI_CONTENT',
+        target: entity.entityId,
+        details: { title: entity.title, aiKeys: Object.keys(aiContent) },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: `已成功将 AI SEO 内容写入《${entity.title}》！前台详情页即刻生效。`,
+        canonicalUrl: `/title/${entity.canonicalSlug || entity.entityId}`,
+      });
+    } catch (err: any) {
+      return NextResponse.json({ success: false, error: err.message || '保存失败' }, { status: 500 });
+    }
+  }
+
+  // 0.2 将 AI 专题一键发布上线：/api/admin/ai/publish-topic
+  if (path === 'ai/publish-topic') {
+    const authError = await requireAdminAuth(request);
+    if (authError) return authError;
+
+    try {
+      const body = await request.json();
+      const { topic } = body;
+      if (!topic || !topic.slug || !topic.topicTitle) {
+        return NextResponse.json({ success: false, error: '专题数据不完整 (缺少 slug 或 topicTitle)' }, { status: 400 });
+      }
+
+      await saveTopic(topic);
+
+      await recordAuditLog({
+        actor: 'Admin',
+        action: 'PUBLISH_AI_TOPIC',
+        target: topic.slug,
+        details: { title: topic.topicTitle, titlesCount: topic.titles?.length },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: `专题《${topic.topicTitle}》已成功发布上线！`,
+        topicUrl: `/topic/${topic.slug}`,
+      });
+    } catch (err: any) {
+      return NextResponse.json({ success: false, error: err.message || '发布专题失败' }, { status: 500 });
+    }
+  }
 
   // 1. 实体搜索：/api/admin/entities/search
   if (path === 'entities/search') {

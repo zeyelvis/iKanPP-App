@@ -1,0 +1,403 @@
+/**
+ * AI SEO 智能内容与全域增长中枢服务 (5 大超级场景矩阵)
+ * 
+ * 对接本地/云端大模型接口 (如 GPT-5.6-Sol / GPT-6-Astra / GPT-5.6-Terra)
+ * 涵盖 2026 年最尖端的 5 大流媒体 SEO 场景：
+ * 场景 1：独家原创深度影评与高光剧情扩写（消灭全网重复内容 / Thin Content）
+ * 场景 2：全自动生成 FAQPage 结构化问答胶囊（霸占 Google 搜索首屏折叠下拉框）
+ * 场景 3：万字 Parasite SEO 爆款长文全自动生产（知乎/小红书/Medium/V2EX 借壳外链）
+ * 场景 4：口语化长尾搜索 ➔ 自动裂变程序化专题页（Programmatic SEO 集合）
+ * 场景 5：全球繁体与港台/海外本地化音译优化（港台译名库，通吃全球泛华语流量）
+ */
+
+export interface TitleSnippet {
+  title: string;
+  type: string;
+  qualityBadge?: string;
+  updateBadge?: string;
+  watchUrl: string;
+  coverUrl?: string;
+}
+
+const DEFAULT_BASE_URL = process.env.AI_BASE_URL || 'http://127.0.0.1:8080/v1';
+const DEFAULT_API_KEY = process.env.AI_API_KEY || 'pwd';
+const DEFAULT_MODEL = process.env.AI_MODEL || 'gpt-5.6-sol';
+
+/**
+ * 基础 Chat Completion 统一调度
+ */
+export async function callAiCompletion(params: {
+  messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>;
+  model?: string;
+  temperature?: number;
+  maxTokens?: number;
+}): Promise<string> {
+  const baseUrl = (process.env.AI_BASE_URL || DEFAULT_BASE_URL).replace(/\/+$/, '');
+  const apiKey = process.env.AI_API_KEY || DEFAULT_API_KEY;
+  const model = params.model || process.env.AI_MODEL || DEFAULT_MODEL;
+
+  const url = `${baseUrl}/chat/completions`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      messages: params.messages,
+      temperature: params.temperature ?? 0.7,
+      max_tokens: params.maxTokens ?? 3500,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => '');
+    throw new Error(`[AI API Error] HTTP ${response.status}: ${errorText || response.statusText}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content;
+  if (!content) {
+    throw new Error('[AI API Error] 返回内容为空');
+  }
+
+  return content.trim();
+}
+
+/**
+ * ============================================================================
+ * 场景 1：独家原创深度影评与剧情高光扩写 (消灭全网重复内容 / Thin Content)
+ * ============================================================================
+ */
+export async function generateAiUniqueReview(params: {
+  title: string;
+  type: string;
+  overview?: string;
+  cast?: string[];
+  genres?: string[];
+  model?: string;
+}): Promise<{
+  uniqueSynopsis: string;
+  highlights: string[];
+  characterAnalysis: string;
+  audienceFit: string;
+}> {
+  const systemPrompt = `你是一位精通华语影视与好莱坞电影工业的资深影评人。
+请针对给定的影视作品，撰写一段 100% 全网独一无二、文笔生动老练的独家剧情深度剖析与角色看点。
+严禁抄袭或复述官方公关简介，必须从叙事张力、人性博弈、视听风格与角色弧光展开。
+
+必须直接以严格合法的 JSON 格式返回，包含以下字段：
+{
+  "uniqueSynopsis": "300~400字的独家剧情高光剖析，层层递进，吸引读者观看",
+  "highlights": ["核心看点1 (15~25字)", "核心看点2 (15~25字)", "核心看点3 (15~25字)"],
+  "characterAnalysis": "150字左右的主演演技与角色博弈分析",
+  "audienceFit": "适合哪类受众群（如：高智商犯罪迷、情感共鸣者等）"
+}
+不要输出任何 Markdown 标记或多余废话。`;
+
+  const userPrompt = `作品名称：《${params.title}》
+类型：${params.type === 'tv' ? '电视剧' : '院线电影'}
+原始简介：${params.overview || '暂无详细简介'}
+主要演员：${(params.cast || []).slice(0, 5).join('、') || '实力派演员阵容'}
+分类标签：${(params.genres || []).join('、') || '热门华语佳作'}`;
+
+  const raw = await callAiCompletion({
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    model: params.model,
+    temperature: 0.7,
+    maxTokens: 1500,
+  });
+
+  try {
+    const cleanJson = raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+    return JSON.parse(cleanJson);
+  } catch {
+    return {
+      uniqueSynopsis: raw,
+      highlights: ['高能反转剧情', '实力派演员倾情演绎', '海外4K免翻墙极速呈现'],
+      characterAnalysis: '角色内心博弈极具张力，在危机重重之下展现出深刻的人性光影。',
+      audienceFit: '推荐给所有偏好快节奏、反转悬疑与高质量华语叙事的海外观众。',
+    };
+  }
+}
+
+/**
+ * ============================================================================
+ * 场景 2：全自动生成 FAQPage 结构化数据胶囊 (霸占 Google 搜索折叠下拉框)
+ * ============================================================================
+ */
+export async function generateAiFaq(params: {
+  title: string;
+  type: string;
+  overview?: string;
+  model?: string;
+}): Promise<{
+  faqs: Array<{ question: string; answer: string }>;
+  jsonLd: Record<string, any>;
+}> {
+  const systemPrompt = `你是一位精通 Google Schema.org 结构化数据的国际顶级 SEO 架构师。
+请针对给定的影视作品，生成 4 个海外华人观众在 Google 搜索中最可能高频查询的真实问题与解答。
+核心覆盖：
+1. 海外免翻墙 4K 播放渠道（强调 iKanPP 0广告秒开体验）；
+2. 正片剧情核心看点与反转亮点；
+3. 更新频率、全集集数与清晰度规格；
+4. 真实观众口碑与防坑观影建议。
+
+必须直接返回严格合法的 JSON 数组，格式如下：
+[
+  {"question": "问题1", "answer": "权威回答1"},
+  {"question": "问题2", "answer": "权威回答2"},
+  {"question": "问题3", "answer": "权威回答3"},
+  {"question": "问题4", "answer": "权威回答4"}
+]
+不要包含任何多余文字或 Markdown 包裹。`;
+
+  const userPrompt = `影视作品：《${params.title}》
+类型：${params.type === 'tv' ? '电视剧' : '电影'}
+剧情亮点：${params.overview || '2026 年度热播影视大作'}`;
+
+  const raw = await callAiCompletion({
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    model: params.model,
+    temperature: 0.5,
+    maxTokens: 1200,
+  });
+
+  let faqs: Array<{ question: string; answer: string }> = [];
+  try {
+    const cleanJson = raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+    faqs = JSON.parse(cleanJson);
+  } catch {
+    faqs = [
+      {
+        question: `在海外如何免翻墙流畅观看《${params.title}》4K超清完整版？`,
+        answer: `您可以在 iKanPP (爱看片片) 直接直连观看。平台在全球部署 Anycast 边缘 CDN，海外北美、欧洲、澳洲均可实现 0 缓冲秒开，且全站无弹窗广告。`,
+      },
+      {
+        question: `《${params.title}》的画质与更新进度如何？`,
+        answer: `平台提供 1080P/4K 超清画质版本，与国内各大平台官方保持实时同步更新，支持移动端 PWA 桌面离线直达。`,
+      },
+      {
+        question: `《${params.title}》值得看吗？有哪些精彩亮点？`,
+        answer: `本片叙事紧凑、反转连连，实力派主演阵容在危机与博弈中展现出极高水准，口碑热度持续霸榜。`,
+      },
+      {
+        question: `iKanPP 观看《${params.title}》需要会员充值或看广告吗？`,
+        answer: `无需充值会员，100% 拒绝任何低俗博彩贴片与诱导弹窗，真正还原院线级纯净视听体验。`,
+      },
+    ];
+  }
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.answer,
+      },
+    })),
+  };
+
+  return { faqs, jsonLd };
+}
+
+/**
+ * ============================================================================
+ * 场景 3：万字 Parasite SEO 爆款长文全自动生产矩阵 (知乎/小红书/Medium/V2EX)
+ * ============================================================================
+ */
+export async function generateAiParasiteArticle(
+  items: TitleSnippet[],
+  options: {
+    model?: string;
+    style?: 'review' | 'xiaohongshu' | 'medium' | 'v2ex';
+  } = {}
+): Promise<{ title: string; markdown: string; modelUsed: string }> {
+  const model = options.model || DEFAULT_MODEL;
+  const style = options.style || 'review';
+  const today = new Date().toISOString().slice(0, 10);
+
+  const stylePrompts = {
+    review: '知乎/豆瓣高知影评风：深度解析剧情隐喻、角色弧光、画质与防坑指南，逻辑严密，极具权威感与说服力。',
+    xiaohongshu: '小红书爆款种草风：语言亲切活泼，大量使用吸睛 emoji，痛击海外华人“版权受限”、“卡顿转圈”痛点，强推免翻墙 4K 秒开神站。',
+    medium: 'Medium / Substack 深度特稿风：适合海外华人与留学生的专业流媒体测评与 2026 最新看剧全景指南。',
+    v2ex: '极客技术社区风：客观冷静，重点介绍 Anycast 边缘 CDN 双轨直连架构、0 广告体验与 PWA 桌面技术的极致流畅度。',
+  };
+
+  const systemPrompt = `你是一位拥有 10 年资深经验的海外流媒体与华语影视特约专栏作家，精通 Google 2026 最新 Helpful Content 算法规则与 Parasite SEO 借壳引流写作。
+你的任务是根据提供的今日热播影视片单，撰写一篇极具吸引力、图文并茂、文笔大师级的高质量 Markdown 文章。
+
+写作必须遵循以下原则：
+1. 风格调性：${stylePrompts[style] || stylePrompts.review}
+2. 格式规范：标准 GitHub Flavored Markdown 格式；
+3. 视觉冲击：文章开头必须包含今日热播影视的官方大图（![今日热播影视大作速报](${items[0]?.coverUrl || ''})），并在每部作品的介绍中保留海报（![《片名》官方高清海报](海报地址)）；
+4. 自然锚文本：在每部作品的推荐结尾，自然融入给定的 4K 免翻墙正片直达超链接（[点击立即在 iKanPP 免费观看完整版](链接)）；
+5. 解决痛点：重点强调“海外免翻墙极速直连”、“4K 超清 0 缓冲”、“100% 拒绝任何低俗博彩弹窗广告”的影院级体验；
+6. 严禁生成空洞模板废话，每部剧要有真实的亮点和剧情钩子，吸引读者一口气读完并点击观看。`;
+
+  const itemsText = items.map((it, idx) => `
+${idx + 1}. 《${it.title}》
+- 类型: ${it.type === 'tv' ? '电视剧/网剧' : '电影'}
+- 状态: ${it.qualityBadge || '1080P/4K'} · ${it.updateBadge || '全集'}
+- 海报图片: ${it.coverUrl || '无'}
+- 正片直达URL: ${it.watchUrl}
+`).join('\n');
+
+  const userPrompt = `今天日期是 ${today}。
+请根据以下今日最新上线的 15 部影视片单，撰写一篇标题引人入胜、结构清晰、极具转化力的高质量深度文章：
+
+${itemsText}
+
+请直接输出 Markdown 全文（包含主标题 #、引言、每部电影/剧集的图文评析、以及结语），无需额外的前后寒暄说明。`;
+
+  const markdown = await callAiCompletion({
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    model,
+    temperature: 0.75,
+    maxTokens: 4000,
+  });
+
+  const firstLine = markdown.split('\n')[0].replace(/^#+\s*/, '').trim();
+  const articleTitle = firstLine || `【2026最新片单】海外免翻墙免费看国产剧与院线大片指南（${today}实时更新）`;
+
+  return {
+    title: articleTitle,
+    markdown,
+    modelUsed: model,
+  };
+}
+
+/**
+ * ============================================================================
+ * 场景 4：口语化长尾搜索 ➔ 自动裂变程序化专题页 (Programmatic SEO 集合)
+ * ============================================================================
+ */
+export async function generateAiCollectionTopic(params: {
+  themeKeyword: string;
+  candidateTitles: string[];
+  model?: string;
+}): Promise<{
+  collectionSlug: string;
+  collectionTitle: string;
+  introductoryEssay: string;
+  searchIntentKeywords: string[];
+  recommendedPicks: Array<{ title: string; oneLinePitch: string }>;
+}> {
+  const systemPrompt = `你是一位专业影视策展人与 Programmatic SEO (程序化搜索) 架构师。
+当海外用户在 Google 搜索口语化长尾关键词（如“好看的烧脑悬疑国产剧”、“女主双商在线的爽剧”、“2026最值得看的科幻大作”）时，需要自动生成一个高权重的专属聚合专题页。
+
+请针对给定的主题，从候选片单中精选匹配的影视，并撰写一篇高质量的策展导语。
+必须严格输出合法的 JSON 格式：
+{
+  "collectionSlug": "符合SEO规范的英文slug（如: top-suspense-crime-dramas）",
+  "collectionTitle": "吸睛的专题主标题（如: 2026 反转烧脑巅峰：十大不容错过的硬核悬疑剧精选）",
+  "introductoryEssay": "300字深度策展导语，交代为什么做这个合集、看点是什么",
+  "searchIntentKeywords": ["关键词1", "关键词2", "关键词3", "关键词4"],
+  "recommendedPicks": [
+    {"title": "片名", "oneLinePitch": "一句话神级安利理由 (20~30字)"}
+  ]
+}
+不要输出任何多余标记。`;
+
+  const userPrompt = `专题主题/口语化搜索词：${params.themeKeyword}
+片库候选作品：${params.candidateTitles.slice(0, 15).join('、')}`;
+
+  const raw = await callAiCompletion({
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    model: params.model,
+    temperature: 0.7,
+    maxTokens: 1800,
+  });
+
+  try {
+    const cleanJson = raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+    return JSON.parse(cleanJson);
+  } catch {
+    return {
+      collectionSlug: 'recommended-chinese-masterpieces',
+      collectionTitle: `2026 年度精选：${params.themeKeyword} 观影专栏`,
+      introductoryEssay: '本专题精选了华语影视中极具口碑与艺术质感的重磅佳作，为您带来纯净不卡顿的极致视听体验。',
+      searchIntentKeywords: [params.themeKeyword, '海外看剧推荐', '4K华语影视'],
+      recommendedPicks: params.candidateTitles.slice(0, 5).map((t) => ({
+        title: t,
+        oneLinePitch: '年度口碑爆款，叙事精湛，不容错过。',
+      })),
+    };
+  }
+}
+
+/**
+ * ============================================================================
+ * 场景 5：全球繁体与港台/海外本地化音译优化 (通吃全球泛华语流量)
+ * ============================================================================
+ */
+export async function generateAiLocalization(params: {
+  title: string;
+  originalName?: string;
+  year?: string;
+  model?: string;
+}): Promise<{
+  taiwanTitle: string;
+  hongkongTitle: string;
+  traditionalTitle: string;
+  traditionalMetaDescription: string;
+  searchAliases: string[];
+}> {
+  const systemPrompt = `你是一位精通华语地区不同译名、粤语公映习惯与港台繁体中文的本地化 SEO 专家。
+海外华人（香港、台湾、新加坡、马来西亚、北美唐人街）习惯使用繁体中文及当地特定译名搜索影视。
+请根据给出的大陆中文片名，精准输出其在港台地区的官方上映译名、全繁体 Meta 描述与搜索同义词别名。
+
+必须严格输出 JSON 格式：
+{
+  "taiwanTitle": "台湾正式公映译名（如无特殊译名则为标准台湾繁体）",
+  "hongkongTitle": "香港正式公映译名（符合粤语习惯，如无则为香港繁体）",
+  "traditionalTitle": "标准正体繁体片名",
+  "traditionalMetaDescription": "120字左右专为港台留学生打造的繁体元数据描述，包含免翻墙、4K超清、線上看等高频搜索词",
+  "searchAliases": ["别名1", "别名2", "别名3", "别名4"]
+}
+不要输出任何多余废话。`;
+
+  const userPrompt = `大陆片名：《${params.title}》
+原名/外文名：${params.originalName || '未知'}
+上映年份：${params.year || '2026'}`;
+
+  const raw = await callAiCompletion({
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    model: params.model,
+    temperature: 0.3,
+    maxTokens: 1000,
+  });
+
+  try {
+    const cleanJson = raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+    return JSON.parse(cleanJson);
+  } catch {
+    return {
+      taiwanTitle: params.title,
+      hongkongTitle: params.title,
+      traditionalTitle: params.title,
+      traditionalMetaDescription: `【4K線上看】《${params.title}》完整版高清免翻牆極速播放。iKanPP 全球 Anycast CDN 直連，零廣告零緩衝，即刻享受極致影音！`,
+      searchAliases: [params.title, `${params.title} 線上看`, `${params.title} 4K`],
+    };
+  }
+}

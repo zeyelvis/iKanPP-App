@@ -388,6 +388,22 @@ export async function saveEntity(entity: TitleEntity, options?: { syncGlobalInde
     }
   }
 
+  // 4.5 保存别名与港台公映译名二级反向索引（场景 5：通吃全球泛华语搜索流量）
+  const allAliases = new Set<string>(entity.aliases || []);
+  if (entity.aiContent?.taiwanTitle) allAliases.add(entity.aiContent.taiwanTitle.trim());
+  if (entity.aiContent?.hongkongTitle) allAliases.add(entity.aiContent.hongkongTitle.trim());
+
+  for (const alias of allAliases) {
+    if (!alias || alias === entity.title) continue;
+    const aliasNorm = normalizeTitle(alias);
+    if (aliasNorm) {
+      const existing = await kvGet(`title:${aliasNorm}`);
+      if (!existing) {
+        await kvPut(`title:${aliasNorm}`, id);
+      }
+    }
+  }
+
   // 5. 追加到全局所有 ID 列表与 Sitemap 轻量全量目录
   // 🌟 架构防线：仅在显式批量入库/管理模式下执行（严禁线上 Edge 运行时并发读改写全局大集合，杜绝竞态覆盖脏数据）
   if (options?.syncGlobalIndex) {

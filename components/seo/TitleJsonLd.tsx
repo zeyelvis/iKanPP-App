@@ -92,18 +92,37 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
   };
 
   // 3. 规范单一 @graph 结构，消除虚假评分人数、伪造 VideoObject 及机械 FAQ
+  const graphElements: any[] = [
+    {
+      '@id': `${siteUrl}/#website`,
+      '@type': 'WebSite',
+      name: 'iKanPP 爱看片片',
+      url: siteUrl,
+    },
+    workNode,
+    breadcrumbNode,
+  ];
+
+  // 4. FAQPage 结构化问答节点 (场景 2：直接点亮 Google 搜索折叠问答下拉框)
+  const faqs = entity.aiContent?.faqs;
+  if (faqs && faqs.length > 0) {
+    graphElements.push({
+      '@type': 'FAQPage',
+      '@id': `${currentUrl}#faq`,
+      mainEntity: faqs.map(f => ({
+        '@type': 'Question',
+        name: f.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: f.answer,
+        },
+      })),
+    });
+  }
+
   const graphSchema = {
     '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@id': `${siteUrl}/#website`,
-        '@type': 'WebSite',
-        name: 'iKanPP 爱看片片',
-        url: siteUrl,
-      },
-      workNode,
-      breadcrumbNode,
-    ],
+    '@graph': graphElements,
   };
 
   return (
