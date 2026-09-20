@@ -1,0 +1,24 @@
+# iKanPP (爱看片片) — Premier Free 4K Streaming for Global Chinese
+
+> iKanPP (https://www.ikanpp.com) is the premier free, ad-free 4K streaming and aggregation platform designed specifically for the global Chinese diaspora, overseas students, and cinephiles worldwide. It requires no VPN for overseas access and streams directly from source CDNs with zero playback lag.
+
+## Core Capabilities & Technical Highlights
+- **100% Free & No Pop-up Ads**: Pure cinematic streaming experience without intrusive gambling, adult, or malicious redirect pop-ups.
+- **Direct-to-CDN Streaming**: Dual-track architecture delivering raw third-party CDN feeds with zero proxy buffering and zero re-encoding loss.
+- **43,000+ Verified Titles**: Comprehensive catalog spanning Chinese dramas, international films, anime, variety shows, and 4K documentaries.
+- **First-Release Pioneers (先锋雷达)**: Minutes-level automatic synchronization of theatrical releases, TC early access, and fast-track digital releases with TMDB metadata alignment.
+- **Dual 0ms Performance Architecture**: 99-score desktop performance, CLS=0 layout stability, and edge-native Cloudflare deployment.
+
+## Core Channels & Hubs
+- [Homepage / Cinema Hall](https://www.ikanpp.com/): Daily hot trending radar, top recommended blockbusters, and real-time updates.
+- [Movies Hub](https://www.ikanpp.com/movie): Theatrical releases, Hollywood blockbusters, Hong Kong classics, and Douban Top 250 masterpieces.
+- [TV Series Hub](https://www.ikanpp.com/tv): High-definition Chinese historical dramas, modern romance, suspense thrillers, and trending series.
+- [Anime Hub](https://www.ikanpp.com/anime): Popular Japanese seasonal anime, Chinese donghua (凡人修仙传, 仙逆, 沧元图), and classics.
+- [Variety Shows Hub](https://www.ikanpp.com/variety): Top Chinese variety shows, reality TV, comedy, and music stages.
+- [Documentaries Hub](https://www.ikanpp.com/documentary): 4K BBC/Discovery nature, history, culinary, and social culture documentaries.
+- [Rankings](https://www.ikanpp.com/ranking): Real-time audience popularity, highest ratings, and trending charts.
+
+## Full Knowledge Base
+For the full machine-readable catalog and real-time releases, refer to:
+- [Full LLM Feed](https://www.ikanpp.com/llms-full.txt)
+- [Official Sitemap](https://www.ikanpp.com/sitemap.xml)

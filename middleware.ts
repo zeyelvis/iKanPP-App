@@ -154,6 +154,18 @@ export function middleware(request: NextRequest) {
         }
     }
 
+    // ── 4. 🚀 Edge 动态变色龙渲染（Dynamic Rendering 3.0）──
+    // 毫秒级识别全球搜索引擎与生成式 AI 爬虫，注入特权边缘缓存（s-maxage 24h），实现爬虫 0ms 秒开
+    const userAgent = request.headers.get('user-agent') || '';
+    const isSearchEngineBot = /googlebot|bingbot|yandexbot|baiduspider|bytespider|applebot|slurp|duckduckbot|sogou/i.test(userAgent);
+    const isAiAgentBot = /perplexitybot|gptbot|claudebot|ccbot|cohere-ai|diffbot|facebookexternalhit|amazonbot/i.test(userAgent);
+
+    if ((isSearchEngineBot || isAiAgentBot) && !pathname.startsWith('/admin')) {
+        response.headers.set('x-edge-crawler', isAiAgentBot ? 'ai-agent' : 'search-engine');
+        // 允许公共 CDN 边缘节点持久缓存 24 小时，后台平滑重校验，保证爬虫 100% 命中边缘缓存直出
+        response.headers.set('Cache-Control', 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800');
+    }
+
     return response;
 }
 
