@@ -15,7 +15,7 @@
     "sync:hero:variety": "node scripts/sync-iyf-hero.mjs --target=variety",
     "sync:hero:doc": "node scripts/sync-iyf-hero.mjs --target=doc",
     "sync:all": "node scripts/sync-ikanbot-sources.mjs && node scripts/sync-iyf-hero.mjs",
-    "test:arch": "node scripts/test-architecture-integrity.mjs && npx tsx scripts/test-latest-titles-404.mjs",
+    "test:arch": "node scripts/test-architecture-integrity.mjs && node scripts/test-regression-suite.mjs && npx tsx scripts/test-latest-titles-404.mjs",
     "test:404": "npx tsx scripts/test-latest-titles-404.mjs",
     "pages:build": "npx @cloudflare/next-on-pages@1"
   },
