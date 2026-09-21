@@ -39,6 +39,7 @@ interface VideoPlayerProps {
   sources?: Array<import('./desktop/InPlayerSourceDrawer').SourceItem>;
   currentSource?: string;
   onSelectSource?: (source: import('./desktop/InPlayerSourceDrawer').SourceItem) => void;
+  rating?: string | number | null;
 }
 
 export const VideoPlayer = React.memo(function VideoPlayer({
@@ -63,6 +64,7 @@ export const VideoPlayer = React.memo(function VideoPlayer({
   sources,
   currentSource,
   onSelectSource,
+  rating,
 }: VideoPlayerProps) {
   const [videoError, setVideoError] = useState<string>('');
   const [useProxy, setUseProxy] = useState(false);
@@ -293,6 +295,7 @@ export const VideoPlayer = React.memo(function VideoPlayer({
           sources={sources}
           currentSource={currentSource}
           onSelectSource={onSelectSource}
+          rating={rating}
         />
       )}
     </div>

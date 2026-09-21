@@ -26,6 +26,7 @@ import { Tv, Clapperboard, Sparkles, User, Star, Film, MonitorPlay, Layers, Chec
 import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { PREBAKED_AVATARS } from '@/lib/data/prebaked-avatars';
 import { extractSeasonAndEpisodeNumber, cleanEpisodeName, formatEpisodeGridLabel } from '@/lib/utils/episode-resolver';
+import { FloatingMiniPlayer } from '@/components/player/FloatingMiniPlayer';
 
 interface TitleAnalysis {
   rawTitle: string;
@@ -107,6 +108,7 @@ export function IkanPPPlayerContainer() {
   const [relatedMovies, setRelatedMovies] = useState<RailMovie[]>([]);
   const [loadingRelated, setLoadingRelated] = useState(true);
   const [entityPoster, setEntityPoster] = useState<string | null>(null);
+  const [entityRating, setEntityRating] = useState<string | number | null>(null);
 
   useEffect(() => {
     if (entityParam) {
@@ -114,6 +116,7 @@ export function IkanPPPlayerContainer() {
         .then(r => r.json())
         .then(d => {
           if (d.data?.cover) setEntityPoster(d.data.cover);
+          if (d.data?.score || d.data?.rating) setEntityRating(d.data.score || d.data.rating);
         })
         .catch(() => {});
     }
@@ -1073,8 +1076,13 @@ export function IkanPPPlayerContainer() {
 
       {/* 巨幕模式下的全宽顶部播放器舞台 */}
       {isCinemaMode ? (
-        <div className="w-full bg-black pt-16 pb-6 border-b border-white/5 shadow-2xl">
-          <div className="max-w-[1680px] mx-auto px-2 sm:px-4 lg:px-6">
+        <div id="main-player-stage" className="relative w-full bg-black pt-16 pb-6 border-b border-white/5 shadow-2xl overflow-hidden">
+          {/* 影院级环境光晕氛围层 (Cinema Ambient Glow) */}
+          <div 
+            className="absolute -top-24 left-1/2 -translate-x-1/2 w-[120%] h-[300px] bg-gradient-to-b from-purple-900/20 via-red-950/15 to-transparent blur-3xl pointer-events-none -z-0"
+            aria-hidden="true"
+          />
+          <div className="relative max-w-[1680px] mx-auto px-2 sm:px-4 lg:px-6 z-10">
             <VideoPlayer
               playUrl={playUrl}
               videoId={videoId || undefined}
@@ -1096,6 +1104,7 @@ export function IkanPPPlayerContainer() {
               sources={groupedSources}
               currentSource={currentSourceId || source || ''}
               onSelectSource={handleSourceChange}
+              rating={entityRating || (videoData as { vod_score?: number | string } | null)?.vod_score || null}
             />
           </div>
         </div>
@@ -1105,7 +1114,7 @@ export function IkanPPPlayerContainer() {
         {/* 标准模式下的网格布局 */}
         {!isCinemaMode ? (
           <div className="grid lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+            <div id="main-player-stage" className="lg:col-span-2 space-y-4 sm:space-y-6">
               <VideoPlayer
                 playUrl={playUrl}
                 videoId={videoId || undefined}
@@ -1127,6 +1136,7 @@ export function IkanPPPlayerContainer() {
                 sources={groupedSources}
                 currentSource={currentSourceId || source || ''}
                 onSelectSource={handleSourceChange}
+                rating={entityRating || (videoData as { vod_score?: number | string } | null)?.vod_score || null}
               />
             </div>
 
@@ -1404,6 +1414,22 @@ export function IkanPPPlayerContainer() {
       </main>
 
       <FavoritesSidebar isPremium={false} />
+
+      {/* 视口脱离智能伴随浮动小窗 */}
+      <FloatingMiniPlayer
+        videoTitle={videoData?.vod_name || title || ''}
+        episodeName={videoData?.episodes?.[currentEpisode]?.name || ''}
+        isPlaying={true}
+        onScrollToTop={() => {
+          const el = document.getElementById('main-player-stage');
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }}
+        targetElementId="main-player-stage"
+      />
     </div>
   );
 }

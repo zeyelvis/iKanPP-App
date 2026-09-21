@@ -10,7 +10,8 @@ import { InPlayerEpisodesDrawer } from '../desktop/InPlayerEpisodesDrawer';
 import { InPlayerSourceDrawer } from '../desktop/InPlayerSourceDrawer';
 import { NextEpisodeOverlay } from '../desktop/NextEpisodeOverlay';
 import { KeyboardShortcutsModal } from '../desktop/KeyboardShortcutsModal';
-import { ChevronLeft, MessageSquare, Clock } from 'lucide-react';
+import { InPlayerTopBar } from '../desktop/InPlayerTopBar';
+import { ChevronLeft, MessageSquare, Clock, FastForward, RotateCcw, RotateCw, Sparkles, Zap } from 'lucide-react';
 import { useHistoryStore, usePremiumHistoryStore } from '@/lib/store/history-store';
 import { settingsStore } from '@/lib/store/settings-store';
 import { premiumModeSettingsStore } from '@/lib/store/premium-mode-settings';
@@ -53,6 +54,8 @@ export interface ArtVideoPlayerProps {
   sources?: SourceItem[];
   currentSource?: string;
   onSelectSource?: (source: SourceItem) => void;
+  rating?: string | number | null;
+  resolutionLabel?: string;
 }
 
 export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
@@ -77,6 +80,8 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
   sources = [],
   currentSource = '',
   onSelectSource,
+  rating = null,
+  resolutionLabel,
 }: ArtVideoPlayerProps & { initialTime?: number; shouldAutoPlay?: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const artRef = useRef<Artplayer | null>(null);
@@ -93,6 +98,13 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fullscreenClock, setFullscreenClock] = useState('');
   const [showControls, setShowControls] = useState(true);
+
+  // 🌟 沉浸式流媒体手势与反馈状态
+  const [isFastForwarding, setIsFastForwarding] = useState(false);
+  const [seekFeedback, setSeekFeedback] = useState<{ type: 'forward' | 'rewind'; text: string } | null>(null);
+  const [showSkipIntroBtn, setShowSkipIntroBtn] = useState(false);
+  const [stallCandidate, setStallCandidate] = useState<SourceItem | null>(null);
+  const [detectedResLabel, setDetectedResLabel] = useState<string>(resolutionLabel || '4K 超清');
 
   // 弹幕系统整合 (主站普通影视启用，午夜专区关闭)
   const { danmakuEnabled, comments: danmakuComments } = useDanmaku({
@@ -459,6 +471,13 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
         setShowNextEpisodeCountdown(true);
       }
 
+      // 智能跳过片头：在前 90 秒内且视频总长 > 5 分钟时滑出悬浮提示
+      if (cur >= 5 && cur <= 90 && dur > 300) {
+        setShowSkipIntroBtn(true);
+      } else {
+        setShowSkipIntroBtn(false);
+      }
+
       // 每 5 秒定时记录播放历史
       const now = Date.now();
       if (now - lastSaveTimeRef.current >= 5000 && cur > 1 && videoId) {
@@ -493,7 +512,7 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
     // 事件监听：视频元数据读取
     art.on('video:loadedmetadata', () => {
       const video = art.video;
-      if (video && video.videoWidth && video.videoHeight && onResolutionDetectedRef.current) {
+      if (video && video.videoWidth && video.videoHeight) {
         const w = video.videoWidth;
         const h = video.videoHeight;
         let label = '1080P';
@@ -508,19 +527,26 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
           label = '720P 高清';
           color = 'bg-slate-600';
         }
-        onResolutionDetectedRef.current({
-          width: w,
-          height: h,
-          label,
-          color,
-        });
+        setDetectedResLabel(label);
+        if (onResolutionDetectedRef.current) {
+          onResolutionDetectedRef.current({
+            width: w,
+            height: h,
+            label,
+            color,
+          });
+        }
       }
     });
 
-    // 绝对状态同步：监听原生 video 播放状态，确保中央大按钮与加载圈与底层解码管线 100% 同步
+    // 绝对状态同步与卡顿自愈感知雷达
     const rawVideo = art.video;
+    let stallTimeout: any = null;
+
     if (rawVideo) {
       const handlePlaying = () => {
+        if (stallTimeout) clearTimeout(stallTimeout);
+        setStallCandidate(null);
         if (art.template?.$state) {
           art.template.$state.style.display = 'none';
         }
@@ -529,6 +555,8 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
         }
       };
       const handlePause = () => {
+        if (stallTimeout) clearTimeout(stallTimeout);
+        setStallCandidate(null);
         if (art.template?.$state) {
           art.template.$state.style.display = 'flex';
         }
@@ -536,6 +564,15 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
       const handleWaiting = () => {
         if (art.template?.$loading) {
           art.template.$loading.style.display = 'flex';
+        }
+        // 连续缓冲超过 3.5 秒，自动探知备选健康源
+        if (sources && sources.length > 1 && onSelectSource) {
+          stallTimeout = setTimeout(() => {
+            const candidate = sources.find((s) => s.source !== currentSource);
+            if (candidate) {
+              setStallCandidate(candidate);
+            }
+          }, 3500);
         }
       };
       const handleCanPlay = () => {
@@ -550,12 +587,98 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
       rawVideo.addEventListener('canplay', handleCanPlay);
 
       art.on('destroy', () => {
+        if (stallTimeout) clearTimeout(stallTimeout);
         rawVideo.removeEventListener('playing', handlePlaying);
         rawVideo.removeEventListener('pause', handlePause);
         rawVideo.removeEventListener('waiting', handleWaiting);
         rawVideo.removeEventListener('canplay', handleCanPlay);
       });
     }
+
+    // 🌟 手势与 HUD 系统：长按 2.0x 极速快进 + 双击左右 ±10s 快进快退
+    const playerEl = art.template.$player;
+    let longPressTimer: any = null;
+    let isLongPressing = false;
+    let savedPlaybackRate = 1;
+
+    const handlePointerDown = (e: PointerEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target.closest('.art-bottom') ||
+        target.closest('.art-controls') ||
+        target.closest('button') ||
+        target.closest('.art-state') ||
+        target.closest('.player-interactive-overlay')
+      ) {
+        return;
+      }
+
+      savedPlaybackRate = art.playbackRate || 1;
+      longPressTimer = setTimeout(() => {
+        isLongPressing = true;
+        art.playbackRate = 2.0;
+        setIsFastForwarding(true);
+      }, 350);
+    };
+
+    const handlePointerUp = () => {
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+      if (isLongPressing) {
+        isLongPressing = false;
+        art.playbackRate = savedPlaybackRate;
+        setIsFastForwarding(false);
+      }
+    };
+
+    let seekFeedbackTimer: any = null;
+    const triggerSeekFeedback = (type: 'forward' | 'rewind', text: string) => {
+      if (seekFeedbackTimer) clearTimeout(seekFeedbackTimer);
+      setSeekFeedback({ type, text });
+      seekFeedbackTimer = setTimeout(() => {
+        setSeekFeedback(null);
+      }, 900);
+    };
+
+    const handleDoubleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target.closest('.art-bottom') ||
+        target.closest('.art-controls') ||
+        target.closest('button') ||
+        target.closest('.player-interactive-overlay')
+      ) {
+        return;
+      }
+
+      const rect = playerEl.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const isLeft = clickX < rect.width * 0.4;
+      const isRight = clickX > rect.width * 0.6;
+
+      if (isLeft) {
+        art.currentTime = Math.max(0, art.currentTime - seekStepSeconds);
+        triggerSeekFeedback('rewind', `-${seekStepSeconds}s`);
+      } else if (isRight) {
+        art.currentTime = Math.min(art.duration, art.currentTime + seekStepSeconds);
+        triggerSeekFeedback('forward', `+${seekStepSeconds}s`);
+      }
+    };
+
+    playerEl.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerUp);
+    playerEl.addEventListener('dblclick', handleDoubleClick);
+
+    art.on('destroy', () => {
+      playerEl.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
+      playerEl.removeEventListener('dblclick', handleDoubleClick);
+      if (seekFeedbackTimer) clearTimeout(seekFeedbackTimer);
+    });
 
     // 用户与播放器产生任何交互时，若处于静音自愈状态，尝试自动恢复声音
     const handleRestoreSound = () => {
@@ -589,7 +712,7 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
         artRef.current = null;
       }
     };
-  }, [playM3u8, isPremium, seekStepSeconds]);
+  }, [playM3u8, isPremium, seekStepSeconds, sources, currentSource, onSelectSource]);
 
   // 弹幕开关联动
   useEffect(() => {
@@ -659,42 +782,103 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
       {portalTarget &&
         ReactDOM.createPortal(
           <>
-            {/* 1. 左上角快捷返回胶囊 */}
-            {onBack && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onBack();
-                }}
-                className={`absolute top-4 left-4 z-40 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#141416]/85 hover:bg-black/95 border border-white/20 text-white/90 hover:text-white transition-all cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.6)] hover:scale-105 active:scale-95 text-xs font-bold ${
-                  showControls ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-                }`}
-                title={isPremium ? '返回午夜专区' : '返回'}
-              >
-                <ChevronLeft size={16} />
-                <span>{isPremium ? '午夜版' : '返回'}</span>
-              </button>
-            )}
+            {/* 1. Apple TV+ 级全屏与沉浸动态元数据顶栏 */}
+            <InPlayerTopBar
+              title={videoTitle}
+              episodeName={episodeName}
+              isPremium={isPremium}
+              onBack={onBack}
+              showControls={showControls}
+              fullscreenClock={fullscreenClock}
+              rating={rating}
+              resolutionLabel={detectedResLabel}
+            />
 
-            {/* 2. 右上角全屏时钟与品牌 4K VIP 台标 */}
-            <div
-              className={`absolute top-4 right-4 z-30 pointer-events-none transition-opacity duration-300 flex items-center gap-2 ${
-                showControls ? 'opacity-90' : 'opacity-40'
-              }`}
-            >
-              {fullscreenClock && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#141416]/90 border border-white/20 shadow-lg text-xs font-mono text-white/80">
-                  <Clock size={12} className="text-white/60" />
-                  <span>{fullscreenClock}</span>
-                </div>
-              )}
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#141416]/90 border border-white/20 shadow-lg">
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                <span className="text-[11px] font-black tracking-wider text-white">
-                  {isPremium ? 'iKanX 4K VIP' : 'iKanPP 4K'}
+            {/* 2. 长按 2.0X 极速快进 HUD 呼吸指示气泡 */}
+            {isFastForwarding && (
+              <div className="absolute top-16 sm:top-20 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2 rounded-full bg-black/95 border border-red-500/60 text-white shadow-[0_8px_32px_rgba(229,9,20,0.6)] pointer-events-none animate-pulse">
+                <FastForward size={16} className="text-red-500" />
+                <span className="text-xs sm:text-sm font-bold tracking-wider">
+                  2.0X 极速快进中
                 </span>
               </div>
-            </div>
+            )}
+
+            {/* 3. 双击左右快退/快进拟态水波纹指示器 */}
+            {seekFeedback && (
+              <div
+                className={`absolute top-1/2 -translate-y-1/2 z-40 flex flex-col items-center justify-center pointer-events-none transition-all duration-300 ${
+                  seekFeedback.type === 'rewind' ? 'left-12 sm:left-24' : 'right-12 sm:right-24'
+                }`}
+              >
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/85 border border-white/20 flex flex-col items-center justify-center shadow-2xl scale-110">
+                  {seekFeedback.type === 'rewind' ? (
+                    <RotateCcw size={22} className="text-white mb-1" />
+                  ) : (
+                    <RotateCw size={22} className="text-white mb-1" />
+                  )}
+                  <span className="text-xs font-mono font-bold text-white">
+                    {seekFeedback.text}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* 4. 智能跳过片头悬浮胶囊 */}
+            {showSkipIntroBtn && !isEpisodesDrawerOpen && !isSourceDrawerOpen && (
+              <div className="absolute bottom-20 right-6 z-40 pointer-events-auto animate-fadeIn">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (artRef.current) {
+                      artRef.current.currentTime = 90;
+                      setShowSkipIntroBtn(false);
+                      if (artRef.current.notice) {
+                        artRef.current.notice.show = '已为您跳过片头 90 秒';
+                      }
+                    }
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#141416]/95 hover:bg-black border border-white/25 text-white shadow-[0_8px_30px_rgba(0,0,0,0.8)] hover:border-red-500/60 hover:scale-105 active:scale-95 transition-all text-xs sm:text-sm font-bold cursor-pointer"
+                >
+                  <Zap size={14} className="text-amber-400 fill-amber-400" />
+                  <span>跳过片头 ➔</span>
+                </button>
+              </div>
+            )}
+
+            {/* 5. 卡顿智能切源雷达微通知 */}
+            {stallCandidate && (
+              <div className="absolute top-20 right-6 z-40 pointer-events-auto animate-fadeIn max-w-xs">
+                <div className="p-3 rounded-2xl bg-[#141416]/95 border border-amber-500/40 shadow-2xl text-white">
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <span className="flex items-center gap-1.5 text-xs font-bold text-amber-400">
+                      <Zap size={12} className="fill-amber-400" />
+                      智能自愈雷达
+                    </span>
+                    <button
+                      onClick={() => setStallCandidate(null)}
+                      className="text-white/40 hover:text-white text-xs cursor-pointer"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-white/70 mb-2 leading-tight">
+                    当前专线网络波动，建议平滑切换至备选线路
+                  </p>
+                  <button
+                    onClick={() => {
+                      if (onSelectSource && stallCandidate) {
+                        onSelectSource(stallCandidate);
+                        setStallCandidate(null);
+                      }
+                    }}
+                    className="w-full py-1.5 px-3 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer text-center"
+                  >
+                    立即切换至【{stallCandidate.label || stallCandidate.source}】
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* 3. Netflix 级剧集选集抽屉 */}
             {episodes && episodes.length > 0 && onSelectEpisode && (
