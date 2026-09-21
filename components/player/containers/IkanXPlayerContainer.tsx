@@ -8,7 +8,7 @@ import { EpisodeList, SourceInfo } from '@/components/player/EpisodeList';
 import { PlayerError } from '@/components/player/PlayerError';
 import type { VideoSource } from '@/lib/types';
 import { useVideoPlayer } from '@/lib/hooks/useVideoPlayer';
-import { useHistory } from '@/lib/store/history-store';
+import { usePremiumHistoryStore } from '@/lib/store/history-store';
 import { FavoritesSidebar } from '@/components/favorites/FavoritesSidebar';
 import { FavoriteButton } from '@/components/favorites/FavoriteButton';
 import { ShareButton } from '@/components/player/ShareButton';
@@ -21,7 +21,7 @@ import { extractSeasonAndEpisodeNumber } from '@/lib/utils/episode-resolver';
 export function IkanXPlayerContainer() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { addToHistory } = useHistory(true);
+  const addToHistory = usePremiumHistoryStore((s) => s.addToHistory);
 
   const videoId = searchParams.get('id');
   const source = searchParams.get('source');

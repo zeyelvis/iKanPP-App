@@ -93,7 +93,7 @@ interface DesktopVideoPlayerProps {
   onSelectSource?: (source: import('./desktop/InPlayerSourceDrawer').SourceItem) => void;
 }
 
-export function DesktopVideoPlayer({
+export const DesktopVideoPlayer = React.memo(function DesktopVideoPlayer({
   src,
   poster,
   onError,
@@ -744,4 +744,4 @@ export function DesktopVideoPlayer({
       </div>
     </div>
   );
-}
+});

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 /**
  * 检测是否为真正的 iPadOS 触控设备（排查带多点触控板的桌面 MacBook）
  */
-function checkIsIPadOS(): boolean {
+export function checkIsIPadOS(): boolean {
     if (typeof navigator === 'undefined' || typeof window === 'undefined') return false;
     // 带有多点触控并且主指针为粗触控（触摸屏），排除主指针为 fine（鼠标/Mac触控板）的桌面 Mac
     const isMacPlatform = navigator.platform === 'MacIntel' || /Macintosh/i.test(navigator.userAgent);

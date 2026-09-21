@@ -301,3 +301,36 @@
 - **预烘焙文件**：生成写入 `lib/data/latest-titles-prebaked.ts`，为全站提供 SSR 0ms 直出骨架；
 - **KV 持久化**：由 `.github/workflows/sync-iyf-channels.yml` 每小时整点调度 `scripts/sync-release-radar.mjs`，通过 Cloudflare KV REST API 自动更新生产环境 `recent:*` 系列键；
 - **客户端缓存无缝升级**：前台组件将缓存版本升级至 `v8`，并自动清理历史旧版本缓存。
+
+---
+
+## 11. 播放器防周期性卡顿与高吞吐深缓冲水位绝对规范 (Anti-Periodic Stalling & High-Throughput Buffering Spec)
+
+针对用户在长视频播放过程中“播放一段时间后反复卡顿、一部影片内周期性出现卡顿”的历史顽疾，本项目确立了设备识别、缓冲水位、状态解耦、组件隔离与自动化巡检五重立体防御体系：
+
+### 1. 设备环境精准判定（消灭 MacBook 误判移动端）
+- **现象归因**：MacBook 带有 Force Touch 触控板，系统原生上报 `navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1`。若单纯依赖此条件判定 iPad，会导致 Mac 桌面端被粗暴降级为移动端，被硬性分配只有 30MB 显存限制与 30 秒缓冲的小缓冲区。播放高码率片源 30 秒后水库蓄满停止拉流，待播放头追上时引发周期性饥饿卡顿。
+- **实施标准**：统一调用 `lib/hooks/mobile/useDeviceDetection.ts` 中的 `checkIsIPadOS()`，强制加设 `window.matchMedia('(pointer: coarse)').matches` 与 `'ontouchstart' in window` 双重校验，彻底根治 MacBook 触控板误判。
+
+### 2. 桌面端 120s 高吞吐深水库与 60s 安全后向缓冲区
+- **参数红线**：
+  - `maxBufferLength`: 桌面端 $\ge 120$ 秒，移动端 $\ge 60$ 秒；
+  - `maxMaxBufferLength`: 桌面端 $\ge 240$ 秒，移动端 $\ge 120$ 秒；
+  - `maxBufferSize`: 桌面端 $\ge 120\text{MB}$，移动端 $\ge 60\text{MB}$；
+  - `backBufferLength`: 桌面端 $\ge 60$ 秒，移动端 $\ge 25$ 秒；
+  - `fragLoadingTimeOut`: 恒定 $30000\text{ms}$，重试超时 $60000\text{ms}$。
+- **机理保障**：拉开后向回退缓冲区距离（60 秒），杜绝 Hls.js 以秒级频率调用 `SourceBuffer.remove(0, currentTime - 30)` 导致浏览器解码管线进入 `updating = true` 锁冲突而阻断切片追加。
+
+### 3. 播放器父容器解除 Zustand 全量订阅（消灭 5 秒级联 Re-render 风暴）
+- **现象归因**：播放器每 5 秒自动调用 `addToHistory` 保存进度，修改了 `viewingHistory` 数组。若父容器直接解构 `const { addToHistory } = useHistory()`，就会无意中订阅整个 store，每 5 秒引发 1400 行容器全量子树级联重渲染，抢占主线程 CPU 造成音视频管线卡顿。
+- **实施标准**：
+  - 主站容器：`const addToHistory = useHistoryStore((s) => s.addToHistory);`
+  - 午夜容器：`const addToHistory = usePremiumHistoryStore((s) => s.addToHistory);`
+  - 外部回调（如 `onSelectEpisode`）必须由容器使用 `useCallback` 严格记忆化，严禁内联匿名箭头函数。
+
+### 4. 播放器核心组件 React.memo 物理隔离
+- `VideoPlayer`、`DesktopVideoPlayer`、`CustomVideoPlayer` 统一通过 `React.memo` 导出，隔离父级一切非必要重绘。
+
+### 5. 自动化架构门禁常态化锁定
+- 由 `scripts/test-architecture-integrity.mjs` 第 11 项常态化巡检，CI/CD 与本地预提交硬拦截任何参数倒退。
+

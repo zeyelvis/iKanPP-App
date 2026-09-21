@@ -517,7 +517,51 @@ iKanPP 全域自动化运维流水线与数据同步中枢必须永久恪守以�
 - **隐式信号最大化**：通过充满电影工业质感与文学深度的专业影评，彻底消灭观众的“廉价塑料感”，将单页平均停留时间（Dwell Time）提升至 45 秒以上，以超高用户黏性向搜索引擎持续释放第一梯队正向排名信号；
 - **自动化门禁常态化守护**：由 `scripts/test-architecture-integrity.mjs` 中的检查 7 持续硬拦截，任何前端组件若重新出现“AI 独家解析”或内部调试黑话，本地与 CI 编译立即就地阻断发布。
 
+---
 
+## 22. 播放器防周期性卡顿与高吞吐深缓冲水位绝对铁律 (Anti-Periodic Stalling & High-Throughput Buffering Spec)
 
+iKanPP 全域流媒体播放器（主站轨道 A 与午夜特区轨道 B）必须永久恪守以下底层架构与防卡顿工程基线，**彻底消除“播一段时间就卡顿一次、全片周期性反复卡顿”的顽疾，严禁任何后续开发、代码优化或 AI 助手以任何理由回退、削减或引入不当渲染订阅**：
 
+### 1. MacBook 触控板误判陷阱与设备精准识别铁律 (Device Detection Spec)
+- **底层机理**：MacBook 系列（MacBook Pro / Air）的 Force Touch 触控板因支持多点触控手势，在 Safari 及现代 Chromium 浏览器中会向系统上报 `navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1`。
+- **致病陷阱**：若代码仅依据 `platform === 'MacIntel' && maxTouchPoints > 1` 判定 iPadOS，**会导致 Mac 桌面端被粗暴降级为移动端设备，被分配只有 30MB 内存、30 秒前向缓冲与 10 秒后向缓存的极端紧缩参数**。播放高码率片源 30 秒后缓冲池迅速饱水停止下载；播放指针一旦追及缓冲前沿，由于后备容量严重不足，极易在弱网抖动时直接遭遇水库干涸，引发全片反复出现周期性卡顿。
+- **铁律要求**：
+  1. 识别 iPadOS 必须统一使用 `lib/hooks/mobile/useDeviceDetection.ts` 中的 `checkIsIPadOS()` 函数；
+  2. 必须且只能在检测到 `navigator.maxTouchPoints > 1` 的同时，严格加设 `window.matchMedia('(pointer: coarse)').matches`（粗指针触屏）与 `'ontouchstart' in window`（原生触摸事件）双重物理核验；
+  3. 绝对禁止在任何播放器核心逻辑中裸用 `maxTouchPoints > 1` 判定移动端设备！
 
+### 2. 桌面端 120s 高吞吐深水库与 60s 安全后向缓冲区铁律 (Buffering Watermark Spec)
+- **底层机理**：HLS 播放依靠浏览器的 MediaSource SourceBuffer 流水线。对于 1080P/4K 高码率影视正片（尤其是跨洋长肥网络管道传输时），微型缓冲池极易被网络抖动击穿；而如果将回退缓冲区（`backBufferLength`）设得离播放指针过近（如 10s~30s），Hls.js 会以秒级频率疯狂调用 `SourceBuffer.remove(0, currentTime - 30)`。浏览器执行异步物理内存修剪时，会将 `SourceBuffer.updating` 锁定为 `true`，此时新的音视频切片无法追加（AppendBuffer Blocked），导致解码器掉帧乃至画面瞬时定格。
+- **基线数值红线**：在 `components/player/hooks/useHlsPlayer.ts` 中，以下参数为最高性能红线，严禁以“节省内存”等理由擅自下调：
+  - **桌面端前向缓冲（maxBufferLength）**：$\ge 120$ 秒（保证两分钟深度蓄水，从容抗击网络微抖动）；
+  - **桌面端最大前向缓冲（maxMaxBufferLength）**：$\ge 240$ 秒（充裕扩展上限）；
+  - **桌面端缓冲区内存上限（maxBufferSize）**：$\ge 120\text{MB}$（$120 \times 1000 \times 1000$ 字节，宽裕容纳 4K 原画）；
+  - **桌面端后向回退缓冲（backBufferLength）**：$\ge 60$ 秒（拉开清理距离，杜绝 `SourceBuffer.remove` 锁竞争争抢解码管线）；
+  - **切片加载超时（fragLoadingTimeOut）**：$\ge 30000\text{ms}$（给超清大分片留足跨洋传输时间，杜绝误判死链盲目切源）；
+  - **切片重试超时（fragLoadingMaxRetryTimeout）**：$\ge 60000\text{ms}$。
+- **移动端保护基线**：移动端前向缓冲设为 60s / 120s / 60MB，后向缓冲设为 25s，兼顾移动设备内存约束与长久流畅性。
+
+### 3. 父级容器历史 Store 全量订阅阻断铁律 (Decoupled History Subscription)
+- **底层机理**：播放器在播放过程中，每 5 秒自动触发一次轻量心跳（`SAVE_INTERVAL = 5000`），调用 `addToHistory` 持久化用户当前播放集数与秒数。该操作会不可避免地触发 Zustand 的 `set({ viewingHistory: [...] })` 状态突变。
+- **致病陷阱**：若播放器外层父级容器（如 `IkanPPPlayerContainer.tsx` 或 `IkanXPlayerContainer.tsx`）调用了无 selector 的全量订阅钩子（如 `const { addToHistory } = useHistory()`）：
+  1. 容器隐式订阅了整个 `viewingHistory` 大数组；
+  2. 每 5 秒保存一次进度，就会导致这个长达 1400 行的庞大父级容器及其整个子树在后台无休止地全量重新渲染（Re-render Cascading）；
+  3. 容器重渲染导致内部重新执行几百行 Hooks 并生成新的闭包对象，抢占主线程 CPU 并引发大规模垃圾回收（GC Thrashing），从而打断浏览器的硬件解码渲染管线，造成典型的“每隔几分钟卡顿一次”！
+- **铁律要求**：
+  1. 播放器容器**绝不允许无 selector 订阅历史 Store**，必须且只能使用只读 action selector：
+     - 主站：`const addToHistory = useHistoryStore((s) => s.addToHistory);`
+     - 午夜：`const addToHistory = usePremiumHistoryStore((s) => s.addToHistory);`
+  2. 传递给播放器的交互回调（如 `onSelectEpisode`）必须由容器使用 `useCallback` 彻底记忆化（如 `handleSelectEpisodeInPlayer`），严禁在 JSX 中直接书写 `onSelectEpisode={(idx) => ...}` 匿名内联函数。
+
+### 4. 播放器核心组件 React.memo 物理隔离铁律 (Player Component Memoization)
+- **绝对隔离**：`VideoPlayer`、`CustomVideoPlayer`、`DesktopVideoPlayer` 必须 100% 由 `React.memo` 包裹导出；
+- **防线目标**：即使父级容器因路由参数或侧边栏展开等偶发性交互发生重渲染，播放器核心、Hls.js 引擎、MSE 缓冲队列以及 Danmaku 弹幕画布必须受到 `React.memo` 浅比较防线的物理阻断，实现 **0 侵入、0 抖动、0 重绘**。
+
+### 5. 架构完整性门禁自动化常态守护 (Automated Integrity Linter)
+- 由 `scripts/test-architecture-integrity.mjs` 中的第 11 项持续执行静态与动态特征拦截：
+  1. 自动检验 `useHlsPlayer.ts` 是否正确使用 `checkIsIPadOS`；
+  2. 自动核验桌面端缓冲参数是否满足 120s / 240s / 120MB / 60s 红线；
+  3. 自动扫描播放器容器是否存在裸用 `useHistory(` 的性能毒药；
+  4. 自动核验 `VideoPlayer`、`CustomVideoPlayer`、`DesktopVideoPlayer` 是否均被 `React.memo` 保护；
+- 任何破坏本准则的代码提交或自动化修改，本地测试与 Cloudflare CI 构建立即就地熔断并拒绝发布！

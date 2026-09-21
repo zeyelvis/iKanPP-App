@@ -4,6 +4,7 @@ import { usePlayerSettings } from './usePlayerSettings';
 import { filterM3u8Ad } from '@/lib/utils/m3u8-utils';
 import { sanitizeStreamUrl } from '@/lib/utils/stream-sanitizer';
 import { useRuntimeFeatures } from '@/components/RuntimeFeaturesProvider';
+import { checkIsIPadOS } from '@/lib/hooks/mobile/useDeviceDetection';
 
 interface UseHlsPlayerProps {
     videoRef: React.RefObject<HTMLVideoElement | null>;
@@ -64,23 +65,21 @@ export function useHlsPlayer({
         // Check if MSE is available (required by HLS.js)
         const isMSESupported = Hls.isSupported();
 
-        // 精准识别 iOS / iPadOS 设备（包含 iPadOS 桌面模式的 MacIntel 伪装）
+        // 精准识别 iOS / iPadOS 设备：必须通过 checkIsIPadOS() 排除配备多点触控板的 MacBook 笔记本！
+        const isIPad = checkIsIPadOS();
         const isIOSOrIPad = typeof navigator !== 'undefined' && (
-            /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
-            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+            /iPhone|iPod/i.test(navigator.userAgent) || isIPad
         );
 
         const isMobileClient = typeof navigator !== 'undefined' && (
-            /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
-            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+            /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || isIPad
         );
 
         // 核心架构决策：
-        // 在 iOS / iPadOS 上，普通影视（!isPremium）100% 直连源站 CDN，坚决优先走原生硬件级 AVPlayer！
-        // 苹果系统独立进程 mediaserverd 硬解具备最强抗网络抖动、原生自适应码率与零内存溢出风险，彻底杜绝夸克等第三方浏览器的脚本劫持与撕扯。
-        // 只有非 iOS 设备（PC/安卓）或午夜专区（isPremium 必须切片重写）才启用 Hls.js。
+        // 1. 在真实 iOS / iPadOS 触控设备上，普通影视（!isPremium）直连公网源，走原生硬件级 AVPlayer；
+        // 2. 在桌面端（包含 MacBook、Windows、Linux）或午夜专区，100% 启用高性能 Hls.js，享受大缓冲区平滑防抖能力！
         const shouldUseHlsJs = isMSESupported && (
-            (!isIOSOrIPad && (!isNativeHlsSupported || isAdFilterEnabled || isPremium)) ||
+            (!isIOSOrIPad && (!isNativeHlsSupported || isAdFilterEnabled || isPremium || !isMobileClient)) ||
             (isIOSOrIPad && isPremium)
         );
 
@@ -114,19 +113,20 @@ export function useHlsPlayer({
                     enableWorker: true,
                     lowLatencyMode: false,
 
-                    // 高性能自适应缓冲水位体系：移动端与 iPad 采用紧凑轻量级水位，杜绝 QuotaExceededError 导致的断续卡顿
-                    maxBufferLength: isMobileClient ? 30 : 90,
-                    maxMaxBufferLength: isMobileClient ? 60 : 180,
-                    maxBufferSize: isMobileClient ? 30 * 1000 * 1000 : 90 * 1000 * 1000,
+                    // 高性能自适应缓冲水位体系：彻底杜绝 Buffer Starvation（看 1 秒卡 1 秒）
+                    // 桌面端 120s 充沛深缓冲，秒杀网络抖动；移动端 60s 黄金平衡点，防爆内存且杜绝断续卡顿
+                    maxBufferLength: isMobileClient ? 60 : 120,
+                    maxMaxBufferLength: isMobileClient ? 120 : 240,
+                    maxBufferSize: isMobileClient ? 60 * 1000 * 1000 : 120 * 1000 * 1000,
                     maxBufferHole: 0.8,
 
                     // 启动阶段激进预拉取，保障秒播与连续播放丝滑
                     startFragPrefetch: true,
-                    maxStarvationDelay: isMobileClient ? 2 : 4,
+                    maxStarvationDelay: isMobileClient ? 3 : 5,
 
-                    // 针对 Seek 关键帧停滞的智能微调救活机制（平滑微调 0.05s，无感过渡杜绝黑闪）
+                    // 针对 Seek 关键帧停滞的智能微调救活机制（平滑微调 0.05s，无感过渡杜绝黑闪，严控重试次数防死循环）
                     nudgeOffset: 0.05,
-                    nudgeMaxRetry: 5,
+                    nudgeMaxRetry: 3,
                     maxFragLookUpTolerance: 0.3,
 
                     // ABR Settings
@@ -141,21 +141,21 @@ export function useHlsPlayer({
                     // Loading Settings: 增强切片重试和容错，支持超清原画高码率跨国传输
                     fragLoadingMaxRetry: 8,
                     fragLoadingRetryDelay: 1000,
-                    fragLoadingMaxRetryTimeout: 45000,
+                    fragLoadingMaxRetryTimeout: 60000,
                     manifestLoadingMaxRetry: 8,
                     manifestLoadingRetryDelay: 1000,
-                    manifestLoadingMaxRetryTimeout: 45000,
+                    manifestLoadingMaxRetryTimeout: 60000,
                     levelLoadingMaxRetry: 8,
                     levelLoadingRetryDelay: 1000,
-                    levelLoadingMaxRetryTimeout: 45000,
+                    levelLoadingMaxRetryTimeout: 60000,
 
                     // Timeouts: 超清原画首个大切片加载需宽裕时间，避免过早超时触发切源
-                    fragLoadingTimeOut: 20000,
-                    manifestLoadingTimeOut: 15000,
-                    levelLoadingTimeOut: 15000,
+                    fragLoadingTimeOut: 30000,
+                    manifestLoadingTimeOut: 20000,
+                    levelLoadingTimeOut: 20000,
 
-                    // Backbuffer: 移动端即播即清（10 秒），防止内存持续堆积压垮浏览器
-                    backBufferLength: isMobileClient ? 10 : 30,
+                    // Backbuffer: 桌面端 60 秒、移动端 25 秒，避免高频触发 SourceBuffer.remove() 异步清理锁竞争
+                    backBufferLength: isMobileClient ? 25 : 60,
 
                     // 深度隐私伪装与请求头净化：遵循 no-referrer 规范，与原生 TV 盒子客户端流量特征对齐
                     xhrSetup: (xhr: XMLHttpRequest, url: string) => {

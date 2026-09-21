@@ -9,7 +9,7 @@ import { PlayerError } from '@/components/player/PlayerError';
 import { ClassicNoSourceState } from '@/components/player/ClassicNoSourceState';
 import type { VideoSource } from '@/lib/types';
 import { useVideoPlayer } from '@/lib/hooks/useVideoPlayer';
-import { useHistory } from '@/lib/store/history-store';
+import { useHistoryStore } from '@/lib/store/history-store';
 import { FavoritesSidebar } from '@/components/favorites/FavoritesSidebar';
 import { FavoriteButton } from '@/components/favorites/FavoriteButton';
 import { ShareButton } from '@/components/player/ShareButton';
@@ -84,7 +84,7 @@ function isSeriesTypeName(typeName: string): boolean {
 export function IkanPPPlayerContainer() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { addToHistory } = useHistory(false);
+  const addToHistory = useHistoryStore((s) => s.addToHistory);
 
   const rawVideoId = searchParams.get('id');
   const rawSource = searchParams.get('source');
@@ -864,6 +864,12 @@ export function IkanPPPlayerContainer() {
     }
   }, [videoData, currentEpisode, handleEpisodeClick]);
 
+  const handleSelectEpisodeInPlayer = useCallback((idx: number) => {
+    if (videoData?.episodes?.[idx]) {
+      handleEpisodeClick(videoData.episodes[idx], idx);
+    }
+  }, [videoData?.episodes, handleEpisodeClick]);
+
   const handleSourceChange = useCallback((newSource: { id: string | number; source: string }) => {
     const params = new URLSearchParams();
     params.set('id', String(newSource.id));
@@ -1086,11 +1092,7 @@ export function IkanPPPlayerContainer() {
               connectingMessage={connectingMessage}
               isLoadingSource={isConnecting}
               episodes={videoData?.episodes || []}
-              onSelectEpisode={(idx) => {
-                if (videoData?.episodes?.[idx]) {
-                  handleEpisodeClick(videoData.episodes[idx], idx);
-                }
-              }}
+              onSelectEpisode={handleSelectEpisodeInPlayer}
               sources={groupedSources}
               currentSource={currentSourceId || source || ''}
               onSelectSource={handleSourceChange}
@@ -1121,11 +1123,7 @@ export function IkanPPPlayerContainer() {
                 connectingMessage={connectingMessage}
                 isLoadingSource={isConnecting}
                 episodes={videoData?.episodes || []}
-                onSelectEpisode={(idx) => {
-                  if (videoData?.episodes?.[idx]) {
-                    handleEpisodeClick(videoData.episodes[idx], idx);
-                  }
-                }}
+                onSelectEpisode={handleSelectEpisodeInPlayer}
                 sources={groupedSources}
                 currentSource={currentSourceId || source || ''}
                 onSelectSource={handleSourceChange}

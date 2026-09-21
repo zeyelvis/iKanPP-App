@@ -227,11 +227,96 @@ if (fs.existsSync(vpCssPath)) {
   );
 }
 
+// 11. 播放器防周期性卡顿与高吞吐深缓冲水位绝对门禁 (Anti-Periodic Stalling & High-Throughput Buffering Spec)
+const hlsHookPath = path.resolve('components/player/hooks/useHlsPlayer.ts');
+if (fs.existsSync(hlsHookPath)) {
+  const hlsContent = fs.readFileSync(hlsHookPath, 'utf-8');
+  assert(
+    hlsContent.includes('checkIsIPadOS'),
+    'useHlsPlayer.ts 必须引入并使用 checkIsIPadOS 精准识别 iPad 与 MacBook，严禁单凭 maxTouchPoints > 1 误判导致 Mac 桌面端被降级为移动端极小缓冲区'
+  );
+  assert(
+    hlsContent.includes('maxBufferLength: isMobileClient ? 60 : 120') ||
+    hlsContent.includes('maxBufferLength: 120'),
+    'useHlsPlayer.ts 桌面端前向缓冲水位 maxBufferLength 必须 >= 120 秒，严禁擅自下调导致高码率片源播放中途水库干涸饥饿卡顿'
+  );
+  assert(
+    hlsContent.includes('maxMaxBufferLength: isMobileClient ? 120 : 240') ||
+    hlsContent.includes('maxMaxBufferLength: 240'),
+    'useHlsPlayer.ts 桌面端最大前向缓冲水位 maxMaxBufferLength 必须 >= 240 秒'
+  );
+  assert(
+    hlsContent.includes('120 * 1000 * 1000'),
+    'useHlsPlayer.ts 桌面端最大缓冲区内存容量 maxBufferSize 必须 >= 120MB (120 * 1000 * 1000)'
+  );
+  assert(
+    hlsContent.includes('backBufferLength: isMobileClient ? 25 : 60') ||
+    hlsContent.includes('backBufferLength: 60'),
+    'useHlsPlayer.ts 桌面端后向回退缓冲区 backBufferLength 必须 >= 60 秒，严禁设为 10~30 秒导致频繁触发 SourceBuffer.remove() 解码管线更新锁冲突与卡顿'
+  );
+  assert(
+    hlsContent.includes('fragLoadingTimeOut: 30000'),
+    'useHlsPlayer.ts 切片加载超时 fragLoadingTimeOut 必须保持 30000ms 宽裕水位，防止长肥管道瞬时抖动误判死链'
+  );
+}
+
+// 11b. 播放器父级容器严禁无 selector 全量订阅历史 Store (消除 5 秒级联 Re-render 风暴)
+const ppContainerPath = path.resolve('components/player/containers/IkanPPPlayerContainer.tsx');
+if (fs.existsSync(ppContainerPath)) {
+  const ppContent = fs.readFileSync(ppContainerPath, 'utf-8');
+  assert(
+    !ppContent.includes('useHistory(') && ppContent.includes('useHistoryStore((s) => s.addToHistory)'),
+    'IkanPPPlayerContainer 严禁直接使用无 selector 的 useHistory() 订阅，必须使用 useHistoryStore((s) => s.addToHistory)，杜绝每 5 秒保存播放进度时引发 1400 行容器全量级联重渲染'
+  );
+  assert(
+    ppContent.includes('handleSelectEpisodeInPlayer'),
+    'IkanPPPlayerContainer 必须通过 useCallback 记忆化 handleSelectEpisodeInPlayer，严禁给 VideoPlayer 传递内联箭头函数'
+  );
+}
+
+const xContainerPath = path.resolve('components/player/containers/IkanXPlayerContainer.tsx');
+if (fs.existsSync(xContainerPath)) {
+  const xContent = fs.readFileSync(xContainerPath, 'utf-8');
+  assert(
+    !xContent.includes('useHistory(') && xContent.includes('usePremiumHistoryStore((s) => s.addToHistory)'),
+    'IkanXPlayerContainer 严禁直接使用无 selector 的 useHistory() 订阅，必须使用 usePremiumHistoryStore((s) => s.addToHistory)'
+  );
+}
+
+// 11c. 播放器核心组件必须使用 React.memo 物理阻断外部渲染波及
+const videoPlayerPath = path.resolve('components/player/VideoPlayer.tsx');
+if (fs.existsSync(videoPlayerPath)) {
+  const vpContent = fs.readFileSync(videoPlayerPath, 'utf-8');
+  assert(
+    vpContent.includes('export const VideoPlayer = React.memo('),
+    'VideoPlayer.tsx 必须使用 React.memo 包裹，阻断父级容器的渲染扩散'
+  );
+}
+
+const desktopPlayerPath = path.resolve('components/player/DesktopVideoPlayer.tsx');
+if (fs.existsSync(desktopPlayerPath)) {
+  const dpContent = fs.readFileSync(desktopPlayerPath, 'utf-8');
+  assert(
+    dpContent.includes('export const DesktopVideoPlayer = React.memo('),
+    'DesktopVideoPlayer.tsx 必须使用 React.memo 包裹，阻断重绘风暴'
+  );
+}
+
+const customPlayerPath = path.resolve('components/player/CustomVideoPlayer.tsx');
+if (fs.existsSync(customPlayerPath)) {
+  const cpContent = fs.readFileSync(customPlayerPath, 'utf-8');
+  assert(
+    cpContent.includes('export const CustomVideoPlayer = React.memo('),
+    'CustomVideoPlayer.tsx 必须使用 React.memo 包裹'
+  );
+}
+
 console.log('\n====================================================');
 if (failed) {
   console.error('🚨 架构契约巡检失败！存在破坏全局稳定性的违规回退，请根据上述报错整改后再行提交！');
   process.exit(1);
 } else {
-  console.log('🎉 恭喜！全站架构契约、单一真理源、全屏防黑屏、正片纯净度与流水线韧性 100% 严格达标！');
+  console.log('🎉 恭喜！全站架构契约、单一真理源、全屏防黑屏、播放器防周期性卡顿、正片纯净度与流水线韧性 100% 严格达标！');
   console.log('====================================================\n');
 }
+

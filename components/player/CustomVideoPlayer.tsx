@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { DesktopVideoPlayer } from './DesktopVideoPlayer';
 
 
@@ -35,6 +36,7 @@ interface CustomVideoPlayerProps {
  * - Mobile/Tablet: Optimized touch controls, double-tap gestures, orientation lock
  * - Desktop: Full-featured player with hover interactions
  */
-export function CustomVideoPlayer(props: CustomVideoPlayerProps) {
+export const CustomVideoPlayer = React.memo(function CustomVideoPlayer(props: CustomVideoPlayerProps) {
   return <DesktopVideoPlayer {...props} />;
-}
+});
+

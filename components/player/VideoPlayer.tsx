@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useHistoryStore, usePremiumHistoryStore } from '@/lib/store/history-store';
 import { CustomVideoPlayer } from './CustomVideoPlayer';
@@ -40,7 +40,7 @@ interface VideoPlayerProps {
   onSelectSource?: (source: import('./desktop/InPlayerSourceDrawer').SourceItem) => void;
 }
 
-export function VideoPlayer({
+export const VideoPlayer = React.memo(function VideoPlayer({
   playUrl,
   videoId,
   currentEpisode,
@@ -292,4 +292,4 @@ export function VideoPlayer({
       )}
     </div>
   );
-}
+});

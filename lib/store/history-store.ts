@@ -235,10 +235,26 @@ export const useHistoryStore = createHistoryStore(profiledKey('kvideo-history-st
 export const usePremiumHistoryStore = createHistoryStore(profiledKey('kvideo-premium-history-store'));
 
 /**
- * Helper hook to get the appropriate history store
+ * Helper hook to get the appropriate history store.
+ *
+ * ⚠️ 架构铁律警告：
+ * 严禁在播放器容器（IkanPPPlayerContainer / IkanXPlayerContainer）等高频渲染组件中
+ * 不传 selector 直接解构使用（如 const { addToHistory } = useHistory()）！
+ * 否则每 5 秒保存播放进度更新 viewingHistory 时，会强制触发整个父容器及其子树全量级联重渲染，
+ * 引发音视频 MSE 解码管线掉帧与周期性卡顿！
+ * 播放器容器必须直接使用：
+ * - 主站: useHistoryStore((s) => s.addToHistory)
+ * - 午夜: usePremiumHistoryStore((s) => s.addToHistory)
  */
-export function useHistory(isPremium = false) {
-  const normalStore = useHistoryStore();
-  const premiumStore = usePremiumHistoryStore();
-  return isPremium ? premiumStore : normalStore;
+export function useHistory(isPremium?: boolean): HistoryStore;
+export function useHistory<T>(selector: (state: HistoryStore) => T, isPremium?: boolean): T;
+export function useHistory<T = HistoryStore>(
+  arg1?: boolean | ((state: HistoryStore) => T),
+  arg2: boolean = false
+): T | HistoryStore {
+  const isPremium = typeof arg1 === 'boolean' ? arg1 : arg2;
+  const selector = typeof arg1 === 'function' ? arg1 : ((s: HistoryStore) => s as unknown as T);
+  const store = isPremium ? usePremiumHistoryStore : useHistoryStore;
+  return store(selector);
 }
+
