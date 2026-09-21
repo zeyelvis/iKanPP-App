@@ -51,7 +51,7 @@ export const FloatingMiniPlayer = React.memo(function FloatingMiniPlayer({
 
   return (
     <div className="fixed bottom-6 right-6 z-50 animate-slideUp">
-      <div className="flex items-center gap-3.5 px-4 py-3 rounded-2xl bg-[#141416]/95 border border-white/20 shadow-[0_12px_40px_rgba(0,0,0,0.8)] text-white select-none backdrop-blur-md transition-all hover:scale-102">
+      <div className="flex items-center gap-3.5 px-4 py-3 rounded-2xl bg-[#141416]/95 border border-white/20 shadow-[0_12px_40px_rgba(0,0,0,0.8)] text-white select-none transition-all hover:scale-102">
         {/* 呼吸脉冲指示标 */}
         <div className="relative flex items-center justify-center shrink-0">
           <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />

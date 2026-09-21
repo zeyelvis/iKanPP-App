@@ -161,6 +161,18 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
     adKeywordsRef.current = adKeywords;
   }, [adKeywords]);
 
+  // 稳定引用持久化：阻断搜源及父容器微更新导致的播放器频繁销毁与重置
+  const sourcesRef = useRef(sources);
+  sourcesRef.current = sources;
+  const currentSourceRef = useRef(currentSource);
+  currentSourceRef.current = currentSource;
+  const onSelectSourceRef = useRef(onSelectSource);
+  onSelectSourceRef.current = onSelectSource;
+  const episodesRef = useRef(episodes);
+  episodesRef.current = episodes;
+  const onSelectEpisodeRef = useRef(onSelectEpisode);
+  onSelectEpisodeRef.current = onSelectEpisode;
+
   // 记录上次保存时间，防抖 5 秒保存
   const lastSaveTimeRef = useRef<number>(0);
 
@@ -251,7 +263,20 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         initialTimeRef.current = 0; // 首次启动后清零
-        attemptAutoPlay(art);
+
+        // 确保首帧关键帧数据装填就绪后再调用 play()，杜绝 Chromium AbortError 与音画不同步
+        const startPlayback = () => {
+          attemptAutoPlay(art);
+        };
+
+        if (video.readyState >= 2) {
+          startPlayback();
+        } else {
+          video.addEventListener('canplay', startPlayback, { once: true });
+          setTimeout(() => {
+            if (video.paused) startPlayback();
+          }, 600);
+        }
 
         // 自动跳过片头联动 (首播开局自动快进至正片)
         if (autoSkipIntro && (!initialTime || initialTime < 5)) {
@@ -261,7 +286,7 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
               art.currentTime = skipSec;
               art.notice.show = `已自动跳过片头 ${skipSec} 秒 ⏩`;
             }
-          }, 350);
+          }, 500);
         }
       });
 
@@ -381,33 +406,29 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // 自定义控制栏按钮
-    const customControls: any[] = [];
-
-    if (episodes && episodes.length > 1 && onSelectEpisode) {
-      customControls.push({
+    // 自定义控制栏按钮 (常驻注册，由独立 useEffect 动态控制显隐，杜绝反复销毁重建播放器)
+    const customControls: any[] = [
+      {
         name: 'episodes-drawer-btn',
         position: 'right',
-        html: '<span class="art-custom-btn" style="font-size:12px;font-weight:700;display:flex;align-items:center;gap:4px;cursor:pointer;padding:0 8px;height:100%;color:#fff;">选集</span>',
+        html: '<span id="art-episodes-btn" class="art-custom-btn" style="font-size:12px;font-weight:700;display:none;align-items:center;gap:4px;cursor:pointer;padding:0 8px;height:100%;color:#fff;">选集</span>',
         tooltip: '选择集数 (E)',
         click: function () {
           setIsEpisodesDrawerOpen((prev) => !prev);
           setIsSourceDrawerOpen(false);
         },
-      });
-    }
-    if (sources && sources.length > 1 && onSelectSource) {
-      customControls.push({
+      },
+      {
         name: 'sources-drawer-btn',
         position: 'right',
-        html: '<span class="art-custom-btn" style="font-size:12px;font-weight:700;display:flex;align-items:center;gap:4px;cursor:pointer;padding:0 8px;height:100%;color:#fff;">线路</span>',
+        html: '<span id="art-sources-btn" class="art-custom-btn" style="font-size:12px;font-weight:700;display:none;align-items:center;gap:4px;cursor:pointer;padding:0 8px;height:100%;color:#fff;">线路</span>',
         tooltip: '切换专线源站 (S)',
         click: function () {
           setIsSourceDrawerOpen((prev) => !prev);
           setIsEpisodesDrawerOpen(false);
         },
-      });
-    }
+      },
+    ];
 
     // 插件列表
     const plugins: any[] = [];
@@ -429,7 +450,7 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
       autoplay: false, // 统一由 Hls.Events.MANIFEST_PARSED 安全拉起，杜绝挂起与并发冲突
       pip: true,
       autoSize: false,
-      autoMini: true,
+      autoMini: false, // 禁用自带小窗，由外部 React FloatingMiniPlayer 权威接管，杜绝双小窗冲突
       screenshot: true,
       setting: true,
       loop: false,
@@ -442,10 +463,10 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
       mutex: true,
       backdrop: true,
       playsInline: true,
-      autoPlayback: true,
+      autoPlayback: false, // 禁用自带进度恢复，由 Hls.js startPosition 和历史 store 统一权威调度
       airplay: true,
       lock: true,
-      fastForward: true,
+      fastForward: false, // 禁用自带长按倍速，由我们自定义的三等分区和物理沙盒手势接管
       autoOrientation: true,
       moreVideoAttr: {
         playsInline: true,
@@ -634,9 +655,9 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
           art.template.$loading.style.display = 'flex';
         }
         // 连续缓冲超过 3.5 秒，自动探知备选健康源
-        if (sources && sources.length > 1 && onSelectSource) {
+        if (sourcesRef.current && sourcesRef.current.length > 1 && onSelectSourceRef.current) {
           stallTimeout = setTimeout(() => {
-            const candidate = sources.find((s) => s.source !== currentSource);
+            const candidate = sourcesRef.current.find((s) => s.source !== currentSourceRef.current);
             if (candidate) {
               setStallCandidate(candidate);
             }
@@ -758,21 +779,24 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
     // 用户与播放器产生任何交互时，若处于静音自愈状态，尝试自动恢复声音
     art.on('click', handleRestoreSound);
 
-    // 清理实例 (严格彻底物理销毁，杜绝幽灵 video 留在后台播声音)
+    // 清理实例 (严格时序物理销毁：先断流解绑 HLS，再彻底静默 video，杜绝幽灵音轨留在后台偷跑)
     return () => {
       if (artRef.current) {
         try {
           const artInstance = artRef.current;
-          if (artInstance.video) {
-            artInstance.video.pause();
-            artInstance.video.removeAttribute('src');
-            artInstance.video.load();
-          }
           if ((artInstance as any).hls) {
             try {
+              (artInstance as any).hls.stopLoad();
+              (artInstance as any).hls.detachMedia();
               (artInstance as any).hls.destroy();
             } catch (e) {}
             (artInstance as any).hls = null;
+          }
+          if (artInstance.video) {
+            artInstance.video.pause();
+            artInstance.video.muted = true;
+            artInstance.video.removeAttribute('src');
+            artInstance.video.load();
           }
           artInstance.destroy(true); // 传入 true，彻底抹除 DOM 元素！
         } catch (err) {
@@ -781,7 +805,19 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
         artRef.current = null;
       }
     };
-  }, [playM3u8, isPremium, seekStepSeconds, sources, currentSource, onSelectSource]);
+  }, [playM3u8, isPremium, seekStepSeconds]);
+
+  // 选集与线路按钮显隐轻量级响应 (0ms 局部更新，严禁重新初始化 Artplayer)
+  useEffect(() => {
+    const epBtn = document.getElementById('art-episodes-btn');
+    if (epBtn) {
+      epBtn.style.display = (episodes && episodes.length > 1 && onSelectEpisode) ? 'flex' : 'none';
+    }
+    const srcBtn = document.getElementById('art-sources-btn');
+    if (srcBtn) {
+      srcBtn.style.display = (sources && sources.length > 1 && onSelectSource) ? 'flex' : 'none';
+    }
+  }, [episodes, sources, onSelectEpisode, onSelectSource]);
 
   return (
     <div className="relative w-full h-full aspect-video bg-black rounded-none sm:rounded-2xl overflow-hidden group">

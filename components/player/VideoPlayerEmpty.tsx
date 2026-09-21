@@ -26,7 +26,7 @@ export function VideoPlayerEmpty({ videoTitle, isPremium }: VideoPlayerEmptyProp
 
   return (
     <Card hover={false} className="p-0 overflow-hidden">
-      <div className="aspect-video bg-[var(--glass-bg)] backdrop-blur-[25px] saturate-[180%] rounded-[var(--radius-2xl)] flex items-center justify-center border border-[var(--glass-border)]">
+      <div className="aspect-video bg-[#141416]/95 rounded-[var(--radius-2xl)] flex items-center justify-center border border-white/10">
         <div className="text-center text-[var(--text-secondary)] px-4">
           <Icons.TV size={56} className="text-[var(--text-color-secondary)] mx-auto mb-3 opacity-60" />
           <p className="text-base font-medium text-white/80 mb-2">当前线路暂无有效播放流</p>

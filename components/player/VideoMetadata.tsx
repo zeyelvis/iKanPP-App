@@ -59,7 +59,7 @@ export function VideoMetadata({ videoData, source, title }: VideoMetadataProps) 
           </h1>
           <div className="flex flex-wrap gap-2 mb-4">
             {source && (
-              <Badge variant="primary" className="backdrop-blur-md">
+              <Badge variant="primary">
                 <Icons.Check size={14} className="mr-1" />
                 {getSourceName(source)}
               </Badge>

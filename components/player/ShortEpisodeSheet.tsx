@@ -54,7 +54,7 @@ export function ShortEpisodeSheet({
 
   return (
     <div
-      className="player-control-interactive fixed inset-0 z-[70] flex flex-col justify-end bg-black/75 backdrop-blur-md transition-all duration-300 animate-fadeIn select-none"
+      className="player-control-interactive fixed inset-0 z-[70] flex flex-col justify-end bg-black/85 transition-all duration-300 animate-fadeIn select-none"
       onTouchStart={(e) => e.stopPropagation()}
       onTouchMove={(e) => e.stopPropagation()}
       onTouchEnd={(e) => e.stopPropagation()}

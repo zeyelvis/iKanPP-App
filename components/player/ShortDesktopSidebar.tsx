@@ -60,7 +60,7 @@ export function ShortDesktopSidebar({
         <button
           onClick={onToggleOpen}
           title="展开选集列表"
-          className="p-3 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/10 text-white shadow-2xl transition-all cursor-pointer group flex flex-col items-center gap-2"
+          className="p-3 rounded-2xl bg-[#141416]/95 hover:bg-[#1e1e24] border border-white/15 text-white shadow-2xl transition-all cursor-pointer group flex flex-col items-center gap-2"
         >
           <Icons.ChevronLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
           <span className="text-[11px] font-black tracking-widest [writing-mode:vertical-rl]">
@@ -75,7 +75,7 @@ export function ShortDesktopSidebar({
   }
 
   return (
-    <aside className="hidden lg:flex flex-col w-[360px] xl:w-[390px] h-[92vh] max-h-[880px] ml-4 bg-[#12121A]/95 backdrop-blur-2xl border border-white/10 rounded-3xl p-5 shadow-2xl z-30 transition-all duration-300 select-none">
+    <aside className="hidden lg:flex flex-col w-[360px] xl:w-[390px] h-[92vh] max-h-[880px] ml-4 bg-[#12121A]/98 border border-white/10 rounded-3xl p-5 shadow-2xl z-30 transition-all duration-300 select-none">
       {/* 头部剧集信息与收起按钮 */}
       <div className="flex items-start justify-between gap-3 pb-4 border-b border-white/10">
         <div className="flex items-center gap-3 min-w-0">

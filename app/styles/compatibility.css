@@ -64,6 +64,13 @@
     -webkit-backdrop-filter: inherit;
 }
 
+/* 播放器全域物理硬锁：彻底禁止任何 backdrop-filter 注入，杜绝显卡回读死锁 */
+.kvideo-container,
+.kvideo-container * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
 /* ====================================================
    全屏安全防线：强制覆盖上述兼容性注入，彻底杜绝全屏时
    backdrop-filter 触发显卡 Back-buffer 回读导致的视频黑屏。

@@ -1160,7 +1160,7 @@ export function IkanPPPlayerContainer() {
         {/* Netflix 级影院信息控制台 */}
         <div className="mt-8 space-y-6">
           {/* 标题、品质认证徽章与控制按钮行 */}
-          <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="p-6 rounded-2xl bg-[#16161A]/90 border border-white/10 shadow-xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div className="space-y-2.5">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
@@ -1266,7 +1266,7 @@ export function IkanPPPlayerContainer() {
 
           {/* 巨幕模式下的选集面板 */}
           {isCinemaMode && videoData?.episodes && videoData.episodes.length > 1 && (
-            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
+            <div className="p-6 rounded-2xl bg-[#16161A]/90 border border-white/10">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Layers size={18} className="text-red-500" />
@@ -1303,7 +1303,7 @@ export function IkanPPPlayerContainer() {
 
           {/* 演职员圆形肖像滑轨 */}
           {(directorsList.length > 0 || actorsList.length > 0) && (
-            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl space-y-4">
+            <div className="p-6 rounded-2xl bg-[#16161A]/90 border border-white/10 space-y-4">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <User size={18} className="text-red-500" />
                 <span>导演与主演阵容</span>
@@ -1385,7 +1385,7 @@ export function IkanPPPlayerContainer() {
 
           {/* 剧情简介 */}
           {videoData?.vod_content && (
-            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl space-y-2">
+            <div className="p-6 rounded-2xl bg-[#16161A]/90 border border-white/10 space-y-2">
               <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider">
                 故事梗概
               </h3>

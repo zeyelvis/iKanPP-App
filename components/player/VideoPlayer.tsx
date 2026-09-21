@@ -214,7 +214,7 @@ export const VideoPlayer = React.memo(function VideoPlayer({
             className="absolute -inset-3 sm:-inset-6 bg-gradient-to-r from-amber-500/20 via-orange-600/15 to-purple-600/20 rounded-3xl blur-2xl sm:blur-3xl opacity-50 transition-opacity duration-1000 -z-10 pointer-events-none"
             aria-hidden="true" 
           />
-          <div className="aspect-video w-full rounded-2xl sm:rounded-3xl bg-black/85 backdrop-blur-2xl border border-white/10 flex flex-col items-center justify-center p-6 text-center relative overflow-hidden shadow-2xl">
+          <div className="aspect-video w-full rounded-2xl sm:rounded-3xl bg-[#141416]/95 border border-white/10 flex flex-col items-center justify-center p-6 text-center relative overflow-hidden shadow-2xl">
             {/* 顶层柔和背景光纹 */}
             <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
             
@@ -251,7 +251,7 @@ export const VideoPlayer = React.memo(function VideoPlayer({
       {/* Mode Indicator Badge - controlled by settings */}
       {showModeIndicator && (
         <div className="absolute top-3 right-3 z-30">
-          <span className={`px-2 py-1 text-xs font-medium rounded-full backdrop-blur-md transition-all duration-300 ${effectiveUseProxy
+          <span className={`px-2 py-1 text-xs font-medium rounded-full shadow-md transition-all duration-300 ${effectiveUseProxy
             ? 'bg-orange-500/80 text-white'
             : 'bg-green-500/80 text-white'
             }`}>

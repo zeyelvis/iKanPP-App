@@ -95,7 +95,7 @@ export function ClassicNoSourceState({
   return (
     <div className="space-y-10 animate-fade-in">
       {/* 展台大卡片 */}
-      <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-[#0E0E17]/90 backdrop-blur-2xl p-6 sm:p-10 shadow-2xl">
+      <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-[#0E0E17]/95 p-6 sm:p-10 shadow-2xl">
         {/* 背景氛围晕染 */}
         <div className="absolute -top-32 -left-32 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
@@ -115,7 +115,7 @@ export function ClassicNoSourceState({
               </div>
             )}
             {expectedYear && (
-              <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/80 text-[11px] font-bold text-amber-400 border border-white/10 backdrop-blur-xs">
+              <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/90 text-[11px] font-bold text-amber-400 border border-white/10">
                 {expectedYear}
               </div>
             )}
