@@ -10,7 +10,7 @@ import { InPlayerSourceDrawer } from '../desktop/InPlayerSourceDrawer';
 import { NextEpisodeOverlay } from '../desktop/NextEpisodeOverlay';
 import { KeyboardShortcutsModal } from '../desktop/KeyboardShortcutsModal';
 import { InPlayerTopBar } from '../desktop/InPlayerTopBar';
-import { ChevronLeft, MessageSquare, Clock, FastForward, RotateCcw, RotateCw, Sparkles, Zap } from 'lucide-react';
+import { ChevronLeft, MessageSquare, Clock, FastForward, RotateCcw, RotateCw, Sparkles, Zap, VolumeX } from 'lucide-react';
 import { useHistoryStore, usePremiumHistoryStore } from '@/lib/store/history-store';
 import { settingsStore } from '@/lib/store/settings-store';
 import { premiumModeSettingsStore } from '@/lib/store/premium-mode-settings';
@@ -103,6 +103,7 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
   const [showSkipIntroBtn, setShowSkipIntroBtn] = useState(false);
   const [stallCandidate, setStallCandidate] = useState<SourceItem | null>(null);
   const [detectedResLabel, setDetectedResLabel] = useState<string>(resolutionLabel || '4K 超清');
+  const [isMutedAutoPlayed, setIsMutedAutoPlayed] = useState(false);
 
   // 保存进度历史专用 selector，严格杜绝全量订阅导致的 5 秒重渲染瀑布
   const addToHistory = isPremium
@@ -159,17 +160,28 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
   const attemptAutoPlay = useCallback((art: Artplayer) => {
     if (!shouldAutoPlayRef.current) return;
 
+    art.muted = false;
     const playPromise = art.play();
     if (playPromise && typeof playPromise.catch === 'function') {
       playPromise.catch((err: any) => {
         console.warn('[Artplayer] 带声自动播放被浏览器拦截，立即启动静音秒开自愈:', err);
         art.muted = true;
-        art.play().then(() => {
-          art.notice.show = '浏览器已静音自动播放，点击画面任意处恢复声音 🔊';
-        }).catch((e: any) => {
+        setIsMutedAutoPlayed(true);
+        art.play().catch((e: any) => {
           console.warn('[Artplayer] 静音自动播放亦受阻:', e);
         });
       });
+    }
+  }, []);
+
+  // 用户点击或交互时，快速解开静音恢复震撼原声
+  const handleRestoreSound = useCallback(() => {
+    if (artRef.current) {
+      artRef.current.muted = false;
+      setIsMutedAutoPlayed(false);
+      if (artRef.current.notice) {
+        artRef.current.notice.show = '';
+      }
     }
   }, []);
 
@@ -193,16 +205,18 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
         adKeywords: adKeywordsRef.current,
       });
 
+      // 历史进度起点配置：让 Hls.js 从对应切片直接拉取，避免先下 0 秒切片再被 currentTime 打断清空
+      if (initialTimeRef.current && initialTimeRef.current > 0) {
+        config.startPosition = initialTimeRef.current;
+      }
+
       const hls = new Hls(config);
       hls.loadSource(url);
       hls.attachMedia(video);
       (art as any).hls = hls;
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        if (initialTimeRef.current && initialTimeRef.current > 0) {
-          video.currentTime = initialTimeRef.current;
-          initialTimeRef.current = 0; // 首次命中后清零，杜绝后续切流误跳
-        }
+        initialTimeRef.current = 0; // 首次启动后清零
         attemptAutoPlay(art);
       });
 
@@ -212,14 +226,31 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
         }
       });
 
+      // 工业级双阶错误自愈体系（网络重拉 + 媒体解码管线重建 + 最终切源）
       hls.on(Hls.Events.ERROR, (_event, data) => {
         if (data.fatal) {
-          console.warn('[Artplayer HLS] 遇到致命网络/解码错误:', data.type, data.details);
-          if (onPlaybackErrorRef.current) {
-            const shouldRetry = onPlaybackErrorRef.current(data.details || 'HLS Fatal Error');
-            if (shouldRetry === false) {
-              art.notice.show = '播放失败，正在自动切源中...';
-            }
+          console.warn('[Artplayer HLS] 遇到致命错误:', data.type, data.details);
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              console.warn('[Artplayer HLS] 触发网络级自愈重载...');
+              hls.startLoad();
+              break;
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              console.warn('[Artplayer HLS] 触发媒体解码管线自愈 recoverMediaError...');
+              hls.recoverMediaError();
+              break;
+            default:
+              console.warn('[Artplayer HLS] 无法自愈的致命故障，通知切源:', data.details);
+              try {
+                hls.destroy();
+              } catch (e) {}
+              if (onPlaybackErrorRef.current) {
+                const handled = onPlaybackErrorRef.current(data.details || 'HLS Fatal Error');
+                if (handled !== false) {
+                  art.notice.show = '播放失败，正在自动切源中...';
+                }
+              }
+              break;
           }
         }
       });
@@ -343,7 +374,7 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
       volume: 0.8,
       isLive: false,
       muted: false,
-      autoplay: shouldAutoPlay,
+      autoplay: false, // 统一由 Hls.Events.MANIFEST_PARSED 安全拉起，杜绝挂起与并发冲突
       pip: true,
       autoSize: false,
       autoMini: true,
@@ -627,12 +658,6 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
     });
 
     // 用户与播放器产生任何交互时，若处于静音自愈状态，尝试自动恢复声音
-    const handleRestoreSound = () => {
-      if (art && art.muted) {
-        art.muted = false;
-        art.notice.show = '';
-      }
-    };
     art.on('click', handleRestoreSound);
 
     // 清理实例 (严格彻底物理销毁，杜绝幽灵 video 留在后台播声音)
@@ -660,36 +685,6 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
     };
   }, [playM3u8, isPremium, seekStepSeconds, sources, currentSource, onSelectSource]);
 
-  // 当 playUrl 变动时，平滑切流而非销毁播放器实例
-  useEffect(() => {
-    if (artRef.current && playUrl) {
-      if (artRef.current.url !== playUrl) {
-        if ((artRef.current as any).hls) {
-          try {
-            (artRef.current as any).hls.destroy();
-          } catch (e) {}
-          (artRef.current as any).hls = null;
-        }
-        artRef.current
-          .switchUrl(playUrl)
-          .then(() => {
-            if (artRef.current) {
-              attemptAutoPlay(artRef.current);
-            }
-          })
-          .catch((err) => {
-            console.warn('[Artplayer] switchUrl 异常，降级重试播放:', err);
-            artRef.current?.play().catch(() => {
-              if (artRef.current) {
-                artRef.current.muted = true;
-                artRef.current.play().catch(() => {});
-              }
-            });
-          });
-      }
-    }
-  }, [playUrl, attemptAutoPlay]);
-
   return (
     <div className="relative w-full h-full aspect-video bg-black rounded-none sm:rounded-2xl overflow-hidden group">
       {/* Artplayer 挂载根容器 */}
@@ -710,6 +705,20 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
               rating={rating}
               resolutionLabel={detectedResLabel}
             />
+
+            {/* 1.5 浏览器静音自动播放友好恢复胶囊 */}
+            {isMutedAutoPlayed && (
+              <div className="absolute top-20 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+                <button
+                  type="button"
+                  onClick={handleRestoreSound}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-xs sm:text-sm shadow-[0_8px_32px_rgba(229,9,20,0.6)] animate-bounce cursor-pointer border border-white/30 transition-transform active:scale-95 select-none"
+                >
+                  <VolumeX size={16} className="shrink-0" />
+                  <span>浏览器已静音播放，点击恢复声音 🔊</span>
+                </button>
+              </div>
+            )}
 
             {/* 2. 长按 2.0X 极速快进 HUD 呼吸指示气泡 */}
             {isFastForwarding && (

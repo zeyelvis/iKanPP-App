@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useHistoryStore, usePremiumHistoryStore } from '@/lib/store/history-store';
-import { CustomVideoPlayer } from './CustomVideoPlayer';
 import { ArtVideoPlayer } from './artplayer/ArtVideoPlayer';
 import { VideoPlayerError } from './VideoPlayerError';
 import { VideoPlayerEmpty } from './VideoPlayerEmpty';
@@ -271,7 +270,7 @@ export const VideoPlayer = React.memo(function VideoPlayer({
         />
       ) : (
         <ArtVideoPlayer
-          key={`${effectiveUseProxy ? 'proxy' : 'direct'}-${retryCount}`} // 保持播放器实例稳定，换源换集由 switchUrl 平滑处理，仅在代理模式切换或手动重试时重建
+          key={`${effectiveUseProxy ? 'proxy' : 'direct'}-${finalPlayUrl}-${retryCount}`} // 物理级彻底隔绝切源/切集状态污染，0内存泄露0残影
           playUrl={finalPlayUrl}
           videoId={videoId}
           currentEpisode={currentEpisode}
