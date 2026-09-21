@@ -311,6 +311,22 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
   "tv": [
     {
       "id": "pb_cat_tv_1",
+      "title": "天赐娘子·小镖师",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/c375be6b5cae946ef86524a792993b9f.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "喜剧",
+        "爱情",
+        "古装",
+        "内地剧"
+      ],
+      "remarks": "第24集已完结",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_tv_2",
       "title": "请记住我的名字",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/893c9483e4e4645d8dd91342c128cdbe.jpg",
@@ -325,7 +341,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_2",
+      "id": "pb_cat_tv_3",
       "title": "兰香如故",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/ea1f901d18c2ec1083053ba1e243c737.jpg",
@@ -341,7 +357,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_3",
+      "id": "pb_cat_tv_4",
       "title": "交锋",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/c2eff6732858311bcb38f406692da90f.jpg",
@@ -355,7 +371,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_4",
+      "id": "pb_cat_tv_5",
       "title": "无间道3",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/95bd44ba2753b364af4bbf0775854a38.jpg",
@@ -371,7 +387,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_5",
+      "id": "pb_cat_tv_6",
       "title": "无间道",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/d68832575869ce6bfe3c9ea485d338a9.jpg",
@@ -387,7 +403,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_6",
+      "id": "pb_cat_tv_7",
       "title": "别了，温哥华",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/8c4ea07ab65173712a9b927b7717bc6e.jpg",
@@ -403,7 +419,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_7",
+      "id": "pb_cat_tv_8",
       "title": "无间道第二季",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/a7efee65c6b77c9a43e7aa59587f6c7e.jpg",
@@ -419,7 +435,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_8",
+      "id": "pb_cat_tv_9",
       "title": "无间道2",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/a7efee65c6b77c9a43e7aa59587f6c7e.jpg",
@@ -435,7 +451,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_9",
+      "id": "pb_cat_tv_10",
       "title": "一瓯春",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/fab55811525be3d6e53a950bf168117b.jpg",
@@ -450,7 +466,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_10",
+      "id": "pb_cat_tv_11",
       "title": "济公之降龙除妖",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/dd483b9b4964c66303908e32bce43481.jpg",
@@ -466,7 +482,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_11",
+      "id": "pb_cat_tv_12",
       "title": "车轮下的真相",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/9919ff0c70f967d2c04de979d880d48a.jpg",
@@ -482,7 +498,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_12",
+      "id": "pb_cat_tv_13",
       "title": "云雀叫天录",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/238cded6b2966171e52be1ee183fb684.jpg",
@@ -497,7 +513,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_13",
+      "id": "pb_cat_tv_14",
       "title": "荣耀的阶梯",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/ce6f2a8a3aac3138c6804a6b2af0c58b.jpg",
@@ -512,7 +528,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_14",
+      "id": "pb_cat_tv_15",
       "title": "为爱正名",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/1f0815a80baee53ee652513578406913.jpg",
@@ -527,7 +543,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_15",
+      "id": "pb_cat_tv_16",
       "title": "异世界",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/b97fffc285f450059fa7838ca653ff23.jpg",
@@ -542,7 +558,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_16",
+      "id": "pb_cat_tv_17",
       "title": "熔城",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/2f49a8356e755a4c57432fdac4a3030b.jpg",
@@ -557,7 +573,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_17",
+      "id": "pb_cat_tv_18",
       "title": "妾本草芥",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/e2f522f1c68c7336f56bb2f9524df188.jpg",
@@ -571,7 +587,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_18",
+      "id": "pb_cat_tv_19",
       "title": "行镖",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/047f25ce6a0ad2031887e573c86a5b1a.jpg",
@@ -586,7 +602,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_19",
+      "id": "pb_cat_tv_20",
       "title": "独剑九天",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/f8dca9e824c5476762c6acf77aaaecec.jpg",
@@ -599,28 +615,51 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       ],
       "remarks": "第27集已完结",
       "is_new": true
-    },
-    {
-      "id": "pb_cat_tv_20",
-      "title": "暗恋小说家",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/7319e4d38d55ca798c701cc00f0d480c.jpg",
-      "year": "2026",
-      "types": [
-        "大陆剧",
-        "微短剧",
-        "爱情",
-        "穿越",
-        "青春",
-        "内地剧"
-      ],
-      "remarks": "第7集",
-      "is_new": true
     }
   ],
   "anime": [
     {
       "id": "pb_cat_anime_1",
+      "title": "稀有祖宗",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/c6e015b9e45c233d448f493abcb06597.jpg",
+      "year": "2026",
+      "types": [
+        "中国动漫",
+        "原创动画",
+        "国漫",
+        "都市奇幻"
+      ],
+      "remarks": "第124集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_anime_2",
+      "title": "最强仙尊陈北玄 第四季·动态漫",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/9ea94aee3e419f6c26dcb261e6362433.jpg",
+      "year": "2024",
+      "types": [
+        "中国动漫"
+      ],
+      "remarks": "第426集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_anime_3",
+      "title": "成也萧河",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/04ffa9271faf54ddbfc41f5d9b02aa1b.jpg",
+      "year": "2026",
+      "types": [
+        "中国动漫",
+        "动画"
+      ],
+      "remarks": "第10集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_anime_4",
       "title": "仙逆",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/896b690b9566f53a875e03a3a324c091.jpg",
@@ -632,7 +671,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_anime_2",
+      "id": "pb_cat_anime_5",
       "title": "邪魔墨然",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/feaf23482ff4eb0c97088b7e1c948e4e.jpg",
@@ -648,7 +687,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_anime_3",
+      "id": "pb_cat_anime_6",
       "title": "财神窦占龙",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/35d1c6945f7caae6fdbf53b248dd79df.jpg",
@@ -663,7 +702,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_anime_4",
+      "id": "pb_cat_anime_7",
       "title": "禅王渡尘",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/b14f1d742a471207c017cc24b0fa6e87.jpg",
@@ -678,7 +717,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_anime_5",
+      "id": "pb_cat_anime_8",
       "title": "魔道重生的女武神",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/4390d85d9625806b78ad7ecb81044845.jpg",
@@ -693,7 +732,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_anime_6",
+      "id": "pb_cat_anime_9",
       "title": "反派大师兄 师妹们不按套路出牌·动态漫画",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/f0d101a2a09b93f2af88f31a5e95f1dd.jpg",
@@ -706,7 +745,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_anime_7",
+      "id": "pb_cat_anime_10",
       "title": "我带超市穿到古代养丞相",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/df10c586367d4e304e069c63783f042f.jpg",
@@ -719,7 +758,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_anime_8",
+      "id": "pb_cat_anime_11",
       "title": "武神主宰",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/e4263fd4a14819a2b3dfe2730abe3226.jpg",
@@ -732,7 +771,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_anime_9",
+      "id": "pb_cat_anime_12",
       "title": "高温末世我靠窑洞逆袭",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/383039867253008a2329c2dd81692a8e.jpg",
@@ -747,7 +786,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_anime_10",
+      "id": "pb_cat_anime_13",
       "title": "我一剑劈开了天门",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/f54a993e214a2ab48c6382550feefe94.jpg",
@@ -762,7 +801,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_anime_11",
+      "id": "pb_cat_anime_14",
       "title": "云霄少年守山河",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/8f5a87906db1b5372815e95644395fca.jpg",
@@ -777,7 +816,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_anime_12",
+      "id": "pb_cat_anime_15",
       "title": "废太子签到，弹指镇宗门",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/d4a85dff733eee5de22c6291e2bf3440.jpg",
@@ -792,7 +831,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_anime_13",
+      "id": "pb_cat_anime_16",
       "title": "牧神记",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/1303f700901b0618800c94479308df8d.jpg",
@@ -804,47 +843,6 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
         "战斗"
       ],
       "remarks": "第101集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_anime_14",
-      "title": "红妆送君葬",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/93ae0d44b350540f196d8bcde3ddeca3.jpg",
-      "year": "2026",
-      "types": [
-        "中国动漫",
-        "古风"
-      ],
-      "remarks": "第57集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_anime_15",
-      "title": "盲眼驭诡师",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/242f56a4b4abdd974c0fe40329939662.jpg",
-      "year": "2026",
-      "types": [
-        "中国动漫",
-        "热血"
-      ],
-      "remarks": "第6集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_anime_16",
-      "title": "平行天帝：系统启世",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/b5aa9f33f1ae3ebd21980a3003ee2a12.jpg",
-      "year": "2026",
-      "types": [
-        "中国动漫",
-        "玄幻",
-        "冒险",
-        "热血"
-      ],
-      "remarks": "第59集",
       "is_new": true
     }
   ],
@@ -1076,6 +1074,20 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
   "documentary": [
     {
       "id": "pb_cat_documentary_1",
+      "title": "一个致命故事",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/eb2fc50027cc7b4e506a87b9a6f98a80.jpg",
+      "year": "2026",
+      "types": [
+        "记录片",
+        "纪录片",
+        "犯罪"
+      ],
+      "remarks": "第2集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_documentary_2",
       "title": "十三邀第九季",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/2906dda4fedb740e57e75cbca80e6025.jpg",
@@ -1090,7 +1102,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_documentary_2",
+      "id": "pb_cat_documentary_3",
       "title": "普法栏目剧2011年",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/ce9858d6de8887d99ebcc487e7eccde1.jpg",
@@ -1103,7 +1115,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_documentary_3",
+      "id": "pb_cat_documentary_4",
       "title": "柯南势在必行第三季",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/017cbe61413e59cdc7370d4017bd3d91.jpg",
@@ -1114,20 +1126,6 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
         "纪录片"
       ],
       "remarks": "第4集完结",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_documentary_4",
-      "title": "一个致命故事",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/eb2fc50027cc7b4e506a87b9a6f98a80.jpg",
-      "year": "2026",
-      "types": [
-        "记录片",
-        "纪录片",
-        "犯罪"
-      ],
-      "remarks": "第1集",
       "is_new": true
     },
     {
