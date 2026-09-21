@@ -179,6 +179,54 @@ if (fs.existsSync(faqCompPath)) {
   );
 }
 
+// 10. 全屏黑屏三层物理防线回归测试
+// 10a. compatibility.css 必须包含全屏容器内 backdrop-filter 强制禁用规则
+const compatCssPath = path.resolve('app/styles/compatibility.css');
+if (fs.existsSync(compatCssPath)) {
+  const compatContent = fs.readFileSync(compatCssPath, 'utf-8');
+  assert(
+    compatContent.includes(':fullscreen') && compatContent.includes('backdrop-filter: none !important'),
+    'compatibility.css 必须包含 :fullscreen 全屏容器内 backdrop-filter 强制禁用规则，防止 @supports 兼容性注入覆盖全屏安全防线'
+  );
+  assert(
+    compatContent.includes('.is-native-fullscreen') && compatContent.includes('.is-fullscreen'),
+    'compatibility.css 必须包含 .is-native-fullscreen 与 .is-fullscreen 的 backdrop-filter 禁用保底'
+  );
+}
+
+// 10b. useFullscreenControls.ts 必须包含 JS 层 backdrop-filter 物理清除逻辑
+const fsHookPath = path.resolve('components/player/hooks/desktop/useFullscreenControls.ts');
+if (fs.existsSync(fsHookPath)) {
+  const fsHookContent = fs.readFileSync(fsHookPath, 'utf-8');
+  assert(
+    fsHookContent.includes('backdropFilter') && fsHookContent.includes('querySelectorAll'),
+    'useFullscreenControls.ts 必须包含全屏进入时 JS 层主动遍历 DOM 清除 backdropFilter 的物理防护'
+  );
+  assert(
+    !fsHookContent.includes('offsetHeight') && !fsHookContent.includes('getComputedStyle'),
+    'useFullscreenControls.ts 严禁在全屏切换中使用 offsetHeight/getComputedStyle 同步强制重排'
+  );
+}
+
+// 10c. video-player.css 全屏规则必须保持三路独立声明
+const vpCssPath = path.resolve('app/styles/video-player.css');
+if (fs.existsSync(vpCssPath)) {
+  const vpContent = fs.readFileSync(vpCssPath, 'utf-8');
+  // 确保三路全屏 backdrop-filter 禁用规则独立存在
+  const hasStandard = vpContent.includes(':fullscreen *') && vpContent.includes('backdrop-filter: none !important');
+  const hasWebkit = vpContent.includes(':-webkit-full-screen *') && vpContent.includes('backdrop-filter: none !important');
+  const hasClass = vpContent.includes('.is-native-fullscreen *') && vpContent.includes('backdrop-filter: none !important');
+  assert(
+    hasStandard && hasWebkit && hasClass,
+    'video-player.css 必须保持 :fullscreen / :-webkit-full-screen / .is-native-fullscreen 三路独立的 backdrop-filter: none !important 规则'
+  );
+  // 确保全屏容器使用透明背景而非纯黑
+  assert(
+    vpContent.includes('background: transparent !important'),
+    'video-player.css 全屏容器必须使用 background: transparent，严禁纯黑 background 导致 Occlusion Culling'
+  );
+}
+
 console.log('\n====================================================');
 if (failed) {
   console.error('🚨 架构契约巡检失败！存在破坏全局稳定性的违规回退，请根据上述报错整改后再行提交！');
@@ -187,5 +235,3 @@ if (failed) {
   console.log('🎉 恭喜！全站架构契约、单一真理源、全屏防黑屏、正片纯净度与流水线韧性 100% 严格达标！');
   console.log('====================================================\n');
 }
-
-

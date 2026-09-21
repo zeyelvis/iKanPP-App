@@ -65,6 +65,67 @@
 }
 
 /* ====================================================
+   全屏安全防线：强制覆盖上述兼容性注入，彻底杜绝全屏时
+   backdrop-filter 触发显卡 Back-buffer 回读导致的视频黑屏。
+   必须独立成块，严禁与上方 @supports 合写或逗号合写。
+   ==================================================== */
+:fullscreen [class*="backdrop-blur"],
+:fullscreen [style*="backdrop-filter"],
+:fullscreen .player-controls-glass,
+:fullscreen .btn-glass,
+:fullscreen .badge-proxy,
+:fullscreen .badge-direct,
+:fullscreen .player-toast,
+:fullscreen .player-error-glass,
+:fullscreen .player-menu-glass,
+:fullscreen .skip-indicator-glass {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+:-webkit-full-screen [class*="backdrop-blur"],
+:-webkit-full-screen [style*="backdrop-filter"],
+:-webkit-full-screen .player-controls-glass,
+:-webkit-full-screen .btn-glass,
+:-webkit-full-screen .badge-proxy,
+:-webkit-full-screen .badge-direct,
+:-webkit-full-screen .player-toast,
+:-webkit-full-screen .player-error-glass,
+:-webkit-full-screen .player-menu-glass,
+:-webkit-full-screen .skip-indicator-glass {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+.is-native-fullscreen [class*="backdrop-blur"],
+.is-native-fullscreen [style*="backdrop-filter"],
+.is-native-fullscreen .player-controls-glass,
+.is-native-fullscreen .btn-glass,
+.is-native-fullscreen .badge-proxy,
+.is-native-fullscreen .badge-direct,
+.is-native-fullscreen .player-toast,
+.is-native-fullscreen .player-error-glass,
+.is-native-fullscreen .player-menu-glass,
+.is-native-fullscreen .skip-indicator-glass {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+.is-fullscreen [class*="backdrop-blur"],
+.is-fullscreen [style*="backdrop-filter"],
+.is-fullscreen .player-controls-glass,
+.is-fullscreen .btn-glass,
+.is-fullscreen .badge-proxy,
+.is-fullscreen .badge-direct,
+.is-fullscreen .player-toast,
+.is-fullscreen .player-error-glass,
+.is-fullscreen .player-menu-glass,
+.is-fullscreen .skip-indicator-glass {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* ====================================================
    4. CSS Grid 回退
    极旧浏览器 Grid 不完整时降级为 flexbox 布局
    ==================================================== */

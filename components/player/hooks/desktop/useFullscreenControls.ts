@@ -407,6 +407,27 @@ export function useFullscreenControls({
                 setIsFullscreen(true);
                 setFullscreenMode('native');
                 lockLandscape().catch(() => { });
+
+                // 🛡️ 全屏硬件直通层安全防线 (Hardware Overlay Backdrop-Filter Purge)
+                // 主动遍历全屏容器内所有 DOM 元素，物理清除任何残留的 backdrop-filter
+                // 防止 CSS 层叠优先级在某些浏览器中因 @supports / Tailwind v4 @layer 竞争失效
+                // 导致 GPU Back-buffer 反向显存读取死锁 → 视频黑屏有声音
+                const fsContainer = nativeFullscreenElement || containerRef?.current;
+                if (fsContainer) {
+                    requestAnimationFrame(() => {
+                        try {
+                            const allElements = fsContainer.querySelectorAll('*');
+                            allElements.forEach((el: Element) => {
+                                const htmlEl = el as HTMLElement;
+                                if (htmlEl.style) {
+                                    htmlEl.style.backdropFilter = 'none';
+                                    (htmlEl.style as any).webkitBackdropFilter = 'none';
+                                }
+                            });
+                        } catch {}
+                    });
+                }
+
                 // 彻底杜绝 3D Transform 导致的 Chromium / WebKit 硬件叠加层丢帧黑屏：确保 video 保持原生 transform: none
                 if (videoRef.current) {
                     videoRef.current.style.transform = 'none';
