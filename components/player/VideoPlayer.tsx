@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useHistoryStore, usePremiumHistoryStore } from '@/lib/store/history-store';
-import { ArtVideoPlayer } from './artplayer/ArtVideoPlayer';
+import { CustomVideoPlayer } from './CustomVideoPlayer';
 import { VideoPlayerError } from './VideoPlayerError';
 import { VideoPlayerEmpty } from './VideoPlayerEmpty';
 import { usePlayerSettings } from './hooks/usePlayerSettings';
@@ -63,7 +63,6 @@ export const VideoPlayer = React.memo(function VideoPlayer({
   sources,
   currentSource,
   onSelectSource,
-  rating,
 }: VideoPlayerProps) {
   const [videoError, setVideoError] = useState<string>('');
   const [useProxy, setUseProxy] = useState(false);
@@ -269,32 +268,27 @@ export const VideoPlayer = React.memo(function VideoPlayer({
           maxRetries={MAX_MANUAL_RETRIES}
         />
       ) : (
-        <ArtVideoPlayer
-          key={`${effectiveUseProxy ? 'proxy' : 'direct'}-${finalPlayUrl}-${retryCount}`} // 物理级彻底隔绝切源/切集状态污染，0内存泄露0残影
-          playUrl={finalPlayUrl}
-          videoId={videoId}
-          currentEpisode={currentEpisode}
-          onBack={onBack}
-          totalEpisodes={totalEpisodes}
-          onNextEpisode={onNextEpisode}
-          isReversed={isReversed}
-          isPremium={isPremium}
-          videoTitle={videoTitle}
-          episodeName={episodeName}
-          externalTimeRef={externalTimeRef}
-          nextEpisodeUrl={nextEpisodeUrl}
+        <CustomVideoPlayer
+          key={`${effectiveUseProxy ? 'proxy' : 'direct'}-${retryCount}-${source}`} // Remount when switching sources, modes, or retrying
+          src={finalPlayUrl}
+          onError={handleVideoError}
+          onTimeUpdate={handleTimeUpdate}
           initialTime={initialTime}
           shouldAutoPlay={shouldAutoPlay}
+          totalEpisodes={totalEpisodes}
+          currentEpisodeIndex={currentEpisode}
+          onNextEpisode={onNextEpisode}
+          isReversed={isReversed}
+          videoTitle={videoTitle}
+          episodeName={episodeName}
+          isPremium={isPremium}
+          onBack={onBack}
           onResolutionDetected={onResolutionDetected}
-          onPlaybackError={onPlaybackError}
-          connectingMessage={connectingMessage}
-          isLoadingSource={isLoadingSource}
           episodes={episodes}
           onSelectEpisode={onSelectEpisode}
           sources={sources}
           currentSource={currentSource}
           onSelectSource={onSelectSource}
-          rating={rating}
         />
       )}
     </div>
