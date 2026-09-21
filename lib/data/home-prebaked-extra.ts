@@ -1237,69 +1237,69 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "戴上傩面！别说话！",
+          "title": "我妈是佩奇",
           "updateBadge": "全"
       },
       {
-          "title": "恋爱两年，女友竟查无此人",
+          "title": "星际萌宝不好惹",
           "updateBadge": "全"
       },
       {
-          "title": "武则天传奇",
+          "title": "御龙刀主",
           "updateBadge": "全"
       },
       {
-          "title": "墙里砸出一个亿",
+          "title": "我撕碎他的伪装",
           "updateBadge": "全"
       },
       {
-          "title": "瓜摊老板是大佬",
+          "title": "枭爷，叶小姐又来求婚了",
+          "updateBadge": "75"
+      },
+      {
+          "title": "在这一世的第一百次重生",
           "updateBadge": "全"
       },
       {
-          "title": "荒年逆袭：素手春野粮满仓",
+          "title": "十万佣金的秘密",
           "updateBadge": "全"
       },
       {
-          "title": "攻略大乾：从无赖到霸主",
+          "title": "第一百步离开",
           "updateBadge": "全"
       },
       {
-          "title": "温柔入怀",
+          "title": "爸爸后悔了",
           "updateBadge": "全"
       },
       {
-          "title": "咬夏阳",
+          "title": "侯府重点班",
           "updateBadge": "全"
       },
       {
-          "title": "惹错九爷后他非要娶我",
+          "title": "种其因者须食其果",
           "updateBadge": "全"
       },
       {
-          "title": "绒花开时",
-          "updateBadge": "全"
-      },
-      {
-          "title": "甩了白富美，谁让我是大反派",
+          "title": "逆袭从觉醒系统开始",
           "updateBadge": "全"
       }
   ],
   hero: [
       {
-          "id": "jl_short_632192837202608100",
-          "title": "荒年逆袭：素手春野粮满仓",
-          "rate": "9.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/46a99fb258a5f368380035cfc468775987302c0c24aa546b257cfd6c252dee66.png",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/46a99fb258a5f368380035cfc468775987302c0c24aa546b257cfd6c252dee66.png",
-          "description": "医学女博士宋允棠一觉醒来，成了被掉包的农家假千金，还被迫给地主儿子做妾。面对家人的偏心、白莲花的算计、恶霸的逼迫，她不哭不闹不卖惨，靠医术自救，凭智慧破局。开铺子、置产业、收小弟，一步步逆袭成商业女强人。顺便，把那个病弱腹黑的教书先生拐成了未婚夫。这是一个现代独立女性在古代靠实力生存的故事。",
-          "year": "2025",
+          "id": "jl_short_630086791701135400",
+          "title": "墨先生，快来宠我吧",
+          "rate": "8.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f71a5172730e90512207a7862e70fc21ec067584d524c0dadffbc4482f159ac7.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f71a5172730e90512207a7862e70fc21ec067584d524c0dadffbc4482f159ac7.jpg",
+          "description": "她被迫替嫁給個病秧子衝喜，卻在新婚當天被綁架威脅那個病秧子老公，他卻連看都不看她一眼，一年後的墨先生：真香！",
+          "year": "2024",
           "types": [
               "短剧",
-              "古装仙侠",
+              "女频恋爱",
               "全集连播"
           ],
-          "episodes_info": "全227集·已完结",
+          "episodes_info": "全11集·第81-100集完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1308,231 +1308,231 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_632198971053375500",
-          "title": "戴上傩面！别说话！",
-          "rate": "9.0",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/c4f8384aacd9d36bff15918052dcd920f28be07d4b5be4dd66f836d0a596e6ee.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/c4f8384aacd9d36bff15918052dcd920f28be07d4b5be4dd66f836d0a596e6ee.jpg",
-          "description": "暂无简介，敬请期待",
-          "year": "2026",
+          "id": "jl_short_630086791701135400",
+          "title": "墨先生，快来宠我吧",
+          "rate": "8.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f71a5172730e90512207a7862e70fc21ec067584d524c0dadffbc4482f159ac7.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f71a5172730e90512207a7862e70fc21ec067584d524c0dadffbc4482f159ac7.jpg",
+          "description": "她被迫替嫁給個病秧子衝喜，卻在新婚當天被綁架威脅那個病秧子老公，他卻連看都不看她一眼，一年後的墨先生：真香！",
+          "year": "2024",
           "types": [
               "短剧",
-              "脑洞悬疑",
+              "女频恋爱",
               "全集连播"
           ],
-          "episodes_info": "全3集·已完结",
+          "episodes_info": "全11集·第81-100集完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "涂鑫艺 / 黄玉洁"
+              "短剧实力派"
           ]
       },
       {
-          "id": "jl_short_632198970986266600",
-          "title": "恋爱两年，女友竟查无此人",
+          "id": "jl_short_630104816303407100",
+          "title": "我妈是佩奇",
+          "rate": "9.1",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/181cedec2fd994d88538fe6e0660035932f2829bcb19552e25e8a47533c479a1.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/181cedec2fd994d88538fe6e0660035932f2829bcb19552e25e8a47533c479a1.jpg",
+          "description": "全52集（合全集）",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全105集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "胡毅娟&amp / 李宏利"
+          ]
+      },
+      {
+          "id": "jl_short_630102483196248000",
+          "title": "星际萌宝不好惹",
           "rate": "8.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/b8a1f01bc81fcb3c0015fa90ab863c3dcc5b0f762af43ea691301bdfe6149238.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/b8a1f01bc81fcb3c0015fa90ab863c3dcc5b0f762af43ea691301bdfe6149238.jpg",
-          "description": "暂无简介，敬请期待",
-          "year": "2026",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/424e57ae2dc6954e91effb271255dbf739952ac6bfb3646f78daaaf35b1baa1b.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/424e57ae2dc6954e91effb271255dbf739952ac6bfb3646f78daaaf35b1baa1b.jpg",
+          "description": "星际萌宝不好惹 精彩全集连播，高能反转停不下来！",
+          "year": "2025",
           "types": [
               "短剧",
-              "脑洞悬疑",
+              "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全3集·已完结",
+          "episodes_info": "全109集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "甘涞 / 李佳明"
+              "短剧实力派"
           ]
       },
       {
-          "id": "jl_short_632198970969489400",
-          "title": "武则天传奇",
-          "rate": "8.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d9464bd4bbff996899edccdf95a1b525aac947cd56c4c76f0010eb223a356ce8.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d9464bd4bbff996899edccdf95a1b525aac947cd56c4c76f0010eb223a356ce8.jpg",
-          "description": "暂无简介，敬请期待",
-          "year": "2026",
+          "id": "jl_short_630100872567586800",
+          "title": "御龙刀主",
+          "rate": "8.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/abddfc439d6bb5a5b7a71dc722c63ec715b55d9c5b798a1271c96f1fb282c626.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/abddfc439d6bb5a5b7a71dc722c63ec715b55d9c5b798a1271c96f1fb282c626.jpg",
+          "description": "御龙刀主 精彩全集连播，高能反转停不下来！",
+          "year": "2024",
           "types": [
               "短剧",
               "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全3集·已完结",
+          "episodes_info": "全61集·第61-86集完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "刘晓庆 / 金珈"
+              "短剧实力派"
           ]
       },
       {
-          "id": "jl_short_632198970449461200",
-          "title": "墙里砸出一个亿",
-          "rate": "8.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f82ca78373dd69dc9b12e3d0cbdd5225adb717d369d08dcf39eef19941c43664.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f82ca78373dd69dc9b12e3d0cbdd5225adb717d369d08dcf39eef19941c43664.jpg",
-          "description": "暂无简介，敬请期待",
+          "id": "jl_short_630099641538510800",
+          "title": "我撕碎他的伪装",
+          "rate": "9.0",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/aeeada7b151feb64e11e7090850d0f50f573aa9dd39c6caa28f19f796bd36222.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/aeeada7b151feb64e11e7090850d0f50f573aa9dd39c6caa28f19f796bd36222.jpg",
+          "description": "剧情简介暂缺，敬请期待",
           "year": "2026",
           "types": [
               "短剧",
               "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全123集·已完结",
+          "episodes_info": "全115集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "张瑞恩 / 沈健"
+              "盘书瑶 / 朱凯杰"
           ]
       },
       {
-          "id": "jl_short_632198970298400800",
-          "title": "瓜摊老板是大佬",
+          "id": "jl_short_630097210251542500",
+          "title": "枭爷，叶小姐又来求婚了",
           "rate": "9.0",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/64ef044362f6f96d01a26bd62ccd2d868fe475e13b388708feb62acf43999392.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/64ef044362f6f96d01a26bd62ccd2d868fe475e13b388708feb62acf43999392.jpg",
-          "description": "暂无简介，敬请期待",
-          "year": "2026",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/c152053805eda25b1f87a6fb890d3aaf96d1752aa11bf9c2889a0caf06541213.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/c152053805eda25b1f87a6fb890d3aaf96d1752aa11bf9c2889a0caf06541213.jpg",
+          "description": "剧情简介暂缺，敬请期待",
+          "year": "2024",
           "types": [
               "短剧",
               "反转爽剧",
               "全集连播"
           ],
-          "episodes_info": "全3集·已完结",
+          "episodes_info": "全151集·全75集",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "宁温 / 王子予"
+              "短剧实力派"
           ]
       },
       {
-          "id": "jl_short_632078437963530200",
-          "title": "攻略大乾：从无赖到霸主",
-          "rate": "8.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/57ae809898fe5b52e23c5c72ff84ca1680926d43b6f593e4a8449657b8bf3e50.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/57ae809898fe5b52e23c5c72ff84ca1680926d43b6f593e4a8449657b8bf3e50.jpg",
-          "description": "暂无简介，敬请期待",
-          "year": "2026",
+          "id": "jl_short_630096195330637800",
+          "title": "在这一世的第一百次重生",
+          "rate": "9.1",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/c97326c69b231d0c4091ce31f5378ccaaf67734ca231cf0ecbf9a51703f4073a.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/c97326c69b231d0c4091ce31f5378ccaaf67734ca231cf0ecbf9a51703f4073a.jpg",
+          "description": "全60集（合全集）",
+          "year": "2025",
           "types": [
               "短剧",
-              "古装仙侠",
+              "年代穿越",
               "全集连播"
           ],
-          "episodes_info": "全3集·已完结",
+          "episodes_info": "全121集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "霍文琦 / 陈洁蕾"
-          ]
-      },
-      {
-          "id": "jl_short_632078437946818600",
-          "title": "温柔入怀",
-          "rate": "8.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/3ef4518e955de135e004641b5d242ad9928b3c7c1b3dfb9e1f751a44d60831f8.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/3ef4518e955de135e004641b5d242ad9928b3c7c1b3dfb9e1f751a44d60831f8.jpg",
-          "description": "暂无简介，敬请期待",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "女频恋爱",
-              "全集连播"
-          ],
-          "episodes_info": "全3集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "张甜诚 / 张楸梓"
+              "游雅"
           ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "荒年逆袭：素手春野粮满仓",
-      rate: "9.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/46a99fb258a5f368380035cfc468775987302c0c24aa546b257cfd6c252dee66.png",
-      year: "2025",
-      types: ["短剧","古装仙侠","全集连播"],
+      title: "墨先生，快来宠我吧",
+      rate: "8.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f71a5172730e90512207a7862e70fc21ec067584d524c0dadffbc4482f159ac7.jpg",
+      year: "2024",
+      types: ["短剧","女频恋爱","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: "戴上傩面！别说话！",
-      rate: "9.0",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/c4f8384aacd9d36bff15918052dcd920f28be07d4b5be4dd66f836d0a596e6ee.jpg",
-      year: "2026",
-      types: ["短剧","脑洞悬疑","全集连播"],
+      title: "墨先生，快来宠我吧",
+      rate: "8.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f71a5172730e90512207a7862e70fc21ec067584d524c0dadffbc4482f159ac7.jpg",
+      year: "2024",
+      types: ["短剧","女频恋爱","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_3',
-      title: "恋爱两年，女友竟查无此人",
-      rate: "8.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/b8a1f01bc81fcb3c0015fa90ab863c3dcc5b0f762af43ea691301bdfe6149238.jpg",
-      year: "2026",
-      types: ["短剧","脑洞悬疑","全集连播"],
+      title: "我妈是佩奇",
+      rate: "9.1",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/181cedec2fd994d88538fe6e0660035932f2829bcb19552e25e8a47533c479a1.jpg",
+      year: "2025",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_4',
-      title: "武则天传奇",
-      rate: "8.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d9464bd4bbff996899edccdf95a1b525aac947cd56c4c76f0010eb223a356ce8.jpg",
-      year: "2026",
-      types: ["短剧","古装仙侠","全集连播"],
+      title: "星际萌宝不好惹",
+      rate: "8.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/424e57ae2dc6954e91effb271255dbf739952ac6bfb3646f78daaaf35b1baa1b.jpg",
+      year: "2025",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_5',
-      title: "墙里砸出一个亿",
-      rate: "8.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f82ca78373dd69dc9b12e3d0cbdd5225adb717d369d08dcf39eef19941c43664.jpg",
+      title: "御龙刀主",
+      rate: "8.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/abddfc439d6bb5a5b7a71dc722c63ec715b55d9c5b798a1271c96f1fb282c626.jpg",
+      year: "2024",
+      types: ["短剧","古装仙侠","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_6',
+      title: "我撕碎他的伪装",
+      rate: "9.0",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/aeeada7b151feb64e11e7090850d0f50f573aa9dd39c6caa28f19f796bd36222.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_6',
-      title: "瓜摊老板是大佬",
+      id: 'pb_s_top_7',
+      title: "枭爷，叶小姐又来求婚了",
       rate: "9.0",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/64ef044362f6f96d01a26bd62ccd2d868fe475e13b388708feb62acf43999392.jpg",
-      year: "2026",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/c152053805eda25b1f87a6fb890d3aaf96d1752aa11bf9c2889a0caf06541213.jpg",
+      year: "2024",
       types: ["短剧","反转爽剧","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_7',
-      title: "攻略大乾：从无赖到霸主",
-      rate: "8.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/57ae809898fe5b52e23c5c72ff84ca1680926d43b6f593e4a8449657b8bf3e50.jpg",
-      year: "2026",
-      types: ["短剧","古装仙侠","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
       id: 'pb_s_top_8',
-      title: "温柔入怀",
-      rate: "8.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/3ef4518e955de135e004641b5d242ad9928b3c7c1b3dfb9e1f751a44d60831f8.jpg",
-      year: "2026",
-      types: ["短剧","女频恋爱","全集连播"],
+      title: "在这一世的第一百次重生",
+      rate: "9.1",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/c97326c69b231d0c4091ce31f5378ccaaf67734ca231cf0ecbf9a51703f4073a.jpg",
+      year: "2025",
+      types: ["短剧","年代穿越","全集连播"],
       is_new: true,
       playable: true
     }
