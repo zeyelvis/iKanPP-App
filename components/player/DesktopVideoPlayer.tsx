@@ -9,9 +9,7 @@ import { useStallDetection } from './hooks/useStallDetection';
 import { useVideoResolution } from './hooks/useVideoResolution';
 import { DesktopControlsWrapper } from './desktop/DesktopControlsWrapper';
 import { DesktopOverlayWrapper } from './desktop/DesktopOverlayWrapper';
-import { DanmakuCanvas } from './DanmakuCanvas';
 import { usePlayerSettings } from './hooks/usePlayerSettings';
-import { useDanmaku } from './hooks/useDanmaku';
 import { PlayerBrandLogo } from './PlayerBrandLogo';
 import { useIsIOS, useIsMobile } from '@/lib/hooks/mobile/useDeviceDetection';
 import { useDoubleTap } from '@/lib/hooks/mobile/useDoubleTap';
@@ -144,13 +142,6 @@ export const DesktopVideoPlayer = React.memo(function DesktopVideoPlayer({
       refs.videoRef.current.setAttribute('referrerpolicy', 'no-referrer');
     }
   }, [refs.videoRef]);
-
-  // Danmaku
-  const { danmakuEnabled, comments: danmakuComments } = useDanmaku({
-    videoTitle,
-    episodeName,
-    episodeIndex: currentEpisodeIndex,
-  });
 
   const updateViewportMetrics = React.useCallback(() => {
     setViewportMetrics((current) => {
@@ -607,15 +598,7 @@ export const DesktopVideoPlayer = React.memo(function DesktopVideoPlayer({
             </div>
           )}
 
-          {/* Danmaku Canvas */}
-          {danmakuEnabled && danmakuComments.length > 0 && (
-            <DanmakuCanvas
-              comments={danmakuComments}
-              currentTime={currentTime}
-              isPlaying={isPlaying}
-              duration={duration}
-            />
-          )}
+
 
           {/* 专属 iKanPP 4K VIP 尊享品牌台标（智能边界追踪，100% 严丝合缝死死遮盖 Jable 水印） */}
           <PlayerBrandLogo

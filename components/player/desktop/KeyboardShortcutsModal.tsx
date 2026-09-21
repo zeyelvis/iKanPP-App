@@ -31,7 +31,6 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsMod
     { key: 'F', action: '设备原生全屏' },
     { key: 'W', action: '网页窗口全屏' },
     { key: 'N', action: '播放下一集' },
-    { key: 'D', action: '开启 / 关闭弹幕' },
     { key: '0 - 9', action: '快进到视频百分比 (0% - 90%)' },
     { key: 'Esc', action: '退出全屏 / 关闭浮层' },
   ];

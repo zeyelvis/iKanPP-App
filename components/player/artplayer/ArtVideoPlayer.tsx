@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import ReactDOM from 'react-dom';
 import Artplayer from 'artplayer';
 import Hls from 'hls.js';
-import artplayerPluginDanmuku from 'artplayer-plugin-danmuku';
 import { createHlsConfig } from '@/lib/player/hls-config-factory';
 import { InPlayerEpisodesDrawer } from '../desktop/InPlayerEpisodesDrawer';
 import { InPlayerSourceDrawer } from '../desktop/InPlayerSourceDrawer';
@@ -17,7 +16,6 @@ import { settingsStore } from '@/lib/store/settings-store';
 import { premiumModeSettingsStore } from '@/lib/store/premium-mode-settings';
 import { filterM3u8Ad } from '@/lib/utils/m3u8-utils';
 import { usePlayerSettings } from '../hooks/usePlayerSettings';
-import { useDanmaku } from '../hooks/useDanmaku';
 import type { VideoResolutionInfo } from '../hooks/useVideoResolution';
 
 interface SourceItem {
@@ -105,13 +103,6 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
   const [showSkipIntroBtn, setShowSkipIntroBtn] = useState(false);
   const [stallCandidate, setStallCandidate] = useState<SourceItem | null>(null);
   const [detectedResLabel, setDetectedResLabel] = useState<string>(resolutionLabel || '4K 超清');
-
-  // 弹幕系统整合 (主站普通影视启用，午夜专区关闭)
-  const { danmakuEnabled, comments: danmakuComments } = useDanmaku({
-    videoTitle: !isPremium ? videoTitle : '',
-    episodeName: !isPremium ? episodeName : '',
-    episodeIndex: currentEpisode,
-  });
 
   // 保存进度历史专用 selector，严格杜绝全量订阅导致的 5 秒重渲染瀑布
   const addToHistory = isPremium
@@ -297,12 +288,6 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
         e.preventDefault();
         setIsSourceDrawerOpen((prev) => !prev);
         setIsEpisodesDrawerOpen(false);
-      } else if (e.key === 'd' || e.key === 'D') {
-        if (!isPremium) {
-          e.preventDefault();
-          const s = settingsStore.getSettings();
-          settingsStore.saveSettings({ ...s, danmakuEnabled: !s.danmakuEnabled });
-        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -315,20 +300,6 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
 
     // 自定义控制栏按钮
     const customControls: any[] = [];
-
-    // 1. 弹幕开关按钮 (仅主站普通影视)
-    if (!isPremium) {
-      customControls.push({
-        name: 'danmaku-toggle-btn',
-        position: 'right',
-        html: `<span class="art-custom-btn" style="font-size:12px;font-weight:700;display:flex;align-items:center;gap:4px;cursor:pointer;padding:0 8px;height:100%;color:${danmakuEnabled ? '#e50914' : '#ffffff80'};">弹幕</span>`,
-        tooltip: danmakuEnabled ? '关闭弹幕 (D)' : '开启弹幕 (D)',
-        click: function () {
-          const s = settingsStore.getSettings();
-          settingsStore.saveSettings({ ...s, danmakuEnabled: !s.danmakuEnabled });
-        },
-      });
-    }
 
     if (episodes && episodes.length > 1 && onSelectEpisode) {
       customControls.push({
@@ -355,33 +326,8 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
       });
     }
 
-    // 插件列表：接入 Artplayer 官方弹幕插件
+    // 插件列表
     const plugins: any[] = [];
-    if (!isPremium) {
-      plugins.push(
-        artplayerPluginDanmuku({
-          danmuku: danmakuComments.map((c) => ({
-            text: c.text,
-            time: c.time,
-            color: c.color || '#FFFFFF',
-            mode: c.type === 'top' ? 1 : c.type === 'bottom' ? 2 : 0,
-          })),
-          speed: 5,
-          opacity: 0.9,
-          fontSize: 22,
-          color: '#FFFFFF',
-          mode: 0,
-          margin: [10, '15%'],
-          antiOverlap: true,
-          synchronousPlayback: false,
-          filter: (danmu: any) => danmu.text && danmu.text.length < 100,
-          lockTime: 5,
-          maxLength: 100,
-          visible: danmakuEnabled,
-          emitter: true,
-        })
-      );
-    }
 
     // 设置快进步长
     Artplayer.SEEK_STEP = seekStepSeconds;
@@ -713,35 +659,6 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
       }
     };
   }, [playM3u8, isPremium, seekStepSeconds, sources, currentSource, onSelectSource]);
-
-  // 弹幕开关联动
-  useEffect(() => {
-    if (artRef.current && (artRef.current as any).plugins?.artplayerPluginDanmuku) {
-      if (danmakuEnabled) {
-        (artRef.current as any).plugins.artplayerPluginDanmuku.show();
-      } else {
-        (artRef.current as any).plugins.artplayerPluginDanmuku.hide();
-      }
-    }
-  }, [danmakuEnabled]);
-
-  // 弹幕评论数据实时同步更新
-  useEffect(() => {
-    if (
-      artRef.current &&
-      (artRef.current as any).plugins?.artplayerPluginDanmuku &&
-      danmakuComments.length > 0
-    ) {
-      (artRef.current as any).plugins.artplayerPluginDanmuku.config({
-        danmuku: danmakuComments.map((c) => ({
-          text: c.text,
-          time: c.time,
-          color: c.color || '#FFFFFF',
-          mode: c.type === 'top' ? 1 : c.type === 'bottom' ? 2 : 0,
-        })),
-      });
-    }
-  }, [danmakuComments]);
 
   // 当 playUrl 变动时，平滑切流而非销毁播放器实例
   useEffect(() => {
