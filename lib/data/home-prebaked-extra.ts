@@ -687,13 +687,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608271524382431872.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111844144414888.jpg",
-        "description": "《我家那闺女2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260920(第4期下)。",
+        "description": "《我家那闺女2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260921(加更版)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260920(第4期下)",
+        "episodes_info": "更新至20260921(加更版)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -721,13 +721,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608251140484004368.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202608261125552551744.jpg",
-        "description": "《舞蹈新风暴》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260916(Plus)。",
+        "description": "《舞蹈新风暴》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260921(风暴进行时)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260916(Plus)",
+        "episodes_info": "更新至20260921(风暴进行时)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -738,13 +738,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608102124022465304.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202608261125002570740.jpg",
-        "description": "《披荆斩棘2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260920(三公观演区下)。",
+        "description": "《披荆斩棘2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260921(加更版)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260920(三公观演区下)",
+        "episodes_info": "更新至20260921(加更版)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1237,90 +1237,111 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "亲爱的别来无恙",
+          "title": "请多指教，白老师",
           "updateBadge": "全"
       },
       {
-          "title": "完蛋所有人都以为我是绝世高手",
+          "title": "难哄，许枝俏谈个恋爱吧",
           "updateBadge": "全"
       },
       {
-          "title": "青衣杀",
+          "title": "老公说他是乡下的金凤凰",
           "updateBadge": "全"
       },
       {
-          "title": "离婚的决心",
+          "title": "真千金吃瓜成团宠全家逆天改命",
           "updateBadge": "全"
       },
       {
-          "title": "逆转情迷",
+          "title": "龙芯风暴",
           "updateBadge": "全"
       },
       {
-          "title": "穿成反派，我要干翻镇北王",
+          "title": "我在武侠领补贴",
           "updateBadge": "全"
       },
       {
-          "title": "穿越后我嫁首富",
+          "title": "医凰涅槃",
           "updateBadge": "全"
       },
       {
-          "title": "何以成仇",
+          "title": "我的婚姻不将就",
           "updateBadge": "全"
       },
       {
-          "title": "秘书的逆袭",
+          "title": "五年深情如草芥",
           "updateBadge": "全"
       },
       {
-          "title": "人间自有公道在",
+          "title": "高手下山之猛龙入江",
           "updateBadge": "全"
       },
       {
-          "title": "我家的帅女婿是德古拉",
+          "title": "偷偷喜欢你-就是喜欢你",
           "updateBadge": "全"
       },
       {
-          "title": "总裁爹地宠妻记",
-          "updateBadge": "全"
+          "title": "宫女扶摇录",
+          "updateBadge": "52"
       }
   ],
   hero: [
       {
-          "id": "jl_short_630109024196558800",
-          "title": "梦境使者",
-          "rate": "9.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/217dc415c0db88a92ff0af100b59d7b2708c913ca585d3d152e8db140a616e35.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/217dc415c0db88a92ff0af100b59d7b2708c913ca585d3d152e8db140a616e35.jpg",
-          "description": "南柯拥有入梦的能力，他（她）可以进入到濒死者的梦境，梦境里的她千变万化，以不同的形象示人，他（她）出现的目的只有一个，聆听每一位濒死者最后的心声。所谓南柯一梦，不知岁月几何。聆听者南柯有赐于濒死者在梦境中实现心中夙愿的机会，如果你的故事打动他，将得偿所愿。",
-          "year": "2023",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全23集·全12集",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "王辰逸 / 蒋潇林 / 孙景琛"
-          ]
-      },
-      {
-          "id": "jl_short_630109078957523000",
-          "title": "亲爱的别来无恙",
-          "rate": "9.1",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/9167a19eaa40f6c453f12e0cec8c55935d8d21da0eaa40472aaabd433ac96956.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/9167a19eaa40f6c453f12e0cec8c55935d8d21da0eaa40472aaabd433ac96956.jpg",
-          "description": "剧情简介暂缺，敬请期待",
-          "year": "2024",
+          "id": "jl_short_630113207964729300",
+          "title": "龙芯风暴",
+          "rate": "9.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/48e853078ae15383b20908cf0c0f1cf1a09443ac4fad8c38d6254d135f86b68f.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/48e853078ae15383b20908cf0c0f1cf1a09443ac4fad8c38d6254d135f86b68f.jpg",
+          "description": "夜雨滂沱，胸口中弹的芯片专家“芯王”杰克因血型稀有命悬一线。王牌特工周晓晓指挥若定，在送血车遭炸弹袭击后，动用隐形无人机精准投送血液，救其性命。三个月前，周晓晓奉命潜入龙学院，调查科学家王一鸣的陈年旧案。她在一次RH阴性血联谊会上刻意接近杰克，并因杰克对“被跟踪”一事异于常人的冷静反应而产生警觉。她...",
+          "year": "2025",
           "types": [
               "短剧",
               "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全73集·已完结",
+          "episodes_info": "全121集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "王亨宇"
+          ]
+      },
+      {
+          "id": "jl_short_630315821419331600",
+          "title": "请多指教，白老师",
+          "rate": "8.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/5d7c5599485a9ce6cbff78a611b243f5c4df5edba0fad8f0f88237dccbec58bc.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/5d7c5599485a9ce6cbff78a611b243f5c4df5edba0fad8f0f88237dccbec58bc.jpg",
+          "description": "暂无简介，敬请期待",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全3集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "刘昕岚 / 唐晨"
+          ]
+      },
+      {
+          "id": "jl_short_630220431269363700",
+          "title": "难哄，许枝俏谈个恋爱吧",
+          "rate": "9.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/4a5da2eabe7331ba07910e2068930fd0424497cd87a975db77a71e410a8a0abd.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/4a5da2eabe7331ba07910e2068930fd0424497cd87a975db77a71e410a8a0abd.jpg",
+          "description": "剧情简介暂缺，敬请期待",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "女频恋爱",
+              "全集连播"
+          ],
+          "episodes_info": "全201集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1329,16 +1350,16 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_630109076306526200",
-          "title": "完蛋所有人都以为我是绝世高手",
-          "rate": "9.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/90f782219e13eace4492283bd39ba335aa507e914d763019e349007736d6cc1b.png",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/90f782219e13eace4492283bd39ba335aa507e914d763019e349007736d6cc1b.png",
-          "description": "剧情简介暂缺，敬请期待",
-          "year": "2024",
+          "id": "jl_short_630116564196261900",
+          "title": "老公说他是乡下的金凤凰",
+          "rate": "8.5",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/8dc3ce0aefb559b580ed1b9cab1e494874f6b44e7b56215a8bbabda0e5f7bdd4.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/8dc3ce0aefb559b580ed1b9cab1e494874f6b44e7b56215a8bbabda0e5f7bdd4.jpg",
+          "description": "全62集（合全集）",
+          "year": "2025",
           "types": [
               "短剧",
-              "脑洞悬疑",
+              "现代都市",
               "全集连播"
           ],
           "episodes_info": "全125集·已完结",
@@ -1346,193 +1367,172 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           "is_new": true,
           "playable": true,
           "actors": [
+              "李灼一&amp / 张小磊"
+          ]
+      },
+      {
+          "id": "jl_short_630116203285053400",
+          "title": "真千金吃瓜成团宠全家逆天改命",
+          "rate": "8.7",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/41e6fa277c349961018246dc4d276d8d8a06996089ee261d814ac1919384f41d.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/41e6fa277c349961018246dc4d276d8d8a06996089ee261d814ac1919384f41d.jpg",
+          "description": "剧情简介暂缺，敬请期待",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "反转爽剧",
+              "全集连播"
+          ],
+          "episodes_info": "全191集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
               "短剧实力派"
           ]
       },
       {
-          "id": "jl_short_630109075702808600",
-          "title": "青衣杀",
-          "rate": "9.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/9804f3c70cc976e41cdf264fb7c6f4f83622c3db59b906eb20672b49b817e6d7.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/9804f3c70cc976e41cdf264fb7c6f4f83622c3db59b906eb20672b49b817e6d7.jpg",
-          "description": "剧情简介暂缺，敬请期待",
-          "year": "2024",
+          "id": "jl_short_630112507365097500",
+          "title": "我在武侠领补贴",
+          "rate": "8.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/de90b573653cebb21f2f91c29ade7602c20215a46f0d4fbe78e0a10a1017c249.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/de90b573653cebb21f2f91c29ade7602c20215a46f0d4fbe78e0a10a1017c249.jpg",
+          "description": "暂无简介，敬请期待",
+          "year": "2026",
           "types": [
               "短剧",
               "其他",
               "全集连播"
           ],
-          "episodes_info": "全133集·已完结",
+          "episodes_info": "全161集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "短剧实力派"
+              "马溯鼎 / 李宣锦"
           ]
       },
       {
-          "id": "jl_short_630109072900816900",
-          "title": "离婚的决心",
-          "rate": "8.8",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/1123c1cb20f753d3bb5816e49a2aa2148f4bd0081cb700a5938e2095fe1a3cc9.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/1123c1cb20f753d3bb5816e49a2aa2148f4bd0081cb700a5938e2095fe1a3cc9.jpg",
-          "description": "剧情简介暂缺，敬请期待",
-          "year": "2024",
+          "id": "jl_short_630112281460080600",
+          "title": "医凰涅槃",
+          "rate": "9.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/e0aa3476a7805c9efaf7e146590c108083bbcad39828152a1283db60a19aeffc.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/e0aa3476a7805c9efaf7e146590c108083bbcad39828152a1283db60a19aeffc.jpg",
+          "description": "暂无简介，敬请期待",
+          "year": "2026",
           "types": [
               "短剧",
-              "现代都市",
+              "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全107集·已完结",
+          "episodes_info": "全101集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "短剧实力派"
+              "伍中元 / 陈小满"
           ]
       },
       {
-          "id": "jl_short_630109070669709300",
-          "title": "逆转情迷",
-          "rate": "9.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d005884d8c545591e140f6d335d7530bd4a9a5cffdaf6181a9eda60366f3a220.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d005884d8c545591e140f6d335d7530bd4a9a5cffdaf6181a9eda60366f3a220.jpg",
-          "description": "剧情简介暂缺，敬请期待",
-          "year": "2024",
+          "id": "jl_short_630112204838010900",
+          "title": "我的婚姻不将就",
+          "rate": "9.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/4bee1015e830b5db477e46555b044f48fd21bcdacc9f5bba2908b54fef4c497e.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/4bee1015e830b5db477e46555b044f48fd21bcdacc9f5bba2908b54fef4c497e.jpg",
+          "description": "暂无简介，敬请期待",
+          "year": "2026",
           "types": [
               "短剧",
-              "现代都市",
+              "女频恋爱",
               "全集连播"
           ],
-          "episodes_info": "全165集·已完结",
+          "episodes_info": "全61集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_630109067364401200",
-          "title": "穿成反派，我要干翻镇北王",
-          "rate": "8.9",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/5a453c75521f8d8a21ac2fbce267794af6dfb43950779924e8540d735f6df5c5.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/5a453c75521f8d8a21ac2fbce267794af6dfb43950779924e8540d735f6df5c5.jpg",
-          "description": "剧情简介暂缺，敬请期待",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "年代穿越",
-              "全集连播"
-          ],
-          "episodes_info": "全83集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_630109066307305500",
-          "title": "穿越后我嫁首富",
-          "rate": "8.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/7a6ed5fdc60fe926c43dd8a565f10790eccf8288686ff35a061b2764b047fbb2.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/7a6ed5fdc60fe926c43dd8a565f10790eccf8288686ff35a061b2764b047fbb2.jpg",
-          "description": "剧情简介暂缺，敬请期待",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "年代穿越",
-              "全集连播"
-          ],
-          "episodes_info": "全69集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
+              "王铉博 / 张睿航"
           ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "梦境使者",
-      rate: "9.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/217dc415c0db88a92ff0af100b59d7b2708c913ca585d3d152e8db140a616e35.jpg",
-      year: "2023",
-      types: ["短剧","古装仙侠","全集连播"],
+      title: "龙芯风暴",
+      rate: "9.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/48e853078ae15383b20908cf0c0f1cf1a09443ac4fad8c38d6254d135f86b68f.jpg",
+      year: "2025",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: "亲爱的别来无恙",
-      rate: "9.1",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9167a19eaa40f6c453f12e0cec8c55935d8d21da0eaa40472aaabd433ac96956.jpg",
-      year: "2024",
+      title: "请多指教，白老师",
+      rate: "8.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/5d7c5599485a9ce6cbff78a611b243f5c4df5edba0fad8f0f88237dccbec58bc.jpg",
+      year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_3',
-      title: "完蛋所有人都以为我是绝世高手",
-      rate: "9.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/90f782219e13eace4492283bd39ba335aa507e914d763019e349007736d6cc1b.png",
-      year: "2024",
-      types: ["短剧","脑洞悬疑","全集连播"],
+      title: "难哄，许枝俏谈个恋爱吧",
+      rate: "9.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/4a5da2eabe7331ba07910e2068930fd0424497cd87a975db77a71e410a8a0abd.jpg",
+      year: "2025",
+      types: ["短剧","女频恋爱","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_4',
-      title: "青衣杀",
-      rate: "9.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9804f3c70cc976e41cdf264fb7c6f4f83622c3db59b906eb20672b49b817e6d7.jpg",
-      year: "2024",
-      types: ["短剧","其他","全集连播"],
+      title: "老公说他是乡下的金凤凰",
+      rate: "8.5",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/8dc3ce0aefb559b580ed1b9cab1e494874f6b44e7b56215a8bbabda0e5f7bdd4.jpg",
+      year: "2025",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_5',
-      title: "离婚的决心",
-      rate: "8.8",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/1123c1cb20f753d3bb5816e49a2aa2148f4bd0081cb700a5938e2095fe1a3cc9.jpg",
-      year: "2024",
-      types: ["短剧","现代都市","全集连播"],
+      title: "真千金吃瓜成团宠全家逆天改命",
+      rate: "8.7",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/41e6fa277c349961018246dc4d276d8d8a06996089ee261d814ac1919384f41d.jpg",
+      year: "2025",
+      types: ["短剧","反转爽剧","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_6',
-      title: "逆转情迷",
-      rate: "9.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d005884d8c545591e140f6d335d7530bd4a9a5cffdaf6181a9eda60366f3a220.jpg",
-      year: "2024",
-      types: ["短剧","现代都市","全集连播"],
+      title: "我在武侠领补贴",
+      rate: "8.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/de90b573653cebb21f2f91c29ade7602c20215a46f0d4fbe78e0a10a1017c249.jpg",
+      year: "2026",
+      types: ["短剧","其他","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_7',
-      title: "穿成反派，我要干翻镇北王",
-      rate: "8.9",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/5a453c75521f8d8a21ac2fbce267794af6dfb43950779924e8540d735f6df5c5.jpg",
-      year: "2024",
-      types: ["短剧","年代穿越","全集连播"],
+      title: "医凰涅槃",
+      rate: "9.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/e0aa3476a7805c9efaf7e146590c108083bbcad39828152a1283db60a19aeffc.jpg",
+      year: "2026",
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_8',
-      title: "穿越后我嫁首富",
-      rate: "8.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/7a6ed5fdc60fe926c43dd8a565f10790eccf8288686ff35a061b2764b047fbb2.jpg",
-      year: "2024",
-      types: ["短剧","年代穿越","全集连播"],
+      title: "我的婚姻不将就",
+      rate: "9.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/4bee1015e830b5db477e46555b044f48fd21bcdacc9f5bba2908b54fef4c497e.jpg",
+      year: "2026",
+      types: ["短剧","女频恋爱","全集连播"],
       is_new: true,
       playable: true
     }
