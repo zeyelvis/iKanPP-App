@@ -311,6 +311,40 @@ if (fs.existsSync(customPlayerPath)) {
   );
 }
 
+const artPlayerPath = path.resolve('components/player/artplayer/ArtVideoPlayer.tsx');
+if (fs.existsSync(artPlayerPath)) {
+  const apContent = fs.readFileSync(artPlayerPath, 'utf-8');
+  assert(
+    apContent.includes('export const ArtVideoPlayer = React.memo('),
+    'ArtVideoPlayer.tsx 必须使用 React.memo 包裹，隔离外部虚拟 DOM 渲染波动'
+  );
+  assert(
+    apContent.includes('createHlsConfig'),
+    'ArtVideoPlayer.tsx 必须统一接入 createHlsConfig 单一真理源，继承 120s 深水库'
+  );
+}
+
+const hlsFactoryPath = path.resolve('lib/player/hls-config-factory.ts');
+if (fs.existsSync(hlsFactoryPath)) {
+  const hfContent = fs.readFileSync(hlsFactoryPath, 'utf-8');
+  assert(
+    hfContent.includes('maxBufferLength: isMobileClient ? 60 : 120'),
+    'hls-config-factory.ts 桌面端前向缓冲水位 maxBufferLength 必须 >= 120 秒'
+  );
+  assert(
+    hfContent.includes('maxMaxBufferLength: isMobileClient ? 120 : 240'),
+    'hls-config-factory.ts 桌面端最大前向缓冲水位 maxMaxBufferLength 必须 >= 240 秒'
+  );
+  assert(
+    hfContent.includes('120 * 1000 * 1000'),
+    'hls-config-factory.ts 桌面端最大缓冲区容量 maxBufferSize 必须 >= 120MB'
+  );
+  assert(
+    hfContent.includes('backBufferLength: isMobileClient ? 25 : 60'),
+    'hls-config-factory.ts 桌面端后向回退缓冲区 backBufferLength 必须 >= 60 秒'
+  );
+}
+
 console.log('\n====================================================');
 if (failed) {
   console.error('🚨 架构契约巡检失败！存在破坏全局稳定性的违规回退，请根据上述报错整改后再行提交！');

@@ -560,8 +560,32 @@ iKanPP 全域流媒体播放器（主站轨道 A 与午夜特区轨道 B）必�
 
 ### 5. 架构完整性门禁自动化常态守护 (Automated Integrity Linter)
 - 由 `scripts/test-architecture-integrity.mjs` 中的第 11 项持续执行静态与动态特征拦截：
-  1. 自动检验 `useHlsPlayer.ts` 是否正确使用 `checkIsIPadOS`；
+  1. 自动检验 `useHlsPlayer.ts` 与 `lib/player/hls-config-factory.ts` 是否正确使用 `checkIsIPadOS`；
   2. 自动核验桌面端缓冲参数是否满足 120s / 240s / 120MB / 60s 红线；
   3. 自动扫描播放器容器是否存在裸用 `useHistory(` 的性能毒药；
-  4. 自动核验 `VideoPlayer`、`CustomVideoPlayer`、`DesktopVideoPlayer` 是否均被 `React.memo` 保护；
+  4. 自动核验 `VideoPlayer`、`CustomVideoPlayer`、`DesktopVideoPlayer`、`ArtVideoPlayer` 是否均被 `React.memo` 保护；
 - 任何破坏本准则的代码提交或自动化修改，本地测试与 Cloudflare CI 构建立即就地熔断并拒绝发布！
+
+---
+
+## 23. 工业级 Artplayer 5 独立渲染核心与全屏硬件防黑屏铁律 (Artplayer 5 Core & Fullscreen Surface Spec)
+
+iKanPP 全域流媒体播放器（主站轨道 A 与午夜特区轨道 B）必须永久以 **Artplayer 5** 工业级原生 DOM 架构作为最高渲染核心基线，**彻底根除系统全屏下画面偶发黑屏（声音正常播放但视频图层丢失）的顽疾，严禁任何后续开发回退到多层 React 虚拟 DOM 包裹 `<video>` 的脆弱模型**：
+
+### 1. 硬件直通与虚拟 DOM 物理隔离铁律
+- **根本机理**：在系统全屏（`requestFullscreen()`）下，macOS CoreAnimation 与 Windows DirectComposition 会将底层视频提升到显卡专用的 **Hardware Overlay Plane（硬件直通叠加平面）** 实施零拷贝硬件加速。若视频被包裹在深度嵌套的 React 虚拟 DOM 组件中，当全屏状态切换引发父容器或子组件重绘、内联样式调整或 ClassName 变更时，显卡驱动会强制发生 **Surface Detach（硬件平面脱离）**，导致视频图层被操作系统剔除，只留音频播放而画面纯黑。
+- **物理隔离**：播放器统一由 `components/player/artplayer/ArtVideoPlayer.tsx` 调度，`<video>` 元素完全在独立的纯原生 DOM 树内创建与生命周期管理，彻底隔离 React 虚拟 DOM Re-render 瀑布流的任何外部扰动，确保全屏下硬件叠加图层稳如磐石。
+
+### 2. 单一真理源 HLS 配置工场铁律 (Single Source of Truth)
+- 全站播放器的 Hls.js 配置必须统一由 `lib/player/hls-config-factory.ts` 的 `createHlsConfig()` 生成；
+- 必须严格继承 120s 桌面端深水库、240s 最大缓冲上限、120MB 显存池与 60s 安全后向缓冲区，严禁在不同组件中重复或随意手写不同参数。
+
+### 3. 全屏 Portal 容器直插与纯色无模糊铁律
+- 选集抽屉（`InPlayerEpisodesDrawer`）、专线抽屉（`InPlayerSourceDrawer`）、返回按钮与 VIP 品牌角标，统一通过 `ReactDOM.createPortal(..., art.template.$player)` 直接挂载到 Artplayer 原生全屏顶层 DOM 内部；
+- 全屏弹层底色必须严格使用 `bg-[#141416]/98` 等高级纯色不透明暗夜底色，全链路 100% 严禁出现 `backdrop-filter: blur(...)`，杜绝 GPU Back-buffer 显存反向回读引发的显卡崩溃。
+
+### 4. 双轨绝对隔离铁律不妥协
+- 轨道 A（普通影视）恒定 100% 浏览器直连第三方源站 CDN（`effectiveUseProxy: false`），零代理、零重写；
+- 轨道 B（午夜特区）恒定走边缘 Worker（`/api/proxy`）进行请求头伪装与中转；
+- 换源容灾依然唯有纯前端切源，严禁通过代理抢救死链。
+

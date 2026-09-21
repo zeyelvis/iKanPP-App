@@ -334,3 +334,23 @@
 ### 5. 自动化架构门禁常态化锁定
 - 由 `scripts/test-architecture-integrity.mjs` 第 11 项常态化巡检，CI/CD 与本地预提交硬拦截任何参数倒退。
 
+---
+
+## 12. 工业级 Artplayer 5 独立渲染核心与全屏防黑屏铁律 (Artplayer 5 Core & Fullscreen Surface Spec)
+
+为了彻底根除用户在全屏播放时画面偶发黑屏（声音正常播放但视频图层丢失）的顽疾，播放器渲染层全面升级为工业级 **Artplayer 5 原生 DOM 架构**：
+
+### 1. 根本原因与架构解耦机理
+- **冲突根源**：在原有纯 React 播放器模型中，`<video>` 标签被包裹在 5 层 React `<div>` 容器中。当用户进入系统全屏时，操作系统（如 macOS CoreAnimation、Windows DirectComposition）会将底层 `<video>` 提升到显卡专属的 **Hardware Overlay Plane（硬件直通叠加平面）** 以实现零拷贝省电渲染。然而，浏览器触发 `fullscreenchange` 事件时，React 虚拟 DOM 会捕获该事件并重新渲染外层 1400 行的容器与所有子组件，频繁变更内联样式与 ClassName。这种虚拟 DOM 的回流（Reflow）强制显卡驱动发生 **Surface Detach（硬件平面脱离）**，导致视频图层被显卡保护性剔除，呈现出“黑屏但声音继续”的假死现象。
+- **Artplayer 物理隔离解耦**：Artplayer 5 是纯原生 JavaScript 驱动的工业级流媒体播放器，`<video>` 元素与控制栏全部在独立的纯原生 DOM 树内创建与调度，**彻底不受 React 虚拟 DOM Re-render 瀑布流的任何干扰**。在进入或退出全屏时，显卡硬件叠加图层保持绝对稳定，彻底终结全屏黑屏风险。
+
+### 2. 双轨业务与 Netflix 交互 100% 资产继承
+- **单一真理源配置贯穿**：通过 `lib/player/hls-config-factory.ts` 为 Artplayer 提供标准化的 `createHlsConfig()`：
+  - 桌面端：`maxBufferLength: 120s`、`maxMaxBufferLength: 240s`、`maxBufferSize: 120MB`、`backBufferLength: 60s`、`fragLoadingTimeOut: 30000ms`；
+  - 移动端：`maxBufferLength: 60s`、`maxMaxBufferLength: 120s`、`maxBufferSize: 60MB`、`backBufferLength: 25s`；
+  - 精准识别：彻底杜绝通过简单 `maxTouchPoints > 1` 将 MacBook 误判为 iPad 的漏洞。
+- **双轨绝对隔离**：轨道 A 恒定 100% 浏览器直连第三方源站 CDN（`effectiveUseProxy: false`），轨道 B 恒定走 Cloudflare Edge Worker 中转伪装，边界丝毫不乱。
+- **全屏 Portal 容器直插**：选集抽屉（`InPlayerEpisodesDrawer`）、线路抽屉（`InPlayerSourceDrawer`）、返回按钮与 4K VIP 品牌台标，统一通过 `ReactDOM.createPortal(..., art.template.$player)` 直接挂载到 Artplayer 原生全屏宿主容器内部。在系统全屏与网页全屏下皆能平滑弹出，且底色严格恪守 `bg-[#141416]/98` 纯色不透明原则，彻底剔除 `backdrop-filter`。
+- **进度保存 Selector 防重绘**：通过 `useHistoryStore((s) => s.addToHistory)` 和 `usePremiumHistoryStore((s) => s.addToHistory)` 进行防抖（5 秒）保存，绝不订阅全量 store。
+
+

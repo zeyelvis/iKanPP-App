@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation';
 import { useHistoryStore, usePremiumHistoryStore } from '@/lib/store/history-store';
 import { CustomVideoPlayer } from './CustomVideoPlayer';
+import { ArtVideoPlayer } from './artplayer/ArtVideoPlayer';
 import { VideoPlayerError } from './VideoPlayerError';
 import { VideoPlayerEmpty } from './VideoPlayerEmpty';
 import { usePlayerSettings } from './hooks/usePlayerSettings';
@@ -267,22 +268,26 @@ export const VideoPlayer = React.memo(function VideoPlayer({
           maxRetries={MAX_MANUAL_RETRIES}
         />
       ) : (
-        <CustomVideoPlayer
+        <ArtVideoPlayer
           key={`${effectiveUseProxy ? 'proxy' : 'direct'}-${retryCount}-${source}`} // Remount when switching sources, modes, or retrying
-          src={finalPlayUrl}
-          onError={handleVideoError}
-          onTimeUpdate={handleTimeUpdate}
-          initialTime={initialTime}
-          shouldAutoPlay={shouldAutoPlay}
+          playUrl={finalPlayUrl}
+          videoId={videoId}
+          currentEpisode={currentEpisode}
+          onBack={onBack}
           totalEpisodes={totalEpisodes}
-          currentEpisodeIndex={currentEpisode}
           onNextEpisode={onNextEpisode}
           isReversed={isReversed}
+          isPremium={isPremium}
           videoTitle={videoTitle}
           episodeName={episodeName}
-          isPremium={isPremium}
-          onBack={onBack}
+          externalTimeRef={externalTimeRef}
+          nextEpisodeUrl={nextEpisodeUrl}
+          initialTime={initialTime}
+          shouldAutoPlay={shouldAutoPlay}
           onResolutionDetected={onResolutionDetected}
+          onPlaybackError={onPlaybackError}
+          connectingMessage={connectingMessage}
+          isLoadingSource={isLoadingSource}
           episodes={episodes}
           onSelectEpisode={onSelectEpisode}
           sources={sources}
