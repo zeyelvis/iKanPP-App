@@ -77,7 +77,10 @@ export function InPlayerEpisodesDrawer({
 
   return (
     <div
+      data-player-layer="true"
       className="absolute inset-0 z-50 flex justify-end bg-black/60 transition-opacity duration-300 animate-fade-in"
+      onPointerDown={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
       onClick={(e) => {
         e.stopPropagation();
         onClose();

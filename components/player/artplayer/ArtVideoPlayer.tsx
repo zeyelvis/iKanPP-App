@@ -110,7 +110,15 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
     ? usePremiumHistoryStore((s) => s.addToHistory)
     : useHistoryStore((s) => s.addToHistory);
 
-  const { adFilterMode, adKeywords } = usePlayerSettings(isPremium);
+  const {
+    adFilterMode,
+    adKeywords,
+    autoSkipIntro,
+    skipIntroSeconds,
+    autoNextEpisode,
+    autoSkipOutro,
+    skipOutroSeconds,
+  } = usePlayerSettings(isPremium);
 
   // 读取用户设置的快进步长
   const [seekStepSeconds, setSeekStepSeconds] = useState(10);
@@ -185,6 +193,32 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
     }
   }, []);
 
+  // 全屏安全返回处理：退出全屏后再触发路由跳转，杜绝画面撕裂与黑屏
+  const safeOnBack = useCallback(() => {
+    if (artRef.current) {
+      if (artRef.current.fullscreen) {
+        artRef.current.fullscreen = false;
+      }
+      if (artRef.current.fullscreenWeb) {
+        artRef.current.fullscreenWeb = false;
+      }
+    }
+    if (typeof document !== 'undefined' && document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
+    onBack?.();
+  }, [onBack]);
+
+  // 跳过片头处理函数
+  const handleSkipIntro = useCallback(() => {
+    if (artRef.current) {
+      const targetTime = skipIntroSeconds > 0 ? skipIntroSeconds : 85;
+      artRef.current.currentTime = Math.min(artRef.current.duration, targetTime);
+      setShowSkipIntroBtn(false);
+      artRef.current.notice.show = `已跳过片头至 ${Math.floor(targetTime / 60)}分${targetTime % 60}秒 ⏩`;
+    }
+  }, [skipIntroSeconds]);
+
   // 播放 M3U8 的核心定制逻辑 (100% 继承双轨直连/反代与 120s 缓冲区深水库)
   const playM3u8 = useCallback((video: HTMLVideoElement, url: string, art: Artplayer) => {
     if (Hls.isSupported()) {
@@ -218,6 +252,17 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         initialTimeRef.current = 0; // 首次启动后清零
         attemptAutoPlay(art);
+
+        // 自动跳过片头联动 (首播开局自动快进至正片)
+        if (autoSkipIntro && (!initialTime || initialTime < 5)) {
+          const skipSec = skipIntroSeconds > 0 ? skipIntroSeconds : 85;
+          setTimeout(() => {
+            if (art.currentTime < 5) {
+              art.currentTime = skipSec;
+              art.notice.show = `已自动跳过片头 ${skipSec} 秒 ⏩`;
+            }
+          }, 350);
+        }
       });
 
       hls.on(Hls.Events.LEVEL_LOADED, (_event, data) => {
@@ -264,8 +309,15 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
       // 苹果原生 Safari / iOS AVPlayer 硬件加速
       video.src = url;
       if (initialTimeRef.current && initialTimeRef.current > 0) {
-        video.currentTime = initialTimeRef.current;
+        const targetTime = initialTimeRef.current;
         initialTimeRef.current = 0;
+        const onLoadedMetadata = () => {
+          try {
+            video.currentTime = targetTime;
+          } catch (e) {}
+          video.removeEventListener('loadedmetadata', onLoadedMetadata);
+        };
+        video.addEventListener('loadedmetadata', onLoadedMetadata);
       }
       attemptAutoPlay(art);
     } else {
@@ -419,41 +471,80 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
     artRef.current = art;
     setPortalTarget(art.template.$player);
 
-    // 事件监听：全屏状态
-    art.on('fullscreen', (state: boolean) => {
-      setIsFullscreen(state);
-    });
-    art.on('fullscreenWeb', (state: boolean) => {
-      setIsFullscreen(state);
-    });
+      // 事件监听：全屏状态物理同步
+      const handleFullscreenSync = () => {
+        const isNativeFs = Boolean(
+          (typeof document !== 'undefined' && document.fullscreenElement) ||
+          (document as any)?.webkitFullscreenElement ||
+          (document as any)?.mozFullScreenElement ||
+          (document as any)?.msFullscreenElement
+        );
+        const isWebFs = Boolean(art.fullscreenWeb);
+        setIsFullscreen(isNativeFs || isWebFs);
+      };
 
-    // 事件监听：播放器时间更新
-    art.on('video:timeupdate', () => {
-      const cur = art.currentTime;
-      const dur = art.duration;
-      if (externalTimeRef) {
-        externalTimeRef.current = cur;
+      art.on('fullscreen', (state: boolean) => {
+        setIsFullscreen(state || Boolean(art.fullscreenWeb));
+      });
+      art.on('fullscreenWeb', (state: boolean) => {
+        setIsFullscreen(state || Boolean(art.fullscreen));
+      });
+
+      if (typeof document !== 'undefined') {
+        document.addEventListener('fullscreenchange', handleFullscreenSync);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenSync);
       }
 
-      // 检测进入尾声倒数 15 秒且有下一集时，弹出 Netflix 倒计时卡片
-      const hasNext = currentEpisode < totalEpisodes - 1;
-      if (
-        hasNext &&
-        onNextEpisodeRef.current &&
-        dur > 30 &&
-        dur - cur <= 15 &&
-        cur > 10 &&
-        !nextCountdownDismissedRef.current
-      ) {
-        setShowNextEpisodeCountdown(true);
-      }
+      art.on('destroy', () => {
+        if (typeof document !== 'undefined') {
+          document.removeEventListener('fullscreenchange', handleFullscreenSync);
+          document.removeEventListener('webkitfullscreenchange', handleFullscreenSync);
+        }
+      });
 
-      // 智能跳过片头：在前 90 秒内且视频总长 > 5 分钟时滑出悬浮提示
-      if (cur >= 5 && cur <= 90 && dur > 300) {
-        setShowSkipIntroBtn(true);
-      } else {
-        setShowSkipIntroBtn(false);
-      }
+      // 事件监听：播放器时间更新
+      art.on('video:timeupdate', () => {
+        const cur = art.currentTime;
+        const dur = art.duration;
+        if (externalTimeRef) {
+          externalTimeRef.current = cur;
+        }
+
+        const hasNext = currentEpisode < totalEpisodes - 1;
+
+        // 自动跳过片尾 (Auto Skip Outro)
+        if (
+          autoSkipOutro &&
+          dur > 120 &&
+          skipOutroSeconds > 0 &&
+          dur - cur <= skipOutroSeconds &&
+          cur > 30 &&
+          hasNext &&
+          onNextEpisodeRef.current
+        ) {
+          onNextEpisodeRef.current();
+          return;
+        }
+
+        // 检测进入尾声倒数 15 秒且有下一集时，弹出 Netflix 倒计时卡片
+        if (
+          hasNext &&
+          onNextEpisodeRef.current &&
+          dur > 30 &&
+          dur - cur <= 15 &&
+          cur > 10 &&
+          !nextCountdownDismissedRef.current
+        ) {
+          setShowNextEpisodeCountdown(true);
+        }
+
+        // 智能跳过片头：在片头区间内且视频总长 > 3 分钟时滑出悬浮提示
+        const introThreshold = skipIntroSeconds > 0 ? skipIntroSeconds : 90;
+        if (cur >= 3 && cur <= introThreshold && dur > 180) {
+          setShowSkipIntroBtn(true);
+        } else {
+          setShowSkipIntroBtn(false);
+        }
 
       // 每 5 秒定时记录播放历史
       const now = Date.now();
@@ -572,7 +663,7 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
       });
     }
 
-    // 🌟 手势与 HUD 系统：长按 2.0x 极速快进 + 双击左右 ±10s 快进快退
+    // 🌟 手势与 HUD 系统：长按 2.0x 极速快进 + 双击左右 ±10s 快进快退 (绝不误伤抽屉与控件)
     const playerEl = art.template.$player;
     let longPressTimer: any = null;
     let isLongPressing = false;
@@ -580,7 +671,10 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
 
     const handlePointerDown = (e: PointerEvent) => {
       const target = e.target as HTMLElement;
+      // 物理防误触铁壁：必须点在视频渲染主体上，绝不误触控制栏、抽屉、顶栏或按钮
       if (
+        !target.closest('.art-mask') ||
+        target.closest('[data-player-layer]') ||
         target.closest('.art-bottom') ||
         target.closest('.art-controls') ||
         target.closest('button') ||
@@ -622,6 +716,8 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
     const handleDoubleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (
+        !target.closest('.art-mask') ||
+        target.closest('[data-player-layer]') ||
         target.closest('.art-bottom') ||
         target.closest('.art-controls') ||
         target.closest('button') ||
@@ -632,13 +728,15 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
 
       const rect = playerEl.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
-      const isLeft = clickX < rect.width * 0.4;
-      const isRight = clickX > rect.width * 0.6;
+      const isLeft = clickX < rect.width * 0.35;
+      const isRight = clickX > rect.width * 0.65;
 
       if (isLeft) {
+        e.stopPropagation();
         art.currentTime = Math.max(0, art.currentTime - seekStepSeconds);
         triggerSeekFeedback('rewind', `-${seekStepSeconds}s`);
       } else if (isRight) {
+        e.stopPropagation();
         art.currentTime = Math.min(art.duration, art.currentTime + seekStepSeconds);
         triggerSeekFeedback('forward', `+${seekStepSeconds}s`);
       }
@@ -699,7 +797,7 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
               title={videoTitle}
               episodeName={episodeName}
               isPremium={isPremium}
-              onBack={onBack}
+              onBack={safeOnBack}
               showControls={showControls}
               fullscreenClock={fullscreenClock}
               rating={rating}

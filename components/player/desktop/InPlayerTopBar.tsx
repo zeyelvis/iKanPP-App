@@ -32,6 +32,9 @@ export const InPlayerTopBar = React.memo(function InPlayerTopBar({
 
   return (
     <div
+      data-player-layer="true"
+      onPointerDown={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
       className={`absolute top-0 left-0 right-0 z-40 px-4 sm:px-6 py-4 flex items-center justify-between pointer-events-none transition-all duration-300 ${
         showControls
           ? 'opacity-100 translate-y-0'
@@ -47,13 +50,16 @@ export const InPlayerTopBar = React.memo(function InPlayerTopBar({
           <button
             onClick={(e) => {
               e.stopPropagation();
+              if (typeof document !== 'undefined' && document.fullscreenElement) {
+                document.exitFullscreen().catch(() => {});
+              }
               onBack();
             }}
             className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#141416]/90 hover:bg-black border border-white/20 text-white/90 hover:text-white transition-all cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.6)] hover:scale-105 active:scale-95 text-xs font-bold shrink-0"
-            title={isPremium ? '返回午夜专区' : '返回'}
+            title={isPremium ? '返回' : '返回'}
           >
             <ChevronLeft size={16} />
-            <span>{isPremium ? '午夜版' : '返回'}</span>
+            <span>返回</span>
           </button>
         )}
 
