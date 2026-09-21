@@ -269,7 +269,7 @@ export const VideoPlayer = React.memo(function VideoPlayer({
         />
       ) : (
         <ArtVideoPlayer
-          key={`${effectiveUseProxy ? 'proxy' : 'direct'}-${retryCount}-${source}`} // Remount when switching sources, modes, or retrying
+          key={`${effectiveUseProxy ? 'proxy' : 'direct'}-${retryCount}`} // 保持播放器实例稳定，换源换集由 switchUrl 平滑处理，仅在代理模式切换或手动重试时重建
           playUrl={finalPlayUrl}
           videoId={videoId}
           currentEpisode={currentEpisode}

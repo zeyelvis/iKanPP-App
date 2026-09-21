@@ -119,7 +119,7 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
     return store.subscribe(syncStep);
   }, [isPremium]);
 
-  // Ref 稳定引用，供底层事件闭包调用
+  // Ref 稳定引用，供底层事件闭包调用，彻底隔断 props 微变导致的初始化 useEffect 重新运行
   const onPlaybackErrorRef = useRef(onPlaybackError);
   onPlaybackErrorRef.current = onPlaybackError;
   const onNextEpisodeRef = useRef(onNextEpisode);
@@ -127,14 +127,57 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
   const onResolutionDetectedRef = useRef(onResolutionDetected);
   onResolutionDetectedRef.current = onResolutionDetected;
 
+  const initialTimeRef = useRef(initialTime);
+  useEffect(() => {
+    if (initialTime && initialTime > 0) {
+      initialTimeRef.current = initialTime;
+    }
+  }, [initialTime]);
+
+  const shouldAutoPlayRef = useRef(shouldAutoPlay);
+  useEffect(() => {
+    shouldAutoPlayRef.current = shouldAutoPlay;
+  }, [shouldAutoPlay]);
+
+  const adFilterModeRef = useRef(adFilterMode);
+  useEffect(() => {
+    adFilterModeRef.current = adFilterMode;
+  }, [adFilterMode]);
+
+  const adKeywordsRef = useRef(adKeywords);
+  useEffect(() => {
+    adKeywordsRef.current = adKeywords;
+  }, [adKeywords]);
+
   // 记录上次保存时间，防抖 5 秒保存
   const lastSaveTimeRef = useRef<number>(0);
+
+  // 智能自动播放调度器：先尝试带声播放；若被浏览器 Autoplay Policy 拦截，立即降级为静音秒开，确保画面立刻流动
+  const attemptAutoPlay = useCallback((art: Artplayer) => {
+    if (!shouldAutoPlayRef.current) return;
+
+    const playPromise = art.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch((err: any) => {
+        console.warn('[Artplayer] 带声自动播放被浏览器拦截，立即启动静音秒开自愈:', err);
+        art.muted = true;
+        art.play().then(() => {
+          art.notice.show = '浏览器已静音自动播放，点击画面任意处恢复声音 🔊';
+        }).catch((e: any) => {
+          console.warn('[Artplayer] 静音自动播放亦受阻:', e);
+        });
+      });
+    }
+  }, []);
 
   // 播放 M3U8 的核心定制逻辑 (100% 继承双轨直连/反代与 120s 缓冲区深水库)
   const playM3u8 = useCallback((video: HTMLVideoElement, url: string, art: Artplayer) => {
     if (Hls.isSupported()) {
       if ((art as any).hls) {
-        (art as any).hls.destroy();
+        try {
+          (art as any).hls.destroy();
+        } catch (e) {}
+        (art as any).hls = null;
       }
 
       const isMobile = Artplayer.utils.isMobile;
@@ -143,27 +186,26 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
         isMobileClient: isMobile,
         isAdFilterEnabled: true,
         filterM3u8Ad,
-        adFilterMode,
-        adKeywords,
+        adFilterMode: adFilterModeRef.current,
+        adKeywords: adKeywordsRef.current,
       });
 
       const hls = new Hls(config);
       hls.loadSource(url);
       hls.attachMedia(video);
-      art.hls = hls;
+      (art as any).hls = hls;
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        if (initialTime && initialTime > 0) {
-          video.currentTime = initialTime;
+        if (initialTimeRef.current && initialTimeRef.current > 0) {
+          video.currentTime = initialTimeRef.current;
+          initialTimeRef.current = 0; // 首次命中后清零，杜绝后续切流误跳
         }
-        if (shouldAutoPlay && video.paused) {
-          art.play().catch(() => {});
-        }
+        attemptAutoPlay(art);
       });
 
       hls.on(Hls.Events.LEVEL_LOADED, (_event, data) => {
         if (data.details?.totalduration && art.duration !== data.details.totalduration) {
-          // 更新总时长
+          // 时长自愈
         }
       });
 
@@ -180,21 +222,22 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
       });
 
       art.on('destroy', () => {
-        hls.destroy();
+        try {
+          hls.destroy();
+        } catch (e) {}
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       // 苹果原生 Safari / iOS AVPlayer 硬件加速
       video.src = url;
-      if (initialTime && initialTime > 0) {
-        video.currentTime = initialTime;
+      if (initialTimeRef.current && initialTimeRef.current > 0) {
+        video.currentTime = initialTimeRef.current;
+        initialTimeRef.current = 0;
       }
-      if (shouldAutoPlay && video.paused) {
-        art.play().catch(() => {});
-      }
+      attemptAutoPlay(art);
     } else {
       art.notice.show = '当前浏览器环境暂不支持播放此视频流';
     }
-  }, [adFilterMode, adKeywords, initialTime, shouldAutoPlay]);
+  }, [attemptAutoPlay]);
 
   // 切集或切片源时，重置倒计时与抽屉状态
   useEffect(() => {
@@ -474,10 +517,75 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
       }
     });
 
-    // 清理实例
+    // 绝对状态同步：监听原生 video 播放状态，确保中央大按钮与加载圈与底层解码管线 100% 同步
+    const rawVideo = art.video;
+    if (rawVideo) {
+      const handlePlaying = () => {
+        if (art.template?.$state) {
+          art.template.$state.style.display = 'none';
+        }
+        if (art.template?.$loading) {
+          art.template.$loading.style.display = 'none';
+        }
+      };
+      const handlePause = () => {
+        if (art.template?.$state) {
+          art.template.$state.style.display = 'flex';
+        }
+      };
+      const handleWaiting = () => {
+        if (art.template?.$loading) {
+          art.template.$loading.style.display = 'flex';
+        }
+      };
+      const handleCanPlay = () => {
+        if (art.template?.$loading) {
+          art.template.$loading.style.display = 'none';
+        }
+      };
+
+      rawVideo.addEventListener('playing', handlePlaying);
+      rawVideo.addEventListener('pause', handlePause);
+      rawVideo.addEventListener('waiting', handleWaiting);
+      rawVideo.addEventListener('canplay', handleCanPlay);
+
+      art.on('destroy', () => {
+        rawVideo.removeEventListener('playing', handlePlaying);
+        rawVideo.removeEventListener('pause', handlePause);
+        rawVideo.removeEventListener('waiting', handleWaiting);
+        rawVideo.removeEventListener('canplay', handleCanPlay);
+      });
+    }
+
+    // 用户与播放器产生任何交互时，若处于静音自愈状态，尝试自动恢复声音
+    const handleRestoreSound = () => {
+      if (art && art.muted) {
+        art.muted = false;
+        art.notice.show = '';
+      }
+    };
+    art.on('click', handleRestoreSound);
+
+    // 清理实例 (严格彻底物理销毁，杜绝幽灵 video 留在后台播声音)
     return () => {
       if (artRef.current) {
-        artRef.current.destroy(false);
+        try {
+          const artInstance = artRef.current;
+          if (artInstance.video) {
+            artInstance.video.pause();
+            artInstance.video.removeAttribute('src');
+            artInstance.video.load();
+          }
+          if ((artInstance as any).hls) {
+            try {
+              (artInstance as any).hls.destroy();
+            } catch (e) {}
+            (artInstance as any).hls = null;
+          }
+          artInstance.destroy(true); // 传入 true，彻底抹除 DOM 元素！
+        } catch (err) {
+          console.warn('[Artplayer] Cleanup error:', err);
+        }
         artRef.current = null;
       }
     };
@@ -516,12 +624,31 @@ export const ArtVideoPlayer = React.memo(function ArtVideoPlayer({
   useEffect(() => {
     if (artRef.current && playUrl) {
       if (artRef.current.url !== playUrl) {
-        artRef.current.switchUrl(playUrl).catch(() => {
-          artRef.current?.play().catch(() => {});
-        });
+        if ((artRef.current as any).hls) {
+          try {
+            (artRef.current as any).hls.destroy();
+          } catch (e) {}
+          (artRef.current as any).hls = null;
+        }
+        artRef.current
+          .switchUrl(playUrl)
+          .then(() => {
+            if (artRef.current) {
+              attemptAutoPlay(artRef.current);
+            }
+          })
+          .catch((err) => {
+            console.warn('[Artplayer] switchUrl 异常，降级重试播放:', err);
+            artRef.current?.play().catch(() => {
+              if (artRef.current) {
+                artRef.current.muted = true;
+                artRef.current.play().catch(() => {});
+              }
+            });
+          });
       }
     }
-  }, [playUrl]);
+  }, [playUrl, attemptAutoPlay]);
 
   return (
     <div className="relative w-full h-full aspect-video bg-black rounded-none sm:rounded-2xl overflow-hidden group">
