@@ -1,6 +1,6 @@
 import type { VideoSource } from '@/lib/types';
 
-// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-20T07:58:34.682Z）
+// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-21T08:17:21.111Z）
 export const DEFAULT_SOURCES: VideoSource[] = [
   {
     id: 'juliang',
@@ -113,9 +113,9 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     priority: 11,
   },
   {
-    id: 'feifan',
-    name: '非凡资源',
-    baseUrl: 'https://api.ffzyapi.com',
+    id: 'haitun',
+    name: '海豚资源',
+    baseUrl: 'https://hhzyapi.com',
     searchPath: '/api.php/provide/vod',
     detailPath: '/api.php/provide/vod',
     group: 'normal',
@@ -133,9 +133,9 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     priority: 13,
   },
   {
-    id: 'haitun',
-    name: '海豚资源',
-    baseUrl: 'https://hhzyapi.com',
+    id: 'feifan',
+    name: '非凡资源',
+    baseUrl: 'https://api.ffzyapi.com',
     searchPath: '/api.php/provide/vod',
     detailPath: '/api.php/provide/vod',
     group: 'normal',
