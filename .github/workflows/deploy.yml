@@ -34,11 +34,28 @@ jobs:
         run: npm install
 
       - name: Run Architecture Contract & Zero-404 Integrity Gate
+        id: integrity_gate
         run: |
           node scripts/test-architecture-integrity.mjs
           npx tsx scripts/test-latest-titles-404.mjs
 
+      - name: Report Architecture Integrity Failure
+        if: failure() && steps.integrity_gate.outcome == 'failure'
+        run: |
+          echo "## 🚨 iKanPP 部署熔断：架构守卫门禁拦截" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> ⚠️ **本次提交由于破坏了核心架构铁律，生产环境已启动自动熔断保护，本次构建不上线！**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 常见拦截原因：" >> $GITHUB_STEP_SUMMARY
+          echo "1. **播放器卡顿参数倒退**：下调了桌面端缓冲水位（低于 120s/240s/120MB）或错误识别了设备；" >> $GITHUB_STEP_SUMMARY
+          echo "2. **全局状态订阅风暴**：在播放器容器中使用了无 selector 的 \`useHistory()\`；" >> $GITHUB_STEP_SUMMARY
+          echo "3. **全屏黑屏隐患**：全屏组件引入了 \`backdrop-filter\` 或合写了跨浏览器全屏选择器；" >> $GITHUB_STEP_SUMMARY
+          echo "4. **正片纯净度违背**：引入了日文假名、解说类搬运或未汉化外文条目。" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "请立即查阅上方 \`Run Architecture Contract & Zero-404 Integrity Gate\` 步骤中的 ❌ 具体拦截项，参照 \`AGENTS.md\` 修复后重新提交。" >> $GITHUB_STEP_SUMMARY
+
       - name: Build Next.js application for Cloudflare Pages
+
         run: npm run pages:build
 
       - name: Deploy to Cloudflare Pages
