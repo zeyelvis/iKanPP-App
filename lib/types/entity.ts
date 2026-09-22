@@ -39,13 +39,14 @@ export interface TitleEntity {
  */
 export interface TitleAiContent {
   // 场景 1：独家原创深度影评与高光剧情
+  hook?: string;                // 15~25字极具悬念与冲击力的一句话观影金句 (用于 Google 搜索结果首句抓人)
   uniqueSynopsis?: string;      // 300~400字独家深度剖析
   highlights?: string[];        // 3大剧情高光核心看点
   characterAnalysis?: string;   // 角色博弈与主演演技点评
   audienceFit?: string;         // 适宜受众画像
 
   // 场景 2：Google FAQPage 结构化问答
-  faqs?: Array<{ question: string; answer: string }>;
+  faqs?: Array<{ question: string; answer: string; [key: string]: any }>;
 
   // 场景 5：全球繁体与港台本地化译名库
   taiwanTitle?: string;         // 台湾院线公映名 (如: 刺激1995)

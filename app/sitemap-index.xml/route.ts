@@ -25,6 +25,7 @@ export async function GET() {
 
   const subSitemaps: { url: string; lastmod: string }[] = [
     { url: `${BASE_URL}/sitemap.xml`, lastmod: todayStr },
+    { url: `${BASE_URL}/sitemap-topics.xml`, lastmod: todayStr },
     { url: `${BASE_URL}/sitemap-genres.xml`, lastmod: todayStr },
     { url: `${BASE_URL}/sitemap-people.xml`, lastmod: todayStr },
   ];

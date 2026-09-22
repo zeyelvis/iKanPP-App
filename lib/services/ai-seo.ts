@@ -40,7 +40,7 @@ export async function callAiCompletion(params: {
 
   const response = await fetch(url, {
     method: 'POST',
-    signal: AbortSignal.timeout(5000),
+    signal: AbortSignal.timeout(60000),
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
@@ -50,6 +50,7 @@ export async function callAiCompletion(params: {
       messages: params.messages,
       temperature: params.temperature ?? 0.7,
       max_tokens: params.maxTokens ?? 3500,
+      reasoning_effort: 'low',
     }),
   });
 
@@ -68,6 +69,26 @@ export async function callAiCompletion(params: {
 }
 
 /**
+ * 健壮的 JSON 提取工具，防范大模型多余包裹与解释性前后缀
+ */
+export function extractJson<T = any>(raw: string): T {
+  const trimmed = raw.trim();
+  const withoutFences = trimmed.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+  try {
+    return JSON.parse(withoutFences);
+  } catch {}
+
+  const match = withoutFences.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+  if (match) {
+    try {
+      return JSON.parse(match[1]);
+    } catch {}
+  }
+
+  throw new Error('无法从大模型返回内容中解析出合法的 JSON');
+}
+
+/**
  * ============================================================================
  * 场景 1：独家原创深度影评与剧情高光扩写 (消灭全网重复内容 / Thin Content)
  * ============================================================================
@@ -80,23 +101,25 @@ export async function generateAiUniqueReview(params: {
   genres?: string[];
   model?: string;
 }): Promise<{
+  hook: string;
   uniqueSynopsis: string;
   highlights: string[];
   characterAnalysis: string;
   audienceFit: string;
 }> {
-  const systemPrompt = `你是一位精通华语影视与好莱坞电影工业的资深影评人。
-请针对给定的影视作品，撰写一段 100% 全网独一无二、文笔生动老练的独家剧情深度剖析与角色看点。
-严禁抄袭或复述官方公关简介，必须从叙事张力、人性博弈、视听风格与角色弧光展开。
+  const systemPrompt = `你是一位精通华语影视与好莱坞电影工业的资深顶级影评人。
+请针对给定的影视作品，撰写一段 100% 全网独家原创、文笔老练犀利的独家深度剧情剖析与角色看点。
+严禁复述官方公关简介，必须从叙事张力、人性博弈、视听风格与角色弧光深度展开。
 
 必须直接以严格合法的 JSON 格式返回，包含以下字段：
 {
+  "hook": "15~25字极具悬念与冲击力的一句话观影金句（用于Google搜索结果首句抓人）",
   "uniqueSynopsis": "300~400字的独家剧情高光剖析，层层递进，吸引读者观看",
   "highlights": ["核心看点1 (15~25字)", "核心看点2 (15~25字)", "核心看点3 (15~25字)"],
   "characterAnalysis": "150字左右的主演演技与角色博弈分析",
   "audienceFit": "适合哪类受众群（如：高智商犯罪迷、情感共鸣者等）"
 }
-不要输出任何 Markdown 标记或多余废话。`;
+不要输出任何多余废话或 Markdown 代码块包裹。`;
 
   const userPrompt = `作品名称：《${params.title}》
 类型：${params.type === 'tv' ? '电视剧' : '院线电影'}
@@ -110,14 +133,29 @@ export async function generateAiUniqueReview(params: {
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
       ],
-      model: params.model,
+      model: params.model || DEFAULT_MODEL,
       temperature: 0.7,
-      maxTokens: 1500,
+      maxTokens: 1800,
     });
-    const cleanJson = raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
-    return JSON.parse(cleanJson);
-  } catch {
+    const parsed = extractJson<{
+      hook?: string;
+      uniqueSynopsis: string;
+      highlights: string[];
+      characterAnalysis: string;
+      audienceFit: string;
+    }>(raw);
+
     return {
+      hook: parsed.hook || `${params.title}：在危机漩涡与人性抉择中，展开令人屏息的博弈。`,
+      uniqueSynopsis: parsed.uniqueSynopsis,
+      highlights: parsed.highlights || ['高能剧情推进与极致视听震撼', '实力派主创倾力呈现角色弧光', '海外 Anycast 4K 纯直连秒开'],
+      characterAnalysis: parsed.characterAnalysis || '主演扎实的表演赋予角色极强的心理博弈张力。',
+      audienceFit: parsed.audienceFit || '推荐给所有偏好快节奏、硬派视听与高质量电影工业叙事的全球影迷。',
+    };
+  } catch (err: any) {
+    console.warn(`[generateAiUniqueReview fallback] ${params.title}:`, err?.message);
+    return {
+      hook: `${params.title}：危机四伏中的人性抉择与全景视听震撼。`,
       uniqueSynopsis: `${params.title} 是一部兼具叙事张力与视听冲击力的佳作。${params.overview ? params.overview.slice(0, 200) + '...' : '故事情节跌宕起伏，危机四伏中层层展开令人屏息的剧情高潮。'}`,
       highlights: ['高能剧情推进与极致视听震撼', '实力派主创倾力呈现角色弧光', '海外 Anycast 4K 纯直连秒开'],
       characterAnalysis: '主演通过扎实而极具沉浸感的表演，将危机漩涡中的心理博弈与决绝信念演绎得淋漓尽致。',
@@ -143,7 +181,7 @@ export async function generateAiFaq(params: {
   const systemPrompt = `你是一位精通 Google Schema.org 结构化数据的国际顶级 SEO 架构师。
 请针对给定的影视作品，生成 4 个海外华人观众在 Google 搜索中最可能高频查询的真实问题与解答。
 核心覆盖：
-1. 海外免翻墙 4K 播放渠道（强调 iKanPP 0广告秒开体验）；
+1. 海外免翻墙 4K 播放渠道（强调 iKanPP 0广告直连秒开体验）；
 2. 正片剧情核心看点与反转亮点；
 3. 更新频率、全集集数与清晰度规格；
 4. 真实观众口碑与防坑观影建议。
@@ -168,13 +206,13 @@ export async function generateAiFaq(params: {
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
       ],
-      model: params.model,
+      model: params.model || DEFAULT_MODEL,
       temperature: 0.5,
-      maxTokens: 1200,
+      maxTokens: 1400,
     });
-    const cleanJson = raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
-    faqs = JSON.parse(cleanJson);
-  } catch {
+    faqs = extractJson<Array<{ question: string; answer: string }>>(raw);
+  } catch (err: any) {
+    console.warn(`[generateAiFaq fallback] ${params.title}:`, err?.message);
     faqs = [
       {
         question: `在海外如何免翻墙流畅观看《${params.title}》4K超清完整版？`,
@@ -345,8 +383,7 @@ export async function generateAiCollectionTopic(params: {
   });
 
   try {
-    const cleanJson = raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
-    return JSON.parse(cleanJson);
+    return extractJson(raw);
   } catch {
     return {
       collectionSlug: 'recommended-chinese-masterpieces',
@@ -419,3 +456,153 @@ export async function generateAiLocalization(params: {
     };
   }
 }
+
+/**
+ * ============================================================================
+ * 场景 6：工业级单次全量生成 (One-Shot Comprehensive Generator)
+ * 1 次网络请求同时生成 Hook、独家影评、三大看点、演技点评、受众画像、4组FAQ与港台公映译名！
+ * ============================================================================
+ */
+export async function generateAiComprehensiveInsights(params: {
+  title: string;
+  type: string;
+  year?: string;
+  overview?: string;
+  genres?: string[];
+  cast?: string[];
+  model?: string;
+}): Promise<{
+  hook: string;
+  uniqueSynopsis: string;
+  highlights: string[];
+  characterAnalysis: string;
+  audienceFit: string;
+  faqs: Array<{ question: string; answer: string }>;
+  taiwanTitle: string;
+  hongkongTitle: string;
+}> {
+  const systemPrompt = `你是一位精通华语影视工业与国际顶级搜索引擎算法的资深策展人兼架构师。
+请针对给定的影视作品，撰写一段 100% 全网独家原创、文笔老练犀利的独家深度剧情剖析、高光看点，以及海外华人 Google 搜索高频 FAQ 问答胶囊与港台公映译名。
+
+必须直接输出严格合法的 JSON 格式，字段定义如下：
+{
+  "hook": "15~25字极具悬念与冲击力的一句话观影金句（用于Google搜索结果首句抓人）",
+  "uniqueSynopsis": "300~450字的独家剧情高光深度剖析，深入人性博弈与时代宿命，严禁复述官方公关简介",
+  "highlights": ["核心看点1 (15~25字)", "核心看点2 (15~25字)", "核心看点3 (15~25字)"],
+  "characterAnalysis": "120~180字的主演演技与角色心理博弈深度点评",
+  "audienceFit": "适宜受众画像（如：硬核推理迷、年代历史爱好者、情感共鸣者等）",
+  "faqs": [
+    {
+      "question": "在海外如何免翻墙流畅观看《${params.title}》4K超清完整版？",
+      "answer": "您可以在 iKanPP (爱看片片) 直接直连观看。平台在全球部署 Anycast 边缘 CDN，海外北美、欧洲、澳洲均可实现 0 缓冲秒开，且全站无弹窗广告。"
+    },
+    {
+      "question": "《${params.title}》的核心剧情亮点与反转看点是什么？",
+      "answer": "解答2（围绕真实剧情亮点生动展开，50~80字）"
+    },
+    {
+      "question": "《${params.title}》的画质规格与更新进度如何？",
+      "answer": "平台提供 1080P/4K 超清画质版本，与国内各大平台官方保持实时同步更新，支持移动端 PWA 桌面离线直达。"
+    },
+    {
+      "question": "《${params.title}》值得看吗？真实观众口碑如何？",
+      "answer": "解答4（客观专业的口碑评价与观影防坑建议，50~80字）"
+    }
+  ],
+  "taiwanTitle": "台湾正式公映译名（如无特殊译名则为标准正体）",
+  "hongkongTitle": "香港正式公映译名（符合粤语上映习惯）"
+}
+注意：只输出合法的纯 JSON 文本，不要包含任何多余文字或 Markdown 包裹。`;
+
+  const userPrompt = `影视名称：《${params.title}》
+类型：${params.type === 'tv' ? '电视剧' : '院线电影'}
+上映年份：${params.year || '2024'}
+剧情简介：${params.overview || '暂无详细简介'}
+主要演员：${(params.cast || []).slice(0, 5).join('、') || '实力派阵容'}
+题材分类：${(params.genres || []).join('、') || '精选大作'}`;
+
+  try {
+    const raw = await callAiCompletion({
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      model: params.model || DEFAULT_MODEL,
+      temperature: 0.6,
+      maxTokens: 2500,
+    });
+
+    const parsed = extractJson<{
+      hook?: string;
+      uniqueSynopsis?: string;
+      highlights?: string[];
+      characterAnalysis?: string;
+      audienceFit?: string;
+      faqs?: Array<{ question: string; answer: string }>;
+      taiwanTitle?: string;
+      hongkongTitle?: string;
+    }>(raw);
+
+    return {
+      hook: parsed.hook || `《${params.title}》：在时代巨浪与命运漩涡中，展开令人屏息的博弈。`,
+      uniqueSynopsis: parsed.uniqueSynopsis || `${params.title} 是一部兼具叙事张力与视听冲击力的重磅佳作。`,
+      highlights: parsed.highlights && parsed.highlights.length >= 3 ? parsed.highlights : [
+        '高能剧情推进与极致视听震撼',
+        '实力派主创倾力呈现角色弧光',
+        '海外 Anycast 4K 纯直连秒开',
+      ],
+      characterAnalysis: parsed.characterAnalysis || '主演扎实细腻的表演赋予角色极强的心理博弈张力。',
+      audienceFit: parsed.audienceFit || '推荐给所有偏好快节奏、硬派视听与高质量电影工业叙事的全球影迷。',
+      faqs: parsed.faqs && parsed.faqs.length >= 4 ? parsed.faqs : [
+        {
+          question: `在海外如何免翻墙流畅观看《${params.title}》4K超清完整版？`,
+          answer: `您可以在 iKanPP (爱看片片) 直接直连观看。平台在全球部署 Anycast 边缘 CDN，海外北美、欧洲、澳洲均可实现 0 缓冲秒开，且全站无弹窗广告。`,
+        },
+        {
+          question: `《${params.title}》的画质与更新进度如何？`,
+          answer: `平台提供 1080P/4K 超清画质版本，与国内各大平台官方保持实时同步更新，支持移动端 PWA 桌面离线直达。`,
+        },
+        {
+          question: `《${params.title}》值得看吗？有哪些精彩看点？`,
+          answer: `本片叙事紧凑、反转连连，实力派主演阵容在危机与博弈中展现出极高水准，口碑热度持续霸榜。`,
+        },
+        {
+          question: `iKanPP 观看《${params.title}》需要会员充值或看广告吗？`,
+          answer: `无需充值会员，100% 拒绝任何低俗博彩贴片与诱导弹窗，真正还原院线级纯净视听体验。`,
+        },
+      ],
+      taiwanTitle: parsed.taiwanTitle || params.title,
+      hongkongTitle: parsed.hongkongTitle || params.title,
+    };
+  } catch (err: any) {
+    console.warn(`[generateAiComprehensiveInsights fallback] ${params.title}:`, err?.message);
+    return {
+      hook: `《${params.title}》：在时代巨浪与命运漩涡中，展开令人屏息的博弈。`,
+      uniqueSynopsis: `${params.title} 是一部兼具叙事张力与视听冲击力的重磅佳作。剧情跌宕起伏，危机四伏中层层展开扣人心弦的命运交织。`,
+      highlights: ['高能剧情推进与极致视听震撼', '实力派主创倾力呈现角色弧光', '海外 Anycast 4K 纯直连秒开'],
+      characterAnalysis: '主演通过扎实而极具沉浸感的表演，将危机漩涡中的心理博弈与决绝信念演绎得淋漓尽致。',
+      audienceFit: '推荐给所有偏好快节奏、硬派视听与高质量电影工业叙事的全球影迷。',
+      faqs: [
+        {
+          question: `在海外如何免翻墙流畅观看《${params.title}》4K超清完整版？`,
+          answer: `您可以在 iKanPP (爱看片片) 直接直连观看。平台在全球部署 Anycast 边缘 CDN，海外北美、欧洲、澳洲均可实现 0 缓冲秒开，且全站无弹窗广告。`,
+        },
+        {
+          question: `《${params.title}》的画质与更新进度如何？`,
+          answer: `平台提供 1080P/4K 超清画质版本，与国内各大平台官方保持实时同步更新，支持移动端 PWA 桌面离线直达。`,
+        },
+        {
+          question: `《${params.title}》值得看吗？有哪些精彩看点？`,
+          answer: `本片叙事紧凑、反转连连，实力派主演阵容在危机与博弈中展现出极高水准，口碑热度持续霸榜。`,
+        },
+        {
+          question: `iKanPP 观看《${params.title}》需要会员充值或看广告吗？`,
+          answer: `无需充值会员，100% 拒绝任何低俗博彩贴片与诱导弹窗，真正还原院线级纯净视听体验。`,
+        },
+      ],
+      taiwanTitle: params.title,
+      hongkongTitle: params.title,
+    };
+  }
+}
+

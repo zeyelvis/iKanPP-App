@@ -32,6 +32,7 @@ import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 import { generateFullSpectrumKeywords } from '@/lib/utils/seo-keyword-generator';
 import { isEntityIndexable } from '@/lib/data/seo-rules/seo-keyword-system';
 import { FlagTW, FlagHK } from '@/components/ui/RegionFlags';
+import { getPrebakedAiInsight } from '@/lib/data/prebaked-ai-insights';
 
 interface PrebakedDisplayItem {
   entityId?: string;
@@ -731,7 +732,18 @@ function hasTitleOverlap(a: string, b: string): boolean {
  * 彻底消除 generateMetadata() 与 TitlePage() 对同一条目数据的双重重复解析
  */
 const getCachedEntity = cache(async (rawSlugParam: string): Promise<TitleEntity | null> => {
-  return resolveEntity(rawSlugParam);
+  const entity = await resolveEntity(rawSlugParam);
+  if (entity) {
+    const prebakedAi = getPrebakedAiInsight({
+      title: entity.title,
+      entityId: entity.entityId,
+      slug: entity.slug,
+    });
+    if (prebakedAi) {
+      entity.aiContent = { ...prebakedAi, ...(entity.aiContent || {}) };
+    }
+  }
+  return entity;
 });
 
 /**
@@ -814,7 +826,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: entity.description,
   });
 
-  const metaDescription = seoSpectrum.metaDescription;
+  const hookPrefix = entity.aiContent?.hook ? `${entity.aiContent.hook} ` : '';
+  const metaDescription = `${hookPrefix}${seoSpectrum.metaDescription}`;
 
   return {
     // 依循规范 21.3 节：仅输出少量核心实体词，彻底杜绝 meta keyword 堆叠
