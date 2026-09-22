@@ -24,7 +24,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全24集",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_all_2",
@@ -41,7 +41,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全12集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_all_3",
@@ -58,7 +58,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T20:21:42.095Z"
+      "createdAt": "2026-09-22T01:17:57.336Z"
     },
     {
       "entityId": "ik_radar_all_4",
@@ -75,7 +75,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第06集",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_all_5",
@@ -92,7 +92,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第2集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T19:21:42.095Z"
+      "createdAt": "2026-09-22T00:17:57.336Z"
     },
     {
       "entityId": "ik_radar_all_6",
@@ -109,7 +109,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全6集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_all_7",
@@ -126,7 +126,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第1集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T18:21:42.095Z"
+      "createdAt": "2026-09-21T23:17:57.336Z"
     },
     {
       "entityId": "ik_radar_all_8",
@@ -143,7 +143,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第2集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T17:51:42.095Z"
+      "createdAt": "2026-09-21T22:47:57.336Z"
     },
     {
       "entityId": "ik_radar_all_9",
@@ -151,7 +151,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "slug": "数到三",
       "cover": "https://static.iyf.tv/upload/video/202609191155235567514.gif",
       "backdrop": "https://static.iyf.tv/upload/video/202609191155235567514.gif",
-      "rate": "7.2",
+      "rate": "7.4",
       "year": "2026",
       "type": "movie",
       "channelKey": "all",
@@ -160,7 +160,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T17:21:42.095Z"
+      "createdAt": "2026-09-21T22:17:57.336Z"
     },
     {
       "entityId": "ik_radar_all_10",
@@ -177,7 +177,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第1集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T16:51:42.095Z"
+      "createdAt": "2026-09-21T21:47:57.336Z"
     },
     {
       "entityId": "ik_radar_all_11",
@@ -194,7 +194,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第1集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T16:21:42.095Z"
+      "createdAt": "2026-09-21T21:17:57.336Z"
     },
     {
       "entityId": "ik_radar_all_12",
@@ -211,7 +211,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T15:51:42.095Z"
+      "createdAt": "2026-09-21T20:47:57.336Z"
     },
     {
       "entityId": "ik_radar_all_13",
@@ -219,7 +219,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "slug": "挑情丑闻",
       "cover": "https://static.iyf.tv/upload/video/202609181216121660147.gif",
       "backdrop": "https://static.iyf.tv/upload/video/202609181216121660147.gif",
-      "rate": "6.5",
+      "rate": "6.6",
       "year": "2026",
       "type": "tv",
       "channelKey": "all",
@@ -228,7 +228,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全8集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_all_14",
@@ -245,7 +245,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T14:51:42.095Z"
+      "createdAt": "2026-09-21T19:47:57.336Z"
     },
     {
       "entityId": "ik_radar_all_15",
@@ -262,7 +262,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T14:21:42.095Z"
+      "createdAt": "2026-09-21T19:17:57.336Z"
     },
     {
       "entityId": "ik_radar_all_16",
@@ -279,7 +279,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "第1期会员版",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T13:51:42.095Z"
+      "createdAt": "2026-09-21T18:47:57.336Z"
     },
     {
       "entityId": "ik_radar_all_17",
@@ -296,7 +296,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第2集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T13:21:42.095Z"
+      "createdAt": "2026-09-21T18:17:57.336Z"
     },
     {
       "entityId": "ik_radar_all_18",
@@ -313,7 +313,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第1集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T12:51:42.095Z"
+      "createdAt": "2026-09-21T17:47:57.336Z"
     },
     {
       "entityId": "ik_radar_all_19",
@@ -330,7 +330,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第1集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T12:21:42.095Z"
+      "createdAt": "2026-09-21T17:17:57.336Z"
     },
     {
       "entityId": "ik_radar_all_20",
@@ -345,9 +345,9 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "genres": [
         "电影"
       ],
-      "updateBadge": "正片",
+      "updateBadge": "更新至第21集",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T11:51:42.095Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_all_21",
@@ -364,7 +364,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全24集",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_all_22",
@@ -381,7 +381,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全8集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_all_23",
@@ -398,7 +398,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T10:21:42.095Z"
+      "createdAt": "2026-09-21T15:17:57.336Z"
     },
     {
       "entityId": "ik_radar_all_24",
@@ -406,7 +406,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "slug": "怪物-丽兹-波顿的故事",
       "cover": "https://static.iyf.tv/upload/video/202609171342044218480.gif",
       "backdrop": "https://static.iyf.tv/upload/video/202609171342044218480.gif",
-      "rate": "8.2",
+      "rate": "7.9",
       "year": "2026",
       "type": "tv",
       "channelKey": "all",
@@ -415,7 +415,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全8集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     }
   ],
   "movie": [
@@ -434,7 +434,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:21:46.581Z"
+      "createdAt": "2026-09-22T02:17:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_2",
@@ -442,7 +442,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "slug": "数到三",
       "cover": "https://static.iyf.tv/upload/video/202609191155235567514.gif",
       "backdrop": "https://static.iyf.tv/upload/video/202609191155235567514.gif",
-      "rate": "7.2",
+      "rate": "7.4",
       "year": "2026",
       "type": "movie",
       "channelKey": "movie",
@@ -451,7 +451,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T20:51:46.581Z"
+      "createdAt": "2026-09-22T01:47:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_3",
@@ -468,7 +468,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T20:21:46.581Z"
+      "createdAt": "2026-09-22T01:17:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_4",
@@ -485,7 +485,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T19:51:46.581Z"
+      "createdAt": "2026-09-22T00:47:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_5",
@@ -502,7 +502,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T19:21:46.581Z"
+      "createdAt": "2026-09-22T00:17:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_6",
@@ -517,9 +517,9 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "genres": [
         "电影"
       ],
-      "updateBadge": "正片",
+      "updateBadge": "更新至第21集",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T18:51:46.581Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_movie_7",
@@ -536,7 +536,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T18:21:46.581Z"
+      "createdAt": "2026-09-21T23:17:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_8",
@@ -553,7 +553,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T17:51:46.581Z"
+      "createdAt": "2026-09-21T22:47:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_9",
@@ -570,7 +570,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T17:21:46.581Z"
+      "createdAt": "2026-09-21T22:17:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_10",
@@ -587,7 +587,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T16:51:46.581Z"
+      "createdAt": "2026-09-21T21:47:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_11",
@@ -604,7 +604,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T16:21:46.581Z"
+      "createdAt": "2026-09-21T21:17:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_12",
@@ -621,7 +621,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T15:51:46.581Z"
+      "createdAt": "2026-09-21T20:47:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_13",
@@ -638,7 +638,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T15:21:46.581Z"
+      "createdAt": "2026-09-21T20:17:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_14",
@@ -655,7 +655,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T14:51:46.581Z"
+      "createdAt": "2026-09-21T19:47:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_15",
@@ -672,7 +672,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T14:21:46.581Z"
+      "createdAt": "2026-09-21T19:17:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_16",
@@ -689,7 +689,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T13:51:46.581Z"
+      "createdAt": "2026-09-21T18:47:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_17",
@@ -706,7 +706,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T13:21:46.581Z"
+      "createdAt": "2026-09-21T18:17:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_18",
@@ -723,7 +723,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T12:51:46.581Z"
+      "createdAt": "2026-09-21T17:47:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_19",
@@ -740,7 +740,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T12:21:46.581Z"
+      "createdAt": "2026-09-21T17:17:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_20",
@@ -757,7 +757,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T11:51:46.581Z"
+      "createdAt": "2026-09-21T16:47:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_21",
@@ -774,7 +774,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T11:21:46.581Z"
+      "createdAt": "2026-09-21T16:17:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_22",
@@ -791,7 +791,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T10:51:46.581Z"
+      "createdAt": "2026-09-21T15:47:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_23",
@@ -808,7 +808,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T10:21:46.581Z"
+      "createdAt": "2026-09-21T15:17:59.987Z"
     },
     {
       "entityId": "ik_radar_movie_24",
@@ -825,7 +825,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T09:51:46.581Z"
+      "createdAt": "2026-09-21T14:47:59.987Z"
     }
   ],
   "tv": [
@@ -844,7 +844,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全12集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_2",
@@ -861,7 +861,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第2集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T20:51:49.973Z"
+      "createdAt": "2026-09-22T01:48:02.199Z"
     },
     {
       "entityId": "ik_radar_tv_3",
@@ -878,7 +878,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全6集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_4",
@@ -895,7 +895,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第1集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T19:51:49.973Z"
+      "createdAt": "2026-09-22T00:48:02.199Z"
     },
     {
       "entityId": "ik_radar_tv_5",
@@ -912,7 +912,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第2集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T19:21:49.973Z"
+      "createdAt": "2026-09-22T00:18:02.199Z"
     },
     {
       "entityId": "ik_radar_tv_6",
@@ -929,7 +929,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第1集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T18:51:49.973Z"
+      "createdAt": "2026-09-21T23:48:02.199Z"
     },
     {
       "entityId": "ik_radar_tv_7",
@@ -946,7 +946,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第1集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T18:21:49.973Z"
+      "createdAt": "2026-09-21T23:18:02.199Z"
     },
     {
       "entityId": "ik_radar_tv_8",
@@ -954,7 +954,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "slug": "挑情丑闻",
       "cover": "https://static.iyf.tv/upload/video/202609181216121660147.gif",
       "backdrop": "https://static.iyf.tv/upload/video/202609181216121660147.gif",
-      "rate": "6.5",
+      "rate": "6.6",
       "year": "2026",
       "type": "tv",
       "channelKey": "tv",
@@ -963,7 +963,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全8集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_9",
@@ -980,7 +980,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第2集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T17:21:49.973Z"
+      "createdAt": "2026-09-21T22:18:02.199Z"
     },
     {
       "entityId": "ik_radar_tv_10",
@@ -997,7 +997,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第1集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T16:51:49.973Z"
+      "createdAt": "2026-09-21T21:48:02.199Z"
     },
     {
       "entityId": "ik_radar_tv_11",
@@ -1014,7 +1014,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第24集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_12",
@@ -1031,7 +1031,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第34集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_13",
@@ -1048,7 +1048,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第14集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_14",
@@ -1065,7 +1065,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全24集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_15",
@@ -1082,7 +1082,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第18集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_16",
@@ -1099,7 +1099,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全24集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_17",
@@ -1116,7 +1116,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第17集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_18",
@@ -1133,7 +1133,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全27集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_19",
@@ -1150,7 +1150,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第06集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_20",
@@ -1167,7 +1167,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第15集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_21",
@@ -1184,7 +1184,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第05集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_22",
@@ -1201,7 +1201,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全7集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_23",
@@ -1218,7 +1218,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第24集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_tv_24",
@@ -1235,7 +1235,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全24集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     }
   ],
   "anime": [
@@ -1245,7 +1245,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "slug": "怪奇物语-1985故事集第2季",
       "cover": "https://static.iyf.tv/upload/video/202609171158515862311.gif",
       "backdrop": "https://static.iyf.tv/upload/video/202609171158515862311.gif",
-      "rate": "8.2",
+      "rate": "8.3",
       "year": "2026",
       "type": "anime",
       "channelKey": "anime",
@@ -1254,7 +1254,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全10集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_anime_2",
@@ -1271,7 +1271,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第06集",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_anime_3",
@@ -1288,7 +1288,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全8集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_anime_4",
@@ -1296,7 +1296,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "slug": "怪兽8号-鸣海的日常",
       "cover": "https://static.iyf.tv/upload/video/202609051331573138133.gif",
       "backdrop": "https://static.iyf.tv/upload/video/202609051331573138133.gif",
-      "rate": "7.6",
+      "rate": "7.7",
       "year": "2026",
       "type": "anime",
       "channelKey": "anime",
@@ -1305,7 +1305,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第3集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T19:51:53.735Z"
+      "createdAt": "2026-09-22T00:48:04.358Z"
     },
     {
       "entityId": "ik_radar_anime_5",
@@ -1322,7 +1322,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第04集",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_anime_6",
@@ -1339,7 +1339,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_anime_7",
@@ -1356,7 +1356,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第7集",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T18:21:53.735Z"
+      "createdAt": "2026-09-21T23:18:04.358Z"
     },
     {
       "entityId": "ik_radar_anime_8",
@@ -1373,7 +1373,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第8集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T17:51:53.735Z"
+      "createdAt": "2026-09-21T22:48:04.358Z"
     },
     {
       "entityId": "ik_radar_anime_9",
@@ -1390,7 +1390,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第7集",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T17:21:53.735Z"
+      "createdAt": "2026-09-21T22:18:04.358Z"
     },
     {
       "entityId": "ik_radar_anime_10",
@@ -1407,10 +1407,163 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "全05集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_anime_11",
+      "title": "牛大力作妖记",
+      "slug": "牛大力作妖记",
+      "cover": "https://img.guangsuimage.com/cover/f948a0d891d3928d5a31f319a01a614f.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/f948a0d891d3928d5a31f319a01a614f.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "更新至第07集",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-22T02:18:26.552Z"
+    },
+    {
+      "entityId": "ik_radar_anime_12",
+      "title": "亡灵天灾：我抬手百万骨海 动态漫",
+      "slug": "亡灵天灾-我抬手百万骨海-动态漫",
+      "cover": "https://img.guangsuimage.com/cover/2023feb438482ea913de19a0beb9f88c.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/2023feb438482ea913de19a0beb9f88c.jpg",
+      "rate": "8.8",
+      "year": "2025",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "更新至第174集",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-22T02:18:26.552Z"
+    },
+    {
+      "entityId": "ik_radar_anime_13",
+      "title": "仙逆彩蛋·逆仙客栈",
+      "slug": "仙逆彩蛋-逆仙客栈",
+      "cover": "https://img.guangsuimage.com/cover/11bcd3d663b92f1c929fdb3e0844d3c7.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/11bcd3d663b92f1c929fdb3e0844d3c7.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "更新至第7集",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-22T02:18:26.552Z"
+    },
+    {
+      "entityId": "ik_radar_anime_14",
+      "title": "一只叫囧的熊决定要快乐",
+      "slug": "一只叫囧的熊决定要快乐",
+      "cover": "https://img.guangsuimage.com/cover/199a777aa2d5adb3a49b14c34a5506f0.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/199a777aa2d5adb3a49b14c34a5506f0.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "更新至第11集",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-22T02:18:26.552Z"
+    },
+    {
+      "entityId": "ik_radar_anime_15",
+      "title": "万古神帝 (2026)​",
+      "slug": "万古神帝-2026",
+      "cover": "https://img.guangsuimage.com/cover/95d19ea4a20626390741a3b44abc09fd.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/95d19ea4a20626390741a3b44abc09fd.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "更新至第21集",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-22T02:18:26.552Z"
+    },
+    {
+      "entityId": "ik_radar_anime_16",
+      "title": "稀有祖宗",
+      "slug": "稀有祖宗",
+      "cover": "https://img.guangsuimage.com/cover/c6e015b9e45c233d448f493abcb06597.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/c6e015b9e45c233d448f493abcb06597.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "更新至第130集",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-22T02:18:26.552Z"
+    },
+    {
+      "entityId": "ik_radar_anime_17",
+      "title": "掌门低调点",
+      "slug": "掌门低调点",
+      "cover": "https://img.guangsuimage.com/cover/66939714ba37c59f38567454a9de4d65.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/66939714ba37c59f38567454a9de4d65.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "更新至第30集",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-22T02:18:26.552Z"
+    },
+    {
+      "entityId": "ik_radar_anime_18",
+      "title": "反派魔女自救计划",
+      "slug": "反派魔女自救计划",
+      "cover": "https://img.guangsuimage.com/cover/9eae5081b37b45d443eccfc66c3186dd.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/9eae5081b37b45d443eccfc66c3186dd.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "更新至第18集",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-22T02:18:26.552Z"
+    },
+    {
+      "entityId": "ik_radar_anime_19",
+      "title": "三嫁公主",
+      "slug": "三嫁公主",
+      "cover": "https://img.guangsuimage.com/cover/795537169f6295f96085ab0e4676460d.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/795537169f6295f96085ab0e4676460d.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "anime",
+      "channelKey": "anime",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "更新至第21集",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-22T02:18:26.552Z"
+    },
+    {
+      "entityId": "ik_radar_anime_20",
       "title": "吞噬星空",
       "slug": "吞噬星空",
       "cover": "https://img.guangsuimage.com/cover/1e81d9ddb81fa08481c942a7f794300e.jpg",
@@ -1424,10 +1577,10 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第242集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
-      "entityId": "ik_radar_anime_12",
+      "entityId": "ik_radar_anime_21",
       "title": "逆天至尊",
       "slug": "逆天至尊",
       "cover": "https://img.guangsuimage.com/cover/bc44b9e1df4dfc8cbf8a5f08f4ac01a8.jpg",
@@ -1441,10 +1594,10 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第551集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
-      "entityId": "ik_radar_anime_13",
+      "entityId": "ik_radar_anime_22",
       "title": "我家娘子竟是当朝女帝",
       "slug": "我家娘子竟是当朝女帝",
       "cover": "https://img.guangsuimage.com/cover/30242cff0f775d3e3bb483f48e6849a8.jpg",
@@ -1458,10 +1611,10 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第12集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
-      "entityId": "ik_radar_anime_14",
+      "entityId": "ik_radar_anime_23",
       "title": "大荒妖君，为我赴凡尘",
       "slug": "大荒妖君为我赴凡尘",
       "cover": "https://img.guangsuimage.com/cover/c38648b6e838613f6158e3db05942d53.jpg",
@@ -1475,10 +1628,10 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第3集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
-      "entityId": "ik_radar_anime_15",
+      "entityId": "ik_radar_anime_24",
       "title": "斗罗大陆4终极斗罗 合集",
       "slug": "斗罗大陆4终极斗罗-合集",
       "cover": "https://img.guangsuimage.com/cover/5aaa24c3ab499a42ff9e8b0be143a1b6.jpg",
@@ -1492,160 +1645,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第205集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_anime_16",
-      "title": "禅王渡尘",
-      "slug": "禅王渡尘",
-      "cover": "https://img.guangsuimage.com/cover/b14f1d742a471207c017cc24b0fa6e87.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/b14f1d742a471207c017cc24b0fa6e87.jpg",
-      "rate": "8.8",
-      "year": "2026",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "电视剧"
-      ],
-      "updateBadge": "更新至第166集",
-      "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_anime_17",
-      "title": "魔道重生的女武神",
-      "slug": "魔道重生的女武神",
-      "cover": "https://img.guangsuimage.com/cover/4390d85d9625806b78ad7ecb81044845.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/4390d85d9625806b78ad7ecb81044845.jpg",
-      "rate": "8.8",
-      "year": "2026",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "电视剧"
-      ],
-      "updateBadge": "更新至第187集",
-      "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_anime_18",
-      "title": "雾镜狐月",
-      "slug": "雾镜狐月",
-      "cover": "https://img.guangsuimage.com/cover/2fc8f02c289ba301ecff622410403e8d.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/2fc8f02c289ba301ecff622410403e8d.jpg",
-      "rate": "8.8",
-      "year": "2026",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "电视剧"
-      ],
-      "updateBadge": "全30集",
-      "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_anime_19",
-      "title": "牛大力作妖记",
-      "slug": "牛大力作妖记",
-      "cover": "https://img.guangsuimage.com/cover/f948a0d891d3928d5a31f319a01a614f.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/f948a0d891d3928d5a31f319a01a614f.jpg",
-      "rate": "8.8",
-      "year": "2026",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "电视剧"
-      ],
-      "updateBadge": "更新至第06集",
-      "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_anime_20",
-      "title": "摆烂成仙",
-      "slug": "摆烂成仙",
-      "cover": "https://img.guangsuimage.com/cover/1b4c1afae2a4477623cf0c6b148a5dbe.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/1b4c1afae2a4477623cf0c6b148a5dbe.jpg",
-      "rate": "8.8",
-      "year": "2026",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "电视剧"
-      ],
-      "updateBadge": "全9集",
-      "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_anime_21",
-      "title": "红妆送君葬",
-      "slug": "红妆送君葬",
-      "cover": "https://img.guangsuimage.com/cover/93ae0d44b350540f196d8bcde3ddeca3.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/93ae0d44b350540f196d8bcde3ddeca3.jpg",
-      "rate": "8.8",
-      "year": "2026",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "电视剧"
-      ],
-      "updateBadge": "更新至第60集",
-      "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_anime_22",
-      "title": "一斩苍穹",
-      "slug": "一斩苍穹",
-      "cover": "https://img.guangsuimage.com/cover/80edc839105c1689cdc84a8258d2edd3.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/80edc839105c1689cdc84a8258d2edd3.jpg",
-      "rate": "8.8",
-      "year": "2026",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "电视剧"
-      ],
-      "updateBadge": "更新至第10集",
-      "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_anime_23",
-      "title": "修仙归来当大佬",
-      "slug": "修仙归来当大佬",
-      "cover": "https://img.guangsuimage.com/cover/3c38bf04ae972211c47d7de393fcccc8.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/3c38bf04ae972211c47d7de393fcccc8.jpg",
-      "rate": "8.8",
-      "year": "2023",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "电视剧"
-      ],
-      "updateBadge": "更新至第711集",
-      "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_anime_24",
-      "title": "无上神帝",
-      "slug": "无上神帝",
-      "cover": "https://img.guangsuimage.com/cover/03af2dab7923447ee070be156ac70bc7.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/03af2dab7923447ee070be156ac70bc7.jpg",
-      "rate": "8.8",
-      "year": "2020",
-      "type": "anime",
-      "channelKey": "anime",
-      "genres": [
-        "电视剧"
-      ],
-      "updateBadge": "更新至第642集",
-      "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     }
   ],
   "variety": [
@@ -1664,7 +1664,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "第1期会员版",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T21:21:57.889Z"
+      "createdAt": "2026-09-22T02:18:07.340Z"
     },
     {
       "entityId": "ik_radar_variety_2",
@@ -1681,7 +1681,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "第1期",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_variety_3",
@@ -1689,7 +1689,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "slug": "第六感-b-side",
       "cover": "https://static.iyf.tv/upload/video/202609151738013883184.gif",
       "backdrop": "https://static.iyf.tv/upload/video/202609151738013883184.gif",
-      "rate": "6.0",
+      "rate": "10.0",
       "year": "2026",
       "type": "variety",
       "channelKey": "variety",
@@ -1698,7 +1698,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "正片",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_variety_4",
@@ -1715,7 +1715,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "第2期",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T19:51:57.889Z"
+      "createdAt": "2026-09-22T00:48:07.340Z"
     },
     {
       "entityId": "ik_radar_variety_5",
@@ -1732,7 +1732,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "第3期",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_variety_6",
@@ -1749,7 +1749,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "第2期",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_variety_7",
@@ -1757,7 +1757,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "slug": "对我来说太刻薄的经纪人-秘书镇第2季",
       "cover": "https://static.iyf.tv/upload/video/202608311609560923756.jpg",
       "backdrop": "https://static.iyf.tv/upload/video/202608311609560923756.jpg",
-      "rate": "9.3",
+      "rate": "8.8",
       "year": "2025",
       "type": "variety",
       "channelKey": "variety",
@@ -1766,7 +1766,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "第4期",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_variety_8",
@@ -1783,7 +1783,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "第4期",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_variety_9",
@@ -1800,7 +1800,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "第4期",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
+      "createdAt": "2026-09-22T02:18:26.552Z"
     },
     {
       "entityId": "ik_radar_variety_10",
@@ -1817,246 +1817,245 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "第4期",
       "qualityBadge": "4K",
-      "createdAt": "2026-09-21T16:51:57.889Z"
+      "createdAt": "2026-09-21T21:48:07.340Z"
     },
     {
       "entityId": "ik_radar_variety_11",
-      "title": "只要有空第5季",
-      "slug": "只要有空第5季",
-      "cover": "https://static.iyf.tv/upload/video/202608211328562835688.gif",
-      "backdrop": "https://static.iyf.tv/upload/video/202608211328562835688.gif",
-      "rate": "10.0",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "综艺"
-      ],
-      "updateBadge": "第6期",
-      "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_variety_12",
-      "title": "不想睡的星期五",
-      "slug": "不想睡的星期五",
-      "cover": "https://static.iyf.tv/upload/video/202608181424042465368.jpg",
-      "backdrop": "https://static.iyf.tv/upload/video/202608181424042465368.jpg",
-      "rate": "6.5",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "综艺"
-      ],
-      "updateBadge": "第6期",
-      "qualityBadge": "4K",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_variety_13",
-      "title": "你为什么要爬山？",
-      "slug": "你为什么要爬山",
-      "cover": "https://static.iyf.tv/upload/video/202608181216371618800.gif",
-      "backdrop": "https://static.iyf.tv/upload/video/202608181216371618800.gif",
-      "rate": "10.0",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "综艺"
-      ],
-      "updateBadge": "全10集",
-      "platformBadge": "Netflix",
-      "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_variety_14",
-      "title": "我剩下的恋爱",
-      "slug": "我剩下的恋爱",
-      "cover": "https://static.iyf.tv/upload/video/202608151635013538042.gif",
-      "backdrop": "https://static.iyf.tv/upload/video/202608151635013538042.gif",
-      "rate": "9.4",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "综艺"
-      ],
-      "updateBadge": "第7期",
-      "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_variety_15",
-      "title": "一站到底少年季第2季",
-      "slug": "一站到底少年季第2季",
-      "cover": "https://static.iyf.tv/upload/video/202608131750245055315.jpg",
-      "backdrop": "https://static.iyf.tv/upload/video/202608131750245055315.jpg",
-      "rate": "6.0",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "综艺"
-      ],
-      "updateBadge": "第7期",
-      "qualityBadge": "4K",
-      "createdAt": "2026-09-21T14:21:57.889Z"
-    },
-    {
-      "entityId": "ik_radar_variety_16",
-      "title": "加油！汪汪",
-      "slug": "加油汪汪",
-      "cover": "https://static.iyf.tv/upload/video/202608131736193687275.jpg",
-      "backdrop": "https://static.iyf.tv/upload/video/202608131736193687275.jpg",
-      "rate": "9.5",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "综艺"
-      ],
-      "updateBadge": "第6期",
-      "qualityBadge": "4K",
-      "createdAt": "2026-09-21T13:51:57.889Z"
-    },
-    {
-      "entityId": "ik_radar_variety_17",
-      "title": "大哥小助理",
-      "slug": "大哥小助理",
-      "cover": "https://static.iyf.tv/upload/video/202608131509560942460.jpg",
-      "backdrop": "https://static.iyf.tv/upload/video/202608131509560942460.jpg",
-      "rate": "9.3",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "综艺"
-      ],
-      "updateBadge": "第6期",
-      "qualityBadge": "4K",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_variety_18",
-      "title": "披荆斩棘2026",
-      "slug": "披荆斩棘2026",
-      "cover": "https://static.iyf.tv/upload/video/202608102124022465304.gif",
-      "backdrop": "https://static.iyf.tv/upload/video/202608102124022465304.gif",
-      "rate": "8.5",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "综艺"
-      ],
-      "updateBadge": "第5期",
-      "qualityBadge": "4K",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_variety_19",
-      "title": "伦敦合伙人",
-      "slug": "伦敦合伙人",
-      "cover": "https://static.iyf.tv/upload/video/202608091143064301151.jpg",
-      "backdrop": "https://static.iyf.tv/upload/video/202608091143064301151.jpg",
-      "rate": "9.2",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "综艺"
-      ],
-      "updateBadge": "第7期",
-      "qualityBadge": "4K",
-      "createdAt": "2026-09-21T21:22:21.894Z"
-    },
-    {
-      "entityId": "ik_radar_variety_20",
-      "title": "姐姐快醒醒",
-      "slug": "姐姐快醒醒",
-      "cover": "https://static.iyf.tv/upload/video/202608071816001681062.jpg",
-      "backdrop": "https://static.iyf.tv/upload/video/202608071816001681062.jpg",
-      "rate": "7.7",
-      "year": "2026",
-      "type": "variety",
-      "channelKey": "variety",
-      "genres": [
-        "综艺"
-      ],
-      "updateBadge": "第7期",
-      "qualityBadge": "4K",
-      "createdAt": "2026-09-21T11:51:57.889Z"
-    },
-    {
-      "entityId": "ik_radar_variety_21",
       "title": "一路向海的少年",
       "slug": "一路向海的少年",
-      "cover": "https://static.iyf.tv/upload/video/202608031355565551587.jpg",
-      "backdrop": "https://static.iyf.tv/upload/video/202608031355565551587.jpg",
+      "cover": "https://img.guangsuimage.com/cover/24f251cb9569d43975c1feebb0a61c02.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/24f251cb9569d43975c1feebb0a61c02.jpg",
       "rate": "8.8",
       "year": "2026",
       "type": "variety",
       "channelKey": "variety",
       "genres": [
-        "综艺"
+        "电视剧"
       ],
       "updateBadge": "第7期",
-      "qualityBadge": "4K",
-      "createdAt": "2026-09-21T11:21:57.889Z"
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-21T21:18:07.340Z"
+    },
+    {
+      "entityId": "ik_radar_variety_12",
+      "title": "钱塘老娘舅",
+      "slug": "钱塘老娘舅",
+      "cover": "https://img.guangsuimage.com/cover/445c77cfd1c86def7ddd0d14e9bd8948.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/445c77cfd1c86def7ddd0d14e9bd8948.jpg",
+      "rate": "8.8",
+      "year": "2009",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "第20260920期",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-21T20:48:07.340Z"
+    },
+    {
+      "entityId": "ik_radar_variety_13",
+      "title": "心动的信号第9季",
+      "slug": "心动的信号第9季",
+      "cover": "https://img.guangsuimage.com/cover/bc6f1f3779c04d2b142bc35d69bd3474.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/bc6f1f3779c04d2b142bc35d69bd3474.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "第8期",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-22T02:18:26.552Z"
+    },
+    {
+      "entityId": "ik_radar_variety_14",
+      "title": "奔跑吧少年第7季",
+      "slug": "奔跑吧少年第7季",
+      "cover": "https://img.guangsuimage.com/cover/19d7bb12e94e1f83d4fdff273181e24d.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/19d7bb12e94e1f83d4fdff273181e24d.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "第2期",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-21T19:48:07.340Z"
+    },
+    {
+      "entityId": "ik_radar_variety_15",
+      "title": "毛雪汪",
+      "slug": "毛雪汪",
+      "cover": "https://img.guangsuimage.com/cover/1e06ec8cf0abf417f8c787235f66f350.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/1e06ec8cf0abf417f8c787235f66f350.jpg",
+      "rate": "7.2",
+      "year": "2021",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "第156期",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-21T19:18:07.340Z"
+    },
+    {
+      "entityId": "ik_radar_variety_16",
+      "title": "星动网球社",
+      "slug": "星动网球社",
+      "cover": "https://img.guangsuimage.com/cover/2549a06a9e3556ebc9ac6433959a1e5a.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/2549a06a9e3556ebc9ac6433959a1e5a.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "第1期",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-21T18:48:07.340Z"
+    },
+    {
+      "entityId": "ik_radar_variety_17",
+      "title": "大哥小助理",
+      "slug": "大哥小助理",
+      "cover": "https://img.guangsuimage.com/cover/9dac9db8204abfacece76632f697b6ec.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/9dac9db8204abfacece76632f697b6ec.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "第6期",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-22T02:18:26.552Z"
+    },
+    {
+      "entityId": "ik_radar_variety_18",
+      "title": "伦敦合伙人",
+      "slug": "伦敦合伙人",
+      "cover": "https://img.guangsuimage.com/cover/56448fb13eecfe67571619e16a2f9fea.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/56448fb13eecfe67571619e16a2f9fea.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "第7期",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-21T17:48:07.340Z"
+    },
+    {
+      "entityId": "ik_radar_variety_19",
+      "title": "披荆斩棘2026",
+      "slug": "披荆斩棘2026",
+      "cover": "https://img.guangsuimage.com/cover/2eea2ab420e3cde52f34fd7cc5d341ee.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/2eea2ab420e3cde52f34fd7cc5d341ee.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "第5期",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-21T17:18:07.340Z"
+    },
+    {
+      "entityId": "ik_radar_variety_20",
+      "title": "博物馆夜行指楠",
+      "slug": "博物馆夜行指楠",
+      "cover": "https://img.guangsuimage.com/cover/00ac8c9b984ddfc64cb9f1923348e225.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/00ac8c9b984ddfc64cb9f1923348e225.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "第3期",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-21T16:48:07.340Z"
+    },
+    {
+      "entityId": "ik_radar_variety_21",
+      "title": "哥哥来啦",
+      "slug": "哥哥来啦",
+      "cover": "https://img.guangsuimage.com/cover/0e87319c7bbff7c0fb9904f138570582.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/0e87319c7bbff7c0fb9904f138570582.jpg",
+      "rate": "8.8",
+      "year": "2026",
+      "type": "variety",
+      "channelKey": "variety",
+      "genres": [
+        "电视剧"
+      ],
+      "updateBadge": "第5期",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-21T16:18:07.340Z"
     },
     {
       "entityId": "ik_radar_variety_22",
-      "title": "超棒的我们第2季",
-      "slug": "超棒的我们第2季",
-      "cover": "https://static.iyf.tv/upload/video/202608011125522510708.jpg",
-      "backdrop": "https://static.iyf.tv/upload/video/202608011125522510708.jpg",
-      "rate": "6.0",
+      "title": "手信集·青岛篇",
+      "slug": "手信集-青岛篇",
+      "cover": "https://img.guangsuimage.com/cover/3e1a813196d7bfc007bedb02c7956842.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/3e1a813196d7bfc007bedb02c7956842.jpg",
+      "rate": "8.8",
       "year": "2026",
       "type": "variety",
       "channelKey": "variety",
       "genres": [
-        "综艺"
+        "电视剧"
       ],
-      "updateBadge": "第8期",
-      "qualityBadge": "4K",
-      "createdAt": "2026-09-21T10:51:57.889Z"
+      "updateBadge": "第5期",
+      "qualityBadge": "1080P",
+      "createdAt": "2026-09-21T15:48:07.340Z"
     },
     {
       "entityId": "ik_radar_variety_23",
-      "title": "谋杀俱乐部",
-      "slug": "谋杀俱乐部",
-      "cover": "https://static.iyf.tv/upload/video/202607311629152975141.gif",
-      "backdrop": "https://static.iyf.tv/upload/video/202607311629152975141.gif",
-      "rate": "3.6",
+      "title": "湾区升明月2026大湾区电影音乐晚会",
+      "slug": "湾区升明月2026大湾区电影音乐晚会",
+      "cover": "https://img.guangsuimage.com/cover/75fbf002ed9d924c8df2d29144e463c0.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/75fbf002ed9d924c8df2d29144e463c0.jpg",
+      "rate": "8.8",
       "year": "2026",
       "type": "variety",
       "channelKey": "variety",
       "genres": [
-        "综艺"
+        "电视剧"
       ],
-      "updateBadge": "06集全",
+      "updateBadge": "第1期纯享版",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T10:21:57.889Z"
+      "createdAt": "2026-09-21T15:18:07.340Z"
     },
     {
       "entityId": "ik_radar_variety_24",
-      "title": "宇宙年糕店",
-      "slug": "宇宙年糕店",
-      "cover": "https://static.iyf.tv/upload/video/202607311625372585820.gif",
-      "backdrop": "https://static.iyf.tv/upload/video/202607311625372585820.gif",
-      "rate": "9.6",
-      "year": "2026",
+      "title": "小姐不熙娣2026",
+      "slug": "小姐不熙娣2026",
+      "cover": "https://img.guangsuimage.com/cover/d029847ab0189f1a6c570f1d37ccb6cb.jpg",
+      "backdrop": "https://img.guangsuimage.com/cover/d029847ab0189f1a6c570f1d37ccb6cb.jpg",
+      "rate": "7.6",
+      "year": "2022",
       "type": "variety",
       "channelKey": "variety",
       "genres": [
-        "综艺"
+        "电视剧"
       ],
-      "updateBadge": "更新至第8集",
+      "updateBadge": "第260914期",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T09:51:57.889Z"
+      "createdAt": "2026-09-21T14:48:07.340Z"
     }
   ],
   "documentary": [
@@ -2075,7 +2074,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "03集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T21:22:01.384Z"
+      "createdAt": "2026-09-22T02:18:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_2",
@@ -2092,7 +2091,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "3集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T20:52:01.384Z"
+      "createdAt": "2026-09-22T01:48:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_3",
@@ -2109,7 +2108,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "08集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T20:22:01.384Z"
+      "createdAt": "2026-09-22T01:18:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_4",
@@ -2126,7 +2125,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "01集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T19:52:01.384Z"
+      "createdAt": "2026-09-22T00:48:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_5",
@@ -2143,7 +2142,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "01集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T19:22:01.384Z"
+      "createdAt": "2026-09-22T00:18:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_6",
@@ -2160,7 +2159,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "01集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T18:52:01.384Z"
+      "createdAt": "2026-09-21T23:48:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_7",
@@ -2178,7 +2177,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "updateBadge": "01集全",
       "platformBadge": "Netflix",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T18:22:01.384Z"
+      "createdAt": "2026-09-21T23:18:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_8",
@@ -2195,7 +2194,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "01集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T17:52:01.384Z"
+      "createdAt": "2026-09-21T22:48:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_9",
@@ -2212,7 +2211,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "01集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T17:22:01.384Z"
+      "createdAt": "2026-09-21T22:18:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_10",
@@ -2230,7 +2229,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "updateBadge": "03集全",
       "platformBadge": "Netflix",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T16:52:01.384Z"
+      "createdAt": "2026-09-21T21:48:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_11",
@@ -2247,7 +2246,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "01集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T16:22:01.384Z"
+      "createdAt": "2026-09-21T21:18:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_12",
@@ -2264,7 +2263,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "04集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T15:52:01.384Z"
+      "createdAt": "2026-09-21T20:48:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_13",
@@ -2281,7 +2280,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "01集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T15:22:01.384Z"
+      "createdAt": "2026-09-21T20:18:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_14",
@@ -2298,7 +2297,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "02集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T14:52:01.384Z"
+      "createdAt": "2026-09-21T19:48:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_15",
@@ -2316,7 +2315,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "updateBadge": "04集全",
       "platformBadge": "Netflix",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T14:22:01.384Z"
+      "createdAt": "2026-09-21T19:18:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_16",
@@ -2334,7 +2333,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "updateBadge": "08集全",
       "platformBadge": "Netflix",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T13:52:01.384Z"
+      "createdAt": "2026-09-21T18:48:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_17",
@@ -2351,7 +2350,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "更新至第10集",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T13:22:01.384Z"
+      "createdAt": "2026-09-21T18:18:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_18",
@@ -2368,7 +2367,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "08集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T12:52:01.384Z"
+      "createdAt": "2026-09-21T17:48:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_19",
@@ -2385,7 +2384,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "03集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T12:22:01.384Z"
+      "createdAt": "2026-09-21T17:18:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_20",
@@ -2402,7 +2401,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "01集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T11:52:01.384Z"
+      "createdAt": "2026-09-21T16:48:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_21",
@@ -2419,7 +2418,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "03集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T11:22:01.384Z"
+      "createdAt": "2026-09-21T16:18:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_22",
@@ -2436,7 +2435,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "01集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T10:52:01.384Z"
+      "createdAt": "2026-09-21T15:48:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_23",
@@ -2453,7 +2452,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "01集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T10:22:01.384Z"
+      "createdAt": "2026-09-21T15:18:09.581Z"
     },
     {
       "entityId": "ik_radar_documentary_24",
@@ -2470,7 +2469,7 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       ],
       "updateBadge": "03集全",
       "qualityBadge": "1080P",
-      "createdAt": "2026-09-21T09:52:01.384Z"
+      "createdAt": "2026-09-21T14:48:09.581Z"
     }
   ]
 };

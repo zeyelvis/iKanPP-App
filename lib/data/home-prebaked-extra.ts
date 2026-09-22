@@ -30,7 +30,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "吞噬星空",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "牧神记",
@@ -1237,69 +1237,69 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "我妈是佩奇",
+          "title": "闪婚后夫人竟有两幅面孔",
           "updateBadge": "全"
       },
       {
-          "title": "星际萌宝不好惹",
+          "title": "天上掉下个武财神",
           "updateBadge": "全"
       },
       {
-          "title": "御龙刀主",
+          "title": "预谋 短剧版",
           "updateBadge": "全"
       },
       {
-          "title": "我撕碎他的伪装",
+          "title": "神医下山我怎么就无敌了",
+          "updateBadge": "81"
+      },
+      {
+          "title": "大小姐画风不对",
           "updateBadge": "全"
       },
       {
-          "title": "枭爷，叶小姐又来求婚了",
-          "updateBadge": "75"
-      },
-      {
-          "title": "在这一世的第一百次重生",
+          "title": "青衣传奇",
           "updateBadge": "全"
       },
       {
-          "title": "十万佣金的秘密",
+          "title": "那年中秋",
           "updateBadge": "全"
       },
       {
-          "title": "第一百步离开",
+          "title": "再嫁高门",
           "updateBadge": "全"
       },
       {
-          "title": "爸爸后悔了",
+          "title": "夜夜龙泉壁上鸣",
           "updateBadge": "全"
       },
       {
-          "title": "侯府重点班",
+          "title": "红颜心计",
           "updateBadge": "全"
       },
       {
-          "title": "种其因者须食其果",
-          "updateBadge": "全"
+          "title": "偏心",
+          "updateBadge": "60"
       },
       {
-          "title": "逆袭从觉醒系统开始",
+          "title": "我的系统靠逝者许愿升级",
           "updateBadge": "全"
       }
   ],
   hero: [
       {
-          "id": "jl_short_630086791701135400",
-          "title": "墨先生，快来宠我吧",
-          "rate": "8.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f71a5172730e90512207a7862e70fc21ec067584d524c0dadffbc4482f159ac7.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f71a5172730e90512207a7862e70fc21ec067584d524c0dadffbc4482f159ac7.jpg",
-          "description": "她被迫替嫁給個病秧子衝喜，卻在新婚當天被綁架威脅那個病秧子老公，他卻連看都不看她一眼，一年後的墨先生：真香！",
-          "year": "2024",
+          "id": "jl_short_630107718006997000",
+          "title": "闪婚后夫人竟有两幅面孔",
+          "rate": "8.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/610392dc9250d9869e9ad8b49d0ea45d49db6417802ee983088df17eb802bf4e.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/610392dc9250d9869e9ad8b49d0ea45d49db6417802ee983088df17eb802bf4e.jpg",
+          "description": "剧情简介暂缺，敬请期待",
+          "year": "2025",
           "types": [
               "短剧",
               "女频恋爱",
               "全集连播"
           ],
-          "episodes_info": "全11集·第81-100集完结",
+          "episodes_info": "全123集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1308,19 +1308,40 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_630086791701135400",
-          "title": "墨先生，快来宠我吧",
+          "id": "jl_short_630104838633422800",
+          "title": "天上掉下个武财神",
+          "rate": "9.5",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/cbbf6ec4746ce195d4cd32b5b68fb225c97fb9f313820f8cc88137a14f5d055f.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/cbbf6ec4746ce195d4cd32b5b68fb225c97fb9f313820f8cc88137a14f5d055f.jpg",
+          "description": "天上掉下个武财神 精彩全集连播，高能反转停不下来！",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "其他",
+              "全集连播"
+          ],
+          "episodes_info": "全105集·第21-52集完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_630103527662223400",
+          "title": "预谋 短剧版",
           "rate": "8.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f71a5172730e90512207a7862e70fc21ec067584d524c0dadffbc4482f159ac7.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f71a5172730e90512207a7862e70fc21ec067584d524c0dadffbc4482f159ac7.jpg",
-          "description": "她被迫替嫁給個病秧子衝喜，卻在新婚當天被綁架威脅那個病秧子老公，他卻連看都不看她一眼，一年後的墨先生：真香！",
-          "year": "2024",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/1d6f3342c74a2daf0c2cf1e8b57007d2eae41c7bc97aa6498c41d6c2429e5283.png",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/1d6f3342c74a2daf0c2cf1e8b57007d2eae41c7bc97aa6498c41d6c2429e5283.png",
+          "description": "剧情简介暂缺，敬请期待",
+          "year": "2025",
           "types": [
               "短剧",
-              "女频恋爱",
+              "其他",
               "全集连播"
           ],
-          "episodes_info": "全11集·第81-100集完结",
+          "episodes_info": "全119集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1329,40 +1350,40 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_630104816303407100",
-          "title": "我妈是佩奇",
-          "rate": "9.1",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/181cedec2fd994d88538fe6e0660035932f2829bcb19552e25e8a47533c479a1.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/181cedec2fd994d88538fe6e0660035932f2829bcb19552e25e8a47533c479a1.jpg",
-          "description": "全52集（合全集）",
-          "year": "2025",
+          "id": "jl_short_630102127384985600",
+          "title": "神医下山我怎么就无敌了",
+          "rate": "8.7",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/c38648138129516582d0257c116390f2d9a585007819a0c5d1ea1618706d7b98.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/c38648138129516582d0257c116390f2d9a585007819a0c5d1ea1618706d7b98.jpg",
+          "description": "全81集（合全集）",
+          "year": "2026",
           "types": [
               "短剧",
-              "现代都市",
+              "脑洞悬疑",
               "全集连播"
           ],
-          "episodes_info": "全105集·已完结",
+          "episodes_info": "全163集·全81集（合全集）",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "胡毅娟&amp / 李宏利"
+              "彭士腾 / 秦萍"
           ]
       },
       {
-          "id": "jl_short_630102483196248000",
-          "title": "星际萌宝不好惹",
-          "rate": "8.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/424e57ae2dc6954e91effb271255dbf739952ac6bfb3646f78daaaf35b1baa1b.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/424e57ae2dc6954e91effb271255dbf739952ac6bfb3646f78daaaf35b1baa1b.jpg",
-          "description": "星际萌宝不好惹 精彩全集连播，高能反转停不下来！",
-          "year": "2025",
+          "id": "jl_short_630101174423257100",
+          "title": "大小姐画风不对",
+          "rate": "9.0",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/b8d3b66f4abac1838e92d5bf85f90cab1c642946ff05fe933c1b616ef0038b67.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/b8d3b66f4abac1838e92d5bf85f90cab1c642946ff05fe933c1b616ef0038b67.jpg",
+          "description": "大小姐画风不对 精彩全集连播，高能反转停不下来！",
+          "year": "2023",
           "types": [
               "短剧",
               "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全109集·已完结",
+          "episodes_info": "全9集·第61-80集完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1371,168 +1392,147 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_630100872567586800",
-          "title": "御龙刀主",
-          "rate": "8.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/abddfc439d6bb5a5b7a71dc722c63ec715b55d9c5b798a1271c96f1fb282c626.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/abddfc439d6bb5a5b7a71dc722c63ec715b55d9c5b798a1271c96f1fb282c626.jpg",
-          "description": "御龙刀主 精彩全集连播，高能反转停不下来！",
+          "id": "jl_short_630098934396551200",
+          "title": "青衣传奇",
+          "rate": "9.0",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/66c4b2234cb59ee91bbd0c43705b792b696ed4af933c1ec7413681b50af8589c.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/66c4b2234cb59ee91bbd0c43705b792b696ed4af933c1ec7413681b50af8589c.jpg",
+          "description": "青衣传奇 精彩全集连播，高能反转停不下来！",
           "year": "2024",
+          "types": [
+              "短剧",
+              "其他",
+              "全集连播"
+          ],
+          "episodes_info": "全113集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_630098056125218800",
+          "title": "那年中秋",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/fdf3cc06d704dd7813257743f2dcc5f1deba6c1764f16714a3c1034b40e00ab0.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/fdf3cc06d704dd7813257743f2dcc5f1deba6c1764f16714a3c1034b40e00ab0.jpg",
+          "description": "剧情简介暂缺，敬请期待",
+          "year": "2024",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全123集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_630096707455025200",
+          "title": "再嫁高门",
+          "rate": "8.9",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/e36401792b86aa739d9bd5ff0428e030c07c08ac50976033dd6ee40426c03a85.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/e36401792b86aa739d9bd5ff0428e030c07c08ac50976033dd6ee40426c03a85.jpg",
+          "description": "剧情简介暂缺，敬请期待",
+          "year": "2025",
           "types": [
               "短剧",
               "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全61集·第61-86集完结",
+          "episodes_info": "全199集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
               "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_630099641538510800",
-          "title": "我撕碎他的伪装",
-          "rate": "9.0",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/aeeada7b151feb64e11e7090850d0f50f573aa9dd39c6caa28f19f796bd36222.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/aeeada7b151feb64e11e7090850d0f50f573aa9dd39c6caa28f19f796bd36222.jpg",
-          "description": "剧情简介暂缺，敬请期待",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全115集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "盘书瑶 / 朱凯杰"
-          ]
-      },
-      {
-          "id": "jl_short_630097210251542500",
-          "title": "枭爷，叶小姐又来求婚了",
-          "rate": "9.0",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/c152053805eda25b1f87a6fb890d3aaf96d1752aa11bf9c2889a0caf06541213.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/c152053805eda25b1f87a6fb890d3aaf96d1752aa11bf9c2889a0caf06541213.jpg",
-          "description": "剧情简介暂缺，敬请期待",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "反转爽剧",
-              "全集连播"
-          ],
-          "episodes_info": "全151集·全75集",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_630096195330637800",
-          "title": "在这一世的第一百次重生",
-          "rate": "9.1",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/c97326c69b231d0c4091ce31f5378ccaaf67734ca231cf0ecbf9a51703f4073a.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/c97326c69b231d0c4091ce31f5378ccaaf67734ca231cf0ecbf9a51703f4073a.jpg",
-          "description": "全60集（合全集）",
-          "year": "2025",
-          "types": [
-              "短剧",
-              "年代穿越",
-              "全集连播"
-          ],
-          "episodes_info": "全121集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "游雅"
           ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "墨先生，快来宠我吧",
-      rate: "8.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f71a5172730e90512207a7862e70fc21ec067584d524c0dadffbc4482f159ac7.jpg",
-      year: "2024",
+      title: "闪婚后夫人竟有两幅面孔",
+      rate: "8.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/610392dc9250d9869e9ad8b49d0ea45d49db6417802ee983088df17eb802bf4e.jpg",
+      year: "2025",
       types: ["短剧","女频恋爱","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: "墨先生，快来宠我吧",
-      rate: "8.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f71a5172730e90512207a7862e70fc21ec067584d524c0dadffbc4482f159ac7.jpg",
-      year: "2024",
-      types: ["短剧","女频恋爱","全集连播"],
+      title: "天上掉下个武财神",
+      rate: "9.5",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/cbbf6ec4746ce195d4cd32b5b68fb225c97fb9f313820f8cc88137a14f5d055f.jpg",
+      year: "2025",
+      types: ["短剧","其他","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_3',
-      title: "我妈是佩奇",
-      rate: "9.1",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/181cedec2fd994d88538fe6e0660035932f2829bcb19552e25e8a47533c479a1.jpg",
+      title: "预谋 短剧版",
+      rate: "8.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/1d6f3342c74a2daf0c2cf1e8b57007d2eae41c7bc97aa6498c41d6c2429e5283.png",
       year: "2025",
-      types: ["短剧","现代都市","全集连播"],
+      types: ["短剧","其他","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_4',
-      title: "星际萌宝不好惹",
-      rate: "8.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/424e57ae2dc6954e91effb271255dbf739952ac6bfb3646f78daaaf35b1baa1b.jpg",
-      year: "2025",
-      types: ["短剧","现代都市","全集连播"],
+      title: "神医下山我怎么就无敌了",
+      rate: "8.7",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/c38648138129516582d0257c116390f2d9a585007819a0c5d1ea1618706d7b98.jpg",
+      year: "2026",
+      types: ["短剧","脑洞悬疑","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_5',
-      title: "御龙刀主",
-      rate: "8.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/abddfc439d6bb5a5b7a71dc722c63ec715b55d9c5b798a1271c96f1fb282c626.jpg",
-      year: "2024",
-      types: ["短剧","古装仙侠","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_6',
-      title: "我撕碎他的伪装",
+      title: "大小姐画风不对",
       rate: "9.0",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/aeeada7b151feb64e11e7090850d0f50f573aa9dd39c6caa28f19f796bd36222.jpg",
-      year: "2026",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/b8d3b66f4abac1838e92d5bf85f90cab1c642946ff05fe933c1b616ef0038b67.jpg",
+      year: "2023",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_7',
-      title: "枭爷，叶小姐又来求婚了",
+      id: 'pb_s_top_6',
+      title: "青衣传奇",
       rate: "9.0",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/c152053805eda25b1f87a6fb890d3aaf96d1752aa11bf9c2889a0caf06541213.jpg",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/66c4b2234cb59ee91bbd0c43705b792b696ed4af933c1ec7413681b50af8589c.jpg",
       year: "2024",
-      types: ["短剧","反转爽剧","全集连播"],
+      types: ["短剧","其他","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_7',
+      title: "那年中秋",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/fdf3cc06d704dd7813257743f2dcc5f1deba6c1764f16714a3c1034b40e00ab0.jpg",
+      year: "2024",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_8',
-      title: "在这一世的第一百次重生",
-      rate: "9.1",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/c97326c69b231d0c4091ce31f5378ccaaf67734ca231cf0ecbf9a51703f4073a.jpg",
+      title: "再嫁高门",
+      rate: "8.9",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/e36401792b86aa739d9bd5ff0428e030c07c08ac50976033dd6ee40426c03a85.jpg",
       year: "2025",
-      types: ["短剧","年代穿越","全集连播"],
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1583,7 +1583,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "吞噬星空",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "庆余年第2季",
