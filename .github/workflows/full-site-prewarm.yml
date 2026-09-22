@@ -23,7 +23,7 @@ permissions:
 jobs:
   full-prewarm:
     name: Execute Full-Site Multi-Dimensional Prewarm
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     timeout-minutes: 45
 
     steps:

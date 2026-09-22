@@ -2,8 +2,8 @@ name: Auto Sync IYF Channels & Drama Hero Slides
 
 on:
   schedule:
-    # 每 3 小时整点全自动巡检同步（高效感知电视剧、热门新番更新，同时大幅节省 Actions 运行额度）
-    - cron: '0 */3 * * *'
+    # 每小时整点全自动巡检同步（100% 绝对对齐 AGENTS.md 准则 6，运行在日本专属 Runner 零消耗 GitHub 配额）
+    - cron: '0 * * * *'
   workflow_dispatch:
     inputs:
       channel:
@@ -28,7 +28,7 @@ permissions:
 jobs:
   sync-iyf-hero:
     name: Sync IYF Hero & Trending Nav
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
