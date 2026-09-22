@@ -1,12 +1,40 @@
 /**
+ * 历史撕裂 Hex-Slug 自愈解码器
+ * 将形如 "e5-8f-a4-e6-88-98-..." 的连字符十六进制 UTF-8 碎片无损还原为中文
+ */
+export function decodeMangledHexSlug(str: string): string {
+  if (!str || typeof str !== 'string') return '';
+  if (!/[0-9a-f]{2}-[0-9a-f]{2}/i.test(str)) return str;
+
+  return str.replace(/(?:[0-9a-f]{2}(?:-[0-9a-f]{2})+)/gi, (match) => {
+    try {
+      const hexParts = match.split('-');
+      const percentEncoded = hexParts.map(h => '%' + h).join('');
+      return decodeURIComponent(percentEncoded);
+    } catch {
+      return match;
+    }
+  });
+}
+
+/**
  * 将影视中文/英文标题转换为 SEO 规范化的 Slug
  * 100% 兼容 Cloudflare Workers / Pages Edge Runtime，绝不在全局作用域引入任何带 setTimeout 的第三方库
  */
 export function generateSlug(title: string): string {
   if (!title || typeof title !== 'string') return 'video';
 
+  // 🌟 若 title 包含 % 转码，先行安全解码，保护中文字符不被撕裂成连字符十六进制碎片
+  let raw = title;
+  if (raw.includes('%')) {
+    try {
+      raw = decodeURIComponent(raw);
+    } catch {}
+  }
+  raw = decodeMangledHexSlug(raw);
+
   // 清洗特殊标点与括号备注（如 "(2024)"、"【完整版】"）
-  const cleaned = title
+  const cleaned = raw
     .replace(/[（(][^）)]*[）)]/g, ' ')
     .replace(/[【\[][^】\]]*[】\]]/g, ' ')
     .replace(/[:：·•/／\\、，,。！？!?~～@#$%^&*+=|]/g, ' ')
@@ -44,22 +72,24 @@ export function parseEntitySlug(param: string): { entityId: string | null; slug:
   // 1. 优先匹配标准 6 位实体 ID：如 "ik000001-xiao-shen-ke-de-jiu-shu" 或 "ik000001"
   const matchStandard = param.match(/^(ik\d{6})(?:-(.*))?$/i);
   if (matchStandard) {
+    const rawSlug = (matchStandard[2] || '').toLowerCase();
     return {
       entityId: matchStandard[1].toLowerCase(),
-      slug: (matchStandard[2] || '').toLowerCase(),
+      slug: decodeMangledHexSlug(rawSlug),
     };
   }
 
   // 2. 增强容错：兼容带下划线或其他前缀的内部 ID（如 "ik_latest_all_1-兰香如故" 或 "pb_cat_movie_1-抓娃娃"）
   const matchInternal = param.match(/^((?:ik|pb)_[a-zA-Z0-9_]+)-(.*)$/i);
   if (matchInternal) {
+    const rawSlug = (matchInternal[2] || '').trim();
     return {
       entityId: matchInternal[1].toLowerCase(),
-      slug: (matchInternal[2] || '').trim(),
+      slug: decodeMangledHexSlug(rawSlug),
     };
   }
 
-  return { entityId: null, slug: param };
+  return { entityId: null, slug: decodeMangledHexSlug(param) };
 }
 
 /**
@@ -71,7 +101,8 @@ export function getTitleCanonicalHref(item: { entityId?: string; id?: string | n
   if (!item) return '/';
   if (item.canonicalSlug && item.canonicalSlug.trim()) {
     const cleanCanonical = item.canonicalSlug.trim().replace(/^\/?(title\/)?/, '');
-    if (cleanCanonical) {
+    // 🚨 严禁使用连字符十六进制乱码作为规范 URL
+    if (cleanCanonical && !/(?:e[0-9a-f]-[0-9a-f]{2}){2,}/i.test(cleanCanonical)) {
       return `/title/${cleanCanonical}`;
     }
   }
@@ -95,6 +126,7 @@ export function getTitleCanonicalHref(item: { entityId?: string; id?: string | n
       baseText = decodeURIComponent(baseText).trim();
     } catch {}
   }
+  baseText = decodeMangledHexSlug(baseText);
 
   let cleanSlug = generateSlug(baseText).toLowerCase();
   // 清洗可能重复的 ID 前缀（如 ik000001- 或 ik_radar_...-）

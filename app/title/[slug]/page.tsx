@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Star, Clock, Calendar, Film, ArrowLeft, Clapperboard, User, Sparkles, CheckCircle2, Play } from 'lucide-react';
 import { getEntityBySlug, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity, isSafeRecentTitleItem } from '@/lib/services/entity-kv';
 import { getGenreBySlug } from '@/lib/data/genres';
-import { parseEntitySlug, normalizeTitle, isStrictSafeEntity, generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
+import { parseEntitySlug, normalizeTitle, isStrictSafeEntity, generateSlug, getTitleCanonicalHref, decodeMangledHexSlug } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, fetchTMDBDetails, fetchTMDBAiredEpisodeCount, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
 import { getFastPersonAvatars } from '@/lib/services/person-avatar';
 import { getOptimizedImageUrl, isRestrictedRegion } from '@/lib/utils/image-utils';
@@ -198,6 +198,7 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
   try {
     cleanTitle = decodeURIComponent(cleanTitle).trim();
   } catch {}
+  cleanTitle = decodeMangledHexSlug(cleanTitle);
 
   // 🌟 优先级 1：根据完整 decodedSlug 优先查询
   // 覆盖：显式别名映射（如历史错配旧链接 slug:ik002038-the-bill -> ik007343）、规范 canonical slug、实体 ID
@@ -269,13 +270,14 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
       return true;
     }
 
-    // 3. 历史受损 hex-slug 自愈比对（将连字符十六进制碎片与 item.title/item.slug 的编码形式精准比对自愈）
-    if (/[0-9a-f]{2}-[0-9a-f]{2}-[0-9a-f]{2}/i.test(decodedSlugLower) || /[0-9a-f]{2}-[0-9a-f]{2}-[0-9a-f]{2}/i.test(cleanTitleLower)) {
-      const hex1 = generateSlug(encodeURIComponent(itemTitleSlug)).toLowerCase();
-      const hex2 = generateSlug(encodeURIComponent(item.title)).toLowerCase();
-      if (hex1 === cleanTitleLower || hex1 === decodedSlugLower || hex2 === cleanTitleLower || hex2 === decodedSlugLower) {
-        return true;
-      }
+    // 3. 历史受损 hex-slug 自愈比对（将连字符十六进制碎片无损还原为真实中文比对）
+    const decodedClean = decodeMangledHexSlug(cleanTitleLower);
+    const decodedSlugHex = decodeMangledHexSlug(decodedSlugLower);
+    if (
+      (decodedClean && (item.title === decodedClean || itemTitleNorm === normalizeTitle(decodedClean) || itemTitleSlug === decodedClean)) ||
+      (decodedSlugHex && (item.title === decodedSlugHex || itemTitleNorm === normalizeTitle(decodedSlugHex) || itemTitleSlug === decodedSlugHex))
+    ) {
+      return true;
     }
 
     return false;
@@ -406,7 +408,11 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
  */
 export function getEntityCanonicalSlug(entity: TitleEntity): string {
   if (entity.canonicalSlug && entity.canonicalSlug.trim()) {
-    return entity.canonicalSlug.trim().toLowerCase();
+    const rawCanonical = entity.canonicalSlug.trim().toLowerCase();
+    // 🚨 严禁使用连字符十六进制乱码作为 canonicalSlug
+    if (!/(?:e[0-9a-f]-[0-9a-f]{2}){2,}/i.test(rawCanonical)) {
+      return rawCanonical;
+    }
   }
   const id = (entity.entityId || (entity as any).id || '').toLowerCase();
   const hasStandardId = /^ik\d{6}$/i.test(id);
@@ -424,6 +430,7 @@ export function getEntityCanonicalSlug(entity: TitleEntity): string {
       baseText = decodeURIComponent(baseText).trim();
     } catch {}
   }
+  baseText = decodeMangledHexSlug(baseText);
 
   // 清洗 baseText 开头可能重复的 id 前缀（如 ik000009-一饭封神 或 ik_radar_...-阿波罗陷落）
   if (id && baseText.toLowerCase().startsWith(`${id}-`)) {
@@ -437,10 +444,18 @@ export function getEntityCanonicalSlug(entity: TitleEntity): string {
 
   // 准则 13 铁律：必须且只能在具有标准 6 位 ik\d{6} 实体 ID 时拼接 ID
   // 严禁将临时内部 ID（如 ik_radar_...）拼入 canonicalSlug 触发非法 308 重定向
+  let computedSlug = cleanSlugPart;
   if (hasStandardId) {
-    return `${id}-${cleanSlugPart}`;
+    computedSlug = `${id}-${cleanSlugPart}`;
   }
-  return cleanSlugPart;
+
+  // 🌟 若发现原 entity.canonicalSlug 受损或缺失，就地修正内存字段并异步自愈写回 KV
+  if (hasStandardId && (!entity.canonicalSlug || /(?:e[0-9a-f]-[0-9a-f]{2}){2,}/i.test(entity.canonicalSlug))) {
+    entity.canonicalSlug = computedSlug;
+    saveEntity(entity).catch(() => {});
+  }
+
+  return computedSlug;
 }
 
 /**

@@ -1,5 +1,5 @@
 import { TitleEntity } from '@/lib/types/entity';
-import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie, hasTitleOverlap, isCleanChineseTitle, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
+import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie, hasTitleOverlap, isCleanChineseTitle, isStrictSafeEntity, decodeMangledHexSlug } from '@/lib/data/entities/entity-utils';
 
 /**
  * 影视实体精简卡片项（用于「最新上线」货架与 RSS Feed 0ms 瞬间直出）
@@ -173,6 +173,17 @@ export async function getEntityById(entityId: string): Promise<TitleEntity | nul
       const parsed = JSON.parse(raw) as TitleEntity;
       parsed.directors = (parsed.directors || []).filter(d => d && d !== '知名导演');
       parsed.actors = (parsed.actors || []).filter(a => a && a !== '实力主演');
+      // 🌟 自动自愈净化：若发现历史 canonicalSlug 被撕裂为连字符十六进制乱码，立即清洗为规范中文 Slug
+      if (parsed.canonicalSlug && /(?:e[0-9a-f]-[0-9a-f]{2}){2,}/i.test(parsed.canonicalSlug)) {
+        const correctSlug = `${cleanId}-${generateSlug(parsed.title)}`.toLowerCase();
+        parsed.canonicalSlug = correctSlug;
+        (async () => {
+          try {
+            await kvPut(`entity:${cleanId}`, JSON.stringify(parsed));
+            await kvPut(`slug:${correctSlug}`, cleanId);
+          } catch {}
+        })();
+      }
       return parsed;
     } catch {}
   }
@@ -184,6 +195,9 @@ export async function getEntityById(entityId: string): Promise<TitleEntity | nul
       const parsed = JSON.parse(memRaw) as TitleEntity;
       parsed.directors = (parsed.directors || []).filter(d => d && d !== '知名导演');
       parsed.actors = (parsed.actors || []).filter(a => a && a !== '实力主演');
+      if (parsed.canonicalSlug && /(?:e[0-9a-f]-[0-9a-f]{2}){2,}/i.test(parsed.canonicalSlug)) {
+        parsed.canonicalSlug = `${cleanId}-${generateSlug(parsed.title)}`.toLowerCase();
+      }
       return parsed;
     } catch {}
   }
@@ -206,11 +220,14 @@ export async function getEntityBySlug(slugKey: string): Promise<TitleEntity | nu
       const parts = cleanKey.split('-');
       if (parts.length > 1) {
         const urlTitlePart = parts.slice(1).join('-');
+        const decodedUrlTitlePart = decodeMangledHexSlug(urlTitlePart);
         const isMatch =
           !urlTitlePart ||
           hasTitleOverlap(ent.title, urlTitlePart) ||
-          (ent.originalTitle && hasTitleOverlap(ent.originalTitle, urlTitlePart)) ||
-          (ent.slug && hasTitleOverlap(ent.slug, urlTitlePart));
+          (decodedUrlTitlePart && hasTitleOverlap(ent.title, decodedUrlTitlePart)) ||
+          (ent.originalTitle && (hasTitleOverlap(ent.originalTitle, urlTitlePart) || (decodedUrlTitlePart && hasTitleOverlap(ent.originalTitle, decodedUrlTitlePart)))) ||
+          (ent.slug && (hasTitleOverlap(ent.slug, urlTitlePart) || (decodedUrlTitlePart && hasTitleOverlap(ent.slug, decodedUrlTitlePart)))) ||
+          (decodedUrlTitlePart && normalizeTitle(ent.title) === normalizeTitle(decodedUrlTitlePart));
 
         if (isMatch) {
           return ent;
@@ -230,14 +247,17 @@ export async function getEntityBySlug(slugKey: string): Promise<TitleEntity | nu
       const safeCheck = isStrictSafeEntity(ent);
       const parts = cleanKey.split('-');
       const urlTitlePart = parts.length > 1 ? parts.slice(1).join('-') : '';
-      const hasChineseInKey = /[\u4e00-\u9fff]/.test(cleanKey);
+      const decodedUrlTitlePart = decodeMangledHexSlug(urlTitlePart);
+      const decodedCleanKey = decodeMangledHexSlug(cleanKey);
+      const hasChineseInKey = /[\u4e00-\u9fff]/.test(cleanKey) || /[\u4e00-\u9fff]/.test(decodedCleanKey);
 
       const isMismatch =
         (urlTitlePart &&
           !hasTitleOverlap(ent.title, urlTitlePart) &&
-          (!ent.originalTitle || !hasTitleOverlap(ent.originalTitle, urlTitlePart)) &&
-          (!ent.slug || !hasTitleOverlap(ent.slug, urlTitlePart))) ||
-        (hasChineseInKey && !hasTitleOverlap(ent.title, cleanKey));
+          (!decodedUrlTitlePart || !hasTitleOverlap(ent.title, decodedUrlTitlePart)) &&
+          (!ent.originalTitle || (!hasTitleOverlap(ent.originalTitle, urlTitlePart) && (!decodedUrlTitlePart || !hasTitleOverlap(ent.originalTitle, decodedUrlTitlePart)))) &&
+          (!ent.slug || (!hasTitleOverlap(ent.slug, urlTitlePart) && (!decodedUrlTitlePart || !hasTitleOverlap(ent.slug, decodedUrlTitlePart))))) ||
+        (hasChineseInKey && !hasTitleOverlap(ent.title, cleanKey) && (!decodedCleanKey || !hasTitleOverlap(ent.title, decodedCleanKey)));
 
       if (!safeCheck.safe || isMismatch) {
         console.warn(`[getEntityBySlug 毒化映射自动修剪]: slug:${cleanKey} -> ${explicitTargetId} (title="${ent.title}", safe=${safeCheck.safe}, mismatch=${isMismatch})`);
@@ -335,8 +355,8 @@ export async function saveEntity(entity: TitleEntity, options?: { syncGlobalInde
 
   const id = entity.entityId.toLowerCase();
   // 权威规范 Slug 强制预热与持久化
-  if (!entity.canonicalSlug) {
-    const cleanSlug = generateSlug(entity.slug || entity.title);
+  if (!entity.canonicalSlug || /(?:e[0-9a-f]-[0-9a-f]{2}){2,}/i.test(entity.canonicalSlug)) {
+    const cleanSlug = generateSlug(entity.title || entity.slug);
     entity.canonicalSlug = `${id}-${cleanSlug}`.toLowerCase();
   }
 

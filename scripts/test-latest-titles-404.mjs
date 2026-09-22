@@ -1,4 +1,4 @@
-import { getTitleCanonicalHref, parseEntitySlug, normalizeTitle, generateSlug } from '../lib/data/entities/entity-utils.ts';
+import { getTitleCanonicalHref, parseEntitySlug, normalizeTitle, generateSlug, decodeMangledHexSlug } from '../lib/data/entities/entity-utils.ts';
 import { PREBAKED_LATEST_TITLES } from '../lib/data/latest-titles-prebaked.ts';
 
 // 模拟详情页中的 resolveEntity 与预烘焙匹配逻辑
@@ -17,6 +17,7 @@ function simulateResolve(param, prebakedList) {
   try {
     cleanTitle = decodeURIComponent(cleanTitle).trim();
   } catch {}
+  cleanTitle = decodeMangledHexSlug(cleanTitle);
 
   const hit = prebakedList.find(item => {
     if (!item) return false;
@@ -47,12 +48,14 @@ function simulateResolve(param, prebakedList) {
       return true;
     }
 
-    if (/[0-9a-f]{2}-[0-9a-f]{2}-[0-9a-f]{2}/i.test(decodedSlugLower) || /[0-9a-f]{2}-[0-9a-f]{2}-[0-9a-f]{2}/i.test(cleanTitleLower)) {
-      const hex1 = generateSlug(encodeURIComponent(itemTitleSlug)).toLowerCase();
-      const hex2 = generateSlug(encodeURIComponent(item.title)).toLowerCase();
-      if (hex1 === cleanTitleLower || hex1 === decodedSlugLower || hex2 === cleanTitleLower || hex2 === decodedSlugLower) {
-        return true;
-      }
+    // 3. 历史受损 hex-slug 自愈比对（将连字符十六进制碎片无损还原为真实中文比对）
+    const decodedClean = decodeMangledHexSlug(cleanTitleLower);
+    const decodedSlugHex = decodeMangledHexSlug(decodedSlugLower);
+    if (
+      (decodedClean && (item.title === decodedClean || itemTitleNorm === normalizeTitle(decodedClean) || itemTitleSlug === decodedClean)) ||
+      (decodedSlugHex && (item.title === decodedSlugHex || itemTitleNorm === normalizeTitle(decodedSlugHex) || itemTitleSlug === decodedSlugHex))
+    ) {
+      return true;
     }
 
     return false;
@@ -98,15 +101,17 @@ async function runTests() {
 
   console.log(`✅ 步骤 1 验证完毕：成功 ${successCount} 部，失败 ${failCount} 部`);
 
-  console.log(`\n📋 步骤 2：测试历史畸形 URL 存量自愈能力（用户截图中的片目）...`);
+  console.log(`\n📋 步骤 2：测试历史畸形 URL 存量自愈能力（纯 Hex 与带 ID Hex）...`);
   const mangledCases = [
     { title: '阿波罗陷落', mangled: 'e9-98-bf-e6-b3-a2-e7-bd-97-e9-99-b7-e8-90-bd' },
     { title: '古战场传奇：吾血之亲第2季', mangled: 'e5-8f-a4-e6-88-98-e5-9c-ba-e4-bc-a0-e5-a5-87-e5-90-be-e8-a1-80-e4-b9-8b-e4-ba-b2-e7-ac-ac2-e5-ad-a3' },
+    { title: '古战场传奇：吾血之亲第2季', mangled: 'ik475975-e5-8f-a4-e6-88-98-e5-9c-ba-e4-bc-a0-e5-a5-87-e5-90-be-e8-a1-80-e4-b9-8b-e4-ba-b2-e7-ac-ac2-e5-ad-a3' },
     { title: '神秘的声音', mangled: 'e7-a5-9e-e7-a7-98-e7-9a-84-e5-a3-b0-e9-9f-b3' },
     { title: '乌鸦俱乐部', mangled: 'e4-b9-8c-e9-b8-a6-e4-bf-b1-e4-b9-90-e9-83-a8' },
     { title: '挑情丑闻', mangled: 'e6-8c-91-e6-83-85-e4-b8-91-e9-97-bb' },
     { title: '万物既伟大又渺小第7季', mangled: 'e4-b8-87-e7-89-a9-e6-97-a2-e4-bc-9f-e5-a4-a7-e5-8f-88-e6-b8-ba-e5-b0-8f-e7-ac-ac7-e5-ad-a3' },
-    { title: '假面美颜', mangled: 'e5-81-87-e9-9d-a2-e7-be-8e-e9-a2-9c' }
+    { title: '万物既伟大又渺小第7季', mangled: 'ik533629-e4-b8-87-e7-89-a9-e6-97-a2-e4-bc-9f-e5-a4-a7-e5-8f-88-e6-b8-ba-e5-b0-8f-e7-ac-ac7-e5-ad-a3' },
+    { title: '美国人质', mangled: 'e7-be-8e-e5-9b-bd-e4-ba-ba-e8-b4-a8' }
   ];
 
   let mangledSuccess = 0;
@@ -122,7 +127,24 @@ async function runTests() {
 
   console.log(`✅ 步骤 2 验证完毕：历史死链 100% 成功自愈 (${mangledSuccess}/${mangledCases.length})`);
 
-  if (failCount === 0 && mangledSuccess === mangledCases.length) {
+  console.log(`\n📋 步骤 3：测试 decodeMangledHexSlug 核心算法的字节级还原能力...`);
+  const hexTests = [
+    { input: 'e5-8f-a4-e6-88-98-e5-9c-ba-e4-bc-a0-e5-a5-87', expected: '古战场传奇' },
+    { input: 'e4-b8-87-e7-89-a9-e6-97-a2-e4-bc-9f-e5-a4-a7', expected: '万物既伟大' },
+    { input: 'e5-81-87-e9-9d-a2-e7-be-8e-e9-a2-9c', expected: '假面美颜' },
+  ];
+  let hexSuccess = 0;
+  for (const t of hexTests) {
+    const decoded = decodeMangledHexSlug(t.input);
+    if (decoded.includes(t.expected)) {
+      console.log(`  ✅ Hex 解码通过: ${t.input} -> ${decoded}`);
+      hexSuccess++;
+    } else {
+      console.error(`  ❌ Hex 解码失败: ${t.input} -> ${decoded} (期望包含 ${t.expected})`);
+    }
+  }
+
+  if (failCount === 0 && mangledSuccess === mangledCases.length && hexSuccess === hexTests.length) {
     console.log('\n🎉 所有回归测试全部通过！0 个 404！');
     process.exit(0);
   } else {
