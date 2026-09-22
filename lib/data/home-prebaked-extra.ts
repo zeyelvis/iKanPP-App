@@ -38,7 +38,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "遮天",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "神印王座",
@@ -1237,213 +1237,66 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "儿子撞脸CEO",
+          "title": "橙红年代1998",
           "updateBadge": "全"
       },
       {
-          "title": "重燃，淘金的神",
+          "title": "叶罗丽梦奇境",
+          "updateBadge": "24"
+      },
+      {
+          "title": "极速营救",
           "updateBadge": "全"
       },
       {
-          "title": "千禧年的赶海王系统带我鱼虾满舱",
+          "title": "重回1989",
           "updateBadge": "全"
       },
       {
-          "title": "老公失忆，爆改18岁直球小奶狗",
+          "title": "折金枝",
           "updateBadge": "全"
       },
       {
-          "title": "风华鉴",
+          "title": "逍遥四公子",
           "updateBadge": "全"
       },
       {
-          "title": "致命游戏",
+          "title": "重返大学，我靠股神系统翻身",
           "updateBadge": "全"
       },
       {
-          "title": "东北年代之我的大腰子",
+          "title": "染指",
           "updateBadge": "全"
       },
       {
-          "title": "唐诡奇谭之九重楼",
+          "title": "滚滚红尘1988",
           "updateBadge": "全"
       },
       {
-          "title": "华丽的缰绳",
+          "title": "回到1983",
+          "updateBadge": "83"
+      },
+      {
+          "title": "回到1994",
           "updateBadge": "全"
       },
       {
-          "title": "周小姐，请点头",
-          "updateBadge": "全"
-      },
-      {
-          "title": "书遇良缘",
-          "updateBadge": "全"
-      },
-      {
-          "title": "黑色月光",
+          "title": "破茧2",
           "updateBadge": "全"
       }
   ],
   hero: [
       {
-          "id": "jl_short_629472125626875900",
-          "title": "风华鉴",
-          "rate": "8.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/b50230ec9470deaf29bdbd31849703030d6e76e34fb5afbfd6c5380ed5e535d2.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/b50230ec9470deaf29bdbd31849703030d6e76e34fb5afbfd6c5380ed5e535d2.jpg",
-          "description": "将门贵女温宛爱慕名满皇城的第一公子苏玄璟，却在大婚之夜，遭到苏玄璟的陷害，连累御南侯府被灭满门。重生归来，她誓要报仇雪恨，避免前世之殇，却发现幕后真凶另有其人。灭门之案卷土重来，迷雾重重...经历轮回的温宛能否扭转命运？",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全159集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "葛鑫怡 / 董子凡 / 周微微 / 刘俊达"
-          ]
-      },
-      {
-          "id": "jl_short_629182917611880400",
-          "title": "致命游戏",
-          "rate": "9.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/245292/poster/d1fcc95a68a9be4833b59c04379b3fc53799978ed957ada74e0b71998b6240ae.webp",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/245292/poster/d1fcc95a68a9be4833b59c04379b3fc53799978ed957ada74e0b71998b6240ae.webp",
-          "description": "林秋石是一个游戏高手，但他从未游戏人生。他曾是游戏设计师，想做出改变世界的中国游戏，起因资本擅取、老板逐利而无法实现梦想，愤而辞联，致自寻梦。 风靡海外的游戏（灵境），本是华人设计师研发，内蕴人生暂学，却被国外资本改造加入血腥与暴力，形同精神毒品，玩家抑郁、精神失常，甚至自杀，比比皆是。如今这款游戏...",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "脑洞悬疑",
-              "全集连播"
-          ],
-          "episodes_info": "全161集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "夏之光 / 黄俊捷 / 刘若谷 / 刘小北 / 郑淳璟 / 卢梦琳 / 张元帅 / 俞俙 / 尹蕊 / 翁虹 / 徐冬冬 / 李萍 / 佟磊 / 何志龙 / 岳跃利 / 高玉庆 / 李茂 / 刘頔 / 张钧涵 / 李斯羽 / 赵煊 / 李汶朔 / 吕松浩 / 代古拉K / 钟盅"
-          ]
-      },
-      {
-          "id": "jl_short_629417742851637200",
-          "title": "华丽的缰绳",
-          "rate": "9.0",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/7405284671472d2e83c86c81edc9b1ca8fb71ea82a0debabfe126fae0f146a05.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/7405284671472d2e83c86c81edc9b1ca8fb71ea82a0debabfe126fae0f146a05.jpg",
-          "description": "昔日许氏继承人许惟心遭陷害身败名裂，为复仇夺回一切，她步步为营将路弋收作棋子，却意外发现幕后黑手另有其人，而路弋相依为命的妹妹之死，竟也与许家权斗暗藏关联。二人就此结盟，她狠辣算计驱他前行，他甘为鹰犬却在朝夕相处中渐生情愫与忠诚。执鞭人与棋子本无真心，可当幕后黑手步步紧逼，误会与利益隔阂横生，这份在...",
-          "year": "2026",
+          "id": "jl_short_629737867618287600",
+          "title": "橙红年代1998",
+          "rate": "8.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/257394/poster/519697f5d31fbe4e58ae51f97101e07316b5e2591cd56085a0899f00bbfbb219.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/257394/poster/519697f5d31fbe4e58ae51f97101e07316b5e2591cd56085a0899f00bbfbb219.webp",
+          "description": "在一座名叫江北的城市里,充满正气与担当的新时代青年刘子光,在海外经历了八年的坎坷之后,重新回到故乡江北,开始了对幸福美好生活的追求和奋斗。",
+          "year": "2023",
           "types": [
               "短剧",
               "其他",
-              "全集连播"
-          ],
-          "episodes_info": "全153集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "马小宇 / 胡原君"
-          ]
-      },
-      {
-          "id": "jl_short_629413317105942500",
-          "title": "周小姐，请点头",
-          "rate": "8.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/32a06b0380702822ec2ab83ad7ec2504e11a98415e25fc953313713d607e50a9.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/32a06b0380702822ec2ab83ad7ec2504e11a98415e25fc953313713d607e50a9.jpg",
-          "description": "宗州集团千金周惜为了成为一名外交翻译官，只身一人来到北城闯荡，却与鼎尚风投总裁应珩之发生了一夜情。身体契合的二人开始了一段心照不宣的床伴关系，约定互不干涉彼此生活，但应珩之却先一步对周惜动了心。然而经历过网恋奔现\"失败\"且见惯豪开放式感情的周惜害怕自己会沦为游戏的一环，始终不愿与应珩之拉近关系，迫使...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "女频恋爱",
-              "全集连播"
-          ],
-          "episodes_info": "全141集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "施景子 / 钟正"
-          ]
-      },
-      {
-          "id": "jl_short_629451866031259600",
-          "title": "黑色月光",
-          "rate": "9.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/b8da826e0d9f79c0950432ff2207d0edb1eaa2cfbeb5bd32980fcf92a9c153e0.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/b8da826e0d9f79c0950432ff2207d0edb1eaa2cfbeb5bd32980fcf92a9c153e0.jpg",
-          "description": "人前光采亮丽的余满月，背负着一段不堪回首的可怕过去……满月当年惨遭富三代蒋基俊施暴蹂躏、妹妹曦晨受创变成残废，及后父母受牵连丧命、姐姐漫星疏远离弃。十八年过去，满月成上流圈炙手可热的危机公关，处心积虑推行复仇大计，要将蒋家父子与共犯绳之于法。孤寂的复仇路上，满月取得卓家千金慧云信任，获同路人成风支持...",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全155集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "杨茜尧 / 王浩信 / 林夏薇 / 马志威 / 黄翠如"
-          ]
-      },
-      {
-          "id": "jl_short_630092513285374000",
-          "title": "穿越时空爱上你",
-          "rate": "8.9",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/fbdb8a237964a7b953ef1ff0244feb06373f3dde74ff107315c5230339f0eca5.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/fbdb8a237964a7b953ef1ff0244feb06373f3dde74ff107315c5230339f0eca5.jpg",
-          "description": "为了摆脱富少纠缠，她隨手拽临居假裝男友，沒想到却真的愛上了他，原來他穿越千年只为找到宠愛她！",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "年代穿越",
-              "全集连播"
-          ],
-          "episodes_info": "全11集·第81-90集完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_630086766887436300",
-          "title": "天降萌娃，王爷请接招",
-          "rate": "8.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/e64d22e6d349ab7f97f1ca925d2180c093873e3a86a1c6b1e8a6380d31bcb24c.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/e64d22e6d349ab7f97f1ca925d2180c093873e3a86a1c6b1e8a6380d31bcb24c.jpg",
-          "description": "现代医学博士意外穿越古代，居然穿成被王爷厌弃的下堂王妃？还揣了崽？！还好我自备医药箱空间。六年后崽子却被渣渣王爷说成是野种？！看我如何用医术在这古代闯荡！",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全5集·第61-95集完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_638447677633200600",
-          "title": "儿子撞脸CEO",
-          "rate": "9.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/7911c7571eb78ee1bc7ccfcfa621c0e5fb560743dff8658279d01dee2dec85b5.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/7911c7571eb78ee1bc7ccfcfa621c0e5fb560743dff8658279d01dee2dec85b5.jpg",
-          "description": "儿子撞脸CEO 精彩全集连播，高能反转停不下来！",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
               "全集连播"
           ],
           "episodes_info": "全80集·已完结",
@@ -1451,86 +1304,233 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           "is_new": true,
           "playable": true,
           "actors": [
-              "张雨晴 / 刘辰宇"
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_629732080535732200",
+          "title": "叶罗丽梦奇境",
+          "rate": "8.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/274816/poster/ac8604b3da9f58f5671ea2ad30c92060093cf282b325601e8c583e74dc2228ba.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/274816/poster/ac8604b3da9f58f5671ea2ad30c92060093cf282b325601e8c583e74dc2228ba.webp",
+          "description": "在现实世界的边缘，有一个与人类世界平行的神秘领域——叶罗丽仙境。这里居住着各种许多拥有魔法力量的叶罗丽仙子，他们原本与自然和谐共生。然而，随着人类对自然环境的破坏，仙境的平衡开始受到威胁。叶罗丽仙境的女王曼多拉对人类的破坏行为感到愤怒，决定通过控制梦境的力量来入侵并改变人类世界……",
+          "year": "2024",
+          "types": [
+              "短剧",
+              "其他",
+              "全集连播"
+          ],
+          "episodes_info": "全47集·更新至第24集",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "王楠楠 / 林昱希 / 章凯玥 / 吴添豪 / 陈雅钰 / 杨乔语 / 王筱涵"
+          ]
+      },
+      {
+          "id": "jl_short_629713915005108200",
+          "title": "极速营救",
+          "rate": "9.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/296650/poster/3efe64d281c3121f78def4e9a724fb34b131dfd17b3fc6a4007174a844261d89.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/296650/poster/3efe64d281c3121f78def4e9a724fb34b131dfd17b3fc6a4007174a844261d89.webp",
+          "description": "邵宇原是一名警察，因工作失误被革职，后与女儿相依为命。一日，他醒来发现体内被放置炸弹，同时女儿也被劫持。绑匪声称只要邵宇完成相关任务，便会解除炸弹，并释放其女儿，邵宇不得不踏上救女之路。",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全47集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "邵庄 / 安宁 / 骆诗琪 / 刘芊亦 / 李俊霆 / 郭若寒 / 杨羽 / 王冬"
+          ]
+      },
+      {
+          "id": "jl_short_629713708326584300",
+          "title": "折金枝",
+          "rate": "9.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/306589/poster/fdb253397fa9fe7e02dc58c36e294707c88e773c162215ef23ad3d637992a5d7.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/306589/poster/fdb253397fa9fe7e02dc58c36e294707c88e773c162215ef23ad3d637992a5d7.webp",
+          "description": "丫鬟苏晚乔为王爷谢言彧产子后，母子二人皆被王妃阮希音残害致死。重生一世，苏晚乔发誓要自己而活，抗拒不公，倾覆王府，手刃仇人。苏晚乔却毫不动摇，凭一己之力终是完成了复仇大计。",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全147集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "王云云 / 蓝博"
+          ]
+      },
+      {
+          "id": "jl_short_629704466077057000",
+          "title": "逍遥四公子",
+          "rate": "8.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/296362/poster/a7220f285472bb4b1bbcbcd4f69753d8db05a00ea853c3fb42d98bfabea264ca.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/296362/poster/a7220f285472bb4b1bbcbcd4f69753d8db05a00ea853c3fb42d98bfabea264ca.webp",
+          "description": "宸穿越为大玄礼部尚书私生子，自幼在宁府受尽兄弟欺辱、生母早逝，生活艰难。面对他人的陷害，宁宸利用自己的才能一次次力挽狂澜，过程中与长公主怀瑾、将军陈婕等女子渐生情愫，开启逆袭之路。",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全213集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "冯艺然 / 张震 / 李钊 / 马瑞泽 / 姜熙饶 / 冷海铭 / 高广泽"
+          ]
+      },
+      {
+          "id": "jl_short_629698685067919400",
+          "title": "染指",
+          "rate": "9.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/244395/poster/1c5e3026c73fa1e2fe93001b165c5505d63f9398e241ac5368afd7624f3393a5.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/244395/poster/1c5e3026c73fa1e2fe93001b165c5505d63f9398e241ac5368afd7624f3393a5.webp",
+          "description": "改编自番茄小说《野，才带劲》。 一对原本青梅竹马的男女因一场车祸彼此错过多年重逢之时却成为异父异母的姐弟。两人从相互试探到极限拉扯，在爱情与可能存在的世仇中纠缠挣扎。抽丝剥茧之后，携手揭露了那场车祸的真相，有情人终成眷属。",
+          "year": "2024",
+          "types": [
+              "短剧",
+              "擦边",
+              "全集连播"
+          ],
+          "episodes_info": "全53集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "王钧浩 / 冯熙尧 / 张冠森 / 李佳馨 / 刘纯粹"
+          ]
+      },
+      {
+          "id": "jl_short_629692062060511200",
+          "title": "破茧2",
+          "rate": "8.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/257193/poster/e6cea2bbe87794de6294fa565dcde2d818e36d922e28dbf5cd9f2785c55a3ee3.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/257193/poster/e6cea2bbe87794de6294fa565dcde2d818e36d922e28dbf5cd9f2785c55a3ee3.webp",
+          "description": "谭景天（张耀 饰）和金灵（楚月 饰）分别前往泰国参加交流学习，因一起走私印度国蝶引发的失足女虐杀案与泰国警长瓦拉里洛结识，三人开始联手屡破奇案。然而危机就在他们身边，在侦破一起连环杀人案过程中发现金灵已经成为凶手下一个目标。",
+          "year": "2024",
+          "types": [
+              "短剧",
+              "其他",
+              "全集连播"
+          ],
+          "episodes_info": "全53集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "张耀 / 楚月 / 徐志贤 / 王冠逸 / 朱刚日尧 / 高卿尘 / 郑乃馨 / 蒲熠星 / 周开开 / 张铎 / 房子斌 / 包文婧"
+          ]
+      },
+      {
+          "id": "jl_short_629689424447406100",
+          "title": "她有点不乖",
+          "rate": "8.7",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/322063/poster/8ba5fb2ca3f58b82dc041b826ab1bf27e6d8e329a38a1e28ccd37849542d043b.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/322063/poster/8ba5fb2ca3f58b82dc041b826ab1bf27e6d8e329a38a1e28ccd37849542d043b.webp",
+          "description": "他是浑身带刺的落魄贵公子，用桀骜伪装孤独；她是看似温顺的倔强少女，用沉默对抗深渊。意外成为同桌，他们从互相敌视、针锋相对，到一次次的交集中，看穿了彼此坚硬外壳下的柔软。他见过她最狼狈的模样，却视若珍宝；她懂他最深处的脆弱，便温柔守护。",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全141集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "徐艺真 / 马小宇"
           ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "风华鉴",
-      rate: "8.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/b50230ec9470deaf29bdbd31849703030d6e76e34fb5afbfd6c5380ed5e535d2.jpg",
-      year: "2024",
-      types: ["短剧","古装仙侠","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_2',
-      title: "致命游戏",
-      rate: "9.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/245292/poster/d1fcc95a68a9be4833b59c04379b3fc53799978ed957ada74e0b71998b6240ae.webp",
-      year: "2024",
-      types: ["短剧","脑洞悬疑","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_3',
-      title: "华丽的缰绳",
-      rate: "9.0",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/7405284671472d2e83c86c81edc9b1ca8fb71ea82a0debabfe126fae0f146a05.jpg",
-      year: "2026",
+      title: "橙红年代1998",
+      rate: "8.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/257394/poster/519697f5d31fbe4e58ae51f97101e07316b5e2591cd56085a0899f00bbfbb219.webp",
+      year: "2023",
       types: ["短剧","其他","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_4',
-      title: "周小姐，请点头",
-      rate: "8.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/32a06b0380702822ec2ab83ad7ec2504e11a98415e25fc953313713d607e50a9.jpg",
-      year: "2026",
-      types: ["短剧","女频恋爱","全集连播"],
+      id: 'pb_s_top_2',
+      title: "叶罗丽梦奇境",
+      rate: "8.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/274816/poster/ac8604b3da9f58f5671ea2ad30c92060093cf282b325601e8c583e74dc2228ba.webp",
+      year: "2024",
+      types: ["短剧","其他","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_5',
-      title: "黑色月光",
-      rate: "9.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/b8da826e0d9f79c0950432ff2207d0edb1eaa2cfbeb5bd32980fcf92a9c153e0.jpg",
-      year: "2024",
+      id: 'pb_s_top_3',
+      title: "极速营救",
+      rate: "9.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/296650/poster/3efe64d281c3121f78def4e9a724fb34b131dfd17b3fc6a4007174a844261d89.webp",
+      year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_6',
-      title: "穿越时空爱上你",
-      rate: "8.9",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/fbdb8a237964a7b953ef1ff0244feb06373f3dde74ff107315c5230339f0eca5.jpg",
-      year: "2024",
-      types: ["短剧","年代穿越","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_7',
-      title: "天降萌娃，王爷请接招",
-      rate: "8.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/e64d22e6d349ab7f97f1ca925d2180c093873e3a86a1c6b1e8a6380d31bcb24c.jpg",
-      year: "2024",
+      id: 'pb_s_top_4',
+      title: "折金枝",
+      rate: "9.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/306589/poster/fdb253397fa9fe7e02dc58c36e294707c88e773c162215ef23ad3d637992a5d7.webp",
+      year: "2025",
       types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_8',
-      title: "儿子撞脸CEO",
+      id: 'pb_s_top_5',
+      title: "逍遥四公子",
+      rate: "8.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/296362/poster/a7220f285472bb4b1bbcbcd4f69753d8db05a00ea853c3fb42d98bfabea264ca.webp",
+      year: "2025",
+      types: ["短剧","古装仙侠","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_6',
+      title: "染指",
       rate: "9.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/7911c7571eb78ee1bc7ccfcfa621c0e5fb560743dff8658279d01dee2dec85b5.jpg",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/244395/poster/1c5e3026c73fa1e2fe93001b165c5505d63f9398e241ac5368afd7624f3393a5.webp",
+      year: "2024",
+      types: ["短剧","擦边","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_7',
+      title: "破茧2",
+      rate: "8.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/257193/poster/e6cea2bbe87794de6294fa565dcde2d818e36d922e28dbf5cd9f2785c55a3ee3.webp",
+      year: "2024",
+      types: ["短剧","其他","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_8',
+      title: "她有点不乖",
+      rate: "8.7",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/322063/poster/8ba5fb2ca3f58b82dc041b826ab1bf27e6d8e329a38a1e28ccd37849542d043b.webp",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
