@@ -3,7 +3,7 @@ import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
 import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
-export const runtime = 'edge';
+export const dynamic = 'force-static';
 export const revalidate = 3600; // 1小时缓存
 
 export async function GET() {

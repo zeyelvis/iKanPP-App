@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { PREBAKED_TOPICS } from '@/lib/services/topic-service';
+import { PREBAKED_TOPICS } from '@/lib/data/prebaked-topics';
 
-export const runtime = 'edge';
+export const dynamic = 'force-static';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Sparkles, Film, ArrowLeft, Star, Compass, Tag, Play } from 'lucide-react';
-import { getTopicBySlug, PREBAKED_TOPICS } from '@/lib/services/topic-service';
+import { getTopicBySlug, PREBAKED_TOPICS, TopicItem } from '@/lib/services/topic-service';
 import { Navbar } from '@/components/layout/Navbar';
 
 export function generateStaticParams() {
@@ -75,7 +75,7 @@ export default async function TopicPage({ params }: Props) {
         url: currentUrl,
         mainEntity: {
           '@type': 'ItemList',
-          itemListElement: topic.titles.map((item, idx) => ({
+          itemListElement: topic.titles.map((item: TopicItem, idx: number) => ({
             '@type': 'ListItem',
             position: idx + 1,
             name: item.title,
@@ -160,7 +160,7 @@ export default async function TopicPage({ params }: Props) {
           {topic.longTailKeywords && topic.longTailKeywords.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 mt-5">
               <Tag className="w-3.5 h-3.5 text-neutral-500" />
-              {topic.longTailKeywords.map(kw => (
+              {topic.longTailKeywords.map((kw: string) => (
                 <span
                   key={kw}
                   className="px-2.5 py-0.5 rounded-lg bg-white/5 border border-white/10 text-xs text-neutral-300"
@@ -181,7 +181,7 @@ export default async function TopicPage({ params }: Props) {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {topic.titles.map((item, idx) => (
+          {topic.titles.map((item: TopicItem, idx: number) => (
             <Link
               key={idx}
               href={item.href}
