@@ -24,14 +24,24 @@ const TMDB_BASE = 'https://api.themoviedb.org/3';
 // Cloudflare KV 配置
 const CF_KV_ACCOUNT_ID = process.env.CF_KV_ACCOUNT_ID || process.env.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a';
 const CF_KV_NAMESPACE_ID = process.env.CF_KV_NAMESPACE_ID || process.env.CLOUDFLARE_NAMESPACE_ID || '42311924427747deaf00981d99d58998';
-const CF_KV_API_KEY = process.env.CF_KV_API_KEY || process.env.CLOUDFLARE_API_KEY || '';
+const CF_KV_API_KEY = process.env.CLOUDFLARE_API_TOKEN || process.env.CF_KV_API_KEY || process.env.CLOUDFLARE_API_KEY || '';
 const CF_KV_EMAIL = process.env.CF_KV_EMAIL || process.env.CLOUDFLARE_EMAIL || 'zeyelvis@gmail.com';
 
 const KV_BASE_URL = `https://api.cloudflare.com/client/v4/accounts/${CF_KV_ACCOUNT_ID}/storage/kv/namespaces/${CF_KV_NAMESPACE_ID}`;
-const KV_HEADERS = {
-  'X-Auth-Email': CF_KV_EMAIL,
-  'X-Auth-Key': CF_KV_API_KEY,
-};
+
+function getKvHeaders() {
+  const headers = {};
+  const token = process.env.CLOUDFLARE_API_TOKEN || CF_KV_API_KEY;
+  if (token && (token.length === 40 || !CF_KV_EMAIL || token.startsWith('Bearer '))) {
+    headers['Authorization'] = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+  } else if (CF_KV_API_KEY && CF_KV_EMAIL) {
+    headers['X-Auth-Email'] = CF_KV_EMAIL;
+    headers['X-Auth-Key'] = CF_KV_API_KEY;
+  }
+  return headers;
+}
+
+const KV_HEADERS = getKvHeaders();
 
 // 专区配置（涵盖全站 6 大核心板块）
 const CHANNELS = [

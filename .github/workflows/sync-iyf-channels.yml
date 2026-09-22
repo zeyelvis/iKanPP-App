@@ -40,13 +40,14 @@ jobs:
 
       - name: Execute Full Auto-Update & SEO Pipeline
         env:
-          CF_KV_ACCOUNT_ID: ${{ secrets.CF_KV_ACCOUNT_ID }}
-          CF_KV_NAMESPACE_ID: ${{ secrets.CF_KV_NAMESPACE_ID }}
-          CF_KV_API_KEY: ${{ secrets.CF_KV_API_KEY || secrets.CLOUDFLARE_AUTH_KEY }}
+          CF_KV_ACCOUNT_ID: ${{ secrets.CF_KV_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_KV_NAMESPACE_ID: ${{ secrets.CF_KV_NAMESPACE_ID || secrets.CLOUDFLARE_NAMESPACE_ID }}
+          CF_KV_API_KEY: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CF_KV_API_KEY || secrets.CLOUDFLARE_AUTH_KEY }}
           CF_KV_EMAIL: ${{ secrets.CF_KV_EMAIL || secrets.CLOUDFLARE_AUTH_EMAIL }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_KV_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_NAMESPACE_ID: ${{ secrets.CF_KV_NAMESPACE_ID || secrets.CLOUDFLARE_NAMESPACE_ID }}
-          CLOUDFLARE_API_KEY: ${{ secrets.CF_KV_API_KEY || secrets.CLOUDFLARE_AUTH_KEY || secrets.CLOUDFLARE_API_KEY }}
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CF_KV_API_KEY || secrets.CLOUDFLARE_AUTH_KEY || secrets.CLOUDFLARE_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_EMAIL: ${{ secrets.CF_KV_EMAIL || secrets.CLOUDFLARE_AUTH_EMAIL || secrets.CLOUDFLARE_EMAIL }}
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
 
