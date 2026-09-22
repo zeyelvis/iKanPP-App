@@ -62,8 +62,12 @@ export function SearchResults({
         toggleLang,
     } = useLanguageBadges(typeFilteredVideos);
 
-    const hasFilters = availableSources.length > 0 || typeBadges.length > 0 || languageBadges.length > 0;
-    const activeFilterCount = selectedSources.size + selectedTypes.size + selectedLangs.size;
+    const firstResult = results && results.length > 0 ? results[0] : null;
+    const fallbackHint = (!hasEntityMatched && firstResult) ? {
+        actor: firstResult.vod_actor ? firstResult.vod_actor.split(/[,/，\s]/)[0]?.trim() : undefined,
+        year: firstResult.vod_year ? String(firstResult.vod_year).slice(0, 4) : undefined,
+        title: firstResult.vod_name,
+    } : undefined;
 
     return (
         <div className="animate-fade-in">
@@ -73,9 +77,10 @@ export function SearchResults({
                 availableSources={availableSources}
             />
 
-            {/* 本站 TMDB 权威最高权重推荐知识面板（置顶第一席，实体大脑先行） */}
+            {/* 本站 TMDB 权威最高权重推荐知识面板（置顶第一席，实体大脑先行 + 结果协同反哺自愈） */}
             <SearchKnowledgePanel
                 query={query}
+                fallbackHint={fallbackHint}
                 onEntityLoaded={(has) => setHasEntityMatched(has)}
             />
 

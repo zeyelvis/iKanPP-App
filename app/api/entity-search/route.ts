@@ -23,6 +23,9 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q')?.trim();
+    const actor = searchParams.get('actor')?.trim() || undefined;
+    const year = searchParams.get('year')?.trim() || undefined;
+    const hint = actor || year ? { actor, year } : undefined;
 
     if (!query || query.length === 0) {
       return NextResponse.json({ entities: [], entity: null });
@@ -148,7 +151,7 @@ export async function GET(request: NextRequest) {
     // ──────────────────────────────────────────
     // 4. L4: TMDB 在线多源检索 + 5000ms 超时熔断守卫
     // ──────────────────────────────────────────
-    const tmdbPromise = searchMultipleEntitiesFromTMDB(query, 2);
+    const tmdbPromise = searchMultipleEntitiesFromTMDB(query, 2, hint);
     const timeoutPromise = new Promise<TitleEntity[]>((resolve) =>
       setTimeout(() => resolve([]), 5000)
     );

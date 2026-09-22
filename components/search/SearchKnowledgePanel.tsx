@@ -13,6 +13,11 @@ import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 interface SearchKnowledgePanelProps {
   query?: string;
   onEntityLoaded?: (hasEntities: boolean) => void;
+  fallbackHint?: {
+    actor?: string;
+    year?: string;
+    title?: string;
+  };
 }
 
 // 内存单例缓存，保证用户切词或返回时不发生重复网络抖动
@@ -333,6 +338,7 @@ const KnowledgeCard = memo(function KnowledgeCard({
 export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
   query = '',
   onEntityLoaded,
+  fallbackHint,
 }: SearchKnowledgePanelProps) {
   const cleanQuery = query.trim();
   const [entities, setEntities] = useState<TitleEntity[]>([]);
@@ -385,8 +391,13 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
     let isSubscribed = true;
     setLoading(true);
 
-    // 彻底移除无意义的人为 150ms 延迟，用户提交搜索后毫秒级直达网络
-    fetch(`/api/entity-search?q=${encodeURIComponent(cleanQuery)}`)
+    const hintParams = new URLSearchParams();
+    hintParams.set('q', cleanQuery);
+    if (fallbackHint?.actor) hintParams.set('actor', fallbackHint.actor);
+    if (fallbackHint?.year) hintParams.set('year', fallbackHint.year);
+
+    // 用户提交搜索后毫秒级直达网络接口
+    fetch(`/api/entity-search?${hintParams.toString()}`)
       .then((res) => {
         if (!res.ok) throw new Error('Search failed');
         return res.json();
@@ -397,13 +408,11 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
           ? data.entities
           : (data?.entity ? [data.entity] : []);
 
-        // 客户端最终一道安全防线：坚决剔除任何无语义交集的条目
+        // 客户端安全防线：保留具有有效标题重合的条目
         const found = rawFound.filter(ent =>
           ent && (hasTitleOverlap(cleanQuery, ent.title) || (ent.originalTitle && hasTitleOverlap(cleanQuery, ent.originalTitle)))
         );
 
-        // 🌟 核心修复：仅在查到有效实体时才进行持久化与内存缓存！
-        // 严禁将空数组 [] 写入 sessionStorage，防止网络偶发超时直接杀死当前 Tab 的图谱渲染
         if (found.length > 0) {
           entitiesMemoryCache.set(cleanQuery, found);
           try {
@@ -427,7 +436,7 @@ export const SearchKnowledgePanel = memo(function SearchKnowledgePanel({
     return () => {
       isSubscribed = false;
     };
-  }, [cleanQuery, onEntityLoaded]);
+  }, [cleanQuery, fallbackHint?.actor, fallbackHint?.year, onEntityLoaded]);
 
   // 加载状态骨架屏（精致电影态微光，平滑淡入，防止布局突兀跳动）
   if (loading && entities.length === 0) {

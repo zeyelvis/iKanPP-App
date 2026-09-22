@@ -753,15 +753,202 @@ async function convertHitToEntity(
 }
 
 /**
+ * 针对系列续集民间数字简写（如 "一击3"、"碟中谍7"、"疾速追杀4"、"速度与激情10"、"杀破狼2"）的智能合集探测与续集对齐引擎
+ */
+export async function resolveSeriesSequelFromTMDB(
+  query: string,
+  hint?: { actor?: string; year?: string; title?: string }
+): Promise<TitleEntity | null> {
+  if (!query || !TMDB_API_KEY) return null;
+  const clean = query.trim();
+
+  // 匹配带数字的续集格式（例如 "一击3", "一击 3", "一击3：最后一击", "一击三", "杀破狼2"）
+  const match = clean.match(/^(.+?)\s*(?:第\s*)?([0-9]+|[一二两三四五六七八九十]+)(?:\s*[部季])?(?:[:：\s]+(.*))?$/);
+  if (!match) return null;
+
+  const baseTitle = match[1].trim();
+  const numRaw = match[2].trim();
+  const subTitle = (match[3] || '').trim();
+
+  // 中文数字转阿拉伯数字
+  const parseNum = (str: string): number => {
+    if (/^\d+$/.test(str)) return parseInt(str, 10);
+    const map: Record<string, number> = {
+      '一': 1, '二': 2, '两': 2, '三': 3, '四': 4,
+      '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10,
+      '十一': 11, '十二': 12, '十三': 13, '十四': 14, '十五': 15,
+      '十六': 16, '十七': 17, '十八': 18, '十九': 19, '二十': 20,
+    };
+    return map[str] || 0;
+  };
+
+  const targetNum = parseNum(numRaw);
+  if (targetNum < 1 || targetNum > 20 || baseTitle.length < 1) return null;
+
+  try {
+    // 1. 若用户输入附带副标题（如 "一击3：最后一击"），优先尝试副标题直接命中
+    if (subTitle && subTitle.length >= 2) {
+      const subHits = await searchMultipleEntitiesFromTMDB(subTitle, 1);
+      if (subHits && subHits.length > 0) {
+        return subHits[0];
+      }
+    }
+
+    // 2. 检索系列母词电影（如 "一击"）
+    const searchUrl = `${TMDB_BASE}/search/movie?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(baseTitle)}`;
+    const sRes = await fetch(searchUrl, {
+      headers: { Accept: 'application/json' },
+      next: { revalidate: 86400 * 7 },
+    });
+    if (!sRes.ok) return null;
+    const sData = await sRes.json();
+    const candidates: any[] = Array.isArray(sData.results) ? sData.results : [];
+    if (candidates.length === 0) return null;
+
+    // 🌟 核心优化：按与母词 baseTitle 的匹配度严格排序（精确等于 baseTitle 的优先，杜绝同名/包含词干扰）
+    candidates.sort((a: any, b: any) => {
+      const aExact = a.title === baseTitle ? 1 : 0;
+      const bExact = b.title === baseTitle ? 1 : 0;
+      if (aExact !== bExact) return bExact - aExact;
+      return (b.popularity || 0) - (a.popularity || 0);
+    });
+
+    // 🌟 阶段 1：首轮全速检查合集（Collection 具有 100% 官方血缘保证，优先级最高）
+    for (const cand of candidates.slice(0, 5)) {
+      if (!cand?.id) continue;
+      const detail = await fetchTMDBDetails(cand.id, 'movie', TMDB_API_KEY);
+      if (!detail) continue;
+
+      if (detail.belongs_to_collection?.id) {
+        const collId = detail.belongs_to_collection.id;
+        const cUrl = `${TMDB_BASE}/collection/${collId}?api_key=${TMDB_API_KEY}&language=zh-CN`;
+        const cRes = await fetch(cUrl, {
+          headers: { Accept: 'application/json' },
+          next: { revalidate: 86400 * 7 },
+        });
+
+        if (cRes.ok) {
+          const cData = await cRes.json();
+          const parts: any[] = (cData.parts || [])
+            .filter((p: any) => p && p.id)
+            .sort((a: any, b: any) => (a.release_date || '9999').localeCompare(b.release_date || '9999'));
+
+          if (targetNum <= parts.length) {
+            const targetPart = parts[targetNum - 1];
+            if (targetPart && targetPart.id) {
+              // 命中目标第 N 部！转换为 TitleEntity
+              const entity = await convertHitToEntity(targetPart, 'movie', clean);
+              if (entity && entity.cover) {
+                // 如果标题不含用户搜索词，将用户常用民间搜索词与官方译名融合（如 "一击3：最后一击"）
+                if (!entity.title.includes(clean) && !clean.includes(entity.title)) {
+                  const mergedTitle = `${clean}：${entity.title}`;
+                  entity.title = mergedTitle;
+                  entity.slug = generateSlug(mergedTitle);
+                  await saveEntity(entity);
+                }
+                return entity;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // 🌟 阶段 2：若无合集，次选母片英文原名 + 序号推导（如 "One Shot 3"）
+    for (const cand of candidates.slice(0, 3)) {
+      const orig = (cand.original_title || '').trim();
+      if (orig && orig.length >= 2) {
+        const enQuery = `${orig} ${targetNum}`;
+        const enMultiUrl = `${TMDB_BASE}/search/movie?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(enQuery)}`;
+        const enRes = await fetch(enMultiUrl, {
+          headers: { Accept: 'application/json' },
+          next: { revalidate: 86400 * 7 },
+        });
+        if (enRes.ok) {
+          const enData = await enRes.json();
+          const firstHit = enData.results?.[0];
+          if (firstHit && firstHit.id) {
+            const entity = await convertHitToEntity(firstHit, 'movie', clean);
+            if (entity && entity.cover) {
+              if (!entity.title.includes(clean) && !clean.includes(entity.title)) {
+                const mergedTitle = `${clean}：${entity.title}`;
+                entity.title = mergedTitle;
+                entity.slug = generateSlug(mergedTitle);
+                await saveEntity(entity);
+              }
+              return entity;
+            }
+          }
+        }
+      }
+    }
+
+    // 🌟 阶段 3：若有辅助主演与年份线索（如 actor: "斯科特·阿金斯", year: "2026"）
+    if (hint?.actor && hint.actor.length >= 2) {
+      const primaryActor = hint.actor.split(/[,/，\s]/)[0]?.trim();
+      if (primaryActor && primaryActor.length >= 2) {
+        const actorSearchUrl = `${TMDB_BASE}/search/person?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(primaryActor)}`;
+        const aRes = await fetch(actorSearchUrl, { headers: { Accept: 'application/json' } });
+        if (aRes.ok) {
+          const aData = await aRes.json();
+          const person = aData.results?.[0];
+          if (person?.id) {
+            const creditsUrl = `${TMDB_BASE}/person/${person.id}/movie_credits?api_key=${TMDB_API_KEY}&language=zh-CN`;
+            const credRes = await fetch(creditsUrl, { headers: { Accept: 'application/json' } });
+            if (credRes.ok) {
+              const credData = await credRes.json();
+              const castList: any[] = credData.cast || [];
+              const matchedMovie = castList.find((m: any) => {
+                const mYear = (m.release_date || '').slice(0, 4);
+                const hasYear = hint.year ? mYear === hint.year : true;
+                const origT = (m.original_title || '').toLowerCase();
+                const baseLower = baseTitle.toLowerCase();
+                return hasYear && (origT.includes(baseLower) || (m.title && m.title.includes(baseTitle)));
+              });
+              if (matchedMovie?.id) {
+                const entity = await convertHitToEntity(matchedMovie, 'movie', clean);
+                if (entity && entity.cover) {
+                  if (!entity.title.includes(clean) && !clean.includes(entity.title)) {
+                    const mergedTitle = `${clean}：${entity.title}`;
+                    entity.title = mergedTitle;
+                    entity.slug = generateSlug(mergedTitle);
+                    await saveEntity(entity);
+                  }
+                  return entity;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.warn(`[resolveSeriesSequelFromTMDB fail] query=${query}:`, err);
+  }
+
+  return null;
+}
+
+/**
  * 搜索 TMDB 多个权威匹配实体（如动漫原版 + 真人改编版双轨推荐）
  */
 export async function searchMultipleEntitiesFromTMDB(
   query: string,
-  limit = 2
+  limit = 2,
+  hint?: { actor?: string; year?: string; title?: string }
 ): Promise<TitleEntity[]> {
   if (!query || !TMDB_API_KEY) return [];
   const cleanQuery = sanitizeSearchTitle(query);
   if (!cleanQuery) return [];
+
+  // 🌟 意图优先：若用户输入明确为系列续集（如 "一击3", "碟中谍7"），优先执行合集续集对齐引擎
+  const isSequelQuery = /^(.+?)\s*(?:第\s*)?([0-9]+|[一二两三四五六七八九十]+)(?:\s*[部季])?/.test(cleanQuery);
+  if (isSequelQuery) {
+    const sequelEntity = await resolveSeriesSequelFromTMDB(cleanQuery, hint);
+    if (sequelEntity && sequelEntity.cover) {
+      return [sequelEntity];
+    }
+  }
 
   try {
     const multiUrl = `${TMDB_BASE}/search/multi?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(cleanQuery)}`;
@@ -773,7 +960,15 @@ export async function searchMultipleEntitiesFromTMDB(
     if (!mRes.ok) return [];
     const mData = await mRes.json();
     const candidates: any[] = Array.isArray(mData.results) ? mData.results : [];
-    if (candidates.length === 0) return [];
+    
+    // 若常规 TMDB search/multi 无结果，优先触发系列合集与续集探测引擎
+    if (candidates.length === 0) {
+      const sequelEntity = await resolveSeriesSequelFromTMDB(cleanQuery, hint);
+      if (sequelEntity && sequelEntity.cover) {
+        return [sequelEntity];
+      }
+      return [];
+    }
 
     const cleanQ = cleanQuery.toLowerCase();
     const ranked = candidates
@@ -808,11 +1003,22 @@ export async function searchMultipleEntitiesFromTMDB(
       .sort((a, b) => b.score - a.score);
 
     const best = ranked[0];
-    if (!best || !best.hit?.id) return [];
+    if (!best || !best.hit?.id) {
+      const sequelEntity = await resolveSeriesSequelFromTMDB(cleanQuery, hint);
+      if (sequelEntity && sequelEntity.cover) {
+        return [sequelEntity];
+      }
+      return [];
+    }
 
     const bestTitle = (best.hit.title || best.hit.name || '').trim();
     const bestOrig = (best.hit.original_title || best.hit.original_name || '').trim();
     if (!hasTitleOverlap(cleanQuery, bestTitle + bestOrig)) {
+      // 虽有 TMDB 返回，但完全无标题交集，启动系列合集推导兜底
+      const sequelEntity = await resolveSeriesSequelFromTMDB(cleanQuery, hint);
+      if (sequelEntity && sequelEntity.cover) {
+        return [sequelEntity];
+      }
       return [];
     }
 
@@ -861,6 +1067,14 @@ export async function searchMultipleEntitiesFromTMDB(
           seenKeys.add(`${finalEntity.type}:${finalEntity.tmdbId}`);
           entities.push(finalEntity);
         }
+      }
+    }
+
+    // 若最终实体列表为空，启动系列续集探测引擎进行最终尝试
+    if (entities.length === 0) {
+      const sequelEntity = await resolveSeriesSequelFromTMDB(cleanQuery, hint);
+      if (sequelEntity && sequelEntity.cover) {
+        entities.push(sequelEntity);
       }
     }
 
