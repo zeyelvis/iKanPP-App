@@ -2,6 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { generateAiUniqueReview, generateAiFaq } from '../lib/services/ai-seo.ts';
 
 /**
  * =========================================================================
@@ -15,6 +16,23 @@ import crypto from 'crypto';
  * 自动结合 TMDB 4K 原版物料建档、置顶四大排序物理索引、并在 15 分钟内闪电广播，
  * 抢占 Google / Bing 首发搜索流量最高峰！
  */
+
+// 自动载入 .env.local 与 .env
+const envFiles = ['.env.local', '.env'];
+for (const envFile of envFiles) {
+  const envPath = path.resolve(process.cwd(), envFile);
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    for (const line of envContent.split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const [key, ...vals] = trimmed.split('=');
+      if (key && vals.length > 0 && !process.env[key.trim()]) {
+        process.env[key.trim()] = vals.join('=').trim().replace(/^["']|["']$/g, '');
+      }
+    }
+  }
+}
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
@@ -81,6 +99,22 @@ function isCleanChineseTitle(title) {
   const validTotal = t.replace(/\s+/g, '').length;
   if (chineseChars.length / validTotal < 0.4) return false;
   return true;
+}
+
+const SHORT_DRAMA_KEYWORDS = [
+  '战神', '闪婚', '虐恋', '神医', '下山', '首辅', '白月光', '少爷', '千金', '陆少',
+  '继承人', '无敌', '赘婿', '龙王', '绝色', '太师', '娇妻', '师姐', '致富', '跑路',
+  '后妈', '继母', '继妹', '重生', '逆袭', '豪门', '总裁', '霸总', '萌宝', '假千金',
+  '真千金', '真假千金', '替嫁', '退婚', '休夫', '狂飙', '阎罗', '修罗', '医圣'
+];
+
+function isShortDrama(rawTitle, remarks, it) {
+  if (it?.type_id === 45 || it?.type_name?.includes('短剧') || it?.vod_class?.includes('短剧')) return true;
+  const combined = `${rawTitle} ${remarks || ''} ${it?.vod_class || ''}`;
+  const epMatch = (remarks || '').match(/第?\s*(\d+)\s*[集话]/);
+  const epNum = epMatch ? parseInt(epMatch[1], 10) : 0;
+  if (epNum >= 35) return true;
+  return SHORT_DRAMA_KEYWORDS.some(k => combined.includes(k));
 }
 
 function normalizeTitle(title) {
@@ -272,6 +306,11 @@ async function main() {
         if (year < 2025) continue;
         if (!isCleanChineseTitle(cleanTitle)) continue;
 
+        // 🌟 核心分流：短剧专线专属条目，自动分流至 /short 专区，不向 TMDB 电影/剧集发起无效检索
+        if (isShortDrama(rawTitle, remarks, it)) {
+          continue;
+        }
+
         // 判断是否具备院线首发或高热度特征
         const isFirstRelease = /(抢先|TC|枪版|HD|预告|TS|CAM)/i.test(rawTitle) || /(抢先|TC|枪版)/i.test(remarks);
         
@@ -447,6 +486,30 @@ async function main() {
       key: `slug:${encodeURIComponent(`${newEntity.slug}-${newEntity.year}`)}`,
       value: newEntityId,
     });
+    // 采集源原始纯化标题别名映射（如 "一击3" -> ik111782）
+    entitiesToCreate.push({
+      key: `slug:${title}`,
+      value: newEntityId,
+    });
+    entitiesToCreate.push({
+      key: `slug:${encodeURIComponent(title)}`,
+      value: newEntityId,
+    });
+    entitiesToCreate.push({
+      key: `title:${title}`,
+      value: newEntityId,
+    });
+    if (norm) {
+      entitiesToCreate.push({
+        key: `title:${norm}`,
+        value: newEntityId,
+      });
+    }
+    // TMDB 反向索引映射
+    entitiesToCreate.push({
+      key: `tmdb:${newEntity.tmdbType}:${newEntity.tmdbId}`,
+      value: newEntityId,
+    });
 
     indexAll.push(newEntityId);
     indexAllSet.add(newEntityId);
@@ -538,6 +601,42 @@ async function main() {
   let recentAll = rawRecentAll ? JSON.parse(rawRecentAll) : [];
   recentAll = [residentEvilRecent, ...recentAll.filter(it => (it.entityId || it.id) !== 'ik020581')].slice(0, 24);
   await kvPut('recent:all', recentAll);
+
+  // 6. 为首发先锋影片自动检测并补充 AI 独家深度视点与 FAQ 胶囊 (消灭 Thin Content，霸占 Google 搜索首屏)
+  console.log('🧠 [AI 智能赋能] 检查首发先锋片单中的 AI 视点与 FAQ 覆盖状态...');
+  for (const p of pioneers.slice(0, 10)) {
+    try {
+      const rawEnt = await kvGet(`entity:${p.entityId}`);
+      if (!rawEnt) continue;
+      const ent = JSON.parse(rawEnt);
+      if (!ent.aiContent || !ent.aiContent.uniqueSynopsis) {
+        console.log(`   ✨ [AI 生成] 为先锋新片 《${ent.title}》 (${ent.year}) 生成独家视点与 FAQ...`);
+        const review = await generateAiUniqueReview({
+          title: ent.title,
+          type: ent.type || 'movie',
+          overview: ent.description,
+          genres: ent.genres,
+        });
+        const faq = await generateAiFaq({
+          title: ent.title,
+          type: ent.type || 'movie',
+          overview: ent.description,
+        });
+        ent.aiContent = {
+          uniqueSynopsis: review.uniqueSynopsis,
+          highlights: review.highlights,
+          characterAnalysis: review.characterAnalysis,
+          audienceFit: review.audienceFit,
+          faqs: faq.faqs,
+          generatedAt: new Date().toISOString(),
+        };
+        await kvPut(`entity:${p.entityId}`, ent);
+        console.log(`   ✅ 《${ent.title}》 AI 视点与 FAQ 成功写入生产 KV！`);
+      }
+    } catch (aiErr) {
+      console.warn(`   ⚠️ 为 《${p.title}》 生成 AI 内容跳过:`, aiErr.message);
+    }
+  }
 
   console.log(`🎉 [首发雷达] 全网首发先锋爆款已成功完成侦测、建档与排序物理置顶闭环！`);
 }

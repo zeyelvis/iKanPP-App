@@ -40,6 +40,7 @@ export async function callAiCompletion(params: {
 
   const response = await fetch(url, {
     method: 'POST',
+    signal: AbortSignal.timeout(5000),
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
@@ -103,25 +104,24 @@ export async function generateAiUniqueReview(params: {
 主要演员：${(params.cast || []).slice(0, 5).join('、') || '实力派演员阵容'}
 分类标签：${(params.genres || []).join('、') || '热门华语佳作'}`;
 
-  const raw = await callAiCompletion({
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt },
-    ],
-    model: params.model,
-    temperature: 0.7,
-    maxTokens: 1500,
-  });
-
   try {
+    const raw = await callAiCompletion({
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      model: params.model,
+      temperature: 0.7,
+      maxTokens: 1500,
+    });
     const cleanJson = raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
     return JSON.parse(cleanJson);
   } catch {
     return {
-      uniqueSynopsis: raw,
-      highlights: ['高能反转剧情', '实力派演员倾情演绎', '海外4K免翻墙极速呈现'],
-      characterAnalysis: '角色内心博弈极具张力，在危机重重之下展现出深刻的人性光影。',
-      audienceFit: '推荐给所有偏好快节奏、反转悬疑与高质量华语叙事的海外观众。',
+      uniqueSynopsis: `${params.title} 是一部兼具叙事张力与视听冲击力的佳作。${params.overview ? params.overview.slice(0, 200) + '...' : '故事情节跌宕起伏，危机四伏中层层展开令人屏息的剧情高潮。'}`,
+      highlights: ['高能剧情推进与极致视听震撼', '实力派主创倾力呈现角色弧光', '海外 Anycast 4K 纯直连秒开'],
+      characterAnalysis: '主演通过扎实而极具沉浸感的表演，将危机漩涡中的心理博弈与决绝信念演绎得淋漓尽致。',
+      audienceFit: '推荐给所有偏好快节奏、硬派视听与高质量电影工业叙事的全球影迷。',
     };
   }
 }
@@ -161,18 +161,17 @@ export async function generateAiFaq(params: {
 类型：${params.type === 'tv' ? '电视剧' : '电影'}
 剧情亮点：${params.overview || '2026 年度热播影视大作'}`;
 
-  const raw = await callAiCompletion({
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt },
-    ],
-    model: params.model,
-    temperature: 0.5,
-    maxTokens: 1200,
-  });
-
   let faqs: Array<{ question: string; answer: string }> = [];
   try {
+    const raw = await callAiCompletion({
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      model: params.model,
+      temperature: 0.5,
+      maxTokens: 1200,
+    });
     const cleanJson = raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
     faqs = JSON.parse(cleanJson);
   } catch {
