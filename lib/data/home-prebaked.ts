@@ -1879,13 +1879,13 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
                 "backdrop": "https://static.iyf.tv/upload/user/202609171141024107110.jpg",
-                "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至14集 | 共30集。",
+                "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至15集 | 共30集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至14集 | 共30集",
+                "episodes_info": "更新至15集 | 共30集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1896,13 +1896,13 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609111404160476768.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609111848394812246.jpg",
-                "description": "《兰香如故》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至24集 | 共47集。",
+                "description": "《兰香如故》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至26集 | 共47集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至24集 | 共47集",
+                "episodes_info": "更新至26集 | 共47集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1947,13 +1947,13 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609061321182110656.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609062012101288405.jpg",
-                "description": "《交锋》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至34集 | 共40集。",
+                "description": "《交锋》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至35集 | 共40集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至34集 | 共40集",
+                "episodes_info": "更新至35集 | 共40集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true

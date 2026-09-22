@@ -1237,69 +1237,69 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "九零东北：逐梦年代",
+          "title": "从弃女到团宠她逆天改命",
+          "updateBadge": "61"
+      },
+      {
+          "title": "弃女归来：真千金手撕坏命剧本",
           "updateBadge": "全"
       },
       {
-          "title": "沈技术员他沦陷了",
+          "title": "妈妈请别为我哭泣",
           "updateBadge": "全"
       },
       {
-          "title": "重生后我拒绝陪闺蜜离婚",
+          "title": "拉个手就有了好大儿",
           "updateBadge": "全"
       },
       {
-          "title": "繁星落我怀",
+          "title": "我的老爸是战神",
           "updateBadge": "全"
       },
       {
-          "title": "先婚蜜爱，他的偏爱藏不住",
+          "title": "宝宝来自六年后",
           "updateBadge": "全"
       },
       {
-          "title": "断片2：破晓之战",
+          "title": "慈母不亲",
           "updateBadge": "全"
       },
       {
-          "title": "副本老大是男友",
+          "title": "穿越时空爱上你",
           "updateBadge": "全"
       },
       {
-          "title": "掌生：萧府大小姐她名满京城",
+          "title": "倒计时：老婆再原谅我一次",
           "updateBadge": "全"
       },
       {
-          "title": "今生都是第一次",
+          "title": "闪婚后我被老公裁员了",
           "updateBadge": "全"
       },
       {
-          "title": "代号冥王",
+          "title": "为了他我以身入局",
           "updateBadge": "全"
       },
       {
-          "title": "系统逼我娶大明星，从此走上人生巅峰",
-          "updateBadge": "全"
-      },
-      {
-          "title": "透视农女逆袭记",
+          "title": "漾漾春光不可欺",
           "updateBadge": "全"
       }
   ],
   hero: [
       {
-          "id": "jl_short_636720862040424600",
-          "title": "副本老大是男友",
-          "rate": "8.8",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/2fa89897efc48a4ff973b1c76e13b333565657fbe72fffba133c8e42ac1c5eec.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/2fa89897efc48a4ff973b1c76e13b333565657fbe72fffba133c8e42ac1c5eec.jpg",
-          "description": "这部剧最大的看点就是打破常规恋爱套路，将游戏副本的紧张感与情侣间的甜蜜互动完美融合 。 故事围绕主角在虚拟世界中的身份反转展开，既有惊心动魄的战斗场面，又穿插着令人会心一笑的情感羁绊，这种双重设定的碰撞让剧情节奏紧凑且充满新鲜感 。 随着第二部的深入，角色关系更加复杂，观众能清晰感受到从对抗到依赖的...",
-          "year": "2026",
+          "id": "jl_short_630092513285374000",
+          "title": "穿越时空爱上你",
+          "rate": "8.9",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/fbdb8a237964a7b953ef1ff0244feb06373f3dde74ff107315c5230339f0eca5.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/fbdb8a237964a7b953ef1ff0244feb06373f3dde74ff107315c5230339f0eca5.jpg",
+          "description": "为了摆脱富少纠缠，她隨手拽临居假裝男友，沒想到却真的愛上了他，原來他穿越千年只为找到宠愛她！",
+          "year": "2024",
           "types": [
               "短剧",
-              "其他",
+              "年代穿越",
               "全集连播"
           ],
-          "episodes_info": "全121集·已完结",
+          "episodes_info": "全11集·第81-90集完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1308,19 +1308,19 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_636720856185176200",
-          "title": "掌生：萧府大小姐她名满京城",
-          "rate": "8.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/de8b0d3de98b0a8663c1fec43fd714180c96459d807f4b91e75777b00ecf7188.png",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/de8b0d3de98b0a8663c1fec43fd714180c96459d807f4b91e75777b00ecf7188.png",
-          "description": "这部AI古装剧把名门嫡女的京城风云拍出了新高度。本合集收录《掌生：萧府大小姐她名满京城》第四季共一百四十五集，延续前作热度讲述萧家大小姐在京城权贵圈中的智谋博弈与命运沉浮。剧情推进极快，女主从困境中逆袭的转折密集且爽感充足，家族利益与个人情感的冲突贯穿始终，主线清晰不拖沓。喜欢古装宅斗和女性成长题材...",
-          "year": "2026",
+          "id": "jl_short_630086766887436300",
+          "title": "天降萌娃，王爷请接招",
+          "rate": "8.5",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/e64d22e6d349ab7f97f1ca925d2180c093873e3a86a1c6b1e8a6380d31bcb24c.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/e64d22e6d349ab7f97f1ca925d2180c093873e3a86a1c6b1e8a6380d31bcb24c.jpg",
+          "description": "现代医学博士意外穿越古代，居然穿成被王爷厌弃的下堂王妃？还揣了崽？！还好我自备医药箱空间。六年后崽子却被渣渣王爷说成是野种？！看我如何用医术在这古代闯荡！",
+          "year": "2024",
           "types": [
               "短剧",
               "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全565集·已完结",
+          "episodes_info": "全5集·第61-95集完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1329,210 +1329,210 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_636724552860172300",
-          "title": "九零东北：逐梦年代",
-          "rate": "9.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f64d0346076884a38ef5252a043b200125563fdcaf6b60c2f8b8eeaf63ab655b.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f64d0346076884a38ef5252a043b200125563fdcaf6b60c2f8b8eeaf63ab655b.jpg",
-          "description": "暂无简介，敬请期待",
+          "id": "jl_short_629436029295657000",
+          "title": "从弃女到团宠她逆天改命",
+          "rate": "8.7",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/40afb02d265708a5b1f541f33704b9c1f036f546b827ea0e7dd1d270cc409027.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/40afb02d265708a5b1f541f33704b9c1f036f546b827ea0e7dd1d270cc409027.jpg",
+          "description": "全61集（合全集）",
           "year": "2026",
           "types": [
               "短剧",
-              "年代穿越",
+              "反转爽剧",
               "全集连播"
           ],
-          "episodes_info": "全3集·已完结",
+          "episodes_info": "全123集·全61集（合全集）",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "刘春泽 / 罗雨彤"
+              "郑洋 / 王裕博"
           ]
       },
       {
-          "id": "jl_short_636721706957799600",
-          "title": "沈技术员他沦陷了",
-          "rate": "9.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/bd425117b2ac304572f63dbbb3d18b81870f46967984aed4f7e3f135634fe00a.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/bd425117b2ac304572f63dbbb3d18b81870f46967984aed4f7e3f135634fe00a.jpg",
-          "description": "暂无简介，敬请期待",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "女频恋爱",
-              "全集连播"
-          ],
-          "episodes_info": "全3集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "千喆＆何适"
-          ]
-      },
-      {
-          "id": "jl_short_636721708115493000",
-          "title": "重生后我拒绝陪闺蜜离婚",
-          "rate": "8.9",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/44bb35cef5929cae22130a89d1985557c4f5b7f8eceb59724aeb78bdf0cd4ab0.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/44bb35cef5929cae22130a89d1985557c4f5b7f8eceb59724aeb78bdf0cd4ab0.jpg",
-          "description": "暂无简介，敬请期待",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "年代穿越",
-              "全集连播"
-          ],
-          "episodes_info": "全3集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "杨梓依 / 邵之鹏"
-          ]
-      },
-      {
-          "id": "jl_short_636724523181277200",
-          "title": "繁星落我怀",
-          "rate": "9.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/fb8ed3f6b0d1f0cb6db9927e1a544408c2bb158ccf173a46a45f977377c71544.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/fb8ed3f6b0d1f0cb6db9927e1a544408c2bb158ccf173a46a45f977377c71544.jpg",
-          "description": "暂无简介，敬请期待",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "女频恋爱",
-              "全集连播"
-          ],
-          "episodes_info": "全3集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "王轩 / 何田田"
-          ]
-      },
-      {
-          "id": "jl_short_636721668034658400",
-          "title": "先婚蜜爱，他的偏爱藏不住",
+          "id": "jl_short_630099380938145800",
+          "title": "弃女归来：真千金手撕坏命剧本",
           "rate": "8.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/468b012fe85c4c6d5b0aa28fd294fb13f316a62e4809cd1ca4f038a59040b0f7.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/468b012fe85c4c6d5b0aa28fd294fb13f316a62e4809cd1ca4f038a59040b0f7.jpg",
-          "description": "暂无简介，敬请期待",
-          "year": "2026",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/0a6159470fff5ee7b248f02db7dcd6ad5be0b2eb11a82b314b6e1d94489fb0fa.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/0a6159470fff5ee7b248f02db7dcd6ad5be0b2eb11a82b314b6e1d94489fb0fa.jpg",
+          "description": "全42集（合全集）",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "反转爽剧",
+              "全集连播"
+          ],
+          "episodes_info": "全85集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "王珊珊 / 夏婷"
+          ]
+      },
+      {
+          "id": "jl_short_630098436179492900",
+          "title": "妈妈请别为我哭泣",
+          "rate": "9.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d67cc6386b769f143f970840bfcce90d5587cbe4098f09394bdcfe55377f8701.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d67cc6386b769f143f970840bfcce90d5587cbe4098f09394bdcfe55377f8701.jpg",
+          "description": "剧情简介暂缺，敬请期待",
+          "year": "2024",
           "types": [
               "短剧",
               "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全175集·已完结",
+          "episodes_info": "全101集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "韩旭 / 苏子浠"
+              "短剧实力派"
           ]
       },
       {
-          "id": "jl_short_636721105142546600",
-          "title": "断片2：破晓之战",
-          "rate": "9.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/3582a0aebea1cc4a041458432987b5a80a43ae581a9f7105c4cae7837ed7dc00.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/3582a0aebea1cc4a041458432987b5a80a43ae581a9f7105c4cae7837ed7dc00.jpg",
-          "description": "暂无简介，敬请期待",
-          "year": "2026",
+          "id": "jl_short_630095230892441600",
+          "title": "拉个手就有了好大儿",
+          "rate": "8.7",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/a96492ce1524911e1a9ecab0aa972b7116ab4600af79cddc831c30e90d5ba7df.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/a96492ce1524911e1a9ecab0aa972b7116ab4600af79cddc831c30e90d5ba7df.jpg",
+          "description": "剧情简介暂缺，敬请期待",
+          "year": "2025",
           "types": [
               "短剧",
-              "其他",
+              "女频恋爱",
               "全集连播"
           ],
-          "episodes_info": "全3集·已完结",
+          "episodes_info": "全143集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "陈政阳 / 徐墨"
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_630094211525574700",
+          "title": "我的老爸是战神",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/7f95f620bcdf941630874733bb140250834cda75f15620d8219c9009e0b6f5ae.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/7f95f620bcdf941630874733bb140250834cda75f15620d8219c9009e0b6f5ae.jpg",
+          "description": "我的老爸是战神 精彩全集连播，高能反转停不下来！",
+          "year": "2024",
+          "types": [
+              "短剧",
+              "反转爽剧",
+              "全集连播"
+          ],
+          "episodes_info": "全197集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_630094174380752900",
+          "title": "宝宝来自六年后",
+          "rate": "8.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/92cd02c8f33e7daaf68e274640d11ca1a69ea6e861d16ccd88fd7acb757f86db.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/92cd02c8f33e7daaf68e274640d11ca1a69ea6e861d16ccd88fd7acb757f86db.jpg",
+          "description": "剧情简介暂缺，敬请期待",
+          "year": "2024",
+          "types": [
+              "短剧",
+              "女频恋爱",
+              "全集连播"
+          ],
+          "episodes_info": "全191集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
           ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "副本老大是男友",
-      rate: "8.8",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/2fa89897efc48a4ff973b1c76e13b333565657fbe72fffba133c8e42ac1c5eec.jpg",
-      year: "2026",
-      types: ["短剧","其他","全集连播"],
+      title: "穿越时空爱上你",
+      rate: "8.9",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/fbdb8a237964a7b953ef1ff0244feb06373f3dde74ff107315c5230339f0eca5.jpg",
+      year: "2024",
+      types: ["短剧","年代穿越","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: "掌生：萧府大小姐她名满京城",
-      rate: "8.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/de8b0d3de98b0a8663c1fec43fd714180c96459d807f4b91e75777b00ecf7188.png",
-      year: "2026",
+      title: "天降萌娃，王爷请接招",
+      rate: "8.5",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/e64d22e6d349ab7f97f1ca925d2180c093873e3a86a1c6b1e8a6380d31bcb24c.jpg",
+      year: "2024",
       types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_3',
-      title: "九零东北：逐梦年代",
-      rate: "9.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f64d0346076884a38ef5252a043b200125563fdcaf6b60c2f8b8eeaf63ab655b.jpg",
+      title: "从弃女到团宠她逆天改命",
+      rate: "8.7",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/40afb02d265708a5b1f541f33704b9c1f036f546b827ea0e7dd1d270cc409027.jpg",
       year: "2026",
-      types: ["短剧","年代穿越","全集连播"],
+      types: ["短剧","反转爽剧","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_4',
-      title: "沈技术员他沦陷了",
-      rate: "9.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/bd425117b2ac304572f63dbbb3d18b81870f46967984aed4f7e3f135634fe00a.jpg",
-      year: "2026",
-      types: ["短剧","女频恋爱","全集连播"],
+      title: "弃女归来：真千金手撕坏命剧本",
+      rate: "8.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/0a6159470fff5ee7b248f02db7dcd6ad5be0b2eb11a82b314b6e1d94489fb0fa.jpg",
+      year: "2025",
+      types: ["短剧","反转爽剧","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_5',
-      title: "重生后我拒绝陪闺蜜离婚",
-      rate: "8.9",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/44bb35cef5929cae22130a89d1985557c4f5b7f8eceb59724aeb78bdf0cd4ab0.jpg",
-      year: "2026",
-      types: ["短剧","年代穿越","全集连播"],
+      title: "妈妈请别为我哭泣",
+      rate: "9.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d67cc6386b769f143f970840bfcce90d5587cbe4098f09394bdcfe55377f8701.jpg",
+      year: "2024",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_6',
-      title: "繁星落我怀",
-      rate: "9.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/fb8ed3f6b0d1f0cb6db9927e1a544408c2bb158ccf173a46a45f977377c71544.jpg",
-      year: "2026",
+      title: "拉个手就有了好大儿",
+      rate: "8.7",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/a96492ce1524911e1a9ecab0aa972b7116ab4600af79cddc831c30e90d5ba7df.jpg",
+      year: "2025",
       types: ["短剧","女频恋爱","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_7',
-      title: "先婚蜜爱，他的偏爱藏不住",
-      rate: "8.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/468b012fe85c4c6d5b0aa28fd294fb13f316a62e4809cd1ca4f038a59040b0f7.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
+      title: "我的老爸是战神",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/7f95f620bcdf941630874733bb140250834cda75f15620d8219c9009e0b6f5ae.jpg",
+      year: "2024",
+      types: ["短剧","反转爽剧","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_8',
-      title: "断片2：破晓之战",
-      rate: "9.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/3582a0aebea1cc4a041458432987b5a80a43ae581a9f7105c4cae7837ed7dc00.jpg",
-      year: "2026",
-      types: ["短剧","其他","全集连播"],
+      title: "宝宝来自六年后",
+      rate: "8.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/92cd02c8f33e7daaf68e274640d11ca1a69ea6e861d16ccd88fd7acb757f86db.jpg",
+      year: "2024",
+      types: ["短剧","女频恋爱","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1673,13 +1673,13 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609171141024107110.jpg",
-        "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至14集 | 共30集。",
+        "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至15集 | 共30集。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至14集 | 共30集",
+        "episodes_info": "更新至15集 | 共30集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1690,13 +1690,13 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609111404160476768.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202609111848394812246.jpg",
-        "description": "《兰香如故》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至24集 | 共47集。",
+        "description": "《兰香如故》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至26集 | 共47集。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至24集 | 共47集",
+        "episodes_info": "更新至26集 | 共47集",
         "type": "tv",
         "is_new": true,
         "playable": true
