@@ -62,6 +62,9 @@ export function SearchResults({
         toggleLang,
     } = useLanguageBadges(typeFilteredVideos);
 
+    const activeFilterCount = (selectedSources?.size || 0) + (selectedTypes?.size || 0) + (selectedLangs?.size || 0);
+    const hasFilters = (availableSources && availableSources.length > 0) || (typeBadges && typeBadges.length > 0) || (languageBadges && languageBadges.length > 0);
+
     const firstResult = results && results.length > 0 ? results[0] : null;
     const fallbackHint = (!hasEntityMatched && firstResult) ? {
         actor: firstResult.vod_actor ? firstResult.vod_actor.split(/[,/，\s]/)[0]?.trim() : undefined,
