@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import { generateAiUniqueReview, generateAiFaq } from '../lib/services/ai-seo.ts';
+import { generateAiComprehensiveInsights } from '../lib/services/ai-seo.ts';
 
 /**
  * =========================================================================
@@ -610,28 +610,27 @@ async function main() {
       if (!rawEnt) continue;
       const ent = JSON.parse(rawEnt);
       if (!ent.aiContent || !ent.aiContent.uniqueSynopsis) {
-        console.log(`   ✨ [AI 生成] 为先锋新片 《${ent.title}》 (${ent.year}) 生成独家视点与 FAQ...`);
-        const review = await generateAiUniqueReview({
+        console.log(`   ✨ [AI 生成] 为先锋新片 《${ent.title}》 (${ent.year}) 一站式生成独家视点、Hook 与 FAQ...`);
+        const insight = await generateAiComprehensiveInsights({
           title: ent.title,
           type: ent.type || 'movie',
           overview: ent.description,
           genres: ent.genres,
-        });
-        const faq = await generateAiFaq({
-          title: ent.title,
-          type: ent.type || 'movie',
-          overview: ent.description,
+          year: ent.year ? String(ent.year) : undefined,
         });
         ent.aiContent = {
-          uniqueSynopsis: review.uniqueSynopsis,
-          highlights: review.highlights,
-          characterAnalysis: review.characterAnalysis,
-          audienceFit: review.audienceFit,
-          faqs: faq.faqs,
+          hook: insight.hook,
+          uniqueSynopsis: insight.uniqueSynopsis,
+          highlights: insight.highlights,
+          characterAnalysis: insight.characterAnalysis,
+          audienceFit: insight.audienceFit,
+          faqs: insight.faqs,
+          taiwanTitle: insight.taiwanTitle,
+          hongkongTitle: insight.hongkongTitle,
           generatedAt: new Date().toISOString(),
         };
         await kvPut(`entity:${p.entityId}`, ent);
-        console.log(`   ✅ 《${ent.title}》 AI 视点与 FAQ 成功写入生产 KV！`);
+        console.log(`   ✅ 《${ent.title}》 AI 视点、Hook 与 FAQ 成功写入生产 KV！`);
       }
     } catch (aiErr) {
       console.warn(`   ⚠️ 为 《${p.title}》 生成 AI 内容跳过:`, aiErr.message);

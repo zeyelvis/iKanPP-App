@@ -255,6 +255,351 @@ const TOPIC_CONFIGS = [
       },
     ],
   },
+  {
+    slug: 'stephen-chow-classic-comedies',
+    themeKeyword: '让人笑出眼泪的周星驰无厘头巅峰喜剧神作精选',
+    intentFamily: '星爷经典 · 无厘头巅峰',
+    titles: [
+      {
+        title: '功夫',
+        type: 'movie',
+        year: '2004',
+        rate: '8.8',
+        cover: 'https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg',
+        href: '/title/功夫',
+        highlight: '周星驰集大成之作，小人物化蝶与至高武学哲学的东方神话',
+      },
+      {
+        title: '少林足球',
+        type: 'movie',
+        year: '2001',
+        rate: '8.1',
+        cover: 'https://image.tmdb.org/t/p/w500/bF2g4F24K20C6eN9v6u8i3Z9y4A.jpg',
+        href: '/title/少林足球',
+        highlight: '做人如果没有梦想，跟咸鱼有什么分别？笑泪交织的热血逆袭',
+      },
+      {
+        title: '大话西游之月光宝盒',
+        type: 'movie',
+        year: '1995',
+        rate: '9.0',
+        cover: 'https://image.tmdb.org/t/p/w500/yQxG4Z7z9X1aB3c5E7f9h1i3k5m.jpg',
+        href: '/title/大话西游之月光宝盒',
+        highlight: '命运的齿轮从戴上金箍开始，爱一个人原来可以这般痛苦又壮烈',
+      },
+    ],
+  },
+  {
+    slug: 'high-score-laughter-relax-comedies',
+    themeKeyword: '全程高能无尿点笑到腹肌痛的爆笑解压喜剧大片',
+    intentFamily: '爆笑解压 · 下饭神作',
+    titles: [
+      {
+        title: '抓娃娃',
+        type: 'movie',
+        year: '2024',
+        rate: '7.3',
+        cover: 'https://image.tmdb.org/t/p/w500/z6hOq8Yq4n5U5d9c7J6h5F4.jpg',
+        href: '/title/抓娃娃',
+        highlight: '沈腾马丽神仙合体，豪门装穷穷养儿子的荒诞教育讽刺',
+      },
+      {
+        title: '夏洛特烦恼',
+        type: 'movie',
+        year: '2015',
+        rate: '7.9',
+        cover: 'https://image.tmdb.org/t/p/w500/5k7B8Q7j8p3d5a8s9d7f6g5h4j.jpg',
+        href: '/title/夏洛特烦恼',
+        highlight: '重回十八岁偷走所有巨星金曲，繁华梦醒才懂一碗茴香面的温度',
+      },
+      {
+        title: '疯狂的石头',
+        type: 'movie',
+        year: '2006',
+        rate: '8.6',
+        cover: 'https://image.tmdb.org/t/p/w500/9k8J7H6G5F4D3S2A1Q0W9E8R7T.jpg',
+        href: '/title/疯狂的石头',
+        highlight: '多线叙事国产盖·里奇黑色幽默开山鼻祖，巧合环环相扣绝无冷场',
+      },
+    ],
+  },
+  {
+    slug: 'douban-top-unmissable-classics',
+    themeKeyword: '豆瓣9分以上一生必看零差评殿堂级华语电影排行榜',
+    intentFamily: '殿堂经典 · 零差评神作',
+    titles: [
+      {
+        title: '霸王别姬',
+        type: 'movie',
+        year: '1993',
+        rate: '9.6',
+        cover: 'https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg',
+        href: '/title/霸王别姬',
+        highlight: '不疯魔不成活，中国电影史上难以逾越的至高艺术丰碑',
+      },
+      {
+        title: '无间道',
+        type: 'movie',
+        year: '2002',
+        rate: '9.3',
+        cover: 'https://image.tmdb.org/t/p/w500/1Q2W3E4R5T6Y7U8I9O0P1A2S3D.jpg',
+        href: '/title/%E6%97%A0%E9%97%B4%E9%81%93',
+        highlight: '给我一个机会，我想做好人。天台对决铸就香港影史永恒经典',
+      },
+      {
+        title: '我不是药神',
+        type: 'movie',
+        year: '2018',
+        rate: '9.0',
+        cover: 'https://image.tmdb.org/t/p/w500/yQxG4Z7z9X1aB3c5E7f9h1i3k5m.jpg',
+        href: '/title/%E6%88%91%E4%B8%8D%E6%98%AF%E8%8D%AF%E7%A5%9E',
+        highlight: '这世上只有一种病，就是穷病。平凡人的良知点亮沉重现实',
+      },
+    ],
+  },
+  {
+    slug: 'real-life-crime-investigation',
+    themeKeyword: '根据真实大案要案改编的震撼现实主义犯罪大片',
+    intentFamily: '真实大案 · 警世震撼',
+    titles: [
+      {
+        title: '周处除三害',
+        type: 'movie',
+        year: '2023',
+        rate: '8.1',
+        cover: 'https://image.tmdb.org/t/p/w500/bF2g4F24K20C6eN9v6u8i3Z9y4A.jpg',
+        href: '/title/周处除三害',
+        highlight: '绝症狂徒礼堂枪决洗脑邪教徒，荒诞暴烈的人性救赎与反思',
+      },
+      {
+        title: '边水往事',
+        type: 'tv',
+        year: '2024',
+        rate: '8.1',
+        cover: 'https://image.tmdb.org/t/p/w500/z6hOq8Yq4n5U5d9c7J6h5F4.jpg',
+        href: '/title/%E8%BE%B9%E6%B0%B4%E5%BE%80%E4%BA%8B',
+        highlight: '真实还原东南亚边境法外雨林利益网，每一步逃生都踏入死局',
+      },
+      {
+        title: '狂飙',
+        type: 'tv',
+        year: '2023',
+        rate: '8.5',
+        cover: 'https://image.tmdb.org/t/p/w500/5k7B8Q7j8p3d5a8s9d7f6g5h4j.jpg',
+        href: '/title/%E7%8B%82%E9%A3%99',
+        highlight: '真实扫黑原型深层剖析，二十年政商灰度人情网的起伏与坍塌',
+      },
+    ],
+  },
+  {
+    slug: 'jianghu-wuxia-golden-era',
+    themeKeyword: '刀光剑影快意恩仇的徐克武侠江湖巅峰神作',
+    intentFamily: '武侠巅峰 · 快意江湖',
+    titles: [
+      {
+        title: '莲花楼',
+        type: 'tv',
+        year: '2023',
+        rate: '8.5',
+        cover: 'https://image.tmdb.org/t/p/w500/z6hOq8Yq4n5U5d9c7J6h5F4.jpg',
+        href: '/title/%E8%8E%B2%E8%8A%B1%E6%A5%BC',
+        highlight: '一代剑神化身游医的江湖告别录，放下天下第一的至高意境',
+      },
+      {
+        title: '唐朝诡事录之西行',
+        type: 'tv',
+        year: '2024',
+        rate: '8.6',
+        cover: 'https://image.tmdb.org/t/p/w500/9k8J7H6G5F4D3S2A1Q0W9E8R7T.jpg',
+        href: '/title/唐朝诡事录之西行',
+        highlight: '盛唐奇幻诡谲的边关异域，破案与刀剑齐飞的东方志怪史诗',
+      },
+    ],
+  },
+  {
+    slug: 'deep-night-suspense-thrillers',
+    themeKeyword: '一个人深夜关灯看的高分硬核悬疑心理惊悚反转神作',
+    intentFamily: '深夜微恐 · 心理惊悚',
+    titles: [
+      {
+        title: '隐秘的角落',
+        type: 'tv',
+        year: '2020',
+        rate: '8.8',
+        cover: 'https://image.tmdb.org/t/p/w500/1Q2W3E4R5T6Y7U8I9O0P1A2S3D.jpg',
+        href: '/title/%E9%9A%90%E7%A7%98%E7%9A%84%E8%A7%92%E8%90%BD',
+        highlight: '一起爬山吗？童年日记与残忍谋杀交织，令人后背发凉的心理深渊',
+      },
+      {
+        title: '白夜追凶',
+        type: 'tv',
+        year: '2017',
+        rate: '9.0',
+        cover: 'https://image.tmdb.org/t/p/w500/5k7B8Q7j8p3d5a8s9d7f6g5h4j.jpg',
+        href: '/title/%E7%99%BD%E5%A4%9C%E8%BF%BD%E5%87%B6',
+        highlight: '暗夜恐惧与双生身份，黑白交替之间的硬核高智商反转',
+      },
+    ],
+  },
+  {
+    slug: 'time-travel-multiverse-mindfuck',
+    themeKeyword: '烧脑时空循环与平行宇宙科幻脑洞佳作精选',
+    intentFamily: '时空循环 · 脑洞逆转',
+    titles: [
+      {
+        title: '开端',
+        type: 'tv',
+        year: '2022',
+        rate: '7.9',
+        cover: 'https://image.tmdb.org/t/p/w500/1Q2W3E4R5T6Y7U8I9O0P1A2S3D.jpg',
+        href: '/title/%E5%BC%80%E7%AB%AF',
+        highlight: '公交车上的炸弹与生死循环，每次醒来都在与倒计时博弈',
+      },
+      {
+        title: '三体',
+        type: 'tv',
+        year: '2023',
+        rate: '8.7',
+        cover: 'https://image.tmdb.org/t/p/w500/bF2g4F24K20C6eN9v6u8i3Z9y4A.jpg',
+        href: '/title/%E4%B8%89%E4%BD%93',
+        highlight: '当宇宙为人类闪烁，高维智子锁死科学，人类最后的尊严反扑',
+      },
+      {
+        title: '流浪地球2',
+        type: 'movie',
+        year: '2023',
+        rate: '8.3',
+        cover: 'https://image.tmdb.org/t/p/w500/yQxG4Z7z9X1aB3c5E7f9h1i3k5m.jpg',
+        href: '/title/%E6%B5%81%E6%B5%AA%E5%9C%B0%E7%90%832',
+        highlight: '数字生命与行星发动机的终极抉择，五十岁以上出列的悲壮史诗',
+      },
+    ],
+  },
+  {
+    slug: 'youth-growth-healing-dramas',
+    themeKeyword: '青春疼痛与岁月温柔的治愈系成长高分剧集',
+    intentFamily: '青春慢调 · 岁月治愈',
+    titles: [
+      {
+        title: '我的阿勒泰',
+        type: 'tv',
+        year: '2024',
+        rate: '8.9',
+        cover: 'https://image.tmdb.org/t/p/w500/z6hOq8Yq4n5U5d9c7J6h5F4.jpg',
+        href: '/title/我的阿勒泰',
+        highlight: '旷野清风吹散一切焦虑，在大地怀抱中找回生命的原始诗意',
+      },
+      {
+        title: '漫长的季节',
+        type: 'tv',
+        year: '2023',
+        rate: '9.4',
+        cover: 'https://image.tmdb.org/t/p/w500/z6hOq8Yq4n5U5d9c7J6h5F4.jpg',
+        href: '/title/%E6%BC%AB%E9%95%BF%E7%9A%84%E5%AD%A3%E8%8A%82',
+        highlight: '往前走，别回头。岁月虽然残酷，但温情与回忆永远滚烫',
+      },
+    ],
+  },
+  {
+    slug: 'courtroom-justice-legal-battles',
+    themeKeyword: '唇枪舌剑与正义较量的顶级华语律政法庭辩护大戏',
+    intentFamily: '律政交锋 · 司法人性',
+    titles: [
+      {
+        title: '沉默的真相',
+        type: 'tv',
+        year: '2020',
+        rate: '9.0',
+        cover: 'https://image.tmdb.org/t/p/w500/9k8J7H6G5F4D3S2A1Q0W9E8R7T.jpg',
+        href: '/title/%E6%B2%89%E9%BB%98%E7%9A%84%E7%9C%9F%E7%9B%B8',
+        highlight: '江阳以身殉道，在无边长夜里点燃程序正义的耀眼光芒',
+      },
+      {
+        title: '白夜追凶',
+        type: 'tv',
+        year: '2017',
+        rate: '9.0',
+        cover: 'https://image.tmdb.org/t/p/w500/5k7B8Q7j8p3d5a8s9d7f6g5h4j.jpg',
+        href: '/title/%E7%99%BD%E5%A4%9C%E8%BF%BD%E5%87%B6',
+        highlight: '白昼审凶黑夜审己，法理与兄弟情义最极端的撕扯',
+      },
+    ],
+  },
+  {
+    slug: 'contemporary-realistic-family-dramas',
+    themeKeyword: '道尽烟火人间与代际羁绊的现实主义家庭史诗大戏',
+    intentFamily: '烟火人间 · 现实史诗',
+    titles: [
+      {
+        title: '繁花',
+        type: 'tv',
+        year: '2023',
+        rate: '8.7',
+        cover: 'https://image.tmdb.org/t/p/w500/z6hOq8Yq4n5U5d9c7J6h5F4.jpg',
+        href: '/title/繁花',
+        highlight: '大时代浪潮下普通人的欲望、尊严与命运羁绊',
+      },
+      {
+        title: '漫长的季节',
+        type: 'tv',
+        year: '2023',
+        rate: '9.4',
+        cover: 'https://image.tmdb.org/t/p/w500/z6hOq8Yq4n5U5d9c7J6h5F4.jpg',
+        href: '/title/%E6%BC%AB%E9%95%BF%E7%9A%84%E5%AD%A3%E8%8A%82',
+        highlight: '老东北下岗潮下的父子与家庭，笑泪交织的时代挽歌',
+      },
+    ],
+  },
+  {
+    slug: 'spy-war-undercover-legends',
+    themeKeyword: '暗夜潜伏与信仰对决的中国谍战剧巅峰天花板',
+    intentFamily: '暗夜信仰 · 谍战巅峰',
+    titles: [
+      {
+        title: '风筝',
+        type: 'tv',
+        year: '2017',
+        rate: '8.8',
+        cover: 'https://image.tmdb.org/t/p/w500/5k7B8Q7j8p3d5a8s9d7f6g5h4j.jpg',
+        href: '/title/风筝',
+        highlight: '谍战剧封神之作，比死亡更残酷的是隐姓埋名与信仰坚守',
+      },
+      {
+        title: '潜伏',
+        type: 'tv',
+        year: '2009',
+        rate: '9.4',
+        cover: 'https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg',
+        href: '/title/潜伏',
+        highlight: '余则成与翠平，办公室政治与生死潜伏的最完美融合',
+      },
+    ],
+  },
+  {
+    slug: 'legendary-dynasty-historical-epics',
+    themeKeyword: '正气磅礴考据严密的古装历史权谋正剧大戏排行榜',
+    intentFamily: '历史正剧 · 盛世风骨',
+    titles: [
+      {
+        title: '庆余年 第二季',
+        type: 'tv',
+        year: '2024',
+        rate: '7.3',
+        cover: 'https://image.tmdb.org/t/p/w500/5k7B8Q7j8p3d5a8s9d7f6g5h4j.jpg',
+        href: '/title/庆余年 第二季',
+        highlight: '假死还生与朝堂洗牌，帝王心术与公道理想的激烈碰撞',
+      },
+      {
+        title: '唐朝诡事录之西行',
+        type: 'tv',
+        year: '2024',
+        rate: '8.6',
+        cover: 'https://image.tmdb.org/t/p/w500/9k8J7H6G5F4D3S2A1Q0W9E8R7T.jpg',
+        href: '/title/唐朝诡事录之西行',
+        highlight: '盛唐边关异域奇案，还原考据扎实的华丽盛世风骨',
+      },
+    ],
+  },
 ];
 
 async function runBulkTopicGeneration() {
@@ -269,6 +614,13 @@ async function runBulkTopicGeneration() {
 
   for (let i = 0; i < TOPIC_CONFIGS.length; i++) {
     const config = TOPIC_CONFIGS[i];
+
+    // 如果已有高质量策展导语，直接跳过
+    if (topicEntities[config.slug] && topicEntities[config.slug].curatorNote && topicEntities[config.slug].curatorNote.length > 200) {
+      console.log(`[${i + 1}/${TOPIC_CONFIGS.length}] ⏭️ 专题「${config.intentFamily}」(${config.slug}) 已有深度导语，自动跳过。`);
+      continue;
+    }
+
     console.log(`[${i + 1}/${TOPIC_CONFIGS.length}] ⚡ 正在为专题「${config.intentFamily}」生成深度策展导语与长尾SEO元数据...`);
 
     try {
@@ -298,6 +650,9 @@ async function runBulkTopicGeneration() {
       console.log(`     📝 策展导语字数: ${topicEntity.curatorNote.length} 字`);
       console.log(`     🏷️ 核心长尾词: ${topicEntity.longTailKeywords.join('、')}`);
       console.log(`     ✅ 专题「${config.slug}」策展生成成功！\n`);
+
+      // 实时保存到文件，保证随时可中断与断点续传
+      saveTopicsToFile(topicEntities);
 
       // 写回 KV（可选）
       try {
