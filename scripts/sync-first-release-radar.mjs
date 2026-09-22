@@ -378,7 +378,21 @@ async function main() {
     // 🌟 TMDB 反向索引与片名二次查重：坚决复用已有 entityId，杜绝重复建档
     const existingTmdbEntityId = await kvGet(`tmdb:${tmdbData.tmdbType}:${tmdbData.tmdbId}`);
     if (existingTmdbEntityId) {
-      console.log(`   ♻️ 发现 TMDB 已有关联实体 (${existingTmdbEntityId.trim()})，坚决复用已有主键，杜绝重复造号！`);
+      console.log(`   ♻️ 发现 TMDB 已有关联实体 (${existingTmdbEntityId.trim()})，纳入先锋置顶！`);
+      const rawEnt = await kvGet(`entity:${existingTmdbEntityId.trim()}`);
+      if (rawEnt) {
+        const ent = JSON.parse(rawEnt);
+        pioneers.push({
+          entityId: existingTmdbEntityId.trim(),
+          title: ent.title,
+          year: ent.year,
+          type: ent.type || item.type,
+          rate: ent.rate || '8.0',
+          cover: ent.cover,
+          backdrop: ent.backdrop,
+          remarks: item.remarks,
+        });
+      }
       continue;
     }
     const tmdbTitleNorm = normalizeTitle(tmdbData.title);
