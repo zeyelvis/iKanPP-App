@@ -105,6 +105,22 @@ export const PREBAKED_HOME_DATA: {
     "hero": [
         {
                 "id": "iyf_hero_movie_1",
+                "title": "一个部门的诞生",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/user/202609221322272268801.jpg",
+                "backdrop": "https://static.iyf.tv/upload/user/202609221322272268801.jpg",
+                "description": "《一个部门的诞生》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "电影"
+                ],
+                "type": "movie",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_movie_2",
                 "title": "特立独行",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609041101050133022.gif",
@@ -122,7 +138,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_movie_2",
+                "id": "iyf_hero_movie_3",
                 "title": "给阿嬷的情书",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202608310955385526438.gif",
@@ -140,7 +156,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_movie_3",
+                "id": "iyf_hero_movie_4",
                 "title": "玩具总动员5",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202608172352485267834.gif",
@@ -158,7 +174,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_movie_4",
+                "id": "iyf_hero_movie_5",
                 "title": "寒战1994",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202607241043194354365.gif",
@@ -176,7 +192,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_movie_5",
+                "id": "iyf_hero_movie_6",
                 "title": "穿普拉达的女王2",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202606301118241864513.gif",
@@ -194,7 +210,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_movie_6",
+                "id": "iyf_hero_movie_7",
                 "title": "我的妈耶",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202606121444314431704.gif",
@@ -212,7 +228,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_movie_7",
+                "id": "iyf_hero_movie_8",
                 "title": "镖人：风起大漠",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202606102054405426178.gif",
@@ -225,24 +241,6 @@ export const PREBAKED_HOME_DATA: {
                         "电影"
                 ],
                 "episodes_info": "电影·动作",
-                "type": "movie",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_movie_8",
-                "title": "迈克尔·杰克逊：巨星之路",
-                "rate": "8.8",
-                "cover": "https://static.iyf.tv/upload/video/202606090333563351804.gif",
-                "backdrop": "https://static.iyf.tv/upload/user/202606091956235603344.jpg",
-                "description": "《迈克尔·杰克逊：巨星之路》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·剧情。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "剧情",
-                        "电影"
-                ],
-                "episodes_info": "电影·剧情",
                 "type": "movie",
                 "is_new": true,
                 "playable": true
@@ -1875,6 +1873,23 @@ export const PREBAKED_HOME_DATA: {
     "hero": [
         {
                 "id": "iyf_hero_tv_1",
+                "title": "法医秦明之龙番往事",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202609221204050427723.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202609221304100431020.jpg",
+                "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至04集 | 共24集。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至04集 | 共24集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_2",
                 "title": "一瓯春",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
@@ -1891,7 +1906,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_2",
+                "id": "iyf_hero_tv_3",
                 "title": "兰香如故",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609111404160476768.gif",
@@ -1908,7 +1923,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_3",
+                "id": "iyf_hero_tv_4",
                 "title": "冬城猎凶",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609100710231001184.jpg",
@@ -1925,7 +1940,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_4",
+                "id": "iyf_hero_tv_5",
                 "title": "深渊无间",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609091238023882533.gif",
@@ -1942,24 +1957,24 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_5",
+                "id": "iyf_hero_tv_6",
                 "title": "交锋",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609061321182110656.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609062012101288405.jpg",
-                "description": "《交锋》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至35集 | 共40集。",
+                "description": "《交锋》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：40集全。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至35集 | 共40集",
+                "episodes_info": "40集全",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_6",
+                "id": "iyf_hero_tv_7",
                 "title": "生逢其时",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609031658525831647.jpg",
@@ -1976,7 +1991,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_7",
+                "id": "iyf_hero_tv_8",
                 "title": "重案六组:消失的警号",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202608310534563487003.gif",
@@ -1988,23 +2003,6 @@ export const PREBAKED_HOME_DATA: {
                         "连续剧"
                 ],
                 "episodes_info": "更新至20集 | 共26集",
-                "type": "tv",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_tv_8",
-                "title": "早春晴朗",
-                "rate": "8.8",
-                "cover": "https://static.iyf.tv/upload/video/202608260600250038853.gif",
-                "backdrop": "https://static.iyf.tv/upload/user/202608262134513470253.jpg",
-                "description": "《早春晴朗》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：24集全。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "连续剧"
-                ],
-                "episodes_info": "24集全",
                 "type": "tv",
                 "is_new": true,
                 "playable": true

@@ -38,7 +38,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "遮天",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
         "title": "神印王座",
@@ -660,7 +660,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "爱情保卫战",
-        "updateBadge": ""
+        "updateBadge": "1"
     }
   ],
   hero: [
@@ -1237,55 +1237,160 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "从弃女到团宠她逆天改命",
-          "updateBadge": "61"
-      },
-      {
-          "title": "弃女归来：真千金手撕坏命剧本",
+          "title": "儿子撞脸CEO",
           "updateBadge": "全"
       },
       {
-          "title": "妈妈请别为我哭泣",
+          "title": "重燃，淘金的神",
           "updateBadge": "全"
       },
       {
-          "title": "拉个手就有了好大儿",
+          "title": "千禧年的赶海王系统带我鱼虾满舱",
           "updateBadge": "全"
       },
       {
-          "title": "我的老爸是战神",
+          "title": "老公失忆，爆改18岁直球小奶狗",
           "updateBadge": "全"
       },
       {
-          "title": "宝宝来自六年后",
+          "title": "风华鉴",
           "updateBadge": "全"
       },
       {
-          "title": "慈母不亲",
+          "title": "致命游戏",
           "updateBadge": "全"
       },
       {
-          "title": "穿越时空爱上你",
+          "title": "东北年代之我的大腰子",
           "updateBadge": "全"
       },
       {
-          "title": "倒计时：老婆再原谅我一次",
+          "title": "唐诡奇谭之九重楼",
           "updateBadge": "全"
       },
       {
-          "title": "闪婚后我被老公裁员了",
+          "title": "华丽的缰绳",
           "updateBadge": "全"
       },
       {
-          "title": "为了他我以身入局",
+          "title": "周小姐，请点头",
           "updateBadge": "全"
       },
       {
-          "title": "漾漾春光不可欺",
+          "title": "书遇良缘",
+          "updateBadge": "全"
+      },
+      {
+          "title": "黑色月光",
           "updateBadge": "全"
       }
   ],
   hero: [
+      {
+          "id": "jl_short_629472125626875900",
+          "title": "风华鉴",
+          "rate": "8.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/b50230ec9470deaf29bdbd31849703030d6e76e34fb5afbfd6c5380ed5e535d2.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/b50230ec9470deaf29bdbd31849703030d6e76e34fb5afbfd6c5380ed5e535d2.jpg",
+          "description": "将门贵女温宛爱慕名满皇城的第一公子苏玄璟，却在大婚之夜，遭到苏玄璟的陷害，连累御南侯府被灭满门。重生归来，她誓要报仇雪恨，避免前世之殇，却发现幕后真凶另有其人。灭门之案卷土重来，迷雾重重...经历轮回的温宛能否扭转命运？",
+          "year": "2024",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全159集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "葛鑫怡 / 董子凡 / 周微微 / 刘俊达"
+          ]
+      },
+      {
+          "id": "jl_short_629182917611880400",
+          "title": "致命游戏",
+          "rate": "9.5",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/245292/poster/d1fcc95a68a9be4833b59c04379b3fc53799978ed957ada74e0b71998b6240ae.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/245292/poster/d1fcc95a68a9be4833b59c04379b3fc53799978ed957ada74e0b71998b6240ae.webp",
+          "description": "林秋石是一个游戏高手，但他从未游戏人生。他曾是游戏设计师，想做出改变世界的中国游戏，起因资本擅取、老板逐利而无法实现梦想，愤而辞联，致自寻梦。 风靡海外的游戏（灵境），本是华人设计师研发，内蕴人生暂学，却被国外资本改造加入血腥与暴力，形同精神毒品，玩家抑郁、精神失常，甚至自杀，比比皆是。如今这款游戏...",
+          "year": "2024",
+          "types": [
+              "短剧",
+              "脑洞悬疑",
+              "全集连播"
+          ],
+          "episodes_info": "全161集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "夏之光 / 黄俊捷 / 刘若谷 / 刘小北 / 郑淳璟 / 卢梦琳 / 张元帅 / 俞俙 / 尹蕊 / 翁虹 / 徐冬冬 / 李萍 / 佟磊 / 何志龙 / 岳跃利 / 高玉庆 / 李茂 / 刘頔 / 张钧涵 / 李斯羽 / 赵煊 / 李汶朔 / 吕松浩 / 代古拉K / 钟盅"
+          ]
+      },
+      {
+          "id": "jl_short_629417742851637200",
+          "title": "华丽的缰绳",
+          "rate": "9.0",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/7405284671472d2e83c86c81edc9b1ca8fb71ea82a0debabfe126fae0f146a05.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/7405284671472d2e83c86c81edc9b1ca8fb71ea82a0debabfe126fae0f146a05.jpg",
+          "description": "昔日许氏继承人许惟心遭陷害身败名裂，为复仇夺回一切，她步步为营将路弋收作棋子，却意外发现幕后黑手另有其人，而路弋相依为命的妹妹之死，竟也与许家权斗暗藏关联。二人就此结盟，她狠辣算计驱他前行，他甘为鹰犬却在朝夕相处中渐生情愫与忠诚。执鞭人与棋子本无真心，可当幕后黑手步步紧逼，误会与利益隔阂横生，这份在...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "其他",
+              "全集连播"
+          ],
+          "episodes_info": "全153集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "马小宇 / 胡原君"
+          ]
+      },
+      {
+          "id": "jl_short_629413317105942500",
+          "title": "周小姐，请点头",
+          "rate": "8.5",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/32a06b0380702822ec2ab83ad7ec2504e11a98415e25fc953313713d607e50a9.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/32a06b0380702822ec2ab83ad7ec2504e11a98415e25fc953313713d607e50a9.jpg",
+          "description": "宗州集团千金周惜为了成为一名外交翻译官，只身一人来到北城闯荡，却与鼎尚风投总裁应珩之发生了一夜情。身体契合的二人开始了一段心照不宣的床伴关系，约定互不干涉彼此生活，但应珩之却先一步对周惜动了心。然而经历过网恋奔现\"失败\"且见惯豪开放式感情的周惜害怕自己会沦为游戏的一环，始终不愿与应珩之拉近关系，迫使...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "女频恋爱",
+              "全集连播"
+          ],
+          "episodes_info": "全141集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "施景子 / 钟正"
+          ]
+      },
+      {
+          "id": "jl_short_629451866031259600",
+          "title": "黑色月光",
+          "rate": "9.5",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/b8da826e0d9f79c0950432ff2207d0edb1eaa2cfbeb5bd32980fcf92a9c153e0.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/b8da826e0d9f79c0950432ff2207d0edb1eaa2cfbeb5bd32980fcf92a9c153e0.jpg",
+          "description": "人前光采亮丽的余满月，背负着一段不堪回首的可怕过去……满月当年惨遭富三代蒋基俊施暴蹂躏、妹妹曦晨受创变成残废，及后父母受牵连丧命、姐姐漫星疏远离弃。十八年过去，满月成上流圈炙手可热的危机公关，处心积虑推行复仇大计，要将蒋家父子与共犯绳之于法。孤寂的复仇路上，满月取得卓家千金慧云信任，获同路人成风支持...",
+          "year": "2024",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全155集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "杨茜尧 / 王浩信 / 林夏薇 / 马志威 / 黄翠如"
+          ]
+      },
       {
           "id": "jl_short_630092513285374000",
           "title": "穿越时空爱上你",
@@ -1329,135 +1434,80 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_629436029295657000",
-          "title": "从弃女到团宠她逆天改命",
-          "rate": "8.7",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/40afb02d265708a5b1f541f33704b9c1f036f546b827ea0e7dd1d270cc409027.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/40afb02d265708a5b1f541f33704b9c1f036f546b827ea0e7dd1d270cc409027.jpg",
-          "description": "全61集（合全集）",
+          "id": "jl_short_638447677633200600",
+          "title": "儿子撞脸CEO",
+          "rate": "9.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/7911c7571eb78ee1bc7ccfcfa621c0e5fb560743dff8658279d01dee2dec85b5.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/7911c7571eb78ee1bc7ccfcfa621c0e5fb560743dff8658279d01dee2dec85b5.jpg",
+          "description": "儿子撞脸CEO 精彩全集连播，高能反转停不下来！",
           "year": "2026",
-          "types": [
-              "短剧",
-              "反转爽剧",
-              "全集连播"
-          ],
-          "episodes_info": "全123集·全61集（合全集）",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "郑洋 / 王裕博"
-          ]
-      },
-      {
-          "id": "jl_short_630099380938145800",
-          "title": "弃女归来：真千金手撕坏命剧本",
-          "rate": "8.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/0a6159470fff5ee7b248f02db7dcd6ad5be0b2eb11a82b314b6e1d94489fb0fa.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/0a6159470fff5ee7b248f02db7dcd6ad5be0b2eb11a82b314b6e1d94489fb0fa.jpg",
-          "description": "全42集（合全集）",
-          "year": "2025",
-          "types": [
-              "短剧",
-              "反转爽剧",
-              "全集连播"
-          ],
-          "episodes_info": "全85集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "王珊珊 / 夏婷"
-          ]
-      },
-      {
-          "id": "jl_short_630098436179492900",
-          "title": "妈妈请别为我哭泣",
-          "rate": "9.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d67cc6386b769f143f970840bfcce90d5587cbe4098f09394bdcfe55377f8701.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d67cc6386b769f143f970840bfcce90d5587cbe4098f09394bdcfe55377f8701.jpg",
-          "description": "剧情简介暂缺，敬请期待",
-          "year": "2024",
           "types": [
               "短剧",
               "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全101集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_630095230892441600",
-          "title": "拉个手就有了好大儿",
-          "rate": "8.7",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/a96492ce1524911e1a9ecab0aa972b7116ab4600af79cddc831c30e90d5ba7df.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/a96492ce1524911e1a9ecab0aa972b7116ab4600af79cddc831c30e90d5ba7df.jpg",
-          "description": "剧情简介暂缺，敬请期待",
-          "year": "2025",
-          "types": [
-              "短剧",
-              "女频恋爱",
-              "全集连播"
-          ],
-          "episodes_info": "全143集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_630094211525574700",
-          "title": "我的老爸是战神",
-          "rate": "9.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/7f95f620bcdf941630874733bb140250834cda75f15620d8219c9009e0b6f5ae.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/7f95f620bcdf941630874733bb140250834cda75f15620d8219c9009e0b6f5ae.jpg",
-          "description": "我的老爸是战神 精彩全集连播，高能反转停不下来！",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "反转爽剧",
-              "全集连播"
-          ],
-          "episodes_info": "全197集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_630094174380752900",
-          "title": "宝宝来自六年后",
-          "rate": "8.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/92cd02c8f33e7daaf68e274640d11ca1a69ea6e861d16ccd88fd7acb757f86db.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/92cd02c8f33e7daaf68e274640d11ca1a69ea6e861d16ccd88fd7acb757f86db.jpg",
-          "description": "剧情简介暂缺，敬请期待",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "女频恋爱",
-              "全集连播"
-          ],
-          "episodes_info": "全191集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
+              "张雨晴 / 刘辰宇"
           ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
+      title: "风华鉴",
+      rate: "8.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/b50230ec9470deaf29bdbd31849703030d6e76e34fb5afbfd6c5380ed5e535d2.jpg",
+      year: "2024",
+      types: ["短剧","古装仙侠","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_2',
+      title: "致命游戏",
+      rate: "9.5",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/245292/poster/d1fcc95a68a9be4833b59c04379b3fc53799978ed957ada74e0b71998b6240ae.webp",
+      year: "2024",
+      types: ["短剧","脑洞悬疑","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_3',
+      title: "华丽的缰绳",
+      rate: "9.0",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/7405284671472d2e83c86c81edc9b1ca8fb71ea82a0debabfe126fae0f146a05.jpg",
+      year: "2026",
+      types: ["短剧","其他","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_4',
+      title: "周小姐，请点头",
+      rate: "8.5",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/32a06b0380702822ec2ab83ad7ec2504e11a98415e25fc953313713d607e50a9.jpg",
+      year: "2026",
+      types: ["短剧","女频恋爱","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_5',
+      title: "黑色月光",
+      rate: "9.5",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/b8da826e0d9f79c0950432ff2207d0edb1eaa2cfbeb5bd32980fcf92a9c153e0.jpg",
+      year: "2024",
+      types: ["短剧","现代都市","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_6',
       title: "穿越时空爱上你",
       rate: "8.9",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/fbdb8a237964a7b953ef1ff0244feb06373f3dde74ff107315c5230339f0eca5.jpg",
@@ -1467,7 +1517,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_2',
+      id: 'pb_s_top_7',
       title: "天降萌娃，王爷请接招",
       rate: "8.5",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/e64d22e6d349ab7f97f1ca925d2180c093873e3a86a1c6b1e8a6380d31bcb24c.jpg",
@@ -1477,62 +1527,12 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_3',
-      title: "从弃女到团宠她逆天改命",
-      rate: "8.7",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/40afb02d265708a5b1f541f33704b9c1f036f546b827ea0e7dd1d270cc409027.jpg",
-      year: "2026",
-      types: ["短剧","反转爽剧","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_4',
-      title: "弃女归来：真千金手撕坏命剧本",
-      rate: "8.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/0a6159470fff5ee7b248f02db7dcd6ad5be0b2eb11a82b314b6e1d94489fb0fa.jpg",
-      year: "2025",
-      types: ["短剧","反转爽剧","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_5',
-      title: "妈妈请别为我哭泣",
-      rate: "9.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d67cc6386b769f143f970840bfcce90d5587cbe4098f09394bdcfe55377f8701.jpg",
-      year: "2024",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_6',
-      title: "拉个手就有了好大儿",
-      rate: "8.7",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/a96492ce1524911e1a9ecab0aa972b7116ab4600af79cddc831c30e90d5ba7df.jpg",
-      year: "2025",
-      types: ["短剧","女频恋爱","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_7',
-      title: "我的老爸是战神",
-      rate: "9.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/7f95f620bcdf941630874733bb140250834cda75f15620d8219c9009e0b6f5ae.jpg",
-      year: "2024",
-      types: ["短剧","反转爽剧","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
       id: 'pb_s_top_8',
-      title: "宝宝来自六年后",
-      rate: "8.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/92cd02c8f33e7daaf68e274640d11ca1a69ea6e861d16ccd88fd7acb757f86db.jpg",
-      year: "2024",
-      types: ["短剧","女频恋爱","全集连播"],
+      title: "儿子撞脸CEO",
+      rate: "9.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/7911c7571eb78ee1bc7ccfcfa621c0e5fb560743dff8658279d01dee2dec85b5.jpg",
+      year: "2026",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1597,6 +1597,22 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   hero: [
     {
         "id": "iyf_hero_movie_1",
+        "title": "一个部门的诞生",
+        "rate": "8.8",
+        "cover": "https://static.iyf.tv/upload/user/202609221322272268801.jpg",
+        "backdrop": "https://static.iyf.tv/upload/user/202609221322272268801.jpg",
+        "description": "《一个部门的诞生》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "电影"
+        ],
+        "type": "movie",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_movie_2",
         "title": "特立独行",
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609041101050133022.gif",
@@ -1614,7 +1630,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "playable": true
     },
     {
-        "id": "iyf_hero_movie_2",
+        "id": "iyf_hero_movie_3",
         "title": "给阿嬷的情书",
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608310955385526438.gif",
@@ -1632,7 +1648,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "playable": true
     },
     {
-        "id": "iyf_hero_movie_3",
+        "id": "iyf_hero_movie_4",
         "title": "玩具总动员5",
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608172352485267834.gif",
@@ -1650,25 +1666,24 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "playable": true
     },
     {
-        "id": "iyf_hero_movie_4",
-        "title": "寒战1994",
+        "id": "iyf_hero_tv_5",
+        "title": "法医秦明之龙番往事",
         "rate": "8.8",
-        "cover": "https://static.iyf.tv/upload/video/202607241043194354365.gif",
-        "backdrop": "https://static.iyf.tv/upload/user/202607241720422033874.jpg",
-        "description": "《寒战1994》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·剧情。",
+        "cover": "https://static.iyf.tv/upload/video/202609221204050427723.gif",
+        "backdrop": "https://static.iyf.tv/upload/user/202609221304100431020.jpg",
+        "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至04集 | 共24集。",
         "year": "2026",
         "types": [
             "热门",
-            "剧情",
-            "电影"
+            "连续剧"
         ],
-        "episodes_info": "电影·剧情",
-        "type": "movie",
+        "episodes_info": "更新至04集 | 共24集",
+        "type": "tv",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_tv_5",
+        "id": "iyf_hero_tv_6",
         "title": "一瓯春",
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
@@ -1685,7 +1700,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "playable": true
     },
     {
-        "id": "iyf_hero_tv_6",
+        "id": "iyf_hero_tv_7",
         "title": "兰香如故",
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609111404160476768.gif",
@@ -1697,23 +1712,6 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
             "连续剧"
         ],
         "episodes_info": "更新至26集 | 共47集",
-        "type": "tv",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_tv_7",
-        "title": "冬城猎凶",
-        "rate": "8.8",
-        "cover": "https://static.iyf.tv/upload/video/202609100710231001184.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202609101250115060466.jpg",
-        "description": "《冬城猎凶》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：18集全。",
-        "year": "2026",
-        "types": [
-            "热门",
-            "连续剧"
-        ],
-        "episodes_info": "18集全",
         "type": "tv",
         "is_new": true,
         "playable": true
