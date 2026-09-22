@@ -173,7 +173,51 @@ async function fetchTmdbDetail(title, year, type = 'movie') {
     if (!res.ok) return null;
     const data = await res.json();
     const results = data.results || [];
-    if (results.length === 0) return null;
+    if (results.length === 0) {
+      // 🌟 核心增强：当 TMDB 常规搜索未命中且片名带数字序号时，启动系列合集推导（如 "一击3" -> "One Last Shot / 最后一击"）
+      const sequelMatch = title.match(/^(.+?)\s*(?:第\s*)?([0-9]+|[一二两三四五六七八九十]+)(?:\s*[部季])?/);
+      if (sequelMatch && tmdbType === 'movie') {
+        const baseTitle = sequelMatch[1].trim();
+        const numStr = sequelMatch[2].trim();
+        const numMap = { '一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10 };
+        const targetNum = /^[0-9]+$/.test(numStr) ? parseInt(numStr, 10) : (numMap[numStr] || 0);
+
+        if (baseTitle && targetNum > 0) {
+          const collUrl = `${TMDB_BASE}/search/collection?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(baseTitle)}`;
+          const collRes = await fetch(collUrl, { signal: AbortSignal.timeout(6000) });
+          if (collRes.ok) {
+            const collData = await collRes.json();
+            const collection = collData.results?.[0];
+            if (collection?.id) {
+              const detailUrl = `${TMDB_BASE}/collection/${collection.id}?api_key=${TMDB_API_KEY}&language=zh-CN`;
+              const detRes = await fetch(detailUrl, { signal: AbortSignal.timeout(6000) });
+              if (detRes.ok) {
+                const detData = await detRes.json();
+                const parts = (detData.parts || []).sort((a, b) => (a.release_date || '9999').localeCompare(b.release_date || '9999'));
+                if (targetNum <= parts.length) {
+                  const part = parts[targetNum - 1];
+                  if (part && part.id) {
+                    const mergedTitle = `${title}：${part.title || baseTitle}`;
+                    return {
+                      tmdbId: String(part.id),
+                      tmdbType: 'movie',
+                      title: mergedTitle,
+                      originalTitle: part.original_title || '',
+                      description: part.overview || '',
+                      rate: part.vote_average ? String(part.vote_average.toFixed(1)) : '8.0',
+                      cover: part.poster_path ? `https://image.tmdb.org/t/p/w500${part.poster_path}` : '',
+                      backdrop: part.backdrop_path ? `https://image.tmdb.org/t/p/w1280${part.backdrop_path}` : '',
+                      year: (part.release_date || year || '2026').slice(0, 4),
+                    };
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      return null;
+    }
 
     // 优先匹配年份最接近的
     let hit = results[0];

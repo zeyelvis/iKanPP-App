@@ -10,6 +10,27 @@ export type { LatestPrebakedItem };
 export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
   "all": [
     {
+          "entityId": "ik111782",
+          "tmdbId": "1607127",
+          "title": "一击3：最后一击",
+          "slug": "ik111782-最后一击",
+          "cover": "https://image.tmdb.org/t/p/w500/niQ4NBh2jqAf1hDZP5m6ReWFAb7.jpg",
+          "backdrop": "https://image.tmdb.org/t/p/w1280/8giIQcHpxgsPVP6c7aQtHl3txuh.jpg",
+          "rate": "8.0",
+          "year": "2026",
+          "type": "movie",
+          "channelKey": "movie",
+          "genres": [
+                "动作",
+                "惊悚",
+                "电影"
+          ],
+          "updateBadge": "4K超清",
+          "qualityBadge": "4K",
+          "platformBadge": "首发先锋",
+          "createdAt": "2026-09-22T12:30:47.548Z"
+    },
+{
       "entityId": "ik_radar_all_1",
       "title": "法医秦明之龙番往事",
       "slug": "法医秦明之龙番往事",
@@ -420,6 +441,27 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
   ],
   "movie": [
     {
+          "entityId": "ik111782",
+          "tmdbId": "1607127",
+          "title": "一击3：最后一击",
+          "slug": "ik111782-最后一击",
+          "cover": "https://image.tmdb.org/t/p/w500/niQ4NBh2jqAf1hDZP5m6ReWFAb7.jpg",
+          "backdrop": "https://image.tmdb.org/t/p/w1280/8giIQcHpxgsPVP6c7aQtHl3txuh.jpg",
+          "rate": "8.0",
+          "year": "2026",
+          "type": "movie",
+          "channelKey": "movie",
+          "genres": [
+                "动作",
+                "惊悚",
+                "电影"
+          ],
+          "updateBadge": "4K超清",
+          "qualityBadge": "4K",
+          "platformBadge": "首发先锋",
+          "createdAt": "2026-09-22T12:30:47.548Z"
+    },
+{
       "entityId": "ik_radar_movie_1",
       "title": "一个部门的诞生(粤语)",
       "slug": "一个部门的诞生粤语",

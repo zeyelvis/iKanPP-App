@@ -421,6 +421,49 @@ async function fetchTmdbMeta(query, mediaType = 'movie', yearHint) {
     }
   }
 
+  // 🌟 阶段 2：常规搜索未命中且片名带数字序号时，启动系列合集推导（如 "一击3" -> "One Last Shot / 最后一击"）
+  const sequelMatch = cleanKey.match(/^(.+?)\s*(?:第\s*)?([0-9]+|[一二两三四五六七八九十]+)(?:\s*[部季])?/);
+  if (sequelMatch && searchType === 'movie') {
+    const baseTitle = sequelMatch[1].trim();
+    const numStr = sequelMatch[2].trim();
+    const numMap = { '一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10 };
+    const targetNum = /^[0-9]+$/.test(numStr) ? parseInt(numStr, 10) : (numMap[numStr] || 0);
+
+    if (baseTitle && targetNum > 0) {
+      try {
+        const collUrl = `${TMDB_BASE}/search/collection?api_key=${TMDB_API_KEY}&language=zh-CN&query=${encodeURIComponent(baseTitle)}`;
+        const collRes = await fetch(collUrl, { signal: AbortSignal.timeout(5000) });
+        if (collRes.ok) {
+          const collData = await collRes.json();
+          const collection = collData.results?.[0];
+          if (collection?.id) {
+            const detailUrl = `${TMDB_BASE}/collection/${collection.id}?api_key=${TMDB_API_KEY}&language=zh-CN`;
+            const detRes = await fetch(detailUrl, { signal: AbortSignal.timeout(5000) });
+            if (detRes.ok) {
+              const detData = await detRes.json();
+              const parts = (detData.parts || []).sort((a, b) => (a.release_date || '9999').localeCompare(b.release_date || '9999'));
+              if (targetNum <= parts.length) {
+                const part = parts[targetNum - 1];
+                if (part && part.id) {
+                  const meta = {
+                    tmdbId: String(part.id),
+                    rate: part.vote_average && part.vote_average > 0 ? part.vote_average.toFixed(1) : '8.0',
+                    cover: part.poster_path ? `https://image.tmdb.org/t/p/w500${part.poster_path}` : undefined,
+                    backdrop: part.backdrop_path ? `https://image.tmdb.org/t/p/w1280${part.backdrop_path}` : undefined,
+                    overview: part.overview || '',
+                    year: (part.release_date || '').slice(0, 4) || undefined,
+                  };
+                  tmdbMetaCache.set(cacheKey, meta);
+                  return meta;
+                }
+              }
+            }
+          }
+        }
+      } catch {}
+    }
+  }
+
   return null;
 }
 
@@ -478,11 +521,38 @@ async function processChannelShowcase(channel, trendingMap) {
   const iyfItems = [...iyfPage1, ...iyfPage2];
   console.log(`📥 原始候选: 爱壹帆 ${iyfItems.length} 部, 采集站 ${collectorList.length} 部`);
 
-  // 2. 候选流归一化与排重聚合
+  // 2. 候选流归一化与双轨智能交织融合（采集站真实今日首发流优先交织进入前排）
   const candidatePool = [];
   const seenNormTitles = new Set();
 
-  // 首先以爱壹帆高品质流为基线入库
+  const collectorCandidates = [];
+  for (const col of collectorList) {
+    if (!col || !col.title) continue;
+    if (!isCleanChineseTitle(col.title)) continue;
+    const norm = normalizeTitle(col.title);
+    if (seenNormTitles.has(norm)) continue;
+    seenNormTitles.add(norm);
+
+    const trendMeta = trendingMap.get(norm);
+    collectorCandidates.push({
+      source: 'collector',
+      title: col.title,
+      year: String(col.year || new Date().getFullYear()),
+      rawRate: col.score,
+      rawCover: col.cover,
+      updateBadgeRaw: col.vod_remarks,
+      regional: '华语',
+      atypeName: channel.defaultType === 'movie' ? '电影' : '电视剧',
+      vipResource: '1080P',
+      contxt: '',
+      labels: '',
+      isTrending: !!trendMeta?.isTrending,
+      isNowPlaying: !!trendMeta?.isNowPlaying,
+      addTime: col.vod_time,
+    });
+  }
+
+  const iyfCandidates = [];
   for (const item of iyfItems) {
     if (!item || !item.title) continue;
     const title = item.title.trim();
@@ -493,7 +563,7 @@ async function processChannelShowcase(channel, trendingMap) {
     seenNormTitles.add(norm);
 
     const trendMeta = trendingMap.get(norm);
-    candidatePool.push({
+    iyfCandidates.push({
       source: 'iyf',
       title,
       year: String(item.year || new Date().getFullYear()),
@@ -511,32 +581,11 @@ async function processChannelShowcase(channel, trendingMap) {
     });
   }
 
-  // 补充采集站真实最新入库的条目（填补 IYF 尚未上架的新资源）
-  for (const col of collectorList) {
-    if (!col || !col.title) continue;
-    if (!isCleanChineseTitle(col.title)) continue;
-    const norm = normalizeTitle(col.title);
-    if (seenNormTitles.has(norm)) continue;
-    seenNormTitles.add(norm);
-
-    const trendMeta = trendingMap.get(norm);
-    candidatePool.push({
-      source: 'collector',
-      title: col.title,
-      year: String(col.year || new Date().getFullYear()),
-      rawRate: col.score,
-      rawCover: col.cover,
-      updateBadgeRaw: col.vod_remarks,
-      regional: '华语',
-      atypeName: channel.defaultType === 'movie' ? '电影' : '电视剧',
-      vipResource: '1080P',
-      contxt: '',
-      labels: '',
-      isTrending: !!trendMeta?.isTrending,
-      isNowPlaying: !!trendMeta?.isNowPlaying,
-      addTime: col.vod_time,
-    });
-  }
+  // 🌟 智能交织：前 6 席优先注入采集站最新刚上线的首发新片，杜绝被爱壹帆单向吞噬
+  const topCollectors = collectorCandidates.slice(0, 6);
+  candidatePool.push(...topCollectors);
+  candidatePool.push(...iyfCandidates);
+  candidatePool.push(...collectorCandidates.slice(6));
 
   console.log(`🔍 华语安全与排重后候选: ${candidatePool.length} 部`);
 
