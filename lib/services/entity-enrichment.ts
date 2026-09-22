@@ -22,6 +22,7 @@ interface TMDBDetailResponse {
   runtime?: number;
   number_of_seasons?: number;
   number_of_episodes?: number;
+  belongs_to_collection?: { id: number; name?: string; poster_path?: string; backdrop_path?: string } | null;
   popularity?: number;
   status?: string;
   original_language?: string;
