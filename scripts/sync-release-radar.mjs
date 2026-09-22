@@ -61,7 +61,8 @@ const ADULT_BLACKLIST_WORDS = [
   '風俗', '风俗', '無修正', '无修正', 'エロ', 'AV', 'JAV', 'FC2', 'SM', '変態', '变态',
   '制服誘惑', '制服诱惑', '女教師', '女教师', '看護婦', '看护妇', '盗撮', '覗き', '偷窥',
   '性交', '做爱', '自慰', '色情', '三级', '露点', '情色', '偷拍', '色誘', '色诱', '情欲', '欲女',
-  '売春', '愛汁', '肉しびれ', '女囚', '痴情', '快辱', '乱交', 'ポルノ', '半熟売春'
+  '売春', '愛汁', '肉しびれ', '女囚', '痴情', '快辱', '乱交', 'ポルノ', '半熟売春',
+  '女牢', '奉行', '捕吏', '人肌', '春宫', '粉红电影', '风月', '肉体', '玉蒲团', '金瓶梅', '肉身', '欲火', '艳情'
 ];
 
 const COMMENTARY_BLACKLIST_WORDS = [
@@ -529,6 +530,14 @@ async function processChannelShowcase(channel, trendingMap) {
   for (const col of collectorList) {
     if (!col || !col.title) continue;
     if (!isCleanChineseTitle(col.title)) continue;
+
+    // 🌟 电影绝对年份铁律：来自采集站的电影条目必须是 2024 年以后的当季新片！
+    const yearNum = parseInt(col.year || '0', 10);
+    if ((channel.defaultType === 'movie' || channel.key === 'all') && yearNum > 0 && yearNum < 2024) {
+      console.log(`⏩ [老片过滤] 采集站历史老电影 《${col.title}》 (${yearNum}) 拒绝进入最新上线流`);
+      continue;
+    }
+
     const norm = normalizeTitle(col.title);
     if (seenNormTitles.has(norm)) continue;
     seenNormTitles.add(norm);

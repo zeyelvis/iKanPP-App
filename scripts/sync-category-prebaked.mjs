@@ -24,6 +24,43 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// 成人低俗违禁词黑名单（准则 12）
+const ADULT_BLACKLIST_WORDS = [
+  '痴漢', '痴汉', '調教', '调教', '発情', '发情', '近親', '近亲', '乱倫', '乱伦',
+  '性奴', '小股', '沙龙病院', '中出し', '潮吹き', '巨乳', '美乳', '素人',
+  '熟女', '人妻', '淫乱', '絶頂', '绝顶', '強姦', '强奸', '輪姦', '轮奸', '肉便器',
+  '風俗', '风俗', '無修正', '无修正', 'エロ', 'AV', 'JAV', 'FC2', 'SM', '変態', '变态',
+  '制服誘惑', '制服诱惑', '女教師', '女教师', '看護婦', '看护妇', '盗撮', '覗き', '偷窥',
+  '性交', '做爱', '自慰', '色情', '三级', '露点', '情色', '偷拍', '色誘', '色诱', '情欲', '欲女',
+  '売春', '愛汁', '肉しびれ', '女囚', '痴情', '快辱', '乱交', 'ポルノ', '半熟売春',
+  '女牢', '奉行', '捕吏', '人肌', '春宫', '粉红电影', '风月', '肉体', '玉蒲团', '金瓶梅', '肉身', '欲火', '艳情'
+];
+
+const COMMENTARY_BLACKLIST_WORDS = [
+  '解说', '说电影', '几分钟看', '一口气看', '速看', '看懂',
+  '纯享版', '先导片', '幕后花絮', '独家花絮', '精彩看点', '正片片段',
+  '电影解说', '影视解说', '剧情解说', '短剧解说', '影视剪辑', '混剪'
+];
+
+function isCleanChineseTitle(title) {
+  if (!title || typeof title !== 'string') return false;
+  const t = title.trim();
+  if (!t) return false;
+  for (const w of ADULT_BLACKLIST_WORDS) {
+    if (t.includes(w)) return false;
+  }
+  for (const cw of COMMENTARY_BLACKLIST_WORDS) {
+    if (t.includes(cw)) return false;
+  }
+  // 日文假名绝对零容忍
+  if (/[\u3040-\u309f\u30a0-\u30ff]/.test(t)) return false;
+  // 韩文字符绝对零容忍
+  if (/[\uac00-\ud7af]/.test(t)) return false;
+  // 必须包含中文汉字
+  if (!/[\u4e00-\u9fa5]/.test(t)) return false;
+  return true;
+}
+
 function cleanTitle(raw) {
   if (!raw) return '';
   return raw
@@ -130,6 +167,20 @@ async function main() {
     for (const item of rawItems) {
       if (!item || !item.vod_name) continue;
       const title = item.vod_name.trim();
+
+      // 🌟 华语内容安全一票否决（日文假名、韩文、成人低俗词坚决阻断）
+      if (!isCleanChineseTitle(title)) {
+        console.log(`   ⛔ [内容安全] 拦截非纯净或低俗违规条目: 《${title}》`);
+        continue;
+      }
+
+      const year = parseInt(item.vod_year || '0', 10);
+      // 🌟 电影专区绝对年份铁律：来自采集站的电影必须是 2024 年以后的当季新片！
+      if (cfg.key === 'movie' && year > 0 && year < 2024) {
+        console.log(`   ⏩ [老片过滤] 采集站历史老电影 《${title}》 (${year}) 拒绝进入电影最新实时入库流`);
+        continue;
+      }
+
       allScrapedTitles.push(title);
 
       await sleep(100);
@@ -152,7 +203,7 @@ async function main() {
         year: String(item.vod_year || new Date().getFullYear()),
         types: types.length > 0 ? types : [cfg.name.replace('专区', '')],
         remarks: item.vod_remarks || '',
-        is_new: true,
+        is_new: year >= 2025, // 仅 2025~2026 当季新片打上 NEW 角标，绝不允许老电影冒充 NEW
       });
     }
 

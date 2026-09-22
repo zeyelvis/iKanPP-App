@@ -664,24 +664,6 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "updateBadge": "正片",
       "qualityBadge": "1080P",
       "createdAt": "2026-09-22T05:31:47.084Z"
-    },
-    {
-      "entityId": "ik_radar_movie_13",
-      "title": "美女捕吏女牢秘档续美女奉行2",
-      "slug": "美女捕吏女牢秘档续美女奉行2",
-      "cover": "https://img.guangsuimage.com/cover/d5acadf1b2e7b66ec4c8e46b9de59d1f.jpg",
-      "backdrop": "https://img.guangsuimage.com/cover/d5acadf1b2e7b66ec4c8e46b9de59d1f.jpg",
-      "rate": "8.8",
-      "year": "1995",
-      "type": "movie",
-      "channelKey": "movie",
-      "genres": [
-        "电影"
-      ],
-      "updateBadge": "正片",
-      "qualityBadge": "1080P",
-      "createdAt": "2026-09-22T05:01:47.084Z"
-    },
     {
       "entityId": "ik_radar_movie_14",
       "title": "逃出绝命街",
