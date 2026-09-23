@@ -660,7 +660,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "爱情保卫战",
-        "updateBadge": "1"
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -687,13 +687,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608271524382431872.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111844144414888.jpg",
-        "description": "《我家那闺女2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260921(加更版)。",
+        "description": "《我家那闺女2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260923(盲盒放送)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260921(加更版)",
+        "episodes_info": "更新至20260923(盲盒放送)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -721,13 +721,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608251140484004368.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202608261125552551744.jpg",
-        "description": "《舞蹈新风暴》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260922(第5期上)。",
+        "description": "《舞蹈新风暴》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260923(Plus)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260922(第5期上)",
+        "episodes_info": "更新至20260923(Plus)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -755,13 +755,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607311122522270150.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202608031821302167723.jpg",
-        "description": "《心动的信号第9季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260922(第8期下纯享)。",
+        "description": "《心动的信号第9季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260923(超前彩蛋)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260922(第8期下纯享)",
+        "episodes_info": "更新至20260923(超前彩蛋)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -772,13 +772,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607231303450351514.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202607271339373917253.jpg",
-        "description": "《一饭封神第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260920(回顾特辑)。",
+        "description": "《一饭封神第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260923(第9期上美食竞技纯享版)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260920(回顾特辑)",
+        "episodes_info": "更新至20260923(第9期上美食竞技纯享版)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1237,302 +1237,302 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "妻不可欺",
+          "title": "子时娶妻",
           "updateBadge": "全"
       },
       {
-          "title": "九霄神女",
+          "title": "逆袭之最强搬砖工",
           "updateBadge": "全"
       },
       {
-          "title": "张大人现在是2024年",
+          "title": "离歌1999",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "满堂春",
           "updateBadge": "全"
       },
       {
-          "title": "人到晚年绝美魔女拿我当炉鼎",
+          "title": "冒牌姐夫，竟是大夏真神",
           "updateBadge": "全"
       },
       {
-          "title": "婆婆当家儿子归来傻眼了",
+          "title": "冒牌对冒牌，戏精夫妇有点甜",
           "updateBadge": "全"
       },
       {
-          "title": "郑和下西洋：沧海新途",
+          "title": "百岁悟道仙途",
           "updateBadge": "全"
       },
       {
-          "title": "温秘书，下不为例",
+          "title": "接单就打钱：系统带我赚不停",
+          "updateBadge": "100"
+      },
+      {
+          "title": "鱼目也想当珍珠",
+          "updateBadge": "60"
+      },
+      {
+          "title": "我爸归来全员罚跪",
+          "updateBadge": "61"
+      },
+      {
+          "title": "刁蛮姐姐",
           "updateBadge": "全"
       },
       {
-          "title": "女帝",
-          "updateBadge": "全"
-      },
-      {
-          "title": "身为太子被陷害，我选择落草为寇",
-          "updateBadge": "全"
-      },
-      {
-          "title": "昔日追风少年一心向阳",
-          "updateBadge": "全"
-      },
-      {
-          "title": "重生九零年代拯救难产媳妇后发大财",
-          "updateBadge": "全"
-      },
-      {
-          "title": "全府偷听仙尊心声，养子大祸临头",
+          "title": "无敌酒仙路，我能一剑开天",
           "updateBadge": "全"
       }
   ],
   hero: [
       {
-          "id": "jl_short_630315077333876700",
-          "title": "妻不可欺",
-          "rate": "8.8",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/4e61b0f678d53f9f477f5cb0243ac0ad72d52de3d049bdb83886f785e4a3801d.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/4e61b0f678d53f9f477f5cb0243ac0ad72d52de3d049bdb83886f785e4a3801d.jpg",
-          "description": "父母意外去世，只剩下姐妹俩相依为命。街坊都疯传他俩得到巨额赔偿，两人从未回应。随着年龄的增长，两人各自成婚，却不想姐姐的丈夫惦记那笔赔偿金，而妹夫暴力不顾家。当看清了丈夫的真面目，姐妹俩联手反击，走向美好新生活。",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全101集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "穆乐恩 / 李星昊 / 汪颖菲"
-          ]
-      },
-      {
-          "id": "jl_short_630220338307596300",
-          "title": "人到晚年绝美魔女拿我当炉鼎",
-          "rate": "8.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/032eafe1b0bff5e4e7e7e2b6f0cc36fdd982cdad8f0da78498a23f8b3ed6ae4e.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/032eafe1b0bff5e4e7e7e2b6f0cc36fdd982cdad8f0da78498a23f8b3ed6ae4e.jpg",
-          "description": "现代穿越者叶不凡获灵根，却惊觉是修仙界公认的女邪修炉鼎体质。当邪修持锁魂链逼近，他丹田爆发现代科技蓝光，灵根废柴誓以科技逆转炉鼎命，在修真界杀出独特的科技修仙路。",
-          "year": "2025",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全161集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "何其炜 / 史国慧 / 张乙萌 / 张婧 / 吴妮妮 / 凌杰 / 王子清 / 于东甲 / 柒可欣 / 刘成 / 黄轲 / 钟雪 / 杨灿 / 柴亮 / 路少平 / 马宽 / 戴宇乾 / 郁恬慧 / 于嘉 / 李晓颖 / 启朝 / 姜雅露 / 姜雅文 / 王首元 / 李显 / 林志康 / 张嘉宝 / 张连兴 / 于宵然 / 文婷 / 张欢 / 薛犇 / 马畅 / 殷艳华 / 崔锌沫 / 付一博 / 李佳欣"
-          ]
-      },
-      {
-          "id": "jl_short_630220292119396400",
-          "title": "郑和下西洋：沧海新途",
-          "rate": "8.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/7c8aa512c751a3383427f9ae224f2047a8d30bcfe2a79f49b2457228805a6dcb.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/7c8aa512c751a3383427f9ae224f2047a8d30bcfe2a79f49b2457228805a6dcb.jpg",
-          "description": "因鉴宝负债的鬼马少女郑梓玥被迫与高冷密码天才陈奉一联手，限时48小时破解600年前郑和下西洋的秘密，却被迫卷入神秘势力混战。神秘飒姐截胡、搭档突然反水、父亲失踪谜案连环暴雷，最终发现阿公以命守护的“宝藏”竟另有深意！一对欢喜冤家在冒险中擦出火花，一个不可能完成的任务最终绝地反击！",
-          "year": "2025",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全45集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "王格格 / 王一钧 / 冷心清 / 邵嘉 / 何泽宇"
-          ]
-      },
-      {
-          "id": "jl_short_630117176094883800",
-          "title": "女帝",
-          "rate": "9.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/0014d71f8092831ee4b3f017ff8536399e667e6b300a7d8e52f55f1203f3e26c.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/0014d71f8092831ee4b3f017ff8536399e667e6b300a7d8e52f55f1203f3e26c.jpg",
-          "description": "本片讲述了一个美丽的女人，该剧主要讲述一个被拥有金钱和权力的人们践踏着人生，最终甚至失去了挚爱的母亲，为了复仇远走他乡，最终决心以女人的姿色为武器，誓要成为夜晚世界的“女帝”的故事。",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全99集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "张伸瑛 / 全世贤 / 강지섭 / 崔弼立 / 黄正音 / Hyun Suk / 郑庆顺 / 宇东邦 / 양택조"
-          ]
-      },
-      {
-          "id": "jl_short_630113127920566300",
-          "title": "全府偷听仙尊心声，养子大祸临头",
-          "rate": "9.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/06188f59f87359ed057e888e86884b6da1a422655f12fc188ad40766511ae75a.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/06188f59f87359ed057e888e86884b6da1a422655f12fc188ad40766511ae75a.jpg",
-          "description": "男主凌煜多年后才被凌家找回，但却被凌家养子拿捏欺辱后惨死。未曾想，他死后被天界大能穿越，这一次，重新回到凌家的凌煜成为了天界的亲儿子！凌煜开启了拯救全家的凄惨命运，并找到自己真爱，让养子付出代价。",
-          "year": "2025",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全153集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "宣以豪 / 彭静娴"
-          ]
-      },
-      {
-          "id": "jl_short_630111923735625700",
-          "title": "微风襟袖同卿心",
-          "rate": "9.0",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/716406000492c9d89d778c9fbb4480f1f59476e64cca353d1cdd0d703d7bd4d5.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/716406000492c9d89d778c9fbb4480f1f59476e64cca353d1cdd0d703d7bd4d5.jpg",
-          "description": "李度原本庸碌无为，在妻子杨策的鼓励与鞭策下逐渐成长，学会承担责任。两人在相互扶持中共同面对生活的挑战，感情也逐渐加深。",
+          "id": "jl_short_632772130362097700",
+          "title": "满堂春",
+          "rate": "9.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/cc2e33e83e489a1bde26a0baaa156f19ceb8af1dd90e647abe7eb5cc5f841e4a.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/cc2e33e83e489a1bde26a0baaa156f19ceb8af1dd90e647abe7eb5cc5f841e4a.jpg",
+          "description": "这部由AI制作的历史战争短剧《烬九州》以115集的超长篇幅，生动再现了一个战火纷飞、天下大乱的时代。AI生成的战争场面和人物形象极具震撼力，无论是战场上的刀光剑影，还是宫廷中的权谋斗争，都展现出极高的制作水准。剧中讲述了一个普通人在乱世中的成长历程，从最初的弱小无助到后来的运筹帷幄，AI制作团队通过...",
           "year": "2026",
           "types": [
               "短剧",
-              "女频恋爱",
+              "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全37集·已完结",
+          "episodes_info": "全291集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "范梦 / 张植绿"
+              "短剧实力派"
           ]
       },
       {
-          "id": "jl_short_630110771678019600",
-          "title": "真爱之百万新娘",
-          "rate": "9.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/1fbbfc76ce5f22ccf199ec50e73c7ac74ef52223179895e2015dd28d67b7066f.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/1fbbfc76ce5f22ccf199ec50e73c7ac74ef52223179895e2015dd28d67b7066f.jpg",
-          "description": "嫁入豪门是许多拜金女孩毕生的梦想，然而一如豪门深似海，个中的委屈和挫折却并非每个人都能承受的。王、林两家喜结连理，可是没有爱情的新人王绍华（倪齐民 饰）和林敏君（袁咏仪 饰）之间不仅有着难以逾越的感情沟壑，更有周围人各怀鬼胎的经营和挤兑。儿子的婚姻由一家之主王光耀（岳跃利 饰）亲手操办，但是何莉（夏...",
-          "year": "2024",
+          "id": "jl_short_632714372413718500",
+          "title": "百岁悟道仙途",
+          "rate": "9.0",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/2dce29d93f69ed4c3cc885fe0204b183044bafbddeae3683eadaa9e52b1ab2bc.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/2dce29d93f69ed4c3cc885fe0204b183044bafbddeae3683eadaa9e52b1ab2bc.jpg",
+          "description": "百岁老人北寒风，八十多年前与未婚妻一同参与灵根检测，他被判定无修仙灵根，未婚妻则踏入仙门，自此仙凡殊途。他曾不甘挣扎，最终归于平凡，在葫芦村娶妻生子，如今亲人相继离世，只剩他孤身一人，即将迎来百岁寿辰。一日，两位修仙者来村为孩童测灵根，全村孩童皆无灵根，测灵玉佩却自主激活，爆发出百丈青光，测出风烛残...",
+          "year": "2026",
           "types": [
               "短剧",
-              "现代都市",
+              "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全71集·已完结",
+          "episodes_info": "全281集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "袁咏仪 / 王伟华 / 岳跃利 / 张亮 / 李琳"
+              "短剧实力派"
           ]
       },
       {
-          "id": "jl_short_630107680594460700",
-          "title": "叱咤风云",
-          "rate": "8.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/0e53e5df779b0ba0975a5ab4a78d09c3c3f189a5af297b3ef170b8b7b9c9ba4e.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/0e53e5df779b0ba0975a5ab4a78d09c3c3f189a5af297b3ef170b8b7b9c9ba4e.jpg",
-          "description": "宋志高自幼便失去了父母成为一名弃婴，幸运的是，他得到了富商周怀生的照拂，后者收养他为义子，将他抚养长大成人。然而，周家半道遭张永康父子的陷害，家破人亡，志高流离失所最终回到了新加坡，在那里，他遇见了丽明和乐文意，两个姑娘都对他帮扶有加，实际上，丽明和乐文意都将芳心许给了宋志高，只是害羞内敛的文意选择...",
-          "year": "2024",
+          "id": "jl_short_632588378289733600",
+          "title": "无敌酒仙路，我能一剑开天",
+          "rate": "9.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/484cefc493ebdf38a7f2cae7e2c85b414983611a7d828776546961727716d63b.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/484cefc493ebdf38a7f2cae7e2c85b414983611a7d828776546961727716d63b.jpg",
+          "description": "为了激活酒剑仙系统，天骄林墨痕散尽修为沦为杂役，终日与美酒为伴，被宗门上下视为废人。当师妹柳如烟为上位而污蔑他之时，林墨痕却在醉酒中悄然突破，一剑惊天，令满座哗然。从被诬陷的杂役到万众瞩目的天骄，他凭借饮酒破境的独特天赋，一路碾压各路强敌。然而，觊觎他性命的强敌与心怀嫉妒的同门正暗中布下天罗地网。看...",
+          "year": "2026",
           "types": [
               "短剧",
-              "现代都市",
+              "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全59集·已完结",
+          "episodes_info": "全127集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "李南星 / 李锦梅 / 陈汉玮 / 薛素珊 / 陈澍城 / 王玉清"
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_632541512647049200",
+          "title": "嗨，哈瑞",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/ade46453b1d798e687885e7ff038622c8dac295320ce9999d760def66b1ee12b.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/ade46453b1d798e687885e7ff038622c8dac295320ce9999d760def66b1ee12b.jpg",
+          "description": "故事以被遗弃的金毛犬哈瑞为主线，讲述它被拾荒老人收养后，又因为一场意外成为流浪狗，所幸遇到了善良的小女孩艾沙，哈瑞也从最开始的抗拒到最后接纳，在新主人艾沙的陪伴下，逐渐走出阴霾，学会重新信任与爱，最终收获了新的温暖与归宿。",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "其他",
+              "全集连播"
+          ],
+          "episodes_info": "全61集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_632491275689459700",
+          "title": "从杂役到宗门之光小师妹以茶治茶",
+          "rate": "9.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/aa90ca448315b72707f93e9195220d2a137efd3bd776d17aaefea6e363b8d613.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/aa90ca448315b72707f93e9195220d2a137efd3bd776d17aaefea6e363b8d613.jpg",
+          "description": "凤溪穿越成书中炮灰，开局就被原女主捅碎丹田、抢走灵草，还被偏心掌门贬为杂役。她不哭不闹，转身套路大师兄，骗走灵石转身投靠最穷的玄天宗。师父慈爱，她嘴甜心黑，契约神兽、搅黄原女主身边所有痴心人，让伪善者无路可走。从废柴小师妹到玄天宗之光，她靠一张甜嘴和满腹套路，带领穷酸宗门一路飞升！",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "其他",
+              "全集连播"
+          ],
+          "episodes_info": "全177集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_632488336103047200",
+          "title": "侯门红烛碎",
+          "rate": "9.5",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/8184ca23dbb2816a2dab6613ca7c044a4b34837618c4ba44e69b5c3ea545f998.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/8184ca23dbb2816a2dab6613ca7c044a4b34837618c4ba44e69b5c3ea545f998.jpg",
+          "description": "昭阳郡主崔南音大婚之夜，被夫君沈砚抛下，沈砚执意要娶卖唱女林如霜。崔南音不堪受辱，当众退婚回归镇国将军府，获皇室与将门旧部力挺，重振家门。沈砚如愿娶林如霜后，府中与表妹沈绾绾争斗不休，终酿祸事，沈家彻底衰败。沈砚追悔莫及远赴边关求复合，崔南音已在边关办学建功，活出独立风采。",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全115集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_631707723398512600",
+          "title": "藏地秘史之八百万有寂圆满大殿之战",
+          "rate": "8.7",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/e95e717af122fb71dfbb33f56543aceedd6b8e4ef48f3061d347375cb9cf2ad0.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/e95e717af122fb71dfbb33f56543aceedd6b8e4ef48f3061d347375cb9cf2ad0.jpg",
+          "description": "贞观初年，雪域高原，横跨隋唐两代的帝国暗战，层层揭开；驱虎吞狼，到如今李世民和松赞干布的四海一家，何去何从？累世修行传法雪域的释迦云丹，苯教圣女噶尔玛，隋帝遗脉李元正，吐谷浑白兰圣女慕容璇，党项王子拓跋山烈，都敌不过大唐司天监老剑神的灭世三剑。最终，袁天罡以身撞开山穹，劈开旧因果枷锁。全剧以“星轨非...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "其他",
+              "全集连播"
+          ],
+          "episodes_info": "全147集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_630025220979163100",
+          "title": "神话断层：我复苏了华夏众神",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/9250e4450750ddbc40ad57bafb0e12391f574c5027a7fa119f7d1f7c516ee0f7.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/9250e4450750ddbc40ad57bafb0e12391f574c5027a7fa119f7d1f7c516ee0f7.jpg",
+          "description": "国运擂台降临，各国召唤神明争夺气运，华夏因无神可用屡遭西方列强欺凌，濒临亡国。江天意外重生并唤醒了前世昊天上帝的记忆与神力。他以帝血解封孙悟空、杨戬、哪吒等沉睡众神，与姐姐林清雪带领华夏战队征战国运擂台，手撕樱花国式神、碾压西方主神，打破西方诸神的诡计。",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "其他",
+              "全集连播"
+          ],
+          "episodes_info": "全155集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
           ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "妻不可欺",
-      rate: "8.8",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/4e61b0f678d53f9f477f5cb0243ac0ad72d52de3d049bdb83886f785e4a3801d.jpg",
-      year: "2024",
-      types: ["短剧","现代都市","全集连播"],
+      title: "满堂春",
+      rate: "9.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/cc2e33e83e489a1bde26a0baaa156f19ceb8af1dd90e647abe7eb5cc5f841e4a.jpg",
+      year: "2026",
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: "人到晚年绝美魔女拿我当炉鼎",
-      rate: "8.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/032eafe1b0bff5e4e7e7e2b6f0cc36fdd982cdad8f0da78498a23f8b3ed6ae4e.jpg",
-      year: "2025",
+      title: "百岁悟道仙途",
+      rate: "9.0",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/2dce29d93f69ed4c3cc885fe0204b183044bafbddeae3683eadaa9e52b1ab2bc.jpg",
+      year: "2026",
       types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_3',
-      title: "郑和下西洋：沧海新途",
-      rate: "8.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/7c8aa512c751a3383427f9ae224f2047a8d30bcfe2a79f49b2457228805a6dcb.jpg",
-      year: "2025",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_4',
-      title: "女帝",
-      rate: "9.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/0014d71f8092831ee4b3f017ff8536399e667e6b300a7d8e52f55f1203f3e26c.jpg",
-      year: "2024",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_5',
-      title: "全府偷听仙尊心声，养子大祸临头",
+      title: "无敌酒仙路，我能一剑开天",
       rate: "9.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/06188f59f87359ed057e888e86884b6da1a422655f12fc188ad40766511ae75a.jpg",
-      year: "2025",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/484cefc493ebdf38a7f2cae7e2c85b414983611a7d828776546961727716d63b.jpg",
+      year: "2026",
       types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_6',
-      title: "微风襟袖同卿心",
-      rate: "9.0",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/716406000492c9d89d778c9fbb4480f1f59476e64cca353d1cdd0d703d7bd4d5.jpg",
+      id: 'pb_s_top_4',
+      title: "嗨，哈瑞",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/ade46453b1d798e687885e7ff038622c8dac295320ce9999d760def66b1ee12b.jpg",
       year: "2026",
-      types: ["短剧","女频恋爱","全集连播"],
+      types: ["短剧","其他","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_5',
+      title: "从杂役到宗门之光小师妹以茶治茶",
+      rate: "9.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/aa90ca448315b72707f93e9195220d2a137efd3bd776d17aaefea6e363b8d613.jpg",
+      year: "2026",
+      types: ["短剧","其他","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_6',
+      title: "侯门红烛碎",
+      rate: "9.5",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/8184ca23dbb2816a2dab6613ca7c044a4b34837618c4ba44e69b5c3ea545f998.jpg",
+      year: "2026",
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_7',
-      title: "真爱之百万新娘",
-      rate: "9.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/1fbbfc76ce5f22ccf199ec50e73c7ac74ef52223179895e2015dd28d67b7066f.jpg",
-      year: "2024",
-      types: ["短剧","现代都市","全集连播"],
+      title: "藏地秘史之八百万有寂圆满大殿之战",
+      rate: "8.7",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/e95e717af122fb71dfbb33f56543aceedd6b8e4ef48f3061d347375cb9cf2ad0.jpg",
+      year: "2026",
+      types: ["短剧","其他","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_8',
-      title: "叱咤风云",
-      rate: "8.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/0e53e5df779b0ba0975a5ab4a78d09c3c3f189a5af297b3ef170b8b7b9c9ba4e.jpg",
-      year: "2024",
-      types: ["短剧","现代都市","全集连播"],
+      title: "神话断层：我复苏了华夏众神",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9250e4450750ddbc40ad57bafb0e12391f574c5027a7fa119f7d1f7c516ee0f7.jpg",
+      year: "2026",
+      types: ["短剧","其他","全集连播"],
       is_new: true,
       playable: true
     }
