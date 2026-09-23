@@ -94,11 +94,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "逃出绝命街",
+                "title": "色戒",
                 "updateBadge": ""
         },
         {
-                "title": "怒之杀(听译)",
+                "title": "哈利波特1魔法石",
                 "updateBadge": ""
         }
       ],
@@ -1842,23 +1842,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
-                "title": "死有对证",
-                "updateBadge": "1"
-        },
-        {
                 "title": "冬城猎凶",
                 "updateBadge": ""
         },
         {
+                "title": "死有对证",
+                "updateBadge": "1"
+        },
+        {
                 "title": "挑情丑闻",
-                "updateBadge": ""
-        },
-        {
-                "title": "飞到我心上",
-                "updateBadge": ""
-        },
-        {
-                "title": "花开锦绣",
                 "updateBadge": ""
         },
         {
@@ -1866,8 +1858,16 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "韩国制造第2季",
-                "updateBadge": "2"
+                "title": "花开锦绣",
+                "updateBadge": ""
+        },
+        {
+                "title": "飞到我心上",
+                "updateBadge": ""
+        },
+        {
+                "title": "生逢其时",
+                "updateBadge": ""
         }
       ],
     "hero": [
