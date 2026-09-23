@@ -20,10 +20,6 @@ const CollectionsRail = dynamic(
   () => import('./CollectionsRail').then((m) => m.CollectionsRail),
   { loading: () => <div className="h-44 rounded-2xl bg-white/5 animate-pulse border border-white/5" /> }
 );
-const TopicsRail = dynamic(
-  () => import('./TopicsRail').then((m) => m.TopicsRail),
-  { loading: () => <div className="h-44 rounded-2xl bg-white/5 animate-pulse border border-white/5" /> }
-);
 const PlatformFeaturesStrip = dynamic(
   () => import('./PlatformFeaturesStrip').then((m) => m.PlatformFeaturesStrip),
   { loading: () => <div className="h-28 rounded-2xl bg-white/5 animate-pulse border border-white/5" /> }
@@ -598,14 +594,9 @@ export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
         {isBelowFoldMounted ? <LiveChannelsPreview /> : null}
       </div>
 
-      {/* 8.5 📚 精选片单 · 官方策展（常驻独立版位，不受品类 Tab 切换干扰） */}
+      {/* 8.5 📚 官方策展 · 殿堂片单与深度意图专题超级展台（融合34大主题，打通全网意图与经典片单） */}
       <div className="below-fold-rail min-h-[220px]">
         {isBelowFoldMounted ? <CollectionsRail /> : null}
-      </div>
-
-      {/* 8.6 🎯 意图专栏 · 深度策展专题（常驻独立版位，打通全网长尾意图内链） */}
-      <div className="below-fold-rail min-h-[220px]">
-        {isBelowFoldMounted ? <TopicsRail /> : null}
       </div>
 
       {/* 9. 货架 3 */}
