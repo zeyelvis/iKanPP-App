@@ -5,7 +5,7 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, Clock, Calendar, Film, ArrowLeft, Clapperboard, User, Sparkles, CheckCircle2, Play } from 'lucide-react';
-import { getEntityBySlug, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity, isSafeRecentTitleItem } from '@/lib/services/entity-kv';
+import { getEntityBySlug, getEntityById, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity, isSafeRecentTitleItem } from '@/lib/services/entity-kv';
 import { getGenreBySlug } from '@/lib/data/genres';
 import { parseEntitySlug, normalizeTitle, isStrictSafeEntity, generateSlug, getTitleCanonicalHref, decodeMangledHexSlug } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, fetchTMDBDetails, fetchTMDBAiredEpisodeCount, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
@@ -201,9 +201,26 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
   } catch {}
   cleanTitle = decodeMangledHexSlug(cleanTitle);
 
+  // 🌟 优先级 0：显式历史遗留/更名 URL 映射表（防止历史老词、历史合并条目丢失权重）
+  const LEGACY_SLUG_REDIRECTS: Record<string, string> = {
+    'ik002038-the-bill': 'ik007343-杀死比尔-血色全传', // 历史将杀死比尔错配至 2038，后纠正至 7343
+  };
+  const legacyTarget = LEGACY_SLUG_REDIRECTS[decodedSlug.toLowerCase()];
+  if (legacyTarget) {
+    const targetEntity = (await getEntityBySlug(legacyTarget)) || (legacyTarget.startsWith('ik') ? await getEntityById(legacyTarget.slice(0, 8)) : null);
+    if (targetEntity) return enrichEpisodeCount(targetEntity);
+  }
+
   // 🌟 优先级 1：根据完整 decodedSlug 优先查询
   // 覆盖：显式别名映射（如历史错配旧链接 slug:ik002038-the-bill -> ik007343）、规范 canonical slug、实体 ID
   let entity = await getEntityBySlug(decodedSlug);
+
+  // 🌟 优先级 1.1：若完整 Slug 未命中，但解析出标准 6 位实体 ID（如 ik002038），
+  // 必须直接按 ID 查询主键实体！随后由 TitlePage 组件 100% 自动 308 永久重定向到最新标准规范 URL！
+  // 彻底根除历史带有旧英文后缀、旧别名、旧 ID 的 URL 发生 404 或白屏异常！
+  if (!entity && entityId && /^ik\d{6}$/i.test(entityId)) {
+    entity = await getEntityById(entityId);
+  }
 
   if (entity) {
     // 确保实体通过基础安全审核，否则不提前返回，放行至后续片名自愈
