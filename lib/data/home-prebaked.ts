@@ -62,10 +62,6 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "卖冰淇淋的人",
-                "updateBadge": ""
-        },
-        {
                 "title": "年会不能停！2",
                 "updateBadge": ""
         },
@@ -74,7 +70,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "爱情假说",
+                "title": "卖冰淇淋的人",
                 "updateBadge": ""
         },
         {
@@ -82,11 +78,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "逃出绝命街",
-                "updateBadge": ""
-        },
-        {
-                "title": "数到三",
+                "title": "爱情假说",
                 "updateBadge": ""
         },
         {
@@ -94,7 +86,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "数到三",
+                "updateBadge": ""
+        },
+        {
                 "title": "超级骑警3",
+                "updateBadge": ""
+        },
+        {
+                "title": "逃出绝命街",
                 "updateBadge": ""
         },
         {
@@ -1826,6 +1826,10 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
+                "title": "交锋",
+                "updateBadge": ""
+        },
+        {
                 "title": "一瓯春",
                 "updateBadge": "1"
         },
@@ -1834,16 +1838,16 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "法医秦明之龙番往事",
+                "updateBadge": "2"
+        },
+        {
                 "title": "死有对证",
                 "updateBadge": "1"
         },
         {
-                "title": "交锋",
+                "title": "冬城猎凶",
                 "updateBadge": ""
-        },
-        {
-                "title": "法医秦明之龙番往事",
-                "updateBadge": "2"
         },
         {
                 "title": "挑情丑闻",
@@ -1854,20 +1858,16 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "冬城猎凶",
-                "updateBadge": ""
-        },
-        {
                 "title": "花开锦绣",
                 "updateBadge": ""
         },
         {
-                "title": "百花杀",
+                "title": "深渊无间",
                 "updateBadge": ""
         },
         {
-                "title": "生逢其时",
-                "updateBadge": ""
+                "title": "韩国制造第2季",
+                "updateBadge": "2"
         }
       ],
     "hero": [

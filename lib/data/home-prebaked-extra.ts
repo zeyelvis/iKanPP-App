@@ -13,12 +13,12 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "灵境行者",
-        "updateBadge": "1"
-    },
-    {
         "title": "凡人修仙传",
         "updateBadge": ""
+    },
+    {
+        "title": "灵境行者",
+        "updateBadge": "1"
     },
     {
         "title": "遮天",
@@ -26,6 +26,10 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "海贼王",
+        "updateBadge": ""
+    },
+    {
+        "title": "斗破苍穹年番",
         "updateBadge": ""
     },
     {
@@ -37,23 +41,19 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "牧神记",
-        "updateBadge": ""
-    },
-    {
-        "title": "斗破苍穹年番",
-        "updateBadge": ""
-    },
-    {
-        "title": "光阴之外",
-        "updateBadge": ""
-    },
-    {
         "title": "从零开始的异世界生活第4季",
         "updateBadge": "1"
     },
     {
-        "title": "一斩苍穹",
+        "title": "沧元图",
+        "updateBadge": ""
+    },
+    {
+        "title": "牧神记",
+        "updateBadge": ""
+    },
+    {
+        "title": "光阴之外",
         "updateBadge": ""
     }
   ],
@@ -632,18 +632,10 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "心动的信号第9季",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "一饭封神第2季",
-        "updateBadge": "2"
-    },
-    {
-        "title": "密室大逃脱第8季",
-        "updateBadge": "2"
-    },
-    {
-        "title": "花儿与少年第8季",
         "updateBadge": ""
     },
     {
@@ -652,15 +644,23 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "我家那闺女2026",
-        "updateBadge": "1"
-    },
-    {
-        "title": "旗安84的奇趣民宿第2季",
         "updateBadge": ""
     },
     {
-        "title": "密室大逃脱大神版第8季",
-        "updateBadge": "2"
+        "title": "花儿与少年第8季",
+        "updateBadge": ""
+    },
+    {
+        "title": "密室大逃脱第8季",
+        "updateBadge": ""
+    },
+    {
+        "title": "大哥小助理",
+        "updateBadge": ""
+    },
+    {
+        "title": "喜剧之王单口季第3季",
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -1550,6 +1550,10 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "2"
     },
     {
+        "title": "交锋",
+        "updateBadge": ""
+    },
+    {
         "title": "一瓯春",
         "updateBadge": "1"
     },
@@ -1558,31 +1562,27 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "死有对证",
-        "updateBadge": "1"
-    },
-    {
-        "title": "交锋",
-        "updateBadge": ""
-    },
-    {
         "title": "法医秦明之龙番往事",
         "updateBadge": "2"
     },
     {
-        "title": "心动的信号第9季",
+        "title": "死有对证",
         "updateBadge": "1"
+    },
+    {
+        "title": "冬城猎凶",
+        "updateBadge": ""
+    },
+    {
+        "title": "心动的信号第9季",
+        "updateBadge": ""
     },
     {
         "title": "挑情丑闻",
         "updateBadge": ""
     },
     {
-        "title": "飞到我心上",
-        "updateBadge": ""
-    },
-    {
-        "title": "冬城猎凶",
+        "title": "一饭封神第2季",
         "updateBadge": ""
     },
     {
@@ -1590,7 +1590,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "花开锦绣",
+        "title": "飞到我心上",
         "updateBadge": ""
     }
   ],
@@ -2161,7 +2161,15 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "克拉克森的农场第4季",
+        "updateBadge": ""
+    },
+    {
         "title": "克拉克森的农场第2季",
+        "updateBadge": ""
+    },
+    {
+        "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
@@ -2173,19 +2181,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "守护解放西",
+        "updateBadge": ""
+    },
+    {
         "title": "狂坠：波音大调查2",
-        "updateBadge": ""
-    },
-    {
-        "title": "失焦命案：被遗忘的女童",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第4季",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第5季",
         "updateBadge": ""
     }
   ],
