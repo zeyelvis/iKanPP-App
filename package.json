@@ -23,7 +23,8 @@
     "seo:daemon:status": "bash scripts/cron/status-daemon.sh",
     "seo:daemon:uninstall": "bash scripts/cron/uninstall-daemon.sh",
     "seo:daemon:logs": "tail -f logs/seo-daemon.log",
-    "seo:daemon:run": "node scripts/cron/autonomous-seo-daemon.mjs"
+    "seo:daemon:run": "node scripts/cron/autonomous-seo-daemon.mjs",
+    "seo:dashboard": "node scripts/cron/dashboard.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
