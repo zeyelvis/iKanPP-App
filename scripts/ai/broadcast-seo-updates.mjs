@@ -52,8 +52,16 @@ async function broadcastAllSeoUpdates() {
     urlsToBroadcast.add(`${BASE_URL}/topic/${slug}`);
   }
 
-  // 2. 收集所有具备 AI 深度资产的影视详情页
-  const insightTitles = Object.keys(PREBAKED_AI_INSIGHTS);
+  // 2. 收集所有具备 AI 深度资产的影视详情页 (Tier 1 内存 100 部 + Tier 2 KV 377 部)
+  const insightTitles = new Set(Object.keys(PREBAKED_AI_INSIGHTS));
+  const tier2CachePath = path.join(__dirname, 'tier2-cache.json');
+  if (fs.existsSync(tier2CachePath)) {
+    try {
+      const tier2 = JSON.parse(fs.readFileSync(tier2CachePath, 'utf8'));
+      for (const t of Object.keys(tier2)) insightTitles.add(t);
+    } catch {}
+  }
+
   for (const title of insightTitles) {
     urlsToBroadcast.add(`${BASE_URL}/title/${encodeURIComponent(title)}`);
   }
@@ -65,7 +73,7 @@ async function broadcastAllSeoUpdates() {
   const urlList = Array.from(urlsToBroadcast);
   console.log(`📋 待广播的核心高价值 URL 数量: ${urlList.length} 条`);
   console.log(`   - 意图专题页: ${topicSlugs.length} 个`);
-  console.log(`   - AI 深度影视详情页: ${insightTitles.length} 部`);
+  console.log(`   - AI 深度影视详情页: ${insightTitles.size} 部`);
   console.log(`   - 核心 Sitemap: 2 个\n`);
 
   // 4. 发起 IndexNow 批量全网广播 (Bing / Yandex / Naver)
