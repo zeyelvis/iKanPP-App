@@ -75,5 +75,27 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* ══════════════════════════════════════════════════════════════
+   移动端底部悬浮层安全避让规范 (Mobile Floating Safety Inset)
+   - 彻底解决继续播放浮窗与返回顶部按钮被移动端底部导航栏遮挡问题
+   - 完美适配 iOS Home Bar 安全区 (safe-area-inset-bottom)
+   ══════════════════════════════════════════════════════════════ */
+.resume-bubble-floating {
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+}
+
+.back-to-top-floating {
+  bottom: calc(158px + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 1024px) {
+  .resume-bubble-floating {
+    bottom: 1.5rem; /* 24px */
+  }
+  .back-to-top-floating {
+    bottom: 2rem; /* 32px */
+  }
+}
+
 
 

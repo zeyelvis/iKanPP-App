@@ -44,7 +44,7 @@ export function BackToTop() {
     return (
         <button
             onClick={scrollToTop}
-            className={`fixed bottom-20 right-6 z-[9999] p-2.5 rounded-full 
+            className={`fixed back-to-top-floating right-4 sm:right-6 z-[999] p-2.5 rounded-full 
                         bg-[var(--glass-bg)] border border-[var(--glass-border)] 
                         shadow-[var(--shadow-md)] backdrop-blur-xl 
                         text-[var(--text-color)] transition-all duration-300 ease-out

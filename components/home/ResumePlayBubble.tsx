@@ -127,7 +127,7 @@ export function ResumePlayBubble() {
   return (
     <aside
       aria-label="继续播放提示"
-      className="fixed bottom-6 right-6 z-40 max-w-sm w-[calc(100vw-3rem)] sm:w-auto animate-slide-up select-none"
+      className="fixed resume-bubble-floating left-3 right-3 sm:left-auto sm:right-6 z-40 max-w-sm sm:w-auto animate-slide-up select-none"
     >
       <div
         onClick={handleResume}
