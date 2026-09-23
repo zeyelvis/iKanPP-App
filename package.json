@@ -18,7 +18,12 @@
     "test:arch": "node scripts/test-architecture-integrity.mjs && node scripts/test-regression-suite.mjs && npx tsx scripts/test-latest-titles-404.mjs",
     "test:404": "npx tsx scripts/test-latest-titles-404.mjs",
     "prepare": "git config core.hooksPath scripts/git-hooks || true",
-    "pages:build": "npx @cloudflare/next-on-pages@1"
+    "pages:build": "npx @cloudflare/next-on-pages@1",
+    "seo:daemon:install": "bash scripts/cron/setup-daemon.sh",
+    "seo:daemon:status": "bash scripts/cron/status-daemon.sh",
+    "seo:daemon:uninstall": "bash scripts/cron/uninstall-daemon.sh",
+    "seo:daemon:logs": "tail -f logs/seo-daemon.log",
+    "seo:daemon:run": "node scripts/cron/autonomous-seo-daemon.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
