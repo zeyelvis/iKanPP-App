@@ -234,6 +234,8 @@ export default function AdminSeoPage() {
             <ShieldCheck className="w-4 h-4" />
           </div>
         </div>
+      </div>
+
       {/* Google Search Console 30天真实流量飙升折线图 */}
       <div className="admin-glass-panel p-6 rounded-2xl space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -495,3 +497,5 @@ export default function AdminSeoPage() {
     </div>
   );
 }
+
+
