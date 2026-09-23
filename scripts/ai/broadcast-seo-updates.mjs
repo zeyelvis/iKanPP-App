@@ -31,7 +31,7 @@ if (fs.existsSync(envLocalPath)) {
   }
 }
 
-import { PREBAKED_TOPICS } from '../../lib/services/topic-service.ts';
+import { PREBAKED_TOPICS } from '../../lib/data/prebaked-topics.ts';
 import { PREBAKED_AI_INSIGHTS } from '../../lib/data/prebaked-ai-insights.ts';
 
 const HOST = 'www.ikanpp.com';
