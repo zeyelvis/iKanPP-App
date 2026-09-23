@@ -37,8 +37,17 @@ function simulateResolve(param, prebakedList) {
       itemSlugDecoded === decodedSlug ||
       item.title === cleanTitle ||
       item.title === decodedSlug ||
-      (itemTitleNorm && (itemTitleNorm === cleanTitleNorm || itemTitleNorm === decodedSlugNorm)) ||
-      (item.entityId && entityId && item.entityId.toLowerCase() === entityId.toLowerCase())
+      (itemTitleNorm && (itemTitleNorm === cleanTitleNorm || itemTitleNorm === decodedSlugNorm))
+    ) {
+      return true;
+    }
+
+    // 只有权威固定主键 (非 ik_radar_ 动态临时顺位 ID) 才允许优先用 entityId 寻址
+    if (
+      item.entityId &&
+      entityId &&
+      !entityId.startsWith('ik_radar_') &&
+      item.entityId.toLowerCase() === entityId.toLowerCase()
     ) {
       return true;
     }
