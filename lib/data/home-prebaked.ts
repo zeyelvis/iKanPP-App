@@ -54,51 +54,51 @@ export const PREBAKED_HOME_DATA: {
   "movie": {
     "trendingNav": [
         {
-                "title": "哪吒之魔童降世",
+                "title": "一个部门的诞生",
                 "updateBadge": ""
         },
         {
-                "title": "五十度灰(未删减)",
+                "title": "欢迎来龙餐馆",
                 "updateBadge": ""
         },
         {
-                "title": "复仇者联盟4",
+                "title": "卖冰淇淋的人",
                 "updateBadge": ""
         },
         {
-                "title": "哈利波特1魔法石",
+                "title": "年会不能停！2",
                 "updateBadge": ""
         },
         {
-                "title": "色戒",
+                "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
         {
-                "title": "流浪地球",
+                "title": "爱情假说",
                 "updateBadge": ""
         },
         {
-                "title": "复仇者联盟3",
+                "title": "一夜限定",
                 "updateBadge": ""
         },
         {
-                "title": "周处除三害",
+                "title": "逃出绝命街",
                 "updateBadge": ""
         },
         {
-                "title": "毒液：致命守护者",
+                "title": "数到三",
                 "updateBadge": ""
         },
         {
-                "title": "疯狂动物城",
+                "title": "特立独行",
                 "updateBadge": ""
         },
         {
-                "title": "你好，李焕英",
+                "title": "超级骑警3",
                 "updateBadge": ""
         },
         {
-                "title": "西虹市首富",
+                "title": "怒之杀(听译)",
                 "updateBadge": ""
         }
       ],
@@ -1822,51 +1822,51 @@ export const PREBAKED_HOME_DATA: {
   "tv": {
     "trendingNav": [
         {
-                "title": "逐玉",
+                "title": "兰香如故",
+                "updateBadge": "2"
+        },
+        {
+                "title": "一瓯春",
+                "updateBadge": "1"
+        },
+        {
+                "title": "早春晴朗",
                 "updateBadge": ""
         },
         {
-                "title": "许我耀眼",
+                "title": "死有对证",
+                "updateBadge": "1"
+        },
+        {
+                "title": "交锋",
                 "updateBadge": ""
         },
         {
-                "title": "狂飙",
+                "title": "法医秦明之龙番往事",
+                "updateBadge": "2"
+        },
+        {
+                "title": "挑情丑闻",
                 "updateBadge": ""
         },
         {
-                "title": "庆余年第2季",
+                "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
-                "title": "藏海传",
+                "title": "冬城猎凶",
                 "updateBadge": ""
         },
         {
-                "title": "延禧攻略",
+                "title": "花开锦绣",
                 "updateBadge": ""
         },
         {
-                "title": "折腰",
+                "title": "百花杀",
                 "updateBadge": ""
         },
         {
-                "title": "墨雨云间",
-                "updateBadge": ""
-        },
-        {
-                "title": "如懿传",
-                "updateBadge": ""
-        },
-        {
-                "title": "知否知否应是绿肥红瘦",
-                "updateBadge": ""
-        },
-        {
-                "title": "玫瑰的故事",
-                "updateBadge": ""
-        },
-        {
-                "title": "难哄",
+                "title": "生逢其时",
                 "updateBadge": ""
         }
       ],
@@ -1877,13 +1877,13 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609221204050427723.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609221304100431020.jpg",
-                "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至04集 | 共24集。",
+                "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至06集 | 共24集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至04集 | 共24集",
+                "episodes_info": "更新至06集 | 共24集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1894,13 +1894,13 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
                 "backdrop": "https://static.iyf.tv/upload/user/202609171141024107110.jpg",
-                "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至15集 | 共30集。",
+                "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至16集 | 共30集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至15集 | 共30集",
+                "episodes_info": "更新至16集 | 共30集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1911,13 +1911,13 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609111404160476768.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609111848394812246.jpg",
-                "description": "《兰香如故》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至26集 | 共47集。",
+                "description": "《兰香如故》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至28集 | 共47集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至26集 | 共47集",
+                "episodes_info": "更新至28集 | 共47集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
