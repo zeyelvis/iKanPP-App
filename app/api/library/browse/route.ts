@@ -326,6 +326,34 @@ function matchesStatus(item: any, status: string): boolean {
 }
 
 /**
+ * 题材分类匹配辅助函数（支持智能复合与近义词召回）
+ */
+function matchesGenre(item: any, genre: string): boolean {
+  if (!genre || genre === '全部' || genre === 'all') return true;
+  const target = genre.trim().toLowerCase();
+  const typeName = (item.type_name || '').toLowerCase();
+  const vodClass = (item.vod_class || '').toLowerCase();
+  const vodName = (item.vod_name || '').toLowerCase();
+  const combined = `${typeName} ${vodClass} ${vodName}`;
+
+  if (combined.includes(target)) return true;
+
+  // 智能近义与复合题材映射
+  if (target === '警匪') return combined.includes('警匪') || combined.includes('犯罪') || combined.includes('刑侦') || combined.includes('枪战');
+  if (target === '枪战') return combined.includes('枪战') || combined.includes('动作') || combined.includes('警匪');
+  if (target === '谍战') return combined.includes('谍战') || combined.includes('特工') || combined.includes('军旅') || combined.includes('抗日');
+  if (target === '仙侠') return combined.includes('仙侠') || combined.includes('古装') || combined.includes('修真') || combined.includes('玄幻');
+  if (target === '玄幻') return combined.includes('玄幻') || combined.includes('修真') || combined.includes('奇幻');
+  if (target === '修真') return combined.includes('修真') || combined.includes('玄幻') || combined.includes('仙侠');
+  if (target === '赘婿') return combined.includes('赘婿') || combined.includes('战神') || combined.includes('逆袭');
+  if (target === '复仇') return combined.includes('复仇') || combined.includes('逆袭') || combined.includes('爽剧');
+  if (target === '战神') return combined.includes('战神') || combined.includes('逆袭') || combined.includes('神医');
+  if (target === '灾难') return combined.includes('灾难') || combined.includes('末日') || combined.includes('末世');
+
+  return false;
+}
+
+/**
  * 年份匹配辅助函数
  */
 function matchesYear(item: any, yearStr: string): boolean {
@@ -530,8 +558,12 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
-    // 内存过滤年份
+    // 内存过滤题材（细分垂直分类）
+    if (!matchesGenre(item, cleanGenre)) {
+      continue;
+    }
 
+    // 内存过滤年份
     if (!matchesYear(item, year)) {
       continue;
     }
@@ -576,7 +608,7 @@ export async function GET(req: NextRequest) {
 
   // 计算分页指标（真实反映源站与筛选后的条目数量）
   const primaryData = gsData?.total ? gsData : jsData;
-  const isFiltered = Boolean((year && year !== '全部') || (lang && lang !== '全部') || (quality && quality !== '全部') || (status && status !== '全部'));
+  const isFiltered = Boolean((cleanGenre && cleanGenre !== '全部') || (year && year !== '全部') || (lang && lang !== '全部') || (quality && quality !== '全部') || (status && status !== '全部'));
 
   // 未加细筛选时，直接透传源站该专区真实总数；加细筛选时如实统计匹配结果
   let total = Number(primaryData?.total) || normalizedList.length;

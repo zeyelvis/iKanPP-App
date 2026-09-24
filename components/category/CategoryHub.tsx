@@ -93,9 +93,10 @@ export function CategoryHub({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // 统一多维检索矩阵状态（覆盖板块/地区/语言/年份/画质/状态/排序）
+  // 统一多维检索矩阵状态（覆盖板块/类型/地区/语言/年份/画质/状态/排序）
   const [filters, setFilters] = useState<FilterParams>({
     channel: activeNav || 'movie',
+    genre: searchParams.get('genre') || '',
     region: searchParams.get('region') || '',
     lang: searchParams.get('lang') || '',
     year: searchParams.get('year') || '',
@@ -317,6 +318,12 @@ function isSameList(a: any[], b: any[]): boolean {
           // 纯预烘焙频道：直接使用本地精选池进行内存过滤与分页呈现
           const pool = PREBAKED_CATEGORY_ITEMS[activeNav] || PREBAKED_CATEGORY_ITEMS.short || [];
           let filtered = [...pool];
+          if (activeFilters.genre) {
+            filtered = filtered.filter((item) =>
+              (item.types && item.types.some((t) => t.includes(activeFilters.genre))) ||
+              item.title.includes(activeFilters.genre)
+            );
+          }
           if (activeFilters.year) {
             filtered = filtered.filter((item) => item.year === activeFilters.year);
           }
@@ -331,8 +338,9 @@ function isSameList(a: any[], b: any[]): boolean {
 
         if (shortDramaMode && !usePrebakedOnly && (activeFilters.channel === 'short' || activeNav === 'short')) {
           const targetPage = pageNum + 1;
+          const targetCategory = activeFilters.genre || 'all';
           const res = await fetch(
-            `/api/short-dramas/browse?category=all&page=${targetPage}&limit=${PAGE_SIZE}`
+            `/api/short-dramas/browse?category=${encodeURIComponent(targetCategory)}&page=${targetPage}&limit=${PAGE_SIZE}`
           );
           if (!res.ok) {
             setGridMovies([]);
@@ -358,7 +366,7 @@ function isSameList(a: any[], b: any[]): boolean {
           return;
         }
 
-        // 采集站全库实时网格浏览（覆盖全部板块/地区/语言/年份/画质/状态/排序）
+        // 采集站全库实时网格浏览（覆盖全部板块/题材/地区/语言/年份/画质/状态/排序）
         const targetChannel = activeFilters.channel || activeNav;
         const browseType =
           targetChannel === 'all'
@@ -370,6 +378,7 @@ function isSameList(a: any[], b: any[]): boolean {
         params.set('type', browseType);
         params.set('page', String(targetPage));
         params.set('limit', String(PAGE_SIZE));
+        if (activeFilters.genre) params.set('genre', activeFilters.genre);
         if (activeFilters.region) params.set('area', activeFilters.region);
         if (activeFilters.lang) params.set('lang', activeFilters.lang);
         if (activeFilters.year) params.set('year', activeFilters.year);

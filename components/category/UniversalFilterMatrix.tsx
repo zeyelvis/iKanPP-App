@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 export interface FilterParams {
   channel: string;
+  genre: string;
   region: string;
   lang: string;
   year: string;
@@ -35,6 +36,163 @@ const CHANNEL_OPTIONS = [
   { label: '短剧', value: 'short' },
   { label: '纪录片', value: 'documentary' },
 ];
+
+// 1.5 全量精细题材分类标签库（按 6 大专区智能动态联动，支持多重模糊召回）
+const CHANNEL_GENRES: Record<string, Array<{ label: string; value: string }>> = {
+  all: [
+    { label: '动作', value: '动作' },
+    { label: '喜剧', value: '喜剧' },
+    { label: '爱情', value: '爱情' },
+    { label: '科幻', value: '科幻' },
+    { label: '悬疑', value: '悬疑' },
+    { label: '犯罪', value: '犯罪' },
+    { label: '警匪', value: '警匪' },
+    { label: '古装', value: '古装' },
+    { label: '仙侠', value: '仙侠' },
+    { label: '都市', value: '都市' },
+    { label: '武侠', value: '武侠' },
+    { label: '战争', value: '战争' },
+    { label: '谍战', value: '谍战' },
+    { label: '灾难', value: '灾难' },
+    { label: '冒险', value: '冒险' },
+    { label: '奇幻', value: '奇幻' },
+    { label: '热血', value: '热血' },
+    { label: '修真', value: '修真' },
+    { label: '剧情', value: '剧情' },
+    { label: '惊悚', value: '惊悚' },
+    { label: '真人秀', value: '真人秀' },
+    { label: '脱口秀', value: '脱口秀' },
+    { label: '战神', value: '战神' },
+    { label: '豪门', value: '豪门' },
+    { label: '自然', value: '自然' },
+    { label: '历史', value: '历史' },
+  ],
+  movie: [
+    { label: '动作', value: '动作' },
+    { label: '喜剧', value: '喜剧' },
+    { label: '爱情', value: '爱情' },
+    { label: '科幻', value: '科幻' },
+    { label: '悬疑', value: '悬疑' },
+    { label: '犯罪', value: '犯罪' },
+    { label: '警匪', value: '警匪' },
+    { label: '枪战', value: '枪战' },
+    { label: '谍战', value: '谍战' },
+    { label: '惊悚', value: '惊悚' },
+    { label: '恐怖', value: '恐怖' },
+    { label: '战争', value: '战争' },
+    { label: '灾难', value: '灾难' },
+    { label: '冒险', value: '冒险' },
+    { label: '奇幻', value: '奇幻' },
+    { label: '魔幻', value: '魔幻' },
+    { label: '武侠', value: '武侠' },
+    { label: '历史', value: '历史' },
+    { label: '剧情', value: '剧情' },
+    { label: '传记', value: '传记' },
+    { label: '动画', value: '动画' },
+    { label: '歌舞', value: '歌舞' },
+  ],
+  tv: [
+    { label: '古装', value: '古装' },
+    { label: '仙侠', value: '仙侠' },
+    { label: '都市', value: '都市' },
+    { label: '悬疑', value: '悬疑' },
+    { label: '刑侦', value: '刑侦' },
+    { label: '谍战', value: '谍战' },
+    { label: '言情', value: '言情' },
+    { label: '年代', value: '年代' },
+    { label: '商战', value: '商战' },
+    { label: '军旅', value: '军旅' },
+    { label: '武侠', value: '武侠' },
+    { label: '科幻', value: '科幻' },
+    { label: '律政', value: '律政' },
+    { label: '医疗', value: '医疗' },
+    { label: '家庭', value: '家庭' },
+    { label: '偶像', value: '偶像' },
+    { label: '历史', value: '历史' },
+    { label: '奇幻', value: '奇幻' },
+    { label: '青春', value: '青春' },
+    { label: '情景', value: '情景' },
+  ],
+  anime: [
+    { label: '热血', value: '热血' },
+    { label: '修真', value: '修真' },
+    { label: '玄幻', value: '玄幻' },
+    { label: '冒险', value: '冒险' },
+    { label: '科幻', value: '科幻' },
+    { label: '搞笑', value: '搞笑' },
+    { label: '奇幻', value: '奇幻' },
+    { label: '穿越', value: '穿越' },
+    { label: '异世界', value: '异世界' },
+    { label: '战斗', value: '战斗' },
+    { label: '校园', value: '校园' },
+    { label: '恋爱', value: '恋爱' },
+    { label: '日常', value: '日常' },
+    { label: '治愈', value: '治愈' },
+    { label: '机战', value: '机战' },
+    { label: '推理', value: '推理' },
+    { label: '古风', value: '古风' },
+    { label: '萌系', value: '萌系' },
+    { label: '游戏', value: '游戏' },
+    { label: '悬疑', value: '悬疑' },
+  ],
+  variety: [
+    { label: '真人秀', value: '真人秀' },
+    { label: '脱口秀', value: '脱口秀' },
+    { label: '音乐现场', value: '音乐' },
+    { label: '搞笑', value: '搞笑' },
+    { label: '竞技户外', value: '竞技' },
+    { label: '恋爱观察', value: '恋爱' },
+    { label: '访谈', value: '访谈' },
+    { label: '相声', value: '相声' },
+    { label: '生活', value: '生活' },
+    { label: '美食', value: '美食' },
+    { label: '情感', value: '情感' },
+    { label: '选秀', value: '选秀' },
+    { label: '游戏', value: '游戏' },
+    { label: '文化', value: '文化' },
+    { label: '晚会盛典', value: '晚会' },
+    { label: '亲子', value: '亲子' },
+    { label: '职场', value: '职场' },
+  ],
+  documentary: [
+    { label: '自然', value: '自然' },
+    { label: '地理', value: '地理' },
+    { label: '宇宙天文', value: '宇宙' },
+    { label: '历史', value: '历史' },
+    { label: '人文', value: '人文' },
+    { label: '美食', value: '美食' },
+    { label: '军事战争', value: '军事' },
+    { label: '考古秘境', value: '考古' },
+    { label: '科学', value: '科学' },
+    { label: '探险', value: '探险' },
+    { label: '动物生态', value: '动物' },
+    { label: '社会纪实', value: '社会' },
+    { label: '传记', value: '传记' },
+    { label: '旅行', value: '旅行' },
+    { label: '科技', value: '科技' },
+    { label: '灾难', value: '灾难' },
+    { label: '艺术', value: '艺术' },
+  ],
+  short: [
+    { label: '战神', value: '战神' },
+    { label: '豪门', value: '豪门' },
+    { label: '赘婿', value: '赘婿' },
+    { label: '复仇爽剧', value: '复仇' },
+    { label: '虐恋', value: '虐恋' },
+    { label: '重生', value: '重生' },
+    { label: '穿越', value: '穿越' },
+    { label: '逆袭', value: '逆袭' },
+    { label: '神医', value: '神医' },
+    { label: '甜宠', value: '甜宠' },
+    { label: '言情', value: '言情' },
+    { label: '古装', value: '古装' },
+    { label: '仙侠', value: '仙侠' },
+    { label: '脑洞', value: '脑洞' },
+    { label: '现代都市', value: '现代都市' },
+    { label: '女频', value: '女频' },
+    { label: '萌宝', value: '萌宝' },
+  ],
+};
 
 // 2. 全部地区
 const REGION_OPTIONS = [
@@ -110,6 +268,7 @@ export function UniversalFilterMatrix({
 
   // 当前激活状态
   const [selectedChannel, setSelectedChannel] = useState<string>(defaultChannel);
+  const [selectedGenre, setSelectedGenre] = useState<string>('');
   const [selectedRegion, setSelectedRegion] = useState<string>('');
   const [selectedLang, setSelectedLang] = useState<string>('');
   const [selectedYear, setSelectedYear] = useState<string>('');
@@ -129,6 +288,7 @@ export function UniversalFilterMatrix({
     (overrides?: Partial<FilterParams>) => {
       const currentFilters: FilterParams = {
         channel: overrides?.channel !== undefined ? overrides.channel : selectedChannel,
+        genre: overrides?.genre !== undefined ? overrides.genre : selectedGenre,
         region: overrides?.region !== undefined ? overrides.region : selectedRegion,
         lang: overrides?.lang !== undefined ? overrides.lang : selectedLang,
         year: overrides?.year !== undefined ? overrides.year : selectedYear,
@@ -140,6 +300,7 @@ export function UniversalFilterMatrix({
     },
     [
       selectedChannel,
+      selectedGenre,
       selectedRegion,
       selectedLang,
       selectedYear,
@@ -153,7 +314,19 @@ export function UniversalFilterMatrix({
   // 单独切换处理
   const handleChannelSelect = (channelVal: string) => {
     setSelectedChannel(channelVal);
-    notifyChange({ channel: channelVal });
+    // 切换专区时，如果当前选中的题材在新的专区不存在，则自动重置题材
+    const newGenres = CHANNEL_GENRES[channelVal] || CHANNEL_GENRES.all || [];
+    const keepGenre = newGenres.some(g => g.value === selectedGenre) ? selectedGenre : '';
+    if (keepGenre !== selectedGenre) {
+      setSelectedGenre(keepGenre);
+    }
+    notifyChange({ channel: channelVal, genre: keepGenre });
+  };
+
+  const handleGenreSelect = (genreVal: string) => {
+    const nextVal = selectedGenre === genreVal ? '' : genreVal;
+    setSelectedGenre(nextVal);
+    notifyChange({ genre: nextVal });
   };
 
   const handleRegionSelect = (regionVal: string) => {
@@ -193,6 +366,7 @@ export function UniversalFilterMatrix({
 
   // 一键重置所有条件（保留当前板块）
   const handleResetFilters = () => {
+    setSelectedGenre('');
     setSelectedRegion('');
     setSelectedLang('');
     setSelectedYear('');
@@ -201,6 +375,7 @@ export function UniversalFilterMatrix({
     setSelectedSort('time_added');
     onFilterChange({
       channel: selectedChannel,
+      genre: '',
       region: '',
       lang: '',
       year: '',
@@ -211,8 +386,10 @@ export function UniversalFilterMatrix({
   };
 
   const hasActiveFilters = Boolean(
-    selectedRegion || selectedLang || selectedYear || selectedQuality || selectedStatus || selectedSort !== 'time_added'
+    selectedGenre || selectedRegion || selectedLang || selectedYear || selectedQuality || selectedStatus || selectedSort !== 'time_added'
   );
+
+  const currentGenres = CHANNEL_GENRES[selectedChannel] || CHANNEL_GENRES[defaultChannel] || CHANNEL_GENRES.all;
 
   return (
     <div className="w-full bg-[#131926]/95 backdrop-blur-xl border border-[#1e2a3f] rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6 text-sm select-none transition-all">
@@ -276,6 +453,43 @@ export function UniversalFilterMatrix({
           </div>
         </div>
 
+        {/* 行 1.5：全部类型 / 题材分类（随选中的板块智能动态联动） */}
+        <div className="flex items-start gap-4 sm:gap-6">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedGenre('');
+              notifyChange({ genre: '' });
+            }}
+            className={`px-3.5 py-1.5 rounded-[3px] text-sm shrink-0 cursor-pointer font-medium transition-all text-center min-w-[88px] ${
+              !selectedGenre
+                ? 'bg-[#00a8ff] text-white shadow-sm'
+                : 'text-[#8899aa] hover:text-white hover:bg-white/5'
+            }`}
+          >
+            全部类型
+          </button>
+          <div className="flex flex-wrap items-center gap-x-6 sm:gap-x-7 gap-y-2 flex-1 pt-1">
+            {currentGenres.map((item) => {
+              const isActive = selectedGenre === item.value;
+              return (
+                <button
+                  key={item.value}
+                  type="button"
+                  onClick={() => handleGenreSelect(item.value)}
+                  className={`text-sm cursor-pointer transition-colors rounded-[3px] ${
+                    isActive
+                      ? 'bg-[#00a8ff] text-white font-medium px-3 py-0.5 shadow-sm'
+                      : 'text-[#94a3b8] hover:text-white'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* 行 2：全部地区 */}
         <div className="flex items-start gap-4 sm:gap-6">
           <button
@@ -312,6 +526,7 @@ export function UniversalFilterMatrix({
             })}
           </div>
         </div>
+
 
         {/* 行 3：全部语言 */}
         <div className="flex items-start gap-4 sm:gap-6">
