@@ -27,6 +27,8 @@ interface ContentRailProps {
   isPriority?: boolean;
   onMovieClick?: (movie: RailMovie) => void;
   onViewAll?: () => void;
+  actionLabel?: string;
+  quickTags?: Array<{ label: string; href: string }>;
 }
 
 function RailPosterItem({
@@ -175,6 +177,8 @@ export function ContentRail({
   isPriority = false,
   onMovieClick,
   onViewAll,
+  actionLabel,
+  quickTags,
 }: ContentRailProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -209,28 +213,45 @@ export function ContentRail({
 
   return (
     <section className="relative my-8 sm:my-10 group/rail">
-      {/* 标题栏 */}
-      <div className="flex items-center justify-between mb-3.5 px-1 sm:px-2">
-        <div className="flex items-center gap-2.5">
-          <span className="text-xl sm:text-2xl">{icon}</span>
-          <h2 className="text-lg sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-            {title}
-            {badge && (
-              <span className="text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full bg-(--accent-color)/20 text-(--accent-color) border border-(--accent-color)/30">
-                {badge}
-              </span>
-            )}
-          </h2>
+      {/* 标题栏与专区分类快捷导航 */}
+      <div className="mb-3.5 px-1 sm:px-2 space-y-2.5">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="text-xl sm:text-2xl shrink-0">{icon}</span>
+            <h2 className="text-lg sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2 truncate">
+              <span className="truncate">{title}</span>
+              {badge && (
+                <span className="shrink-0 text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full bg-(--accent-color)/20 text-(--accent-color) border border-(--accent-color)/30">
+                  {badge}
+                </span>
+              )}
+            </h2>
+          </div>
+
+          {onViewAll && (
+            <button
+              onClick={onViewAll}
+              className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-(--accent-color) border border-white/10 hover:border-transparent text-xs sm:text-sm font-semibold text-white/70 hover:text-white transition-all cursor-pointer shrink-0 shadow-xs active:scale-95"
+            >
+              <span>{actionLabel || '查看全部'}</span>
+              <Icons.ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          )}
         </div>
 
-        {onViewAll && (
-          <button
-            onClick={onViewAll}
-            className="flex items-center gap-1 text-xs sm:text-sm font-medium text-white/50 hover:text-white transition-colors cursor-pointer"
-          >
-            <span>查看全部</span>
-            <Icons.ChevronRight size={14} />
-          </button>
+        {/* 专区高频分类快捷药丸胶囊 */}
+        {quickTags && quickTags.length > 0 && (
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-0.5">
+            {quickTags.map((tag, idx) => (
+              <Link
+                key={idx}
+                href={tag.href}
+                className="shrink-0 whitespace-nowrap px-3 py-1 rounded-full text-xs font-medium bg-white/5 hover:bg-white/15 text-white/60 hover:text-white border border-white/5 hover:border-white/20 transition-all cursor-pointer active:scale-95"
+              >
+                {tag.label}
+              </Link>
+            ))}
+          </div>
         )}
       </div>
 
