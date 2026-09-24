@@ -9,11 +9,15 @@ import type { PrebakedSubject, PrebakedHomeCategory } from './home-prebaked';
 export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
+        "title": "仙逆",
+        "updateBadge": ""
+    },
+    {
         "title": "诛仙4",
         "updateBadge": "1"
     },
     {
-        "title": "仙逆",
+        "title": "海贼王",
         "updateBadge": ""
     },
     {
@@ -21,16 +25,8 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "海贼王",
-        "updateBadge": ""
-    },
-    {
-        "title": "东大高武学院",
+        "title": "被追放的转生重骑士用游戏知识开无双",
         "updateBadge": "1"
-    },
-    {
-        "title": "斗破苍穹年番",
-        "updateBadge": ""
     },
     {
         "title": "遮天",
@@ -41,19 +37,23 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "逆天邪神3D",
-        "updateBadge": "1"
+        "title": "牧神记",
+        "updateBadge": ""
+    },
+    {
+        "title": "斗破苍穹年番",
+        "updateBadge": ""
     },
     {
         "title": "吞噬星空",
         "updateBadge": ""
     },
     {
-        "title": "灵境行者",
+        "title": "光阴之外",
         "updateBadge": ""
     },
     {
-        "title": "牧神记",
+        "title": "逆天邪神3D",
         "updateBadge": ""
     }
   ],
@@ -631,36 +631,36 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
 export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "心动的信号第9季",
-        "updateBadge": "2"
+        "title": "一饭封神第2季",
+        "updateBadge": ""
     },
     {
-        "title": "一饭封神第2季",
-        "updateBadge": "2"
+        "title": "心动的信号第9季",
+        "updateBadge": ""
     },
     {
         "title": "花儿与少年第8季",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "披荆斩棘2026",
-        "updateBadge": "1"
+        "updateBadge": ""
+    },
+    {
+        "title": "我家那闺女2026",
+        "updateBadge": ""
     },
     {
         "title": "密室大逃脱第8季",
         "updateBadge": ""
     },
     {
-        "title": "我家那闺女2026",
-        "updateBadge": "1"
-    },
-    {
-        "title": "旗安84的奇趣民宿第2季",
-        "updateBadge": ""
-    },
-    {
         "title": "大哥小助理",
         "updateBadge": "1"
+    },
+    {
+        "title": "脱口秀和Ta的朋友们第3季",
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -772,13 +772,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607231303450351514.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202607271339373917253.jpg",
-        "description": "《一饭封神第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260924(第9期下美食竞技纯享版)。",
+        "description": "《一饭封神第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至第10期下。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260924(第9期下美食竞技纯享版)",
+        "episodes_info": "更新至第10期下",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1237,195 +1237,132 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "与君共覆局",
-          "updateBadge": "全"
+          "title": "医妃一笑，王爷魂都掉",
+          "updateBadge": "HOT"
       },
       {
-          "title": "云锦秀起，世子有福了",
-          "updateBadge": "全"
+          "title": "骤雨撞骄阳",
+          "updateBadge": "121"
       },
       {
-          "title": "信手斩神，我即是暗影",
-          "updateBadge": "全"
+          "title": "主母爱谁当！纨绔夫君为我争诰命",
+          "updateBadge": "79"
       },
       {
-          "title": "千古第三阳谋！",
-          "updateBadge": "全"
+          "title": "十八岁太奶奶驾到重整家族荣耀2",
+          "updateBadge": "HOT"
       },
       {
-          "title": "开局虐渣，特工世子妃来自现代",
-          "updateBadge": "71"
+          "title": "星光下的诺言",
+          "updateBadge": "78"
       },
       {
-          "title": "山海道太昊崛起",
-          "updateBadge": "全"
+          "title": "抢亲九零小娇夫竟是大院贵公子",
+          "updateBadge": "88"
       },
       {
-          "title": "温柔的诱惑第四版",
-          "updateBadge": "全"
+          "title": "半生父女一生情",
+          "updateBadge": "45"
       },
       {
-          "title": "春色都将付以棠",
-          "updateBadge": "全"
+          "title": "错爱经年人已远",
+          "updateBadge": "50"
       },
       {
-          "title": "时光缝里的救赎-和心上人争锋相对后他不装了",
-          "updateBadge": "全"
+          "title": "养神为夫",
+          "updateBadge": "65"
       },
       {
-          "title": "乱世红颜惹人醉",
-          "updateBadge": "80"
+          "title": "山村奇谈",
+          "updateBadge": "46"
       },
       {
-          "title": "长夜沉霜烬余辉",
-          "updateBadge": "全"
+          "title": "护你不只是任务",
+          "updateBadge": "61"
       },
       {
-          "title": "重生之我爸是全班倒数第一",
-          "updateBadge": "全"
+          "title": "那年那团那青春岁月",
+          "updateBadge": "61"
       }
   ],
   hero: [
       {
-          "id": "jl_short_638711984551887000",
-          "title": "与君共覆局",
-          "rate": "8.8",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/66ca3d7c81da751efe1f40a4e7edd5dea5df96b934cab7e91c0c3c79b1f3b78c.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/66ca3d7c81da751efe1f40a4e7edd5dea5df96b934cab7e91c0c3c79b1f3b78c.jpg",
-          "description": "携手与共赴深渊，这两个词放在102集的《与君共覆局》里形成了极其锋利的割裂感。林潇和喻嘉琳开场时是并肩作战的同盟，彼此交付后背的信任感让人以为这是一段相互救赎的坦途，可随着棋局层层剥开，亲密无间的表象下暗流涌动。所谓的共覆局，既是联手倾覆敌人的阴谋，也是两人关系走向崩塌的倒计时。前期的默契配合越动人...",
+          "id": "jl_short_631199570835013600",
+          "title": "十八岁太奶奶驾到重整家族荣耀2",
+          "rate": "9.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/7387d707551b88aef4325bb3dd046cdb9a2b9007996b0c39b70956c05115cefe.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/7387d707551b88aef4325bb3dd046cdb9a2b9007996b0c39b70956c05115cefe.jpg",
+          "description": "1955年容遇意外去世，一睁眼竟穿到了七十年后同名同姓的高中少女身上。如今她的儿子已经七十多岁，还有了几个帅气重孙子。可重孙们各有问题，容遇凭借智慧和能力整顿大家，同时她自己也在这个全新时代不断成长，找到了属于她的美好。",
           "year": "2026",
+          "types": [
+              "短剧",
+              "年代穿越",
+              "全集连播"
+          ],
+          "episodes_info": "全219集·全集",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "王道铁 / 屈刚 / 曾辉 / 赵廷义 / 吴添豪 / 李柯以 / 王培延"
+          ]
+      },
+      {
+          "id": "jl_short_629462229317582800",
+          "title": "医妃一笑，王爷魂都掉",
+          "rate": "9.5",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/304088/poster/24d9e5eaa3d70fc0deca912115aaddbadf7c501058fc23a5cd935984b476d6bc.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/304088/poster/24d9e5eaa3d70fc0deca912115aaddbadf7c501058fc23a5cd935984b476d6bc.webp",
+          "description": "更新全集",
+          "year": "2025",
           "types": [
               "短剧",
               "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全80集·已完结",
+          "episodes_info": "全147集·全集",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "林潇 / 喻嘉琳"
+              "王梓亦＆魏凡舒＆张力壬"
           ]
       },
       {
-          "id": "jl_short_633545666890563600",
-          "title": "千古第三阳谋！",
-          "rate": "9.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/cea19d7eb9b3cb302d23ddacbca18917cfa2fa6d227f5ce530150891dba8e53a.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/cea19d7eb9b3cb302d23ddacbca18917cfa2fa6d227f5ce530150891dba8e53a.jpg",
-          "description": "高阳穿越大乾，恰逢女帝登基，广纳天下贤才，他便以一介谋士身份毛遂自荐。女帝问，当你扳倒通敌叛国的奸臣，其核心党羽尽数伏法，却发现还有一个年幼的远亲躲在暗处，你会如何处置。高阳答，臣会告诉他，今日之祸是他家族罪有应得，我从不滥杀无辜孩童，今日便放他一条生路。说完转身作势要走，却又猛然回头，大笑一声，哈...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全601集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_630315791188623400",
-          "title": "一胎二宝：总裁爹地超凶猛",
-          "rate": "8.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/5c0336cdee798c796a211b8be3b813ae94b2f9d2a2b84f42badbb445723035ef.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/5c0336cdee798c796a211b8be3b813ae94b2f9d2a2b84f42badbb445723035ef.jpg",
-          "description": "做了几年贤妻的夜太太把夜司瀚睡了之后突然提出离婚。夜司瀚：“理由。” 荣浅：“做了那么多年夜太太就是馋你的颜跟身子，现在得到了。”",
-          "year": "2023",
+          "id": "jl_short_630064493187301400",
+          "title": "骤雨撞骄阳",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/40283c6648f0695194cc56ab8f423fb5ee6467ab777b41144910f453996726f5.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/40283c6648f0695194cc56ab8f423fb5ee6467ab777b41144910f453996726f5.jpg",
+          "description": "剧情简介暂缺，敬请期待",
+          "year": "2025",
           "types": [
               "短剧",
               "女频恋爱",
               "全集连播"
           ],
-          "episodes_info": "全13集·全80集",
+          "episodes_info": "全243集·全121集",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "短剧实力派"
+              "赵冠宇&amp / 郝韵"
           ]
       },
       {
-          "id": "jl_short_638613549605716500",
-          "title": "归路 短剧版",
-          "rate": "9.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/a9eb35734fbae89d78b90d9468df547479bd222430b69428b146a91ada7c4fe2.png",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/a9eb35734fbae89d78b90d9468df547479bd222430b69428b146a91ada7c4fe2.png",
-          "description": "《归路》的故事超级打动人心，讲的是归晓和路炎晨这对初恋情侣，因为种种原因分开了十年，然后又重逢的故事。路炎晨变成了一名英勇的特警，而归晓则在家庭变故后，变得更加坚强独立。两个人的再次相遇，真的是让人又相信爱情了！",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "其他",
-              "全集连播"
-          ],
-          "episodes_info": "全145集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_638617135836299300",
-          "title": "穿书秦洛日记，女主移情别恋",
-          "rate": "9.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/5f870010024fb10e52c8f0af9697f47063a9564f9862c6486921de4cc1720c78.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/5f870010024fb10e52c8f0af9697f47063a9564f9862c6486921de4cc1720c78.jpg",
-          "description": "你有没有想过，穿进书里却发现女主根本不按剧情走？刘珈睿和薄艾莹主演的这部剧就把这个设定玩出了花，80集全程高能。主角穿成秦洛，本想抱紧女主大腿，结果女主直接移情别恋，原定剧本全盘打乱。刘珈睿演出了那种计划落空的错愕与不甘，薄艾莹则把女主的洒脱和转变刻画得细腻真实，两人拉扯感十足。这部剧适合爱看反套路...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "刘珈睿＆薄艾莹"
-          ]
-      },
-      {
-          "id": "jl_short_633545588843020300",
-          "title": "云锦秀起，世子有福了",
-          "rate": "9.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/7b603f2c289c818a258bac51e5caf6b626639849f7a46a138457d51c8e00dfcf.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/7b603f2c289c818a258bac51e5caf6b626639849f7a46a138457d51c8e00dfcf.jpg",
-          "description": "云锦秀起，世子有福了 精彩全集连播，高能反转停不下来！",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全325集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_638726163530842200",
-          "title": "信手斩神，我即是暗影",
-          "rate": "9.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d9d826c2ce76b7fd175b7b1366d3f6934ba3a2b9f5fa697bdd0c847246b533ac.png",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d9d826c2ce76b7fd175b7b1366d3f6934ba3a2b9f5fa697bdd0c847246b533ac.png",
-          "description": "信手斩神，我即是暗影 精彩全集连播，高能反转停不下来！",
+          "id": "jl_short_630051643903311900",
+          "title": "主母爱谁当！纨绔夫君为我争诰命",
+          "rate": "8.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/e77b15897421b173fe04505b6542d9fac9260418d5c92d108296e7d4215ed1e1.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/e77b15897421b173fe04505b6542d9fac9260418d5c92d108296e7d4215ed1e1.jpg",
+          "description": "主母爱谁当！纨绔夫君为我争诰命 精彩全集连播，高能反转停不下来！",
           "year": "2025",
           "types": [
               "短剧",
-              "其他",
+              "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全123集·已完结",
+          "episodes_info": "全159集·全79集",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1434,105 +1371,168 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_630908530278268900",
-          "title": "开局虐渣，特工世子妃来自现代",
-          "rate": "9.0",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/16fa49e934b4a366bcf48b77ad27f52eae07b8decc82166c74d6bafc896bac54.png",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/16fa49e934b4a366bcf48b77ad27f52eae07b8decc82166c74d6bafc896bac54.png",
+          "id": "jl_short_630028413717119000",
+          "title": "星光下的诺言",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/b93f62776b12889c22585552ec99490e188e1f7ad61b477de0acc1da2234d617.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/b93f62776b12889c22585552ec99490e188e1f7ad61b477de0acc1da2234d617.jpg",
           "description": "剧情简介暂缺，敬请期待",
           "year": "2025",
           "types": [
               "短剧",
-              "古装仙侠",
+              "女频恋爱",
               "全集连播"
           ],
-          "episodes_info": "全161集·更新至71集",
+          "episodes_info": "全157集·全78集",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "王晨钊 / 郑千亦"
+              "张禹麟＆惠一秋&amp / 瑞子"
+          ]
+      },
+      {
+          "id": "jl_short_630028393013903400",
+          "title": "抢亲九零小娇夫竟是大院贵公子",
+          "rate": "8.7",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/dde0917d9ced30e110ce8e2f47a879d6a82b2b37f92398d0ceeddf9e493cadc0.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/dde0917d9ced30e110ce8e2f47a879d6a82b2b37f92398d0ceeddf9e493cadc0.jpg",
+          "description": "剧情简介暂缺，敬请期待",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "年代穿越",
+              "全集连播"
+          ],
+          "episodes_info": "全177集·全88集",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "刘灿＆刘雨昊"
+          ]
+      },
+      {
+          "id": "jl_short_630028377260097500",
+          "title": "半生父女一生情",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/9bdd8775661b7ad32effbd979b22d56a7948163bbee8c3dacbbb03e38991a5c2.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/9bdd8775661b7ad32effbd979b22d56a7948163bbee8c3dacbbb03e38991a5c2.jpg",
+          "description": "剧情简介暂缺，敬请期待",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全91集·全45集",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "戚玉洁"
+          ]
+      },
+      {
+          "id": "jl_short_630099970606760000",
+          "title": "错爱经年人已远",
+          "rate": "8.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/491e1c4075990b2712a83484ed4a9d74c7911511d55fbc1ca5581ec38595b86f.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/491e1c4075990b2712a83484ed4a9d74c7911511d55fbc1ca5581ec38595b86f.jpg",
+          "description": "剧情简介暂缺，敬请期待",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "年代穿越",
+              "全集连播"
+          ],
+          "episodes_info": "全101集·全50集",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "余沛杉&amp / 张晓楠"
           ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "与君共覆局",
-      rate: "8.8",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/66ca3d7c81da751efe1f40a4e7edd5dea5df96b934cab7e91c0c3c79b1f3b78c.jpg",
+      title: "十八岁太奶奶驾到重整家族荣耀2",
+      rate: "9.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/7387d707551b88aef4325bb3dd046cdb9a2b9007996b0c39b70956c05115cefe.jpg",
       year: "2026",
-      types: ["短剧","古装仙侠","全集连播"],
+      types: ["短剧","年代穿越","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: "千古第三阳谋！",
-      rate: "9.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/cea19d7eb9b3cb302d23ddacbca18917cfa2fa6d227f5ce530150891dba8e53a.jpg",
-      year: "2026",
+      title: "医妃一笑，王爷魂都掉",
+      rate: "9.5",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/304088/poster/24d9e5eaa3d70fc0deca912115aaddbadf7c501058fc23a5cd935984b476d6bc.webp",
+      year: "2025",
       types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_3',
-      title: "一胎二宝：总裁爹地超凶猛",
-      rate: "8.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/5c0336cdee798c796a211b8be3b813ae94b2f9d2a2b84f42badbb445723035ef.jpg",
-      year: "2023",
+      title: "骤雨撞骄阳",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/40283c6648f0695194cc56ab8f423fb5ee6467ab777b41144910f453996726f5.jpg",
+      year: "2025",
       types: ["短剧","女频恋爱","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_4',
-      title: "归路 短剧版",
-      rate: "9.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/a9eb35734fbae89d78b90d9468df547479bd222430b69428b146a91ada7c4fe2.png",
-      year: "2024",
-      types: ["短剧","其他","全集连播"],
+      title: "主母爱谁当！纨绔夫君为我争诰命",
+      rate: "8.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/e77b15897421b173fe04505b6542d9fac9260418d5c92d108296e7d4215ed1e1.jpg",
+      year: "2025",
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_5',
-      title: "穿书秦洛日记，女主移情别恋",
-      rate: "9.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/5f870010024fb10e52c8f0af9697f47063a9564f9862c6486921de4cc1720c78.jpg",
-      year: "2026",
-      types: ["短剧","古装仙侠","全集连播"],
+      title: "星光下的诺言",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/b93f62776b12889c22585552ec99490e188e1f7ad61b477de0acc1da2234d617.jpg",
+      year: "2025",
+      types: ["短剧","女频恋爱","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_6',
-      title: "云锦秀起，世子有福了",
-      rate: "9.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/7b603f2c289c818a258bac51e5caf6b626639849f7a46a138457d51c8e00dfcf.jpg",
-      year: "2026",
-      types: ["短剧","古装仙侠","全集连播"],
+      title: "抢亲九零小娇夫竟是大院贵公子",
+      rate: "8.7",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/dde0917d9ced30e110ce8e2f47a879d6a82b2b37f92398d0ceeddf9e493cadc0.jpg",
+      year: "2025",
+      types: ["短剧","年代穿越","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_7',
-      title: "信手斩神，我即是暗影",
-      rate: "9.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d9d826c2ce76b7fd175b7b1366d3f6934ba3a2b9f5fa697bdd0c847246b533ac.png",
+      title: "半生父女一生情",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9bdd8775661b7ad32effbd979b22d56a7948163bbee8c3dacbbb03e38991a5c2.jpg",
       year: "2025",
-      types: ["短剧","其他","全集连播"],
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_8',
-      title: "开局虐渣，特工世子妃来自现代",
-      rate: "9.0",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/16fa49e934b4a366bcf48b77ad27f52eae07b8decc82166c74d6bafc896bac54.png",
+      title: "错爱经年人已远",
+      rate: "8.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/491e1c4075990b2712a83484ed4a9d74c7911511d55fbc1ca5581ec38595b86f.jpg",
       year: "2025",
-      types: ["短剧","古装仙侠","全集连播"],
+      types: ["短剧","年代穿越","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1554,27 +1554,19 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "我不是大师",
-        "updateBadge": "4"
-    },
-    {
         "title": "早春晴朗",
         "updateBadge": ""
     },
     {
-        "title": "死有对证",
-        "updateBadge": ""
+        "title": "我不是大师",
+        "updateBadge": "4"
     },
     {
         "title": "交锋",
         "updateBadge": ""
     },
     {
-        "title": "心动的信号第9季",
-        "updateBadge": "2"
-    },
-    {
-        "title": "诛仙4",
+        "title": "死有对证",
         "updateBadge": "1"
     },
     {
@@ -1582,16 +1574,24 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "2"
     },
     {
-        "title": "黑岛监狱",
-        "updateBadge": "8"
+        "title": "一饭封神第2季",
+        "updateBadge": ""
+    },
+    {
+        "title": "心动的信号第9季",
+        "updateBadge": ""
     },
     {
         "title": "冬城猎凶",
         "updateBadge": ""
     },
     {
-        "title": "一饭封神第2季",
-        "updateBadge": "2"
+        "title": "黑岛监狱",
+        "updateBadge": "8"
+    },
+    {
+        "title": "挑情丑闻",
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -2163,6 +2163,10 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "克拉克森的农场第3季",
+        "updateBadge": ""
+    },
+    {
         "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
@@ -2171,23 +2175,19 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "克拉克森的农场第4季",
+        "updateBadge": ""
+    },
+    {
+        "title": "史前星球",
+        "updateBadge": ""
+    },
+    {
         "title": "征服14座高峰：凡事皆可能 14",
         "updateBadge": ""
     },
     {
-        "title": "狂坠：波音大调查2",
-        "updateBadge": ""
-    },
-    {
-        "title": "一级方程式：疾速争胜第7季",
-        "updateBadge": ""
-    },
-    {
-        "title": "失焦命案：被遗忘的女童",
-        "updateBadge": ""
-    },
-    {
-        "title": "早餐中国",
+        "title": "寻色中国",
         "updateBadge": ""
     }
   ],

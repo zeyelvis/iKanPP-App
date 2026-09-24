@@ -74,11 +74,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "卖冰淇淋的人",
-                "updateBadge": ""
-        },
-        {
-                "title": "爱情假说",
+                "title": "一夜限定",
                 "updateBadge": ""
         },
         {
@@ -86,7 +82,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "一夜限定",
+                "title": "爱情假说",
+                "updateBadge": ""
+        },
+        {
+                "title": "卖冰淇淋的人",
                 "updateBadge": ""
         },
         {
@@ -94,11 +94,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "超级骑警3",
+                "title": "数到三",
                 "updateBadge": ""
         },
         {
-                "title": "玩具总动员5",
+                "title": "超级骑警3",
                 "updateBadge": ""
         }
       ],
@@ -1832,31 +1832,35 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "1"
         },
         {
-                "title": "我不是大师",
-                "updateBadge": "4"
-        },
-        {
                 "title": "早春晴朗",
                 "updateBadge": ""
         },
         {
-                "title": "死有对证",
-                "updateBadge": ""
+                "title": "我不是大师",
+                "updateBadge": "4"
         },
         {
                 "title": "交锋",
                 "updateBadge": ""
         },
         {
+                "title": "死有对证",
+                "updateBadge": "1"
+        },
+        {
                 "title": "法医秦明之龙番往事",
                 "updateBadge": "2"
+        },
+        {
+                "title": "冬城猎凶",
+                "updateBadge": ""
         },
         {
                 "title": "黑岛监狱",
                 "updateBadge": "8"
         },
         {
-                "title": "冬城猎凶",
+                "title": "挑情丑闻",
                 "updateBadge": ""
         },
         {
@@ -1864,12 +1868,8 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "挑情丑闻",
-                "updateBadge": ""
-        },
-        {
-                "title": "花开锦绣",
-                "updateBadge": ""
+                "title": "中头奖还是要上班",
+                "updateBadge": "2"
         }
       ],
     "hero": [

@@ -585,16 +585,18 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
   "anime": [
     {
       "id": "pb_cat_anime_1",
-      "title": "天灾末世，她囤满物资后所向披靡！",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/1f89a6014e659ecc77ec21b090eb5cbc.jpg",
-      "year": "2026",
+      "title": "完美世界",
+      "rate": "7.0",
+      "cover": "https://img.guangsuimage.com/cover/c68df1093a93023d0960841f27224080.jpg",
+      "year": "2021",
       "types": [
         "中国动漫",
-        "末世"
+        "剧情",
+        "动画",
+        "奇幻"
       ],
-      "remarks": "全集完结",
-      "is_new": true
+      "remarks": "第288集",
+      "is_new": false
     },
     {
       "id": "pb_cat_anime_2",
@@ -612,18 +614,16 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     },
     {
       "id": "pb_cat_anime_3",
-      "title": "完美世界",
-      "rate": "7.0",
-      "cover": "https://img.guangsuimage.com/cover/c68df1093a93023d0960841f27224080.jpg",
-      "year": "2021",
+      "title": "天灾末世，她囤满物资后所向披靡！",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/1f89a6014e659ecc77ec21b090eb5cbc.jpg",
+      "year": "2026",
       "types": [
         "中国动漫",
-        "剧情",
-        "动画",
-        "奇幻"
+        "末世"
       ],
-      "remarks": "第288集",
-      "is_new": false
+      "remarks": "全集完结",
+      "is_new": true
     },
     {
       "id": "pb_cat_anime_4",
