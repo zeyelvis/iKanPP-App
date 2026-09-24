@@ -54,6 +54,10 @@ export const PREBAKED_HOME_DATA: {
   "movie": {
     "trendingNav": [
         {
+                "title": "生死尽头",
+                "updateBadge": ""
+        },
+        {
                 "title": "一个部门的诞生",
                 "updateBadge": ""
         },
@@ -62,11 +66,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "给阿嬷的情书",
+                "title": "年会不能停！2",
                 "updateBadge": ""
         },
         {
-                "title": "年会不能停！2",
+                "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
         {
@@ -74,7 +78,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "一夜限定",
+                "title": "爱情假说",
                 "updateBadge": ""
         },
         {
@@ -82,7 +86,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "爱情假说",
+                "title": "一夜限定",
                 "updateBadge": ""
         },
         {
@@ -94,11 +98,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "数到三",
-                "updateBadge": ""
-        },
-        {
-                "title": "色戒",
+                "title": "玩具总动员5",
                 "updateBadge": ""
         }
       ],
@@ -107,14 +107,16 @@ export const PREBAKED_HOME_DATA: {
                 "id": "iyf_hero_movie_1",
                 "title": "一个部门的诞生",
                 "rate": "8.8",
-                "cover": "https://static.iyf.tv/upload/user/202609221322272268801.jpg",
+                "cover": "https://static.iyf.tv/upload/video/202609221021152158435.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609221322272268801.jpg",
-                "description": "《一个部门的诞生》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。",
+                "description": "《一个部门的诞生》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·喜剧。",
                 "year": "2026",
                 "types": [
                         "热门",
+                        "喜剧",
                         "电影"
                 ],
+                "episodes_info": "电影·喜剧",
                 "type": "movie",
                 "is_new": true,
                 "playable": true
@@ -1823,18 +1825,18 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": ""
+                "updateBadge": "2"
         },
         {
                 "title": "一瓯春",
-                "updateBadge": ""
+                "updateBadge": "1"
+        },
+        {
+                "title": "我不是大师",
+                "updateBadge": "4"
         },
         {
                 "title": "早春晴朗",
-                "updateBadge": ""
-        },
-        {
-                "title": "交锋",
                 "updateBadge": ""
         },
         {
@@ -1842,15 +1844,19 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "法医秦明之龙番往事",
+                "title": "交锋",
                 "updateBadge": ""
+        },
+        {
+                "title": "法医秦明之龙番往事",
+                "updateBadge": "2"
+        },
+        {
+                "title": "黑岛监狱",
+                "updateBadge": "8"
         },
         {
                 "title": "冬城猎凶",
-                "updateBadge": ""
-        },
-        {
-                "title": "挑情丑闻",
                 "updateBadge": ""
         },
         {
@@ -1858,72 +1864,85 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "挑情丑闻",
+                "updateBadge": ""
+        },
+        {
                 "title": "花开锦绣",
-                "updateBadge": ""
-        },
-        {
-                "title": "生逢其时",
-                "updateBadge": ""
-        },
-        {
-                "title": "深渊无间",
                 "updateBadge": ""
         }
       ],
     "hero": [
         {
                 "id": "iyf_hero_tv_1",
-                "title": "法医秦明之龙番往事",
+                "title": "我不是大师",
                 "rate": "8.8",
-                "cover": "https://static.iyf.tv/upload/video/202609221204050427723.gif",
-                "backdrop": "https://static.iyf.tv/upload/user/202609221304100431020.jpg",
-                "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至06集 | 共24集。",
+                "cover": "https://static.iyf.tv/upload/video/202609241200270068364.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202609241345244520726.jpg",
+                "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至04集 | 共24集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至06集 | 共24集",
+                "episodes_info": "更新至04集 | 共24集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
         },
         {
                 "id": "iyf_hero_tv_2",
-                "title": "一瓯春",
+                "title": "法医秦明之龙番往事",
                 "rate": "8.8",
-                "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
-                "backdrop": "https://static.iyf.tv/upload/user/202609171141024107110.jpg",
-                "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至16集 | 共30集。",
+                "cover": "https://static.iyf.tv/upload/video/202609221204050427723.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202609221304100431020.jpg",
+                "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至08集 | 共24集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至16集 | 共30集",
+                "episodes_info": "更新至08集 | 共24集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
         },
         {
                 "id": "iyf_hero_tv_3",
-                "title": "兰香如故",
+                "title": "一瓯春",
                 "rate": "8.8",
-                "cover": "https://static.iyf.tv/upload/video/202609111404160476768.gif",
-                "backdrop": "https://static.iyf.tv/upload/user/202609111848394812246.jpg",
-                "description": "《兰香如故》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至28集 | 共47集。",
+                "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
+                "backdrop": "https://static.iyf.tv/upload/user/202609171141024107110.jpg",
+                "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至17集 | 共30集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至28集 | 共47集",
+                "episodes_info": "更新至17集 | 共30集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
         },
         {
                 "id": "iyf_hero_tv_4",
+                "title": "兰香如故",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202609111404160476768.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202609111848394812246.jpg",
+                "description": "《兰香如故》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至30集 | 共47集。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至30集 | 共47集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_5",
                 "title": "冬城猎凶",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609100710231001184.jpg",
@@ -1940,7 +1959,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_5",
+                "id": "iyf_hero_tv_6",
                 "title": "深渊无间",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609091238023882533.gif",
@@ -1957,7 +1976,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_6",
+                "id": "iyf_hero_tv_7",
                 "title": "交锋",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609061321182110656.gif",
@@ -1974,7 +1993,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_7",
+                "id": "iyf_hero_tv_8",
                 "title": "生逢其时",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609031658525831647.jpg",
@@ -1986,23 +2005,6 @@ export const PREBAKED_HOME_DATA: {
                         "连续剧"
                 ],
                 "episodes_info": "更新至23集 | 共26集",
-                "type": "tv",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_tv_8",
-                "title": "重案六组:消失的警号",
-                "rate": "8.8",
-                "cover": "https://static.iyf.tv/upload/video/202608310534563487003.gif",
-                "backdrop": "https://static.iyf.tv/upload/user/202608311450075058045.jpg",
-                "description": "《重案六组:消失的警号》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20集 | 共26集。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "连续剧"
-                ],
-                "episodes_info": "更新至20集 | 共26集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
