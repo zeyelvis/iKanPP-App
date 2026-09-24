@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -27,38 +26,63 @@ export function AddToHomeScreenModal() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // 1. 若当前已经是以独立 PWA / 全屏 App 模式运行，不触发
-    const isStandalone =
-      window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as unknown as { standalone?: boolean }).standalone === true;
-    if (isStandalone) return;
+    // 1. 主动唤起事件监听（无论是否免打扰，主动触发均可唤起）
+    const handleCustomTrigger = () => {
+      setIsOpen(true);
+    };
+    window.addEventListener('ikanpp:show-pwa-modal', handleCustomTrigger);
 
-    // 2. 仅针对移动端视口
-    const isMobile = window.innerWidth <= 768;
-    if (!isMobile) return;
-
-    // 3. 检查免打扰时间戳（7天内不打扰）
-    const dismissedAt = localStorage.getItem('ikanpp_pwa_dismissed_at');
-    if (dismissedAt) {
-      const diff = Date.now() - parseInt(dismissedAt, 10);
-      if (diff < 7 * 24 * 60 * 60 * 1000) {
-        return;
-      }
+    // 2. 支持通过 URL 参数 (?pwa=1 或 ?install=1) 主动唤起
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get('pwa') === '1' || searchParams.get('pwa') === 'true' || searchParams.get('install') === '1') {
+      setIsOpen(true);
     }
 
-    // 4. 判断设备系统
+    // 3. 判断设备系统
     const ua = window.navigator.userAgent.toLowerCase();
     const isIosDevice = /iphone|ipad|ipod/.test(ua);
     setIsIOS(isIosDevice);
 
-    // 5. 监听 Android / Chrome 的原生安装候选事件
+    // 4. 监听 Android / Chrome 的原生安装候选事件
     const handleBeforeInstall = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
 
-    // 6. 沉浸式观影或停留 180 秒后优雅唤起
+    // 5. 若当前已经是以独立 PWA / 全屏 App 模式运行，不自动触发
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as unknown as { standalone?: boolean }).standalone === true;
+    if (isStandalone) {
+      return () => {
+        window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+        window.removeEventListener('ikanpp:show-pwa-modal', handleCustomTrigger);
+      };
+    }
+
+    // 6. 自动唤起仅针对移动端视口
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) {
+      return () => {
+        window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+        window.removeEventListener('ikanpp:show-pwa-modal', handleCustomTrigger);
+      };
+    }
+
+    // 7. 检查免打扰时间戳（7天内不自动打扰）
+    const dismissedAt = localStorage.getItem('ikanpp_pwa_dismissed_at');
+    if (dismissedAt) {
+      const diff = Date.now() - parseInt(dismissedAt, 10);
+      if (diff < 7 * 24 * 60 * 60 * 1000) {
+        return () => {
+          window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+          window.removeEventListener('ikanpp:show-pwa-modal', handleCustomTrigger);
+        };
+      }
+    }
+
+    // 8. 沉浸式观影或停留 180 秒后优雅唤起
     const timer = setTimeout(() => {
       setIsOpen(true);
     }, 180000); // 3 分钟
@@ -66,8 +90,23 @@ export function AddToHomeScreenModal() {
     return () => {
       clearTimeout(timer);
       window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener('ikanpp:show-pwa-modal', handleCustomTrigger);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // 监听 ESC 键关闭
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleDismiss();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
 
   const handleDismiss = () => {
     setIsOpen(false);
@@ -90,8 +129,17 @@ export function AddToHomeScreenModal() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in select-none">
-      <div className="relative w-full max-w-sm rounded-3xl bg-[#141416]/95 border border-white/10 p-5 shadow-2xl text-white space-y-4">
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md animate-fade-in select-none"
+      onClick={handleDismiss}
+      role="dialog"
+      aria-modal="true"
+      aria-label="添加到手机主屏幕"
+    >
+      <div
+        className="relative w-full max-w-sm rounded-3xl bg-[#141416]/95 border border-white/10 p-5 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.95)] text-white space-y-4 max-h-[calc(100dvh-2rem)] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* 顶部图标与关闭按钮 */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -105,7 +153,7 @@ export function AddToHomeScreenModal() {
           </div>
           <button
             onClick={handleDismiss}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 transition-colors"
+            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-90 flex items-center justify-center text-white/60 hover:text-white transition-all"
             aria-label="关闭"
           >
             ✕
@@ -130,19 +178,19 @@ export function AddToHomeScreenModal() {
 
         {/* 操作指引 */}
         {isIOS ? (
-          <div className="rounded-2xl bg-white/5 p-3 border border-white/5 space-y-2 text-xs text-white/80">
+          <div className="rounded-2xl bg-white/5 p-3.5 border border-white/5 space-y-2.5 text-xs text-white/80">
             <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold">1</span>
+              <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold shrink-0">1</span>
               <span>点击 Safari 浏览器底部的 <strong>分享</strong> 按钮 ⎋</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold">2</span>
+              <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold shrink-0">2</span>
               <span>向下滑动，选择 <strong>添加到主屏幕</strong> ⊕</span>
             </div>
             <div className="pt-2">
               <button
                 onClick={handleDismiss}
-                className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-500 font-bold text-xs tracking-wider transition-colors shadow-lg shadow-red-600/30"
+                className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-500 active:scale-[0.98] font-bold text-xs tracking-wider transition-all shadow-lg shadow-red-600/30"
               >
                 我知道了，稍后添加
               </button>
@@ -152,13 +200,13 @@ export function AddToHomeScreenModal() {
           <div className="pt-1 flex gap-2">
             <button
               onClick={handleDismiss}
-              className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 font-medium text-xs transition-colors text-white/70"
+              className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:scale-[0.98] font-medium text-xs transition-all text-white/70"
             >
               稍后再说
             </button>
             <button
               onClick={handleInstallClick}
-              className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 font-bold text-xs tracking-wider transition-colors shadow-lg shadow-red-600/30"
+              className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 active:scale-[0.98] font-bold text-xs tracking-wider transition-all shadow-lg shadow-red-600/30"
             >
               一键添加至桌面
             </button>
