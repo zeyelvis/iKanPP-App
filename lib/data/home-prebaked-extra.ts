@@ -21,12 +21,8 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "灵境行者",
-        "updateBadge": ""
-    },
-    {
-        "title": "吞噬星空",
-        "updateBadge": ""
+        "title": "东大高武学院",
+        "updateBadge": "1"
     },
     {
         "title": "遮天",
@@ -34,6 +30,14 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "斗破苍穹年番",
+        "updateBadge": ""
+    },
+    {
+        "title": "逆天邪神3D",
+        "updateBadge": "1"
+    },
+    {
+        "title": "灵境行者",
         "updateBadge": ""
     },
     {
@@ -45,16 +49,12 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "光阴之外",
-        "updateBadge": ""
-    },
-    {
         "title": "师兄啊师兄",
         "updateBadge": ""
     },
     {
-        "title": "从零开始的异世界生活第4季",
-        "updateBadge": "1"
+        "title": "吞噬星空",
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -632,30 +632,30 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "心动的信号第9季",
-        "updateBadge": ""
+        "updateBadge": "2"
     },
     {
         "title": "一饭封神第2季",
-        "updateBadge": ""
+        "updateBadge": "2"
     },
     {
         "title": "花儿与少年第8季",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
         "title": "披荆斩棘2026",
-        "updateBadge": ""
-    },
-    {
-        "title": "我家那闺女2026",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
         "title": "密室大逃脱第8季",
         "updateBadge": ""
     },
     {
-        "title": "大哥小助理",
+        "title": "我家那闺女2026",
+        "updateBadge": "1"
+    },
+    {
+        "title": "Running Man",
         "updateBadge": ""
     },
     {
@@ -687,13 +687,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608271524382431872.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111844144414888.jpg",
-        "description": "《我家那闺女2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260923(盲盒放送)。",
+        "description": "《我家那闺女2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260924(盲盒放送)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260923(盲盒放送)",
+        "episodes_info": "更新至20260924(盲盒放送)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -704,13 +704,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609041706270661205.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111843274326403.jpg",
-        "description": "《花儿与少年第8季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260920(加更版)。",
+        "description": "《花儿与少年第8季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260924(超前营业)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260920(加更版)",
+        "episodes_info": "更新至20260924(超前营业)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -738,13 +738,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608102124022465304.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202608261125002570740.jpg",
-        "description": "《披荆斩棘2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260922(宿舍日记)。",
+        "description": "《披荆斩棘2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260924(“聚”乐部)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260922(宿舍日记)",
+        "episodes_info": "更新至20260924(“聚”乐部)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -755,13 +755,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607311122522270150.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202608031821302167723.jpg",
-        "description": "《心动的信号第9季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260923(超前彩蛋)。",
+        "description": "《心动的信号第9季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260924(第8期加更下)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260923(超前彩蛋)",
+        "episodes_info": "更新至20260924(第8期加更下)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -772,13 +772,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607231303450351514.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202607271339373917253.jpg",
-        "description": "《一饭封神第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260923(第9期上美食竞技纯享版)。",
+        "description": "《一饭封神第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260924(第9期下美食竞技纯享版)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260923(第9期上美食竞技纯享版)",
+        "episodes_info": "更新至20260924(第9期下美食竞技纯享版)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1550,10 +1550,6 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "交锋",
-        "updateBadge": ""
-    },
-    {
         "title": "一瓯春",
         "updateBadge": ""
     },
@@ -1562,8 +1558,16 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "交锋",
+        "updateBadge": ""
+    },
+    {
         "title": "死有对证",
-        "updateBadge": "1"
+        "updateBadge": ""
+    },
+    {
+        "title": "心动的信号第9季",
+        "updateBadge": "2"
     },
     {
         "title": "法医秦明之龙番往事",
@@ -1574,11 +1578,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "心动的信号第9季",
-        "updateBadge": ""
-    },
-    {
-        "title": "一饭封神第2季",
+        "title": "挑情丑闻",
         "updateBadge": ""
     },
     {
@@ -1586,11 +1586,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "挑情丑闻",
-        "updateBadge": ""
+        "title": "一饭封神第2季",
+        "updateBadge": "2"
     },
     {
-        "title": "深渊无间",
+        "title": "花开锦绣",
         "updateBadge": ""
     }
   ],
@@ -2169,7 +2169,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "失焦命案：被遗忘的女童",
+        "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
     {
@@ -2177,15 +2177,15 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第2季",
+        "title": "失焦命案：被遗忘的女童",
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第4季",
+        "title": "狂坠：波音大调查2",
         "updateBadge": ""
     },
     {
-        "title": "欢迎来地球",
+        "title": "爱达荷州血案：大学梦魇",
         "updateBadge": ""
     }
   ],

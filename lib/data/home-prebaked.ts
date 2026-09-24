@@ -62,15 +62,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "年会不能停！2",
-                "updateBadge": ""
-        },
-        {
-                "title": "爱情假说",
-                "updateBadge": ""
-        },
-        {
                 "title": "给阿嬷的情书",
+                "updateBadge": ""
+        },
+        {
+                "title": "年会不能停！2",
                 "updateBadge": ""
         },
         {
@@ -82,11 +78,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "数到三",
+                "title": "特立独行",
                 "updateBadge": ""
         },
         {
-                "title": "特立独行",
+                "title": "爱情假说",
+                "updateBadge": ""
+        },
+        {
+                "title": "逃出绝命街",
                 "updateBadge": ""
         },
         {
@@ -94,11 +94,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "哈利波特1魔法石",
+                "title": "数到三",
                 "updateBadge": ""
         },
         {
-                "title": "逃出绝命街",
+                "title": "色戒",
                 "updateBadge": ""
         }
       ],
@@ -1826,10 +1826,6 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "交锋",
-                "updateBadge": ""
-        },
-        {
                 "title": "一瓯春",
                 "updateBadge": ""
         },
@@ -1838,8 +1834,12 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "交锋",
+                "updateBadge": ""
+        },
+        {
                 "title": "死有对证",
-                "updateBadge": "1"
+                "updateBadge": ""
         },
         {
                 "title": "法医秦明之龙番往事",
@@ -1850,15 +1850,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "飞到我心上",
-                "updateBadge": ""
-        },
-        {
                 "title": "挑情丑闻",
                 "updateBadge": ""
         },
         {
-                "title": "深渊无间",
+                "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
@@ -1867,6 +1863,10 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "生逢其时",
+                "updateBadge": ""
+        },
+        {
+                "title": "深渊无间",
                 "updateBadge": ""
         }
       ],
