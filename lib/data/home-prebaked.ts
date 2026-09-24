@@ -66,6 +66,10 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "爱情假说",
+                "updateBadge": ""
+        },
+        {
                 "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
@@ -78,7 +82,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "爱情假说",
+                "title": "数到三",
                 "updateBadge": ""
         },
         {
@@ -86,19 +90,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "数到三",
-                "updateBadge": ""
-        },
-        {
                 "title": "超级骑警3",
                 "updateBadge": ""
         },
         {
-                "title": "色戒",
+                "title": "哈利波特1魔法石",
                 "updateBadge": ""
         },
         {
-                "title": "哈利波特1魔法石",
+                "title": "逃出绝命街",
                 "updateBadge": ""
         }
       ],
@@ -1823,7 +1823,7 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "交锋",
@@ -1831,23 +1831,27 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "一瓯春",
-                "updateBadge": "1"
+                "updateBadge": ""
         },
         {
                 "title": "早春晴朗",
                 "updateBadge": ""
         },
         {
+                "title": "死有对证",
+                "updateBadge": "1"
+        },
+        {
                 "title": "法医秦明之龙番往事",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "冬城猎凶",
                 "updateBadge": ""
         },
         {
-                "title": "死有对证",
-                "updateBadge": "1"
+                "title": "飞到我心上",
+                "updateBadge": ""
         },
         {
                 "title": "挑情丑闻",
@@ -1859,10 +1863,6 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "花开锦绣",
-                "updateBadge": ""
-        },
-        {
-                "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
