@@ -78,11 +78,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "特立独行",
+                "title": "爱情假说",
                 "updateBadge": ""
         },
         {
-                "title": "爱情假说",
+                "title": "特立独行",
                 "updateBadge": ""
         },
         {
@@ -90,11 +90,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "逃出绝命街",
+                "title": "数到三",
                 "updateBadge": ""
         },
         {
-                "title": "数到三",
+                "title": "抓特务",
                 "updateBadge": ""
         },
         {
@@ -1828,19 +1828,19 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
-                "title": "一瓯春",
-                "updateBadge": "1"
-        },
-        {
-                "title": "早春晴朗",
-                "updateBadge": ""
-        },
-        {
                 "title": "我不是大师",
                 "updateBadge": "4"
         },
         {
+                "title": "一瓯春",
+                "updateBadge": "1"
+        },
+        {
                 "title": "交锋",
+                "updateBadge": ""
+        },
+        {
+                "title": "早春晴朗",
                 "updateBadge": ""
         },
         {
@@ -1857,14 +1857,14 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "黑岛监狱",
-                "updateBadge": "8"
-        },
-        {
-                "title": "挑情丑闻",
                 "updateBadge": ""
         },
         {
-                "title": "飞到我心上",
+                "title": "深渊无间",
+                "updateBadge": ""
+        },
+        {
+                "title": "挑情丑闻",
                 "updateBadge": ""
         },
         {
