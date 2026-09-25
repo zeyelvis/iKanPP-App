@@ -17,14 +17,6 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "大主宰年番",
-        "updateBadge": "1"
-    },
-    {
-        "title": "关于我转生变成史莱姆这档事第4季",
-        "updateBadge": "1"
-    },
-    {
         "title": "凡人修仙传",
         "updateBadge": ""
     },
@@ -33,12 +25,24 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "关于我转生变成史莱姆这档事第4季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "大主宰年番",
+        "updateBadge": "1"
+    },
+    {
         "title": "斗破苍穹年番",
         "updateBadge": ""
     },
     {
-        "title": "光阴之外",
+        "title": "遮天",
         "updateBadge": ""
+    },
+    {
+        "title": "地狱模式 喜欢速通游戏的玩家在废设定异世界无双第2季",
+        "updateBadge": "1"
     },
     {
         "title": "诛仙4",
@@ -49,11 +53,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "遮天",
-        "updateBadge": ""
-    },
-    {
-        "title": "吞噬星空",
+        "title": "一斩苍穹",
         "updateBadge": ""
     }
   ],
@@ -631,16 +631,16 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
 export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "心动的信号第9季",
-        "updateBadge": "2"
+        "title": "一饭封神第2季",
+        "updateBadge": "3"
     },
     {
         "title": "花儿与少年第8季",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
-        "title": "一饭封神第2季",
-        "updateBadge": "3"
+        "title": "心动的信号第9季",
+        "updateBadge": ""
     },
     {
         "title": "披荆斩棘2026",
@@ -651,16 +651,16 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "2"
     },
     {
-        "title": "密室大逃脱第8季",
-        "updateBadge": "1"
-    },
-    {
         "title": "我家那闺女2026",
         "updateBadge": ""
     },
     {
+        "title": "密室大逃脱第8季",
+        "updateBadge": ""
+    },
+    {
         "title": "你好星期六",
-        "updateBadge": "1"
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -1550,48 +1550,48 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "2"
     },
     {
-        "title": "一瓯春",
-        "updateBadge": "2"
-    },
-    {
-        "title": "早春晴朗",
-        "updateBadge": ""
-    },
-    {
         "title": "我不是大师",
         "updateBadge": "2"
     },
     {
-        "title": "死有对证",
-        "updateBadge": "1"
+        "title": "一瓯春",
+        "updateBadge": "2"
     },
     {
         "title": "交锋",
         "updateBadge": ""
     },
     {
-        "title": "心动的信号第9季",
-        "updateBadge": "2"
-    },
-    {
-        "title": "沧元图",
+        "title": "早春晴朗",
         "updateBadge": ""
     },
     {
-        "title": "花儿与少年第8季",
-        "updateBadge": "2"
+        "title": "死有对证",
+        "updateBadge": "1"
     },
     {
         "title": "法医秦明之龙番往事",
         "updateBadge": "1"
     },
     {
-        "title": "飞到我心上",
+        "title": "一饭封神第2季",
+        "updateBadge": "3"
+    },
+    {
+        "title": "冬城猎凶",
         "updateBadge": ""
     },
     {
-        "title": "一饭封神第2季",
-        "updateBadge": "3"
+        "title": "花儿与少年第8季",
+        "updateBadge": ""
+    },
+    {
+        "title": "心动的信号第9季",
+        "updateBadge": ""
+    },
+    {
+        "title": "披荆斩棘2026",
+        "updateBadge": ""
     }
   ],
   hero: [
@@ -2179,7 +2179,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "失焦命案：被遗忘的女童",
+        "title": "街头美食第1季",
         "updateBadge": ""
     },
     {
@@ -2187,7 +2187,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "王朝第2季",
+        "title": "守护解放西第6季",
         "updateBadge": ""
     }
   ],
