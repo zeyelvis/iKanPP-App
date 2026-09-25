@@ -2,6 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { runBingIntelligence } from './seo/bing-webmaster-intelligence.mjs';
 
 /**
  * iKanPP 全自动零成本 SEO 智能引擎 (SEO Intelligence OS)
@@ -421,6 +422,16 @@ async function main() {
     console.log(`  ✅ [Google Indexing API] 促抓完成，今日累计使用配额: ${report.googlePushedCount}/${MAX_GOOGLE_DAILY_PUSH}`);
   }
 
+  // 3.3 Bing Webmaster API 官方批量直推与深度诊断
+  console.log('\n  🌐 [Bing Webmaster API] 启动 Bing 官方深度巡检与配额直推...');
+  try {
+    const bingResult = await runBingIntelligence();
+    report.bingIntelligence = bingResult;
+    console.log(`  ✅ [Bing Webmaster API] 巡检完成，成功推送 ${bingResult.pushedCount} 个 URL，健康状态良好！`);
+  } catch (err) {
+    console.warn('  ⚠️ Bing Webmaster 巡检异常:', err.message);
+  }
+
   // -------------------------------------------------------------
   // 模块 4: 输出报告 (GITHUB_STEP_SUMMARY + Telegram)
   // -------------------------------------------------------------
@@ -432,16 +443,22 @@ async function main() {
 | :--- | :---: | :---: | :---: | :---: |
 ${report.sitemaps.length > 0 ? report.sitemaps.map(s => `| \`${s.path.replace('https://www.ikanpp.com', '')}\` | ${s.submitted} | ${s.errors} | ${s.warnings} | ${s.isHealthy ? '✅ 正常' : '⚠️ 需关注'} |`).join('\n') : '| 暂无数据 / 未连接 GSC API | - | - | - | ℹ️ |'}
 
-### 🚀 2. 搜索词增长潜力榜 (第 11~30 位高潜冲首页词)
+### 🌐 2. Bing Webmaster Tools 官方健康体检
+- **收录规模**：已编入索引 **${report.bingIntelligence?.stats?.InIndex || 0}** 篇 | 爬取成功 (2xx): **${report.bingIntelligence?.stats?.Code2xx || 0}** 篇
+- **异常诊断**：4xx 死链 **${report.bingIntelligence?.stats?.Code4xx || 0}** | 5xx 服务端异常 **${report.bingIntelligence?.stats?.Code5xx || 0}** | 抓取阻断 **${report.bingIntelligence?.issuesCount || 0}**
+- **今日官方队列直推**：**${report.bingIntelligence?.pushedCount || 0}** 条 URL
+
+### 🚀 3. 搜索词增长潜力榜 (第 11~30 位高潜冲首页词)
 ${report.highPotentialKeywords.length > 0 ? `
 | 核心搜索词 | 当前平均排名 | 过去30天曝光 | 推荐内链策略 |
 | :--- | :---: | :---: | :--- |
 ${report.highPotentialKeywords.slice(0, 10).map(k => `| **${k.query}** | 第 ${k.pos} 位 | ${k.impressions} 次 | 自动提权推荐位冲首页 |`).join('\n')}
 ` : '*暂无处于第 11~30 位的次级潜力词。*'}
 
-### ⚡ 3. 搜索引擎多轨促抓与自愈执行情况
+### ⚡ 4. 搜索引擎多轨促抓与自愈执行情况
 - **Sitemap 汇总有效条目**：${report.sitemapUrlsCount} 个
 - **IndexNow 广播覆盖 (Bing/Yandex)**：已广播 ${report.indexNowBroadcast?.count || 0} 个 URL (状态: ${report.indexNowBroadcast?.success ? '✅ 成功' : '⚠️ 异常'})
+- **Bing 官方 API 直推**：${report.bingIntelligence?.pushedCount || 0} 个 URL
 - **Google Indexing API 促抓总数**：${report.googlePushedCount} / ${MAX_GOOGLE_DAILY_PUSH} 条 (安全受控运行)
 - **URL Inspection 自动自愈补推**：${report.autoHealedUrls.length} 个条目
 ${report.autoHealedUrls.map(u => `  - \`[自愈成功]\` ${u}`).join('\n')}
@@ -460,6 +477,7 @@ ${report.autoHealedUrls.map(u => `  - \`[自愈成功]\` ${u}`).join('\n')}
   const tgText = `🔔 *iKanPP SEO 智能操作系统巡检报告*
 📅 日期: ${report.timestamp.split('T')[0]}
 🗺️ Sitemap 汇总条目: ${report.sitemapUrlsCount}
+🌐 Bing 索引收录: ${report.bingIntelligence?.stats?.InIndex || 0} 篇 (4xx: ${report.bingIntelligence?.stats?.Code4xx || 0})
 📡 IndexNow 广播: ${report.indexNowBroadcast?.count || 0} 条 (Bing/Yandex)
 🎯 Google Indexing 促抓: ${report.googlePushedCount}/${MAX_GOOGLE_DAILY_PUSH} 条
 🌟 捕获高潜冲榜词: ${report.highPotentialKeywords.length} 个
