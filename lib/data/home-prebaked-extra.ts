@@ -9,6 +9,10 @@ import type { PrebakedSubject, PrebakedHomeCategory } from './home-prebaked';
 export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
+        "title": "凡人修仙传",
+        "updateBadge": ""
+    },
+    {
         "title": "沧元图",
         "updateBadge": ""
     },
@@ -17,35 +21,19 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "凡人修仙传",
-        "updateBadge": ""
-    },
-    {
-        "title": "海贼王",
-        "updateBadge": ""
+        "title": "大主宰年番",
+        "updateBadge": "1"
     },
     {
         "title": "关于我转生变成史莱姆这档事第4季",
         "updateBadge": "1"
     },
     {
-        "title": "大主宰年番",
-        "updateBadge": "1"
+        "title": "海贼王",
+        "updateBadge": ""
     },
     {
         "title": "斗破苍穹年番",
-        "updateBadge": ""
-    },
-    {
-        "title": "遮天",
-        "updateBadge": ""
-    },
-    {
-        "title": "地狱模式 喜欢速通游戏的玩家在废设定异世界无双第2季",
-        "updateBadge": "1"
-    },
-    {
-        "title": "诛仙4",
         "updateBadge": ""
     },
     {
@@ -53,7 +41,19 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "一斩苍穹",
+        "title": "光阴之外",
+        "updateBadge": ""
+    },
+    {
+        "title": "遮天",
+        "updateBadge": ""
+    },
+    {
+        "title": "吞噬星空",
+        "updateBadge": ""
+    },
+    {
+        "title": "名侦探柯南",
         "updateBadge": ""
     }
   ],
@@ -632,14 +632,10 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "一饭封神第2季",
-        "updateBadge": "3"
-    },
-    {
-        "title": "花儿与少年第8季",
         "updateBadge": ""
     },
     {
-        "title": "心动的信号第9季",
+        "title": "花儿与少年第8季",
         "updateBadge": ""
     },
     {
@@ -647,8 +643,12 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "心动的信号第9季",
+        "updateBadge": ""
+    },
+    {
         "title": "大哥小助理",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "我家那闺女2026",
@@ -659,7 +659,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "你好星期六",
+        "title": "脱口秀和Ta的朋友们第3季",
         "updateBadge": ""
     }
   ],
@@ -670,13 +670,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609111636583635663.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111853405324148.jpg",
-        "description": "《打歌2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260925(第3期纯享)。",
+        "description": "《打歌2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260925(第3期)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260925(第3期纯享)",
+        "episodes_info": "更新至20260925(第3期)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1547,22 +1547,22 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "兰香如故",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "我不是大师",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "一瓯春",
-        "updateBadge": "2"
-    },
-    {
-        "title": "交锋",
         "updateBadge": ""
     },
     {
         "title": "早春晴朗",
+        "updateBadge": ""
+    },
+    {
+        "title": "交锋",
         "updateBadge": ""
     },
     {
@@ -1571,11 +1571,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "法医秦明之龙番往事",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "一饭封神第2季",
-        "updateBadge": "3"
+        "updateBadge": ""
     },
     {
         "title": "冬城猎凶",
@@ -1586,11 +1586,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "心动的信号第9季",
+        "title": "披荆斩棘2026",
         "updateBadge": ""
     },
     {
-        "title": "披荆斩棘2026",
+        "title": "心动的信号第9季",
         "updateBadge": ""
     }
   ],
@@ -2163,11 +2163,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第3季",
+        "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第2季",
+        "title": "守望秦岭",
         "updateBadge": ""
     },
     {
@@ -2175,19 +2175,19 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "失焦命案：被遗忘的女童",
+        "updateBadge": ""
+    },
+    {
         "title": "克拉克森的农场第4季",
         "updateBadge": ""
     },
     {
-        "title": "街头美食第1季",
+        "title": "王朝第2季",
         "updateBadge": ""
     },
     {
-        "title": "征服14座高峰：凡事皆可能 14",
-        "updateBadge": ""
-    },
-    {
-        "title": "守护解放西第6季",
+        "title": "克拉克森的农场第3季",
         "updateBadge": ""
     }
   ],

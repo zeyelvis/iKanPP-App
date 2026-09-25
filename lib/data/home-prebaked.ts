@@ -78,10 +78,6 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "一夜限定",
-                "updateBadge": ""
-        },
-        {
                 "title": "特立独行",
                 "updateBadge": ""
         },
@@ -90,7 +86,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "数到三",
+                "title": "一夜限定",
                 "updateBadge": ""
         },
         {
@@ -98,7 +94,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "逃出绝命街",
+                "title": "玩具总动员5",
+                "updateBadge": ""
+        },
+        {
+                "title": "数到三",
                 "updateBadge": ""
         }
       ],
@@ -1825,22 +1825,22 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "我不是大师",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "一瓯春",
-                "updateBadge": "2"
-        },
-        {
-                "title": "交锋",
                 "updateBadge": ""
         },
         {
                 "title": "早春晴朗",
+                "updateBadge": ""
+        },
+        {
+                "title": "交锋",
                 "updateBadge": ""
         },
         {
@@ -1849,7 +1849,7 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "法医秦明之龙番往事",
-                "updateBadge": "1"
+                "updateBadge": ""
         },
         {
                 "title": "冬城猎凶",
@@ -1860,15 +1860,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "深渊无间",
-                "updateBadge": ""
-        },
-        {
                 "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
                 "title": "花开锦绣",
+                "updateBadge": ""
+        },
+        {
+                "title": "深渊无间",
                 "updateBadge": ""
         }
       ],
