@@ -27,6 +27,7 @@ jobs:
         env:
           GOOGLE_INDEXING_KEY: ${{ secrets.GOOGLE_INDEXING_KEY }}
           NEXT_PUBLIC_SITE_URL: https://www.ikanpp.com
+          BING_WEBMASTER_API_KEY: ${{ secrets.BING_WEBMASTER_API_KEY || 'cedcc24b386447c29e916f67e9daaed3' }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
