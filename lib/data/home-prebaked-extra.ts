@@ -13,19 +13,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "凡人修仙传",
-        "updateBadge": ""
-    },
-    {
         "title": "诛仙4",
-        "updateBadge": "1"
-    },
-    {
-        "title": "吞噬星空",
         "updateBadge": ""
     },
     {
-        "title": "斗破苍穹年番",
+        "title": "凡人修仙传",
         "updateBadge": ""
     },
     {
@@ -33,7 +25,15 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "牧神记",
+        "title": "遮天",
+        "updateBadge": ""
+    },
+    {
+        "title": "斗破苍穹年番",
+        "updateBadge": ""
+    },
+    {
+        "title": "吞噬星空",
         "updateBadge": ""
     },
     {
@@ -45,11 +45,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "遮天",
+        "title": "牧神记",
         "updateBadge": ""
     },
     {
-        "title": "灵境行者",
+        "title": "师兄啊师兄",
         "updateBadge": ""
     },
     {
@@ -643,11 +643,15 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "披荆斩棘2026",
+        "updateBadge": ""
+    },
+    {
         "title": "我家那闺女2026",
         "updateBadge": ""
     },
     {
-        "title": "披荆斩棘2026",
+        "title": "密室大逃脱第8季",
         "updateBadge": ""
     },
     {
@@ -655,11 +659,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "密室大逃脱第8季",
-        "updateBadge": ""
-    },
-    {
-        "title": "喜剧之王单口季第3季",
+        "title": "旗安84的奇趣民宿第2季",
         "updateBadge": ""
     }
   ],
@@ -1551,14 +1551,10 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "我不是大师",
-        "updateBadge": "4"
+        "updateBadge": ""
     },
     {
         "title": "一瓯春",
-        "updateBadge": "1"
-    },
-    {
-        "title": "交锋",
         "updateBadge": ""
     },
     {
@@ -1566,23 +1562,23 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "死有对证",
-        "updateBadge": "1"
+        "title": "交锋",
+        "updateBadge": ""
     },
     {
-        "title": "法医秦明之龙番往事",
-        "updateBadge": "2"
+        "title": "死有对证",
+        "updateBadge": "1"
     },
     {
         "title": "一饭封神第2季",
         "updateBadge": "4"
     },
     {
-        "title": "冬城猎凶",
+        "title": "法医秦明之龙番往事",
         "updateBadge": ""
     },
     {
-        "title": "黑岛监狱",
+        "title": "冬城猎凶",
         "updateBadge": ""
     },
     {
@@ -1590,7 +1586,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "生死尽头",
+        "title": "飞到我心上",
+        "updateBadge": ""
+    },
+    {
+        "title": "黑岛监狱",
         "updateBadge": ""
     }
   ],
@@ -2159,7 +2159,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
 export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "克拉克森的农场第5季",
+        "title": "克拉克森的农场第3季",
         "updateBadge": ""
     },
     {
@@ -2167,7 +2167,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第3季",
+        "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
@@ -2175,19 +2175,19 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第2季",
-        "updateBadge": ""
-    },
-    {
-        "title": "史前星球",
-        "updateBadge": ""
-    },
-    {
         "title": "征服14座高峰：凡事皆可能 14",
         "updateBadge": ""
     },
     {
-        "title": "狂坠：波音大调查2",
+        "title": "克拉克森的农场第2季",
+        "updateBadge": ""
+    },
+    {
+        "title": "早餐中国",
+        "updateBadge": ""
+    },
+    {
+        "title": "闪闪的儿科医生第2季",
         "updateBadge": ""
     }
   ],
