@@ -54,15 +54,19 @@ export const PREBAKED_HOME_DATA: {
   "movie": {
     "trendingNav": [
         {
-                "title": "欢迎来龙餐馆",
-                "updateBadge": ""
-        },
-        {
                 "title": "一个部门的诞生",
                 "updateBadge": ""
         },
         {
+                "title": "欢迎来龙餐馆",
+                "updateBadge": ""
+        },
+        {
                 "title": "生死尽头",
+                "updateBadge": ""
+        },
+        {
+                "title": "大学炸弹客",
                 "updateBadge": ""
         },
         {
@@ -86,19 +90,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "特立独行",
-                "updateBadge": ""
-        },
-        {
                 "title": "爱情假说",
                 "updateBadge": ""
         },
         {
-                "title": "玩具总动员5",
+                "title": "特立独行",
                 "updateBadge": ""
         },
         {
-                "title": "数到三",
+                "title": "怒之杀(听译)",
                 "updateBadge": ""
         }
       ],
@@ -1841,7 +1841,7 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "死有对证",
-                "updateBadge": ""
+                "updateBadge": "1"
         },
         {
                 "title": "交锋",
@@ -1852,24 +1852,24 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "1"
         },
         {
-                "title": "冬城猎凶",
-                "updateBadge": ""
-        },
-        {
                 "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
-                "title": "黑岛监狱",
-                "updateBadge": "2"
+                "title": "冬城猎凶",
+                "updateBadge": ""
         },
         {
                 "title": "花开锦绣",
                 "updateBadge": ""
         },
         {
-                "title": "中头奖还是要上班",
+                "title": "挑情丑闻",
                 "updateBadge": ""
+        },
+        {
+                "title": "黑岛监狱",
+                "updateBadge": "2"
         }
       ],
     "hero": [

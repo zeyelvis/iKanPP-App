@@ -10,15 +10,19 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "沧元图",
-        "updateBadge": "1"
+        "updateBadge": ""
+    },
+    {
+        "title": "仙逆",
+        "updateBadge": ""
     },
     {
         "title": "大主宰年番",
         "updateBadge": "1"
     },
     {
-        "title": "仙逆",
-        "updateBadge": ""
+        "title": "关于我转生变成史莱姆这档事第4季",
+        "updateBadge": "1"
     },
     {
         "title": "凡人修仙传",
@@ -33,27 +37,23 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "诛仙4",
+        "title": "光阴之外",
         "updateBadge": ""
     },
     {
-        "title": "死灵法师我即是天灾",
-        "updateBadge": "2"
+        "title": "诛仙4",
+        "updateBadge": ""
     },
     {
         "title": "牧神记",
         "updateBadge": ""
     },
     {
-        "title": "灵武大陆",
-        "updateBadge": "1"
-    },
-    {
-        "title": "光阴之外",
+        "title": "遮天",
         "updateBadge": ""
     },
     {
-        "title": "遮天",
+        "title": "吞噬星空",
         "updateBadge": ""
     }
   ],
@@ -644,7 +644,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "披荆斩棘2026",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "大哥小助理",
@@ -670,13 +670,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609111636583635663.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111853405324148.jpg",
-        "description": "《打歌2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260920(上班直播第2期)。",
+        "description": "《打歌2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260925(第3期纯享)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260920(上班直播第2期)",
+        "episodes_info": "更新至20260925(第3期纯享)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1237,230 +1237,230 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "从契约关系开始",
+          "title": "婚契",
+          "updateBadge": "全"
+      },
+      {
+          "title": "沈老板专治不服",
+          "updateBadge": "全"
+      },
+      {
+          "title": "别惹那个神医，他医武双绝",
+          "updateBadge": "全"
+      },
+      {
+          "title": "重生村霸：专治各种不服",
+          "updateBadge": "全"
+      },
+      {
+          "title": "穿越未来二十年，我开启情绪收集系统",
+          "updateBadge": "全"
+      },
+      {
+          "title": "我在修仙界摆摊",
+          "updateBadge": "全"
+      },
+      {
+          "title": "凌晨四点见人心",
+          "updateBadge": "全"
+      },
+      {
+          "title": "绯色禁令",
+          "updateBadge": "全"
+      },
+      {
+          "title": "赌上职业生涯，我带七班逆风翻盘",
+          "updateBadge": "全"
+      },
+      {
+          "title": "青春岁月之东北往事",
           "updateBadge": "HOT"
       },
       {
-          "title": "苦瓜少爷别哭，迟总夫人又在倒追你",
-          "updateBadge": "全"
-      },
-      {
-          "title": "夏有山居，种田致富",
-          "updateBadge": "全"
-      },
-      {
-          "title": "沈技术员他沦陷了",
-          "updateBadge": "全"
-      },
-      {
-          "title": "执渊入怀与他相依偎",
-          "updateBadge": "全"
-      },
-      {
-          "title": "青山依旧撩",
+          "title": "错位招惹",
           "updateBadge": "HOT"
       },
       {
-          "title": "帝后也疯狂第二",
+          "title": "韩指挥的农家妻",
           "updateBadge": "全"
-      },
-      {
-          "title": "野草疯长二",
-          "updateBadge": "HOT"
-      },
-      {
-          "title": "我恶名缠身，竟带全家翻身致富",
-          "updateBadge": "全"
-      },
-      {
-          "title": "开局虐渣，特工世子妃来自现代",
-          "updateBadge": "72"
-      },
-      {
-          "title": "盛夏青苹果",
-          "updateBadge": "全"
-      },
-      {
-          "title": "今日宜偏爱",
-          "updateBadge": "16"
       }
   ],
   hero: [
       {
-          "id": "jl_short_637690552409654000",
-          "title": "苦瓜少爷别哭，迟总夫人又在倒追你",
-          "rate": "8.8",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/730b30ac10be25cf47a242b5f8257e28716948f3f09f88a06222238b45684a3b.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/730b30ac10be25cf47a242b5f8257e28716948f3f09f88a06222238b45684a3b.jpg",
-          "description": "沈葵意外获得重新审视人生的机会，逐渐理解丈夫迟郁凉不善表达却始终真诚的心意。她开始调整生活态度，用耐心沟通化解隔阂，并在家人的陪伴下学会珍惜与担当。随着新生命即将到来，两人共同适应生活中的变化，在相互理解与共同成长中建立起温暖幸福的家庭。",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全283集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_637086774782394500",
-          "title": "沈技术员他沦陷了",
-          "rate": "8.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/df6037704e6ae30d187977af34d8bde71e57c4738f04ac4a266b17950397f590.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/df6037704e6ae30d187977af34d8bde71e57c4738f04ac4a266b17950397f590.jpg",
-          "description": "这部剧最大的看点在于千喆与何适对年代情感的深刻诠释，两部佳作合集呈现了不同维度的动人故事。《沈技术员他沦陷了》聚焦职场与情感的交织，《芳华八零：苏念荷的故事》则还原了特定时代背景下的青春与抉择。两位主演演技扎实，将角色塑造得鲜活立体，76集的体量让故事铺垫充分，情感爆发力更强。无论是怀旧风还是现代职...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "其他",
-              "全集连播"
-          ],
-          "episodes_info": "全153集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "千喆 / 何适"
-          ]
-      },
-      {
-          "id": "jl_short_637158738318393900",
-          "title": "执渊入怀与他相依偎",
-          "rate": "8.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/4d424dc776023eb798c3af97c1c7bc7c5459be2cbadbd671e4b9f8d01b7ccb51.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/4d424dc776023eb798c3af97c1c7bc7c5459be2cbadbd671e4b9f8d01b7ccb51.jpg",
-          "description": "初沿沿是白叙的小尾巴，在日记里亲手写下所有暗恋的小心愿，一次生日宴中，初沿沿不小心从楼梯跌落失去所有记忆，白叙嫌她烦人，把她推给大哥白执渊，谎称是大哥一直在照顾她，她翻到自己的日记，以为字字句句都在觊觎白执渊，于是，她决定完成失忆前的心愿，按照日记内容，一步步进行",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全147集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_638739829277851900",
-          "title": "我恶名缠身，竟带全家翻身致富",
+          "id": "jl_short_638730060257297000",
+          "title": "婚契",
           "rate": "9.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/498664c8446a7a75def9545eef29ca11dd03fab8b6495afba4a33884a0239e80.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/498664c8446a7a75def9545eef29ca11dd03fab8b6495afba4a33884a0239e80.jpg",
-          "description": "现代女子苏梨穿书，绑定拯救反派系统，需维持恶毒人设积攒分值保命。原主苛待小叔宋迟允、宋迟迎与小姑宋迟雨，三人终将黑化。苏表面泼辣护着三姐弟，怼刻薄亲戚、化解人贩危机，挣钱供他们读书、调理身体，还开小吃铺立业，携手金少经商，一路化解杏花、李氏等人的刁难，温柔治愈三个缺爱的少年，改写悲惨命运，全家日子蒸...",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/39cfe266029b42b63aaf12b365efab4d7fa26f66ee1790ada2df9613d893a088.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/39cfe266029b42b63aaf12b365efab4d7fa26f66ee1790ada2df9613d893a088.jpg",
+          "description": "这是一场始于冰冷契约的联姻，却在无人窥见的角落，滋长出最炙热的情感。孟瑜本是小镇养女，养母重病、男友分手陷入绝境时，孟家寻回这位流落在外的真千金，以承担医药费为条件，让她接受联姻。她遇上傅家掌权人傅青绍，自幼孤苦的他只求一段无爱稳定婚姻，二人签下冰冷契约，约定互不打扰、不许动情。领证后，傅青绍远赴国...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "李金鱼 / 黄字淇"
+          ]
+      },
+      {
+          "id": "jl_short_638850930804130300",
+          "title": "沈老板专治不服",
+          "rate": "9.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/3738992bab92134a84c041ba344f3e438230edc42aef5488fedecc8560f47846.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/3738992bab92134a84c041ba344f3e438230edc42aef5488fedecc8560f47846.jpg",
+          "description": "五一假期，坚守只做鲜食的私房菜馆老板沈念为七年老客户方大成预留十桌包宴，却被其疑心杀熟、砸壶退单。转身她便接住识货伯乐刘正言带来的海外华侨客户30万包场。此后资本大鳄钱董联手方大成断供食材、操控比赛、网暴查封，沈念冒雨进山寻鲜，以一道开水白菜击败分子料理夺冠，又靠24小时全球直播自证清白。最终她拒绝...",
           "year": "2026",
           "types": [
               "短剧",
               "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全567集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "短剧实力派"
+              "朱婉婷 / 彭天烁"
           ]
       },
       {
-          "id": "jl_short_636725592728797200",
-          "title": "盛夏青苹果",
-          "rate": "9.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/09c81add91f9629ca0ce51eef625327cde6642f5c7a034b24ddfb8aaaa0e7819.png",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/09c81add91f9629ca0ce51eef625327cde6642f5c7a034b24ddfb8aaaa0e7819.png",
-          "description": "季溪闻寄人篱下，却意外撞进池遂的世界——那个嘴硬心软的大少爷，会记得她所有喜好，为她买小熊蛋糕，在暴雨中递来外套。当全世界教她懂事时，只有他说“你可以随便消耗我的耐心”。这个夏天，青苹果味的暗恋悄悄成熟，寄人篱下的女孩终于拥有了属于自己的心跳。原来被偏爱的滋味，比想象中更甜。",
-          "year": "2025",
+          "id": "jl_short_638730060223742600",
+          "title": "别惹那个神医，他医武双绝",
+          "rate": "9.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/1d84e8dda32fe8b3b770e922dac927b59cab9e010b7e75c0eaef7c0dc6631eab.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/1d84e8dda32fe8b3b770e922dac927b59cab9e010b7e75c0eaef7c0dc6631eab.jpg",
+          "description": "苏阳意外习得顶尖古医传承，归来却撞见昔日伴侣早已变心，他斩断过往羁绊。机缘巧合下，他结识聪慧果敢的王雨馨，二人彼此扶持。面对对手的商业算计与圈套，苏阳沉着布局，粉碎敌方阴谋，惩治作恶之人，最终事业爱情双双圆满，开启属于自己的全新人生。",
+          "year": "2026",
           "types": [
               "短剧",
               "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全353集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "短剧实力派"
+              "何其炜 / 杨子愉"
           ]
       },
       {
-          "id": "jl_short_629822003276152800",
-          "title": "今日宜偏爱",
-          "rate": "8.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/290589/poster/9fc43b5ea049f8e0325db600a8a59e5e5792bd76c1a41aaec0f54d12eb936216.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/290589/poster/9fc43b5ea049f8e0325db600a8a59e5e5792bd76c1a41aaec0f54d12eb936216.jpg",
-          "description": "十一年前，张然刚刚从栖宁中学毕业，父亲就从自己投资失败的烂楼上一跃而下。从此潘多拉魔盒被打开，张然永远留在了栖宁，到森洲上大学开启新生活的是改名换姓的舒听澜。十一年后，科技新贵卓禹安在森州和舒听澜再相逢，两人阴差阳错发生一夜情！究竟是卓禹安密谋了十年的温柔陷阱？还是舒听澜为父报仇的感情游戏？道德的枷...",
-          "year": "2024",
+          "id": "jl_short_638711984568795300",
+          "title": "重生村霸：专治各种不服",
+          "rate": "9.1",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d7ab5459b07100b7e7810bb4e5923a5b48e08dc1e2fdd0373b3139748c3e5279.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d7ab5459b07100b7e7810bb4e5923a5b48e08dc1e2fdd0373b3139748c3e5279.jpg",
+          "description": "重生题材早就烂大街，但把背景扔回村里当恶霸的设定确实少见。《重生村霸：专治各种不服》七十八集的容量里，周彦哲饰演的男主带着前世记忆重返乡村，不走温情路线，开局就用拳头和脑子把地头蛇挨个收拾。张雨彤在剧中与他搭档，两人在鸡飞狗跳的村庄生态里碰撞出火花。这剧的爽点在于不讲武德的降维打击，村霸逻辑配上重生...",
+          "year": "2026",
           "types": [
               "短剧",
-              "现代都市",
+              "年代穿越",
               "全集连播"
           ],
-          "episodes_info": "全119集·更新至16集",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "阳兵卓 / 龚婉怡"
+              "周彦哲 / 张雨彤"
           ]
       },
       {
-          "id": "jl_short_638800614221939500",
-          "title": "家里来了个活爹 2",
+          "id": "jl_short_638705926148325800",
+          "title": "穿越未来二十年，我开启情绪收集系统",
+          "rate": "9.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/64d01a7a721e0f4509373923b52a0376a46e5934baeb4857abebcd68bcdc8e65.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/64d01a7a721e0f4509373923b52a0376a46e5934baeb4857abebcd68bcdc8e65.jpg",
+          "description": "霓虹闪烁的未来都市街头，主角手腕上的虚拟面板突然亮起，提示情绪能量已满载——这就是《穿越未来二十年，我开启情绪收集系统》开篇定下的赛博基调。刘浩闻与侯青念在这部79集的真人短剧中搭档，一个负责冷静布局，一个提供情绪张力，两人配合默契。剧情讲述主角意外穿越到二十年后，发现世界由一套情绪收集系统掌控，人...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "刘浩闻 / 侯青念"
+          ]
+      },
+      {
+          "id": "jl_short_638711984535109800",
+          "title": "我在修仙界摆摊",
+          "rate": "8.7",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/65236bb022bf2cd8b43bf3e99dd0969e5d1e8d81411a71709ad59d6e712a6690.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/65236bb022bf2cd8b43bf3e99dd0969e5d1e8d81411a71709ad59d6e712a6690.jpg",
+          "description": "秦明穿越修仙界开了家小超市，店内商品看着平平无奇，效果却格外离谱，平价的肥宅快乐水有机会参悟道心，盲盒更是能搏出仙器、海量修为。随着接连有人开出逆天机缘，消息迅速传遍整片大陆，大家便争相抢购。店铺不断扩张，分店开遍各大域，而幕后店主秦明，看着源源不断的进账，感慨生意太红火也是一种甜蜜的负担。",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "李兼任 / 江路祺"
+          ]
+      },
+      {
+          "id": "jl_short_638705926198526300",
+          "title": "凌晨四点见人心",
           "rate": "9.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/378e0ab95f209fb4909f0632773dc8146b646b374cbd77839dbd706c4f9879b7.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/378e0ab95f209fb4909f0632773dc8146b646b374cbd77839dbd706c4f9879b7.jpg",
-          "description": "这部续作延续了前作的爆笑风格，讲述了一个看似普通家庭突然闯入一位性格古怪、行事乖张的“活爹”后引发的连环闹剧。作为一部典型的AI制作短剧，其画面细节和场景转换都展现了极高的技术水准，AI生成的特效让那些夸张的肢体冲突和滑稽场面更加生动逼真。剧情紧凑且笑点密集，主角们在应对这位不速之客时手忙脚乱的样子...",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/9e84cf0851e683cc434684820a14cc510d9e2dcaeba21819104a3f3d8f147faa.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/9e84cf0851e683cc434684820a14cc510d9e2dcaeba21819104a3f3d8f147faa.jpg",
+          "description": "天还没亮，街灯昏黄，两个人站在空旷的路口对峙，所有伪装都在这一刻卸下。《凌晨四点见人心》五十二集的故事就发生在这种褪去喧嚣的时刻，邓靖与钟政在剧中分别代表不同立场的角色，白天里维持的体面与客套，到了凌晨时分全被撕碎。剧集以时间刻度为线索，把人际间的猜忌、利用与真心摊开在夜色下审视。两人对戏时微表情的...",
           "year": "2026",
           "types": [
               "短剧",
               "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全75集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "短剧实力派"
+              "邓靖 / 钟政"
           ]
       },
       {
-          "id": "jl_short_631198734138474500",
-          "title": "你给我的喜欢",
-          "rate": "8.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/666474d1c865d790b028cbf257cd8b95e954d5e0b3fedf044c122f2e1d645e85.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/666474d1c865d790b028cbf257cd8b95e954d5e0b3fedf044c122f2e1d645e85.jpg",
-          "description": "企鹅影视出品，改编自施定柔的同名都市言情小说，讲述了两个素不相识的女生在一辆长途大巴上相遇，闵慧对自己只字不提，好奇的苏田却觉察到她的心事，并为此献出了生命，为了填补内心的亏欠，闵慧决定替代苏田去见男主辛旗，不料却陷入到一段尴尬的情缘。",
+          "id": "jl_short_638705926265635200",
+          "title": "绯色禁令",
+          "rate": "8.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d72a804341116edb477a75fc542c3ce3c8a091e6aa4324815811d5aaf494426b.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d72a804341116edb477a75fc542c3ce3c8a091e6aa4324815811d5aaf494426b.jpg",
+          "description": "清冷女医生沈清歌被催婚逼入绝境，那个曾被她拒绝的学弟江临竟以收购医院的新任总裁身份强势回归。七年前她以“年龄差距”推开他，七年后却因一场意外和他发生一夜情。醒来后沈清歌发现，江临竟然是闺蜜的儿子？！！！",
           "year": "2026",
           "types": [
               "短剧",
-              "女频恋爱",
+              "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全55集·更新至20集",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "王子奇 / 王玉雯"
+              "曹嘉怡 / 梁进"
           ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "苦瓜少爷别哭，迟总夫人又在倒追你",
-      rate: "8.8",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/730b30ac10be25cf47a242b5f8257e28716948f3f09f88a06222238b45684a3b.jpg",
+      title: "婚契",
+      rate: "9.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/39cfe266029b42b63aaf12b365efab4d7fa26f66ee1790ada2df9613d893a088.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1468,19 +1468,19 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_2',
-      title: "沈技术员他沦陷了",
-      rate: "8.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/df6037704e6ae30d187977af34d8bde71e57c4738f04ac4a266b17950397f590.jpg",
+      title: "沈老板专治不服",
+      rate: "9.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/3738992bab92134a84c041ba344f3e438230edc42aef5488fedecc8560f47846.jpg",
       year: "2026",
-      types: ["短剧","其他","全集连播"],
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_3',
-      title: "执渊入怀与他相依偎",
-      rate: "8.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/4d424dc776023eb798c3af97c1c7bc7c5459be2cbadbd671e4b9f8d01b7ccb51.jpg",
+      title: "别惹那个神医，他医武双绝",
+      rate: "9.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/1d84e8dda32fe8b3b770e922dac927b59cab9e010b7e75c0eaef7c0dc6631eab.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1488,39 +1488,39 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_4',
-      title: "我恶名缠身，竟带全家翻身致富",
-      rate: "9.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/498664c8446a7a75def9545eef29ca11dd03fab8b6495afba4a33884a0239e80.jpg",
+      title: "重生村霸：专治各种不服",
+      rate: "9.1",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d7ab5459b07100b7e7810bb4e5923a5b48e08dc1e2fdd0373b3139748c3e5279.jpg",
+      year: "2026",
+      types: ["短剧","年代穿越","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_5',
+      title: "穿越未来二十年，我开启情绪收集系统",
+      rate: "9.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/64d01a7a721e0f4509373923b52a0376a46e5934baeb4857abebcd68bcdc8e65.jpg",
       year: "2026",
       types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_5',
-      title: "盛夏青苹果",
-      rate: "9.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/09c81add91f9629ca0ce51eef625327cde6642f5c7a034b24ddfb8aaaa0e7819.png",
-      year: "2025",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
       id: 'pb_s_top_6',
-      title: "今日宜偏爱",
-      rate: "8.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/290589/poster/9fc43b5ea049f8e0325db600a8a59e5e5792bd76c1a41aaec0f54d12eb936216.jpg",
-      year: "2024",
-      types: ["短剧","现代都市","全集连播"],
+      title: "我在修仙界摆摊",
+      rate: "8.7",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/65236bb022bf2cd8b43bf3e99dd0969e5d1e8d81411a71709ad59d6e712a6690.jpg",
+      year: "2026",
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_7',
-      title: "家里来了个活爹 2",
+      title: "凌晨四点见人心",
       rate: "9.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/378e0ab95f209fb4909f0632773dc8146b646b374cbd77839dbd706c4f9879b7.jpg",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9e84cf0851e683cc434684820a14cc510d9e2dcaeba21819104a3f3d8f147faa.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1528,11 +1528,11 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_8',
-      title: "你给我的喜欢",
-      rate: "8.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/666474d1c865d790b028cbf257cd8b95e954d5e0b3fedf044c122f2e1d645e85.jpg",
+      title: "绯色禁令",
+      rate: "8.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d72a804341116edb477a75fc542c3ce3c8a091e6aa4324815811d5aaf494426b.jpg",
       year: "2026",
-      types: ["短剧","女频恋爱","全集连播"],
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1563,19 +1563,19 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "死有对证",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
         "title": "交锋",
         "updateBadge": ""
     },
     {
-        "title": "沧元图",
-        "updateBadge": "1"
-    },
-    {
         "title": "心动的信号第9季",
         "updateBadge": "2"
+    },
+    {
+        "title": "沧元图",
+        "updateBadge": ""
     },
     {
         "title": "花儿与少年第8季",
@@ -1586,12 +1586,12 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "一饭封神第2季",
-        "updateBadge": "3"
+        "title": "飞到我心上",
+        "updateBadge": ""
     },
     {
-        "title": "大主宰年番",
-        "updateBadge": "1"
+        "title": "一饭封神第2季",
+        "updateBadge": "3"
     }
   ],
   hero: [
@@ -2163,7 +2163,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第5季",
+        "title": "克拉克森的农场第3季",
         "updateBadge": ""
     },
     {
@@ -2171,23 +2171,23 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第3季",
+        "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
-        "title": "风味人间",
+        "title": "克拉克森的农场第4季",
         "updateBadge": ""
     },
     {
-        "title": "中国通史",
-        "updateBadge": ""
-    },
-    {
-        "title": "舌尖上的中国第2季",
+        "title": "失焦命案：被遗忘的女童",
         "updateBadge": ""
     },
     {
         "title": "征服14座高峰：凡事皆可能 14",
+        "updateBadge": ""
+    },
+    {
+        "title": "王朝第2季",
         "updateBadge": ""
     }
   ],
