@@ -9,11 +9,11 @@ import type { PrebakedSubject, PrebakedHomeCategory } from './home-prebaked';
 export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "仙逆",
-        "updateBadge": ""
+        "title": "沧元图",
+        "updateBadge": "1"
     },
     {
-        "title": "诛仙4",
+        "title": "仙逆",
         "updateBadge": ""
     },
     {
@@ -25,7 +25,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "遮天",
+        "title": "死灵法师我即是天灾",
+        "updateBadge": "2"
+    },
+    {
+        "title": "诛仙4",
         "updateBadge": ""
     },
     {
@@ -33,28 +37,24 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "吞噬星空",
+        "title": "大主宰年番",
         "updateBadge": ""
     },
     {
-        "title": "沧元图",
+        "title": "遮天",
         "updateBadge": ""
     },
     {
-        "title": "被追放的转生重骑士用游戏知识开无双",
-        "updateBadge": "1"
+        "title": "光阴之外",
+        "updateBadge": ""
     },
     {
         "title": "牧神记",
         "updateBadge": ""
     },
     {
-        "title": "师兄啊师兄",
-        "updateBadge": ""
-    },
-    {
-        "title": "名侦探柯南",
-        "updateBadge": ""
+        "title": "无上神帝",
+        "updateBadge": "1"
     }
   ],
   hero: [
@@ -631,19 +631,27 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
 export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "一饭封神第2季",
-        "updateBadge": "4"
-    },
-    {
         "title": "心动的信号第9季",
-        "updateBadge": ""
+        "updateBadge": "2"
     },
     {
         "title": "花儿与少年第8季",
-        "updateBadge": ""
+        "updateBadge": "2"
+    },
+    {
+        "title": "一饭封神第2季",
+        "updateBadge": "1"
     },
     {
         "title": "披荆斩棘2026",
+        "updateBadge": "1"
+    },
+    {
+        "title": "密室大逃脱第8季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "大哥小助理",
         "updateBadge": ""
     },
     {
@@ -651,16 +659,8 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "密室大逃脱第8季",
-        "updateBadge": ""
-    },
-    {
-        "title": "大哥小助理",
+        "title": "你好星期六",
         "updateBadge": "1"
-    },
-    {
-        "title": "旗安84的奇趣民宿第2季",
-        "updateBadge": ""
     }
   ],
   hero: [
@@ -704,13 +704,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609041706270661205.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111843274326403.jpg",
-        "description": "《花儿与少年第8季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260924(超前营业)。",
+        "description": "《花儿与少年第8季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260925(第3期下)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260924(超前营业)",
+        "episodes_info": "更新至20260925(第3期下)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -738,13 +738,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608102124022465304.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202608261125002570740.jpg",
-        "description": "《披荆斩棘2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260924(“聚”乐部)。",
+        "description": "《披荆斩棘2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260925(第7期上)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260924(“聚”乐部)",
+        "episodes_info": "更新至20260925(第7期上)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -755,13 +755,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607311122522270150.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202608031821302167723.jpg",
-        "description": "《心动的信号第9季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260924(第8期加更下)。",
+        "description": "《心动的信号第9季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260925(第8期陪看下)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260924(第8期加更下)",
+        "episodes_info": "更新至20260925(第8期陪看下)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -772,13 +772,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607231303450351514.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202607271339373917253.jpg",
-        "description": "《一饭封神第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至第10期下。",
+        "description": "《一饭封神第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260925(第9期加更)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至第10期下",
+        "episodes_info": "更新至20260925(第9期加更)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1237,6 +1237,10 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
+          "title": "今日宜偏爱",
+          "updateBadge": "16"
+      },
+      {
           "title": "二嫁婚浓，荔香入宋庭",
           "updateBadge": "HOT"
       },
@@ -1279,13 +1283,30 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       {
           "title": "超人婆婆宠哭孕吐儿媳2",
           "updateBadge": "HOT"
-      },
-      {
-          "title": "大小姐，您给恶魔执事调成啥了 动漫",
-          "updateBadge": "70"
       }
   ],
   hero: [
+      {
+          "id": "jl_short_629822003276152800",
+          "title": "今日宜偏爱",
+          "rate": "8.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/290589/poster/9fc43b5ea049f8e0325db600a8a59e5e5792bd76c1a41aaec0f54d12eb936216.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/290589/poster/9fc43b5ea049f8e0325db600a8a59e5e5792bd76c1a41aaec0f54d12eb936216.jpg",
+          "description": "十一年前，张然刚刚从栖宁中学毕业，父亲就从自己投资失败的烂楼上一跃而下。从此潘多拉魔盒被打开，张然永远留在了栖宁，到森洲上大学开启新生活的是改名换姓的舒听澜。十一年后，科技新贵卓禹安在森州和舒听澜再相逢，两人阴差阳错发生一夜情！究竟是卓禹安密谋了十年的温柔陷阱？还是舒听澜为父报仇的感情游戏？道德的枷...",
+          "year": "2024",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全119集·更新至16集",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "阳兵卓 / 龚婉怡"
+          ]
+      },
       {
           "id": "jl_short_638800614221939500",
           "title": "家里来了个活爹 2",
@@ -1432,32 +1453,21 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           "actors": [
               "龙泽鸣＆于雨桐"
           ]
-      },
-      {
-          "id": "jl_short_636745928056767000",
-          "title": "出千1牌局之下",
-          "rate": "8.8",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/c68e7771158113eb281063e2853d8c08e49a7f9b5a3895b5b80901e461dc2666.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/c68e7771158113eb281063e2853d8c08e49a7f9b5a3895b5b80901e461dc2666.jpg",
-          "description": "更新全集",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全3集·更新全集",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "李禹润＆汪元泱"
-          ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
+      title: "今日宜偏爱",
+      rate: "8.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/290589/poster/9fc43b5ea049f8e0325db600a8a59e5e5792bd76c1a41aaec0f54d12eb936216.jpg",
+      year: "2024",
+      types: ["短剧","现代都市","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_2',
       title: "家里来了个活爹 2",
       rate: "9.3",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/378e0ab95f209fb4909f0632773dc8146b646b374cbd77839dbd706c4f9879b7.jpg",
@@ -1467,7 +1477,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_2',
+      id: 'pb_s_top_3',
       title: "你给我的喜欢",
       rate: "8.3",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/666474d1c865d790b028cbf257cd8b95e954d5e0b3fedf044c122f2e1d645e85.jpg",
@@ -1477,7 +1487,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_3',
+      id: 'pb_s_top_4',
       title: "首富千金狂追二龙湖浩哥之他不干",
       rate: "9.0",
       cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/329028/poster/c27285d03a6f8043c64c412cce9faba314d80efa5f5654cc93a623276b917b16.webp",
@@ -1487,7 +1497,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_4',
+      id: 'pb_s_top_5',
       title: "女帝",
       rate: "9.2",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/0014d71f8092831ee4b3f017ff8536399e667e6b300a7d8e52f55f1203f3e26c.jpg",
@@ -1497,7 +1507,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_5',
+      id: 'pb_s_top_6',
       title: "我喜欢的人变成猫是怎样的体验",
       rate: "8.6",
       cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/316175/poster/1d0cf02eb87c2e2db2bec299ea6dad082e05cee3d5fd9848ffd1ae1a342f00d0.webp",
@@ -1507,7 +1517,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_6',
+      id: 'pb_s_top_7',
       title: "高手下山，我有六个姐姐",
       rate: "8.6",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/1ec728d5bfa4ea0477a61cba00dbc1b395ec22925a81f593f41b861e2d23b963.jpg",
@@ -1517,22 +1527,12 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_7',
+      id: 'pb_s_top_8',
       title: "二嫁婚浓，荔香入宋庭",
       rate: "8.9",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/16543dbe943838dd61af738ea0c83555546fb694a99a8cc99b60451583b690a8.jpg",
       year: "2026",
       types: ["短剧","女频恋爱","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_8',
-      title: "出千1牌局之下",
-      rate: "8.8",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/c68e7771158113eb281063e2853d8c08e49a7f9b5a3895b5b80901e461dc2666.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1547,10 +1547,6 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "兰香如故",
-        "updateBadge": "2"
-    },
-    {
-        "title": "我不是大师",
         "updateBadge": ""
     },
     {
@@ -1562,16 +1558,32 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "交锋",
+        "title": "我不是大师",
         "updateBadge": ""
     },
     {
         "title": "死有对证",
+        "updateBadge": ""
+    },
+    {
+        "title": "心动的信号第9季",
+        "updateBadge": "2"
+    },
+    {
+        "title": "交锋",
+        "updateBadge": ""
+    },
+    {
+        "title": "沧元图",
         "updateBadge": "1"
     },
     {
+        "title": "花儿与少年第8季",
+        "updateBadge": "2"
+    },
+    {
         "title": "一饭封神第2季",
-        "updateBadge": "4"
+        "updateBadge": "1"
     },
     {
         "title": "法医秦明之龙番往事",
@@ -1579,18 +1591,6 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "冬城猎凶",
-        "updateBadge": ""
-    },
-    {
-        "title": "心动的信号第9季",
-        "updateBadge": ""
-    },
-    {
-        "title": "飞到我心上",
-        "updateBadge": ""
-    },
-    {
-        "title": "黑岛监狱",
         "updateBadge": ""
     }
   ],
@@ -2159,23 +2159,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
 export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "克拉克森的农场第3季",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第1季",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第5季",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第4季",
-        "updateBadge": ""
-    },
-    {
-        "title": "征服14座高峰：凡事皆可能 14",
         "updateBadge": ""
     },
     {
@@ -2183,11 +2167,27 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "早餐中国",
+        "title": "征服14座高峰：凡事皆可能 14",
         "updateBadge": ""
     },
     {
-        "title": "闪闪的儿科医生第2季",
+        "title": "克拉克森的农场第3季",
+        "updateBadge": ""
+    },
+    {
+        "title": "克拉克森的农场第5季",
+        "updateBadge": ""
+    },
+    {
+        "title": "向着宵夜的方向",
+        "updateBadge": ""
+    },
+    {
+        "title": "寻色中国",
+        "updateBadge": ""
+    },
+    {
+        "title": "河中巨怪第1-9季",
         "updateBadge": ""
     }
   ],

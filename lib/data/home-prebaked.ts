@@ -66,15 +66,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "年会不能停！2",
-                "updateBadge": ""
-        },
-        {
                 "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
         {
-                "title": "爱情假说",
+                "title": "年会不能停！2",
+                "updateBadge": ""
+        },
+        {
+                "title": "卖冰淇淋的人",
                 "updateBadge": ""
         },
         {
@@ -86,7 +86,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "卖冰淇淋的人",
+                "title": "逃出绝命街",
+                "updateBadge": ""
+        },
+        {
+                "title": "爱情假说",
                 "updateBadge": ""
         },
         {
@@ -94,11 +98,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "夜王",
-                "updateBadge": ""
-        },
-        {
-                "title": "玩具总动员5",
+                "title": "怒之杀(听译)",
                 "updateBadge": ""
         }
       ],
@@ -1825,10 +1825,6 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": "2"
-        },
-        {
-                "title": "我不是大师",
                 "updateBadge": ""
         },
         {
@@ -1840,12 +1836,16 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "交锋",
+                "title": "我不是大师",
                 "updateBadge": ""
         },
         {
                 "title": "死有对证",
-                "updateBadge": "1"
+                "updateBadge": ""
+        },
+        {
+                "title": "交锋",
+                "updateBadge": ""
         },
         {
                 "title": "法医秦明之龙番往事",
@@ -1861,15 +1861,15 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "黑岛监狱",
+                "updateBadge": "2"
+        },
+        {
+                "title": "花开锦绣",
                 "updateBadge": ""
         },
         {
                 "title": "挑情丑闻",
                 "updateBadge": ""
-        },
-        {
-                "title": "中头奖还是要上班",
-                "updateBadge": "2"
         }
       ],
     "hero": [
