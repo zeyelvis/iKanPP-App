@@ -312,17 +312,10 @@ if (fs.existsSync(customPlayerPath)) {
 }
 
 const artPlayerPath = path.resolve('components/player/artplayer/ArtVideoPlayer.tsx');
-if (fs.existsSync(artPlayerPath)) {
-  const apContent = fs.readFileSync(artPlayerPath, 'utf-8');
-  assert(
-    apContent.includes('export const ArtVideoPlayer = React.memo('),
-    'ArtVideoPlayer.tsx 必须使用 React.memo 包裹，隔离外部虚拟 DOM 渲染波动'
-  );
-  assert(
-    apContent.includes('createHlsConfig'),
-    'ArtVideoPlayer.tsx 必须统一接入 createHlsConfig 单一真理源，继承 120s 深水库'
-  );
-}
+assert(
+  !fs.existsSync(artPlayerPath),
+  '彻底杜绝架构倒退：已全面淘汰 Artplayer，严禁重新引入 components/player/artplayer/ArtVideoPlayer.tsx'
+);
 
 const hlsFactoryPath = path.resolve('lib/player/hls-config-factory.ts');
 if (fs.existsSync(hlsFactoryPath)) {
