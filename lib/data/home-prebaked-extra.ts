@@ -9,6 +9,10 @@ import type { PrebakedSubject, PrebakedHomeCategory } from './home-prebaked';
 export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
+        "title": "斗破苍穹年番",
+        "updateBadge": "1"
+    },
+    {
         "title": "凡人修仙传",
         "updateBadge": "1"
     },
@@ -17,16 +21,12 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "择日飞升",
-        "updateBadge": "1"
-    },
-    {
         "title": "仙逆",
         "updateBadge": ""
     },
     {
-        "title": "斗破苍穹年番",
-        "updateBadge": ""
+        "title": "择日飞升",
+        "updateBadge": "1"
     },
     {
         "title": "沧元图",
@@ -37,23 +37,23 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "牧神记",
+        "updateBadge": ""
+    },
+    {
         "title": "妖神记第4季",
         "updateBadge": "2"
     },
     {
-        "title": "牧神记",
-        "updateBadge": ""
+        "title": "名侦探柯南",
+        "updateBadge": "2"
     },
     {
         "title": "吞噬星空",
         "updateBadge": ""
     },
     {
-        "title": "万界独尊",
-        "updateBadge": "1"
-    },
-    {
-        "title": "遮天",
+        "title": "大主宰年番",
         "updateBadge": ""
     }
   ],
@@ -631,15 +631,19 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
 export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "花儿与少年第8季",
-        "updateBadge": ""
-    },
-    {
         "title": "心动的信号第9季",
         "updateBadge": ""
     },
     {
         "title": "披荆斩棘2026",
+        "updateBadge": "1"
+    },
+    {
+        "title": "花儿与少年第8季",
+        "updateBadge": ""
+    },
+    {
+        "title": "你好星期六",
         "updateBadge": "1"
     },
     {
@@ -657,10 +661,6 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
     {
         "title": "密室大逃脱第8季",
         "updateBadge": ""
-    },
-    {
-        "title": "地球超新鲜第2季",
-        "updateBadge": "1"
     }
   ],
   hero: [
@@ -1237,6 +1237,38 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
+          "title": "重生逼我换嫁，我靠灵泉养出镇海王",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "悍妻进门，包租公全家立正",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "妻子频繁升职后我后悔了",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "家里保姆竟是古代丫鬟出身",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "好运小厨娘",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "钓系攻略手册",
+          "updateBadge": "全"
+      },
+      {
+          "title": "遇是旧时人",
+          "updateBadge": "全"
+      },
+      {
+          "title": "胎珠传",
+          "updateBadge": "全"
+      },
+      {
           "title": "打到京城那天，他选择了退兵",
           "updateBadge": "全"
       },
@@ -1251,41 +1283,51 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       {
           "title": "我修法宝就能变强",
           "updateBadge": "全"
-      },
-      {
-          "title": "盛律师的离婚前规则",
-          "updateBadge": "全"
-      },
-      {
-          "title": "开局虐渣，特工世子妃来自现代",
-          "updateBadge": "73"
-      },
-      {
-          "title": "双珠换嫁掌荣华",
-          "updateBadge": "HOT"
-      },
-      {
-          "title": "亿万斯年",
-          "updateBadge": "全"
-      },
-      {
-          "title": "求求你们，别再喊我高人了",
-          "updateBadge": "全"
-      },
-      {
-          "title": "三大反骨仔：硬撼诸神联军",
-          "updateBadge": "全"
-      },
-      {
-          "title": "修仙入世我在都市当靠山",
-          "updateBadge": "全"
-      },
-      {
-          "title": "我能往返60，这年代遍地黄金",
-          "updateBadge": "全"
       }
   ],
   hero: [
+      {
+          "id": "jl_short_638730060206965400",
+          "title": "钓系攻略手册",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/9c73e1e8c312ee207caff4aa7289a7f173b6aec70f67395e24955e259b70a1d9.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/9c73e1e8c312ee207caff4aa7289a7f173b6aec70f67395e24955e259b70a1d9.jpg",
+          "description": "看完《钓系攻略手册》，心里像被猫爪子轻轻挠过一样，又痒又空落落的。这50集的都市情感剧根本不是什么正经攻略，而是朴婧闻和吴杰两人在推拉游戏里不断交出底牌的记录。朴婧闻把钓系角色的欲擒故纵演得浑然天成，每一个看似不经意的靠近都藏着精准的算计；吴杰则负责扮演那个自以为清醒却一步步沦陷的猎物，两人之间的化...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "朴婧闻 / 吴杰"
+          ]
+      },
+      {
+          "id": "jl_short_636726914572091400",
+          "title": "胎珠传",
+          "rate": "8.9",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/53c276146e98cfb7e5f36f0860a8a470ce795415da7daa3e809dce9537d2b637.png",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/53c276146e98cfb7e5f36f0860a8a470ce795415da7daa3e809dce9537d2b637.png",
+          "description": "太玄界胎珠传奇的陈长安，万年不死、无法修炼，被师父赶下山后才发现，自己的修炼天赋竟然全在娘胎里化成九颗珠子！带着麒麟大黄，一路寻珠、收徒、搞事。当绝世女帝的冤种徒弟带着麒麟，从太玄界横推到太古仙域——记住，他从不炼器，专炼师。",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全801集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
       {
           "id": "jl_short_638856975014297900",
           "title": "打到京城那天，他选择了退兵",
@@ -1411,53 +1453,31 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           "actors": [
               "短剧实力派"
           ]
-      },
-      {
-          "id": "jl_short_638964011253170200",
-          "title": "此地良宵",
-          "rate": "8.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/a8f7d96128970f7383dff3236382a87f9a88ea5952d4954056f51bbad326c145.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/a8f7d96128970f7383dff3236382a87f9a88ea5952d4954056f51bbad326c145.jpg",
-          "description": "你看完会觉得时间被偷走了，《此地良宵》这41集的节奏密不透风。马法洋和李百万两位演员在这部真人短剧里搭档，一个眼神凌厉一个气质沉稳，对手戏火花四溅。故事围绕夜色下的暗流涌动展开，两人在利益与情感的拉扯中步步为营，每一次交锋都带着试探底线的危险气息。马法洋把角色的隐忍演得入木三分，李百万则把张扬拿捏得...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "女频恋爱",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "马法洋＆李百万"
-          ]
-      },
-      {
-          "id": "jl_short_638964011152506900",
-          "title": "重生当天，我替姐姐联姻了",
-          "rate": "9.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/16aaf6fc44ddb3a494774da8a05e32a85ea0c1d83138848a6b5a9b25f0aabcd4.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/16aaf6fc44ddb3a494774da8a05e32a85ea0c1d83138848a6b5a9b25f0aabcd4.jpg",
-          "description": "重生题材年年火，但敢在睁眼第一天就直接顶替姐姐嫁入虎狼之家的设定确实少见。《重生当天，我替姐姐联姻了》共75集，由何连飞与姚宇晨搭档出演这部真人短剧。何连飞将女主那份破釜沉舟的果决演得极具说服力，姚宇晨则把联姻对象从冷漠防备到深陷其中的转变处理得层次分明，两人配合默契十足。剧情核心在于女主利用前世记...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "年代穿越",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "何连飞＆姚宇晨"
-          ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
+      title: "钓系攻略手册",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9c73e1e8c312ee207caff4aa7289a7f173b6aec70f67395e24955e259b70a1d9.jpg",
+      year: "2026",
+      types: ["短剧","现代都市","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_2',
+      title: "胎珠传",
+      rate: "8.9",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/53c276146e98cfb7e5f36f0860a8a470ce795415da7daa3e809dce9537d2b637.png",
+      year: "2026",
+      types: ["短剧","古装仙侠","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_3',
       title: "打到京城那天，他选择了退兵",
       rate: "8.8",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/c8d7ea74f20729989347e7ada9c46d889465653c64c6c08395a1bdd9df14af77.jpg",
@@ -1467,7 +1487,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_2',
+      id: 'pb_s_top_4',
       title: "战王老爸带我飞",
       rate: "8.4",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/17a735cd46901f515ea472f3e5ad0bc0e0b0cbfb63c26534af090a09530bd5b4.jpg",
@@ -1477,7 +1497,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_3',
+      id: 'pb_s_top_5',
       title: "我修法宝就能变强",
       rate: "8.7",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/5a7749ac4d28455b6439f0b4c8aadd5e05f1e69b1813d959dd829da82f001892.jpg",
@@ -1487,7 +1507,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_4',
+      id: 'pb_s_top_6',
       title: "盛律师的离婚前规则",
       rate: "8.5",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d39f21e9a4ab8f55c4eca3135e1a0fd9ba39a2ae86505b648ec9e05e4e8d91ec.jpg",
@@ -1497,7 +1517,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_5',
+      id: 'pb_s_top_7',
       title: "嫁去农村，成为头号当家主母",
       rate: "8.7",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/b9dca1bbaba0f53ec83fcd7c6328d0c876c664adbc0bacc2bb2ab8b76cd34bd3.jpg",
@@ -1507,32 +1527,12 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_6',
+      id: 'pb_s_top_8',
       title: "卿卿入怀川2：京城篇",
       rate: "8.5",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/782f3ba39a4e22fdde4ef85e0bc83372937252046adde58119ccf221e387a9ae.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_7',
-      title: "此地良宵",
-      rate: "8.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/a8f7d96128970f7383dff3236382a87f9a88ea5952d4954056f51bbad326c145.jpg",
-      year: "2026",
-      types: ["短剧","女频恋爱","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_8',
-      title: "重生当天，我替姐姐联姻了",
-      rate: "9.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/16aaf6fc44ddb3a494774da8a05e32a85ea0c1d83138848a6b5a9b25f0aabcd4.jpg",
-      year: "2026",
-      types: ["短剧","年代穿越","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1547,19 +1547,23 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "兰香如故",
-        "updateBadge": ""
+        "updateBadge": "2"
+    },
+    {
+        "title": "一瓯春",
+        "updateBadge": "2"
+    },
+    {
+        "title": "我不是大师",
+        "updateBadge": "2"
+    },
+    {
+        "title": "斗破苍穹年番",
+        "updateBadge": "1"
     },
     {
         "title": "凡人修仙传",
         "updateBadge": "1"
-    },
-    {
-        "title": "一瓯春",
-        "updateBadge": ""
-    },
-    {
-        "title": "我不是大师",
-        "updateBadge": ""
     },
     {
         "title": "早春晴朗",
@@ -1578,15 +1582,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "花儿与少年第8季",
-        "updateBadge": ""
+        "title": "法医秦明之龙番往事",
+        "updateBadge": "1"
     },
     {
         "title": "心动的信号第9季",
-        "updateBadge": ""
-    },
-    {
-        "title": "法医秦明之龙番往事",
         "updateBadge": ""
     },
     {
@@ -1673,13 +1673,13 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609241200270068364.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202609241345244520726.jpg",
-        "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至06集 | 共24集。",
+        "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至08集 | 共24集。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至06集 | 共24集",
+        "episodes_info": "更新至08集 | 共24集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1690,13 +1690,13 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609221204050427723.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202609221304100431020.jpg",
-        "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至09集 | 共24集。",
+        "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至10集 | 共24集。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至09集 | 共24集",
+        "episodes_info": "更新至10集 | 共24集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1707,13 +1707,13 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609171141024107110.jpg",
-        "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至19集 | 共30集。",
+        "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至21集 | 共30集。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至19集 | 共30集",
+        "episodes_info": "更新至21集 | 共30集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -2163,23 +2163,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第2季",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第5季",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第4季",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第3季",
-        "updateBadge": ""
-    },
-    {
-        "title": "七个世界，一个星球",
         "updateBadge": ""
     },
     {
@@ -2187,7 +2171,23 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "狂坠：波音大调查2",
+        "title": "克拉克森的农场第3季",
+        "updateBadge": ""
+    },
+    {
+        "title": "克拉克森的农场第2季",
+        "updateBadge": ""
+    },
+    {
+        "title": "一级方程式：疾速争胜第8季",
+        "updateBadge": ""
+    },
+    {
+        "title": "人间世第2季",
+        "updateBadge": ""
+    },
+    {
+        "title": "早餐中国第2季",
         "updateBadge": ""
     }
   ],
