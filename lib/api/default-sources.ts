@@ -1,6 +1,6 @@
 import type { VideoSource } from '@/lib/types';
 
-// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-25T08:16:03.674Z）
+// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-26T08:03:47.462Z）
 export const DEFAULT_SOURCES: VideoSource[] = [
   {
     id: 'juliang',
