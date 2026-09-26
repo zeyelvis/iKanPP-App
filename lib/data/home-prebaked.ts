@@ -62,11 +62,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "给阿嬷的情书",
+                "title": "死亡赌局",
                 "updateBadge": ""
         },
         {
-                "title": "生死尽头",
+                "title": "魔方小姐",
+                "updateBadge": ""
+        },
+        {
+                "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
         {
@@ -82,7 +86,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "逃出绝命街",
+                "title": "生死尽头",
                 "updateBadge": ""
         },
         {
@@ -94,11 +98,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "卖冰淇淋的人",
-                "updateBadge": ""
-        },
-        {
-                "title": "怒之杀(听译)",
+                "title": "逃出绝命街",
                 "updateBadge": ""
         }
       ],
@@ -1840,11 +1840,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "死有对证",
+                "title": "交锋",
                 "updateBadge": ""
         },
         {
-                "title": "交锋",
+                "title": "死有对证",
                 "updateBadge": ""
         },
         {
@@ -1856,12 +1856,12 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "飞到我心上",
+                "title": "黑岛监狱",
                 "updateBadge": ""
         },
         {
-                "title": "黑岛监狱",
-                "updateBadge": "1"
+                "title": "飞到我心上",
+                "updateBadge": ""
         },
         {
                 "title": "花开锦绣",
