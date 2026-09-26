@@ -13,20 +13,24 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "沧元图",
-        "updateBadge": ""
+        "title": "光阴之外",
+        "updateBadge": "1"
+    },
+    {
+        "title": "择日飞升",
+        "updateBadge": "1"
     },
     {
         "title": "仙逆",
         "updateBadge": ""
     },
     {
-        "title": "大主宰年番",
-        "updateBadge": "1"
+        "title": "沧元图",
+        "updateBadge": ""
     },
     {
-        "title": "关于我转生变成史莱姆这档事第4季",
-        "updateBadge": "1"
+        "title": "妖神记第4季",
+        "updateBadge": "2"
     },
     {
         "title": "海贼王",
@@ -37,23 +41,19 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "关于我转生变成史莱姆这档事第4季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "大主宰年番",
+        "updateBadge": ""
+    },
+    {
+        "title": "炼气十万年",
+        "updateBadge": "1"
+    },
+    {
         "title": "牧神记",
-        "updateBadge": ""
-    },
-    {
-        "title": "光阴之外",
-        "updateBadge": ""
-    },
-    {
-        "title": "遮天",
-        "updateBadge": ""
-    },
-    {
-        "title": "吞噬星空",
-        "updateBadge": ""
-    },
-    {
-        "title": "名侦探柯南",
         "updateBadge": ""
     }
   ],
@@ -631,19 +631,19 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
 export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "一饭封神第2季",
-        "updateBadge": ""
-    },
-    {
         "title": "花儿与少年第8季",
         "updateBadge": ""
     },
     {
-        "title": "披荆斩棘2026",
+        "title": "一饭封神第2季",
         "updateBadge": ""
     },
     {
         "title": "心动的信号第9季",
+        "updateBadge": ""
+    },
+    {
+        "title": "披荆斩棘2026",
         "updateBadge": ""
     },
     {
@@ -659,7 +659,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "脱口秀和Ta的朋友们第3季",
+        "title": "你好星期六",
         "updateBadge": ""
     }
   ],
@@ -1237,55 +1237,76 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "婚契",
-          "updateBadge": "全"
+          "title": "今日宜偏爱",
+          "updateBadge": "22"
       },
       {
-          "title": "沈老板专治不服",
-          "updateBadge": "全"
-      },
-      {
-          "title": "别惹那个神医，他医武双绝",
-          "updateBadge": "全"
-      },
-      {
-          "title": "重生村霸：专治各种不服",
-          "updateBadge": "全"
-      },
-      {
-          "title": "穿越未来二十年，我开启情绪收集系统",
-          "updateBadge": "全"
-      },
-      {
-          "title": "我在修仙界摆摊",
-          "updateBadge": "全"
-      },
-      {
-          "title": "凌晨四点见人心",
-          "updateBadge": "全"
-      },
-      {
-          "title": "绯色禁令",
-          "updateBadge": "全"
-      },
-      {
-          "title": "赌上职业生涯，我带七班逆风翻盘",
-          "updateBadge": "全"
-      },
-      {
-          "title": "青春岁月之东北往事",
+          "title": "归宗",
           "updateBadge": "HOT"
       },
       {
-          "title": "错位招惹",
+          "title": "江先生，你逃不掉了",
           "updateBadge": "HOT"
       },
       {
-          "title": "韩指挥的农家妻",
-          "updateBadge": "全"
+          "title": "偷换人生终有报",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "掀桌退婚：保安男友身份藏不住了",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "莫欺枕边人",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "我成全弟媳孝心，她却后悔了",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "那老头是相术大师风水术无敌了",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "十年禁制期满，无敌赘婿出山了",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "傅总，你找错白月光了",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "重生当天，我替姐姐联姻了",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "我的传奇",
+          "updateBadge": "HOT"
       }
   ],
   hero: [
+      {
+          "id": "jl_short_629822003276152800",
+          "title": "今日宜偏爱",
+          "rate": "8.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/290589/poster/9fc43b5ea049f8e0325db600a8a59e5e5792bd76c1a41aaec0f54d12eb936216.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/290589/poster/9fc43b5ea049f8e0325db600a8a59e5e5792bd76c1a41aaec0f54d12eb936216.jpg",
+          "description": "十一年前，张然刚刚从栖宁中学毕业，父亲就从自己投资失败的烂楼上一跃而下。从此潘多拉魔盒被打开，张然永远留在了栖宁，到森洲上大学开启新生活的是改名换姓的舒听澜。十一年后，科技新贵卓禹安在森州和舒听澜再相逢，两人阴差阳错发生一夜情！究竟是卓禹安密谋了十年的温柔陷阱？还是舒听澜为父报仇的感情游戏？道德的枷...",
+          "year": "2024",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全119集·更新至22集",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "阳兵卓 / 龚婉怡"
+          ]
+      },
       {
           "id": "jl_short_638730060257297000",
           "title": "婚契",
@@ -1432,32 +1453,21 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           "actors": [
               "邓靖 / 钟政"
           ]
-      },
-      {
-          "id": "jl_short_638705926265635200",
-          "title": "绯色禁令",
-          "rate": "8.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d72a804341116edb477a75fc542c3ce3c8a091e6aa4324815811d5aaf494426b.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d72a804341116edb477a75fc542c3ce3c8a091e6aa4324815811d5aaf494426b.jpg",
-          "description": "清冷女医生沈清歌被催婚逼入绝境，那个曾被她拒绝的学弟江临竟以收购医院的新任总裁身份强势回归。七年前她以“年龄差距”推开他，七年后却因一场意外和他发生一夜情。醒来后沈清歌发现，江临竟然是闺蜜的儿子？！！！",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "曹嘉怡 / 梁进"
-          ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
+      title: "今日宜偏爱",
+      rate: "8.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/290589/poster/9fc43b5ea049f8e0325db600a8a59e5e5792bd76c1a41aaec0f54d12eb936216.jpg",
+      year: "2024",
+      types: ["短剧","现代都市","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_2',
       title: "婚契",
       rate: "9.6",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/39cfe266029b42b63aaf12b365efab4d7fa26f66ee1790ada2df9613d893a088.jpg",
@@ -1467,7 +1477,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_2',
+      id: 'pb_s_top_3',
       title: "沈老板专治不服",
       rate: "9.6",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/3738992bab92134a84c041ba344f3e438230edc42aef5488fedecc8560f47846.jpg",
@@ -1477,7 +1487,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_3',
+      id: 'pb_s_top_4',
       title: "别惹那个神医，他医武双绝",
       rate: "9.4",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/1d84e8dda32fe8b3b770e922dac927b59cab9e010b7e75c0eaef7c0dc6631eab.jpg",
@@ -1487,7 +1497,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_4',
+      id: 'pb_s_top_5',
       title: "重生村霸：专治各种不服",
       rate: "9.1",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d7ab5459b07100b7e7810bb4e5923a5b48e08dc1e2fdd0373b3139748c3e5279.jpg",
@@ -1497,7 +1507,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_5',
+      id: 'pb_s_top_6',
       title: "穿越未来二十年，我开启情绪收集系统",
       rate: "9.2",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/64d01a7a721e0f4509373923b52a0376a46e5934baeb4857abebcd68bcdc8e65.jpg",
@@ -1507,7 +1517,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_6',
+      id: 'pb_s_top_7',
       title: "我在修仙界摆摊",
       rate: "8.7",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/65236bb022bf2cd8b43bf3e99dd0969e5d1e8d81411a71709ad59d6e712a6690.jpg",
@@ -1517,20 +1527,10 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_7',
+      id: 'pb_s_top_8',
       title: "凌晨四点见人心",
       rate: "9.3",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9e84cf0851e683cc434684820a14cc510d9e2dcaeba21819104a3f3d8f147faa.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_8',
-      title: "绯色禁令",
-      rate: "8.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d72a804341116edb477a75fc542c3ce3c8a091e6aa4324815811d5aaf494426b.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1550,6 +1550,10 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "凡人修仙传",
+        "updateBadge": ""
+    },
+    {
         "title": "我不是大师",
         "updateBadge": ""
     },
@@ -1562,15 +1566,23 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "光阴之外",
+        "updateBadge": "1"
+    },
+    {
         "title": "交锋",
         "updateBadge": ""
     },
     {
         "title": "死有对证",
+        "updateBadge": ""
+    },
+    {
+        "title": "择日飞升",
         "updateBadge": "1"
     },
     {
-        "title": "法医秦明之龙番往事",
+        "title": "花儿与少年第8季",
         "updateBadge": ""
     },
     {
@@ -1579,18 +1591,6 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "冬城猎凶",
-        "updateBadge": ""
-    },
-    {
-        "title": "花儿与少年第8季",
-        "updateBadge": ""
-    },
-    {
-        "title": "披荆斩棘2026",
-        "updateBadge": ""
-    },
-    {
-        "title": "心动的信号第9季",
         "updateBadge": ""
     }
   ],
@@ -2167,15 +2167,19 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "守望秦岭",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
-        "title": "失焦命案：被遗忘的女童",
+        "title": "克拉克森的农场第3季",
+        "updateBadge": ""
+    },
+    {
+        "title": "寻色中国",
+        "updateBadge": ""
+    },
+    {
+        "title": "征服14座高峰：凡事皆可能 14",
         "updateBadge": ""
     },
     {
@@ -2183,11 +2187,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "王朝第2季",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第3季",
+        "title": "激流时代",
         "updateBadge": ""
     }
   ],

@@ -62,7 +62,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "生死尽头",
+                "title": "年会不能停！2",
                 "updateBadge": ""
         },
         {
@@ -70,11 +70,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "年会不能停！2",
+                "title": "生死尽头",
                 "updateBadge": ""
         },
         {
                 "title": "给阿嬷的情书",
+                "updateBadge": ""
+        },
+        {
+                "title": "一夜限定",
                 "updateBadge": ""
         },
         {
@@ -86,7 +90,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "一夜限定",
+                "title": "数到三",
                 "updateBadge": ""
         },
         {
@@ -94,11 +98,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "玩具总动员5",
-                "updateBadge": ""
-        },
-        {
-                "title": "数到三",
+                "title": "逃出绝命街",
                 "updateBadge": ""
         }
       ],
@@ -1845,10 +1845,6 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "死有对证",
-                "updateBadge": "1"
-        },
-        {
-                "title": "法医秦明之龙番往事",
                 "updateBadge": ""
         },
         {
@@ -1856,7 +1852,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "黑岛监狱",
+                "title": "法医秦明之龙番往事",
                 "updateBadge": ""
         },
         {
@@ -1869,6 +1865,10 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "深渊无间",
+                "updateBadge": ""
+        },
+        {
+                "title": "黑岛监狱",
                 "updateBadge": ""
         }
       ],
