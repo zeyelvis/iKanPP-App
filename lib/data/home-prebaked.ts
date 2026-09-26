@@ -54,11 +54,11 @@ export const PREBAKED_HOME_DATA: {
   "movie": {
     "trendingNav": [
         {
-                "title": "欢迎来龙餐馆",
+                "title": "一个部门的诞生",
                 "updateBadge": ""
         },
         {
-                "title": "一个部门的诞生",
+                "title": "欢迎来龙餐馆",
                 "updateBadge": ""
         },
         {
@@ -78,7 +78,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "大学炸弹客",
+                "title": "生死尽头",
                 "updateBadge": ""
         },
         {
@@ -86,11 +86,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "生死尽头",
-                "updateBadge": ""
-        },
-        {
-                "title": "一夜限定",
+                "title": "大学炸弹客",
                 "updateBadge": ""
         },
         {
@@ -98,7 +94,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "逃出绝命街",
+                "title": "一夜限定",
+                "updateBadge": ""
+        },
+        {
+                "title": "玩具总动员5",
                 "updateBadge": ""
         }
       ],
@@ -1828,28 +1828,28 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
-                "title": "一瓯春",
-                "updateBadge": "2"
-        },
-        {
                 "title": "我不是大师",
                 "updateBadge": "2"
         },
         {
-                "title": "早春晴朗",
-                "updateBadge": ""
+                "title": "一瓯春",
+                "updateBadge": "2"
         },
         {
                 "title": "交锋",
                 "updateBadge": ""
         },
         {
-                "title": "死有对证",
+                "title": "早春晴朗",
                 "updateBadge": ""
         },
         {
                 "title": "法医秦明之龙番往事",
                 "updateBadge": "1"
+        },
+        {
+                "title": "死有对证",
+                "updateBadge": ""
         },
         {
                 "title": "冬城猎凶",
@@ -1860,7 +1860,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "飞到我心上",
+                "title": "深渊无间",
                 "updateBadge": ""
         },
         {
@@ -1868,7 +1868,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "百花杀",
+                "title": "飞到我心上",
                 "updateBadge": ""
         }
       ],
