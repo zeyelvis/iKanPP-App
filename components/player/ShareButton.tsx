@@ -8,7 +8,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Share2, Copy, Check, X, Link2, MessageCircle, QrCode, Sparkles } from 'lucide-react';
 import { siteConfig } from '@/lib/config/site-config';
-import { ShareCardModal } from './ShareCardModal';
+import { AiViralShareModal } from '@/components/share/AiViralShareModal';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 interface ShareButtonProps {
@@ -258,12 +258,11 @@ export function ShareButton({ title, size = 20, poster, episodeName, year, type,
       )}
 
       {/* 专属影评裂变分享弹窗 */}
-      <ShareCardModal
+      <AiViralShareModal
         isOpen={showCardModal}
         onClose={() => setShowCardModal(false)}
         title={title}
         poster={poster}
-        episodeName={episodeName}
         year={year}
         type={type}
       />

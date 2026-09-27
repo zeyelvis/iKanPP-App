@@ -11,6 +11,7 @@ import { fetchTitleProbe, subscribeTitleProbe, resolvePlayTarget } from '@/lib/u
 import { isValidSourceId } from '@/lib/api/video-sources';
 import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 import { ClassicDemandModal } from './ClassicDemandModal';
+import { AiViralShareModal } from '@/components/share/AiViralShareModal';
 
 interface TitleActionsBarProps {
   entity: TitleEntity;
@@ -32,6 +33,7 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
   const [isLiked, setIsLiked] = useState(false);
   const [isClassicNoSource, setIsClassicNoSource] = useState(false);
   const [isDemandModalOpen, setIsDemandModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   // 联动收藏/追剧 store
   const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore();
@@ -163,27 +165,8 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
     }
   };
 
-  const handleShare = async () => {
-    const url = typeof window !== 'undefined' ? window.location.href : '';
-    const shareText = `我在 iKanPP 免费观看《${entity.title}》(${entity.year}) 高清全集，海外免翻墙极速播放：${url}`;
-
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: entity.title,
-          text: shareText,
-          url,
-        });
-        return;
-      }
-    } catch {}
-
-    try {
-      await navigator.clipboard.writeText(shareText);
-      showToast('✅ 影视分享链接已复制到剪贴板！');
-    } catch {
-      showToast('复制链接失败，请手动复制地址栏网址');
-    }
+  const handleShare = () => {
+    setIsShareModalOpen(true);
   };
 
   const handleLike = () => {
@@ -263,10 +246,10 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
 
             <button
               onClick={handleShare}
-              className="flex-1 flex flex-col items-center justify-center gap-1 text-white/80 hover:text-white active:scale-95 transition-all cursor-pointer py-1"
+              className="flex-1 flex flex-col items-center justify-center gap-1 text-white/80 hover:text-white active:scale-95 transition-all cursor-pointer py-1 group"
             >
-              <Share2 className="w-5 h-5 text-white/90" />
-              <span className="text-[11px] font-medium text-white/65">分享好友</span>
+              <Share2 className="w-5 h-5 text-red-400 group-hover:scale-110 transition-transform" />
+              <span className="text-[11px] font-bold text-red-400">✨ 安利好友</span>
             </button>
 
             <button
@@ -353,14 +336,14 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
           )}
         </button>
 
-        {/* 分享 */}
+        {/* 社交裂变推荐分享 */}
         <button
           onClick={handleShare}
-          className="p-3.5 lg:p-4 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-white backdrop-blur-md transition-all duration-200 cursor-pointer shrink-0 hover:scale-[1.02]"
-          title="分享此影视"
-          aria-label="分享"
+          className="flex items-center gap-2 px-5 lg:px-6 py-3.5 lg:py-4 rounded-2xl border border-red-500/40 bg-red-600/15 hover:bg-red-600/25 text-red-300 hover:text-white font-bold text-sm lg:text-base transition-all duration-200 cursor-pointer shrink-0 hover:scale-[1.02] shadow-lg shadow-red-950/20 active:scale-[0.98]"
+          title="生成电影拍立得海报与小红书爆款文案"
         >
-          <Share2 className="w-5 h-5" />
+          <Share2 className="w-5 h-5 text-red-400" />
+          <span>✨ 推荐给好友</span>
         </button>
 
         {/* 推荐点赞 */}
@@ -398,6 +381,13 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
         onClose={() => setIsDemandModalOpen(false)}
         entity={entity}
         relatedTitles={relatedTitles}
+      />
+
+      {/* 弹窗：AI 社交裂变与固定分享中枢 */}
+      <AiViralShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        entity={entity}
       />
 
       {/* Toast 动效提示 */}

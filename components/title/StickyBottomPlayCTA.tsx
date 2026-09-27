@@ -3,11 +3,12 @@
 import { useState, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Play, Loader2, Sparkles } from 'lucide-react';
+import { Play, Loader2, Sparkles, Share2 } from 'lucide-react';
 import { useHistoryStore } from '@/lib/store/history-store';
 import { TitleEntity } from '@/lib/types/entity';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { getEpisodeDisplayInfo, EpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
+import { AiViralShareModal } from '@/components/share/AiViralShareModal';
 
 import { fetchTitleProbe, subscribeTitleProbe, resolvePlayTarget } from '@/lib/utils/title-probe';
 import { isValidSourceId } from '@/lib/api/video-sources';
@@ -21,6 +22,7 @@ export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAPr
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isVisible, setIsVisible] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const { viewingHistory } = useHistoryStore();
   const [episodeInfo, setEpisodeInfo] = useState<EpisodeDisplayInfo>({
     label: '第 1 集',
@@ -167,22 +169,40 @@ export function StickyBottomPlayCTA({ entity, playTitle }: StickyBottomPlayCTAPr
           </div>
         </div>
 
-        {/* 右侧：单手大拇指大播放按钮 */}
-        <button
-          onClick={handlePlay}
-          disabled={isPending}
-          className="shrink-0 flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 active:bg-red-700 text-white font-black text-sm shadow-lg shadow-red-600/30 cursor-pointer disabled:opacity-75"
-        >
-          {isPending ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Play className="w-4 h-4 fill-white text-white" />
-          )}
-          <span>
-            {entity.type === 'tv' ? `播放 ${episodeInfo.label}` : '立即播放'}
-          </span>
-        </button>
+        {/* 右侧：单手操作按钮组 */}
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => setIsShareModalOpen(true)}
+            className="p-2.5 rounded-xl bg-white/10 hover:bg-white/15 active:bg-white/20 border border-white/15 text-red-400 active:scale-95 transition-all cursor-pointer flex items-center justify-center shadow-md"
+            title="生成海报与文案安利好友"
+            aria-label="安利好友"
+          >
+            <Share2 className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={handlePlay}
+            disabled={isPending}
+            className="flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-red-600 active:bg-red-700 text-white font-black text-sm shadow-lg shadow-red-600/30 cursor-pointer disabled:opacity-75 active:scale-95 transition-all"
+          >
+            {isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Play className="w-4 h-4 fill-white text-white" />
+            )}
+            <span>
+              {entity.type === 'tv' ? `播放 ${episodeInfo.label}` : '立即播放'}
+            </span>
+          </button>
+        </div>
       </div>
+
+      {/* 弹窗：AI 社交裂变与固定分享中枢 */}
+      <AiViralShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        entity={entity}
+      />
     </aside>
   );
 }
