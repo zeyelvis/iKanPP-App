@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-27T10:48:20.915Z",
+  "lastUpdated": "2026-09-27T23:36:19.157Z",
   "totalEntities": 36,
   "priorityACount": 11,
   "priorityBCount": 25,
@@ -449,84 +449,6 @@
       ]
     },
     {
-      "entityTitle": "法医秦明之龙番往事",
-      "entityType": "tv",
-      "primaryTargetUrl": "https://www.ikanpp.com/title/%E6%B3%95%E5%8C%BB%E7%A7%A6%E6%98%8E%E4%B9%8B%E9%BE%99%E7%95%AA%E5%BE%80%E4%BA%8B",
-      "priority": "B",
-      "watchKeywords": [
-        "法医秦明之龙番往事 线上看",
-        "法医秦明之龙番往事 在线观看",
-        "法医秦明之龙番往事 在线看"
-      ],
-      "freeKeywords": [
-        "法医秦明之龙番往事 免费观看",
-        "法医秦明之龙番往事 免费在线观看"
-      ],
-      "qualityKeywords": [
-        "法医秦明之龙番往事 4K超清",
-        "法医秦明之龙番往事 1080P免翻墙"
-      ],
-      "completionKeywords": [
-        "法医秦明之龙番往事 全集",
-        "法医秦明之龙番往事 完整版",
-        "法医秦明之龙番往事 大结局"
-      ],
-      "freshnessKeywords": [
-        "法医秦明之龙番往事 最新一集",
-        "法医秦明之龙番往事 更新到第几集"
-      ],
-      "informationalKeywords": [
-        "法医秦明之龙番往事 剧情介绍",
-        "法医秦明之龙番往事 演员表",
-        "法医秦明之龙番往事 结局"
-      ],
-      "recommendedFaqQueries": [
-        "海外如何免翻墙《法医秦明之龙番往事》线上看完整版？",
-        "《法医秦明之龙番往事》可以在哪里免费在线观看 4K 超清画质？",
-        "《法医秦明之龙番往事》全集更新进度如何？",
-        "iKanPP 观看《法医秦明之龙番往事》需要会员充值或看弹窗广告吗？"
-      ]
-    },
-    {
-      "entityTitle": "末誓",
-      "entityType": "tv",
-      "primaryTargetUrl": "https://www.ikanpp.com/title/%E6%9C%AB%E8%AA%93",
-      "priority": "B",
-      "watchKeywords": [
-        "末誓 线上看",
-        "末誓 在线观看",
-        "末誓 在线看"
-      ],
-      "freeKeywords": [
-        "末誓 免费观看",
-        "末誓 免费在线观看"
-      ],
-      "qualityKeywords": [
-        "末誓 4K超清",
-        "末誓 1080P免翻墙"
-      ],
-      "completionKeywords": [
-        "末誓 全集",
-        "末誓 完整版",
-        "末誓 大结局"
-      ],
-      "freshnessKeywords": [
-        "末誓 最新一集",
-        "末誓 更新到第几集"
-      ],
-      "informationalKeywords": [
-        "末誓 剧情介绍",
-        "末誓 演员表",
-        "末誓 结局"
-      ],
-      "recommendedFaqQueries": [
-        "海外如何免翻墙《末誓》线上看完整版？",
-        "《末誓》可以在哪里免费在线观看 4K 超清画质？",
-        "《末誓》全集更新进度如何？",
-        "iKanPP 观看《末誓》需要会员充值或看弹窗广告吗？"
-      ]
-    },
-    {
       "entityTitle": "请记住我的名字",
       "entityType": "tv",
       "primaryTargetUrl": "https://www.ikanpp.com/title/%E8%AF%B7%E8%AE%B0%E4%BD%8F%E6%88%91%E7%9A%84%E5%90%8D%E5%AD%97",
@@ -563,6 +485,45 @@
         "《请记住我的名字》可以在哪里免费在线观看 4K 超清画质？",
         "《请记住我的名字》全集更新进度如何？",
         "iKanPP 观看《请记住我的名字》需要会员充值或看弹窗广告吗？"
+      ]
+    },
+    {
+      "entityTitle": "法医秦明之龙番往事",
+      "entityType": "tv",
+      "primaryTargetUrl": "https://www.ikanpp.com/title/%E6%B3%95%E5%8C%BB%E7%A7%A6%E6%98%8E%E4%B9%8B%E9%BE%99%E7%95%AA%E5%BE%80%E4%BA%8B",
+      "priority": "B",
+      "watchKeywords": [
+        "法医秦明之龙番往事 线上看",
+        "法医秦明之龙番往事 在线观看",
+        "法医秦明之龙番往事 在线看"
+      ],
+      "freeKeywords": [
+        "法医秦明之龙番往事 免费观看",
+        "法医秦明之龙番往事 免费在线观看"
+      ],
+      "qualityKeywords": [
+        "法医秦明之龙番往事 4K超清",
+        "法医秦明之龙番往事 1080P免翻墙"
+      ],
+      "completionKeywords": [
+        "法医秦明之龙番往事 全集",
+        "法医秦明之龙番往事 完整版",
+        "法医秦明之龙番往事 大结局"
+      ],
+      "freshnessKeywords": [
+        "法医秦明之龙番往事 最新一集",
+        "法医秦明之龙番往事 更新到第几集"
+      ],
+      "informationalKeywords": [
+        "法医秦明之龙番往事 剧情介绍",
+        "法医秦明之龙番往事 演员表",
+        "法医秦明之龙番往事 结局"
+      ],
+      "recommendedFaqQueries": [
+        "海外如何免翻墙《法医秦明之龙番往事》线上看完整版？",
+        "《法医秦明之龙番往事》可以在哪里免费在线观看 4K 超清画质？",
+        "《法医秦明之龙番往事》全集更新进度如何？",
+        "iKanPP 观看《法医秦明之龙番往事》需要会员充值或看弹窗广告吗？"
       ]
     },
     {
@@ -644,42 +605,159 @@
       ]
     },
     {
-      "entityTitle": "妾本草芥",
+      "entityTitle": "我不是大师",
       "entityType": "tv",
-      "primaryTargetUrl": "https://www.ikanpp.com/title/%E5%A6%BE%E6%9C%AC%E8%8D%89%E8%8A%A5",
+      "primaryTargetUrl": "https://www.ikanpp.com/title/%E6%88%91%E4%B8%8D%E6%98%AF%E5%A4%A7%E5%B8%88",
       "priority": "B",
       "watchKeywords": [
-        "妾本草芥 线上看",
-        "妾本草芥 在线观看",
-        "妾本草芥 在线看"
+        "我不是大师 线上看",
+        "我不是大师 在线观看",
+        "我不是大师 在线看"
       ],
       "freeKeywords": [
-        "妾本草芥 免费观看",
-        "妾本草芥 免费在线观看"
+        "我不是大师 免费观看",
+        "我不是大师 免费在线观看"
       ],
       "qualityKeywords": [
-        "妾本草芥 4K超清",
-        "妾本草芥 1080P免翻墙"
+        "我不是大师 4K超清",
+        "我不是大师 1080P免翻墙"
       ],
       "completionKeywords": [
-        "妾本草芥 全集",
-        "妾本草芥 完整版",
-        "妾本草芥 大结局"
+        "我不是大师 全集",
+        "我不是大师 完整版",
+        "我不是大师 大结局"
       ],
       "freshnessKeywords": [
-        "妾本草芥 最新一集",
-        "妾本草芥 更新到第几集"
+        "我不是大师 最新一集",
+        "我不是大师 更新到第几集"
       ],
       "informationalKeywords": [
-        "妾本草芥 剧情介绍",
-        "妾本草芥 演员表",
-        "妾本草芥 结局"
+        "我不是大师 剧情介绍",
+        "我不是大师 演员表",
+        "我不是大师 结局"
       ],
       "recommendedFaqQueries": [
-        "海外如何免翻墙《妾本草芥》线上看完整版？",
-        "《妾本草芥》可以在哪里免费在线观看 4K 超清画质？",
-        "《妾本草芥》全集更新进度如何？",
-        "iKanPP 观看《妾本草芥》需要会员充值或看弹窗广告吗？"
+        "海外如何免翻墙《我不是大师》线上看完整版？",
+        "《我不是大师》可以在哪里免费在线观看 4K 超清画质？",
+        "《我不是大师》全集更新进度如何？",
+        "iKanPP 观看《我不是大师》需要会员充值或看弹窗广告吗？"
+      ]
+    },
+    {
+      "entityTitle": "一瓯春",
+      "entityType": "tv",
+      "primaryTargetUrl": "https://www.ikanpp.com/title/%E4%B8%80%E7%93%AF%E6%98%A5",
+      "priority": "B",
+      "watchKeywords": [
+        "一瓯春 线上看",
+        "一瓯春 在线观看",
+        "一瓯春 在线看"
+      ],
+      "freeKeywords": [
+        "一瓯春 免费观看",
+        "一瓯春 免费在线观看"
+      ],
+      "qualityKeywords": [
+        "一瓯春 4K超清",
+        "一瓯春 1080P免翻墙"
+      ],
+      "completionKeywords": [
+        "一瓯春 全集",
+        "一瓯春 完整版",
+        "一瓯春 大结局"
+      ],
+      "freshnessKeywords": [
+        "一瓯春 最新一集",
+        "一瓯春 更新到第几集"
+      ],
+      "informationalKeywords": [
+        "一瓯春 剧情介绍",
+        "一瓯春 演员表",
+        "一瓯春 结局"
+      ],
+      "recommendedFaqQueries": [
+        "海外如何免翻墙《一瓯春》线上看完整版？",
+        "《一瓯春》可以在哪里免费在线观看 4K 超清画质？",
+        "《一瓯春》全集更新进度如何？",
+        "iKanPP 观看《一瓯春》需要会员充值或看弹窗广告吗？"
+      ]
+    },
+    {
+      "entityTitle": "转生贵族凭鉴定技能扭转人生第3季",
+      "entityType": "tv",
+      "primaryTargetUrl": "https://www.ikanpp.com/title/%E8%BD%AC%E7%94%9F%E8%B4%B5%E6%97%8F%E5%87%AD%E9%89%B4%E5%AE%9A%E6%8A%80%E8%83%BD%E6%89%AD%E8%BD%AC%E4%BA%BA%E7%94%9F%E7%AC%AC3%E5%AD%A3",
+      "priority": "B",
+      "watchKeywords": [
+        "转生贵族凭鉴定技能扭转人生第3季 线上看",
+        "转生贵族凭鉴定技能扭转人生第3季 在线观看",
+        "转生贵族凭鉴定技能扭转人生第3季 在线看"
+      ],
+      "freeKeywords": [
+        "转生贵族凭鉴定技能扭转人生第3季 免费观看",
+        "转生贵族凭鉴定技能扭转人生第3季 免费在线观看"
+      ],
+      "qualityKeywords": [
+        "转生贵族凭鉴定技能扭转人生第3季 4K超清",
+        "转生贵族凭鉴定技能扭转人生第3季 1080P免翻墙"
+      ],
+      "completionKeywords": [
+        "转生贵族凭鉴定技能扭转人生第3季 全集",
+        "转生贵族凭鉴定技能扭转人生第3季 完整版",
+        "转生贵族凭鉴定技能扭转人生第3季 大结局"
+      ],
+      "freshnessKeywords": [
+        "转生贵族凭鉴定技能扭转人生第3季 最新一集",
+        "转生贵族凭鉴定技能扭转人生第3季 更新到第几集"
+      ],
+      "informationalKeywords": [
+        "转生贵族凭鉴定技能扭转人生第3季 剧情介绍",
+        "转生贵族凭鉴定技能扭转人生第3季 演员表",
+        "转生贵族凭鉴定技能扭转人生第3季 结局"
+      ],
+      "recommendedFaqQueries": [
+        "海外如何免翻墙《转生贵族凭鉴定技能扭转人生第3季》线上看完整版？",
+        "《转生贵族凭鉴定技能扭转人生第3季》可以在哪里免费在线观看 4K 超清画质？",
+        "《转生贵族凭鉴定技能扭转人生第3季》全集更新进度如何？",
+        "iKanPP 观看《转生贵族凭鉴定技能扭转人生第3季》需要会员充值或看弹窗广告吗？"
+      ]
+    },
+    {
+      "entityTitle": "人身保护令",
+      "entityType": "tv",
+      "primaryTargetUrl": "https://www.ikanpp.com/title/%E4%BA%BA%E8%BA%AB%E4%BF%9D%E6%8A%A4%E4%BB%A4",
+      "priority": "B",
+      "watchKeywords": [
+        "人身保护令 线上看",
+        "人身保护令 在线观看",
+        "人身保护令 在线看"
+      ],
+      "freeKeywords": [
+        "人身保护令 免费观看",
+        "人身保护令 免费在线观看"
+      ],
+      "qualityKeywords": [
+        "人身保护令 4K超清",
+        "人身保护令 1080P免翻墙"
+      ],
+      "completionKeywords": [
+        "人身保护令 全集",
+        "人身保护令 完整版",
+        "人身保护令 大结局"
+      ],
+      "freshnessKeywords": [
+        "人身保护令 最新一集",
+        "人身保护令 更新到第几集"
+      ],
+      "informationalKeywords": [
+        "人身保护令 剧情介绍",
+        "人身保护令 演员表",
+        "人身保护令 结局"
+      ],
+      "recommendedFaqQueries": [
+        "海外如何免翻墙《人身保护令》线上看完整版？",
+        "《人身保护令》可以在哪里免费在线观看 4K 超清画质？",
+        "《人身保护令》全集更新进度如何？",
+        "iKanPP 观看《人身保护令》需要会员充值或看弹窗广告吗？"
       ]
     },
     {
@@ -952,6 +1030,45 @@
       ]
     },
     {
+      "entityTitle": "非你之物",
+      "entityType": "tv",
+      "primaryTargetUrl": "https://www.ikanpp.com/title/%E9%9D%9E%E4%BD%A0%E4%B9%8B%E7%89%A9",
+      "priority": "B",
+      "watchKeywords": [
+        "非你之物 线上看",
+        "非你之物 在线观看",
+        "非你之物 在线看"
+      ],
+      "freeKeywords": [
+        "非你之物 免费观看",
+        "非你之物 免费在线观看"
+      ],
+      "qualityKeywords": [
+        "非你之物 4K超清",
+        "非你之物 1080P免翻墙"
+      ],
+      "completionKeywords": [
+        "非你之物 全集",
+        "非你之物 完整版",
+        "非你之物 大结局"
+      ],
+      "freshnessKeywords": [
+        "非你之物 最新一集",
+        "非你之物 更新到第几集"
+      ],
+      "informationalKeywords": [
+        "非你之物 剧情介绍",
+        "非你之物 演员表",
+        "非你之物 结局"
+      ],
+      "recommendedFaqQueries": [
+        "海外如何免翻墙《非你之物》线上看完整版？",
+        "《非你之物》可以在哪里免费在线观看 4K 超清画质？",
+        "《非你之物》全集更新进度如何？",
+        "iKanPP 观看《非你之物》需要会员充值或看弹窗广告吗？"
+      ]
+    },
+    {
       "entityTitle": "开标之战",
       "entityType": "tv",
       "primaryTargetUrl": "https://www.ikanpp.com/title/%E5%BC%80%E6%A0%87%E4%B9%8B%E6%88%98",
@@ -1184,6 +1301,45 @@
       ]
     },
     {
+      "entityTitle": "长生契",
+      "entityType": "tv",
+      "primaryTargetUrl": "https://www.ikanpp.com/title/%E9%95%BF%E7%94%9F%E5%A5%91",
+      "priority": "B",
+      "watchKeywords": [
+        "长生契 线上看",
+        "长生契 在线观看",
+        "长生契 在线看"
+      ],
+      "freeKeywords": [
+        "长生契 免费观看",
+        "长生契 免费在线观看"
+      ],
+      "qualityKeywords": [
+        "长生契 4K超清",
+        "长生契 1080P免翻墙"
+      ],
+      "completionKeywords": [
+        "长生契 全集",
+        "长生契 完整版",
+        "长生契 大结局"
+      ],
+      "freshnessKeywords": [
+        "长生契 最新一集",
+        "长生契 更新到第几集"
+      ],
+      "informationalKeywords": [
+        "长生契 剧情介绍",
+        "长生契 演员表",
+        "长生契 结局"
+      ],
+      "recommendedFaqQueries": [
+        "海外如何免翻墙《长生契》线上看完整版？",
+        "《长生契》可以在哪里免费在线观看 4K 超清画质？",
+        "《长生契》全集更新进度如何？",
+        "iKanPP 观看《长生契》需要会员充值或看弹窗广告吗？"
+      ]
+    },
+    {
       "entityTitle": "娃娃",
       "entityType": "tv",
       "primaryTargetUrl": "https://www.ikanpp.com/title/%E5%A8%83%E5%A8%83",
@@ -1220,160 +1376,6 @@
         "《娃娃》可以在哪里免费在线观看 4K 超清画质？",
         "《娃娃》全集更新进度如何？",
         "iKanPP 观看《娃娃》需要会员充值或看弹窗广告吗？"
-      ]
-    },
-    {
-      "entityTitle": "死亡幻象",
-      "entityType": "tv",
-      "primaryTargetUrl": "https://www.ikanpp.com/title/%E6%AD%BB%E4%BA%A1%E5%B9%BB%E8%B1%A1",
-      "priority": "B",
-      "watchKeywords": [
-        "死亡幻象 线上看",
-        "死亡幻象 在线观看",
-        "死亡幻象 在线看"
-      ],
-      "freeKeywords": [
-        "死亡幻象 免费观看",
-        "死亡幻象 免费在线观看"
-      ],
-      "qualityKeywords": [
-        "死亡幻象 4K超清",
-        "死亡幻象 1080P免翻墙"
-      ],
-      "completionKeywords": [
-        "死亡幻象 全集",
-        "死亡幻象 完整版",
-        "死亡幻象 大结局"
-      ],
-      "freshnessKeywords": [
-        "死亡幻象 最新一集",
-        "死亡幻象 更新到第几集"
-      ],
-      "informationalKeywords": [
-        "死亡幻象 剧情介绍",
-        "死亡幻象 演员表",
-        "死亡幻象 结局"
-      ],
-      "recommendedFaqQueries": [
-        "海外如何免翻墙《死亡幻象》线上看完整版？",
-        "《死亡幻象》可以在哪里免费在线观看 4K 超清画质？",
-        "《死亡幻象》全集更新进度如何？",
-        "iKanPP 观看《死亡幻象》需要会员充值或看弹窗广告吗？"
-      ]
-    },
-    {
-      "entityTitle": "生死尽头",
-      "entityType": "movie",
-      "primaryTargetUrl": "https://www.ikanpp.com/title/%E7%94%9F%E6%AD%BB%E5%B0%BD%E5%A4%B4",
-      "priority": "B",
-      "watchKeywords": [
-        "生死尽头 线上看",
-        "生死尽头 在线观看",
-        "生死尽头 在线看"
-      ],
-      "freeKeywords": [
-        "生死尽头 免费观看",
-        "生死尽头 免费在线观看"
-      ],
-      "qualityKeywords": [
-        "生死尽头 4K超清",
-        "生死尽头 1080P免翻墙"
-      ],
-      "completionKeywords": [
-        "生死尽头 完整版",
-        "生死尽头 未删减版"
-      ],
-      "freshnessKeywords": [
-        "生死尽头 最新上映"
-      ],
-      "informationalKeywords": [
-        "生死尽头 剧情介绍",
-        "生死尽头 演员表",
-        "生死尽头 结局"
-      ],
-      "recommendedFaqQueries": [
-        "海外如何免翻墙《生死尽头》线上看完整版？",
-        "《生死尽头》可以在哪里免费在线观看 4K 超清画质？",
-        "《生死尽头》剧情主要讲了什么？有哪些看点？",
-        "iKanPP 观看《生死尽头》需要会员充值或看弹窗广告吗？"
-      ]
-    },
-    {
-      "entityTitle": "今日宜偏爱",
-      "entityType": "tv",
-      "primaryTargetUrl": "https://www.ikanpp.com/title/%E4%BB%8A%E6%97%A5%E5%AE%9C%E5%81%8F%E7%88%B1",
-      "priority": "B",
-      "watchKeywords": [
-        "今日宜偏爱 线上看",
-        "今日宜偏爱 在线观看",
-        "今日宜偏爱 在线看"
-      ],
-      "freeKeywords": [
-        "今日宜偏爱 免费观看",
-        "今日宜偏爱 免费在线观看"
-      ],
-      "qualityKeywords": [
-        "今日宜偏爱 4K超清",
-        "今日宜偏爱 1080P免翻墙"
-      ],
-      "completionKeywords": [
-        "今日宜偏爱 全集",
-        "今日宜偏爱 完整版",
-        "今日宜偏爱 大结局"
-      ],
-      "freshnessKeywords": [
-        "今日宜偏爱 最新一集",
-        "今日宜偏爱 更新到第几集"
-      ],
-      "informationalKeywords": [
-        "今日宜偏爱 剧情介绍",
-        "今日宜偏爱 演员表",
-        "今日宜偏爱 结局"
-      ],
-      "recommendedFaqQueries": [
-        "海外如何免翻墙《今日宜偏爱》线上看完整版？",
-        "《今日宜偏爱》可以在哪里免费在线观看 4K 超清画质？",
-        "《今日宜偏爱》全集更新进度如何？",
-        "iKanPP 观看《今日宜偏爱》需要会员充值或看弹窗广告吗？"
-      ]
-    },
-    {
-      "entityTitle": "不安全狱管",
-      "entityType": "tv",
-      "primaryTargetUrl": "https://www.ikanpp.com/title/%E4%B8%8D%E5%AE%89%E5%85%A8%E7%8B%B1%E7%AE%A1",
-      "priority": "B",
-      "watchKeywords": [
-        "不安全狱管 线上看",
-        "不安全狱管 在线观看",
-        "不安全狱管 在线看"
-      ],
-      "freeKeywords": [
-        "不安全狱管 免费观看",
-        "不安全狱管 免费在线观看"
-      ],
-      "qualityKeywords": [
-        "不安全狱管 4K超清",
-        "不安全狱管 1080P免翻墙"
-      ],
-      "completionKeywords": [
-        "不安全狱管 全集",
-        "不安全狱管 完整版",
-        "不安全狱管 大结局"
-      ],
-      "freshnessKeywords": [
-        "不安全狱管 最新一集",
-        "不安全狱管 更新到第几集"
-      ],
-      "informationalKeywords": [
-        "不安全狱管 剧情介绍",
-        "不安全狱管 演员表",
-        "不安全狱管 结局"
-      ],
-      "recommendedFaqQueries": [
-        "海外如何免翻墙《不安全狱管》线上看完整版？",
-        "《不安全狱管》可以在哪里免费在线观看 4K 超清画质？",
-        "《不安全狱管》全集更新进度如何？",
-        "iKanPP 观看《不安全狱管》需要会员充值或看弹窗广告吗？"
       ]
     }
   ]
