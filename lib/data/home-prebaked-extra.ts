@@ -9,6 +9,14 @@ import type { PrebakedSubject, PrebakedHomeCategory } from './home-prebaked';
 export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
+        "title": "仙逆",
+        "updateBadge": "1"
+    },
+    {
+        "title": "牧神记",
+        "updateBadge": "1"
+    },
+    {
         "title": "凡人修仙传",
         "updateBadge": ""
     },
@@ -17,7 +25,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "仙逆",
+        "title": "海贼王",
         "updateBadge": ""
     },
     {
@@ -25,7 +33,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "海贼王",
+        "title": "沧元图",
         "updateBadge": ""
     },
     {
@@ -33,24 +41,16 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "沧元图",
-        "updateBadge": ""
-    },
-    {
-        "title": "牧神记",
-        "updateBadge": ""
-    },
-    {
-        "title": "名侦探柯南",
-        "updateBadge": ""
+        "title": "武神主宰",
+        "updateBadge": "1"
     },
     {
         "title": "吞噬星空",
         "updateBadge": ""
     },
     {
-        "title": "野生的大魔王出现了第2季",
-        "updateBadge": "2"
+        "title": "名侦探柯南",
+        "updateBadge": ""
     },
     {
         "title": "遮天",
@@ -631,32 +631,32 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
 export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "一饭封神第2季",
-        "updateBadge": ""
-    },
-    {
-        "title": "花儿与少年第8季",
-        "updateBadge": ""
-    },
-    {
-        "title": "披荆斩棘2026",
-        "updateBadge": ""
-    },
-    {
         "title": "我家那闺女2026",
-        "updateBadge": ""
+        "updateBadge": "3"
     },
     {
         "title": "心动的信号第9季",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
-        "title": "大哥小助理",
-        "updateBadge": ""
+        "title": "花儿与少年第8季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "一饭封神第2季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "披荆斩棘2026",
+        "updateBadge": "1"
     },
     {
         "title": "你好星期六",
         "updateBadge": "1"
+    },
+    {
+        "title": "大哥小助理",
+        "updateBadge": ""
     },
     {
         "title": "密室大逃脱第8季",
@@ -670,13 +670,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609111636583635663.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111853405324148.jpg",
-        "description": "《打歌2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260925(第3期)。",
+        "description": "《打歌2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260927(上班直播第3期)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260925(第3期)",
+        "episodes_info": "更新至20260927(上班直播第3期)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -687,13 +687,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608271524382431872.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111844144414888.jpg",
-        "description": "《我家那闺女2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260926(超前营业)。",
+        "description": "《我家那闺女2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260927(第5期下)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260926(超前营业)",
+        "episodes_info": "更新至20260927(第5期下)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -704,13 +704,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609041706270661205.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111843274326403.jpg",
-        "description": "《花儿与少年第8季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260925(第3期下)。",
+        "description": "《花儿与少年第8季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260927(加更版)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260925(第3期下)",
+        "episodes_info": "更新至20260927(加更版)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -738,13 +738,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608102124022465304.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202608261125002570740.jpg",
-        "description": "《披荆斩棘2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260926(第7期下)。",
+        "description": "《披荆斩棘2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260927(加更版)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260926(第7期下)",
+        "episodes_info": "更新至20260927(加更版)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -755,13 +755,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607311122522270150.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202608031821302167723.jpg",
-        "description": "《心动的信号第9季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260925(第8期陪看下)。",
+        "description": "《心动的信号第9季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260927(花絮特辑)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260925(第8期陪看下)",
+        "episodes_info": "更新至20260927(花絮特辑)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -772,13 +772,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607231303450351514.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202607271339373917253.jpg",
-        "description": "《一饭封神第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260926(一饭小馆第9期)。",
+        "description": "《一饭封神第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260927(一饭家常菜第9期)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260926(一饭小馆第9期)",
+        "episodes_info": "更新至20260927(一饭家常菜第9期)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -789,13 +789,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607262018571855218.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202607271339253947372.jpg",
-        "description": "《家乡美食大赛》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260920。",
+        "description": "《家乡美食大赛》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260927。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260920",
+        "episodes_info": "更新至20260927",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1237,90 +1237,111 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "妖神记",
+          "title": "莞东风云，从野草到商业女王",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "装乖失败！被摄政王叼回窝要名分",
           "updateBadge": "全"
       },
       {
-          "title": "重生2011",
-          "updateBadge": "111"
+          "title": "嘲笑我只会搬砖，女神老婆带崽接我回家",
+          "updateBadge": "HOT"
       },
       {
-          "title": "重回1989",
+          "title": "王府小福星爱捡垃圾",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "相错亲嫁对人胖子也有春天",
           "updateBadge": "全"
       },
       {
-          "title": "重回风云1993",
-          "updateBadge": "100"
+          "title": "霍总夫人她套路满级",
+          "updateBadge": "HOT"
       },
       {
-          "title": "逆袭1998",
-          "updateBadge": "100"
-      },
-      {
-          "title": "请回答1999",
-          "updateBadge": "77"
-      },
-      {
-          "title": "炒粉的风波",
+          "title": "闺蜜是只猫，我俩硬控全场",
           "updateBadge": "全"
       },
       {
-          "title": "人生自有芳华",
+          "title": "班主任姐姐她专治不服",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "绯色沉沦",
           "updateBadge": "全"
       },
       {
-          "title": "末世：从搬空全球仓库开始",
+          "title": "重生之凤凰涅槃",
           "updateBadge": "全"
       },
       {
-          "title": "驯野",
+          "title": "重新活一次",
           "updateBadge": "全"
       },
       {
-          "title": "天崩开局，还好我有婚契续命",
-          "updateBadge": "全"
-      },
-      {
-          "title": "明月照我心",
+          "title": "囚爱成瘾",
           "updateBadge": "全"
       }
   ],
   hero: [
       {
-          "id": "jl_short_629184272757948400",
-          "title": "妖神记",
+          "id": "jl_short_636720407696638100",
+          "title": "装乖失败！被摄政王叼回窝要名分",
+          "rate": "8.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/1e9b16b1ae47c9814e764405d177eca3ccda81e46b212da33296804046b690bb.png",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/1e9b16b1ae47c9814e764405d177eca3ccda81e46b212da33296804046b690bb.png",
+          "description": "穿越而来的木系空间异能者沈清窈，本体是赤瞳白狐，与摄政王裴妄殊情愫渐生，灵潮期后彼此确认心意。王府春日宴风波过后，太后联合南疆国师，利用裴妄殊体内寒毒，企图夺取身为南疆圣物的沈清窈。系统提示任务完成，她将被强制离界，便独自南下旱区救灾，积攒世界本源认可。途中她意外怀孕，却在云栖城遭知州后宅算计，生下...",
+          "year": "2025",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全211集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_637297736529478000",
+          "title": "绯色沉沦",
           "rate": "9.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/76806/poster/600fec0dca245f4c0f0bff0d17313097ae2b5c2596944a32a9c708bdb2abf344.webp",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/76806/poster/600fec0dca245f4c0f0bff0d17313097ae2b5c2596944a32a9c708bdb2abf344.webp",
-          "description": "为了与妖主正面对抗做足准备，聂离动身前往“天云高原”历练本领。",
-          "year": "2017",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/ce69a335e4290f51ed42d67bd8ff1e594fa0277a02cec8766d699167dca216d0.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/ce69a335e4290f51ed42d67bd8ff1e594fa0277a02cec8766d699167dca216d0.jpg",
+          "description": "四年前，一场车祸和一场精心策划的误会，让顾明绯狠心抛弃了为救她而重伤失明的谢晏辞。四年后，谢晏辞携滔天权势归来，化身冷酷资本，以投资方的身份强势介入顾明绯的生活，意图报复。他以为她拜金虚荣，早已另投他人怀抱，却不知她当年为救他捐献角膜，并为守护朋友承诺而伪装恋情。",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全171集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_629669590187638800",
+          "title": "重生之凤凰涅槃",
+          "rate": "9.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/257366/poster/921d4470dc682699cc476d07685a1a184a7a175b2a8ae30bfd458586de15b7ec.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/257366/poster/921d4470dc682699cc476d07685a1a184a7a175b2a8ae30bfd458586de15b7ec.webp",
+          "description": "重生之凤凰涅槃是由陈星若等人主演的,题材的网络短剧,陈星若这天被羞辱了,最后一个人走在街上找到了男朋友,...",
+          "year": "2023",
           "types": [
               "短剧",
               "反转爽剧",
               "全集连播"
           ],
-          "episodes_info": "全321集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "徐翔 / 黄骥 / 张妮 / 胡亚捷 / 苏尚卿 / 谷江山 / 关帅 / 钟巍 / 朱婧 / Akira明 / 孙路路 / 柳知萧 / 鱼冻 / 柳川鱼 / 蘭若镝"
-          ]
-      },
-      {
-          "id": "jl_short_630067100584509400",
-          "title": "重回风云1993",
-          "rate": "8.7",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f7bef1db62eee07a5c2d2d3505d843414801c1f7f94c1cd6a6f218b04baf0acf.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f7bef1db62eee07a5c2d2d3505d843414801c1f7f94c1cd6a6f218b04baf0acf.jpg",
-          "description": "穷小子重生回到1993年，利用超前30年的记忆，3天狂纂9个亿，成为全球首富，从此人生开挂！",
-          "year": "2024",
-          "types": [
-              "短剧",
-              "其他",
-              "全集连播"
-          ],
-          "episodes_info": "全100集·全100集",
+          "episodes_info": "全119集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1329,19 +1350,19 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_630038805289959400",
-          "title": "逆袭1998",
-          "rate": "8.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/0cbfee3c9d5ce253ddea105054f8178ed07b408cdcbed4be7ba534fc43ea3877.png",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/0cbfee3c9d5ce253ddea105054f8178ed07b408cdcbed4be7ba534fc43ea3877.png",
-          "description": "小伙逆袭成首富, 穿越解救被村霸玷污的原配老婆",
-          "year": "2024",
+          "id": "jl_short_629669591630479400",
+          "title": "重新活一次",
+          "rate": "9.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/248881/poster/447734ede51c0c5c6ac44f872c858f00b2d8f1c9a39d1df7ed55dbfae1571d0e.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/248881/poster/447734ede51c0c5c6ac44f872c858f00b2d8f1c9a39d1df7ed55dbfae1571d0e.webp",
+          "description": "在绝望中与相遇,坚定的追随命运之路,爱情与财富梦想与努力永远是改变命运的奇妙钥匙。",
+          "year": "2023",
           "types": [
               "短剧",
-              "年代穿越",
+              "反转爽剧",
               "全集连播"
           ],
-          "episodes_info": "全199集·全100集",
+          "episodes_info": "全181集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
@@ -1350,189 +1371,168 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_633545257761570800",
-          "title": "炒粉的风波",
-          "rate": "8.8",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/ddb518a6e486543ea7b09817bd7737e14c94f228647db702ed05308c79efb47e.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/ddb518a6e486543ea7b09817bd7737e14c94f228647db702ed05308c79efb47e.jpg",
-          "description": "我帮校门口炒粉摊拉来数百同学、三年消费超八千，竟是群满后第一个被踢的老顾客！店主过河拆桥的操作惹怒众人，同学们自发联名抵制，后续摊位还被查出食材不达标。曾经的校门口顶流小吃摊，因不懂感恩彻底凉凉，真心相待从来都不该被辜负！",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全69集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_632720022577348600",
-          "title": "人生自有芳华",
-          "rate": "8.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/91b42eda20a1770689c935c1c501dda2c22b61adc452bde71a119330c541a6c1.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/91b42eda20a1770689c935c1c501dda2c22b61adc452bde71a119330c541a6c1.jpg",
-          "description": "苏望月与闺蜜陆怜相伴多年，却始终活在对方的轻视与嘲讽中。顾家为传承家业寻觅继承人，陆怜执意不愿踏入这段人生，苏望月不愿再屈居人下，抓住改写命运的契机，意外怀上顾家血脉。她顶着流言与质疑，一步步走进顾家，过程中意外揭开陆怜不为人知的隐秘过往，曾经的情谊彻底破碎。历经种种波折，苏望月凭借腹中孩子站稳脚跟...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全73集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_630347512036720600",
-          "title": "末世：从搬空全球仓库开始",
-          "rate": "8.7",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/a2148fb7c9e17e32715420efa59b6ba58bf522819c13f3d5416f7d6a2a03fe3a.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/a2148fb7c9e17e32715420efa59b6ba58bf522819c13f3d5416f7d6a2a03fe3a.jpg",
-          "description": "在末世挣扎求生十年，萧逸被信任的圣母队友和女友出卖，死于尸潮。重生回末世前，萧逸凭借空间异能疯狂囤积物资、改造安全屋。他先后清除背叛者、收编幸存者，建立江景基地。在经历极寒、极热、尸潮等天灾后，基地越发强大。变异森林来袭，一场肉体与钢铁的血腥厮杀就此展开。",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全467集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "短剧实力派"
-          ]
-      },
-      {
-          "id": "jl_short_629429355554013200",
-          "title": "天崩开局，还好我有婚契续命",
-          "rate": "8.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/9ea0bda707b870e680369cf1a0fa2eb408fd42079532f6fa7ad3796f283aac69.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/9ea0bda707b870e680369cf1a0fa2eb408fd42079532f6fa7ad3796f283aac69.jpg",
-          "description": "阴年出生的张阿四因家族契约身陷死局，爷爷离世后他遵嘱前往青龙寺寻破局之法。一路历经诡异险境，他始终坚守本心、勇敢抗争，在探寻真相的过程中直面过往因果，以坚韧的意志冲破层层困境，最终寻得生机并扛起了属于自己的责任。改编自番茄小说《诡坟（天阴赐婚）》，作者糖吉柯德",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全131集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "彭瑞风 / 杨春"
-          ]
-      },
-      {
-          "id": "jl_short_629884893492412400",
-          "title": "蓝色情结",
-          "rate": "8.8",
-          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/274074/poster/858f1a5fb6a8533351bdc233c4321a3b46a02abe58fab158aa9b8514c2897657.webp",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/274074/poster/858f1a5fb6a8533351bdc233c4321a3b46a02abe58fab158aa9b8514c2897657.webp",
-          "description": "这是一个关于游泳运动员的故事，细腻地描绘了男人之间的爱情和友情。",
-          "year": "2024",
+          "id": "jl_short_630038868372029400",
+          "title": "囚爱成瘾",
+          "rate": "9.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/939b4b6e37797cd52f52aa33d31c8350fb37e5041a0222316cd03f119a6716c7.png",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/939b4b6e37797cd52f52aa33d31c8350fb37e5041a0222316cd03f119a6716c7.png",
+          "description": "全集江心 霍垣 一场车祸霍垣恨江心入骨囚爱成瘾,她却为爱甘做他六年见不得光的金丝雀,直到他将她的翅膀生生折断。",
+          "year": "2023",
           "types": [
               "短剧",
               "女频恋爱",
               "全集连播"
           ],
-          "episodes_info": "全81集·已完结",
+          "episodes_info": "全201集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "高豪贞 / 安正勋 / 차재훈"
+              "缴沛凯 / 白妍"
+          ]
+      },
+      {
+          "id": "jl_short_630108210635997200",
+          "title": "我到民国当少帅",
+          "rate": "8.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/eb12fd4b3a93e2e879f34d84df6235cb9bdc4a474eee2c4082a58ee3aaca8378.png",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/eb12fd4b3a93e2e879f34d84df6235cb9bdc4a474eee2c4082a58ee3aaca8378.png",
+          "description": "江云廷又问,在他看来,自家小儿子必然是当医生的。 江来则是摇头,“不用了,爹,我找伯恩教授就行了。” “那我让老张备好礼品。”江云廷倒是觉得正常,并没有其他...",
+          "year": "2023",
+          "types": [
+              "短剧",
+              "年代穿越",
+              "全集连播"
+          ],
+          "episodes_info": "全185集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_630071565605732400",
+          "title": "回到大秦当太子",
+          "rate": "9.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/e10fc2a95c82f6da9731e5bf4c4d2f146d35fe24ffca33d1cfad326f30308dbd.png",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/e10fc2a95c82f6da9731e5bf4c4d2f146d35fe24ffca33d1cfad326f30308dbd.png",
+          "description": "魂穿大秦当太子:学霸穿越回秦朝,“爹,大秦明年就要灭亡,我们造反吧!”却不知他爹就是秦始皇…… 存在的与不存在的皆存...",
+          "year": "2023",
+          "types": [
+              "短剧",
+              "年代穿越",
+              "全集连播"
+          ],
+          "episodes_info": "全205集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_639008170513072100",
+          "title": "重回婚闹那天，我救下了嫂子",
+          "rate": "8.5",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/56198daefe327a0b7ac621dab4fb3ec26d964f043e9b8b2c018aef20e367934a.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/56198daefe327a0b7ac621dab4fb3ec26d964f043e9b8b2c018aef20e367934a.jpg",
+          "description": "前世，在裴昭的哥哥和嫂子婚礼上，一场突如其来的罪恶，让裴昭的嫂子孟晚棠含恨跳楼，哥哥殉情，裴家一夜支离破碎。而施暴者却逃脱制裁，逍遥法外。一觉醒来，裴昭重回到了哥哥嫂子婚礼当天。这一次，她不仅要护住嫂子周全，更要撕开那层虚伪的遮羞布，把躲在阴暗里的恶人拽出来，让迟到一辈子的正义，彻底落锤！",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "古装仙侠",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "杜金蓓 / 刘嘉文"
           ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "妖神记",
-      rate: "9.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/76806/poster/600fec0dca245f4c0f0bff0d17313097ae2b5c2596944a32a9c708bdb2abf344.webp",
-      year: "2017",
-      types: ["短剧","反转爽剧","全集连播"],
+      title: "装乖失败！被摄政王叼回窝要名分",
+      rate: "8.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/1e9b16b1ae47c9814e764405d177eca3ccda81e46b212da33296804046b690bb.png",
+      year: "2025",
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: "重回风云1993",
-      rate: "8.7",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f7bef1db62eee07a5c2d2d3505d843414801c1f7f94c1cd6a6f218b04baf0acf.jpg",
-      year: "2024",
-      types: ["短剧","其他","全集连播"],
+      title: "绯色沉沦",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/ce69a335e4290f51ed42d67bd8ff1e594fa0277a02cec8766d699167dca216d0.jpg",
+      year: "2026",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_3',
-      title: "逆袭1998",
-      rate: "8.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/0cbfee3c9d5ce253ddea105054f8178ed07b408cdcbed4be7ba534fc43ea3877.png",
-      year: "2024",
-      types: ["短剧","年代穿越","全集连播"],
+      title: "重生之凤凰涅槃",
+      rate: "9.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/257366/poster/921d4470dc682699cc476d07685a1a184a7a175b2a8ae30bfd458586de15b7ec.webp",
+      year: "2023",
+      types: ["短剧","反转爽剧","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_4',
-      title: "炒粉的风波",
-      rate: "8.8",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/ddb518a6e486543ea7b09817bd7737e14c94f228647db702ed05308c79efb47e.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
+      title: "重新活一次",
+      rate: "9.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/248881/poster/447734ede51c0c5c6ac44f872c858f00b2d8f1c9a39d1df7ed55dbfae1571d0e.webp",
+      year: "2023",
+      types: ["短剧","反转爽剧","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_5',
-      title: "人生自有芳华",
-      rate: "8.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/91b42eda20a1770689c935c1c501dda2c22b61adc452bde71a119330c541a6c1.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
+      title: "囚爱成瘾",
+      rate: "9.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/939b4b6e37797cd52f52aa33d31c8350fb37e5041a0222316cd03f119a6716c7.png",
+      year: "2023",
+      types: ["短剧","女频恋爱","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_6',
-      title: "末世：从搬空全球仓库开始",
-      rate: "8.7",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/a2148fb7c9e17e32715420efa59b6ba58bf522819c13f3d5416f7d6a2a03fe3a.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
+      title: "我到民国当少帅",
+      rate: "8.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/eb12fd4b3a93e2e879f34d84df6235cb9bdc4a474eee2c4082a58ee3aaca8378.png",
+      year: "2023",
+      types: ["短剧","年代穿越","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_7',
-      title: "天崩开局，还好我有婚契续命",
-      rate: "8.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9ea0bda707b870e680369cf1a0fa2eb408fd42079532f6fa7ad3796f283aac69.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
+      title: "回到大秦当太子",
+      rate: "9.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/e10fc2a95c82f6da9731e5bf4c4d2f146d35fe24ffca33d1cfad326f30308dbd.png",
+      year: "2023",
+      types: ["短剧","年代穿越","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_8',
-      title: "蓝色情结",
-      rate: "8.8",
-      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/274074/poster/858f1a5fb6a8533351bdc233c4321a3b46a02abe58fab158aa9b8514c2897657.webp",
-      year: "2024",
-      types: ["短剧","女频恋爱","全集连播"],
+      title: "重回婚闹那天，我救下了嫂子",
+      rate: "8.5",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/56198daefe327a0b7ac621dab4fb3ec26d964f043e9b8b2c018aef20e367934a.jpg",
+      year: "2026",
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1547,14 +1547,30 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "兰香如故",
-        "updateBadge": ""
+        "updateBadge": "2"
     },
     {
-        "title": "我不是大师",
-        "updateBadge": ""
+        "title": "仙逆",
+        "updateBadge": "1"
     },
     {
         "title": "一瓯春",
+        "updateBadge": "2"
+    },
+    {
+        "title": "我不是大师",
+        "updateBadge": "2"
+    },
+    {
+        "title": "早春晴朗",
+        "updateBadge": ""
+    },
+    {
+        "title": "牧神记",
+        "updateBadge": "1"
+    },
+    {
+        "title": "死有对证",
         "updateBadge": ""
     },
     {
@@ -1562,36 +1578,20 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "早春晴朗",
+        "title": "凡人修仙传",
         "updateBadge": ""
     },
     {
-        "title": "凡人修仙传",
-        "updateBadge": ""
+        "title": "我家那闺女2026",
+        "updateBadge": "3"
     },
     {
         "title": "斗破苍穹年番",
         "updateBadge": ""
     },
     {
-        "title": "死有对证",
-        "updateBadge": ""
-    },
-    {
         "title": "法医秦明之龙番往事",
-        "updateBadge": ""
-    },
-    {
-        "title": "冬城猎凶",
-        "updateBadge": ""
-    },
-    {
-        "title": "一饭封神第2季",
-        "updateBadge": ""
-    },
-    {
-        "title": "花儿与少年第8季",
-        "updateBadge": ""
+        "updateBadge": "1"
     }
   ],
   hero: [
@@ -1673,24 +1673,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609241200270068364.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202609241345244520726.jpg",
-        "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至08集 | 共24集。",
-        "year": "2026",
-        "types": [
-            "热门",
-            "连续剧"
-        ],
-        "episodes_info": "更新至08集 | 共24集",
-        "type": "tv",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_tv_6",
-        "title": "法医秦明之龙番往事",
-        "rate": "8.8",
-        "cover": "https://static.iyf.tv/upload/video/202609221204050427723.gif",
-        "backdrop": "https://static.iyf.tv/upload/user/202609221304100431020.jpg",
-        "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至10集 | 共24集。",
+        "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至10集 | 共24集。",
         "year": "2026",
         "types": [
             "热门",
@@ -1702,18 +1685,35 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "playable": true
     },
     {
-        "id": "iyf_hero_tv_7",
-        "title": "一瓯春",
+        "id": "iyf_hero_tv_6",
+        "title": "法医秦明之龙番往事",
         "rate": "8.8",
-        "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202609171141024107110.jpg",
-        "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至21集 | 共30集。",
+        "cover": "https://static.iyf.tv/upload/video/202609221204050427723.gif",
+        "backdrop": "https://static.iyf.tv/upload/user/202609221304100431020.jpg",
+        "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至11集 | 共24集。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至21集 | 共30集",
+        "episodes_info": "更新至11集 | 共24集",
+        "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_tv_7",
+        "title": "一瓯春",
+        "rate": "8.8",
+        "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
+        "backdrop": "https://static.iyf.tv/upload/user/202609171141024107110.jpg",
+        "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至23集 | 共30集。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "连续剧"
+        ],
+        "episodes_info": "更新至23集 | 共30集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -2163,15 +2163,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "征服14座高峰：凡事皆可能 14",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第2季",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
@@ -2179,15 +2171,23 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "狂坠：波音大调查2",
-        "updateBadge": ""
-    },
-    {
-        "title": "王朝第2季",
+        "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
         "title": "克拉克森的农场第4季",
+        "updateBadge": ""
+    },
+    {
+        "title": "狂坠：波音大调查2",
+        "updateBadge": ""
+    },
+    {
+        "title": "征服14座高峰：凡事皆可能 14",
+        "updateBadge": ""
+    },
+    {
+        "title": "失焦命案：被遗忘的女童",
         "updateBadge": ""
     }
   ],
