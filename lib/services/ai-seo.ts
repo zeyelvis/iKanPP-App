@@ -36,7 +36,7 @@ export async function callAiCompletion(params: {
   const baseUrl = (process.env.AI_BASE_URL || DEFAULT_BASE_URL).replace(/\/+$/, '');
   const apiKey = process.env.AI_API_KEY || DEFAULT_API_KEY;
   const model = params.model || process.env.AI_MODEL || DEFAULT_MODEL;
-  const timeoutMs = params.timeoutMs ?? 180000; // 默认宽裕 180s 水位，防止万字长文深度生成时超时截断
+  const timeoutMs = params.timeoutMs ?? 300000; // 宽裕 300s 水位
 
   const url = `${baseUrl}/chat/completions`;
 
@@ -53,6 +53,7 @@ export async function callAiCompletion(params: {
       temperature: params.temperature ?? 0.7,
       max_tokens: params.maxTokens ?? 3500,
       reasoning_effort: 'low',
+      stream: true, // 核心机制：启用 SSE 流式传输，毫秒级首包响应，彻底破除 Cloudflare 100s 代理 524 限制
     }),
   });
 
@@ -61,13 +62,57 @@ export async function callAiCompletion(params: {
     throw new Error(`[AI API Error] HTTP ${response.status}: ${errorText || response.statusText}`);
   }
 
-  const data = await response.json();
-  const content = data.choices?.[0]?.message?.content;
-  if (!content) {
-    throw new Error('[AI API Error] 返回内容为空');
+  if (!response.body) {
+    throw new Error('[AI API Error] Response body 为空');
   }
 
-  return content.trim();
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder('utf-8');
+  let fullContent = '';
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || '';
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith(':')) continue;
+      if (trimmed === 'data: [DONE]') continue;
+      if (trimmed.startsWith('data: ')) {
+        const jsonStr = trimmed.slice(6);
+        try {
+          const chunk = JSON.parse(jsonStr);
+          const deltaContent = chunk.choices?.[0]?.delta?.content;
+          if (deltaContent) {
+            fullContent += deltaContent;
+          }
+        } catch {
+          // 容错处理
+        }
+      }
+    }
+  }
+
+  if (buffer.trim()) {
+    const trimmed = buffer.trim();
+    if (trimmed.startsWith('data: ') && trimmed !== 'data: [DONE]') {
+      try {
+        const chunk = JSON.parse(trimmed.slice(6));
+        const deltaContent = chunk.choices?.[0]?.delta?.content;
+        if (deltaContent) fullContent += deltaContent;
+      } catch {}
+    }
+  }
+
+  if (!fullContent.trim()) {
+    throw new Error('[AI API Error] 流式返回内容为空');
+  }
+
+  return fullContent.trim();
 }
 
 /**
