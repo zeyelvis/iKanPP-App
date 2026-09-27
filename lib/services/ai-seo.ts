@@ -31,16 +31,18 @@ export async function callAiCompletion(params: {
   model?: string;
   temperature?: number;
   maxTokens?: number;
+  timeoutMs?: number;
 }): Promise<string> {
   const baseUrl = (process.env.AI_BASE_URL || DEFAULT_BASE_URL).replace(/\/+$/, '');
   const apiKey = process.env.AI_API_KEY || DEFAULT_API_KEY;
   const model = params.model || process.env.AI_MODEL || DEFAULT_MODEL;
+  const timeoutMs = params.timeoutMs ?? 180000; // 默认宽裕 180s 水位，防止万字长文深度生成时超时截断
 
   const url = `${baseUrl}/chat/completions`;
 
   const response = await fetch(url, {
     method: 'POST',
-    signal: AbortSignal.timeout(60000),
+    signal: AbortSignal.timeout(timeoutMs),
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
@@ -318,6 +320,7 @@ ${itemsText}
     model,
     temperature: 0.75,
     maxTokens: 4000,
+    timeoutMs: 300000, // 5 分钟宽裕时间，确保 15 部万字长文完整构思不被截断
   });
 
   // 终极防线：出口全量正则清洗，100% 抹杀任何可能逃逸的第三方域名
