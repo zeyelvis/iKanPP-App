@@ -51,11 +51,12 @@ export function isRestrictedRegion(countryCode?: string | null): boolean {
 }
 
 /**
- * 客户端轻量同步获取地域标记 (从 Middleware 写入的 Cookie 读取)
+ * 客户端轻量同步获取地域标记 (多级立体防线：Cookie > 浏览器时区特征)
  */
-function isClientRestrictedRegion(): boolean {
+export function isClientRestrictedRegion(): boolean {
   if (typeof document === 'undefined') return false;
   try {
+    // 1. 优先读取 Cookie 中的精确 IP 国家代码 (由 Middleware / Cloudflare 边缘写入)
     const match = document.cookie.match(/(?:^|;\s*)geo-region=([^;]*)/);
     if (match && match[1]) {
       return isRestrictedRegion(match[1]);
@@ -63,6 +64,26 @@ function isClientRestrictedRegion(): boolean {
   } catch {
     // 忽略异常
   }
+
+  // 2. 0ms 零网络延迟客户端时区特征兜底：
+  // 当用户初次打开网页尚无 Cookie 时，若时区为中国大陆标准时区（Asia/Shanghai / Chongqing / Harbin / Urumqi / PRC），
+  // 99.9% 概率身处中国大陆网络，立刻判定为受限地域，首屏直接输出 /api/img-proxy 镜像，绝不盲目直连被墙的 image.tmdb.org
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (
+      tz &&
+      (tz === 'Asia/Shanghai' ||
+        tz === 'Asia/Chongqing' ||
+        tz === 'Asia/Harbin' ||
+        tz === 'Asia/Urumqi' ||
+        tz === 'PRC')
+    ) {
+      return true;
+    }
+  } catch {
+    // 忽略异常
+  }
+
   return false;
 }
 
@@ -74,7 +95,11 @@ export function getOptimizedImageUrl(
   options?: ImageOptimizationOptions
 ): string {
   if (!url) return '/placeholder-poster.svg';
-  if (url.includes('placeholder.jpg')) return '/placeholder-poster.svg';
+  if (url.includes('placeholder.jpg') || url === '/placeholder-poster.svg') return '/placeholder-poster.svg';
+  
+  // 若已经是本站代理 URL，直接放行，杜绝嵌套代理
+  if (url.includes('/api/img-proxy')) return url;
+
   if (!url.startsWith('http')) {
     return url.startsWith('/') ? url : '/placeholder-poster.svg';
   }
@@ -87,7 +112,7 @@ export function getOptimizedImageUrl(
     targetWidth = SIZE_CONFIG[options.variant].width;
   }
 
-  // 2. 确定访客地域（options 指定优先，其次客户端 Cookie，受限国家走镜像代理）
+  // 2. 确定访客地域（options 指定优先，其次客户端 Cookie / 时区特征，受限国家走镜像代理）
   const shouldUseProxy = options?.isChinaMainland !== undefined
     ? options.isChinaMainland
     : isClientRestrictedRegion();
@@ -118,7 +143,14 @@ export function getOptimizedImageUrl(
     return `/api/img-proxy?url=${encodeURIComponent(url)}&w=${targetWidth}${noFallbackQuery}`;
   }
 
-  // 5. 其它通用外链：保持原链直出
+  // 5. 其它第三方源站（光速、极速、暴风等采集站图片）：
+  // 在受限地区或开启代理时，统一步骤纳入 /api/img-proxy 镜像通道，避免国内运营商防盗链或丢包封锁导致大面积裂图
+  if (shouldUseProxy) {
+    const noFallbackQuery = options?.noFallback ? '&nofallback=1' : '';
+    return `/api/img-proxy?url=${encodeURIComponent(url)}&w=${targetWidth}${noFallbackQuery}`;
+  }
+
+  // 其它通用外链：海外保持原链直出
   return url;
 }
 
@@ -131,16 +163,27 @@ export function getFallbackProxiedImageUrl(
   options?: ImageOptimizationOptions
 ): string {
   if (!url) return '/placeholder-poster.svg';
-  if (url.includes('placeholder.jpg')) return '/placeholder-poster.svg';
-  if (!url.startsWith('http')) {
-    return url.startsWith('/') ? url : '/placeholder-poster.svg';
-  }
+  if (url.includes('placeholder.jpg') || url === '/placeholder-poster.svg') return '/placeholder-poster.svg';
+  
   let targetWidth = 342;
   if (options?.width && options.width > 0) {
     targetWidth = options.width;
   } else if (options?.variant && SIZE_CONFIG[options.variant]) {
     targetWidth = SIZE_CONFIG[options.variant].width;
   }
+
+  // 若已经是代理链接，避免重复嵌套
+  if (url.includes('/api/img-proxy')) {
+    if (!url.includes('retry=1')) {
+      return `${url}&retry=1`;
+    }
+    return url;
+  }
+
+  if (!url.startsWith('http')) {
+    return url.startsWith('/') ? url : '/placeholder-poster.svg';
+  }
+
   const cleanUrl = url.replace(/\/t\/p\/(w\d+|original)\//, `/t/p/w${targetWidth}/`);
   return `/api/img-proxy?url=${encodeURIComponent(cleanUrl)}&w=${targetWidth}`;
 }

@@ -52,6 +52,7 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
   const handleImageError = () => {
     // 弹性自愈：若当前直连外链加载失败，自动秒切 /api/img-proxy R2 镜像重试
     if (!useProxyFallback && movie.cover?.startsWith('http') && !initialCover.includes('/api/img-proxy')) {
+      setImageLoaded(false);
       setUseProxyFallback(true);
     } else {
       setImageError(true);
@@ -102,6 +103,7 @@ export const MovieCard = memo(function MovieCard({ movie, onMovieClick, index = 
         )}
         {!imageError ? (
           <Image
+            key={proxiedCover}
             src={proxiedCover}
             alt={movie.title}
             fill

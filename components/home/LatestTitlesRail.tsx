@@ -85,6 +85,7 @@ function LatestPosterCard({
       <div className="relative aspect-2/3 rounded-2xl overflow-hidden bg-white/5 border border-emerald-500/20 shadow-[0_8px_24px_rgba(0,0,0,0.4)] group-hover/card:border-emerald-400/60 group-hover/card:shadow-[0_10px_30px_rgba(16,185,129,0.15)] transition-all duration-300">
         {!imageError && proxiedCover ? (
           <Image
+            key={proxiedCover}
             src={proxiedCover}
             alt={item.title}
             fill

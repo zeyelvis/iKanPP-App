@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
             const controller = new AbortController();
             const timer = setTimeout(() => controller.abort(), 8000);
 
-            // 智能防盗链 Referer 处理
+            // 智能防盗链 Referer 处理：豆瓣/爱壹帆针对性注入，其它采集站默认带源站 Host
             let refererHeader = '';
             try {
                 const parsedUrl = new URL(candidate);
@@ -94,7 +94,7 @@ export async function GET(request: NextRequest) {
                 refererHeader = '';
             }
 
-            const response = await fetch(candidate, {
+            let response = await fetch(candidate, {
                 headers: {
                     'Referer': refererHeader,
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
@@ -103,6 +103,23 @@ export async function GET(request: NextRequest) {
                 signal: controller.signal,
                 redirect: 'follow',
             });
+
+            // 🌟 采集站防盗链双重突破：若带 Referer 遭遇 403 阻断，立即降级为空 Referer（模拟直接访问）再次尝试
+            if (response.status === 403 && refererHeader) {
+                try {
+                    const retryRes = await fetch(candidate, {
+                        headers: {
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                            Accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+                        },
+                        signal: controller.signal,
+                        redirect: 'follow',
+                    });
+                    if (retryRes.ok) {
+                        response = retryRes;
+                    }
+                } catch {}
+            }
 
             clearTimeout(timer);
 
@@ -149,26 +166,15 @@ export async function GET(request: NextRequest) {
         }
     }
 
-    // 若所有外部镜像均失败
-    if (request.nextUrl.searchParams.get('nofallback') === '1') {
-        return new NextResponse('Proxy upstream error', {
-            status: 502,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Cache-Control': 'no-store, no-cache, must-revalidate',
-            },
-        });
-    }
-
-    // 默认兜底：电影胶片质感 SVG
-    const fallbackSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 450" fill="none"><defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#161622"/><stop offset="100%" stop-color="#0A0A0F"/></linearGradient></defs><rect width="300" height="450" fill="url(#bg)" rx="20"/><rect width="298" height="448" x="1" y="1" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" rx="19"/><g transform="translate(150,210)"><rect x="-50" y="-60" width="100" height="120" rx="12" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/><circle cx="0" cy="0" r="24" fill="#E50914"/><path d="M-5,-8 L-5,8 L9,0 Z" fill="#FFF"/></g><text x="150" y="320" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-size="13" font-weight="700" fill="rgba(255,255,255,0.4)" text-anchor="middle">iKanPP · 影视精选</text><text x="150" y="342" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-size="10" font-weight="500" fill="rgba(255,255,255,0.2)" text-anchor="middle">高清原画直达</text></svg>`;
-
-    return new NextResponse(fallbackSvg, {
-        status: 200,
+    // 🌟 核心修复：若外部拉取失败，坚决杜绝返回 HTTP 200 并强缓存 1 小时（防止毒化边缘缓存导致全站整屏黑白胶卷图）
+    // 必须返回真实 502 状态与 no-store 头，确保前端感知失败并允许随时刷新重试
+    return new NextResponse(`Proxy upstream error: ${lastError}`, {
+        status: lastStatus || 502,
         headers: {
-            'Content-Type': 'image/svg+xml',
             'Access-Control-Allow-Origin': '*',
-            'Cache-Control': 'public, max-age=3600',
+            'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+            'CDN-Cache-Control': 'no-store',
+            'Cloudflare-CDN-Cache-Control': 'no-store',
         },
     });
 }

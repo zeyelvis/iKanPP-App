@@ -96,6 +96,7 @@ function Top10Item({
       >
         {!imageError && proxiedCover ? (
           <Image
+            key={proxiedCover}
             src={proxiedCover}
             alt={movie.title}
             fill

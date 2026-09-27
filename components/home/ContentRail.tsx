@@ -86,6 +86,7 @@ function RailPosterItem({
       <div className="relative aspect-2/3 rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.35)] group-hover/card:border-(--accent-color)/50 transition-all duration-300">
         {!imageError && proxiedCover ? (
           <Image
+            key={proxiedCover}
             src={proxiedCover}
             alt={movie.title}
             fill

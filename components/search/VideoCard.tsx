@@ -60,6 +60,7 @@ export const VideoCard = memo<VideoCardProps>(({
           <div className="relative aspect-2/3 bg-white/5 overflow-hidden">
             {!imgError && proxiedPic ? (
               <Image
+                key={proxiedPic}
                 src={proxiedPic}
                 alt={video.vod_name}
                 fill

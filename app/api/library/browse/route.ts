@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { DOCUMENTARY_DATASET } from '@/lib/data/documentary-data';
 import { queryEntities } from '@/lib/services/entity-kv';
 import { getTitleCanonicalHref, isCleanChineseTitle } from '@/lib/data/entities/entity-utils';
+import { getOptimizedImageUrl, isRestrictedRegion } from '@/lib/utils/image-utils';
 
 export const runtime = 'edge';
 
@@ -208,7 +209,7 @@ async function fetchSource(url: string): Promise<any | null> {
 /**
  * 标准化采集站条目为 CategoryHub / MovieCard 识别的标准格式
  */
-function normalizeVodItem(item: any) {
+function normalizeVodItem(item: any, isChinaMainland?: boolean) {
   const doubanScore = parseFloat(item.vod_douban_score || '0');
   const rate = doubanScore > 0 ? doubanScore.toFixed(1) : (item.vod_remarks?.includes('完结') ? '8.8' : '8.5');
 
@@ -225,7 +226,7 @@ function normalizeVodItem(item: any) {
   return {
     id: String(item.vod_id),
     title: (item.vod_name || '').trim(),
-    cover: item.vod_pic || '',
+    cover: getOptimizedImageUrl(item.vod_pic || '', { isChinaMainland, variant: 'poster' }),
     rate,
     year: String(item.vod_year || ''),
     types,
@@ -427,6 +428,9 @@ export async function GET(req: NextRequest) {
   const isAddedSort = sort === 'time_added' || sort === 'added' || sort === 'time' || sort === 'latest';
   const cleanGenre = (genre === '最新' || genre === '豆瓣高分' || genre === '热门' || genre === '全部') ? '' : genre;
 
+  const country = req.headers.get('cf-ipcountry') || req.cookies.get('geo-region')?.value;
+  const isChinaMainland = isRestrictedRegion(country);
+
   // 映射为标准 4 大排序
   let resolvedSort = 'time_added';
   if (isRankSort) {
@@ -465,7 +469,7 @@ export async function GET(req: NextRequest) {
       const list = kvResult.items.map(entity => ({
         id: entity.entityId,
         title: entity.title,
-        cover: entity.cover,
+        cover: getOptimizedImageUrl(entity.cover, { isChinaMainland, variant: 'poster' }),
         rate: entity.rate || entity.score || '8.8',
         score: entity.score || entity.rate || '8.8',
         popularity: entity.popularity || entity.hot || 0,
@@ -529,7 +533,7 @@ export async function GET(req: NextRequest) {
       normalizedList.push({
         id: doc.id,
         title: doc.title,
-        cover: doc.cover,
+        cover: getOptimizedImageUrl(doc.cover, { isChinaMainland, variant: 'poster' }),
         rate: doc.rate,
         year: doc.year,
         types: doc.types,
@@ -590,7 +594,7 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
-    normalizedList.push(normalizeVodItem(item));
+    normalizedList.push(normalizeVodItem(item, isChinaMainland));
   }
 
   // 排序处理
