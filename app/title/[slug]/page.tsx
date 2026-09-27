@@ -5,10 +5,10 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, Clock, Calendar, Film, ArrowLeft, Clapperboard, User, Sparkles, CheckCircle2, Play } from 'lucide-react';
-import { getEntityBySlug, getEntityById, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity, isSafeRecentTitleItem } from '@/lib/services/entity-kv';
+import { getEntityBySlug, getEntityById, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity, isSafeRecentTitleItem, kvDelete } from '@/lib/services/entity-kv';
 import { getGenreBySlug } from '@/lib/data/genres';
-import { parseEntitySlug, normalizeTitle, isStrictSafeEntity, generateSlug, getTitleCanonicalHref, decodeMangledHexSlug } from '@/lib/data/entities/entity-utils';
-import { searchAndEnrichFromTMDB, fetchTMDBDetails, fetchTMDBAiredEpisodeCount, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
+import { parseEntitySlug, normalizeTitle, isStrictSafeEntity, generateSlug, getTitleCanonicalHref, decodeMangledHexSlug, hasTitleOverlap } from '@/lib/data/entities/entity-utils';
+import { searchAndEnrichFromTMDB, enrichEntityByTMDBId, fetchTMDBDetails, fetchTMDBAiredEpisodeCount, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
 import { getFastPersonAvatars } from '@/lib/services/person-avatar';
 import { getOptimizedImageUrl, isRestrictedRegion } from '@/lib/utils/image-utils';
 import { headers } from 'next/headers';
@@ -36,6 +36,8 @@ import { getPrebakedAiInsight } from '@/lib/data/prebaked-ai-insights';
 
 interface PrebakedDisplayItem {
   entityId?: string;
+  tmdbId?: string;
+  tmdbType?: 'movie' | 'tv';
   title: string;
   slug?: string;
   type?: string;
@@ -66,8 +68,12 @@ function getAllPrebakedDisplayItems(): PrebakedDisplayItem[] {
       for (const it of list) {
         if (it && it.title && !seenTitles.has(it.title)) {
           seenTitles.add(it.title);
+          const rawTmdb = (it as any).tmdbId;
+          const itType = it.type || 'tv';
           items.push({
             entityId: it.entityId,
+            tmdbId: rawTmdb ? String(rawTmdb) : undefined,
+            tmdbType: (itType === 'tv' || itType === 'anime') ? 'tv' : 'movie',
             title: it.title,
             slug: it.slug,
             type: it.type,
@@ -98,11 +104,15 @@ function getAllPrebakedDisplayItems(): PrebakedDisplayItem[] {
             seenTitles.add(itTitle);
             const rawId = (it as any).id;
             const hasIkId = typeof rawId === 'string' && rawId.startsWith('ik');
+            const rawTmdbId = (it as any).tmdbId;
+            const itemType = (it as any).type || ((it as any).category === 'movie' ? 'movie' : 'tv');
             items.push({
               entityId: hasIkId ? rawId : undefined,
+              tmdbId: rawTmdbId ? String(rawTmdbId) : undefined,
+              tmdbType: (itemType === 'tv' || itemType === 'anime') ? 'tv' : 'movie',
               title: itTitle,
               slug: (it as any).slug,
-              type: (it as any).type || ((it as any).category === 'movie' ? 'movie' : 'tv'),
+              type: itemType,
               year: (it as any).year ? String((it as any).year) : undefined,
               cover: (it as any).cover,
               backdrop: (it as any).backdrop,
@@ -223,8 +233,28 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
   }
 
   if (entity) {
-    // 确保实体通过基础安全审核，否则不提前返回，放行至后续片名自愈
-    if (!isSafeRecentTitleItem(entity as any) || !isStrictSafeEntity(entity).safe) {
+    // 🌟 强一致防毒化核验门禁：若访问请求带有中文片名，KV 取出的实体必须具备真实语义交集
+    // 彻底杜绝《老蔡的奥德赛》或脏别名污染覆盖正牌大片《奥德赛》
+    const expectedTitle = cleanTitle || decodedSlug;
+    const hasChinese = /[\u4e00-\u9fff]/.test(expectedTitle);
+    const isPoisoned = hasChinese && !hasTitleOverlap(expectedTitle, entity.title) &&
+      (!entity.originalTitle || !hasTitleOverlap(expectedTitle, entity.originalTitle)) &&
+      (!entity.slug || !hasTitleOverlap(expectedTitle, entity.slug));
+
+    if (isPoisoned) {
+      console.warn(`[resolveEntityRaw 防毒化拦截] 实体片名与预期严重不符，剔除毒化缓存: expected="${expectedTitle}", actual="${entity.title}", id="${entity.entityId}"`);
+      // 异步清理受损别名
+      (async () => {
+        try {
+          const norm = normalizeTitle(expectedTitle);
+          if (norm) {
+            await kvDelete(`title:${norm}`);
+            await kvDelete(`slug:${norm}`);
+          }
+        } catch {}
+      })();
+      entity = null;
+    } else if (!isSafeRecentTitleItem(entity as any) || !isStrictSafeEntity(entity).safe) {
       entity = null;
     } else {
       const isMissingCover = !entity.cover || entity.cover.trim() === '';
@@ -303,7 +333,11 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
 
   if (prebakedHit) {
     // 1. 优先尝试从本地/KV 0ms 读取已持久化的完整实体
-    const existing = await getEntityByTitle(prebakedHit.title);
+    let existing = await getEntityByTitle(prebakedHit.title);
+    if (existing && !hasTitleOverlap(prebakedHit.title, existing.title)) {
+      console.warn(`[resolveEntityRaw Prebaked 防毒化拦截] 预置项 "${prebakedHit.title}" 与 KV existing.title "${existing.title}" 不符，丢弃脏数据`);
+      existing = null;
+    }
     if (existing && existing.cover && existing.cover.trim() !== '') {
       return enrichEpisodeCount(existing);
     }
@@ -314,8 +348,8 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
     const fallbackEntity: TitleEntity = {
       entityId: prebakedHit.entityId || `ik_pre_${encodeURIComponent(prebakedHit.title).slice(0, 16)}`,
       slug: decodeURIComponent(prebakedHit.slug || cleanTitle),
-      tmdbId: '',
-      tmdbType: (prebakedHit.type === 'tv' || prebakedHit.type === 'anime') ? 'tv' : 'movie',
+      tmdbId: prebakedHit.tmdbId || '',
+      tmdbType: prebakedHit.tmdbType || ((prebakedHit.type === 'tv' || prebakedHit.type === 'anime') ? 'tv' : 'movie'),
       title: prebakedHit.title,
       type: prebakedHit.type || 'tv',
       year: prebakedHit.year || '2026',
@@ -334,9 +368,20 @@ async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntity | nul
     };
 
     // 3. 后台非阻塞异步补全演职员、多语言与深度元数据并持久化到 KV（绝不阻塞用户首屏关键路径）
+    // 🌟 核心改进：若预烘焙已带有权威 TMDB ID，直接直连获取详情，0 误差 0 模糊匹配歧义！
     (async () => {
       try {
-        await searchAndEnrichFromTMDB(prebakedHit.title, prebakedHit.type, prebakedHit.year, true);
+        if (prebakedHit.tmdbId) {
+          await enrichEntityByTMDBId(
+            prebakedHit.tmdbId,
+            prebakedHit.tmdbType || ((prebakedHit.type === 'tv' || prebakedHit.type === 'anime') ? 'tv' : 'movie'),
+            prebakedHit.title,
+            prebakedHit.entityId,
+            prebakedHit.year
+          );
+        } else {
+          await searchAndEnrichFromTMDB(prebakedHit.title, prebakedHit.type, prebakedHit.year, true);
+        }
       } catch {}
     })();
 
@@ -720,29 +765,7 @@ async function tryEnrichFromTMDB(entity: TitleEntity, tmdbId: string): Promise<T
   return null;
 }
 
-/**
- * 标题相似度检测（中文字符交集）
- *
- * 判断两个标题是否至少有 1 个中文字符相同。
- * 适用于中文动漫/剧集场景，能准确区分"仙逆"与"Intimate Portrait"等完全无关的匹配。
- * 对于纯英文标题，回退到子串包含检查。
- */
-function hasTitleOverlap(a: string, b: string): boolean {
-  // 提取中文字符
-  const chineseA = a.match(/[\u4e00-\u9fff]/g);
-  const chineseB = b.match(/[\u4e00-\u9fff]/g);
 
-  if (chineseA && chineseA.length > 0 && chineseB && chineseB.length > 0) {
-    // 两个标题都有中文字符：检查是否有交集
-    const setB = new Set(chineseB);
-    return chineseA.some(ch => setB.has(ch));
-  }
-
-  // 至少一方没有中文字符（纯英文标题）：回退到子串包含检查
-  const la = a.toLowerCase();
-  const lb = b.toLowerCase();
-  return la.includes(lb) || lb.includes(la);
-}
 
 /**
  * 基于 React 19 cache 的单请求级数据获取去重包装器

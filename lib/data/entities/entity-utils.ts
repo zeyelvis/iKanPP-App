@@ -190,22 +190,90 @@ export function isInvalidDramaOrMovie(entity: {
 }
 
 /**
- * 标题相似度与相关性交集检测
- * 用于校验 URL 中的 slug 与取出的实体标题是否属于同一部作品，严防 ID 错配与脏缓存污染
+ * 标题相似度与相关性严密检测（Entity Disambiguation Guard）
+ * 用于校验 URL 中的 slug 与取出的实体标题是否属于同一部作品，严防张冠李戴、同名多字或脏缓存污染
+ * 
+ * 核心基线：
+ * 1. 100% 精确一致（包含去标点规范化）必须通过；
+ * 2. 季数合法展开（如《庆余年》vs《庆余年 第二季》）必须通过；
+ * 3. 短片名（<= 4个汉字，如《奥德赛》《狂飙》《繁花》）绝对禁止任意添加前后缀（如《老蔡的奥德赛》绝不能匹配《奥德赛》）；
+ * 4. 严禁使用单字交集判定！
  */
 export function hasTitleOverlap(a: string, b: string): boolean {
   if (!a || !b) return false;
-  const chineseA = a.match(/[\u4e00-\u9fff]/g);
-  const chineseB = b.match(/[\u4e00-\u9fff]/g);
+  const normA = normalizeTitle(a);
+  const normB = normalizeTitle(b);
 
-  if (chineseA && chineseA.length > 0 && chineseB && chineseB.length > 0) {
-    const setB = new Set(chineseB);
-    return chineseA.some(ch => setB.has(ch));
+  if (!normA || !normB) return false;
+  // 1. 完全精确一致
+  if (normA === normB) return true;
+
+  // 2. 规范季数展开识别（例如 "庆余年" vs "庆余年第二季" 或 "庆余年2"）
+  const seasonSuffixRegex = /^(?:第[一二三四五六七八九十\d]+季|\d+|特别篇|剧场版|电影版)$/i;
+  if (normA.startsWith(normB)) {
+    const diff = normA.slice(normB.length);
+    if (seasonSuffixRegex.test(diff)) return true;
+  }
+  if (normB.startsWith(normA)) {
+    const diff = normB.slice(normA.length);
+    if (seasonSuffixRegex.test(diff)) return true;
   }
 
-  const la = a.toLowerCase();
-  const lb = b.toLowerCase();
-  return la.includes(lb) || lb.includes(la);
+  const chineseA = normA.match(/[\u4e00-\u9fff]/g) || [];
+  const chineseB = normB.match(/[\u4e00-\u9fff]/g) || [];
+
+  if (chineseA.length > 0 && chineseB.length > 0) {
+    const strA = chineseA.join('');
+    const strB = chineseB.join('');
+    const minLen = Math.min(strA.length, strB.length);
+    const maxLen = Math.max(strA.length, strB.length);
+
+    // 短标题铁律：4字及以下短剧名（如“奥德赛”、“繁花”、“三体”），若不是完全同名或严格季数展开，直接判为不同作品！
+    // 彻底杜绝《老蔡的奥德赛》接管《奥德赛》，或《潜伏者》接管《潜伏》！
+    if (minLen <= 4) {
+      return false;
+    }
+
+    // 忽略常见连接助词（如“之”、“的”）后再比对（如《唐朝诡事录之西行》vs《唐朝诡事录西行》）
+    const stripA = strA.replace(/[之的与和·]/g, '');
+    const stripB = strB.replace(/[之的与和·]/g, '');
+    if (stripA === stripB) return true;
+    if ((stripA.includes(stripB) || stripB.includes(stripA)) && Math.abs(stripA.length - stripB.length) <= 1) {
+      return true;
+    }
+
+    // 较长标题（5字及以上）：必须长者包含短者，且长度差异不超过2个字符
+    if (strA.includes(strB) || strB.includes(strA)) {
+      if (maxLen - minLen <= 2) {
+        return true;
+      }
+    }
+
+    // 计算公共连续最长子串长度
+    let maxCommon = 0;
+    for (let i = 0; i < strA.length; i++) {
+      for (let j = 0; j < strB.length; j++) {
+        let k = 0;
+        while (i + k < strA.length && j + k < strB.length && strA[i + k] === strB[j + k]) {
+          k++;
+        }
+        if (k > maxCommon) maxCommon = k;
+      }
+    }
+
+    // 公共连续部分必须覆盖短标题的 80% 以上，且两者总长相差不能超过 2
+    return maxCommon >= Math.ceil(minLen * 0.8) && (maxLen - minLen <= 2);
+  }
+
+  // 纯英文匹配：必须长者包含短者且长度差异极小
+  const la = normA.toLowerCase();
+  const lb = normB.toLowerCase();
+  if (la === lb) return true;
+  if ((la.includes(lb) || lb.includes(la)) && Math.abs(la.length - lb.length) <= 3) {
+    return true;
+  }
+
+  return false;
 }
 
 /**

@@ -364,49 +364,95 @@ export async function searchAndEnrichFromTMDB(
 
     // 智能多维打分排序（依据：标题精准度 + 海报剧照完整度 + 热度人气 + 评分人数）
     const allQueryCandidates = generateSearchQueries(title);
+    const cleanQ = cleanQuery.toLowerCase();
+    const cleanQNorm = normalizeTitle(cleanQuery);
+
+    // 检查候选池中是否存在完全同名者（包括中文标题或原名规范化完全相等）
+    const hasExactMatchInCandidates = candidates.some(c => {
+      if (!c) return false;
+      const cTitle = (c.title || c.name || '').trim().toLowerCase();
+      const cOrig = (c.original_title || c.original_name || '').trim().toLowerCase();
+      return (
+        cTitle === cleanQ ||
+        cOrig === cleanQ ||
+        (cleanQNorm && (normalizeTitle(cTitle) === cleanQNorm || normalizeTitle(cOrig) === cleanQNorm))
+      );
+    });
+
     const ranked = candidates
       .filter(r => r && (r.media_type === 'movie' || r.media_type === 'tv' || !r.media_type))
       .map(hit => {
         let score = 0;
         const hitTitle = (hit.title || hit.name || '').trim();
         const origTitle = (hit.original_title || hit.original_name || '').trim();
-        const cleanQ = cleanQuery.toLowerCase();
+        const hitTitleLow = hitTitle.toLowerCase();
+        const origTitleLow = origTitle.toLowerCase();
+        const hitTitleNorm = normalizeTitle(hitTitle);
+        const origTitleNorm = normalizeTitle(origTitle);
 
-        // 1. 标题匹配度 (权重高)
-        const matchesAnyQuery = allQueryCandidates.some(q => {
-          const qLow = q.toLowerCase();
-          return hitTitle.toLowerCase().includes(qLow) ||
-            origTitle.toLowerCase().includes(qLow) ||
-            qLow.includes(hitTitle.toLowerCase());
-        });
+        // 1. 标题完全同名绝对统治力判定（最高优先级）
+        const isExactHitTitle = hitTitleLow === cleanQ || (cleanQNorm && hitTitleNorm === cleanQNorm);
+        const isExactOrigTitle = origTitleLow === cleanQ || (cleanQNorm && origTitleNorm === cleanQNorm);
 
-        if (hitTitle.toLowerCase() === cleanQ) score += 100;
-        else if (origTitle.toLowerCase() === cleanQ) score += 90;
-        else if (hitTitle.toLowerCase().includes(cleanQ)) score += 50;
-        else if (matchesAnyQuery) score += 60;
+        // 季数展开判定（例如 "庆余年" vs "庆余年2"）
+        const isSeasonExpansion =
+          (hitTitleNorm.startsWith(cleanQNorm) && /^(?:第[一二三四五六七八九十\d]+季|\d+|特别篇|剧场版|电影版)$/i.test(hitTitleNorm.slice(cleanQNorm.length))) ||
+          (cleanQNorm.startsWith(hitTitleNorm) && /^(?:第[一二三四五六七八九十\d]+季|\d+|特别篇|剧场版|电影版)$/i.test(cleanQNorm.slice(hitTitleNorm.length)));
+
+        if (isExactHitTitle) {
+          score += 350; // 绝对最高统治分！
+        } else if (isExactOrigTitle) {
+          score += 300;
+        } else if (isSeasonExpansion) {
+          score += 200;
+        } else {
+          // 模糊/包含匹配
+          const isSubstring = hitTitleLow.includes(cleanQ) || origTitleLow.includes(cleanQ) || cleanQ.includes(hitTitleLow);
+          if (hasExactMatchInCandidates) {
+            // 候选池中已有完全同名项！包含匹配项（如《老蔡的奥德赛》）坚决重罚淘汰，绝不允许反杀完全同名大片！
+            score -= 250;
+          } else {
+            // 候选池无完全同名项时的梯度惩罚
+            const chineseCharsInQuery = (cleanQuery.match(/[\u4e00-\u9fff]/g) || []).length;
+            if (chineseCharsInQuery > 0 && chineseCharsInQuery <= 4 && !isSeasonExpansion) {
+              // 短片名铁律（<=4汉字）：严禁前后缀模糊侵占！
+              score -= 180;
+            } else if (isSubstring) {
+              const charDiff = Math.abs(hitTitle.length - cleanQuery.length);
+              score += Math.max(0, 80 - charDiff * 30);
+            }
+          }
+
+          const matchesAnyQuery = allQueryCandidates.some(q => {
+            const qLow = q.toLowerCase();
+            return hitTitleLow.includes(qLow) || origTitleLow.includes(qLow) || qLow.includes(hitTitleLow);
+          });
+          if (matchesAnyQuery) score += 30;
+        }
 
         // 2. 海报与剧照完整度 (权重极高！坚决淘汰无图空壳条目)
         if (hit.poster_path) score += 70;
         if (hit.backdrop_path) score += 30;
         if (hit.overview && hit.overview.trim().length > 10) score += 20;
 
-        // 3. 热度与人气加分 (依据 popularity，最高 50 分)
+        // 3. 热度与人气加分 (依据 popularity，最高 60 分)
         const pop = Number(hit.popularity) || 0;
-        score += Math.min(pop * 2, 50);
+        score += Math.min(pop * 2, 60);
 
         // 4. 评价人数加分 (过滤无人问津的极冷门条目)
         const votes = Number(hit.vote_count) || 0;
-        if (votes > 10) score += 10;
-        if (votes > 100) score += 10;
+        if (votes > 10) score += 15;
+        if (votes > 100) score += 20;
 
         // 5. 指定年份契合度匹配与阶梯惩罚
         if (effectiveYear) {
           const hitYear = (hit.release_date || hit.first_air_date || '').slice(0, 4);
           if (hitYear) {
             const diff = Math.abs(parseInt(hitYear, 10) - parseInt(effectiveYear.slice(0, 4), 10));
-            if (diff === 0) score += 70;
-            else if (diff === 1) score += 30;
-            else if (diff > 3) score -= 60;
+            if (diff === 0) score += 80;
+            else if (diff === 1) score += 20;
+            else if (diff > 1 && diff <= 3) score -= 40;
+            else if (diff > 3) score -= 90;
           }
         }
 
@@ -416,27 +462,30 @@ export async function searchAndEnrichFromTMDB(
           if (preferredType === hitType) {
             score += 80;
           } else {
-            score -= 160; // 严惩类型错配，杜绝电影侵占电视剧！
+            score -= 180; // 严惩类型错配，杜绝电影侵占电视剧！
           }
         }
 
-        // 7. 华语原生语言与国家绝对优先防线（杜绝海外同名电影如《潜伏》Insidious 侵占国产剧！）
+        // 7. 华语原生语言理性微调加分（微调决胜，绝不颠倒主次！）
         const isChineseQuery = /[\u4e00-\u9fff]/.test(cleanQuery);
         if (isChineseQuery) {
           const isChineseOrigin = hit.original_language === 'zh' || 
             (Array.isArray(hit.origin_country) && hit.origin_country.some((c: string) => ['CN', 'HK', 'TW'].includes(c)));
           if (isChineseOrigin) {
-            score += 130; // 华语本土作品压倒性加分
+            score += 30; // 华语本土作品合理微调加分（由原来的 130 分降为 30 分）
           } else {
-            score -= 90;  // 翻译同名的海外外语作品严重扣分
+            // 外语片：若中文官方译名与查询词完全匹配，0 扣分；仅在非完全匹配时扣 30 分
+            if (!isExactHitTitle) {
+              score -= 30;
+            }
           }
         }
 
-        // 8. 动画与真人实拍严格隔离防线（杜绝《三体》电视剧被误配为 2022 动画版！）
+        // 8. 动画与真人实拍严格隔离防线
         const isAnimation = Array.isArray(hit.genre_ids) && hit.genre_ids.includes(16);
         const queryWantsAnime = preferredType === 'anime' || /动画|动漫|番剧/.test(cleanQuery);
         if (isAnimation && !queryWantsAnime) {
-          score -= 110; // 普通影视坚决不选动画条目
+          score -= 110;
         } else if (!isAnimation && queryWantsAnime) {
           score -= 110;
         }
@@ -454,26 +503,18 @@ export async function searchAndEnrichFromTMDB(
     if (!best || !best.hit?.id) return null;
 
     // ====== 防线：标题匹配度硬性门槛 ======
-    // 防止 TMDB 搜索返回的最高分候选与搜索词完全不相关
     const bestTitle = (best.hit.title || best.hit.name || '').trim();
     const bestOrig = (best.hit.original_title || best.hit.original_name || '').trim();
-    const hasChineseQuery = /[\u4e00-\u9fff]/.test(cleanQuery);
 
-    if (hasChineseQuery) {
-      // 包含原始查询词以及所有多级候选词中的中文字符（兼容简繁、音译别名与主副标题）
-      const queryChars = Array.from(new Set(generateSearchQueries(title).join('').match(/[\u4e00-\u9fff]/g) || []));
-      const combinedTitle = bestTitle + bestOrig;
-      const hasOverlap = queryChars.some(ch => combinedTitle.includes(ch));
-      const overviewText = best.hit.overview || '';
-      const hasOverviewOverlap = queryChars.some(ch => overviewText.includes(ch));
-      const hasChineseOverview = /[\u4e00-\u9fff]/.test(overviewText);
+    // 强一致消歧防御：使用 hasTitleOverlap 进行防伪核验，彻底杜绝《老蔡的奥德赛》冒充《奥德赛》
+    const isBestTitleOverlap =
+      hasTitleOverlap(cleanQuery, bestTitle) ||
+      hasTitleOverlap(title, bestTitle) ||
+      (bestOrig && (hasTitleOverlap(cleanQuery, bestOrig) || hasTitleOverlap(title, bestOrig)));
 
-      if (!hasOverlap && !hasOverviewOverlap && !(best.score >= 40 && hasChineseOverview)) {
-        return null;
-      }
-    } else {
-      // 英文搜索：最低分数门槛，排除得分极低的无关条目
-      if (best.score < 50) return null;
+    if (!isBestTitleOverlap) {
+      console.warn(`[TMDB Search Disambiguation Mismatch] Rejected candidate "${bestTitle}" (orig: "${bestOrig}") for query "${title}" (score: ${best.score})`);
+      return null;
     }
 
     const firstHit = best.hit;
@@ -486,9 +527,10 @@ export async function searchAndEnrichFromTMDB(
         const hitTitle = (firstHit.title || firstHit.name || '').trim();
         const origTitle = (firstHit.original_title || firstHit.original_name || '').trim();
         const isRelated =
-          hasTitleOverlap(existByTmdb.title, hitTitle + origTitle + cleanQuery) ||
-          (existByTmdb.originalTitle && hasTitleOverlap(existByTmdb.originalTitle, hitTitle + origTitle + cleanQuery)) ||
-          (existByTmdb.slug && hasTitleOverlap(existByTmdb.slug, hitTitle + origTitle + cleanQuery));
+          hasTitleOverlap(existByTmdb.title, hitTitle) ||
+          hasTitleOverlap(existByTmdb.title, cleanQuery) ||
+          (existByTmdb.originalTitle && (hasTitleOverlap(existByTmdb.originalTitle, origTitle) || hasTitleOverlap(existByTmdb.originalTitle, cleanQuery))) ||
+          (existByTmdb.slug && hasTitleOverlap(existByTmdb.slug, cleanQuery));
 
         if (isRelated) {
           return existByTmdb;
@@ -497,132 +539,165 @@ export async function searchAndEnrichFromTMDB(
       }
     }
 
-    // 拉取深度元数据
+    // 拉取深度元数据并持久化
     const detail = await fetchTMDBDetails(firstHit.id, actualType, TMDB_API_KEY);
     if (!detail) return null;
 
-    const { mainTitle, originalTitle } = resolveCanonicalTitle(detail, title);
+    return enrichEntityFromTMDBDetail(detail, actualType, title, undefined, effectiveYear);
+  } catch (e) {
+    console.warn(`[Enrich search fail] title=${title}:`, e);
+  }
 
-    // 🌟 华语内容安全铁律门禁：非合法中文标题/日文假名/纯外文条目坚决拦截，绝不分配实体 ID 入库
-    if (!mainTitle || !isCleanChineseTitle(mainTitle)) {
-      console.warn(`[searchAndEnrichFromTMDB] 坚决阻断非华语/不安全条目入库: "${mainTitle}" (query: "${title}")`);
-      return null;
-    }
+  return null;
+}
 
-    // 生成新实体或升级现有残缺实体
-    let entityId: string;
-    let existingToUpdate: TitleEntity | null = null;
-    if (forceRefresh) {
-      existingToUpdate = await getEntityByTitle(title);
-    }
+/**
+ * 根据 TMDB 详情数据组装完整的规范 TitleEntity 并持久化到 KV
+ */
+export async function enrichEntityFromTMDBDetail(
+  detail: TMDBDetailResponse,
+  actualType: 'movie' | 'tv',
+  requestTitle?: string,
+  existingEntityId?: string,
+  targetYear?: string
+): Promise<TitleEntity | null> {
+  if (!detail || !detail.id) return null;
+
+  const { mainTitle, originalTitle } = resolveCanonicalTitle(detail, requestTitle || '');
+
+  // 🌟 华语内容安全铁律门禁：非合法中文标题/日文假名/纯外文条目坚决拦截，绝不分配实体 ID 入库
+  if (!mainTitle || !isCleanChineseTitle(mainTitle)) {
+    console.warn(`[enrichEntityFromTMDBDetail] 坚决阻断非华语/不安全条目入库: "${mainTitle}" (requestTitle: "${requestTitle}")`);
+    return null;
+  }
+
+  // 生成新实体或升级现有残缺实体
+  let entityId: string;
+  let existingToUpdate: TitleEntity | null = null;
+  if (existingEntityId) {
+    entityId = existingEntityId;
+  } else {
+    existingToUpdate = (await getEntityByTitle(mainTitle)) || (requestTitle ? await getEntityByTitle(requestTitle) : null);
     if (existingToUpdate) {
       entityId = existingToUpdate.entityId;
     } else {
       const nextSeq = await getNextEntitySeq();
       entityId = formatEntityId(nextSeq);
     }
-
-    const slug = generateSlug(mainTitle);
-
-    const directors: string[] = [];
-    const actors: string[] = [];
-
-    if (detail.credits?.crew) {
-      for (const c of detail.credits.crew) {
-        if (c.job === 'Director' && !directors.includes(c.name)) {
-          directors.push(c.name);
-        }
-      }
-    }
-
-    if (detail.credits?.cast) {
-      for (const c of detail.credits.cast.slice(0, 8)) {
-        if (c.name && !actors.includes(c.name)) {
-          actors.push(c.name);
-        }
-      }
-    }
-
-    const releaseYear = (detail.release_date || detail.first_air_date || year || '2024').slice(0, 4);
-    const genres = (detail.genres || []).map(g => g.name).filter(Boolean);
-
-    const region = detail.production_countries?.[0]?.name || (
-      detail.origin_country?.[0] === 'CN' ? '中国' :
-      detail.origin_country?.[0] === 'US' ? '美国' :
-      detail.origin_country?.[0] === 'KR' ? '韩国' :
-      detail.origin_country?.[0] === 'JP' ? '日本' :
-      detail.origin_country?.[0] === 'TH' ? '泰国' :
-      detail.origin_country?.[0] || '华语'
-    );
-    const language = detail.spoken_languages?.[0]?.name || (
-      detail.original_language === 'zh' ? '国语' :
-      detail.original_language === 'en' ? '英语' :
-      detail.original_language === 'ko' ? '韩语' :
-      detail.original_language === 'ja' ? '日语' :
-      detail.original_language === 'th' ? '泰语' :
-      detail.original_language
-    );
-    const status = detail.status === 'Ended' ? '完结' : (detail.status === 'Returning Series' ? '连载中' : (detail.status || '完结'));
-
-    const rawKeywords = detail.keywords?.keywords || detail.keywords?.results || [];
-    const keywords = rawKeywords.map(k => k.name).filter(Boolean).slice(0, 10);
-
-    const entity: TitleEntity = {
-      entityId,
-      slug,
-      tmdbId: String(detail.id),
-      tmdbType: actualType,
-      title: mainTitle,
-      originalTitle: originalTitle || detail.original_title || detail.original_name,
-      type: actualType,
-      year: releaseYear,
-      description: detail.overview || `${mainTitle} 在线观看，支持海外华人免翻墙极速高清播放。`,
-      cover: detail.poster_path ? `https://image.tmdb.org/t/p/w500${detail.poster_path}` : '',
-      backdrop: detail.backdrop_path ? `https://image.tmdb.org/t/p/w1280${detail.backdrop_path}` : '',
-      rate: detail.vote_average ? detail.vote_average.toFixed(1) : '8.5',
-      genres: genres.length > 0 ? genres : [actualType === 'movie' ? '电影' : '电视剧'],
-      directors: directors.filter(d => d && d !== '知名导演'),
-      actors: actors.filter(a => a && a !== '实力主演'),
-      region,
-      language,
-      status,
-      popularity: detail.popularity,
-      runtime: detail.runtime,
-      numberOfSeasons: detail.number_of_seasons,
-      numberOfEpisodes: detail.number_of_episodes, // 临时赋值，下面精确覆盖
-      keywords,
-      createdAt: existingToUpdate?.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    // 精确统计已播出集数（过滤掉预排期的占位集数）
-    if (actualType === 'tv' && detail.number_of_seasons) {
-      try {
-        const airedCount = await fetchTMDBAiredEpisodeCount(
-          detail.id,
-          detail.number_of_seasons
-        );
-        if (airedCount && airedCount > 0) {
-          entity.numberOfEpisodes = airedCount;
-        }
-      } catch {}
-    }
-
-    // 严格内容安全阻断门禁
-    const safeCheck = isStrictSafeEntity(entity);
-    if (!safeCheck.safe) {
-      console.warn(`[searchAndEnrichFromTMDB 安全阻断] 拦截违规/成人条目: ${mainTitle} (${safeCheck.reason})`);
-      return null;
-    }
-
-    // 存入 KV 索引系统
-    await saveEntity(entity);
-    return entity;
-  } catch (e) {
-    console.warn(`[Enrich search fail] title=${title}:`, e);
   }
 
-  return null;
+  const slug = generateSlug(mainTitle);
+
+  const directors: string[] = [];
+  const actors: string[] = [];
+
+  if (detail.credits?.crew) {
+    for (const c of detail.credits.crew) {
+      if (c.job === 'Director' && !directors.includes(c.name)) {
+        directors.push(c.name);
+      }
+    }
+  }
+
+  if (detail.credits?.cast) {
+    for (const c of detail.credits.cast.slice(0, 8)) {
+      if (c.name && !actors.includes(c.name)) {
+        actors.push(c.name);
+      }
+    }
+  }
+
+  const releaseYear = (detail.release_date || detail.first_air_date || targetYear || '2024').slice(0, 4);
+  const genres = (detail.genres || []).map(g => g.name).filter(Boolean);
+
+  const region = detail.production_countries?.[0]?.name || (
+    detail.origin_country?.[0] === 'CN' ? '中国' :
+    detail.origin_country?.[0] === 'US' ? '美国' :
+    detail.origin_country?.[0] === 'KR' ? '韩国' :
+    detail.origin_country?.[0] === 'JP' ? '日本' :
+    detail.origin_country?.[0] === 'TH' ? '泰国' :
+    detail.origin_country?.[0] || '华语'
+  );
+  const language = detail.spoken_languages?.[0]?.name || (
+    detail.original_language === 'zh' ? '国语' :
+    detail.original_language === 'en' ? '英语' :
+    detail.original_language === 'ko' ? '韩语' :
+    detail.original_language === 'ja' ? '日语' :
+    detail.original_language === 'th' ? '泰语' :
+    detail.original_language
+  );
+  const status = detail.status === 'Ended' ? '完结' : (detail.status === 'Returning Series' ? '连载中' : (detail.status || '完结'));
+
+  const rawKeywords = detail.keywords?.keywords || detail.keywords?.results || [];
+  const keywords = rawKeywords.map(k => k.name).filter(Boolean).slice(0, 10);
+
+  const entity: TitleEntity = {
+    entityId,
+    slug,
+    tmdbId: String(detail.id),
+    tmdbType: actualType,
+    title: mainTitle,
+    originalTitle: originalTitle || detail.original_title || detail.original_name,
+    type: actualType,
+    year: releaseYear,
+    description: detail.overview || `${mainTitle} 在线观看，支持海外华人免翻墙极速高清播放。`,
+    cover: detail.poster_path ? `https://image.tmdb.org/t/p/w500${detail.poster_path}` : '',
+    backdrop: detail.backdrop_path ? `https://image.tmdb.org/t/p/w1280${detail.backdrop_path}` : '',
+    rate: detail.vote_average ? detail.vote_average.toFixed(1) : '8.5',
+    genres: genres.length > 0 ? genres : [actualType === 'movie' ? '电影' : '电视剧'],
+    directors: directors.filter(d => d && d !== '知名导演'),
+    actors: actors.filter(a => a && a !== '实力主演'),
+    region,
+    language,
+    status,
+    popularity: detail.popularity,
+    runtime: detail.runtime,
+    numberOfSeasons: detail.number_of_seasons,
+    numberOfEpisodes: detail.number_of_episodes,
+    keywords,
+    createdAt: existingToUpdate?.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  // 精确统计已播出集数（过滤掉预排期的占位集数）
+  if (actualType === 'tv' && detail.number_of_seasons) {
+    try {
+      const airedCount = await fetchTMDBAiredEpisodeCount(
+        detail.id,
+        detail.number_of_seasons
+      );
+      if (airedCount && airedCount > 0) {
+        entity.numberOfEpisodes = airedCount;
+      }
+    } catch {}
+  }
+
+  // 严格内容安全阻断门禁
+  const safeCheck = isStrictSafeEntity(entity);
+  if (!safeCheck.safe) {
+    console.warn(`[enrichEntityFromTMDBDetail 安全阻断] 拦截违规/成人条目: ${mainTitle} (${safeCheck.reason})`);
+    return null;
+  }
+
+  // 存入 KV 索引系统
+  await saveEntity(entity);
+  return entity;
+}
+
+/**
+ * 直接通过官方 TMDB ID 与类型精准获取并持久化实体（零搜索、零歧义、100%精准）
+ */
+export async function enrichEntityByTMDBId(
+  tmdbId: string | number,
+  type: 'movie' | 'tv' = 'movie',
+  fallbackTitle?: string,
+  existingEntityId?: string,
+  year?: string
+): Promise<TitleEntity | null> {
+  if (!tmdbId || !TMDB_API_KEY) return null;
+  const detail = await fetchTMDBDetails(tmdbId, type, TMDB_API_KEY);
+  if (!detail) return null;
+  return enrichEntityFromTMDBDetail(detail, type, fallbackTitle, existingEntityId, year);
 }
 
 /**
