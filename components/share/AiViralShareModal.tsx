@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import QRCode from 'qrcode';
 import {
   X,
-  Sparkles,
+  Film,
+  RefreshCw,
   Share2,
   Download,
   Copy,
@@ -37,36 +38,49 @@ interface AiViralShareModalProps {
   slug?: string;
 }
 
-// 针对不同影视题材的 AI 黄金 Hook 智能备选金句库
-function getAiHookPitch(title: string, genres: string[] = [], overview?: string, rate?: string): string {
-  if (overview && overview.length > 10 && overview.length < 50) {
-    return overview.trim();
-  }
+// iKanPP 团队专业影视短评金句生成器（按题材多维度精选）
+function getCuratedHookPitches(title: string, genres: string[] = [], description?: string, rate?: string): string[] {
+  const list: string[] = [];
   const genreStr = genres.join(' ');
   const numRate = parseFloat(rate || '8.5');
 
+  if (description && description.length > 12 && description.length < 55) {
+    list.push(description.trim());
+  }
+
   if (genreStr.includes('悬疑') || genreStr.includes('惊悚') || genreStr.includes('犯罪')) {
-    return '全员恶人层层反转，不到最后一秒猜不透真相！';
+    list.push('全员恶人层层反转，不到最后一秒猜不透真相！');
+    list.push('当倒数逼近终点，真正被审判的或许不是命运。');
+    list.push('抽丝剥茧的高智商博弈，让人屏住呼吸的窒息快感！');
+  } else if (genreStr.includes('喜剧')) {
+    list.push('全程爆笑解压神作，承包你一整天的好心情！');
+    list.push('笑中带泪的烟火人间，治愈所有不开心的宝藏电影。');
+    list.push('金句频出的喜剧盛宴，放松下饭首选佳作！');
+  } else if (genreStr.includes('科幻') || genreStr.includes('动作') || genreStr.includes('奇幻')) {
+    list.push('大银幕级视听狂宴，全程高能无尿点！');
+    list.push('想象力突破天际，震撼视效直击天灵盖！');
+    list.push('酣畅淋漓的感官冲击，年度不可错过的视听盛宴。');
+  } else if (genreStr.includes('爱情') || genreStr.includes('言情')) {
+    list.push('一眼万年的宿命纠缠，今年最破防的情感盛宴。');
+    list.push('在遗憾与炽热之间，写满了最动人的人间深情。');
+    list.push('爱是想要触碰却收回的手，直击灵魂的纯粹浪漫。');
+  } else if (genreStr.includes('古装') || genreStr.includes('武侠') || genreStr.includes('历史')) {
+    list.push('江湖恩仇与权谋博弈，极致华丽的东方美学！');
+    list.push('纵马长歌赴山海，快意恩仇方显英雄本色。');
+    list.push('风起云涌的大时代史诗，每一个眼神皆是风云。');
+  } else if (genreStr.includes('动画') || genreStr.includes('动漫')) {
+    list.push('燃点泪点双重暴击，年度必看口碑封神之作！');
+    list.push('献给每一个不曾妥协的赤子之心。');
   }
-  if (genreStr.includes('喜剧')) {
-    return '全程爆笑解压神作，承包你一整天的好心情！';
-  }
-  if (genreStr.includes('科幻') || genreStr.includes('动作') || genreStr.includes('奇幻')) {
-    return '大银幕级视听狂宴，全程高能无尿点！';
-  }
-  if (genreStr.includes('爱情') || genreStr.includes('言情')) {
-    return '一眼万年的宿命纠缠，今年最破防的情感盛宴。';
-  }
-  if (genreStr.includes('古装') || genreStr.includes('武侠') || genreStr.includes('历史')) {
-    return '江湖恩仇与权谋博弈，极致华丽的视听美学！';
-  }
-  if (genreStr.includes('动画') || genreStr.includes('动漫')) {
-    return '燃点泪点双重暴击，年度必看口碑封神之作！';
-  }
+
   if (numRate >= 8.5) {
-    return `豆瓣 ${numRate} 分封神力作，每一个镜头都值得细品！`;
+    list.push(`豆瓣 ${numRate} 分封神力作，每一个镜头都值得细品！`);
   }
-  return '精湛演技与扎实剧情，年度不可多得的高分口碑佳作！';
+
+  list.push('精湛演技与扎实剧情，年度不可多得的高分口碑佳作！');
+  list.push('值得二刷三刷的走心力作，诚意满满的年度惊喜。');
+
+  return Array.from(new Set(list));
 }
 
 export function AiViralShareModal({
@@ -89,7 +103,7 @@ export function AiViralShareModal({
   const [isGeneratingPoster, setIsGeneratingPoster] = useState(false);
   const [copySuccessIndex, setCopySuccessIndex] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [hookIndex, setHookIndex] = useState(0);
 
   // 实体属性归一化
   const effectiveTitle = entity?.title || fallbackTitle || '热门影视';
@@ -99,10 +113,26 @@ export function AiViralShareModal({
   const effectiveGenres = entity?.genres || fallbackGenres || ['影视'];
   const effectiveType = entity?.type === 'tv' ? '电视剧' : entity?.type === 'movie' ? '电影' : fallbackType || '影视';
   const effectiveDescription = entity?.description || fallbackOverview || '';
-  // 黄金第一优先级：优先采用本地 AI 深度提炼的 15~25 字观影金句 hook
-  const aiHook = entity?.aiContent?.hook || getAiHookPitch(effectiveTitle, effectiveGenres, effectiveDescription, effectiveRate);
 
-  // 权威规范 URL（带社交裂变 UTM 追踪）
+  // 汇聚 iKanPP 官方精选短评候选池
+  const candidateHooks = useMemo(() => {
+    const list: string[] = [];
+    if (entity?.aiContent?.hook) list.push(entity.aiContent.hook);
+    if (entity?.aiContent?.highlights && Array.isArray(entity.aiContent.highlights)) {
+      entity.aiContent.highlights.forEach((h) => {
+        if (typeof h === 'string' && h.trim().length > 6) list.push(h.trim());
+      });
+    }
+    const genrePitches = getCuratedHookPitches(effectiveTitle, effectiveGenres, effectiveDescription, effectiveRate);
+    genrePitches.forEach((p) => {
+      if (!list.includes(p)) list.push(p);
+    });
+    return list.length > 0 ? list : ['精湛演技与扎实剧情，年度不可多得的高分口碑佳作！'];
+  }, [entity, effectiveTitle, effectiveGenres, effectiveDescription, effectiveRate]);
+
+  const currentHook = candidateHooks[hookIndex % candidateHooks.length];
+
+  // 权威规范 URL（带社交分享参数）
   const [shareUrl, setShareUrl] = useState('');
 
   useEffect(() => {
@@ -111,7 +141,7 @@ export function AiViralShareModal({
       const canonicalBase = entity?.canonicalSlug
         ? `${window.location.origin}/title/${entity.canonicalSlug}`
         : window.location.href.split('?')[0];
-      setShareUrl(`${canonicalBase}?utm_source=viral_share&utm_medium=poster`);
+      setShareUrl(`${canonicalBase}?utm_source=ikanpp_share&utm_medium=card`);
     }
   }, [entity?.canonicalSlug]);
 
@@ -141,41 +171,40 @@ export function AiViralShareModal({
       .catch((err) => console.error('QR code generation failed:', err));
   }, [isOpen, shareUrl]);
 
-  // 纯前端 Canvas 渲染高颜值电影明信片海报
+  // 纯前端 Canvas 渲染 iKanPP 官方高颜值电影明信片海报
   useEffect(() => {
     if (!isOpen || !qrCodeUrl || activeTab !== 'poster') return;
     setIsGeneratingPoster(true);
 
     const canvas = document.createElement('canvas');
     const width = 640;
-    const height = 920;
+    const height = 930;
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     // 1. 绘制暗夜黑金明信片质感背景
-    ctx.fillStyle = '#121216';
+    ctx.fillStyle = '#111115';
     ctx.fillRect(0, 0, width, height);
 
     // 顶部微妙红色微光渐变
     const grad = ctx.createRadialGradient(width / 2, 0, 10, width / 2, 0, width);
-    grad.addColorStop(0, 'rgba(220, 38, 38, 0.25)');
-    grad.addColorStop(1, 'rgba(18, 18, 22, 0)');
+    grad.addColorStop(0, 'rgba(220, 38, 38, 0.22)');
+    grad.addColorStop(1, 'rgba(17, 17, 21, 0)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, width, 400);
 
     // 2. 加载封面大图并绘制电影画幅 (主视觉)
     const img = new window.Image();
     img.crossOrigin = 'anonymous';
-    // 若原图来自防盗链源，走自建图片代理确保 Canvas 导出不被污染
     const proxyCover = effectivePoster ? `/api/img-proxy?url=${encodeURIComponent(effectivePoster)}&w=780` : '';
 
     const drawRestOfCard = () => {
       // 3. 标签与评分栏 (居中偏上)
-      const contentTop = 500;
+      const contentTop = 495;
 
-      // 4K超清与类型药丸胶囊
+      // 4K超清与类型胶囊
       ctx.fillStyle = '#E50914';
       ctx.beginPath();
       ctx.roundRect(40, contentTop, 68, 26, 6);
@@ -200,7 +229,7 @@ export function AiViralShareModal({
 
       // 4. 影视大标题 (支持长文本自适应折行)
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = '900 30px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = '900 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.textAlign = 'left';
       const maxTitleWidth = width - 80;
       let displayTitle = effectiveTitle;
@@ -210,30 +239,36 @@ export function AiViralShareModal({
         }
         displayTitle += '...';
       }
-      ctx.fillText(displayTitle, 40, contentTop + 65);
+      ctx.fillText(displayTitle, 40, contentTop + 62);
 
-      // 5. AI 提炼灵魂短评金句 (引言卡片背景)
-      const quoteBoxY = contentTop + 90;
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      // 5. iKanPP 团队精选短评框 (引言卡片背景)
+      const quoteBoxY = contentTop + 85;
+      const quoteBoxH = 88;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.roundRect(40, quoteBoxY, width - 80, 80, 14);
+      ctx.roundRect(40, quoteBoxY, width - 80, quoteBoxH, 14);
       ctx.fill();
       ctx.stroke();
 
+      // 引言框顶部出处标语：iKanPP 团队精选看点
+      ctx.fillStyle = 'rgba(220, 38, 38, 0.9)';
+      ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('🎬 iKanPP 团队精选微评', 56, quoteBoxY + 22);
+
       // 引号装饰
       ctx.fillStyle = '#E50914';
-      ctx.font = 'bold 24px Georgia, serif';
-      ctx.fillText('“', 56, quoteBoxY + 36);
+      ctx.font = 'bold 22px Georgia, serif';
+      ctx.fillText('“', 56, quoteBoxY + 48);
 
-      // 金句文字
+      // 短评文字排版
       ctx.fillStyle = '#F3F4F6';
-      ctx.font = 'italic 500 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = '500 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.textAlign = 'left';
 
-      // 自动折行
-      const words = aiHook;
+      const words = currentHook;
       let line1 = words;
       let line2 = '';
       if (ctx.measureText(words).width > width - 150) {
@@ -241,9 +276,9 @@ export function AiViralShareModal({
         line1 = words.slice(0, splitIdx);
         line2 = words.slice(splitIdx);
       }
-      ctx.fillText(line1, 80, quoteBoxY + 34);
+      ctx.fillText(line1, 78, quoteBoxY + 46);
       if (line2) {
-        ctx.fillText(line2, 80, quoteBoxY + 58);
+        ctx.fillText(line2, 78, quoteBoxY + 70);
       }
 
       // 6. 底部留白与扫码区域
@@ -254,9 +289,9 @@ export function AiViralShareModal({
       // 加载并绘制二维码
       const qrImg = new window.Image();
       qrImg.onload = () => {
-        const qrSize = 100;
+        const qrSize = 102;
         const qrX = width - 40 - qrSize;
-        const qrY = bottomY + 18;
+        const qrY = bottomY + 16;
 
         // 二维码白底圆角衬底
         ctx.fillStyle = '#FFFFFF';
@@ -270,15 +305,15 @@ export function AiViralShareModal({
         ctx.fillStyle = '#FFFFFF';
         ctx.font = 'bold 18px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
         ctx.textAlign = 'left';
-        ctx.fillText('免翻墙 · 微信/手机扫码即看', 40, bottomY + 48);
+        ctx.fillText('免翻墙 · 微信/手机扫码即看', 40, bottomY + 46);
 
         ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
         ctx.font = '500 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillText('海外华人 4K 极速纯净流媒体平台', 40, bottomY + 74);
+        ctx.fillText('海外华人 4K 极速纯净流媒体平台', 40, bottomY + 72);
 
-        ctx.fillStyle = 'rgba(220, 38, 38, 0.9)';
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.95)';
         ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillText('iKanPP · 全网无删减全集秒播', 40, bottomY + 98);
+        ctx.fillText('iKanPP · 全网无删减全集秒播', 40, bottomY + 96);
 
         // 导出最终海报 DataURL
         try {
@@ -298,11 +333,11 @@ export function AiViralShareModal({
         // 在顶部绘制封面 (带圆角和暗角过渡)
         ctx.save();
         ctx.beginPath();
-        ctx.roundRect(40, 35, width - 80, 430, 20);
+        ctx.roundRect(40, 35, width - 80, 425, 20);
         ctx.clip();
         // 居中裁剪填充
         const targetW = width - 80;
-        const targetH = 430;
+        const targetH = 425;
         const imgRatio = img.width / img.height;
         const targetRatio = targetW / targetH;
         let sW = img.width;
@@ -319,9 +354,9 @@ export function AiViralShareModal({
         ctx.drawImage(img, sX, sY, sW, sH, 40, 35, targetW, targetH);
 
         // 底部渐变羽化至深色背景
-        const coverGrad = ctx.createLinearGradient(0, 300, 0, 465);
-        coverGrad.addColorStop(0, 'rgba(18, 18, 22, 0)');
-        coverGrad.addColorStop(1, '#121216');
+        const coverGrad = ctx.createLinearGradient(0, 300, 0, 460);
+        coverGrad.addColorStop(0, 'rgba(17, 17, 21, 0)');
+        coverGrad.addColorStop(1, '#111115');
         ctx.fillStyle = coverGrad;
         ctx.fillRect(40, 35, targetW, targetH);
         ctx.restore();
@@ -329,10 +364,9 @@ export function AiViralShareModal({
         drawRestOfCard();
       };
       img.onerror = () => {
-        // 图片加载失败时绘制高级深色占位画幅
         ctx.fillStyle = '#1A1A22';
         ctx.beginPath();
-        ctx.roundRect(40, 35, width - 80, 430, 20);
+        ctx.roundRect(40, 35, width - 80, 425, 20);
         ctx.fill();
         drawRestOfCard();
       };
@@ -340,18 +374,24 @@ export function AiViralShareModal({
     } else {
       ctx.fillStyle = '#1A1A22';
       ctx.beginPath();
-      ctx.roundRect(40, 35, width - 80, 430, 20);
+      ctx.roundRect(40, 35, width - 80, 425, 20);
       ctx.fill();
       drawRestOfCard();
     }
-  }, [isOpen, qrCodeUrl, activeTab, effectivePoster, effectiveTitle, effectiveYear, effectiveGenres, effectiveRate, aiHook]);
+  }, [isOpen, qrCodeUrl, activeTab, effectivePoster, effectiveTitle, effectiveYear, effectiveGenres, effectiveRate, currentHook]);
+
+  // 切换下一句精选看点
+  const handleNextHook = () => {
+    setHookIndex((prev) => prev + 1);
+    showToast('✨ 已切换为下一句 iKanPP 团队精选看点');
+  };
 
   // 下载海报图片
   const handleDownloadPoster = () => {
     if (!posterImageUrl) return;
     const a = document.createElement('a');
     a.href = posterImageUrl;
-    a.download = `iKanPP_${effectiveTitle}_4K海报.png`;
+    a.download = `iKanPP_${effectiveTitle}_电影明信片.png`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -372,29 +412,28 @@ export function AiViralShareModal({
       ]);
       showToast('✅ 海报已复制到剪贴板！可直接粘贴发送');
     } catch {
-      // 若不支持直接写图片，则下载
       handleDownloadPoster();
     }
   };
 
-  // 复制文案处理
+  // 复制文案处理（彻底消除任何 AI 营销字眼，全面树立 iKanPP 团队信誉）
   const copyTexts = [
     {
       id: 'xhs',
-      name: '小红书 / 朋友圈爆款种草风',
-      badge: '🔥 转化率最高',
+      name: '小红书 / 朋友圈推荐文案',
+      badge: '🔥 种草首选',
       text: `姐妹们/家人们！终于被我挖到宝了😭！在海外想看《${effectiveTitle}》全网找遍到处要翻墙还要VIP，终于被我找到这个神仙网站！4K画质丝滑秒开，全程免翻墙零广告，一口气刷完全集太爽了！直达链接指路👉 ${shareUrl} #追剧打卡 #宝藏影视站 #海外看剧 #4K影视`,
     },
     {
       id: 'moviegoer',
-      name: '高逼格影迷 / 豆瓣神片安利风',
-      badge: '★ 豆瓣高分背书',
-      text: `年度封神预定！豆瓣评分 ${effectiveRate} 的《${effectiveTitle}》(${effectiveYear})，AI独家神评：“${aiHook}”。没看过的真的亏大！高清在线免翻墙直达：${shareUrl} （来自 iKanPP 纯净流媒体）`,
+      name: '影迷专属 / 豆瓣高分力荐文案',
+      badge: '★ 官方精选',
+      text: `年度封神预定！豆瓣评分 ${effectiveRate} 的《${effectiveTitle}》(${effectiveYear})，iKanPP 团队精选看点：“${currentHook}”。没看过的真的亏大！高清在线免翻墙直达：${shareUrl} （来自 iKanPP 纯净流媒体）`,
     },
     {
       id: 'minimal',
-      name: '极简微信群 / TG群极速直达风',
-      badge: '⚡ 群聊首选',
+      name: '微信群 / Telegram 群极速直达文案',
+      badge: '⚡ 群聊快捷',
       text: `🎬 推荐好片《${effectiveTitle}》4K超清全集在线直连（海外免翻墙/免会员）：${shareUrl}`,
     },
   ];
@@ -402,7 +441,7 @@ export function AiViralShareModal({
   const handleCopyText = (text: string, index: number) => {
     navigator.clipboard.writeText(text).then(() => {
       setCopySuccessIndex(index);
-      showToast('✅ 爆款文案已复制到剪贴板！');
+      showToast('✅ 精选文案已复制到剪贴板！');
       setTimeout(() => setCopySuccessIndex(null), 2500);
     });
   };
@@ -452,26 +491,26 @@ export function AiViralShareModal({
 
   return createPortal(
     <div className="fixed inset-0 z-9999 flex items-center justify-center p-3 sm:p-4 bg-black/85 animate-fade-in select-none">
-      {/* 弹窗主体：使用纯色暗夜背景，严禁 backdrop-filter: blur 避免 GPU 冲突 */}
+      {/* 弹窗主体：纯色暗夜背景，严禁 backdrop-filter 避免显卡冲突 */}
       <div className="relative w-full max-w-lg bg-[#141419] border border-white/15 rounded-3xl p-4 sm:p-6 shadow-[0_25px_80px_rgba(0,0,0,0.9)] flex flex-col gap-4 text-white overflow-hidden max-h-[92vh]">
         {/* 背景氛围点缀微光 */}
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
 
-        {/* 顶部标题栏 */}
+        {/* 顶部标题栏：确立 iKanPP 官方出品权威形象 */}
         <div className="flex items-center justify-between pb-3 border-b border-white/10 shrink-0">
-          <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-xl bg-red-500/20 text-red-400">
-              <Sparkles size={18} />
+          <div className="flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-red-500/20 text-red-400">
+              <Film size={18} />
             </span>
             <div>
-              <h2 className="font-extrabold text-base sm:text-lg tracking-wide text-white flex items-center gap-1.5">
-                AI 社交裂变安利中枢
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-600/30 text-red-300 border border-red-500/30 font-medium">
-                  公域爆款
+              <h2 className="font-extrabold text-base sm:text-lg tracking-wide text-white flex items-center gap-2">
+                iKanPP 电影明信片
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-600/25 text-red-300 border border-red-500/30 font-medium">
+                  团队精选
                 </span>
               </h2>
-              <p className="text-[11px] text-white/50">一键生成电影明信片海报与小红书种草文案</p>
+              <p className="text-[11px] text-white/50">iKanPP 团队制作 · 专属电影海报与安利种草文案</p>
             </div>
           </div>
           <button
@@ -506,7 +545,7 @@ export function AiViralShareModal({
             }`}
           >
             <Flame size={15} />
-            <span>小红书文案</span>
+            <span>朋友圈文案</span>
           </button>
 
           <button
@@ -530,18 +569,30 @@ export function AiViralShareModal({
                 <div className="flex flex-col items-center gap-2">
                   <img
                     src={posterImageUrl}
-                    alt={`${effectiveTitle} 分享海报`}
+                    alt={`${effectiveTitle} 电影明信片`}
                     className="max-h-[340px] sm:max-h-[380px] w-auto rounded-xl shadow-2xl border border-white/10 object-contain"
                   />
-                  <span className="text-[11px] text-white/40 flex items-center gap-1">
-                    <Smartphone size={12} />
-                    手机长按图片可直接保存到相册
-                  </span>
+                  <div className="flex items-center justify-between w-full px-2 text-[11px] text-white/50 pt-1">
+                    <span className="flex items-center gap-1">
+                      <Smartphone size={12} />
+                      长按图片直接存入手机相册
+                    </span>
+
+                    {/* 换一句看点按钮 */}
+                    <button
+                      onClick={handleNextHook}
+                      disabled={isGeneratingPoster}
+                      className="flex items-center gap-1 text-red-400 hover:text-red-300 font-bold transition-colors cursor-pointer"
+                    >
+                      <RefreshCw size={12} className={isGeneratingPoster ? 'animate-spin' : ''} />
+                      <span>换一句精选看点</span>
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col items-center gap-3 py-12 text-white/50 text-xs">
                   <div className="w-8 h-8 rounded-full border-2 border-red-500 border-t-transparent animate-spin" />
-                  <span>AI 正在合成高颜值电影明信片海报...</span>
+                  <span>iKanPP 正在合成专属电影明信片...</span>
                 </div>
               )}
             </div>
@@ -573,7 +624,7 @@ export function AiViralShareModal({
         {activeTab === 'copy' && (
           <div className="flex flex-col gap-3 overflow-y-auto pr-1">
             <p className="text-xs text-white/60">
-              专为海外华人、影迷社群打造的高转化种草文案，点击右侧即可一键复制：
+              iKanPP 团队精选文案，直击免翻墙与 4K 秒播优势，点击即可复制：
             </p>
 
             <div className="flex flex-col gap-2.5">
