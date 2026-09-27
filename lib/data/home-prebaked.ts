@@ -66,7 +66,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "死亡赌局",
+                "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
         {
@@ -74,11 +74,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "给阿嬷的情书",
-                "updateBadge": ""
-        },
-        {
-                "title": "大学炸弹客",
+                "title": "死亡赌局",
                 "updateBadge": ""
         },
         {
@@ -90,11 +86,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "特立独行",
+                "title": "大学炸弹客",
                 "updateBadge": ""
         },
         {
                 "title": "一夜限定",
+                "updateBadge": ""
+        },
+        {
+                "title": "特立独行",
                 "updateBadge": ""
         },
         {
@@ -1828,11 +1828,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
-                "title": "一瓯春",
+                "title": "我不是大师",
                 "updateBadge": "2"
         },
         {
-                "title": "我不是大师",
+                "title": "一瓯春",
                 "updateBadge": "2"
         },
         {
@@ -1844,19 +1844,19 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "死有对证",
-                "updateBadge": ""
-        },
-        {
                 "title": "法医秦明之龙番往事",
                 "updateBadge": "1"
+        },
+        {
+                "title": "死有对证",
+                "updateBadge": ""
         },
         {
                 "title": "冬城猎凶",
                 "updateBadge": ""
         },
         {
-                "title": "飞到我心上",
+                "title": "黑岛监狱",
                 "updateBadge": ""
         },
         {
@@ -1864,7 +1864,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "黑岛监狱",
+                "title": "深渊无间",
                 "updateBadge": ""
         },
         {
