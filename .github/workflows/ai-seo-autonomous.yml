@@ -31,7 +31,7 @@ jobs:
         env:
           AI_BASE_URL: ${{ secrets.AI_BASE_URL }}
           AI_API_KEY: ${{ secrets.AI_API_KEY }}
-          AI_MODEL: ${{ secrets.AI_MODEL || 'gpt-5.6-sol' }}
+          AI_MODEL: ${{ secrets.AI_MODEL || 'gpt-6-astra' }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
@@ -40,16 +40,18 @@ jobs:
           CLOUDFLARE_KV_NAMESPACE_ID: ${{ secrets.CLOUDFLARE_KV_NAMESPACE_ID }}
           NEXT_PUBLIC_SITE_URL: https://www.ikanpp.com
         run: |
+          npx tsx scripts/seo/build-keyword-matrix.mjs
+          npx tsx scripts/ai/enrich-priority-matrix.mjs
           npx tsx scripts/seo/ai-seo-autonomous.mjs
 
       - name: Commit and Push Generated Articles and Archives
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/seo/
+          git add docs/seo/ lib/data/
           if git diff --staged --quiet; then
-            echo "没有产生文章更新，跳过提交"
+            echo "没有产生更新，跳过提交"
           else
-            git commit -m "chore(ai-seo): autonomous daily parasite article generation [skip ci]"
+            git commit -m "chore(ai-seo): autonomous daily keyword matrix & priority enrichment [skip ci]"
             git push
           fi

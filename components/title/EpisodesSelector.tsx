@@ -21,6 +21,7 @@ interface EpisodesSelectorProps {
   totalEpisodes?: number;
   numberOfSeasons?: number;
   currentSeason?: number;
+  episodeHighlights?: Record<number, string>;
 }
 
 export function EpisodesSelector({
@@ -30,9 +31,11 @@ export function EpisodesSelector({
   totalEpisodes = 24,
   numberOfSeasons = 1,
   currentSeason = 1,
+  episodeHighlights,
 }: EpisodesSelectorProps) {
   const router = useRouter();
   const { viewingHistory } = useHistoryStore();
+  const [hoveredEpisode, setHoveredEpisode] = useState<number | null>(null);
 
   // 智能提取母片名与当前季数
   const parsed = parseSeasonFromTitle(title);
@@ -319,23 +322,35 @@ export function EpisodesSelector({
         {episodeList.map(ep => {
           const isCurrent = ep === currentEpisode;
           const isWatched = watchedEpisodes.has(ep);
+          const hasHighlight = !!episodeHighlights?.[ep];
 
           return (
             <button
               key={ep}
               id={`episode-${ep}`}
               onClick={() => handleSelectEpisode(ep)}
+              onMouseEnter={() => setHoveredEpisode(ep)}
+              onMouseLeave={() => setHoveredEpisode(null)}
               className={`group relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-xl border text-center transition-all duration-150 cursor-pointer ${
                 isCurrent
                   ? 'bg-red-600/20 border-red-500 text-white font-black shadow-lg shadow-red-500/10 hover:bg-red-600/30 scale-[1.02]'
                   : 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20 text-white/80 hover:text-white'
               }`}
-              title={realEpisodeNames[ep] ? `播放 ${realEpisodeNames[ep]}` : `播放第 ${ep} 集`}
+              title={
+                episodeHighlights?.[ep]
+                  ? `第 ${ep} 集看点：${episodeHighlights[ep]}`
+                  : (realEpisodeNames[ep] ? `播放 ${realEpisodeNames[ep]}` : `播放第 ${ep} 集`)
+              }
             >
               {/* 集数编号 */}
               <span className="text-sm sm:text-base font-bold tracking-tight">
                 {ep}
               </span>
+
+              {/* 官方精选高光看点角标 */}
+              {hasHighlight && !isCurrent && (
+                <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50" />
+              )}
 
               {/* 状态角标 */}
               {isCurrent && (
@@ -350,6 +365,34 @@ export function EpisodesSelector({
           );
         })}
       </div>
+
+      {/* 官方团队分集精选看点导视 (悬停或当前在看集数) */}
+      {(() => {
+        const activeEpNum = hoveredEpisode || currentEpisode;
+        const activeHighlight = episodeHighlights?.[activeEpNum];
+        if (!activeHighlight) return null;
+
+        return (
+          <div className="mt-4 p-3.5 sm:p-4 rounded-2xl bg-linear-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/20 flex items-start gap-3 text-xs sm:text-sm text-neutral-200 animate-in fade-in duration-200">
+            <div className="w-6 h-6 rounded-lg bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
+              <Sparkles className="w-3.5 h-3.5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="font-bold text-amber-300">
+                  第 {activeEpNum} 集 · 团队精选看点
+                </span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-semibold border border-amber-500/30">
+                  官方导视
+                </span>
+              </div>
+              <p className="text-neutral-300 leading-relaxed text-xs sm:text-sm">
+                {activeHighlight}
+              </p>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* 剧场版 / 特别篇独立导视栏 */}
       {specialEpisodes.length > 0 && (

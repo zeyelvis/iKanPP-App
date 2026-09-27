@@ -1320,6 +1320,7 @@ export default async function TitlePage({ params }: Props) {
               totalEpisodes={entity.numberOfEpisodes || 24}
               numberOfSeasons={entity.numberOfSeasons || 1}
               currentSeason={seasonInfo?.seasonNumber || 1}
+              episodeHighlights={entity.aiContent?.episodeHighlights}
             />
           </section>
         )}

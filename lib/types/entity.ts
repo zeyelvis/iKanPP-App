@@ -48,6 +48,9 @@ export interface TitleAiContent {
   // 场景 2：Google FAQPage 结构化问答
   faqs?: Array<{ question: string; answer: string; [key: string]: any }>;
 
+  // 场景 3：分集高光剧情与选集导视 (集数 -> 当集核心看点/悬念简评)
+  episodeHighlights?: Record<number, string>;
+
   // 场景 5：全球繁体与港台本地化译名库
   taiwanTitle?: string;         // 台湾院线公映名 (如: 刺激1995)
   hongkongTitle?: string;       // 香港院线公映名 (如: 月黑高飛)

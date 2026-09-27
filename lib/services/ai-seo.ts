@@ -541,9 +541,11 @@ export async function generateAiComprehensiveInsights(params: {
   faqs: Array<{ question: string; answer: string }>;
   taiwanTitle: string;
   hongkongTitle: string;
+  episodeHighlights?: Record<number, string>;
 }> {
+  const isTv = params.type === 'tv';
   const systemPrompt = `你是一位精通华语影视工业与国际顶级搜索引擎算法的资深策展人兼架构师。
-请针对给定的影视作品，撰写一段 100% 全网独家原创、文笔老练犀利的独家深度剧情剖析、高光看点，以及海外华人 Google 搜索高频 FAQ 问答胶囊与港台公映译名。
+请针对给定的影视作品，撰写一段 100% 全网独家原创、文笔老练犀利的独家深度剧情剖析、高光看点，以及海外华人 Google 搜索高频 FAQ 问答胶囊、港台公映译名${isTv ? '以及前1~12集的分集看点导视' : ''}。
 
 必须直接输出严格合法的 JSON 格式，字段定义如下：
 {
@@ -571,12 +573,12 @@ export async function generateAiComprehensiveInsights(params: {
     }
   ],
   "taiwanTitle": "台湾正式公映译名（如无特殊译名则为标准正体）",
-  "hongkongTitle": "香港正式公映译名（符合粤语上映习惯）"
+  "hongkongTitle": "香港正式公映译名（符合粤语上映习惯）"${isTv ? `,\n  "episodeHighlights": {\n    "1": "第1集高能剧情悬念或看点导视（20~35字）",\n    "2": "第2集高能剧情悬念或看点导视（20~35字）",\n    "3": "第3集高能剧情悬念或看点导视（20~35字）"\n  }` : ''}
 }
 注意：只输出合法的纯 JSON 文本，不要包含任何多余文字或 Markdown 包裹。`;
 
   const userPrompt = `影视名称：《${params.title}》
-类型：${params.type === 'tv' ? '电视剧' : '院线电影'}
+类型：${isTv ? '电视剧' : '院线电影'}
 上映年份：${params.year || '2024'}
 剧情简介：${params.overview || '暂无详细简介'}
 主要演员：${(params.cast || []).slice(0, 5).join('、') || '实力派阵容'}
@@ -602,7 +604,19 @@ export async function generateAiComprehensiveInsights(params: {
       faqs?: Array<{ question: string; answer: string }>;
       taiwanTitle?: string;
       hongkongTitle?: string;
+      episodeHighlights?: Record<string | number, string>;
     }>(raw);
+
+    // 标准化 episodeHighlights key 为 number
+    const normalizedEpisodes: Record<number, string> = {};
+    if (parsed.episodeHighlights && typeof parsed.episodeHighlights === 'object') {
+      for (const [k, v] of Object.entries(parsed.episodeHighlights)) {
+        const num = parseInt(k, 10);
+        if (!isNaN(num) && typeof v === 'string' && v.trim()) {
+          normalizedEpisodes[num] = v.trim();
+        }
+      }
+    }
 
     return {
       hook: parsed.hook || `《${params.title}》：在时代巨浪与命运漩涡中，展开令人屏息的博弈。`,
@@ -634,6 +648,7 @@ export async function generateAiComprehensiveInsights(params: {
       ],
       taiwanTitle: parsed.taiwanTitle || params.title,
       hongkongTitle: parsed.hongkongTitle || params.title,
+      episodeHighlights: Object.keys(normalizedEpisodes).length > 0 ? normalizedEpisodes : undefined,
     };
   } catch (err: any) {
     console.warn(`[generateAiComprehensiveInsights fallback] ${params.title}:`, err?.message);
