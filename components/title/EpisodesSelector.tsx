@@ -323,6 +323,7 @@ export function EpisodesSelector({
           return (
             <button
               key={ep}
+              id={`episode-${ep}`}
               onClick={() => handleSelectEpisode(ep)}
               className={`group relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-xl border text-center transition-all duration-150 cursor-pointer ${
                 isCurrent

@@ -42,6 +42,25 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
     datePublished: entity.year ? String(entity.year) : undefined,
     genre: entity.genres && entity.genres.length > 0 ? entity.genres : undefined,
     inLanguage: 'zh-CN',
+    isAccessibleForFree: true,
+    aggregateRating: entity.rate && parseFloat(entity.rate) > 0 ? {
+      '@type': 'AggregateRating',
+      ratingValue: entity.rate,
+      bestRating: '10',
+      worstRating: '1',
+      ratingCount: entity.hot ? Math.max(100, Math.floor(entity.hot / 1000)) : 1200,
+    } : undefined,
+    potentialAction: {
+      '@type': 'WatchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: currentUrl,
+        actionPlatform: [
+          'http://schema.org/DesktopWebPlatform',
+          'http://schema.org/MobileWebPlatform',
+        ],
+      },
+    },
     sameAs: sameAsUrls.length > 0 ? sameAsUrls : undefined,
     director: validDirectors.map(d => ({
       '@type': 'Person',

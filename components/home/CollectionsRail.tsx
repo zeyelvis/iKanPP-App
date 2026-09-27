@@ -195,6 +195,15 @@ export function CollectionsRail() {
             </span>
           </h2>
         </div>
+
+        {/* 专题大厅直达快车道 */}
+        <Link
+          href="/topic"
+          className="text-xs sm:text-sm font-bold text-neutral-400 hover:text-white flex items-center gap-1 transition-colors shrink-0 group/link"
+        >
+          <span>查看全部专题</span>
+          <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
+        </Link>
       </div>
 
       {/* 分类筛选药丸胶囊栏 (Filter Pills)：左对齐舒展排列 */}

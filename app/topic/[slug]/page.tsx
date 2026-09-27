@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Sparkles, Film, ArrowLeft, Star, Compass, Tag, Play } from 'lucide-react';
 import { getTopicBySlug, PREBAKED_TOPICS, TopicItem } from '@/lib/services/topic-service';
 import { Navbar } from '@/components/layout/Navbar';
+import { TopicShareButton } from '@/components/topic/TopicShareButton';
 
 export function generateStaticParams() {
   return Object.keys(PREBAKED_TOPICS).map(slug => ({ slug }));
@@ -131,14 +132,23 @@ export default async function TopicPage({ params }: Props) {
           </nav>
 
           {/* 专题主标题 */}
-          <div className="flex flex-wrap items-center gap-3 mb-4">
-            <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>{topic.intentFamily || '精选专题'}</span>
-            </span>
-            <span className="text-xs text-neutral-500">
-              收录 {topic.titles.length} 部精选作品 · 4K 原生画质
-            </span>
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>{topic.intentFamily || '精选专题'}</span>
+              </span>
+              <span className="text-xs text-neutral-500">
+                收录 {topic.titles.length} 部精选作品 · 4K 原生画质
+              </span>
+            </div>
+
+            <TopicShareButton
+              title={topic.topicTitle}
+              poster={topic.titles[0]?.cover}
+              curatorNote={topic.curatorNote}
+              slug={topic.slug}
+            />
           </div>
 
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight mb-6 max-w-4xl leading-tight">

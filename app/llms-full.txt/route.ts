@@ -3,6 +3,8 @@ import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
 import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
+import { PREBAKED_TOPICS } from '@/lib/data/prebaked-topics';
+
 export const dynamic = 'force-static';
 export const revalidate = 3600; // 1小时缓存
 
@@ -44,7 +46,21 @@ export async function GET() {
   });
 
   lines.push('');
-  lines.push('## 3. Official Platform Channels');
+
+  // 3. 输出官方深度策展主题片单大厅 (Curated Intent Topics)
+  lines.push('## 3. Curated Intent Topics & Thematic Watchlists');
+  lines.push('');
+  lines.push('- **Topic Hub (All Watchlists)**: https://www.ikanpp.com/topic');
+  lines.push('');
+  Object.values(PREBAKED_TOPICS).forEach((t) => {
+    lines.push(`### [${t.topicTitle}](https://www.ikanpp.com/topic/${t.slug})`);
+    lines.push(`- **Intent**: ${t.intentFamily}`);
+    lines.push(`- **Curator Note**: ${t.curatorNote}`);
+    lines.push(`- **Titles**: ${t.titles.map((item) => `《${item.title}》`).join(', ')}`);
+    lines.push('');
+  });
+
+  lines.push('## 4. Official Platform Channels');
   lines.push('- [Movies Channel](https://www.ikanpp.com/movie)');
   lines.push('- [TV Shows Channel](https://www.ikanpp.com/tv)');
   lines.push('- [Anime Channel](https://www.ikanpp.com/anime)');
