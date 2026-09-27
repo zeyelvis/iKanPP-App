@@ -1,6 +1,6 @@
 import type { VideoSource } from '@/lib/types';
 
-// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-26T08:03:47.462Z）
+// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-27T08:39:20.043Z）
 export const DEFAULT_SOURCES: VideoSource[] = [
   {
     id: 'juliang',
@@ -113,16 +113,6 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     priority: 11,
   },
   {
-    id: 'haitun',
-    name: '海豚资源',
-    baseUrl: 'https://hhzyapi.com',
-    searchPath: '/api.php/provide/vod',
-    detailPath: '/api.php/provide/vod',
-    group: 'normal',
-    enabled: true,
-    priority: 12,
-  },
-  {
     id: 'liangzi',
     name: '量子资源',
     baseUrl: 'http://cj.lziapi.com',
@@ -130,7 +120,27 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
+    priority: 12,
+  },
+  {
+    id: 'ruyi',
+    name: '如意资源',
+    baseUrl: 'https://cj.rycjapi.com',
+    searchPath: '/api.php/provide/vod',
+    detailPath: '/api.php/provide/vod',
+    group: 'normal',
+    enabled: true,
     priority: 13,
+  },
+  {
+    id: 'haitun',
+    name: '海豚资源',
+    baseUrl: 'https://hhzyapi.com',
+    searchPath: '/api.php/provide/vod',
+    detailPath: '/api.php/provide/vod',
+    group: 'normal',
+    enabled: true,
+    priority: 14,
   },
   {
     id: 'feifan',
@@ -140,22 +150,12 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 14,
+    priority: 15,
   },
   {
     id: 'huya',
     name: '虎牙资源',
     baseUrl: 'https://www.huyaapi.com',
-    searchPath: '/api.php/provide/vod',
-    detailPath: '/api.php/provide/vod',
-    group: 'normal',
-    enabled: true,
-    priority: 15,
-  },
-  {
-    id: 'ruyi',
-    name: '如意资源',
-    baseUrl: 'https://cj.rycjapi.com',
     searchPath: '/api.php/provide/vod',
     detailPath: '/api.php/provide/vod',
     group: 'normal',
