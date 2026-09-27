@@ -88,10 +88,44 @@ async function runAutonomousAiSeo() {
   const allLatest = PREBAKED_LATEST_TITLES.all || [];
 
   // ==========================================================================
-  // 第一阶段：今日新片 3 合 1 自动赋能（独家影评 + FAQ + 港台译名）
+  // 第一阶段：重点词冲榜矩阵 (Priority A) + 今日新片 3 合 1 靶向赋能
   // ==========================================================================
-  console.log('📋 【阶段 1/4】扫描今日最新入库影片，执行 3 合 1 自动增强...');
-  const targetCandidates = allLatest.slice(0, 8); // 取前 8 部重点新片
+  console.log('📋 【阶段 1/4】结合 SEO 重点词矩阵与最新入库影片，执行 3 合 1 靶向增强...');
+  
+  // 1. 读取重点词冲榜矩阵 (Priority A 梯队)
+  const matrixPath = path.join(projectRoot, 'lib/data/seo-priority-matrix.json');
+  const priorityAMap = new Map();
+  if (fs.existsSync(matrixPath)) {
+    try {
+      const rawMatrix = JSON.parse(fs.readFileSync(matrixPath, 'utf8'));
+      const aList = (rawMatrix.entities || []).filter(e => e.priority === 'A');
+      for (const item of aList) {
+        priorityAMap.set(item.entityTitle, item);
+      }
+    } catch {}
+  }
+
+  // 2. 融合候选池：Priority A 冲榜条目优先，随后顺延今日新片
+  const candidatePool = [];
+  for (const [title, item] of priorityAMap.entries()) {
+    candidatePool.push({
+      title: item.entityTitle,
+      type: item.entityType,
+      targetKeywords: [...(item.watchKeywords || []), ...(item.freeKeywords || [])],
+      isPriorityA: true,
+    });
+  }
+
+  for (const item of allLatest) {
+    if (!priorityAMap.has(item.title)) {
+      candidatePool.push({
+        ...item,
+        isPriorityA: false,
+      });
+    }
+  }
+
+  const targetCandidates = candidatePool.slice(0, 10); // 取前 10 部核心条目
   const enrichedTitles = [];
 
   for (const item of targetCandidates) {
@@ -107,7 +141,8 @@ async function runAutonomousAiSeo() {
         continue;
       }
 
-      console.log(`  ⚡ 正在为《${item.title}》生成独家原创影评、FAQ 胶囊与港台译名...`);
+      const priorityTag = item.isPriorityA ? '【Priority A 重点冲榜】' : '';
+      console.log(`  ⚡ 正在为 ${priorityTag}《${item.title}》生成靶向原创影评、FAQ 胶囊与港台译名...`);
 
       // 并行执行轻量提取与深度撰写
       const [reviewData, faqData, localizeData] = await Promise.all([
@@ -115,6 +150,7 @@ async function runAutonomousAiSeo() {
           title: item.title,
           type: item.type || 'tv',
           genres: item.genres,
+          targetKeywords: item.targetKeywords,
           model: AI_MODEL,
         }).catch(err => {
           console.warn(`    ⚠️ 影评生成异常:`, err.message);
@@ -123,6 +159,7 @@ async function runAutonomousAiSeo() {
         generateAiFaq({
           title: item.title,
           type: item.type || 'tv',
+          targetKeywords: item.targetKeywords,
           model: 'gpt-5.6-terra', // 极速轻量模型
         }).catch(err => {
           console.warn(`    ⚠️ FAQ 生成异常:`, err.message);

@@ -53,7 +53,10 @@ const GSC_TRAFFIC_DATA = [
   { date: '09-18', clicks: 133, impressions: 960, pos: 12.0 },
   { date: '09-19', clicks: 196, impressions: 1436, pos: 11.0 },
   { date: '09-20', clicks: 253, impressions: 1898, pos: 10.6 },
-  { date: '09-21', clicks: 258, impressions: 2051, pos: 10.0 }
+  { date: '09-21', clicks: 258, impressions: 2051, pos: 10.0 },
+  { date: '09-22', clicks: 249, impressions: 2160, pos: 10.2 },
+  { date: '09-23', clicks: 270, impressions: 2093, pos: 9.3 },
+  { date: '09-24', clicks: 286, impressions: 2239, pos: 9.9 }
 ];
 
 function getDaemonStatus() {

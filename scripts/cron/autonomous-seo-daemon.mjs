@@ -293,8 +293,12 @@ async function runAutonomousDaemon() {
     const { execSync } = await import('child_process');
     const seoScript = path.join(projectRoot, 'scripts/seo-intelligence.mjs');
     execSync(`node "${seoScript}"`, { stdio: 'inherit', cwd: projectRoot });
+
+    console.log('\n🎯 [重点词矩阵] 自动刷新重点影视冲榜矩阵 (Priority A/B Matrix)...');
+    const matrixScript = path.join(projectRoot, 'scripts/seo/build-keyword-matrix.mjs');
+    execSync(`npx tsx "${matrixScript}"`, { stdio: 'inherit', cwd: projectRoot });
   } catch (err) {
-    console.warn('  ⚠️ 执行 seo-intelligence.mjs 异常:', err.message);
+    console.warn('  ⚠️ 执行 SEO 智能中枢/重点词矩阵刷新异常:', err.message);
   }
 
   // -------------------------------------------------------------

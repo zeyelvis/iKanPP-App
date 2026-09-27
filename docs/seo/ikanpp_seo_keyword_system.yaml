@@ -1,0 +1,796 @@
+# iKanPP SEO Keyword System
+# Version: 1.0
+# Purpose:
+#   Machine-readable SEO keyword architecture for an automated movie / TV website.
+#   Designed for AI coding agents, crawlers, SEO pipelines, CMS generators,
+#   keyword clustering systems, and page-generation systems.
+#
+# Recommended workflow:
+#   content_source -> entity_normalization -> keyword_generation ->
+#   keyword_clustering -> page_mapping -> metadata_generation ->
+#   internal_linking -> schema_generation -> sitemap -> GSC feedback loop
+
+project:
+  name: "iKanPP"
+  domain: "ikanpp.com"
+  locale_primary: "zh-CN"
+  site_type: "movie_tv_streaming_catalog"
+  seo_strategy: "entity_first"
+  description: >
+    Build SEO around movies, TV series, actors, directors, genres, countries,
+    years and user search intent. Multiple related keywords should map to one
+    high-quality canonical page instead of creating one page per keyword.
+
+goals:
+  primary:
+    - "Increase organic search impressions"
+    - "Capture movie and TV long-tail queries"
+    - "Build scalable programmatic SEO"
+    - "Avoid duplicate and doorway pages"
+    - "Use Search Console data to continuously optimize keyword priorities"
+
+keyword_layers:
+
+  primary_keywords:
+    description: "Core category keywords. Usually mapped to homepage or major category pages."
+    examples:
+      - "电影"
+      - "电视剧"
+      - "影视"
+      - "在线观看"
+      - "国产剧"
+      - "韩剧"
+      - "美剧"
+      - "日剧"
+      - "泰剧"
+      - "港剧"
+      - "台剧"
+      - "动漫"
+      - "综艺"
+      - "纪录片"
+      - "短剧"
+      - "动作片"
+      - "爱情片"
+      - "喜剧片"
+      - "恐怖片"
+      - "科幻片"
+      - "悬疑片"
+      - "犯罪片"
+
+  generic_modifiers:
+    description: >
+      Reusable modifiers. These should usually enrich entity pages rather than
+      automatically creating separate URLs.
+    groups:
+
+      watch_intent:
+        - "在线观看"
+        - "在线播放"
+        - "在线看"
+        - "在线观影"
+
+      free_intent:
+        - "免费观看"
+        - "免费在线观看"
+
+      quality:
+        - "高清"
+        - "HD"
+        - "1080P"
+        - "4K"
+
+      freshness:
+        - "最新"
+        - "更新"
+        - "更新至"
+        - "最新一集"
+
+      completion:
+        - "完整版"
+        - "全集"
+        - "全季"
+        - "大结局"
+
+      information:
+        - "剧情"
+        - "剧情介绍"
+        - "简介"
+        - "演员表"
+        - "导演"
+        - "结局"
+        - "上映时间"
+        - "更新时间"
+        - "评分"
+
+      recommendation:
+        - "推荐"
+        - "排行榜"
+        - "好看吗"
+        - "值得看吗"
+
+  entity_types:
+
+    movie:
+      fields:
+        - "title"
+        - "original_title"
+        - "aliases"
+        - "year"
+        - "genres"
+        - "countries"
+        - "language"
+        - "director"
+        - "actors"
+        - "release_date"
+        - "runtime"
+        - "rating"
+        - "description"
+        - "poster"
+        - "keywords"
+
+    tv:
+      fields:
+        - "title"
+        - "original_title"
+        - "aliases"
+        - "year"
+        - "genres"
+        - "countries"
+        - "language"
+        - "director"
+        - "actors"
+        - "release_date"
+        - "episode_count"
+        - "current_episode"
+        - "status"
+        - "rating"
+        - "description"
+        - "poster"
+        - "keywords"
+
+    actor:
+      fields:
+        - "name"
+        - "aliases"
+        - "country"
+        - "birth_year"
+        - "known_for"
+        - "works"
+
+    director:
+      fields:
+        - "name"
+        - "aliases"
+        - "country"
+        - "works"
+
+    genre:
+      fields:
+        - "name"
+
+    country:
+      fields:
+        - "name"
+
+    year:
+      fields:
+        - "value"
+
+keyword_templates:
+
+  movie:
+    index_strategy: "map_many_queries_to_one_entity_page"
+    templates:
+      - "{title}"
+      - "{title} 电影"
+      - "{title} 在线观看"
+      - "{title} 免费观看"
+      - "{title} 完整版"
+      - "{title} 高清"
+      - "{title} 剧情"
+      - "{title} 剧情介绍"
+      - "{title} 演员表"
+      - "{title} 导演"
+      - "{title} 结局"
+      - "{title} 上映时间"
+      - "{title} 评分"
+      - "{title} {year}"
+      - "{title} {year} 在线观看"
+      - "{title} {country} 电影"
+      - "{title} {genre} 电影"
+      - "{title} {actor}"
+
+  tv:
+    index_strategy: "map_many_queries_to_one_entity_page"
+    templates:
+      - "{title}"
+      - "{title} 电视剧"
+      - "{title} 在线观看"
+      - "{title} 免费观看"
+      - "{title} 全集"
+      - "{title} 更新到第几集"
+      - "{title} 最新一集"
+      - "{title} 大结局"
+      - "{title} 演员表"
+      - "{title} 剧情"
+      - "{title} 更新时间"
+      - "{title} {year}"
+      - "{title} {country} 电视剧"
+      - "{title} {genre} 电视剧"
+
+  episode:
+    index_strategy: "index_only_if_page_has_unique_value"
+    templates:
+      - "{title} 第{episode_number}集"
+      - "{title} 第{episode_number}集 在线观看"
+      - "{title} 第{episode_number}集 剧情"
+    requirements:
+      - "Unique episode title or summary"
+      - "Unique episode metadata"
+      - "Canonical must point to episode URL"
+      - "Do not generate empty or duplicated episode pages"
+
+  actor:
+    index_strategy: "entity_page"
+    templates:
+      - "{actor}"
+      - "{actor} 电影"
+      - "{actor} 电视剧"
+      - "{actor} 最新电影"
+      - "{actor} 主演的电视剧"
+      - "{actor} 作品"
+      - "{actor} {year} 新剧"
+
+  director:
+    index_strategy: "entity_page"
+    templates:
+      - "{director}"
+      - "{director} 电影"
+      - "{director} 作品"
+      - "{director} 最新电影"
+
+  discovery:
+    index_strategy: "curated_or_data-rich_page"
+    templates:
+      - "{year} 最好看的 {genre} 电影"
+      - "{year} 热门 {genre} 电影"
+      - "{year} {country} 电影推荐"
+      - "{year} {country} {genre} 电影"
+      - "{year} 热门电视剧"
+      - "{year} {country} 电视剧推荐"
+      - "{genre} 电影排行榜"
+      - "{country} 电影排行榜"
+
+page_types:
+
+  homepage:
+    url_pattern: "/"
+    target_keywords:
+      - "电影"
+      - "电视剧"
+      - "影视"
+      - "在线观看"
+    indexable: true
+
+  movie_category:
+    url_pattern: "/movie/"
+    indexable: true
+    target_keywords:
+      - "电影"
+      - "在线电影"
+      - "最新电影"
+
+  tv_category:
+    url_pattern: "/tv/"
+    indexable: true
+    target_keywords:
+      - "电视剧"
+      - "在线电视剧"
+      - "最新电视剧"
+
+  genre_page:
+    url_pattern: "/genre/{genre_slug}/"
+    indexable_if:
+      minimum_titles: 12
+      minimum_unique_intro_words: 120
+
+  country_page:
+    url_pattern: "/country/{country_slug}/"
+    indexable_if:
+      minimum_titles: 12
+      minimum_unique_intro_words: 120
+
+  year_page:
+    url_pattern: "/year/{year}/"
+    indexable_if:
+      minimum_titles: 20
+
+  compound_listing:
+    examples:
+      - "/movie/2026/korea/"
+      - "/movie/2026/action/"
+      - "/tv/2026/korea/"
+    default_indexable: false
+    indexable_if:
+      minimum_titles: 20
+      has_search_demand: true
+      has_unique_intro: true
+      not_near_duplicate_of_parent: true
+
+  movie_detail:
+    url_pattern: "/movie/{slug}/"
+    indexable: true
+
+  tv_detail:
+    url_pattern: "/tv/{slug}/"
+    indexable: true
+
+  episode_detail:
+    url_pattern: "/tv/{series_slug}/episode-{episode_number}/"
+    indexable_if:
+      has_unique_episode_metadata: true
+      has_unique_content: true
+
+  actor_detail:
+    url_pattern: "/actor/{slug}/"
+    indexable_if:
+      minimum_works: 3
+
+  director_detail:
+    url_pattern: "/director/{slug}/"
+    indexable_if:
+      minimum_works: 3
+
+keyword_record_schema:
+
+  required_fields:
+    keyword: "string"
+    root_keyword: "string"
+    entity_type: "enum[movie,tv,episode,actor,director,genre,country,year,discovery]"
+    intent: "string"
+    keyword_type: "enum[primary,generic,entity,long_tail,discovery]"
+    target_url: "string"
+    indexable: "boolean"
+    priority: "enum[A,B,C,D]"
+
+  optional_fields:
+    entity_id: "string"
+    entity_name: "string"
+    modifier: "string"
+    genre: "string"
+    country: "string"
+    year: "integer"
+    language: "string"
+    actor: "string"
+    director: "string"
+    search_volume: "number|null"
+    keyword_difficulty: "number|null"
+    impressions: "integer|null"
+    clicks: "integer|null"
+    ctr: "number|null"
+    average_position: "number|null"
+    source: "enum[generated,gsc,competitor,manual]"
+    last_updated: "datetime"
+
+keyword_priority_rules:
+
+  A:
+    description: "Highest priority"
+    conditions:
+      any:
+        - "entity has strong impressions"
+        - "keyword has clicks"
+        - "average_position between 4 and 20"
+        - "new trending title"
+        - "high search demand"
+
+  B:
+    description: "Important growth keywords"
+    conditions:
+      any:
+        - "entity + watch intent"
+        - "entity + actor"
+        - "entity + year"
+        - "high-value discovery keyword"
+
+  C:
+    description: "Supporting semantic keywords"
+    conditions:
+      any:
+        - "plot"
+        - "cast"
+        - "director"
+        - "rating"
+        - "release date"
+
+  D:
+    description: "Low-priority or experimental combinations"
+    conditions:
+      any:
+        - "very low-demand combinations"
+        - "near-duplicate modifier combinations"
+
+intent_taxonomy:
+
+  navigation:
+    examples:
+      - "{title}"
+      - "{actor}"
+
+  watch:
+    examples:
+      - "{title} 在线观看"
+      - "{title} 免费观看"
+      - "{title} 完整版"
+
+  informational:
+    examples:
+      - "{title} 剧情"
+      - "{title} 演员表"
+      - "{title} 结局"
+      - "{title} 上映时间"
+
+  discovery:
+    examples:
+      - "{year} 最好看的电影"
+      - "{genre} 电影推荐"
+      - "{country} 电视剧排行榜"
+
+  freshness:
+    examples:
+      - "{title} 最新一集"
+      - "{year} 最新电影"
+
+seo_metadata_templates:
+
+  movie_detail:
+    title_templates:
+      - "{title} ({year}) 在线观看 - iKanPP"
+      - "{title}电影免费观看 | 剧情、演员表 - iKanPP"
+    description_templates:
+      - >
+        在线观看《{title}》。查看{year}年{country}{genre}电影的剧情简介、
+        演员表、导演及相关影片信息。
+    h1:
+      - "{title}"
+    keywords_to_cover_in_body:
+      - "{title}"
+      - "{title} 在线观看"
+      - "{title} 剧情"
+      - "{title} 演员表"
+      - "{title} 导演"
+
+  tv_detail:
+    title_templates:
+      - "{title} 在线观看 | 最新全集 - iKanPP"
+      - "{title}电视剧免费观看 | 剧情、演员表 - iKanPP"
+    description_templates:
+      - >
+        在线观看《{title}》，查看最新更新、剧情简介、演员表、集数及相关电视剧推荐。
+    h1:
+      - "{title}"
+
+  actor_detail:
+    title_templates:
+      - "{actor}电影电视剧作品大全 - iKanPP"
+    description_templates:
+      - >
+        查看{actor}主演和参演的电影、电视剧作品，以及最新影视内容。
+
+  genre_page:
+    title_templates:
+      - "{genre}电影大全 | 最新{genre}电影推荐 - iKanPP"
+    description_templates:
+      - >
+        浏览最新和热门{genre}电影，按年份、地区、评分发现更多值得观看的影片。
+
+  discovery_page:
+    title_templates:
+      - "{year}{country}{genre}电影推荐 - iKanPP"
+    description_templates:
+      - >
+        查看{year}年热门{country}{genre}电影推荐，包括最新上映、
+        热门作品和高关注度影片。
+
+content_requirements:
+
+  movie_detail:
+    required:
+      - "title"
+      - "year"
+      - "poster"
+      - "description"
+      - "genre"
+      - "country"
+    recommended:
+      - "director"
+      - "actors"
+      - "runtime"
+      - "release_date"
+      - "rating"
+      - "related_titles"
+
+  tv_detail:
+    required:
+      - "title"
+      - "poster"
+      - "description"
+      - "episode_count"
+      - "status"
+    recommended:
+      - "actors"
+      - "director"
+      - "genre"
+      - "country"
+      - "year"
+      - "related_titles"
+
+internal_linking_rules:
+
+  movie_detail:
+    link_to:
+      - "genre_page"
+      - "country_page"
+      - "year_page"
+      - "actor_detail"
+      - "director_detail"
+      - "related_movies"
+
+  tv_detail:
+    link_to:
+      - "genre_page"
+      - "country_page"
+      - "year_page"
+      - "actor_detail"
+      - "director_detail"
+      - "episodes"
+      - "related_tv"
+
+  actor_detail:
+    link_to:
+      - "all_known_works"
+
+  discovery_page:
+    link_to:
+      - "all_listed_entities"
+      - "related_genres"
+      - "related_years"
+      - "related_countries"
+
+canonical_rules:
+  - "One searchable entity should have one primary canonical URL."
+  - "Keyword variants must normally point to the same canonical entity page."
+  - "Query parameters for sorting/filtering should not create competing canonical pages."
+  - "Near-duplicate listing pages should canonicalize to the strongest parent page."
+  - "Avoid indexing faceted combinations unless they have clear demand and unique value."
+
+indexation_rules:
+
+  index:
+    - "movie detail with valid metadata"
+    - "TV detail with valid metadata"
+    - "actor page with enough works"
+    - "director page with enough works"
+    - "genre page with enough entities"
+    - "country page with enough entities"
+    - "year page with enough entities"
+    - "high-value discovery page with unique content"
+
+  noindex:
+    - "empty search pages"
+    - "internal search result pages"
+    - "thin filter pages"
+    - "duplicate tag pages"
+    - "pages generated only by changing one modifier"
+    - "zero-result pages"
+    - "pages with no unique entity data"
+    - "tracking parameter URLs"
+
+programmatic_seo_guardrails:
+
+  prohibited_patterns:
+    - "Create one URL for every keyword variant"
+    - "Create hundreds of near-identical pages differing only by title keyword"
+    - "Generate empty actor or director pages"
+    - "Generate pages with no meaningful entity data"
+    - "Index all filter combinations automatically"
+
+  preferred_patterns:
+    - "Cluster related keywords by search intent"
+    - "Map keyword clusters to one canonical page"
+    - "Use entity data to create unique page value"
+    - "Create discovery pages only when dataset is sufficiently rich"
+    - "Use real site data and Search Console feedback"
+
+keyword_clustering_logic:
+
+  same_page_cluster_if:
+    - "same primary entity"
+    - "same dominant search intent"
+    - "search result expectation is substantially identical"
+
+  separate_page_if:
+    - "different entity"
+    - "different episode"
+    - "different actor/director entity"
+    - "discovery query requires a list rather than entity detail"
+    - "search intent materially differs"
+
+example_keyword_records:
+
+  - keyword: "流浪地球3"
+    root_keyword: "流浪地球3"
+    entity_type: "movie"
+    entity_name: "流浪地球3"
+    intent: "navigation"
+    keyword_type: "entity"
+    target_url: "/movie/the-wandering-earth-3/"
+    indexable: true
+    priority: "A"
+
+  - keyword: "流浪地球3 在线观看"
+    root_keyword: "流浪地球3"
+    entity_type: "movie"
+    entity_name: "流浪地球3"
+    modifier: "在线观看"
+    intent: "watch"
+    keyword_type: "long_tail"
+    target_url: "/movie/the-wandering-earth-3/"
+    indexable: true
+    priority: "A"
+
+  - keyword: "流浪地球3 演员表"
+    root_keyword: "流浪地球3"
+    entity_type: "movie"
+    entity_name: "流浪地球3"
+    modifier: "演员表"
+    intent: "informational"
+    keyword_type: "long_tail"
+    target_url: "/movie/the-wandering-earth-3/"
+    indexable: true
+    priority: "B"
+
+  - keyword: "2026 科幻电影推荐"
+    root_keyword: "科幻电影"
+    entity_type: "discovery"
+    genre: "科幻"
+    year: 2026
+    intent: "discovery"
+    keyword_type: "discovery"
+    target_url: "/discover/2026/sci-fi/"
+    indexable: true
+    priority: "A"
+
+automation_pipeline:
+
+  step_1_ingest:
+    input:
+      - "movie API"
+      - "TV API"
+      - "manual data"
+      - "existing CMS database"
+    actions:
+      - "normalize titles"
+      - "normalize aliases"
+      - "normalize genres"
+      - "normalize country"
+      - "normalize actor names"
+      - "deduplicate entities"
+
+  step_2_generate_keywords:
+    actions:
+      - "apply templates"
+      - "generate keyword variants"
+      - "assign intent"
+      - "assign keyword type"
+      - "assign entity ID"
+
+  step_3_cluster:
+    actions:
+      - "group keywords by entity"
+      - "group by intent"
+      - "deduplicate semantically similar queries"
+      - "choose canonical target URL"
+
+  step_4_page_generation:
+    actions:
+      - "generate title"
+      - "generate meta description"
+      - "generate H1"
+      - "generate intro text where appropriate"
+      - "generate internal links"
+      - "generate structured data"
+      - "decide index/noindex"
+
+  step_5_publish:
+    actions:
+      - "update sitemap"
+      - "update internal links"
+      - "submit changed URLs when supported"
+
+  step_6_feedback:
+    sources:
+      - "Google Search Console"
+      - "analytics"
+      - "server logs"
+    metrics:
+      - "impressions"
+      - "clicks"
+      - "CTR"
+      - "average position"
+    actions:
+      - "promote winning keywords"
+      - "improve pages ranking positions 4-20"
+      - "merge cannibalizing pages"
+      - "remove or noindex low-value generated pages"
+      - "discover new query modifiers"
+
+gsc_optimization_rules:
+
+  opportunity:
+    condition:
+      impressions_min: 100
+      position_min: 4
+      position_max: 20
+    action:
+      - "increase content relevance"
+      - "improve title"
+      - "improve internal links"
+      - "add missing semantic entities"
+
+  low_ctr:
+    condition:
+      impressions_min: 300
+      ctr_below_percent: 2.0
+    action:
+      - "rewrite title"
+      - "rewrite meta description"
+      - "check SERP intent mismatch"
+
+  cannibalization:
+    condition:
+      multiple_urls_same_query: true
+    action:
+      - "choose strongest canonical page"
+      - "merge content if appropriate"
+      - "redirect weaker page when appropriate"
+      - "adjust internal links"
+
+ai_agent_instructions:
+  - "Do not create a new URL only because a new keyword exists."
+  - "First identify the entity and intent."
+  - "Cluster semantically equivalent keywords."
+  - "Prefer one authoritative page per entity."
+  - "Use keyword variants naturally in metadata and content."
+  - "Only create indexable discovery pages when they provide unique list value."
+  - "Never mass-index empty or near-duplicate pages."
+  - "When uncertain, default to noindex rather than creating thin indexable pages."
+  - "Use Search Console data to update priorities instead of relying only on generated keywords."
+
+output_examples:
+
+  movie_page:
+    entity:
+      title: "示例电影"
+      year: 2026
+      genre: "科幻"
+      country: "中国"
+      actor: "示例演员"
+    generated_keyword_cluster:
+      - "示例电影"
+      - "示例电影在线观看"
+      - "示例电影免费观看"
+      - "示例电影剧情"
+      - "示例电影演员表"
+      - "示例电影 2026"
+    canonical_url: "/movie/example-movie/"
+    separate_urls_created: 0
+
+  discovery_page:
+    query: "2026 韩国爱情电影"
+    conditions:
+      titles_available: 35
+      has_unique_intro: true
+      has_search_demand: true
+    target_url: "/discover/2026/korea/romance/"
+    indexable: true

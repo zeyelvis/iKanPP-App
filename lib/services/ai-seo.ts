@@ -146,6 +146,7 @@ export async function generateAiUniqueReview(params: {
   overview?: string;
   cast?: string[];
   genres?: string[];
+  targetKeywords?: string[];
   model?: string;
 }): Promise<{
   hook: string;
@@ -154,9 +155,13 @@ export async function generateAiUniqueReview(params: {
   characterAnalysis: string;
   audienceFit: string;
 }> {
+  const keywordGuidance = params.targetKeywords && params.targetKeywords.length > 0
+    ? `\n特别要求：在深度剧情剖析与亮点中，请自然流畅融入以下重点搜索意图词（如 ${params.targetKeywords.slice(0, 3).join('、')}），确保行文老练深刻，杜绝机械堆砌。`
+    : '';
+
   const systemPrompt = `你是一位精通华语影视与好莱坞电影工业的资深顶级影评人。
 请针对给定的影视作品，撰写一段 100% 全网独家原创、文笔老练犀利的独家深度剧情剖析与角色看点。
-严禁复述官方公关简介，必须从叙事张力、人性博弈、视听风格与角色弧光深度展开。
+严禁复述官方公关简介，必须从叙事张力、人性博弈、视听风格与角色弧光深度展开。${keywordGuidance}
 
 必须直接以严格合法的 JSON 格式返回，包含以下字段：
 {
@@ -220,25 +225,32 @@ export async function generateAiFaq(params: {
   title: string;
   type: string;
   overview?: string;
+  targetKeywords?: string[];
   model?: string;
 }): Promise<{
   faqs: Array<{ question: string; answer: string }>;
   jsonLd: Record<string, any>;
 }> {
-  const systemPrompt = `你是一位精通 Google Schema.org 结构化数据的国际顶级 SEO 架构师。
+  const keywordGuidance = params.targetKeywords && params.targetKeywords.length > 0
+    ? `\n特别重点：请务必将以下高频目标搜索词转化为前两个核心问答，直接解答海外华人最迫切的真实诉求：${params.targetKeywords.join('、')}`
+    : '';
+
+  const systemPrompt = `你代表 iKanPP 官方观影服务与内容支持中心。
 请针对给定的影视作品，生成 4 个海外华人观众在 Google 搜索中最可能高频查询的真实问题与解答。
 核心覆盖：
-1. 海外免翻墙 4K 播放渠道（强调 iKanPP 0广告直连秒开体验）；
-2. 正片剧情核心看点与反转亮点；
+1. 明确指引海外华人如何在 iKanPP 官方免翻墙直连观看 4K/1080P 超清完整版，强调 0 会员充值、0 插件、无低俗广告的影院级体验；
+2. 正片剧情核心看点与角色亮点分析；
 3. 更新频率、全集集数与清晰度规格；
-4. 真实观众口碑与防坑观影建议。
+4. 贴心的防坑观影指南（提醒用户认准正版与纯净播放源，远离带有诱导充值和低俗木马弹窗的盗版小站）。${keywordGuidance}
+
+语气要求：专业、严谨、真诚、权威。代表 iKanPP 官方平台发声，严禁使用怀疑或否定平台自身的第三方违和口吻。
 
 必须直接返回严格合法的 JSON 数组，格式如下：
 [
-  {"question": "问题1", "answer": "权威回答1"},
-  {"question": "问题2", "answer": "权威回答2"},
-  {"question": "问题3", "answer": "权威回答3"},
-  {"question": "问题4", "answer": "权威回答4"}
+  {"question": "问题1", "answer": "官方权威回答1"},
+  {"question": "问题2", "answer": "官方权威回答2"},
+  {"question": "问题3", "answer": "官方权威回答3"},
+  {"question": "问题4", "answer": "官方权威回答4"}
 ]
 不要包含任何多余文字或 Markdown 包裹。`;
 
@@ -260,9 +272,10 @@ export async function generateAiFaq(params: {
     faqs = extractJson<Array<{ question: string; answer: string }>>(raw);
   } catch (err: any) {
     console.warn(`[generateAiFaq fallback] ${params.title}:`, err?.message);
+    const mainKw = params.targetKeywords?.[0] || `${params.title} 线上看`;
     faqs = [
       {
-        question: `在海外如何免翻墙流畅观看《${params.title}》4K超清完整版？`,
+        question: `在海外如何免翻墙直接《${mainKw}》4K超清完整版？`,
         answer: `您可以在 iKanPP (爱看片片) 直接直连观看。平台在全球部署 Anycast 边缘 CDN，海外北美、欧洲、澳洲均可实现 0 缓冲秒开，且全站无弹窗广告。`,
       },
       {
