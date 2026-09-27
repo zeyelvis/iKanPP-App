@@ -6,18 +6,23 @@
     <string>com.ikanpp.ai-tunnel</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/opt/homebrew/bin/cloudflared</string>
-        <string>tunnel</string>
-        <string>--url</string>
-        <string>http://127.0.0.1:8080</string>
+        <string>/bin/bash</string>
+        <string>/Users/zeyelvis/KVideo/scripts/tunnel/ai-tunnel-daemon.sh</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
     <true/>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>HOME</key>
+        <string>/Users/zeyelvis</string>
+    </dict>
     <key>StandardOutPath</key>
-    <string>/tmp/ikanpp-ai-tunnel.log</string>
+    <string>/Users/zeyelvis/Library/Logs/ikanpp-ai-tunnel.stdout.log</string>
     <key>StandardErrorPath</key>
-    <string>/tmp/ikanpp-ai-tunnel.err</string>
+    <string>/Users/zeyelvis/Library/Logs/ikanpp-ai-tunnel.stderr.log</string>
 </dict>
 </plist>
