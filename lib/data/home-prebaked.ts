@@ -78,11 +78,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "生死尽头",
+                "title": "爱情假说",
                 "updateBadge": ""
         },
         {
-                "title": "爱情假说",
+                "title": "生死尽头",
                 "updateBadge": ""
         },
         {
@@ -1825,15 +1825,15 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "我不是大师",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "一瓯春",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "交锋",
@@ -1844,11 +1844,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "法医秦明之龙番往事",
-                "updateBadge": "1"
+                "title": "死有对证",
+                "updateBadge": ""
         },
         {
-                "title": "死有对证",
+                "title": "法医秦明之龙番往事",
                 "updateBadge": ""
         },
         {
@@ -1860,11 +1860,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "深渊无间",
+                "title": "花开锦绣",
                 "updateBadge": ""
         },
         {
-                "title": "花开锦绣",
+                "title": "深渊无间",
                 "updateBadge": ""
         },
         {

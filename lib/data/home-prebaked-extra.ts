@@ -14,14 +14,18 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "斗破苍穹年番",
-        "updateBadge": "1"
+        "updateBadge": ""
+    },
+    {
+        "title": "仙逆",
+        "updateBadge": ""
     },
     {
         "title": "光阴之外",
         "updateBadge": ""
     },
     {
-        "title": "仙逆",
+        "title": "海贼王",
         "updateBadge": ""
     },
     {
@@ -33,15 +37,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "海贼王",
+        "title": "牧神记",
         "updateBadge": ""
     },
     {
         "title": "名侦探柯南",
-        "updateBadge": "2"
-    },
-    {
-        "title": "牧神记",
         "updateBadge": ""
     },
     {
@@ -53,7 +53,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "2"
     },
     {
-        "title": "一斩苍穹",
+        "title": "遮天",
         "updateBadge": ""
     }
   ],
@@ -631,7 +631,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
 export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
-        "title": "披荆斩棘2026",
+        "title": "一饭封神第2季",
         "updateBadge": ""
     },
     {
@@ -639,15 +639,15 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "一饭封神第2季",
-        "updateBadge": ""
-    },
-    {
-        "title": "心动的信号第9季",
+        "title": "披荆斩棘2026",
         "updateBadge": ""
     },
     {
         "title": "我家那闺女2026",
+        "updateBadge": ""
+    },
+    {
+        "title": "心动的信号第9季",
         "updateBadge": ""
     },
     {
@@ -1237,6 +1237,10 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
+          "title": "妖神记",
+          "updateBadge": "全"
+      },
+      {
           "title": "重生2011",
           "updateBadge": "111"
       },
@@ -1279,13 +1283,30 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       {
           "title": "明月照我心",
           "updateBadge": "全"
-      },
-      {
-          "title": "不可饶恕的他",
-          "updateBadge": "全"
       }
   ],
   hero: [
+      {
+          "id": "jl_short_629184272757948400",
+          "title": "妖神记",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/76806/poster/600fec0dca245f4c0f0bff0d17313097ae2b5c2596944a32a9c708bdb2abf344.webp",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/76806/poster/600fec0dca245f4c0f0bff0d17313097ae2b5c2596944a32a9c708bdb2abf344.webp",
+          "description": "为了与妖主正面对抗做足准备，聂离动身前往“天云高原”历练本领。",
+          "year": "2017",
+          "types": [
+              "短剧",
+              "反转爽剧",
+              "全集连播"
+          ],
+          "episodes_info": "全321集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "徐翔 / 黄骥 / 张妮 / 胡亚捷 / 苏尚卿 / 谷江山 / 关帅 / 钟巍 / 朱婧 / Akira明 / 孙路路 / 柳知萧 / 鱼冻 / 柳川鱼 / 蘭若镝"
+          ]
+      },
       {
           "id": "jl_short_630067100584509400",
           "title": "重回风云1993",
@@ -1432,32 +1453,21 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           "actors": [
               "高豪贞 / 安正勋 / 차재훈"
           ]
-      },
-      {
-          "id": "jl_short_638730060206965400",
-          "title": "钓系攻略手册",
-          "rate": "9.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/9c73e1e8c312ee207caff4aa7289a7f173b6aec70f67395e24955e259b70a1d9.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/9c73e1e8c312ee207caff4aa7289a7f173b6aec70f67395e24955e259b70a1d9.jpg",
-          "description": "看完《钓系攻略手册》，心里像被猫爪子轻轻挠过一样，又痒又空落落的。这50集的都市情感剧根本不是什么正经攻略，而是朴婧闻和吴杰两人在推拉游戏里不断交出底牌的记录。朴婧闻把钓系角色的欲擒故纵演得浑然天成，每一个看似不经意的靠近都藏着精准的算计；吴杰则负责扮演那个自以为清醒却一步步沦陷的猎物，两人之间的化...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "朴婧闻 / 吴杰"
-          ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
+      title: "妖神记",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/76806/poster/600fec0dca245f4c0f0bff0d17313097ae2b5c2596944a32a9c708bdb2abf344.webp",
+      year: "2017",
+      types: ["短剧","反转爽剧","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_2',
       title: "重回风云1993",
       rate: "8.7",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f7bef1db62eee07a5c2d2d3505d843414801c1f7f94c1cd6a6f218b04baf0acf.jpg",
@@ -1467,7 +1477,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_2',
+      id: 'pb_s_top_3',
       title: "逆袭1998",
       rate: "8.6",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/0cbfee3c9d5ce253ddea105054f8178ed07b408cdcbed4be7ba534fc43ea3877.png",
@@ -1477,7 +1487,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_3',
+      id: 'pb_s_top_4',
       title: "炒粉的风波",
       rate: "8.8",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/ddb518a6e486543ea7b09817bd7737e14c94f228647db702ed05308c79efb47e.jpg",
@@ -1487,7 +1497,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_4',
+      id: 'pb_s_top_5',
       title: "人生自有芳华",
       rate: "8.5",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/91b42eda20a1770689c935c1c501dda2c22b61adc452bde71a119330c541a6c1.jpg",
@@ -1497,7 +1507,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_5',
+      id: 'pb_s_top_6',
       title: "末世：从搬空全球仓库开始",
       rate: "8.7",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/a2148fb7c9e17e32715420efa59b6ba58bf522819c13f3d5416f7d6a2a03fe3a.jpg",
@@ -1507,7 +1517,7 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_6',
+      id: 'pb_s_top_7',
       title: "天崩开局，还好我有婚契续命",
       rate: "8.6",
       cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9ea0bda707b870e680369cf1a0fa2eb408fd42079532f6fa7ad3796f283aac69.jpg",
@@ -1517,22 +1527,12 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       playable: true
     },
     {
-      id: 'pb_s_top_7',
+      id: 'pb_s_top_8',
       title: "蓝色情结",
       rate: "8.8",
       cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/274074/poster/858f1a5fb6a8533351bdc233c4321a3b46a02abe58fab158aa9b8514c2897657.webp",
       year: "2024",
       types: ["短剧","女频恋爱","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_8',
-      title: "钓系攻略手册",
-      rate: "9.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9c73e1e8c312ee207caff4aa7289a7f173b6aec70f67395e24955e259b70a1d9.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1547,15 +1547,15 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "兰香如故",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "我不是大师",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "一瓯春",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "交锋",
@@ -1571,14 +1571,14 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "斗破苍穹年番",
-        "updateBadge": "1"
-    },
-    {
-        "title": "法医秦明之龙番往事",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "死有对证",
+        "updateBadge": ""
+    },
+    {
+        "title": "法医秦明之龙番往事",
         "updateBadge": ""
     },
     {
@@ -1586,7 +1586,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "披荆斩棘2026",
+        "title": "一饭封神第2季",
         "updateBadge": ""
     },
     {
@@ -2163,7 +2163,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第3季",
+        "title": "征服14座高峰：凡事皆可能 14",
         "updateBadge": ""
     },
     {
@@ -2171,15 +2171,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "征服14座高峰：凡事皆可能 14",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第5季",
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第4季",
+        "title": "克拉克森的农场第3季",
         "updateBadge": ""
     },
     {
@@ -2187,7 +2183,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "宵夜江湖第2季",
+        "title": "王朝第2季",
+        "updateBadge": ""
+    },
+    {
+        "title": "克拉克森的农场第4季",
         "updateBadge": ""
     }
   ],
