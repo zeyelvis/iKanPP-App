@@ -825,6 +825,103 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
   "variety": [
     {
       "id": "pb_cat_variety_1",
+      "title": "钱塘老娘舅",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/445c77cfd1c86def7ddd0d14e9bd8948.jpg",
+      "year": "2009",
+      "types": [
+        "大陆综艺",
+        "真人秀"
+      ],
+      "remarks": "第20260926期",
+      "is_new": false
+    },
+    {
+      "id": "pb_cat_variety_2",
+      "title": "我家那闺女2026",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/26341e155670d44627317021c84245ac.jpg",
+      "year": "2026",
+      "types": [
+        "大陆综艺",
+        "明星",
+        "真人秀"
+      ],
+      "remarks": "第5期下",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_variety_3",
+      "title": "友你的旅行",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/9d7929981ee34fdd2d0096997655d721.jpg",
+      "year": "2026",
+      "types": [
+        "大陆综艺",
+        "娱乐",
+        "旅游",
+        "文化"
+      ],
+      "remarks": "第10期",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_variety_4",
+      "title": "非你莫属2026",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/cfc5ef5c3ea43d3e401f6e3496580f6b.jpg",
+      "year": "2026",
+      "types": [
+        "大陆综艺",
+        "真人秀"
+      ],
+      "remarks": "第20260926期",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_variety_5",
+      "title": "奔跑吧少年第7季",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/19d7bb12e94e1f83d4fdff273181e24d.jpg",
+      "year": "2026",
+      "types": [
+        "大陆综艺",
+        "游戏娱乐",
+        "真人秀"
+      ],
+      "remarks": "第8期",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_variety_6",
+      "title": "潮创新生力",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/8b14f79688c0146367914b8240be4128.jpg",
+      "year": "2026",
+      "types": [
+        "大陆综艺",
+        "真人秀",
+        "综艺"
+      ],
+      "remarks": "第4期",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_variety_7",
+      "title": "你好湖南",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/bb076991c5c7cb0165f9c389560878a5.jpg",
+      "year": "2026",
+      "types": [
+        "大陆综艺",
+        "纪实",
+        "访谈"
+      ],
+      "remarks": "第21期",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_variety_8",
       "title": "现在就出发第四季",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/922754ecc14380fcfa4ff0635d066912.jpg",
@@ -839,7 +936,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_variety_2",
+      "id": "pb_cat_variety_9",
       "title": "家乡美食大赛",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/fdd1e361d5de6fbf55e11f9cb205145e.jpg",
@@ -852,7 +949,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_variety_3",
+      "id": "pb_cat_variety_10",
       "title": "一路向海的少年",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/24f251cb9569d43975c1feebb0a61c02.jpg",
@@ -867,7 +964,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_variety_4",
+      "id": "pb_cat_variety_11",
       "title": "一饭封神第二季",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/5a2dfbb1d96bc21ce0b959097117d2e0.jpg",
@@ -880,7 +977,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_variety_5",
+      "id": "pb_cat_variety_12",
       "title": "2026天津中秋晚会",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/f94cad122a84dd9c7b1029e9bb5dcacf.jpg",
@@ -893,7 +990,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_variety_6",
+      "id": "pb_cat_variety_13",
       "title": "心动的信号第9季",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/bc6f1f3779c04d2b142bc35d69bd3474.jpg",
@@ -906,7 +1003,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_variety_7",
+      "id": "pb_cat_variety_14",
       "title": "开始奏乐开始舞",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/5119e3ea8312f864ed2cfb21bba62110.jpg",
@@ -919,7 +1016,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_variety_8",
+      "id": "pb_cat_variety_15",
       "title": "打歌2026·X舞台",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/15a14d5c27bb3d97f6380cbd051efe77.jpg",
@@ -933,21 +1030,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_variety_9",
-      "title": "奔跑吧少年第7季",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/19d7bb12e94e1f83d4fdff273181e24d.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "游戏娱乐",
-        "真人秀"
-      ],
-      "remarks": "第7期",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_variety_10",
+      "id": "pb_cat_variety_16",
       "title": "你好，星期六 2022",
       "rate": "6.8",
       "cover": "https://img.guangsuimage.com/cover/f9cb3124b5a22b133f21273ef2cb0695.jpg",
@@ -958,91 +1041,6 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       ],
       "remarks": "第20260927期",
       "is_new": false
-    },
-    {
-      "id": "pb_cat_variety_11",
-      "title": "职来职往2026",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/161c62b91445d360dbde2644a02e640e.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "职场节目",
-        "求职"
-      ],
-      "remarks": "秋招季第3期",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_variety_12",
-      "title": "地球超新鲜 第二季",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/b9157fcbb292322b146460825507c6a3.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "旅行节目",
-        "生活体验",
-        "美食生活"
-      ],
-      "remarks": "回顾特辑第2期下",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_variety_13",
-      "title": "2026湖南卫视芒果TV中秋之夜",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/b2c004ab8ea216f5dbc89929d6ba0ea8.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "明星",
-        "晚会"
-      ],
-      "remarks": "舞台竖屏纯享版",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_variety_14",
-      "title": "朋友别见外",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/d13255f7c03d862dc18bc30dbcb8607f.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "真人秀"
-      ],
-      "remarks": "第1期",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_variety_15",
-      "title": "花儿与少年2026",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/f8063f1b0b35246aaecc6911f3981d81.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "真人秀",
-        "文化"
-      ],
-      "remarks": "加更版第3期",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_variety_16",
-      "title": "披荆斩棘2026",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/2eea2ab420e3cde52f34fd7cc5d341ee.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "明星",
-        "竞技",
-        "真人秀"
-      ],
-      "remarks": "加更版第6期",
-      "is_new": true
     }
   ],
   "documentary": [

@@ -62,7 +62,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "魔方小姐",
+                "updateBadge": ""
+        },
+        {
                 "title": "死亡赌局",
+                "updateBadge": ""
+        },
+        {
+                "title": "年会不能停！2",
                 "updateBadge": ""
         },
         {
@@ -70,15 +78,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "魔方小姐",
-                "updateBadge": ""
-        },
-        {
                 "title": "大学炸弹客",
-                "updateBadge": ""
-        },
-        {
-                "title": "年会不能停！2",
                 "updateBadge": ""
         },
         {
@@ -98,7 +98,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "逃出绝命街",
+                "title": "玩具总动员5",
                 "updateBadge": ""
         }
       ],
@@ -1840,11 +1840,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "死有对证",
+                "title": "交锋",
                 "updateBadge": ""
         },
         {
-                "title": "交锋",
+                "title": "死有对证",
                 "updateBadge": ""
         },
         {
@@ -1852,19 +1852,19 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "1"
         },
         {
-                "title": "飞到我心上",
-                "updateBadge": ""
-        },
-        {
                 "title": "冬城猎凶",
                 "updateBadge": ""
         },
         {
-                "title": "黑岛监狱",
-                "updateBadge": "1"
+                "title": "飞到我心上",
+                "updateBadge": ""
         },
         {
                 "title": "花开锦绣",
+                "updateBadge": ""
+        },
+        {
+                "title": "黑岛监狱",
                 "updateBadge": ""
         },
         {
