@@ -54,11 +54,11 @@ export const PREBAKED_HOME_DATA: {
   "movie": {
     "trendingNav": [
         {
-                "title": "一个部门的诞生",
+                "title": "重制",
                 "updateBadge": ""
         },
         {
-                "title": "魔方小姐",
+                "title": "一个部门的诞生",
                 "updateBadge": ""
         },
         {
@@ -66,7 +66,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "死亡赌局",
+                "title": "魔方小姐",
+                "updateBadge": ""
+        },
+        {
+                "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
         {
@@ -74,11 +78,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "生死尽头",
+                "title": "死亡赌局",
                 "updateBadge": ""
         },
         {
-                "title": "给阿嬷的情书",
+                "title": "生死尽头",
                 "updateBadge": ""
         },
         {
@@ -95,10 +99,6 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "一夜限定",
-                "updateBadge": ""
-        },
-        {
-                "title": "夜王",
                 "updateBadge": ""
         }
       ],
@@ -1829,23 +1829,23 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "我不是大师",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "一瓯春",
-                "updateBadge": "1"
+                "updateBadge": ""
         },
         {
                 "title": "无可替代",
                 "updateBadge": "3"
         },
         {
-                "title": "死有对证",
-                "updateBadge": "1"
-        },
-        {
                 "title": "早春晴朗",
                 "updateBadge": ""
+        },
+        {
+                "title": "死有对证",
+                "updateBadge": "1"
         },
         {
                 "title": "交锋",
@@ -1853,7 +1853,7 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "法医秦明之龙番往事",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "冬城猎凶",
@@ -1864,11 +1864,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
-                "title": "黑岛监狱",
+                "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
-                "title": "飞到我心上",
+                "title": "花开锦绣",
                 "updateBadge": ""
         }
       ],

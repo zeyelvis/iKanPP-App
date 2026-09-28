@@ -21,15 +21,15 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "一斩苍穹",
-        "updateBadge": ""
-    },
-    {
         "title": "海贼王",
         "updateBadge": ""
     },
     {
         "title": "牧神记",
+        "updateBadge": ""
+    },
+    {
+        "title": "一斩苍穹",
         "updateBadge": ""
     },
     {
@@ -45,15 +45,15 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "名侦探柯南",
+        "updateBadge": ""
+    },
+    {
         "title": "遮天",
         "updateBadge": ""
     },
     {
         "title": "无职转生到了异世界就拿出真本事第3季",
-        "updateBadge": ""
-    },
-    {
-        "title": "名侦探柯南",
         "updateBadge": ""
     }
   ],
@@ -1237,6 +1237,34 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
+          "title": "她渡天命",
+          "updateBadge": "全"
+      },
+      {
+          "title": "天津大妞闯南洋",
+          "updateBadge": "全"
+      },
+      {
+          "title": "重返二十岁，太奶奶她都市无敌",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "原来我是绝世大佬",
+          "updateBadge": "全"
+      },
+      {
+          "title": "我能捧红你，也能封杀你",
+          "updateBadge": "全"
+      },
+      {
+          "title": "风雪遇良缘",
+          "updateBadge": "HOT"
+      },
+      {
+          "title": "偏要偷尝半口甜",
+          "updateBadge": "HOT"
+      },
+      {
           "title": "团宠狗师妹，我的师门全是大妖",
           "updateBadge": "全"
       },
@@ -1254,34 +1282,6 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       },
       {
           "title": "抄家后我带纨绔归田了",
-          "updateBadge": "全"
-      },
-      {
-          "title": "别赖我，我只是来渡劫的天师",
-          "updateBadge": "全"
-      },
-      {
-          "title": "逆风翻盘赢给你看",
-          "updateBadge": "全"
-      },
-      {
-          "title": "别惹真千金，她手握柳叶刀",
-          "updateBadge": "全"
-      },
-      {
-          "title": "福气满厅堂，我成为帅府掌中宠",
-          "updateBadge": "全"
-      },
-      {
-          "title": "每天一个小妙招，读心大佬爱上我",
-          "updateBadge": "全"
-      },
-      {
-          "title": "老公失忆，爆改18岁直球小奶狗",
-          "updateBadge": "全"
-      },
-      {
-          "title": "挟恩图报，高冷王爷步步沦陷",
           "updateBadge": "全"
       }
   ],
@@ -1551,22 +1551,26 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "我不是大师",
-        "updateBadge": "2"
+        "updateBadge": ""
     },
     {
         "title": "一瓯春",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "无可替代",
         "updateBadge": "3"
     },
     {
+        "title": "早春晴朗",
+        "updateBadge": ""
+    },
+    {
         "title": "死有对证",
         "updateBadge": "1"
     },
     {
-        "title": "早春晴朗",
+        "title": "交锋",
         "updateBadge": ""
     },
     {
@@ -1574,7 +1578,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "交锋",
+        "title": "法医秦明之龙番往事",
         "updateBadge": ""
     },
     {
@@ -1582,15 +1586,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "法医秦明之龙番往事",
-        "updateBadge": "2"
-    },
-    {
-        "title": "吞噬星空",
-        "updateBadge": "1"
-    },
-    {
         "title": "冬城猎凶",
+        "updateBadge": ""
+    },
+    {
+        "title": "我家那闺女2026",
         "updateBadge": ""
     }
   ],
@@ -2171,23 +2171,23 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第3季",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第4季",
         "updateBadge": ""
     },
     {
-        "title": "征服14座高峰：凡事皆可能 14",
+        "title": "史前星球",
         "updateBadge": ""
     },
     {
-        "title": "守护解放西第2季",
+        "title": "闪闪的儿科医生",
         "updateBadge": ""
     },
     {
-        "title": "一级方程式：疾速争胜第1季",
+        "title": "动物打工仔",
+        "updateBadge": ""
+    },
+    {
+        "title": "狂坠：波音大调查2",
         "updateBadge": ""
     }
   ],
