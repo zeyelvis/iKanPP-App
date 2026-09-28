@@ -8,7 +8,21 @@ import './xg-player.css';
 
 import { InPlayerSourceDrawer, SourceItem } from '../desktop/InPlayerSourceDrawer';
 import { InPlayerEpisodesDrawer } from '../desktop/InPlayerEpisodesDrawer';
-import { ChevronLeft, Layers, ListVideo, Zap, Radio, FastForward } from 'lucide-react';
+import {
+  ChevronLeft,
+  Layers,
+  ListVideo,
+  Zap,
+  Radio,
+  FastForward,
+  Lock,
+  Unlock,
+  RotateCcw,
+  RotateCw,
+  Tv,
+  Battery,
+  BatteryCharging,
+} from 'lucide-react';
 
 export interface XgVideoPlayerProps {
   src: string;
@@ -58,9 +72,32 @@ export function XgVideoPlayer({
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<Player | null>(null);
 
-  // 全屏状态
+  // 全屏与旋转全屏状态
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isCssFullscreen, setIsCssFullscreen] = useState(false);
+  const [isRotateFullscreen, setIsRotateFullscreen] = useState(false);
+
+  // 防误触锁屏状态
+  const [isScreenLocked, setIsScreenLocked] = useState(false);
+  const [showLockButton, setShowLockButton] = useState(true);
+  const lockButtonTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 移动端状态栏：实时时间与电量
+  const [systemTime, setSystemTime] = useState<string>('');
+  const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
+  const [isCharging, setIsCharging] = useState(false);
+
+  // 轻量级 Toast 提示
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const toastTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const showToast = useCallback((msg: string) => {
+    setToastMessage(msg);
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => {
+      setToastMessage(null);
+    }, 2000);
+  }, []);
 
   // 抽屉状态
   const [sourceDrawerOpen, setSourceDrawerOpen] = useState(false);
@@ -92,8 +129,44 @@ export function XgVideoPlayer({
     return currentSource.includes('shadow') || currentSource.includes('暗影') || currentSource.includes('独家');
   }, [currentSource]);
 
-  // 唤起并自动延时隐藏顶栏
+  // 移动端系统时间与电量监听
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      setSystemTime(`${hours}:${minutes}`);
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 15000);
+
+    // 电池电量监听
+    if (typeof navigator !== 'undefined' && 'getBattery' in navigator) {
+      (navigator as any).getBattery?.().then((battery: any) => {
+        setBatteryLevel(Math.round(battery.level * 100));
+        setIsCharging(Boolean(battery.charging));
+
+        const handleLevel = () => setBatteryLevel(Math.round(battery.level * 100));
+        const handleCharge = () => setIsCharging(Boolean(battery.charging));
+
+        battery.addEventListener('levelchange', handleLevel);
+        battery.addEventListener('chargingchange', handleCharge);
+      }).catch(() => {});
+    }
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // 唤起控制栏与锁屏键 (延时 3.5s 自动淡出)
   const handleTriggerControls = useCallback(() => {
+    setShowLockButton(true);
+    if (lockButtonTimerRef.current) clearTimeout(lockButtonTimerRef.current);
+    lockButtonTimerRef.current = setTimeout(() => {
+      setShowLockButton(false);
+    }, 3500);
+
+    if (isScreenLocked) return;
+
     setShowControlsOverlay(true);
     if (controlsTimeoutRef.current) {
       clearTimeout(controlsTimeoutRef.current);
@@ -103,7 +176,72 @@ export function XgVideoPlayer({
         setShowControlsOverlay(false);
       }
     }, 3500);
-  }, [sourceDrawerOpen, episodeDrawerOpen]);
+  }, [isScreenLocked, sourceDrawerOpen, episodeDrawerOpen]);
+
+  // 切换锁屏防误触
+  const handleToggleLock = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setIsScreenLocked((prev) => {
+      const next = !prev;
+      showToast(next ? '屏幕已锁定' : '屏幕已解锁');
+      if (next) {
+        setShowControlsOverlay(false);
+      } else {
+        setShowControlsOverlay(true);
+      }
+      return next;
+    });
+  }, [showToast]);
+
+  // 快退 15 秒
+  const handleSkipBackward15 = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    const player = playerRef.current;
+    if (!player) return;
+    const cur = player.currentTime || 0;
+    player.currentTime = Math.max(0, cur - 15);
+    showToast('快退 15 秒');
+  }, [showToast]);
+
+  // 快进 15 秒
+  const handleSkipForward15 = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    const player = playerRef.current;
+    if (!player) return;
+    const cur = player.currentTime || 0;
+    const dur = player.duration || Infinity;
+    player.currentTime = Math.min(dur, cur + 15);
+    showToast('快进 15 秒');
+  }, [showToast]);
+
+  // AirPlay 投屏触发
+  const handleAirPlay = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    const video = (playerRef.current?.video as any);
+    if (video && typeof video.webkitShowPlaybackTargetPicker === 'function') {
+      video.webkitShowPlaybackTargetPicker();
+    } else {
+      showToast('可使用系统控制中心或电视投屏');
+    }
+  }, [showToast]);
+
+  // 全屏退出或返回上一页
+  const handleBackAction = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    const player = playerRef.current;
+    if (player && (isFullscreen || isCssFullscreen || isRotateFullscreen)) {
+      if (isFullscreen) player.exitFullscreen();
+      if (isCssFullscreen) player.exitCssFullscreen();
+      if (isRotateFullscreen && typeof (player as any).setRotateDeg === 'function') {
+        (player as any).setRotateDeg(0);
+      }
+      setIsFullscreen(false);
+      setIsCssFullscreen(false);
+      setIsRotateFullscreen(false);
+      return;
+    }
+    onBack?.();
+  }, [isFullscreen, isCssFullscreen, isRotateFullscreen, onBack]);
 
   // 启动 5.0x 极速快进
   const startFastForward = useCallback(() => {
@@ -347,17 +485,32 @@ export function XgVideoPlayer({
         marginControls: true,
         crossOrigin: false,
         lang: 'zh-cn',
+        // 移动端防系统 QuickTime 劫持与旋转横屏全屏配置
+        playsinline: true,
+        'webkit-playsinline': true,
+        'x5-video-player-type': 'h5-page',
+        'x5-video-player-fullscreen': 'true',
+        'x5-playsinline': 'true',
+        fullscreen: {
+          rotateFullscreen: true,      // 移动端全屏时自动旋转 90 度模拟横屏
+          useCssFullscreen: true,      // 优先使用 DOM 级全屏，杜绝 iOS QuickTime
+        },
+        rotateFullscreen: true,
       });
 
       playerRef.current = player;
 
-      // 绑定全屏事件
+      // 绑定全屏与旋转全屏事件
       player.on('fullscreen_change', (isFull: boolean) => {
         setIsFullscreen(Boolean(isFull));
       });
 
       player.on('cssFullscreen_change', (isCssFull: boolean) => {
         setIsCssFullscreen(Boolean(isCssFull));
+      });
+
+      player.on('rotate_fullscreen_change', (isRotateFull: boolean) => {
+        setIsRotateFullscreen(Boolean(isRotateFull));
       });
 
       // 绑定生命周期事件
@@ -402,7 +555,7 @@ export function XgVideoPlayer({
     };
   }, [src, poster, shouldAutoPlay, initialTime, handleTriggerControls, sourceDrawerOpen, episodeDrawerOpen]);
 
-  const isFullActive = isFullscreen || isCssFullscreen;
+  const isFullActive = isFullscreen || isCssFullscreen || isRotateFullscreen;
 
   return (
     <div
@@ -414,6 +567,12 @@ export function XgVideoPlayer({
         }
       }}
       onPointerDown={(e) => {
+        // 如果处于锁屏状态，拦截一切长按与手势，仅唤起解锁按钮
+        if (isScreenLocked) {
+          handleTriggerControls();
+          return;
+        }
+
         // 忽略交互性控件（按钮、选集抽屉、控制条等）
         const target = e.target as HTMLElement;
         if (target.closest('button, a, input, select, .in-player-drawer, .xgplayer-controls, .xg-top-bar, .xgplayer-playbackrate')) {
@@ -457,7 +616,7 @@ export function XgVideoPlayer({
       {/* 5.0x 极速快进高保真居中动态胶囊 (严格恪守防黑屏铁律: 纯色底色不使用 backdrop-filter) */}
       <div
         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 pointer-events-none transition-all duration-200 select-none ${
-          isFastForwarding ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
+          isFastForwarding && !isScreenLocked ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
         }`}
       >
         <div className="flex items-center gap-3.5 px-6 py-3 rounded-full bg-[#141416]/95 border border-amber-500/50 shadow-2xl text-amber-300">
@@ -475,31 +634,94 @@ export function XgVideoPlayer({
         </div>
       </div>
 
-      {/* 顶部通栏自定义覆盖层 (返回、剧名、选集与切源快捷键) */}
+      {/* 轻量级操作反馈 Toast (无任何 backdrop-blur，恪守显卡安全规范) */}
       <div
-        className={`absolute top-0 inset-x-0 z-30 flex items-center justify-between p-4 bg-gradient-to-b from-black/80 via-black/40 to-transparent transition-opacity duration-300 pointer-events-none ${
-          showControlsOverlay || sourceDrawerOpen || episodeDrawerOpen ? 'opacity-100' : 'opacity-0'
+        className={`absolute top-14 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-200 select-none ${
+          toastMessage ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
+        }`}
+      >
+        <div className="px-4 py-1.5 rounded-full bg-[#141416]/95 border border-white/20 text-white text-xs font-medium shadow-2xl flex items-center gap-2">
+          <span>{toastMessage}</span>
+        </div>
+      </div>
+
+      {/* 左侧垂直居中悬浮：防误触「锁屏」按钮 (对齐移动端专业影院图一) */}
+      {isFullActive && (
+        <div
+          className={`absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-40 transition-opacity duration-300 pointer-events-auto ${
+            showLockButton || isScreenLocked ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
+        >
+          <button
+            type="button"
+            onClick={handleToggleLock}
+            className={`p-3 rounded-full border transition-all shadow-2xl flex items-center justify-center ${
+              isScreenLocked
+                ? 'bg-amber-500 text-black border-amber-400 scale-110 shadow-amber-500/40 animate-pulse'
+                : 'bg-black/60 hover:bg-black/80 text-white/90 border-white/20 hover:scale-105 active:scale-95'
+            }`}
+            title={isScreenLocked ? '点击解锁屏幕' : '锁定屏幕防止误触'}
+          >
+            {isScreenLocked ? (
+              <Lock className="w-5 h-5 stroke-[2.5]" />
+            ) : (
+              <Unlock className="w-5 h-5 stroke-[2]" />
+            )}
+          </button>
+        </div>
+      )}
+
+      {/* 右侧纵向快捷跳片头/片尾按钮 (对齐移动端专业影院图二) */}
+      {isFullActive && (
+        <div
+          className={`absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-3 transition-opacity duration-300 pointer-events-auto ${
+            showControlsOverlay && !isScreenLocked ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
+        >
+          <button
+            type="button"
+            onClick={handleSkipForward15}
+            className="flex flex-col items-center justify-center w-11 h-11 rounded-full bg-black/60 hover:bg-white/20 border border-white/20 text-white transition-all hover:scale-105 shadow-xl active:scale-95"
+            title="快进 15 秒"
+          >
+            <RotateCw className="w-4 h-4 text-amber-300" />
+            <span className="text-[9px] font-mono font-bold leading-none mt-0.5 text-white/90">15s</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleSkipBackward15}
+            className="flex flex-col items-center justify-center w-11 h-11 rounded-full bg-black/60 hover:bg-white/20 border border-white/20 text-white transition-all hover:scale-105 shadow-xl active:scale-95"
+            title="快退 15 秒"
+          >
+            <RotateCcw className="w-4 h-4 text-amber-300" />
+            <span className="text-[9px] font-mono font-bold leading-none mt-0.5 text-white/90">15s</span>
+          </button>
+        </div>
+      )}
+
+      {/* 顶部通栏自定义覆盖层 (返回、剧名、电量、系统时间、选集与切源) */}
+      <div
+        className={`absolute top-0 inset-x-0 z-30 flex items-center justify-between p-3.5 sm:p-4 bg-gradient-to-b from-black/85 via-black/45 to-transparent transition-opacity duration-300 pointer-events-none ${
+          showControlsOverlay && !isScreenLocked ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       >
         {/* 左侧：返回键与影视信息 */}
-        <div className="flex items-center gap-3 pointer-events-auto">
-          {onBack && (
-            <button
-              onClick={onBack}
-              className="p-2 rounded-full bg-black/40 hover:bg-white/20 text-white backdrop-blur-none transition-colors border border-white/10"
-              title="返回"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-          )}
+        <div className="flex items-center gap-2.5 sm:gap-3 pointer-events-auto">
+          <button
+            onClick={handleBackAction}
+            className="p-2 rounded-full bg-black/50 hover:bg-white/20 text-white transition-colors border border-white/10 active:scale-95"
+            title={isFullActive ? '退出全屏' : '返回'}
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
 
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <h2 className="text-sm font-bold text-white drop-shadow truncate max-w-xs sm:max-w-md">
+              <h2 className="text-sm font-bold text-white drop-shadow truncate max-w-[180px] sm:max-w-md">
                 {videoTitle}
               </h2>
               {isShadowLineSource && (
-                <span className="flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500/30 to-indigo-500/30 border border-purple-500/40 text-purple-200 shadow-sm animate-pulse">
+                <span className="hidden sm:flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500/30 to-indigo-500/30 border border-purple-500/40 text-purple-200 shadow-sm animate-pulse">
                   <Radio className="w-3 h-3 text-purple-400" />
                   暗影 4K 原画
                 </span>
@@ -511,25 +733,55 @@ export function XgVideoPlayer({
           </div>
         </div>
 
-        {/* 右侧：切源与选集抽屉呼出按钮 */}
-        <div className="flex items-center gap-2 pointer-events-auto">
+        {/* 右侧：系统时间、电池电量、投屏、换源与选集 */}
+        <div className="flex items-center gap-2 sm:gap-2.5 pointer-events-auto">
+          {/* 实时时间 (移动端专业状态栏) */}
+          {systemTime && isFullActive && (
+            <span className="text-xs font-mono font-semibold text-white/90 drop-shadow px-1.5 hidden xs:inline-block">
+              {systemTime}
+            </span>
+          )}
+
+          {/* 实时电量胶囊 */}
+          {batteryLevel !== null && isFullActive && (
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/40 border border-white/15 text-[11px] font-mono text-white/90 drop-shadow">
+              {isCharging ? (
+                <BatteryCharging className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+              ) : (
+                <Battery className="w-3.5 h-3.5 text-white/80" />
+              )}
+              <span>{batteryLevel}%</span>
+            </div>
+          )}
+
+          {/* 投屏 (TV) 按钮 */}
+          <button
+            onClick={handleAirPlay}
+            className="p-1.5 rounded-lg bg-black/50 hover:bg-white/15 text-white text-xs flex items-center justify-center border border-white/15 transition-all hover:scale-105 active:scale-95"
+            title="投屏播放"
+          >
+            <Tv className="w-4 h-4 text-emerald-400" />
+          </button>
+
+          {/* 换源抽屉 */}
           {sources.length > 0 && (
             <button
               onClick={() => setSourceDrawerOpen(true)}
-              className="px-3 py-1.5 rounded-lg bg-black/50 hover:bg-white/15 text-white text-xs flex items-center gap-1.5 border border-white/15 transition-all hover:scale-105"
+              className="px-2.5 py-1.5 rounded-lg bg-black/50 hover:bg-white/15 text-white text-xs flex items-center gap-1.5 border border-white/15 transition-all hover:scale-105 active:scale-95"
             >
               <Layers className="w-3.5 h-3.5 text-amber-400" />
-              <span>换源</span>
+              <span className="hidden sm:inline">换源</span>
               {currentSource && (
-                <span className="text-[10px] text-slate-400 font-mono">({currentSource})</span>
+                <span className="text-[10px] text-slate-400 font-mono hidden md:inline">({currentSource})</span>
               )}
             </button>
           )}
 
+          {/* 选集抽屉 */}
           {episodes.length > 1 && (
             <button
               onClick={() => setEpisodeDrawerOpen(true)}
-              className="px-3 py-1.5 rounded-lg bg-black/50 hover:bg-white/15 text-white text-xs flex items-center gap-1.5 border border-white/15 transition-all hover:scale-105"
+              className="px-2.5 py-1.5 rounded-lg bg-black/50 hover:bg-white/15 text-white text-xs flex items-center gap-1.5 border border-white/15 transition-all hover:scale-105 active:scale-95"
             >
               <ListVideo className="w-3.5 h-3.5 text-sky-400" />
               <span>选集</span>
