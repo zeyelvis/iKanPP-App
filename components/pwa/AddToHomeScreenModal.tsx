@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Download, Sparkles, CheckCircle2, ChevronRight, Apple, Smartphone, Settings, ArrowDownCircle } from 'lucide-react';
+import { Download, Sparkles, CheckCircle2, ChevronRight, Apple, Smartphone, Settings, ArrowDownCircle, ShieldCheck } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -272,6 +272,10 @@ export function AddToHomeScreenModal() {
                       <div className="mt-1 px-2.5 py-1 rounded-lg bg-black/40 border border-white/10 font-bold text-amber-300 flex items-center gap-1.5 w-fit">
                         <Settings className="w-3.5 h-3.5 text-amber-400" />
                         <span>已下载描述文件 ➔ 点安装</span>
+                      </div>
+                      <div className="mt-1.5 text-[11px] text-emerald-400 flex items-center gap-1">
+                        <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
+                        <span>官方绿标已验证 (Verified ✔️)，输密码即可秒级安装</span>
                       </div>
                     </div>
                   </div>
