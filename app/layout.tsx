@@ -100,6 +100,11 @@ export const metadata: Metadata = {
     description: 'iKanPP（爱看片片）— 影视聚合搜索引擎，多源秒搜全网电影电视剧综艺动漫，海外直连免翻墙 2026 新片推荐。',
     images: ['/og-image.png'],
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'iKanPP',
+  },
   robots: {
     index: true,
     follow: true,
