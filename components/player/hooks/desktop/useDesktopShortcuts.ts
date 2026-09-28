@@ -40,11 +40,18 @@ export function useDesktopShortcuts({
     controlsTimeoutRef,
 }: UseDesktopShortcutsProps) {
     useEffect(() => {
+        let isKeyDownHandled = false;
+        let isFastForwarding = false;
+        let originalRate = 1;
+        let pressTimer: NodeJS.Timeout | null = null;
+
         const handleKeyDown = (e: KeyboardEvent) => {
             // Ignore shortcuts if typing in an input
-            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || (e.target as HTMLElement)?.isContentEditable) {
                 return;
             }
+
+            const key = e.key.toLowerCase();
 
             // Show controls on any key press
             setShowControls(true);
@@ -57,7 +64,29 @@ export function useDesktopShortcuts({
                 }, 3000);
             }
 
-            switch (e.key.toLowerCase()) {
+            if (key === 'arrowright' || key === 'l') {
+                e.preventDefault();
+                if (!isKeyDownHandled) {
+                    isKeyDownHandled = true;
+                    pressTimer = setTimeout(() => {
+                        if (videoRef.current) {
+                            isFastForwarding = true;
+                            originalRate = videoRef.current.playbackRate || 1;
+                            videoRef.current.playbackRate = 5;
+                            if (videoRef.current.paused) {
+                                videoRef.current.play().catch(() => {});
+                            }
+                        }
+                    }, 200);
+                } else if (e.repeat && !isFastForwarding && videoRef.current) {
+                    isFastForwarding = true;
+                    originalRate = videoRef.current.playbackRate || 1;
+                    videoRef.current.playbackRate = 5;
+                }
+                return;
+            }
+
+            switch (key) {
                 case ' ':
                 case 'k':
                     e.preventDefault();
@@ -80,11 +109,6 @@ export function useDesktopShortcuts({
                         e.preventDefault();
                         togglePictureInPicture();
                     }
-                    break;
-                case 'arrowright':
-                case 'l':
-                    e.preventDefault();
-                    skipForward();
                     break;
                 case 'arrowleft':
                 case 'j':
@@ -136,8 +160,32 @@ export function useDesktopShortcuts({
             }
         };
 
+        const handleKeyUp = (e: KeyboardEvent) => {
+            const key = e.key.toLowerCase();
+            if (key === 'arrowright' || key === 'l') {
+                isKeyDownHandled = false;
+                if (pressTimer) {
+                    clearTimeout(pressTimer);
+                    pressTimer = null;
+                }
+                if (isFastForwarding) {
+                    isFastForwarding = false;
+                    if (videoRef.current) {
+                        videoRef.current.playbackRate = originalRate || 1;
+                    }
+                } else {
+                    skipForward();
+                }
+            }
+        };
+
         window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
+            if (pressTimer) clearTimeout(pressTimer);
+        };
     }, [
         videoRef,
         isPlaying,

@@ -25,7 +25,8 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsMod
 
   const shortcuts = [
     { key: '空格 / K', action: '播放 / 暂停' },
-    { key: '← / →', action: '后退 / 前进 10 秒' },
+    { key: '← / →', action: '后退 5 秒 / 前进 5 秒' },
+    { key: '长按 → / 画面', action: '⚡ 5.0x 极速快进 (松手恢复)' },
     { key: '↑ / ↓', action: '调高 / 调低 音量' },
     { key: 'M', action: '静音 / 取消静音' },
     { key: 'F', action: '设备原生全屏' },

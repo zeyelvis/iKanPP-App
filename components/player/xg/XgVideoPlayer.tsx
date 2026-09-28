@@ -8,7 +8,7 @@ import './xg-player.css';
 
 import { InPlayerSourceDrawer, SourceItem } from '../desktop/InPlayerSourceDrawer';
 import { InPlayerEpisodesDrawer } from '../desktop/InPlayerEpisodesDrawer';
-import { ChevronLeft, Layers, ListVideo, Zap, Radio } from 'lucide-react';
+import { ChevronLeft, Layers, ListVideo, Zap, Radio, FastForward } from 'lucide-react';
 
 export interface XgVideoPlayerProps {
   src: string;
@@ -67,6 +67,15 @@ export function XgVideoPlayer({
   const [episodeDrawerOpen, setEpisodeDrawerOpen] = useState(false);
   const [showControlsOverlay, setShowControlsOverlay] = useState(true);
 
+  // 5.0x 极速快进状态与 Refs
+  const [isFastForwarding, setIsFastForwarding] = useState(false);
+  const isFastForwardingRef = useRef(false);
+  const originalPlaybackRateRef = useRef<number>(1);
+  const wasPausedBeforeFastForwardRef = useRef<boolean>(false);
+  const keyPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const isKeyDownHandledRef = useRef<boolean>(false);
+  const pointerPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   // 计时器引用
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -95,6 +104,191 @@ export function XgVideoPlayer({
       }
     }, 3500);
   }, [sourceDrawerOpen, episodeDrawerOpen]);
+
+  // 启动 5.0x 极速快进
+  const startFastForward = useCallback(() => {
+    const player = playerRef.current;
+    if (!player || isFastForwardingRef.current) return;
+
+    isFastForwardingRef.current = true;
+    originalPlaybackRateRef.current = player.playbackRate || 1;
+    wasPausedBeforeFastForwardRef.current = Boolean(player.paused);
+
+    try {
+      // 5.0 倍速通过底层浏览器硬件自然解复用，零缓冲破坏
+      player.playbackRate = 5;
+      if (player.video) {
+        (player.video as any).playbackRate = 5;
+      }
+      if (player.paused) {
+        player.play();
+      }
+    } catch (err) {
+      console.warn('[FastForward] 5.0x 提速失败:', err);
+    }
+
+    setIsFastForwarding(true);
+  }, []);
+
+  // 停止 5.0x 极速快进并恢复原倍速
+  const stopFastForward = useCallback(() => {
+    if (keyPressTimerRef.current) {
+      clearTimeout(keyPressTimerRef.current);
+      keyPressTimerRef.current = null;
+    }
+    if (pointerPressTimerRef.current) {
+      clearTimeout(pointerPressTimerRef.current);
+      pointerPressTimerRef.current = null;
+    }
+
+    if (!isFastForwardingRef.current) return;
+    isFastForwardingRef.current = false;
+    setIsFastForwarding(false);
+
+    const player = playerRef.current;
+    if (!player) return;
+
+    const restoreRate = originalPlaybackRateRef.current || 1;
+    try {
+      player.playbackRate = restoreRate;
+      if (player.video) {
+        (player.video as any).playbackRate = restoreRate;
+      }
+      if (wasPausedBeforeFastForwardRef.current) {
+        player.pause();
+      }
+    } catch (err) {
+      console.warn('[FastForward] 恢复原倍速失败:', err);
+    }
+  }, []);
+
+  // 全局键盘快捷键与长按 5.0x 控制器
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 如果焦点在输入控件中，忽略快捷键
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        (e.target as HTMLElement)?.isContentEditable
+      ) {
+        return;
+      }
+
+      const key = e.key.toLowerCase();
+      const player = playerRef.current;
+      if (!player) return;
+
+      // 快进键: ArrowRight 或 l
+      if (key === 'arrowright' || key === 'l') {
+        e.preventDefault();
+        handleTriggerControls();
+
+        if (!isKeyDownHandledRef.current) {
+          isKeyDownHandledRef.current = true;
+          // 按住超过 200ms 即判定为长按极速快进 5.0x
+          keyPressTimerRef.current = setTimeout(() => {
+            startFastForward();
+          }, 200);
+        } else if (e.repeat && !isFastForwardingRef.current) {
+          // 连续 repeat 立即切入 5.0x
+          startFastForward();
+        }
+        return;
+      }
+
+      // 快退键: ArrowLeft 或 j (后退 5 秒)
+      if (key === 'arrowleft' || key === 'j') {
+        e.preventDefault();
+        handleTriggerControls();
+        const cur = player.currentTime || 0;
+        player.currentTime = Math.max(0, cur - 5);
+        return;
+      }
+
+      // 播放 / 暂停: 空格 或 k
+      if (key === ' ' || key === 'k') {
+        e.preventDefault();
+        handleTriggerControls();
+        if (player.paused) {
+          player.play();
+        } else {
+          player.pause();
+        }
+        return;
+      }
+
+      // 调高音量: ArrowUp
+      if (key === 'arrowup') {
+        e.preventDefault();
+        handleTriggerControls();
+        const curVol = typeof player.volume === 'number' ? player.volume : 1;
+        player.volume = Math.min(1, Math.round((curVol + 0.1) * 10) / 10);
+        return;
+      }
+
+      // 调低音量: ArrowDown
+      if (key === 'arrowdown') {
+        e.preventDefault();
+        handleTriggerControls();
+        const curVol = typeof player.volume === 'number' ? player.volume : 1;
+        player.volume = Math.max(0, Math.round((curVol - 0.1) * 10) / 10);
+        return;
+      }
+
+      // 静音 / 取消静音: m
+      if (key === 'm') {
+        e.preventDefault();
+        handleTriggerControls();
+        player.muted = !player.muted;
+        return;
+      }
+
+      // 全屏: f
+      if (key === 'f') {
+        e.preventDefault();
+        handleTriggerControls();
+        if (player.fullscreen) {
+          player.exitFullscreen();
+        } else {
+          player.getFullscreen(player.root || undefined);
+        }
+        return;
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      if (key === 'arrowright' || key === 'l') {
+        isKeyDownHandledRef.current = false;
+        if (isFastForwardingRef.current) {
+          // 长按结束：恢复原速
+          stopFastForward();
+        } else {
+          // 短按松手（<200ms）：步进快进 5 秒
+          if (keyPressTimerRef.current) {
+            clearTimeout(keyPressTimerRef.current);
+            keyPressTimerRef.current = null;
+          }
+          const player = playerRef.current;
+          if (player) {
+            const cur = player.currentTime || 0;
+            const dur = player.duration || Infinity;
+            player.currentTime = Math.min(dur, cur + 5);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      if (keyPressTimerRef.current) clearTimeout(keyPressTimerRef.current);
+      if (pointerPressTimerRef.current) clearTimeout(pointerPressTimerRef.current);
+    };
+  }, [startFastForward, stopFastForward, handleTriggerControls]);
 
   // 全屏事件同步监听兜底
   useEffect(() => {
@@ -148,7 +342,7 @@ export function XgVideoPlayer({
         defaultPlaybackRate: 1,
         pip: true,
         screenShot: true,
-        keyShortcut: true,
+        keyShortcut: false, // 禁用 XG 原生重复触发快捷键，由上层自研长按 5.0x 控制器接管
         controls: true,
         marginControls: true,
         crossOrigin: false,
@@ -219,6 +413,38 @@ export function XgVideoPlayer({
           setShowControlsOverlay(false);
         }
       }}
+      onPointerDown={(e) => {
+        // 忽略交互性控件（按钮、选集抽屉、控制条等）
+        const target = e.target as HTMLElement;
+        if (target.closest('button, a, input, select, .in-player-drawer, .xgplayer-controls, .xg-top-bar, .xgplayer-playbackrate')) {
+          return;
+        }
+        // 仅处理鼠标左键或单点触控
+        if (e.button !== 0 && e.pointerType === 'mouse') return;
+
+        if (pointerPressTimerRef.current) clearTimeout(pointerPressTimerRef.current);
+        pointerPressTimerRef.current = setTimeout(() => {
+          startFastForward();
+        }, 260);
+      }}
+      onPointerUp={() => {
+        if (pointerPressTimerRef.current) {
+          clearTimeout(pointerPressTimerRef.current);
+          pointerPressTimerRef.current = null;
+        }
+        if (isFastForwardingRef.current) {
+          stopFastForward();
+        }
+      }}
+      onPointerCancel={() => {
+        if (pointerPressTimerRef.current) {
+          clearTimeout(pointerPressTimerRef.current);
+          pointerPressTimerRef.current = null;
+        }
+        if (isFastForwardingRef.current) {
+          stopFastForward();
+        }
+      }}
       className={`relative w-full bg-black select-none ${
         isFullActive
           ? 'fixed inset-0 z-50 w-screen h-screen rounded-none'
@@ -227,6 +453,27 @@ export function XgVideoPlayer({
     >
       {/* XGPlayer DOM 挂载容器 */}
       <div ref={containerRef} className="w-full h-full" />
+
+      {/* 5.0x 极速快进高保真居中动态胶囊 (严格恪守防黑屏铁律: 纯色底色不使用 backdrop-filter) */}
+      <div
+        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 pointer-events-none transition-all duration-200 select-none ${
+          isFastForwarding ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
+        }`}
+      >
+        <div className="flex items-center gap-3.5 px-6 py-3 rounded-full bg-[#141416]/95 border border-amber-500/50 shadow-2xl text-amber-300">
+          <div className="flex items-center text-amber-400 animate-pulse">
+            <Zap className="w-5 h-5 fill-amber-400" />
+            <FastForward className="w-5 h-5 ml-0.5 fill-amber-400" />
+          </div>
+          <div className="flex flex-col">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-2xl font-black font-mono tracking-tight text-white drop-shadow">5.0x</span>
+              <span className="text-xs font-bold text-amber-300">极速快进中</span>
+            </div>
+            <span className="text-[10px] text-slate-300/70 tracking-wider">松开按键恢复原速播放</span>
+          </div>
+        </div>
+      </div>
 
       {/* 顶部通栏自定义覆盖层 (返回、剧名、选集与切源快捷键) */}
       <div
