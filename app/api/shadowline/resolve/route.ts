@@ -17,11 +17,53 @@ export const runtime = 'edge';
 // 内存单点缓存（TTL 2小时）
 const resolveCache = new Map<string, { data: any; expiresAt: number }>();
 
+const ALLOWED_ORIGINS = [
+  'https://kanpp.tv',
+  'https://www.kanpp.tv',
+  'http://kanpp.tv',
+  'http://www.kanpp.tv',
+  'https://ikanpp.com',
+  'https://www.ikanpp.com',
+];
+
+function getCorsHeaders(req: NextRequest): Record<string, string> {
+  const origin = req.headers.get('origin') || '';
+  const isAllowed =
+    ALLOWED_ORIGINS.includes(origin) ||
+    origin.endsWith('.kanpp.tv') ||
+    origin.endsWith('.ikanpp.com') ||
+    origin.includes('localhost') ||
+    origin.includes('127.0.0.1');
+
+  const headers: Record<string, string> = {
+    'Vary': 'Origin',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+    'Access-Control-Max-Age': '86400',
+  };
+
+  if (isAllowed && origin) {
+    headers['Access-Control-Allow-Origin'] = origin;
+  } else if (!origin) {
+    // 允许后端服务器直调 (无 Origin 头)
+    headers['Access-Control-Allow-Origin'] = '*';
+  }
+
+  return headers;
+}
+
 function extractEpisodeNumber(epStr?: string | number): number | null {
   if (epStr === undefined || epStr === null) return null;
   if (typeof epStr === 'number') return epStr;
   const match = String(epStr).match(/\d+/);
   return match ? parseInt(match[0], 10) : null;
+}
+
+export async function OPTIONS(req: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: getCorsHeaders(req),
+  });
 }
 
 export async function GET(req: NextRequest) {
@@ -33,6 +75,8 @@ export async function POST(req: NextRequest) {
 }
 
 async function handleResolve(req: NextRequest) {
+  const corsHeaders = getCorsHeaders(req);
+
   try {
     let title = '';
     let episode: string | number | undefined;
@@ -53,7 +97,7 @@ async function handleResolve(req: NextRequest) {
     if (!title) {
       return NextResponse.json(
         { success: false, code: 'PARAM_MISSING', message: '片名不能为空' },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -66,14 +110,14 @@ async function handleResolve(req: NextRequest) {
     if (!config.enabled) {
       return NextResponse.json(
         { success: false, code: 'CIRCUIT_BREAK', message: '暗影专线已开启静默熔断保护' },
-        { status: 200 }
+        { status: 200, headers: corsHeaders }
       );
     }
 
     if (health.status === 'offline') {
       return NextResponse.json(
         { success: false, code: 'OFFLINE', message: '暗影专线上游维护中' },
-        { status: 200 }
+        { status: 200, headers: corsHeaders }
       );
     }
 
@@ -83,7 +127,7 @@ async function handleResolve(req: NextRequest) {
     const cached = resolveCache.get(cacheKey);
     if (cached && cached.expiresAt > Date.now()) {
       return NextResponse.json(cached.data, {
-        headers: { 'Cache-Control': 'private, max-age=1800' },
+        headers: { ...corsHeaders, 'Cache-Control': 'private, max-age=1800' },
       });
     }
 
@@ -100,7 +144,7 @@ async function handleResolve(req: NextRequest) {
     if (!searchResults || searchResults.length === 0) {
       return NextResponse.json(
         { success: false, code: 'NOT_FOUND', message: '专线片库暂未收录该影视' },
-        { status: 200 }
+        { status: 200, headers: corsHeaders }
       );
     }
 
@@ -122,7 +166,7 @@ async function handleResolve(req: NextRequest) {
     if (!playList || playList.length === 0) {
       return NextResponse.json(
         { success: false, code: 'NO_PLAYLIST', message: '专线源暂无可用切片' },
-        { status: 200 }
+        { status: 200, headers: corsHeaders }
       );
     }
 
@@ -169,12 +213,12 @@ async function handleResolve(req: NextRequest) {
     });
 
     return NextResponse.json(result, {
-      headers: { 'Cache-Control': 'private, max-age=1800' },
+      headers: { ...corsHeaders, 'Cache-Control': 'private, max-age=1800' },
     });
   } catch (err: any) {
     return NextResponse.json(
       { success: false, code: 'INTERNAL_ERROR', message: '解析异常: ' + err.message },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
