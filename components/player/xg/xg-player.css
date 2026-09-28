@@ -82,15 +82,6 @@
   height: 100vh !important;
 }
 
-/* 当 XGPlayer 处于 CSS 网页全屏时，由外层 React 容器统领 fixed 视口，保证覆盖层（选集/换源/锁屏）层级正确 */
-.xgplayer.xgplayer-is-cssfullscreen {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  z-index: 10 !important;
-}
-
 /* 顶栏暗影与快捷按钮层级 */
 .xg-player-overlay {
   pointer-events: none;

@@ -474,7 +474,6 @@ export function XgVideoPlayer({
     let videoEl: HTMLVideoElement | null = null;
     let handleWebkitBegin: (() => void) | null = null;
     let handleWebkitEnd: (() => void) | null = null;
-    let handleOrientation: (() => void) | null = null;
 
     try {
       const player = new Player({
@@ -511,7 +510,17 @@ export function XgVideoPlayer({
         fullscreen: isIPhone
           ? {
               rotateFullscreen: false,
-              useCssFullscreen: true, // iPhone 100% 启用纯自定义网页全屏，彻底干掉系统极简原生播放器
+              useCssFullscreen: false,
+              switchCallback: () => {
+                const video = (playerRef.current?.video || containerRef.current?.querySelector('video')) as any;
+                if (video && typeof video.webkitEnterFullscreen === 'function') {
+                  try {
+                    video.webkitEnterFullscreen();
+                  } catch (err) {
+                    console.warn('[iOS Fullscreen] 唤起系统原生全屏失败:', err);
+                  }
+                }
+              },
             }
           : {
               rotateFullscreen: false,
@@ -523,16 +532,9 @@ export function XgVideoPlayer({
 
       playerRef.current = player;
 
-      // 深度加固 iOS 行内播放属性，杜绝任何自动唤起系统原生播放器的可能
+      // 监听 iOS 原生视频全屏生命周期 (WebKit enter/exit fullscreen)
       videoEl = (player.video || containerRef.current?.querySelector('video')) as HTMLVideoElement | null;
       if (videoEl) {
-        try {
-          videoEl.setAttribute('playsinline', 'true');
-          videoEl.setAttribute('webkit-playsinline', 'true');
-          videoEl.setAttribute('x5-playsinline', 'true');
-          (videoEl as any).playsInline = true;
-        } catch (_) {}
-
         handleWebkitBegin = () => {
           setIsFullscreen(true);
           player.emit('fullscreen_change', true);
@@ -544,28 +546,6 @@ export function XgVideoPlayer({
         videoEl.addEventListener('webkitbeginfullscreen', handleWebkitBegin);
         videoEl.addEventListener('webkitendfullscreen', handleWebkitEnd);
       }
-
-      // 移动端物理横竖屏自适应联动：手机横屏时秒级撑满自定义全屏，手机竖回时恢复
-      handleOrientation = () => {
-        const isMobile = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        if (!isMobile) return;
-        const isLandscape = window.innerWidth > window.innerHeight;
-        const p = playerRef.current;
-        if (!p) return;
-
-        if (isLandscape && !p.cssfullscreen && !p.fullscreen) {
-          try {
-            p.getCssFullscreen();
-          } catch (_) {}
-        } else if (!isLandscape && p.cssfullscreen) {
-          try {
-            p.exitCssFullscreen();
-          } catch (_) {}
-        }
-      };
-
-      window.addEventListener('resize', handleOrientation);
-      window.addEventListener('orientationchange', handleOrientation);
 
       // 绑定全屏与旋转全屏事件
       player.on('fullscreen_change', (isFull: boolean) => {
@@ -615,10 +595,6 @@ export function XgVideoPlayer({
     }
 
     return () => {
-      if (handleOrientation) {
-        window.removeEventListener('resize', handleOrientation);
-        window.removeEventListener('orientationchange', handleOrientation);
-      }
       if (videoEl && handleWebkitBegin && handleWebkitEnd) {
         videoEl.removeEventListener('webkitbeginfullscreen', handleWebkitBegin);
         videoEl.removeEventListener('webkitendfullscreen', handleWebkitEnd);
@@ -679,7 +655,7 @@ export function XgVideoPlayer({
       }}
       className={`relative w-full bg-black select-none ${
         isFullActive
-          ? 'fixed inset-0 z-[9999] w-screen h-[100dvh] rounded-none'
+          ? 'fixed inset-0 z-50 w-screen h-screen rounded-none'
           : 'aspect-video rounded-none sm:rounded-2xl overflow-hidden'
       }`}
     >
