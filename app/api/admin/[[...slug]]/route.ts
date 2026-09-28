@@ -28,6 +28,14 @@ import {
   generateAiCollectionTopic,
   generateAiLocalization,
 } from '@/lib/services/ai-seo';
+import {
+  getShadowLineConfig,
+  getShadowLineHealth,
+  getShadowLineLogs,
+  runShadowLineProbe,
+  toggleShadowLineFuse,
+  runShadowLineAutoSniff,
+} from '@/lib/services/shadowline-service';
 
 export const runtime = 'edge';
 
@@ -548,6 +556,26 @@ ${posterUrl ? `\n![《${item.title}》官方高清海报](${posterUrl})\n` : ''}
         success: true,
         logs,
         total: logs.length,
+      });
+    }
+
+    // 11. 暗影自愈专线状态：/api/admin/shadowline/status
+    if (path === 'shadowline/status') {
+      const [config, health, logs] = await Promise.all([
+        getShadowLineConfig(),
+        getShadowLineHealth(),
+        getShadowLineLogs(30),
+      ]);
+
+      return NextResponse.json({
+        success: true,
+        config: {
+          ...config,
+          keyMasked: config.key ? config.key.slice(0, 4) + '****' + config.key.slice(-4) : '',
+          ivMasked: config.iv ? config.iv.slice(0, 4) + '****' + config.iv.slice(-4) : '',
+        },
+        health,
+        logs,
       });
     }
 
@@ -1174,6 +1202,25 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
         runUrl,
         message: `工作流 ${workflow} 已成功触发并加入 GitHub Actions 构建队列`,
       });
+    }
+
+    // 12. 暗影专线：探活 /api/admin/shadowline/probe
+    if (path === 'shadowline/probe') {
+      const result = await runShadowLineProbe();
+      return NextResponse.json({ success: result.success, health: result.health });
+    }
+
+    // 13. 暗影专线：熔断开关切换 /api/admin/shadowline/toggle
+    if (path === 'shadowline/toggle') {
+      const body = await request.json().catch(() => ({}));
+      const config = await toggleShadowLineFuse(body.enabled, authResult.email || 'Admin');
+      return NextResponse.json({ success: true, config, enabled: config.enabled });
+    }
+
+    // 14. 暗影专线：主动嗅探自愈 /api/admin/shadowline/sniff
+    if (path === 'shadowline/sniff') {
+      const result = await runShadowLineAutoSniff(authResult.email || 'Admin');
+      return NextResponse.json(result);
     }
 
     return NextResponse.json({ success: false, error: `未找到 POST 处理端点: ${path}` }, { status: 404 });

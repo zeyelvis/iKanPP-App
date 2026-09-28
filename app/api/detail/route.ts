@@ -12,6 +12,8 @@ import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
 import { fetchJableVideoDetail } from '@/lib/server/jable-scraper';
 import { fetchIkanbotDetail } from '@/lib/server/ikanbot';
 import { parseEpisodes } from '@/lib/api/parsers';
+import { getShadowLineConfig } from '@/lib/services/shadowline-service';
+import { gzProvider } from '@/lib/services/providers/gz-provider';
 
 export const runtime = 'edge';
 
@@ -193,6 +195,56 @@ async function handleDetailRequest(id: string | null, source: any, method: strin
       }
     } catch (e) {
       console.error('[DetailAPI] ikanbot resolve error:', e);
+    }
+  }
+
+  // 2.5 专属支持暗影自愈专线 (ShadowLine Engine) 惰性直解 (轨道 A 纯直连零代理)
+  if (sourceId === 'shadowline' || sourceId === 'shadow' || sourceId === 'gz360') {
+    try {
+      const config = await getShadowLineConfig();
+      if (config.enabled) {
+        gzProvider.updateConfig({
+          baseUrl: config.baseUrl,
+          key: config.key,
+          iv: config.iv,
+          enabled: config.enabled,
+        });
+
+        let targetVodId = id && id !== 'shadowline' && !isNaN(Number(id)) ? id : null;
+        let matchedTitle = titleParam || '';
+
+        // 如果没有数字 ID，但携带了片名 titleParam，则动态按片名搜寻
+        if (!targetVodId && titleParam) {
+          const cleanTitle = titleParam.replace(/[（(].*?[）)]/g, '').trim();
+          const searchList = await gzProvider.search(cleanTitle);
+          if (searchList && searchList.length > 0) {
+            const exact = searchList.find(s => s.title.toLowerCase() === cleanTitle.toLowerCase()) || searchList[0];
+            targetVodId = exact.vod_id;
+            matchedTitle = exact.title;
+          }
+        }
+
+        if (targetVodId) {
+          const playList = await gzProvider.getPlayList(targetVodId);
+          if (playList && playList.length > 0) {
+            return NextResponse.json({
+              success: true,
+              data: {
+                vod_id: targetVodId,
+                vod_name: matchedTitle || titleParam || '4K 原画',
+                type_name: '4K 原画 · 直连',
+                episodes: playList.map((ep, idx) => ({
+                  name: ep.episode || (idx === 0 ? '4K 极清' : `第${idx + 1}集`),
+                  url: ep.url, // 轨道 A 铁律：100% 浏览器直连第三方 CDN，严禁通过 /api/proxy
+                })),
+                source: 'shadowline',
+              }
+            });
+          }
+        }
+      }
+    } catch (shadowErr) {
+      console.warn('[DetailAPI] ShadowLine direct resolve failed:', shadowErr);
     }
   }
 

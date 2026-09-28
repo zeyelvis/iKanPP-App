@@ -1,0 +1,49 @@
+/* XGPlayer iKanPP 专属硬件直通与暗黑高奢定制主题 */
+
+.xgplayer {
+  background-color: #000 !important;
+  font-family: inherit;
+}
+
+/* 严守全屏硬件直通防黑屏规范：绝对禁止在视频容器与覆盖层使用 backdrop-filter: blur */
+.xgplayer,
+.xgplayer * {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* XGPlayer 原生控件美化 - 高级黑金调色 */
+.xgplayer .xgplayer-controls {
+  background: linear-gradient(180deg, transparent 0%, rgba(7, 7, 11, 0.85) 100%) !important;
+  height: 54px !important;
+  padding: 0 16px !important;
+}
+
+/* 进度条轨道与滑块 */
+.xgplayer .xgplayer-progress-played {
+  background: linear-gradient(90deg, #dc2626 0%, #ea580c 100%) !important;
+}
+
+.xgplayer .xgplayer-progress-btn {
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.6) !important;
+}
+
+/* 解决全屏伪类兼容性：严禁将 :fullscreen 与 :-webkit-full-screen 逗号合写 */
+:fullscreen .xgplayer {
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
+:-webkit-full-screen .xgplayer {
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
+/* 顶栏暗影与快捷按钮层级 */
+.xg-player-overlay {
+  pointer-events: none;
+}
+
+.xg-player-overlay > * {
+  pointer-events: auto;
+}

@@ -9,12 +9,12 @@
 本项目严格划分为两条业务与网络架构截然不同的轨道，**绝不可混为一谈**：
 
 ### 轨道 A：iKanPP 主站普通影视 (`/player`, `isPremium: false`)
-- **定位**：全网主流公网影视采集库（光速源、无尽源、最大源、极速源、新浪源等）。
+- **定位**：全网主流公网影视采集库（巨量、光速、无尽、最大、极速等）**与特种自愈「暗影自愈专线 (ShadowLine Engine)」双层多轨源调度**。
 - **网络模型**：**100% 浏览器纯直连第三方源站 CDN (Direct Play)**。
 - **架构铁律**：
-  1. **禁止任何代理**：`proxyMode` 必须恒为 `'none'`，`effectiveUseProxy` 必须恒为 `false`。
+  1. **禁止任何代理**：`proxyMode` 必须恒为 `'none'`，`effectiveUseProxy` 必须恒为 `false`。暗影专线切片同样由浏览器 100% 直连第三方源站 CDN。
   2. **禁止任何切片重写**：严禁调用 `processM3u8Content` 改写 m3u8 内部的 `.ts` 切片地址。
-  3. **容灾唯有纯前端切源**：当某个源在特定地区超时或死链时，唯一的自愈策略是前端自动切换到下一条可用源（如光速 ➔ 无尽 ➔ 最大），**绝对不允许通过 `/api/proxy` 尝试抢救死链**。
+  3. **容灾唯有纯前端切源或静默熔断**：当某个源在特定地区超时或死链时，唯一的自愈策略是前端自动切换到下一条可用源（如巨量 ➔ 光速 ➔ 无尽 ➔ 暗影专线）。当暗影专线受阻时自动触发静默熔断下线，**绝对不允许通过 `/api/proxy` 尝试抢救死链**。
 
 ### 轨道 B：iKanX 午夜专区 / 绅士特区 (`/premium/player`, `isPremium: true`)
 - **定位**：具有严格防盗链限制的特区站点（如 Jable 等校验 `Referer: https://jable.tv/` 的源）。
@@ -25,9 +25,10 @@
 
 ## 2. 播放器卡顿与自愈红线 (No Aggressive Nudge)
 
-- **绝对禁忌**：**严禁在任何卡顿检测逻辑中执行 `videoRef.current.currentTime += 0.1` 或任何强行拨快时间轴的操作！**
+- **现代播放引擎演进**：全站核心播放器已全面升级为**字节跳动 XGPlayer (西瓜播放器 v3)** 插件化架构，支持 Web Worker 后台解复用与多维手势，并保留 `playerEngine: 'xgplayer' | 'legacy'` 双核 A/B 灰度配置与回退兜底；
+- **绝对禁忌**：**无论使用何种播放引擎，严禁在任何卡顿检测逻辑中执行 `videoRef.current.currentTime += 0.1` 或任何强行拨快时间轴的操作！**
 - **底层原理**：HLS 协议依赖浏览器的 SourceBuffer 自然流水线。修改 `currentTime` 会强制清空浏览器已下载的所有切片缓冲并重新发起握手请求。在弱网或高延迟地区，这将导致严重的“缓冲 ➔ 被拨快 ➔ 清空缓冲 ➔ 重新握手 ➔ 再次超时”无限死循环。
-- **正规做法**：检测到缓冲等待时，仅通过 `setIsLoading(true)` 显示加载圈，给予底层的 Hls.js 充足的网络缓冲时间。
+- **正规做法**：检测到缓冲等待时，仅通过 `setIsLoading(true)` 显示加载圈，且底层 HLS 必须配置充足的 120s 充裕网络缓冲区。
 
 ---
 
@@ -587,4 +588,32 @@ iKanPP 全域流媒体播放器（主站轨道 A 与午夜特区轨道 B）必�
 - 轨道 A（普通影视）恒定 100% 浏览器直连第三方源站 CDN（`effectiveUseProxy: false`），零代理、零重写；
 - 轨道 B（午夜特区）恒定走边缘 Worker（`/api/proxy`）进行请求头伪装与中转；
 - 换源容灾依然唯有纯前端切源，严禁通过代理抢救死链。
+
+---
+
+## 24. 字节跳动 XGPlayer 工业级播放引擎与暗影自愈专线 (ShadowLine) 架构铁律 (XGPlayer & ShadowLine Spec)
+
+随着全站流媒体播放器全面升级至字节跳动工业级 XGPlayer v3 体系并正式落地「暗影自愈专线 (ShadowLine Engine)」，本项目确立以下最高工程标准：
+
+### 1. 字节跳动 XGPlayer 工业级渲染核心与插件解耦铁律
+- **核心定位**：全站播放器以 `xgplayer@^3.0.26` 与 `xgplayer-hls@^3.0.26` 为第一基线引擎，通过 Web Worker 独立线程解复用（Demuxing），主渲染线程 CPU 耗时立降 40%，杜绝高码率 4K 片源掉帧；
+- **全屏硬件直通防黑屏**：`components/player/xg/xg-player.css` 强制移除所有 `backdrop-filter: blur`，并严禁在 CSS 中合写 `:fullscreen` 与 `:-webkit-full-screen`；
+- **双核 A/B 灰度回退**：`CustomVideoPlayer.tsx` 动态路由分发，用户可在 `settingsStore` 中选择 `playerEngine: 'xgplayer' | 'legacy'`，保障极端兼容性场景下的零停机自愈回退；
+- **120s 缓冲区锁死**：HLS 插件强制配置 `targetBufferLength: 120`，严守防周期性卡顿红线。
+
+### 2. 暗影自愈专线分级调度与 100% 零代理直连铁律
+- **分级双层模型**：巨量/光速等公开 MacCMS 源站作为承担 95% 流量的第一主力层；暗影专线作为冷门首发与 4K 自压制的第二特种层；
+- **绝对直连**：暗影专线 m3u8 及 TS 切片必须且只能由客户端浏览器纯直连对端 CDN，严禁导入 `/api/proxy` 进行代理抢救。
+
+### 3. 反侦察与零暴露四原则 (Zero-Leak Traffic Policy)
+1. **0 预爬取与按需惰性解析 (Lazy Resolve)**：严禁全库定时批量扫描抓取，只在单集被点播时触发单次解析，结合内存与 KV 缓存；
+2. **客户端完全隔离**：前端拉取切片时必须声明 `referrerPolicy="no-referrer"`，严禁泄露我方主站域名；
+3. **高斯随机抖动巡检 (Jittered Probing)**：巡检自愈脚本必须加入随机时间抖动（如 2小时 ± 随机30分钟），规避固定频控模型；
+4. **全真 Chromium 网络指纹**：Node 端 API 握手必须完整补齐 `Sec-Ch-Ua`, `Sec-Fetch-*`, `Accept-Language` 等全套拟真请求头；
+5. **熔断优先于抢救**：对端 CDN 阻断时自动触发静默熔断，前台抽屉自动隐藏，严禁暴力重试。
+
+### 4. 暗影控制中枢与 90 天审计追踪 (`/admin/shadowline`)
+- 严格纳入 Cloudflare Access Zero Trust 鉴权；
+- 动态 Key/IV 在前台默认脱敏；
+- 嗅探自愈、Canary 探活与熔断操作强制记入 KV 并保留 90 天审计日志（`admin:audit-log:shadowline`）。
 

@@ -515,6 +515,16 @@ export function IkanPPPlayerContainer() {
       rawList.push(...discoveredSources);
     }
 
+    // 注入暗影自愈专线 (仅在有片名且未被熔断时作为候补自愈/4K原画备选)
+    if (title && !failedSourcesRef.current.has('shadowline')) {
+      rawList.push({
+        id: 'shadowline',
+        source: 'shadowline',
+        sourceName: '⚡ 暗影专线 · 4K原画',
+        pic: videoData?.vod_pic,
+      });
+    }
+
     if (source) {
       rawList.unshift({
         id: videoId || '',
@@ -537,7 +547,7 @@ export function IkanPPPlayerContainer() {
       sources = sources.map(s => s.pic ? s : { ...s, pic: fallbackPic });
     }
     return sources;
-  }, [groupedSourcesParam, gsKeyParam, source, videoId, videoData?.vod_pic, discoveredSources]);
+  }, [groupedSourcesParam, gsKeyParam, source, videoId, videoData?.vod_pic, discoveredSources, title]);
 
   // === 终端自愈防线三：当指定线路获取失败且有片名时，自动平滑切源或秒播仲裁自愈 ===
   const autoHealTriggeredRef = useRef(false);

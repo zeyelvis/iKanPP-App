@@ -32,6 +32,7 @@ export const DEPRECATED_SOURCES = new Set(['ole_vip', 'ole_hd', 'olevod']);
 export function isValidSourceId(id?: string | null): boolean {
   if (!id) return false;
   if (DEPRECATED_SOURCES.has(id)) return false;
+  if (id === 'shadowline' || id === 'shadow' || id === 'gz360') return true;
   const source = getSourceById(id);
   return Boolean(source && source.enabled !== false);
 }

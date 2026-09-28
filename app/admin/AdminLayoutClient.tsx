@@ -18,6 +18,7 @@ import {
   Sparkles,
   Inbox,
   Rocket,
+  Radio,
 } from 'lucide-react';
 import './admin.css';
 
@@ -35,6 +36,7 @@ const NAV_ITEMS: NavItem[] = [
   { name: 'SEO 智能监控', href: '/admin/seo', icon: Search },
   { name: '促抓控制台', href: '/admin/indexing', icon: Zap },
   { name: '全域增长中枢', href: '/admin/growth', icon: Rocket, badge: 'HOT' },
+  { name: '暗影专线中枢', href: '/admin/shadowline', icon: Radio, badge: 'AUTO' },
   { name: 'GSC 数据分析', href: '/admin/analytics', icon: BarChart3 },
   { name: '系统配置与审计', href: '/admin/system', icon: Settings },
 ];

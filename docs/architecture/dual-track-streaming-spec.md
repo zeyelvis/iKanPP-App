@@ -1,6 +1,6 @@
 # iKanPP 与 iKanX 双轨流媒体架构规范与隔离准则 (Dual-Track Streaming Architecture Specification)
 
-> **版本**：v1.0.0  
+> **版本**：v1.1.0  
 > **生效时间**：2026-09  
 > **适用范围**：Web 前端、播放器核心组件、边缘代理网关、跨端移植 (iOS/Android/TV)  
 > **维护机制**：**本规范为全库最高架构基线**。任何涉及流媒体链路、切源调度、防盗链代理及播放器自愈算法的重大更新，**必须与代码同步修订此文档**。
@@ -350,7 +350,60 @@
   - 移动端：`maxBufferLength: 60s`、`maxMaxBufferLength: 120s`、`maxBufferSize: 60MB`、`backBufferLength: 25s`；
   - 精准识别：彻底杜绝通过简单 `maxTouchPoints > 1` 将 MacBook 误判为 iPad 的漏洞。
 - **双轨绝对隔离**：轨道 A 恒定 100% 浏览器直连第三方源站 CDN（`effectiveUseProxy: false`），轨道 B 恒定走 Cloudflare Edge Worker 中转伪装，边界丝毫不乱。
-- **全屏 Portal 容器直插**：选集抽屉（`InPlayerEpisodesDrawer`）、线路抽屉（`InPlayerSourceDrawer`）、返回按钮与 4K VIP 品牌台标，统一通过 `ReactDOM.createPortal(..., art.template.$player)` 直接挂载到 Artplayer 原生全屏宿主容器内部。在系统全屏与网页全屏下皆能平滑弹出，且底色严格恪守 `bg-[#141416]/98` 纯色不透明原则，彻底剔除 `backdrop-filter`。
+- **全屏 Portal 容器直插**：选集抽屉（`InPlayerEpisodesDrawer`）、线路抽屉（`InPlayerSourceDrawer`）、返回按钮与 4K VIP 品牌台标，统一通过纯色不透明全屏宿主容器挂载。在系统全屏与网页全屏下皆能平滑弹出，且底色严格恪守 `bg-[#141416]/98` 纯色不透明原则，彻底剔除 `backdrop-filter`。
 - **进度保存 Selector 防重绘**：通过 `useHistoryStore((s) => s.addToHistory)` 和 `usePremiumHistoryStore((s) => s.addToHistory)` 进行防抖（5 秒）保存，绝不订阅全量 store。
+
+---
+
+## 13. 字节跳动 XGPlayer (西瓜播放器 v3) 工业级流媒体引擎与全站双核演进规范 (XGPlayer Engine & Dual-Core Architecture Spec) (2026-09 升级)
+
+为实现媲美西瓜视频、抖音 Web 端的一线流媒体播放体验，项目确立全面升级为**字节跳动 XGPlayer v3 插件化播放引擎**：
+
+### 1. 核心技术选型与解复用卸载
+- **纯插件解耦模型**：采用 `xgplayer@^3.0.26` 与 `xgplayer-hls@^3.0.26`，所有 UI 控件与控制逻辑由插件按需装载；
+- **Web Worker 后台解复用**：`xgplayer-hls` 将复杂的 m3u8 清单解析与 TS 切片解复用（Demuxing）彻底卸载至 Web Worker 独立线程，**主渲染线程 CPU 耗时立降 40%**，杜绝 4K 高码率播放时的掉帧与微小卡顿；
+- **原生多维手势支持**：原生集成单指滑动调节亮度/音量、双击暂停、长按 2x 倍速、横向滑动快进/快退进度带实时缩略图预览等字节级微交互。
+
+### 2. 架构铁律与硬件直通防黑屏 100% 严密继承
+- **120s 深缓冲水位锁死**：XGPlayer HLS 插件必须强制配置 `targetBufferLength: 120`，严禁擅自下调导致高码率片源水库饥饿；
+- **严守 No Aggressive Nudge 铁律**：严禁在卡顿检测中执行强行拨快时间轴（`currentTime += 0.1`）的操作；
+- **全屏硬件直通防黑屏（Hardware Overlay Plane）**：
+  - XGPlayer 样式定制文件（`components/player/xg/xg-player.css`）强制覆盖：`-webkit-backdrop-filter: none !important; backdrop-filter: none !important;`；
+  - 严禁在全屏伪类中将 `:fullscreen` 与 `:-webkit-full-screen` 逗号合写，必须拆解为独立规则块，杜绝显卡驱动触发 Surface Detach 导致画面黑屏。
+
+### 3. 双核 A/B 灰度与自愈回退兜底机制
+- **状态存储集成**：在 `lib/store/settings-store.ts` 中配置 `playerEngine: 'xgplayer' | 'legacy'`，默认值为 `'xgplayer'`；
+- **动态分发入口**：由 `components/player/CustomVideoPlayer.tsx` 统一动态路由分发，若用户遇到特定老旧机型兼容问题，支持在设置中一键平滑回退，保障 100% 播放稳定性。
+
+---
+
+## 14. 暗影自愈专线 (ShadowLine Engine) 架构与反侦察隐匿铁律 (ShadowLine Stealth & Autonomous Self-Healing Spec) (2026-09 升级)
+
+针对全网主流公网源在部分冷门美剧、外语新番或院线先锋大片上画质不佳或缺集的问题，平台正式确立**「暗影自愈专线 (ShadowLine Engine)」特种分级调度与管理体系**：
+
+### 1. 分级双层多轨源调度模型 (Tiered Multi-Source Scheduling)
+- **第一层：骨干采集源（主力公开层）**：
+  - 巨量、光速、极速、无尽、暴风等遵循 MacCMS 规范的公开源站；
+  - 承担全站 95% 以上常规大流量播放，批量定时巡检，公开稳定；
+- **第二层：暗影自愈专线（特种备用层）**：
+  - 基于 AES-128-CBC 动态加解密逆向打通的自压制 4K/1080P 高码率线路；
+  - 仅在骨干源暂缺、画质低劣或用户在播放器切源抽屉中主动点播时唤醒，充当精准尖刀。
+
+### 2. 100% 恪守轨道 A 零代理直连铁律
+- **绝对直连**：暗影专线流媒体 m3u8 及 TS 切片**必须且只能由客户端浏览器纯直连对端 CDN (Direct Play)**；
+- **禁止反代抢救**：**严禁将暗影专线导入 `/api/proxy` 进行请求头伪装与切片重写**。若对端 CDN 阻断跨域直连，系统的唯一合法动作是**静默熔断下线该线路**，坚决不浪费我方任何服务器计算与带宽资源。
+
+### 3. 反侦察与零暴露四原则 (Zero-Leak Traffic Policy)
+为确保暗影专线长期稳定运作，防止对端风控与告警，必须严格遵循以下原则：
+1. **0 预爬取与按需惰性解析 (Lazy Resolve)**：严禁全库定时批量扫描抓取，只在单集被点播时触发单次解析，并利用内存与 KV 缓存 4~6 小时；
+2. **客户端完全隔离**：前端拉取切片时必须声明 `referrerPolicy="no-referrer"`，严禁泄露我方主站域名；
+3. **高斯随机抖动巡检 (Jittered Probing)**：巡检自愈脚本必须加入随机时间抖动（如 2小时 ± 随机30分钟），规避固定频控模型；
+4. **全真 Chromium 网络指纹**：Node 端 API 握手必须完整补齐 `Sec-Ch-Ua`, `Sec-Fetch-*`, `Accept-Language` 等全套拟真请求头。
+
+### 4. 后台控制中枢与 90 天审计追踪 (`/admin/shadowline`)
+- 控制台设立三大核心卡片：动态解密凭据矩阵、Canary 探活质量雷达、隐匿防侦察水位；
+- 支持一键手动静默嗅探（`POST /api/admin/shadowline/sniff`）、Canary 金丝雀探活（`POST /api/admin/shadowline/probe`）与紧急熔断硬锁（`POST /api/admin/shadowline/toggle`）；
+- 每次探活与配置变动强制记入 KV 并保留 90 天审计日志（`admin:audit-log:shadowline`），合规透明可追溯。
+
 
 

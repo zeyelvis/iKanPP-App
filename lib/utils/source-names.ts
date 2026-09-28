@@ -37,6 +37,9 @@ export function getSourceName(sourceId: string): string {
     'shandian': '闪电资源',
     'kuaiche': '快车资源',
     'leba': '乐播资源',
+    'shadowline': '⚡ 暗影专线 · 4K原画',
+    'shadow': '⚡ 暗影专线 · 4K原画',
+    'gz360': '⚡ 暗影专线 · 4K原画',
   };
   return sourceNames[sourceId] || sourceId;
 }

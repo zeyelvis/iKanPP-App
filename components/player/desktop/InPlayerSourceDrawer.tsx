@@ -81,6 +81,7 @@ export function InPlayerSourceDrawer({
           {sources.map((s, idx) => {
             const isCurrent = s.source === currentSource;
             const displayName = s.sourceName || `专线 ${idx + 1}`;
+            const isShadow = s.source.includes('shadow') || displayName.includes('暗影');
             const is4K = displayName.includes('4K') || s.source.includes('4k') || s.source === 'hongniu';
             const isUltra = displayName.includes('极速') || displayName.includes('蓝光') || s.source === 'guangsu';
 
@@ -95,6 +96,8 @@ export function InPlayerSourceDrawer({
                 className={`w-full p-3.5 rounded-xl text-left transition-all duration-200 cursor-pointer flex items-center justify-between border ${
                   isCurrent
                     ? 'bg-purple-600/20 border-purple-500/60 shadow-lg shadow-purple-600/20 text-white'
+                    : isShadow
+                    ? 'bg-gradient-to-r from-purple-950/30 to-amber-950/20 hover:bg-white/10 border-purple-500/30 text-white/90 hover:text-white'
                     : 'bg-white/5 hover:bg-white/10 border-white/10 text-white/80 hover:text-white'
                 }`}
               >
@@ -103,16 +106,24 @@ export function InPlayerSourceDrawer({
                     className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
                       isCurrent
                         ? 'bg-purple-600 text-white'
+                        : isShadow
+                        ? 'bg-purple-500/20 text-amber-400 border border-purple-500/30'
                         : 'bg-white/10 text-white/60'
                     }`}
                   >
-                    {isCurrent ? <Zap size={16} /> : <Server size={16} />}
+                    {isCurrent || isShadow ? <Zap size={16} /> : <Server size={16} />}
                   </div>
 
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold">{displayName}</span>
-                      {is4K && (
+                      {isShadow && (
+                        <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-purple-500/30 to-amber-500/30 text-amber-300 border border-amber-500/40 shadow-sm flex items-center gap-0.5">
+                          <Zap size={10} className="text-amber-400 fill-amber-400" />
+                          独家自愈
+                        </span>
+                      )}
+                      {is4K && !isShadow && (
                         <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
                           4K 原画
                         </span>
