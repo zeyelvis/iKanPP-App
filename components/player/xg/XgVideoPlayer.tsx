@@ -54,13 +54,21 @@ export function XgVideoPlayer({
   currentSource = '',
   onSelectSource,
 }: XgVideoPlayerProps) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<Player | null>(null);
+
+  // 全屏状态
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isCssFullscreen, setIsCssFullscreen] = useState(false);
 
   // 抽屉状态
   const [sourceDrawerOpen, setSourceDrawerOpen] = useState(false);
   const [episodeDrawerOpen, setEpisodeDrawerOpen] = useState(false);
   const [showControlsOverlay, setShowControlsOverlay] = useState(true);
+
+  // 计时器引用
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // 回调引用绑定，防止闭包失效
   const onTimeUpdateRef = useRef(onTimeUpdate);
@@ -75,6 +83,41 @@ export function XgVideoPlayer({
     return currentSource.includes('shadow') || currentSource.includes('暗影') || currentSource.includes('独家');
   }, [currentSource]);
 
+  // 唤起并自动延时隐藏顶栏
+  const handleTriggerControls = useCallback(() => {
+    setShowControlsOverlay(true);
+    if (controlsTimeoutRef.current) {
+      clearTimeout(controlsTimeoutRef.current);
+    }
+    controlsTimeoutRef.current = setTimeout(() => {
+      if (!sourceDrawerOpen && !episodeDrawerOpen) {
+        setShowControlsOverlay(false);
+      }
+    }, 3500);
+  }, [sourceDrawerOpen, episodeDrawerOpen]);
+
+  // 全屏事件同步监听兜底
+  useEffect(() => {
+    const handleDocFsChange = () => {
+      const isDocFull = Boolean(
+        document.fullscreenElement &&
+        (document.fullscreenElement === wrapperRef.current || wrapperRef.current?.contains(document.fullscreenElement))
+      );
+      setIsFullscreen(isDocFull);
+    };
+
+    document.addEventListener('fullscreenchange', handleDocFsChange);
+    document.addEventListener('webkitfullscreenchange', handleDocFsChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleDocFsChange);
+      document.removeEventListener('webkitfullscreenchange', handleDocFsChange);
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current);
+      }
+    };
+  }, []);
+
   // 初始化与销毁 XGPlayer 实例
   useEffect(() => {
     if (!containerRef.current || !src) return;
@@ -88,6 +131,7 @@ export function XgVideoPlayer({
     try {
       const player = new Player({
         el: containerRef.current,
+        fullscreenTarget: wrapperRef.current || undefined,
         url: src,
         poster: poster || '',
         autoplay: shouldAutoPlay,
@@ -113,6 +157,15 @@ export function XgVideoPlayer({
 
       playerRef.current = player;
 
+      // 绑定全屏事件
+      player.on('fullscreen_change', (isFull: boolean) => {
+        setIsFullscreen(Boolean(isFull));
+      });
+
+      player.on('cssFullscreen_change', (isCssFull: boolean) => {
+        setIsCssFullscreen(Boolean(isCssFull));
+      });
+
       // 绑定生命周期事件
       player.on('timeupdate', () => {
         if (player.currentTime && Number.isFinite(player.currentTime)) {
@@ -135,9 +188,13 @@ export function XgVideoPlayer({
         }
       });
 
-      // 监听鼠标活动以控制自定义顶栏显隐
-      player.on('user_active', () => setShowControlsOverlay(true));
-      player.on('user_inactive', () => setShowControlsOverlay(false));
+      // 监听用户活动
+      player.on('user_active', () => handleTriggerControls());
+      player.on('user_inactive', () => {
+        if (!sourceDrawerOpen && !episodeDrawerOpen) {
+          setShowControlsOverlay(false);
+        }
+      });
     } catch (err: any) {
       console.error('[XGPlayer] 初始化异常:', err);
       onErrorRef.current?.(err?.message || '初始化失败');
@@ -149,16 +206,31 @@ export function XgVideoPlayer({
         playerRef.current = null;
       }
     };
-  }, [src, poster, shouldAutoPlay, initialTime]);
+  }, [src, poster, shouldAutoPlay, initialTime, handleTriggerControls, sourceDrawerOpen, episodeDrawerOpen]);
+
+  const isFullActive = isFullscreen || isCssFullscreen;
 
   return (
-    <div className="relative w-full h-full bg-black overflow-hidden group select-none">
+    <div
+      ref={wrapperRef}
+      onMouseMove={handleTriggerControls}
+      onMouseLeave={() => {
+        if (!sourceDrawerOpen && !episodeDrawerOpen) {
+          setShowControlsOverlay(false);
+        }
+      }}
+      className={`relative w-full bg-black select-none ${
+        isFullActive
+          ? 'fixed inset-0 z-50 w-screen h-screen rounded-none'
+          : 'aspect-video rounded-none sm:rounded-2xl overflow-hidden'
+      }`}
+    >
       {/* XGPlayer DOM 挂载容器 */}
       <div ref={containerRef} className="w-full h-full" />
 
       {/* 顶部通栏自定义覆盖层 (返回、剧名、选集与切源快捷键) */}
       <div
-        className={`absolute top-0 inset-x-0 z-30 flex items-center justify-between p-4 bg-linear-to-b from-black/80 via-black/40 to-transparent transition-opacity duration-300 pointer-events-none ${
+        className={`absolute top-0 inset-x-0 z-30 flex items-center justify-between p-4 bg-gradient-to-b from-black/80 via-black/40 to-transparent transition-opacity duration-300 pointer-events-none ${
           showControlsOverlay || sourceDrawerOpen || episodeDrawerOpen ? 'opacity-100' : 'opacity-0'
         }`}
       >
@@ -180,7 +252,7 @@ export function XgVideoPlayer({
                 {videoTitle}
               </h2>
               {isShadowLineSource && (
-                <span className="flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-full bg-linear-to-r from-purple-500/30 to-indigo-500/30 border border-purple-500/40 text-purple-200 shadow-sm animate-pulse">
+                <span className="flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500/30 to-indigo-500/30 border border-purple-500/40 text-purple-200 shadow-sm animate-pulse">
                   <Radio className="w-3 h-3 text-purple-400" />
                   暗影 4K 原画
                 </span>

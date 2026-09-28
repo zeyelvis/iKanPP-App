@@ -10,7 +10,7 @@ const DynamicXgVideoPlayer = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-full h-full bg-black flex items-center justify-center text-slate-500 text-xs">
+      <div className="w-full aspect-video bg-black rounded-none sm:rounded-2xl flex items-center justify-center text-slate-500 text-xs">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
           <span>正在启动字节 XGPlayer 播放引擎...</span>
