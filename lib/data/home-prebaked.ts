@@ -54,6 +54,10 @@ export const PREBAKED_HOME_DATA: {
   "movie": {
     "trendingNav": [
         {
+                "title": "魔方小姐",
+                "updateBadge": ""
+        },
+        {
                 "title": "欢迎来龙餐馆",
                 "updateBadge": ""
         },
@@ -62,11 +66,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "魔方小姐",
+                "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
         {
-                "title": "给阿嬷的情书",
+                "title": "死亡赌局",
                 "updateBadge": ""
         },
         {
@@ -74,7 +78,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "死亡赌局",
+                "title": "大学炸弹客",
                 "updateBadge": ""
         },
         {
@@ -86,7 +90,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "大学炸弹客",
+                "title": "特立独行",
                 "updateBadge": ""
         },
         {
@@ -94,11 +98,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "特立独行",
-                "updateBadge": ""
-        },
-        {
-                "title": "玩具总动员5",
+                "title": "逃出绝命街",
                 "updateBadge": ""
         }
       ],
@@ -1825,15 +1825,15 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "我不是大师",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "一瓯春",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "早春晴朗",
@@ -1844,11 +1844,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "法医秦明之龙番往事",
-                "updateBadge": "1"
+                "title": "死有对证",
+                "updateBadge": ""
         },
         {
-                "title": "死有对证",
+                "title": "法医秦明之龙番往事",
                 "updateBadge": ""
         },
         {
@@ -1856,7 +1856,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "黑岛监狱",
+                "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
@@ -1864,11 +1864,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "深渊无间",
+                "title": "黑岛监狱",
                 "updateBadge": ""
         },
         {
-                "title": "逐玉",
+                "title": "深渊无间",
                 "updateBadge": ""
         }
       ],
