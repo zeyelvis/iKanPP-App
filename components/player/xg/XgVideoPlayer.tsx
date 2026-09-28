@@ -76,10 +76,16 @@ export function XgVideoPlayer({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isCssFullscreen, setIsCssFullscreen] = useState(false);
   const [isRotateFullscreen, setIsRotateFullscreen] = useState(false);
-  const isFullActive = isFullscreen || isCssFullscreen || isRotateFullscreen;
+  // iPhone / PWA 移动端视口接管与 90 度旋转全屏
+  const [isIPhone, setIsIPhone] = useState(false);
+  const [isIPhoneCustomFullscreen, setIsIPhoneCustomFullscreen] = useState(false);
+  const [isScreenLandscape, setIsScreenLandscape] = useState(false);
+  const isFullActive = isFullscreen || isCssFullscreen || isRotateFullscreen || isIPhoneCustomFullscreen;
 
   // 防误触锁屏状态
   const [isScreenLocked, setIsScreenLocked] = useState(false);
+  const isScreenLockedRef = useRef(false);
+  isScreenLockedRef.current = isScreenLocked;
   const [showLockButton, setShowLockButton] = useState(true);
   const lockButtonTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -158,6 +164,118 @@ export function XgVideoPlayer({
     return () => clearInterval(interval);
   }, []);
 
+  // 1. iPhone 设备识别与横竖屏方向动态监听
+  useEffect(() => {
+    const isIosPhone = typeof navigator !== 'undefined' && /iPhone|iPod/i.test(navigator.userAgent);
+    setIsIPhone(isIosPhone);
+
+    const updateOrientation = () => {
+      const isLand = window.innerWidth > window.innerHeight;
+      setIsScreenLandscape(isLand);
+    };
+
+    updateOrientation();
+    window.addEventListener('resize', updateOrientation);
+    window.addEventListener('orientationchange', updateOrientation);
+
+    return () => {
+      window.removeEventListener('resize', updateOrientation);
+      window.removeEventListener('orientationchange', updateOrientation);
+    };
+  }, []);
+
+  // 2. iPhone 全屏锁定页面背景滚动与穿透 (Scroll Lock)
+  useEffect(() => {
+    if (!isIPhoneCustomFullscreen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    const originalTouchAction = document.body.style.touchAction;
+
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.body.style.touchAction = originalTouchAction;
+    };
+  }, [isIPhoneCustomFullscreen]);
+
+  // 3. 手机物理横转联动全屏 (播放中物理横置手机自动全屏，竖回自动退出)
+  useEffect(() => {
+    if (!isIPhone) return;
+
+    if (isScreenLandscape) {
+      // 物理横屏：只要在播放，自动进入全屏
+      if (playerRef.current && !playerRef.current.paused) {
+        setIsIPhoneCustomFullscreen(true);
+      }
+    } else {
+      // 物理竖屏：若未加屏幕锁，自动退出全屏恢复内联
+      if (!isScreenLockedRef.current) {
+        setIsIPhoneCustomFullscreen(false);
+      }
+    }
+  }, [isScreenLandscape, isIPhone]);
+
+  // 4. 同步 XGPlayer 内部状态与触发视口重绘 (Resize)
+  useEffect(() => {
+    if (playerRef.current && isIPhone) {
+      playerRef.current.emit('fullscreen_change', isIPhoneCustomFullscreen);
+      const fsBtn = playerRef.current.root?.querySelector('.xgplayer-fullscreen');
+      if (fsBtn) {
+        if (isIPhoneCustomFullscreen) {
+          fsBtn.setAttribute('data-state', 'full');
+        } else {
+          fsBtn.removeAttribute('data-state');
+        }
+      }
+    }
+    if (playerRef.current) {
+      const timer = setTimeout(() => {
+        try {
+          playerRef.current?.emit('resize');
+        } catch (_) {}
+      }, 80);
+      return () => clearTimeout(timer);
+    }
+  }, [isIPhoneCustomFullscreen, isScreenLandscape, isIPhone]);
+
+  // 5. iPhone / PWA 全屏数学视口样式计算 (竖屏 90 度居中自适应，横屏 0 度无缝铺满)
+  const iPhoneFullscreenStyle: React.CSSProperties = useMemo(() => {
+    if (!isIPhoneCustomFullscreen) return {};
+
+    if (isScreenLandscape) {
+      return {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100dvw',
+        height: '100dvh',
+        maxWidth: '100dvw',
+        maxHeight: '100dvh',
+        zIndex: 999999,
+        transform: 'none',
+        borderRadius: 0,
+        margin: 0,
+      };
+    }
+
+    return {
+      position: 'fixed',
+      width: '100dvh',
+      height: '100dvw',
+      left: 'calc(50vw - 50dvh)',
+      top: 'calc(50dvh - 50vw)',
+      transform: 'rotate(90deg)',
+      transformOrigin: 'center center',
+      zIndex: 999999,
+      borderRadius: 0,
+      margin: 0,
+    };
+  }, [isIPhoneCustomFullscreen, isScreenLandscape]);
+
   // 唤起控制栏与锁屏键 (延时 3.5s 自动淡出)
   const handleTriggerControls = useCallback(() => {
     setShowLockButton(true);
@@ -229,6 +347,10 @@ export function XgVideoPlayer({
   // 全屏退出或返回上一页
   const handleBackAction = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
+    if (isIPhoneCustomFullscreen) {
+      setIsIPhoneCustomFullscreen(false);
+      return;
+    }
     const player = playerRef.current;
     if (player) {
       const video = player.video as any;
@@ -251,7 +373,7 @@ export function XgVideoPlayer({
     if (!isFullActive) {
       onBack?.();
     }
-  }, [isFullActive, onBack]);
+  }, [isFullActive, isIPhoneCustomFullscreen, onBack]);
 
   // 启动 5.0x 极速快进
   const startFastForward = useCallback(() => {
@@ -512,14 +634,7 @@ export function XgVideoPlayer({
               rotateFullscreen: false,
               useCssFullscreen: false,
               switchCallback: () => {
-                const video = (playerRef.current?.video || containerRef.current?.querySelector('video')) as any;
-                if (video && typeof video.webkitEnterFullscreen === 'function') {
-                  try {
-                    video.webkitEnterFullscreen();
-                  } catch (err) {
-                    console.warn('[iOS Fullscreen] 唤起系统原生全屏失败:', err);
-                  }
-                }
+                setIsIPhoneCustomFullscreen((prev) => !prev);
               },
             }
           : {
@@ -653,11 +768,14 @@ export function XgVideoPlayer({
           stopFastForward();
         }
       }}
-      className={`relative w-full bg-black select-none ${
-        isFullActive
+      className={`relative bg-black select-none ${
+        isIPhoneCustomFullscreen
+          ? 'overflow-hidden'
+          : isFullActive
           ? 'fixed inset-0 z-50 w-screen h-screen rounded-none'
-          : 'aspect-video rounded-none sm:rounded-2xl overflow-hidden'
+          : 'w-full aspect-video rounded-none sm:rounded-2xl overflow-hidden'
       }`}
+      style={isIPhoneCustomFullscreen ? iPhoneFullscreenStyle : undefined}
     >
       {/* XGPlayer DOM 挂载容器 */}
       <div ref={containerRef} className="w-full h-full" />
@@ -697,7 +815,7 @@ export function XgVideoPlayer({
       {/* 左侧垂直居中悬浮：防误触「锁屏」按钮 (对齐移动端专业影院图一) */}
       {isFullActive && (
         <div
-          className={`absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-40 transition-opacity duration-300 pointer-events-auto ${
+          className={`absolute left-[max(1rem,env(safe-area-inset-left))] top-1/2 -translate-y-1/2 z-40 transition-opacity duration-300 pointer-events-auto ${
             showLockButton || isScreenLocked ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
         >
@@ -723,7 +841,7 @@ export function XgVideoPlayer({
       {/* 右侧纵向快捷跳片头/片尾按钮 (对齐移动端专业影院图二) */}
       {isFullActive && (
         <div
-          className={`absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-3 transition-opacity duration-300 pointer-events-auto ${
+          className={`absolute right-[max(1rem,env(safe-area-inset-right))] top-1/2 -translate-y-1/2 z-40 flex flex-col gap-3 transition-opacity duration-300 pointer-events-auto ${
             showControlsOverlay && !isScreenLocked ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
         >
@@ -751,7 +869,7 @@ export function XgVideoPlayer({
       {/* 顶部通栏自定义覆盖层 (仅在全屏沉浸模式下展示：退出全屏、剧名、电量、系统时间、选集与切源) */}
       {isFullActive && (
         <div
-          className={`absolute top-0 inset-x-0 z-30 flex items-center justify-between p-3.5 sm:p-4 bg-gradient-to-b from-black/85 via-black/45 to-transparent transition-opacity duration-300 pointer-events-none ${
+          className={`absolute top-0 inset-x-0 z-30 flex items-center justify-between p-3.5 sm:p-4 pl-[max(0.875rem,env(safe-area-inset-left))] pr-[max(0.875rem,env(safe-area-inset-right))] pt-[max(0.875rem,env(safe-area-inset-top))] bg-gradient-to-b from-black/85 via-black/45 to-transparent transition-opacity duration-300 pointer-events-none ${
             showControlsOverlay && !isScreenLocked ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
         >

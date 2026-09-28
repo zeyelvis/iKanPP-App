@@ -1,6 +1,12 @@
 {
-  "updatedAt": "2026-09-28T13:07:25.894Z",
+  "updatedAt": "2026-09-28T21:23:17.800Z",
   "keywords": [
+    {
+      "query": "痴迷在线观看",
+      "title": "痴迷",
+      "pos": 16.5,
+      "impressions": 14
+    },
     {
       "query": "我们战斗吧线上看",
       "title": "我们战斗吧",
@@ -10,14 +16,8 @@
     {
       "query": "在凶手的怀抱里",
       "title": "在凶手的怀抱里",
-      "pos": 12.1,
-      "impressions": 20
-    },
-    {
-      "query": "痴迷在线观看",
-      "title": "痴迷",
-      "pos": 18.3,
-      "impressions": 11
+      "pos": 11.7,
+      "impressions": 23
     },
     {
       "query": "自殺通告 線上看",
@@ -26,10 +26,10 @@
       "impressions": 9
     },
     {
-      "query": "女奴",
-      "title": "女奴",
+      "query": "超级战舰",
+      "title": "超级战舰",
       "pos": 10.2,
-      "impressions": 89
+      "impressions": 26
     },
     {
       "query": "布达佩斯大饭店",
@@ -50,28 +50,16 @@
       "impressions": 8
     },
     {
+      "query": "实习医生格蕾",
+      "title": "实习医生格蕾",
+      "pos": 24.9,
+      "impressions": 15
+    },
+    {
       "query": "热烈电影",
       "title": "热烈电影",
       "pos": 10,
       "impressions": 5
-    },
-    {
-      "query": "豺狼的日子 在线",
-      "title": "豺狼的日子 在线",
-      "pos": 12,
-      "impressions": 5
-    },
-    {
-      "query": "豺狼的日子在线观看",
-      "title": "豺狼的日子",
-      "pos": 20,
-      "impressions": 5
-    },
-    {
-      "query": "倒黴愛神",
-      "title": "倒黴愛神",
-      "pos": 18.7,
-      "impressions": 3
     }
   ]
 }
