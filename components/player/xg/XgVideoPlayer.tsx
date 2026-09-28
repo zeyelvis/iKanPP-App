@@ -525,6 +525,8 @@ export function XgVideoPlayer({
           : {
               rotateFullscreen: false,
               useCssFullscreen: false,
+              useScreenOrientation: true,
+              lockOrientationType: 'landscape',
             },
       });
 
