@@ -13,14 +13,22 @@ import { fetchJableVideoDetail } from '@/lib/server/jable-scraper';
 import { fetchIkanbotDetail } from '@/lib/server/ikanbot';
 import { parseEpisodes } from '@/lib/api/parsers';
 import { getShadowLineConfig } from '@/lib/services/shadowline-service';
-import { gzProvider } from '@/lib/services/providers/gz-provider';
+import { gzProvider, matchBestShadowLineCandidate } from '@/lib/services/providers/gz-provider';
 
 export const runtime = 'edge';
 
 /**
  * Shared handler for fetching video details
  */
-async function handleDetailRequest(id: string | null, source: any, method: string, request?: NextRequest, titleParam?: string | null) {
+async function handleDetailRequest(
+  id: string | null,
+  source: any,
+  method: string,
+  request?: NextRequest,
+  titleParam?: string | null,
+  categoryParam?: string | null,
+  yearParam?: string | null
+) {
   if (!id) {
     return NextResponse.json(
       { success: false, error: 'Missing video ID parameter' },
@@ -213,14 +221,20 @@ async function handleDetailRequest(id: string | null, source: any, method: strin
         let targetVodId = id && id !== 'shadowline' && !isNaN(Number(id)) ? id : null;
         let matchedTitle = titleParam || '';
 
-        // 如果没有数字 ID，但携带了片名 titleParam，则动态按片名搜寻
+        // 如果没有数字 ID，但携带了片名 titleParam，则动态按片名搜寻并执行多维消歧匹配
         if (!targetVodId && titleParam) {
           const cleanTitle = titleParam.replace(/[（(].*?[）)]/g, '').trim();
           const searchList = await gzProvider.search(cleanTitle);
           if (searchList && searchList.length > 0) {
-            const exact = searchList.find(s => s.title.toLowerCase() === cleanTitle.toLowerCase()) || searchList[0];
-            targetVodId = exact.vod_id;
-            matchedTitle = exact.title;
+            const matchedCandidate = matchBestShadowLineCandidate(searchList, {
+              title: cleanTitle,
+              category: categoryParam || undefined,
+              year: yearParam || undefined,
+            });
+            if (matchedCandidate) {
+              targetVodId = matchedCandidate.vod_id;
+              matchedTitle = matchedCandidate.title;
+            }
           }
         }
 
@@ -452,8 +466,10 @@ export async function GET(request: NextRequest) {
     const id = searchParams.get('id');
     const source = searchParams.get('source');
     const title = searchParams.get('title');
+    const category = searchParams.get('category') || searchParams.get('type');
+    const year = searchParams.get('year');
 
-    return await handleDetailRequest(id, source, 'GET', request, title);
+    return await handleDetailRequest(id, source, 'GET', request, title, category, year);
   } catch (error) {
     console.error('Detail API error:', error);
 
@@ -470,9 +486,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, source, title } = body;
+    const { id, source, title, category, type, year } = body;
 
-    return await handleDetailRequest(id, source, 'POST', request, title);
+    return await handleDetailRequest(id, source, 'POST', request, title, category || type, year);
   } catch (error) {
     console.error('Detail API error:', error);
 

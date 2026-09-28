@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getShadowLineConfig, getShadowLineHealth } from '@/lib/services/shadowline-service';
-import { gzProvider } from '@/lib/services/providers/gz-provider';
+import { gzProvider, matchBestShadowLineCandidate } from '@/lib/services/providers/gz-provider';
 
 export const runtime = 'edge';
 
@@ -11,7 +11,8 @@ export const runtime = 'edge';
  * 1. 0 批量预爬取：只在客户端用户点选或公网源熔断自愈时触发单点按需解析；
  * 2. 熔断守护：若后台开关已关闭或上游 offline，静默返回熔断状态，前端无缝降级；
  * 3. 直连下发：解析返回的 m3u8 直链由客户端直接播放，不经过任何反代服务；
- * 4. 高保真响应头与防指纹泄漏。
+ * 4. 高保真响应头与防指纹泄漏；
+ * 5. 多维智能消歧：彻底杜绝正片动漫/影视被同名短剧或垃圾预告营销号顶替。
  */
 
 // 内存单点缓存（TTL 2小时）
@@ -81,17 +82,20 @@ async function handleResolve(req: NextRequest) {
     let title = '';
     let episode: string | number | undefined;
     let year: string | undefined;
+    let category: string | undefined;
 
     if (req.method === 'POST') {
       const body = await req.json().catch(() => ({}));
       title = (body.title || '').trim();
       episode = body.episode;
       year = body.year;
+      category = body.category || body.type;
     } else {
       const url = new URL(req.url);
       title = (url.searchParams.get('title') || '').trim();
       episode = url.searchParams.get('episode') || undefined;
       year = url.searchParams.get('year') || undefined;
+      category = url.searchParams.get('category') || url.searchParams.get('type') || undefined;
     }
 
     if (!title) {
@@ -123,7 +127,7 @@ async function handleResolve(req: NextRequest) {
 
     // 2. 检查单点缓存
     const cleanTitle = title.replace(/[（(].*?[）)]/g, '').trim();
-    const cacheKey = `sl_res:${cleanTitle}_${episode || 'all'}`;
+    const cacheKey = `sl_res:${cleanTitle}_${category || 'any'}_${episode || 'all'}`;
     const cached = resolveCache.get(cacheKey);
     if (cached && cached.expiresAt > Date.now()) {
       return NextResponse.json(cached.data, {
@@ -148,17 +152,18 @@ async function handleResolve(req: NextRequest) {
       );
     }
 
-    // 寻找最佳匹配（片名全等 > 包含）
-    let matched = searchResults.find(
-      (item) => item.title.toLowerCase() === cleanTitle.toLowerCase()
-    );
+    // 寻找最佳匹配（多维智能消歧算法，彻底防短剧与垃圾营销号误穿）
+    const matched = matchBestShadowLineCandidate(searchResults, {
+      title: cleanTitle,
+      category,
+      year,
+    });
+
     if (!matched) {
-      matched = searchResults.find((item) =>
-        item.title.includes(cleanTitle) || cleanTitle.includes(item.title)
+      return NextResponse.json(
+        { success: false, code: 'NOT_FOUND', message: '专线片库暂未收录该影视正片' },
+        { status: 200, headers: corsHeaders }
       );
-    }
-    if (!matched) {
-      matched = searchResults[0];
     }
 
     // 5. 换取播放列表 (m3u8 直链)

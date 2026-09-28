@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { settingsStore } from '@/lib/store/settings-store';
 import { resolveEpisodeIndex } from '@/lib/utils/episode-resolver';
 
@@ -46,6 +47,9 @@ export function useVideoPlayer(
   const [currentEpisode, setCurrentEpisode] = useState(0);
   const [playUrl, setPlayUrl] = useState('');
   const [videoError, setVideoError] = useState<string>('');
+  const searchParams = useSearchParams();
+  const currentCategory = searchParams?.get('type') || searchParams?.get('category') || '';
+  const currentYear = searchParams?.get('year') || '';
 
   // Refs to keep track of latest values for the fetch function without re-triggering it
   // This solves the stale closure problem while keeping fetchVideoDetails stable for the player
@@ -101,11 +105,19 @@ export function useVideoPlayer(
         response = await fetch('/api/detail', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: videoId, source: sourceConfig, title: currentTitle })
+          body: JSON.stringify({
+            id: videoId,
+            source: sourceConfig,
+            title: currentTitle,
+            category: currentCategory,
+            year: currentYear,
+          })
         });
       } else {
         const titleQuery = currentTitle ? `&title=${encodeURIComponent(currentTitle)}` : '';
-        response = await fetch(`/api/detail?id=${videoId}&source=${source}${titleQuery}`);
+        const catQuery = currentCategory ? `&category=${encodeURIComponent(currentCategory)}` : '';
+        const yearQuery = currentYear ? `&year=${encodeURIComponent(currentYear)}` : '';
+        response = await fetch(`/api/detail?id=${videoId}&source=${source}${titleQuery}${catQuery}${yearQuery}`);
       }
 
       const data = await response.json();
