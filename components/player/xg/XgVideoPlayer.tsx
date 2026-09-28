@@ -76,6 +76,7 @@ export function XgVideoPlayer({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isCssFullscreen, setIsCssFullscreen] = useState(false);
   const [isRotateFullscreen, setIsRotateFullscreen] = useState(false);
+  const isFullActive = isFullscreen || isCssFullscreen || isRotateFullscreen;
 
   // 防误触锁屏状态
   const [isScreenLocked, setIsScreenLocked] = useState(false);
@@ -229,19 +230,28 @@ export function XgVideoPlayer({
   const handleBackAction = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
     const player = playerRef.current;
-    if (player && (isFullscreen || isCssFullscreen || isRotateFullscreen)) {
-      if (isFullscreen) player.exitFullscreen();
-      if (isCssFullscreen) player.exitCssFullscreen();
-      if (isRotateFullscreen && typeof (player as any).setRotateDeg === 'function') {
-        (player as any).setRotateDeg(0);
+    if (player) {
+      const video = player.video as any;
+      if (video && typeof video.webkitExitFullscreen === 'function' && video.webkitDisplayingFullscreen) {
+        try {
+          video.webkitExitFullscreen();
+        } catch (_) {}
       }
-      setIsFullscreen(false);
-      setIsCssFullscreen(false);
-      setIsRotateFullscreen(false);
-      return;
+      if (player.fullscreen) {
+        try {
+          player.exitFullscreen();
+        } catch (_) {}
+      }
     }
-    onBack?.();
-  }, [isFullscreen, isCssFullscreen, isRotateFullscreen, onBack]);
+    setIsFullscreen(false);
+    setIsCssFullscreen(false);
+    setIsRotateFullscreen(false);
+
+    // 仅在非全屏模式下才真正执行路由返回
+    if (!isFullActive) {
+      onBack?.();
+    }
+  }, [isFullActive, onBack]);
 
   // 启动 5.0x 极速快进
   const startFastForward = useCallback(() => {
@@ -460,6 +470,11 @@ export function XgVideoPlayer({
       playerRef.current = null;
     }
 
+    const isIPhone = typeof navigator !== 'undefined' && /iPhone|iPod/.test(navigator.userAgent);
+    let videoEl: HTMLVideoElement | null = null;
+    let handleWebkitBegin: (() => void) | null = null;
+    let handleWebkitEnd: (() => void) | null = null;
+
     try {
       const player = new Player({
         el: containerRef.current,
@@ -482,23 +497,53 @@ export function XgVideoPlayer({
         screenShot: true,
         keyShortcut: false, // 禁用 XG 原生重复触发快捷键，由上层自研长按 5.0x 控制器接管
         controls: true,
-        marginControls: true,
         crossOrigin: false,
         lang: 'zh-cn',
-        // 移动端防系统 QuickTime 劫持与旋转横屏全屏配置
+        // 移动端正常嵌入播放
         playsinline: true,
         'webkit-playsinline': true,
         'x5-video-player-type': 'h5-page',
         'x5-video-player-fullscreen': 'true',
         'x5-playsinline': 'true',
-        fullscreen: {
-          rotateFullscreen: true,      // 移动端全屏时自动旋转 90 度模拟横屏
-          useCssFullscreen: true,      // 优先使用 DOM 级全屏，杜绝 iOS QuickTime
-        },
-        rotateFullscreen: true,
+        // 彻底杜绝生硬的 CSS 旋转假全屏（严禁 rotateFullscreen，避免高度拉伸变形与漏底）
+        rotateFullscreen: false,
+        fullscreen: isIPhone
+          ? {
+              rotateFullscreen: false,
+              useCssFullscreen: false,
+              switchCallback: () => {
+                const video = (playerRef.current?.video || containerRef.current?.querySelector('video')) as any;
+                if (video && typeof video.webkitEnterFullscreen === 'function') {
+                  try {
+                    video.webkitEnterFullscreen();
+                  } catch (err) {
+                    console.warn('[iOS Fullscreen] 唤起系统原生全屏失败:', err);
+                  }
+                }
+              },
+            }
+          : {
+              rotateFullscreen: false,
+              useCssFullscreen: false,
+            },
       });
 
       playerRef.current = player;
+
+      // 监听 iOS 原生视频全屏生命周期 (WebKit enter/exit fullscreen)
+      videoEl = (player.video || containerRef.current?.querySelector('video')) as HTMLVideoElement | null;
+      if (videoEl) {
+        handleWebkitBegin = () => {
+          setIsFullscreen(true);
+          player.emit('fullscreen_change', true);
+        };
+        handleWebkitEnd = () => {
+          setIsFullscreen(false);
+          player.emit('fullscreen_change', false);
+        };
+        videoEl.addEventListener('webkitbeginfullscreen', handleWebkitBegin);
+        videoEl.addEventListener('webkitendfullscreen', handleWebkitEnd);
+      }
 
       // 绑定全屏与旋转全屏事件
       player.on('fullscreen_change', (isFull: boolean) => {
@@ -548,14 +593,16 @@ export function XgVideoPlayer({
     }
 
     return () => {
+      if (videoEl && handleWebkitBegin && handleWebkitEnd) {
+        videoEl.removeEventListener('webkitbeginfullscreen', handleWebkitBegin);
+        videoEl.removeEventListener('webkitendfullscreen', handleWebkitEnd);
+      }
       if (playerRef.current) {
         playerRef.current.destroy();
         playerRef.current = null;
       }
     };
   }, [src, poster, shouldAutoPlay, initialTime, handleTriggerControls, sourceDrawerOpen, episodeDrawerOpen]);
-
-  const isFullActive = isFullscreen || isCssFullscreen || isRotateFullscreen;
 
   return (
     <div
@@ -699,99 +746,101 @@ export function XgVideoPlayer({
         </div>
       )}
 
-      {/* 顶部通栏自定义覆盖层 (返回、剧名、电量、系统时间、选集与切源) */}
-      <div
-        className={`absolute top-0 inset-x-0 z-30 flex items-center justify-between p-3.5 sm:p-4 bg-gradient-to-b from-black/85 via-black/45 to-transparent transition-opacity duration-300 pointer-events-none ${
-          showControlsOverlay && !isScreenLocked ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
-      >
-        {/* 左侧：返回键与影视信息 */}
-        <div className="flex items-center gap-2.5 sm:gap-3 pointer-events-auto">
-          <button
-            onClick={handleBackAction}
-            className="p-2 rounded-full bg-black/50 hover:bg-white/20 text-white transition-colors border border-white/10 active:scale-95"
-            title={isFullActive ? '退出全屏' : '返回'}
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
+      {/* 顶部通栏自定义覆盖层 (仅在全屏沉浸模式下展示：退出全屏、剧名、电量、系统时间、选集与切源) */}
+      {isFullActive && (
+        <div
+          className={`absolute top-0 inset-x-0 z-30 flex items-center justify-between p-3.5 sm:p-4 bg-gradient-to-b from-black/85 via-black/45 to-transparent transition-opacity duration-300 pointer-events-none ${
+            showControlsOverlay && !isScreenLocked ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
+        >
+          {/* 左侧：退出全屏返回键与影视信息 */}
+          <div className="flex items-center gap-2.5 sm:gap-3 pointer-events-auto">
+            <button
+              onClick={handleBackAction}
+              className="p-2 rounded-full bg-black/50 hover:bg-white/20 text-white transition-colors border border-white/10 active:scale-95"
+              title="退出全屏"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
 
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-bold text-white drop-shadow truncate max-w-[180px] sm:max-w-md">
-                {videoTitle}
-              </h2>
-              {isShadowLineSource && (
-                <span className="hidden sm:flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500/30 to-indigo-500/30 border border-purple-500/40 text-purple-200 shadow-sm animate-pulse">
-                  <Radio className="w-3 h-3 text-purple-400" />
-                  暗影 4K 原画
-                </span>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm font-bold text-white drop-shadow truncate max-w-[180px] sm:max-w-md">
+                  {videoTitle}
+                </h2>
+                {isShadowLineSource && (
+                  <span className="hidden sm:flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500/30 to-indigo-500/30 border border-purple-500/40 text-purple-200 shadow-sm animate-pulse">
+                    <Radio className="w-3 h-3 text-purple-400" />
+                    暗影 4K 原画
+                  </span>
+                )}
+              </div>
+              {episodeName && (
+                <span className="text-xs text-slate-300/80 drop-shadow">{episodeName}</span>
               )}
             </div>
-            {episodeName && (
-              <span className="text-xs text-slate-300/80 drop-shadow">{episodeName}</span>
+          </div>
+
+          {/* 右侧：系统时间、电池电量、投屏、换源与选集 */}
+          <div className="flex items-center gap-2 sm:gap-2.5 pointer-events-auto">
+            {/* 实时时间 (移动端专业状态栏) */}
+            {systemTime && (
+              <span className="text-xs font-mono font-semibold text-white/90 drop-shadow px-1.5 hidden xs:inline-block">
+                {systemTime}
+              </span>
+            )}
+
+            {/* 实时电量胶囊 */}
+            {batteryLevel !== null && (
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/40 border border-white/15 text-[11px] font-mono text-white/90 drop-shadow">
+                {isCharging ? (
+                  <BatteryCharging className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                ) : (
+                  <Battery className="w-3.5 h-3.5 text-white/80" />
+                )}
+                <span>{batteryLevel}%</span>
+              </div>
+            )}
+
+            {/* 投屏 (TV) 按钮 */}
+            <button
+              onClick={handleAirPlay}
+              className="p-1.5 rounded-lg bg-black/50 hover:bg-white/15 text-white text-xs flex items-center justify-center border border-white/15 transition-all hover:scale-105 active:scale-95"
+              title="投屏播放"
+            >
+              <Tv className="w-4 h-4 text-emerald-400" />
+            </button>
+
+            {/* 换源抽屉 */}
+            {sources.length > 0 && (
+              <button
+                onClick={() => setSourceDrawerOpen(true)}
+                className="px-2.5 py-1.5 rounded-lg bg-black/50 hover:bg-white/15 text-white text-xs flex items-center gap-1.5 border border-white/15 transition-all hover:scale-105 active:scale-95"
+              >
+                <Layers className="w-3.5 h-3.5 text-amber-400" />
+                <span className="hidden sm:inline">换源</span>
+                {currentSource && (
+                  <span className="text-[10px] text-slate-400 font-mono hidden md:inline">({currentSource})</span>
+                )}
+              </button>
+            )}
+
+            {/* 选集抽屉 */}
+            {episodes.length > 1 && (
+              <button
+                onClick={() => setEpisodeDrawerOpen(true)}
+                className="px-2.5 py-1.5 rounded-lg bg-black/50 hover:bg-white/15 text-white text-xs flex items-center gap-1.5 border border-white/15 transition-all hover:scale-105 active:scale-95"
+              >
+                <ListVideo className="w-3.5 h-3.5 text-sky-400" />
+                <span>选集</span>
+                <span className="text-[10px] text-slate-400 font-mono">
+                  ({currentEpisodeIndex + 1}/{totalEpisodes})
+                </span>
+              </button>
             )}
           </div>
         </div>
-
-        {/* 右侧：系统时间、电池电量、投屏、换源与选集 */}
-        <div className="flex items-center gap-2 sm:gap-2.5 pointer-events-auto">
-          {/* 实时时间 (移动端专业状态栏) */}
-          {systemTime && isFullActive && (
-            <span className="text-xs font-mono font-semibold text-white/90 drop-shadow px-1.5 hidden xs:inline-block">
-              {systemTime}
-            </span>
-          )}
-
-          {/* 实时电量胶囊 */}
-          {batteryLevel !== null && isFullActive && (
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/40 border border-white/15 text-[11px] font-mono text-white/90 drop-shadow">
-              {isCharging ? (
-                <BatteryCharging className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-              ) : (
-                <Battery className="w-3.5 h-3.5 text-white/80" />
-              )}
-              <span>{batteryLevel}%</span>
-            </div>
-          )}
-
-          {/* 投屏 (TV) 按钮 */}
-          <button
-            onClick={handleAirPlay}
-            className="p-1.5 rounded-lg bg-black/50 hover:bg-white/15 text-white text-xs flex items-center justify-center border border-white/15 transition-all hover:scale-105 active:scale-95"
-            title="投屏播放"
-          >
-            <Tv className="w-4 h-4 text-emerald-400" />
-          </button>
-
-          {/* 换源抽屉 */}
-          {sources.length > 0 && (
-            <button
-              onClick={() => setSourceDrawerOpen(true)}
-              className="px-2.5 py-1.5 rounded-lg bg-black/50 hover:bg-white/15 text-white text-xs flex items-center gap-1.5 border border-white/15 transition-all hover:scale-105 active:scale-95"
-            >
-              <Layers className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden sm:inline">换源</span>
-              {currentSource && (
-                <span className="text-[10px] text-slate-400 font-mono hidden md:inline">({currentSource})</span>
-              )}
-            </button>
-          )}
-
-          {/* 选集抽屉 */}
-          {episodes.length > 1 && (
-            <button
-              onClick={() => setEpisodeDrawerOpen(true)}
-              className="px-2.5 py-1.5 rounded-lg bg-black/50 hover:bg-white/15 text-white text-xs flex items-center gap-1.5 border border-white/15 transition-all hover:scale-105 active:scale-95"
-            >
-              <ListVideo className="w-3.5 h-3.5 text-sky-400" />
-              <span>选集</span>
-              <span className="text-[10px] text-slate-400 font-mono">
-                ({currentEpisodeIndex + 1}/{totalEpisodes})
-              </span>
-            </button>
-          )}
-        </div>
-      </div>
+      )}
 
       {/* 侧边切源抽屉 */}
       <InPlayerSourceDrawer

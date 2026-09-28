@@ -62,11 +62,13 @@
   display: block !important;
 }
 
-/* 时间文字居中微调 */
-.xgplayer .xgplayer-time {
-  display: inline-flex !important;
-  align-items: center !important;
-  vertical-align: middle !important;
+/* 时间文字微调与移动端防粘连规范：严禁强制覆盖 display: inline-flex 避免击穿移动端 flex 模式下的 display: none 导致 00:00/00:00 粘连 */
+.xgplayer .xgplayer-time[style*="display: none"] {
+  display: none !important;
+}
+
+.xgplayer:not(.xgplayer-mobile) .xgplayer-time {
+  vertical-align: middle;
 }
 
 /* 解决全屏伪类兼容性：严禁将 :fullscreen 与 :-webkit-full-screen 逗号合写 */
