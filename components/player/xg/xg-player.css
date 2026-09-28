@@ -14,9 +14,7 @@
 
 /* XGPlayer 原生控件美化 - 高级黑金调色 */
 .xgplayer .xgplayer-controls {
-  background: linear-gradient(180deg, transparent 0%, rgba(7, 7, 11, 0.85) 100%) !important;
-  height: 54px !important;
-  padding: 0 16px !important;
+  background: linear-gradient(180deg, transparent 0%, rgba(7, 7, 11, 0.88) 100%) !important;
 }
 
 /* 进度条轨道与滑块 */
@@ -26,6 +24,49 @@
 
 .xgplayer .xgplayer-progress-btn {
   box-shadow: 0 0 10px rgba(220, 38, 38, 0.6) !important;
+}
+
+/* 彻底解决 Tailwind v4 全局预设 (svg:not(##) { display: block }) 破坏 XGPlayer 图标状态切换导致的排版错位与图标重叠堆积 */
+.xgplayer .xgplayer-play .xg-icon-play,
+.xgplayer .xgplayer-play[data-state="pause"] .xg-icon-pause,
+.xgplayer .xgplayer-fullscreen .xg-exit-fullscreen,
+.xgplayer .xgplayer-fullscreen[data-state="full"] .xg-get-fullscreen,
+.xgplayer .xgplayer-cssfullscreen .xg-exit-cssfull,
+.xgplayer .xgplayer-cssfullscreen[data-state="full"] .xg-get-cssfull,
+.xgplayer .xgplayer-pip .xg-exit-pip,
+.xgplayer .xgplayer-pip[data-state="pip"] .xg-get-pip,
+.xgplayer .xgplayer-start .xg-icon-pause,
+.xgplayer .xgplayer-start[data-state="pause"] .xg-icon-play,
+.xgplayer .xgplayer-volume[data-state="normal"] .xg-volume-small,
+.xgplayer .xgplayer-volume[data-state="normal"] .xg-volume-mute,
+.xgplayer .xgplayer-volume[data-state="small"] .xg-volume,
+.xgplayer .xgplayer-volume[data-state="small"] .xg-volume-mute,
+.xgplayer .xgplayer-volume[data-state="mute"] .xg-volume,
+.xgplayer .xgplayer-volume[data-state="mute"] .xg-volume-small {
+  display: none !important;
+}
+
+.xgplayer .xgplayer-play .xg-icon-pause,
+.xgplayer .xgplayer-play[data-state="pause"] .xg-icon-play,
+.xgplayer .xgplayer-fullscreen .xg-get-fullscreen,
+.xgplayer .xgplayer-fullscreen[data-state="full"] .xg-exit-fullscreen,
+.xgplayer .xgplayer-cssfullscreen .xg-get-cssfull,
+.xgplayer .xgplayer-cssfullscreen[data-state="full"] .xg-exit-cssfull,
+.xgplayer .xgplayer-pip .xg-get-pip,
+.xgplayer .xgplayer-pip[data-state="pip"] .xg-exit-pip,
+.xgplayer .xgplayer-start .xg-icon-play,
+.xgplayer .xgplayer-start[data-state="pause"] .xg-icon-pause,
+.xgplayer .xgplayer-volume[data-state="normal"] .xg-volume,
+.xgplayer .xgplayer-volume[data-state="small"] .xg-volume-small,
+.xgplayer .xgplayer-volume[data-state="mute"] .xg-volume-mute {
+  display: block !important;
+}
+
+/* 时间文字居中微调 */
+.xgplayer .xgplayer-time {
+  display: inline-flex !important;
+  align-items: center !important;
+  vertical-align: middle !important;
 }
 
 /* 解决全屏伪类兼容性：严禁将 :fullscreen 与 :-webkit-full-screen 逗号合写 */
