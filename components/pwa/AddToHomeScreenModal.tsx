@@ -281,16 +281,22 @@ export function AddToHomeScreenModal() {
                   <button
                     type="button"
                     onClick={handleIosProfileInstall}
-                    className="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 font-medium text-xs transition-all text-center"
+                    className="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 font-medium text-xs transition-all text-center cursor-pointer"
                   >
                     重新下载
                   </button>
                   <button
                     type="button"
-                    onClick={handleDismiss}
-                    className="flex-1 py-2 rounded-xl bg-red-600 hover:bg-red-500 font-bold text-xs text-white transition-all text-center shadow-lg shadow-red-600/30"
+                    onClick={() => {
+                      handleDismiss();
+                      try {
+                        window.location.href = 'App-Prefs:root=General&path=ManagedConfigurationList';
+                      } catch (_) {}
+                    }}
+                    className="flex-1 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 font-bold text-xs text-white transition-all text-center shadow-lg shadow-red-600/30 cursor-pointer flex items-center justify-center gap-1"
                   >
-                    去设置安装
+                    <span>去设置安装</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
