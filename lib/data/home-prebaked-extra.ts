@@ -17,12 +17,12 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "凡人修仙传",
+        "title": "海贼王",
         "updateBadge": ""
     },
     {
-        "title": "海贼王",
-        "updateBadge": "1"
+        "title": "凡人修仙传",
+        "updateBadge": ""
     },
     {
         "title": "牧神记",
@@ -33,11 +33,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "无上神帝",
-        "updateBadge": "1"
-    },
-    {
-        "title": "无职转生到了异世界就拿出真本事第3季",
+        "title": "吞噬星空",
         "updateBadge": ""
     },
     {
@@ -49,12 +45,16 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "灵武大陆",
-        "updateBadge": "1"
+        "title": "无职转生到了异世界就拿出真本事第3季",
+        "updateBadge": ""
     },
     {
         "title": "名侦探柯南",
         "updateBadge": ""
+    },
+    {
+        "title": "无上神帝",
+        "updateBadge": "1"
     }
   ],
   hero: [
@@ -632,14 +632,18 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "心动的信号第9季",
-        "updateBadge": ""
+        "updateBadge": "4"
     },
     {
         "title": "我家那闺女2026",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
         "title": "花儿与少年第8季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "一饭封神第2季",
         "updateBadge": ""
     },
     {
@@ -647,16 +651,12 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "一饭封神第2季",
+        "title": "你好星期六",
         "updateBadge": ""
     },
     {
         "title": "大哥小助理",
-        "updateBadge": ""
-    },
-    {
-        "title": "你好星期六",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
         "title": "密室大逃脱第8季",
@@ -687,13 +687,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608271524382431872.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111844144414888.jpg",
-        "description": "《我家那闺女2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260927(第5期下)。",
+        "description": "《我家那闺女2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260928(加更版)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260927(第5期下)",
+        "episodes_info": "更新至20260928(加更版)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -704,13 +704,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609041706270661205.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609111843274326403.jpg",
-        "description": "《花儿与少年第8季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260927(加更版)。",
+        "description": "《花儿与少年第8季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260928(陪看)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260927(加更版)",
+        "episodes_info": "更新至20260928(陪看)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -721,13 +721,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608251140484004368.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202608261125552551744.jpg",
-        "description": "《舞蹈新风暴》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260923(Plus)。",
+        "description": "《舞蹈新风暴》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260928(风暴进行时)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260923(Plus)",
+        "episodes_info": "更新至20260928(风暴进行时)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -755,13 +755,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607311122522270150.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202608031821302167723.jpg",
-        "description": "《心动的信号第9季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260927(花絮特辑)。",
+        "description": "《心动的信号第9季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260928(第9期中纯享)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260927(花絮特辑)",
+        "episodes_info": "更新至20260928(第9期中纯享)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1237,82 +1237,145 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "今日宜偏爱",
-          "updateBadge": "34"
-      },
-      {
-          "title": "前任全家京夜为她着迷",
+          "title": "和冰山女神绝地逃生",
           "updateBadge": "HOT"
       },
       {
-          "title": "顶流老公你别慌，我只倒霉但不渣",
+          "title": "逆袭开宝箱，前妻一家崩溃了",
           "updateBadge": "HOT"
       },
       {
-          "title": "我家楼下的陌生人",
+          "title": "所城里的夏天",
           "updateBadge": "HOT"
       },
       {
-          "title": "宠妻老公怎么天天催我离婚",
+          "title": "二嫁高枝",
           "updateBadge": "HOT"
       },
       {
-          "title": "领证后新婚老公不装了",
+          "title": "假装在月亮心口撒个娇",
+          "updateBadge": "全"
+      },
+      {
+          "title": "大小姐回京后整顿侯府满门",
           "updateBadge": "HOT"
       },
       {
-          "title": "暮色正浓",
+          "title": "如诗说一千里共明月",
           "updateBadge": "HOT"
       },
       {
-          "title": "逍遥镇北王",
+          "title": "漫长的告白",
+          "updateBadge": "全"
+      },
+      {
+          "title": "人人嫌猎户粗野，唯有我听见他真心",
+          "updateBadge": "全"
+      },
+      {
+          "title": "蛮女养蛊也养夫",
           "updateBadge": "HOT"
       },
       {
-          "title": "艳却含霜",
-          "updateBadge": "HOT"
+          "title": "暗夜闻香",
+          "updateBadge": "全"
       },
       {
-          "title": "五十岁爷们闪婚了",
-          "updateBadge": "HOT"
-      },
-      {
-          "title": "南城风云之马仔逆袭计",
-          "updateBadge": "HOT"
-      },
-      {
-          "title": "长街商潮",
-          "updateBadge": "HOT"
+          "title": "觉醒伪神神明弃我我自为神4",
+          "updateBadge": "全"
       }
   ],
   hero: [
       {
-          "id": "jl_short_629822003276152800",
-          "title": "今日宜偏爱",
-          "rate": "8.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/290589/poster/9fc43b5ea049f8e0325db600a8a59e5e5792bd76c1a41aaec0f54d12eb936216.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/tmdb/tv/290589/poster/9fc43b5ea049f8e0325db600a8a59e5e5792bd76c1a41aaec0f54d12eb936216.jpg",
-          "description": "更新第34集",
-          "year": "2024",
+          "id": "jl_short_633356402177409000",
+          "title": "假装在月亮心口撒个娇",
+          "rate": "9.1",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/9abec981787b4108bdf7819ca3267842ac30b7a893e6a929223d994232d70f78.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/9abec981787b4108bdf7819ca3267842ac30b7a893e6a929223d994232d70f78.jpg",
+          "description": "重生归来的周岁岁，决心守护哥哥周岁安，对抗心机重生的苏婉。周岁安终于得知女儿傅小念的身世，与影后傅年笙解开过往误会。周岁岁和江宗砚双向奔赴，冲破重重阻碍。众人联手搜集证据，扳倒作恶的傅衍成与向凌霄。经历坠海危机的生死考验后，岁岁与江宗砚修成正果领证结婚，周岁安也直面内心感情。在爱恨纠葛、复仇与救赎过...",
+          "year": "2026",
           "types": [
               "短剧",
               "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全119集·更新至34集",
+          "episodes_info": "全261集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "阳兵卓 / 龚婉怡"
+              "短剧实力派"
           ]
       },
       {
-          "id": "jl_short_639233743269200100",
-          "title": "前任全家京夜为她着迷",
-          "rate": "9.5",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/1cbb91e079df7e59071cda3f72c8d4cce306a7fc0e0524755f68594354eb4290.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/1cbb91e079df7e59071cda3f72c8d4cce306a7fc0e0524755f68594354eb4290.jpg",
+          "id": "jl_short_639233743269790000",
+          "title": "漫长的告白",
+          "rate": "8.9",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/cfbcbe9dfdfd0aad529d9b8a46960804ac58e531ccaca3903d025d9bb7733516.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/cfbcbe9dfdfd0aad529d9b8a46960804ac58e531ccaca3903d025d9bb7733516.jpg",
+          "description": "少年时代的立冬（张鲁一 饰）曾爱慕过一位叫阿川（倪妮 饰）的女子，但在某一天阿川的突然失踪成为了他十几年解不开的心结。为一解思念，立冬与哥哥立春（辛柏青 饰）去到与阿川同名的柳川，只为再见她一面。随着他们的再次相遇，很多过去的故事的真相浮出水面，立冬也知晓了阿川当年离开的真正原因，而他对阿川深藏的爱...",
+          "year": "2021",
+          "types": [
+              "短剧",
+              "女频恋爱",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "林秋一 / 田欣雅"
+          ]
+      },
+      {
+          "id": "jl_short_637690562023064300",
+          "title": "人人嫌猎户粗野，唯有我听见他真心",
+          "rate": "9.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d3f510ff1f5e9e29270851570f4feb2c659258f6867f528c1067d604670e317e.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d3f510ff1f5e9e29270851570f4feb2c659258f6867f528c1067d604670e317e.jpg",
+          "description": "乔清妍意外解锁读心术，撞破重生继姐陈晓梦设局抢走她的婚约。她清醒手撕渣男贱女、果断退婚，却被偏心家人逼迫替嫁深山糙汉猎户萧劲野。她硬刚拿下双倍嫁妆底气出嫁，贫寒婆家却格外暖心疼她。新婚夜萧劲野避婚不归，乔清妍意外发现，这位高冷强悍的糙汉，竟是儿时救过自己的少年，宿命甜恋就此开启。",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全295集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "短剧实力派"
+          ]
+      },
+      {
+          "id": "jl_short_639017744196436700",
+          "title": "暗夜闻香",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/c2308fc327cefc05fe7dc1f24053c084fa2ac1f70e57d984ce90712a70db0468.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/c2308fc327cefc05fe7dc1f24053c084fa2ac1f70e57d984ce90712a70db0468.jpg",
+          "description": "江城雪夜，面馆老板娘于清梅撞见了浑身浴血的萧寒深。一方绣梅手帕，一枚白玉环佩，牵起两人命运的伏笔。为给含冤入狱的父母翻案，清梅踏入萧府。原以为最难熬的是规矩是非，没想到真正让她无所适从的，是那个传说中冷硬如冰、失语多年的家主，也是雪夜里她救下的男人。阖府上下都知，寒深不近女色，可他却将清梅刻进了骨子...",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "张旋 / 张雅梦"
+          ]
+      },
+      {
+          "id": "jl_short_636745930405577200",
+          "title": "和冰山女神绝地逃生",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/fcf91f47358a5600690b3ddb8931a5116fcce170ec961990c691c5ee07db62e5.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/fcf91f47358a5600690b3ddb8931a5116fcce170ec961990c691c5ee07db62e5.jpg",
           "description": "更新全集",
           "year": "2026",
           "types": [
@@ -1320,20 +1383,41 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
               "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全80集·更新全集",
+          "episodes_info": "全101集·更新全集",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "戚羽佳&李思君"
+              "魏琳儒&于家辉"
           ]
       },
       {
-          "id": "jl_short_639233743302820100",
-          "title": "顶流老公你别慌，我只倒霉但不渣",
-          "rate": "8.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/c8fd4d9a35ba6b73f8263f75aa5769de993c3f1408a5ecb83f4768ded3ed29cc.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/c8fd4d9a35ba6b73f8263f75aa5769de993c3f1408a5ecb83f4768ded3ed29cc.jpg",
+          "id": "jl_short_636751498646192600",
+          "title": "逆袭开宝箱，前妻一家崩溃了",
+          "rate": "8.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/e5eda1df3e69085c333cffa7e3a9bc97595f420e8eea7b5a6be9bbf3b45a8881.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/e5eda1df3e69085c333cffa7e3a9bc97595f420e8eea7b5a6be9bbf3b45a8881.jpg",
+          "description": "更新全集",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全147集·更新全集",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "郭澈&张瀚林"
+          ]
+      },
+      {
+          "id": "jl_short_636745931730977300",
+          "title": "所城里的夏天",
+          "rate": "8.2",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/3a5c5d96dae7bf094d04069b6861e0f1d9d4b5d6bb34cd274066ab168495a55f.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/3a5c5d96dae7bf094d04069b6861e0f1d9d4b5d6bb34cd274066ab168495a55f.jpg",
           "description": "更新全集",
           "year": "2026",
           "types": [
@@ -1341,20 +1425,20 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
               "女频恋爱",
               "全集连播"
           ],
-          "episodes_info": "全80集·更新全集",
+          "episodes_info": "全121集·更新全集",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "周若绮&聂文华"
+              "朱傲宇＆张宗坤"
           ]
       },
       {
-          "id": "jl_short_639233743269396700",
-          "title": "我家楼下的陌生人",
-          "rate": "8.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/f31ea6c06460c7d5f4afc7ac02eed8824a73ae07db55dc5b36667ea5a7cbc35f.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/f31ea6c06460c7d5f4afc7ac02eed8824a73ae07db55dc5b36667ea5a7cbc35f.jpg",
+          "id": "jl_short_636745928023212500",
+          "title": "二嫁高枝",
+          "rate": "8.6",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d4c8492924f1accdc84c06490317c2cc1f8ba275ba9e131e334df290cf0f2de8.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d4c8492924f1accdc84c06490317c2cc1f8ba275ba9e131e334df290cf0f2de8.jpg",
           "description": "更新全集",
           "year": "2026",
           "types": [
@@ -1362,135 +1446,51 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
               "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全80集·更新全集",
+          "episodes_info": "全143集·更新全集",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "周政&吴克刚"
-          ]
-      },
-      {
-          "id": "jl_short_639233743269265700",
-          "title": "宠妻老公怎么天天催我离婚",
-          "rate": "9.6",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/c1fffcf9048ef6e50d3dc8f88a6a035a60625f0b48dd7f6b6fccb209db833eca.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/c1fffcf9048ef6e50d3dc8f88a6a035a60625f0b48dd7f6b6fccb209db833eca.jpg",
-          "description": "更新全集",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·更新全集",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "韩品杰&孟寒雪"
-          ]
-      },
-      {
-          "id": "jl_short_639233743269855500",
-          "title": "领证后新婚老公不装了",
-          "rate": "9.0",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/7046aa5937d7be13f10558f8f9b27e1ef546c9ea87b86d63795bc93fd14591ca.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/7046aa5937d7be13f10558f8f9b27e1ef546c9ea87b86d63795bc93fd14591ca.jpg",
-          "description": "更新全集",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·更新全集",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "韩品杰&成梓宁"
-          ]
-      },
-      {
-          "id": "jl_short_639233743319531800",
-          "title": "暮色正浓",
-          "rate": "8.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/11f959a26d984e0d45ad48caeb80c0bea16704d5b1c4ec777e1ad5161a888f99.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/11f959a26d984e0d45ad48caeb80c0bea16704d5b1c4ec777e1ad5161a888f99.jpg",
-          "description": "更新全集",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·更新全集",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "胡璇璇&蒋德亮"
-          ]
-      },
-      {
-          "id": "jl_short_639233743252357400",
-          "title": "逍遥镇北王",
-          "rate": "9.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/e9999325a85535fda5d5a24b205c9c0c9b0898bd60eaf68a40c503e0af3f8844.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/e9999325a85535fda5d5a24b205c9c0c9b0898bd60eaf68a40c503e0af3f8844.jpg",
-          "description": "更新全集",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "古装仙侠",
-              "全集连播"
-          ],
-          "episodes_info": "全80集·更新全集",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "张元帅&王硕"
+              "谢茗宇＆李静一"
           ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "今日宜偏爱",
-      rate: "8.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/tmdb/tv/290589/poster/9fc43b5ea049f8e0325db600a8a59e5e5792bd76c1a41aaec0f54d12eb936216.jpg",
-      year: "2024",
+      title: "假装在月亮心口撒个娇",
+      rate: "9.1",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/9abec981787b4108bdf7819ca3267842ac30b7a893e6a929223d994232d70f78.jpg",
+      year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: "前任全家京夜为她着迷",
-      rate: "9.5",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/1cbb91e079df7e59071cda3f72c8d4cce306a7fc0e0524755f68594354eb4290.jpg",
+      title: "漫长的告白",
+      rate: "8.9",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/cfbcbe9dfdfd0aad529d9b8a46960804ac58e531ccaca3903d025d9bb7733516.jpg",
+      year: "2021",
+      types: ["短剧","女频恋爱","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_3',
+      title: "人人嫌猎户粗野，唯有我听见他真心",
+      rate: "9.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d3f510ff1f5e9e29270851570f4feb2c659258f6867f528c1067d604670e317e.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_3',
-      title: "顶流老公你别慌，我只倒霉但不渣",
-      rate: "8.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/c8fd4d9a35ba6b73f8263f75aa5769de993c3f1408a5ecb83f4768ded3ed29cc.jpg",
-      year: "2026",
-      types: ["短剧","女频恋爱","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
       id: 'pb_s_top_4',
-      title: "我家楼下的陌生人",
-      rate: "8.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/f31ea6c06460c7d5f4afc7ac02eed8824a73ae07db55dc5b36667ea5a7cbc35f.jpg",
+      title: "暗夜闻香",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/c2308fc327cefc05fe7dc1f24053c084fa2ac1f70e57d984ce90712a70db0468.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1498,9 +1498,9 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_5',
-      title: "宠妻老公怎么天天催我离婚",
-      rate: "9.6",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/c1fffcf9048ef6e50d3dc8f88a6a035a60625f0b48dd7f6b6fccb209db833eca.jpg",
+      title: "和冰山女神绝地逃生",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/fcf91f47358a5600690b3ddb8931a5116fcce170ec961990c691c5ee07db62e5.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1508,9 +1508,9 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_6',
-      title: "领证后新婚老公不装了",
-      rate: "9.0",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/7046aa5937d7be13f10558f8f9b27e1ef546c9ea87b86d63795bc93fd14591ca.jpg",
+      title: "逆袭开宝箱，前妻一家崩溃了",
+      rate: "8.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/e5eda1df3e69085c333cffa7e3a9bc97595f420e8eea7b5a6be9bbf3b45a8881.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1518,21 +1518,21 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_7',
-      title: "暮色正浓",
-      rate: "8.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/11f959a26d984e0d45ad48caeb80c0bea16704d5b1c4ec777e1ad5161a888f99.jpg",
+      title: "所城里的夏天",
+      rate: "8.2",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/3a5c5d96dae7bf094d04069b6861e0f1d9d4b5d6bb34cd274066ab168495a55f.jpg",
       year: "2026",
-      types: ["短剧","现代都市","全集连播"],
+      types: ["短剧","女频恋爱","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_8',
-      title: "逍遥镇北王",
-      rate: "9.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/e9999325a85535fda5d5a24b205c9c0c9b0898bd60eaf68a40c503e0af3f8844.jpg",
+      title: "二嫁高枝",
+      rate: "8.6",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d4c8492924f1accdc84c06490317c2cc1f8ba275ba9e131e334df290cf0f2de8.jpg",
       year: "2026",
-      types: ["短剧","古装仙侠","全集连播"],
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1550,11 +1550,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "我不是大师",
-        "updateBadge": ""
+        "title": "一瓯春",
+        "updateBadge": "1"
     },
     {
-        "title": "一瓯春",
+        "title": "我不是大师",
         "updateBadge": ""
     },
     {
@@ -1562,11 +1562,11 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "仙逆",
-        "updateBadge": ""
+        "title": "心动的信号第9季",
+        "updateBadge": "4"
     },
     {
-        "title": "交锋",
+        "title": "仙逆",
         "updateBadge": ""
     },
     {
@@ -1574,23 +1574,23 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "一斩苍穹",
-        "updateBadge": "1"
-    },
-    {
-        "title": "心动的信号第9季",
-        "updateBadge": ""
-    },
-    {
-        "title": "法医秦明之龙番往事",
+        "title": "交锋",
         "updateBadge": ""
     },
     {
         "title": "我家那闺女2026",
-        "updateBadge": ""
+        "updateBadge": "1"
     },
     {
-        "title": "凡人修仙传",
+        "title": "法医秦明之龙番往事",
+        "updateBadge": "2"
+    },
+    {
+        "title": "一斩苍穹",
+        "updateBadge": "1"
+    },
+    {
+        "title": "海贼王",
         "updateBadge": ""
     }
   ],
@@ -1673,13 +1673,13 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609241200270068364.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202609241345244520726.jpg",
-        "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至10集 | 共24集。",
+        "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至12集 | 共24集。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至10集 | 共24集",
+        "episodes_info": "更新至12集 | 共24集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1690,13 +1690,13 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609221204050427723.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202609221304100431020.jpg",
-        "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至11集 | 共24集。",
+        "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至13集 | 共24集。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至11集 | 共24集",
+        "episodes_info": "更新至13集 | 共24集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1707,13 +1707,13 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202609171141024107110.jpg",
-        "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至23集 | 共30集。",
+        "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至24集 | 共30集。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至23集 | 共30集",
+        "episodes_info": "更新至24集 | 共30集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -2163,6 +2163,10 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "克拉克森的农场第5季",
+        "updateBadge": ""
+    },
+    {
         "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
@@ -2171,23 +2175,19 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第5季",
+        "title": "中国通史",
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第4季",
+        "title": "狂坠：波音大调查2",
         "updateBadge": ""
     },
     {
-        "title": "征服14座高峰：凡事皆可能 14",
+        "title": "失焦命案：被遗忘的女童",
         "updateBadge": ""
     },
     {
-        "title": "排队小吃第2季",
-        "updateBadge": ""
-    },
-    {
-        "title": "史前星球",
+        "title": "体坛秘史：霹雳舞博士雷切尔·冈恩",
         "updateBadge": ""
     }
   ],
