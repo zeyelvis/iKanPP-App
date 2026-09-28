@@ -23,6 +23,7 @@ import { JsonLd, generateWebSiteJsonLd } from '@/components/seo/JsonLd';
 import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { AddToHomeScreenModal } from '@/components/pwa/AddToHomeScreenModal';
+import { PwaInstallBanner } from '@/components/pwa/PwaInstallBanner';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -221,6 +222,7 @@ export default function RootLayout({
           <TVProvider>
             <TVNavigationInitializer />
             <AdKeywordsWrapper />
+            <PwaInstallBanner />
             <Suspense><ReferralCapture /></Suspense>
             {children}
             <Footer />

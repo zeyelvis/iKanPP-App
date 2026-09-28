@@ -318,6 +318,26 @@ function NavbarInner({
               );
             })}
           </div>
+
+          {/* 移动端常驻 PWA 客户端安装按钮 */}
+          <div className="mt-3 pt-3 border-t border-white/10">
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                window.dispatchEvent(new CustomEvent('ikanpp:show-pwa-modal'));
+              }}
+              className="w-full py-2.5 px-3.5 rounded-2xl bg-gradient-to-r from-red-600/20 via-rose-600/20 to-red-600/20 border border-red-500/30 hover:border-red-500/50 text-white flex items-center justify-between text-xs font-bold transition-all active:scale-[0.98] cursor-pointer"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-base">📱</span>
+                <span>安装 iKanPP 客户端 (免翻直通)</span>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-600 text-white shadow-sm">
+                一键安装
+              </span>
+            </button>
+          </div>
         </div>
       )}
 
