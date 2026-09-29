@@ -588,6 +588,16 @@ export function IkanPPPlayerContainer() {
       rawList.push(...discoveredSources);
     }
 
+    // 注入 iKanPP专线 (仅在有片名且未被熔断时作为品牌极速首选)
+    if (title && !failedSourcesRef.current.has('ikanpp')) {
+      rawList.unshift({
+        id: 'ikanpp',
+        source: 'ikanpp',
+        sourceName: '⚡ iKanPP专线',
+        pic: videoData?.vod_pic,
+      });
+    }
+
     // 注入暗影自愈专线 (仅在有片名且未被熔断时作为候补自愈/4K原画备选)
     if (title && !failedSourcesRef.current.has('shadowline')) {
       rawList.push({

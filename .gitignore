@@ -28,6 +28,7 @@
 certs/
 google key/
 *indexing*.json
+*.apk
 
 # debug
 npm-debug.log*

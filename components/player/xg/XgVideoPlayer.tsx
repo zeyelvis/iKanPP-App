@@ -131,9 +131,9 @@ export function XgVideoPlayer({
   const onErrorRef = useRef(onError);
   onErrorRef.current = onError;
 
-  // 判断当前是否使用了暗影专线
+  // 判断当前是否使用了暗影专线或 iKanPP专线
   const isShadowLineSource = useMemo(() => {
-    return currentSource.includes('shadow') || currentSource.includes('暗影') || currentSource.includes('独家');
+    return currentSource.includes('shadow') || currentSource.includes('暗影') || currentSource.includes('独家') || currentSource.includes('ikanpp') || currentSource.includes('专线');
   }, [currentSource]);
 
   // 移动端系统时间与电量监听

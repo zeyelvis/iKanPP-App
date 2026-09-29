@@ -510,6 +510,37 @@ IkanPPPlayerContainer / IkanXPlayerContainer (双轨容器，负责线路调度�
 4. **指标与调度纯净度铁律**：
    - 脚本加载失败属于客户端版本更迭，**绝不当作线路故障**；严禁触发 `handlePlaybackError` 换线路，严禁向 `/api/beacon/play` 上报 `ok: false`，绝不污染地区线路质量学习与自愈调度系统。
 
+---
+
+## 20. iKanPP专线核心流媒体调度与毫秒直解规范 (iKanPP Line Engine Spec) (2026-09 升级)
+
+为提供全站最顶级的画质与秒开体验，iKanPP 正式确立自研**「iKanPP专线 (iKanPP Line Engine)」**作为主站首选核心直连通道：
+
+### 1. 架构定位与双轨铁律恪守
+- **轨道归属**：100% 严格归属于**轨道 A（Track A：普通影视）**；
+- **网络模型**：**100% 浏览器纯直连源站 PipeCDN (`*.pipecdn.vip`)**，`proxyMode` 恒为 `'none'`，`effectiveUseProxy` 恒为 `false`；
+- **零代理零切片改写**：m3u8 播放切片直接由客户端原生或 HLS.js 直连握手，严禁将流量引入 `/api/proxy`，严禁改写任何 `.ts` 切片；
+- **品牌展示名称**：全站全域 UI 统一命名并展示为 **`⚡ iKanPP专线`**，线路 ID 为 `ikanpp`（兼容 `ikanpp_line`、`iyf`、`titanline`）。
+
+### 2. 移动端逆向签名与 WAF 穿透
+- **移动端 API 直通**：对接 `https://api.tripdata.app/` 移动端专有通道，天然无 Cloudflare Turnstile 验证码拦截；
+- **动态 MD5 签名机制**：
+  - 对每个请求自动追加 Unix 时间戳参数 `_t=<timestamp>`；
+  - 严格按照移动端原生拦截器算法生成签名：`x-sign = MD5(fullQuery + timestamp + '57688*1-331@')`；
+  - 携带 Android / okhttp 原生安全请求头，保证接口稳定性与防阻断。
+
+### 3. 片名毫秒搜索与多维消歧匹配
+- **毫秒直通搜索**：通过 `POST api/List/GetTitleGetData` 检索片库候选；
+- **多维消歧匹配器 (`matchBestIkanppLineCandidate`)**：
+  - 核心片名完全匹配优先（权重 100）；
+  - 影视类型严格隔离：当用户请求正片电影/电视剧时，强制拦截同名微短剧与垃圾营销号视频；
+  - 年份与类型协同打分，确保 100% 命中权威正片。
+
+### 4. 线路排序置顶与智能自愈
+- **置顶首选**：在 `DEFAULT_LINE_TOP_ORDER` 中置顶在首位（`ikanpp`），享有最高起播与切源优先级；
+- **静默熔断保护**：集成 `getIkanppLineConfig()` 与 `getIkanppLineHealth()`，支持后台一键熔断与自动健康探活。
+
+
 
 
 

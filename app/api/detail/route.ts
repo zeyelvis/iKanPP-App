@@ -14,6 +14,8 @@ import { fetchIkanbotDetail } from '@/lib/server/ikanbot';
 import { parseEpisodes } from '@/lib/api/parsers';
 import { getShadowLineConfig } from '@/lib/services/shadowline-service';
 import { gzProvider, matchBestShadowLineCandidate } from '@/lib/services/providers/gz-provider';
+import { getIkanppLineConfig } from '@/lib/services/ikanpp-line-service';
+import { ikanppProvider, matchBestIkanppLineCandidate } from '@/lib/services/providers/iyf-provider';
 
 export const runtime = 'edge';
 
@@ -296,6 +298,88 @@ async function handleDetailRequest(
       }
     } catch (shadowErr) {
       console.warn('[DetailAPI] ShadowLine direct resolve failed:', shadowErr);
+    }
+  }
+
+  // 2.6 专属支持 iKanPP专线 (iKanPP Line Engine) 毫秒直解 (轨道 A 纯直连零代理)
+  if (sourceId === 'ikanpp' || sourceId === 'ikanpp_line' || sourceId === 'iyf' || sourceId === 'titanline') {
+    try {
+      const config = await getIkanppLineConfig();
+      if (config.enabled) {
+        let targetMediaKey = id && id !== 'ikanpp' && id !== 'ikanpp_line' && id !== 'iyf' && id !== 'titanline' && !id.startsWith('ik') && id.length >= 8 && id.length <= 16
+          ? id
+          : null;
+        let matchedTitle = titleParam || '';
+        let matchedPic = '';
+
+        // 如果没有直接传入 mediaKey，但携带了片名 titleParam，则动态按片名搜寻并执行多维消歧匹配
+        if (!targetMediaKey && titleParam) {
+          const cleanTitle = titleParam.replace(/[（(].*?[）)]/g, '').trim();
+          const searchKeywords = new Set<string>();
+          searchKeywords.add(cleanTitle);
+
+          if (aliasesParam) {
+            const aliasList = Array.isArray(aliasesParam)
+              ? aliasesParam
+              : String(aliasesParam).split(/[,/|，]/);
+            for (const a of aliasList) {
+              const cleanAlias = a.replace(/[（(].*?[）)]/g, '').trim();
+              if (cleanAlias && cleanAlias !== cleanTitle && /[\u4e00-\u9fa5]/.test(cleanAlias)) {
+                searchKeywords.add(cleanAlias);
+              }
+            }
+          }
+
+          const searchPromises = Array.from(searchKeywords).map(k => ikanppProvider.searchByTitle(k));
+          const searchResults = await Promise.all(searchPromises);
+
+          const candidateMap = new Map<string, any>();
+          for (const list of searchResults) {
+            if (list && Array.isArray(list)) {
+              for (const item of list) {
+                if (!candidateMap.has(item.mediaKey)) {
+                  candidateMap.set(item.mediaKey, item);
+                }
+              }
+            }
+          }
+
+          const allCandidates = Array.from(candidateMap.values());
+          if (allCandidates.length > 0) {
+            const matchedCandidate = matchBestIkanppLineCandidate(allCandidates, {
+              title: cleanTitle,
+              category: categoryParam || undefined,
+              year: yearParam || undefined,
+              expectedEpisodes: expectedEpisodesParam ? Number(expectedEpisodesParam) : undefined,
+              season: seasonParam || undefined,
+            });
+            if (matchedCandidate) {
+              targetMediaKey = matchedCandidate.mediaKey;
+              matchedTitle = matchedCandidate.title;
+              matchedPic = matchedCandidate.coverImgUrl;
+            }
+          }
+        }
+
+        if (targetMediaKey) {
+          const episodeList = await ikanppProvider.getFullEpisodeList(targetMediaKey);
+          if (episodeList && episodeList.length > 0) {
+            return NextResponse.json({
+              success: true,
+              data: {
+                vod_id: targetMediaKey,
+                vod_name: matchedTitle || titleParam || 'iKanPP专线 · 极清',
+                vod_pic: matchedPic,
+                type_name: '4K 极清 · 直连',
+                episodes: episodeList, // 轨道 A 铁律：100% 浏览器直连第三方 CDN，严禁通过 /api/proxy
+                source: 'ikanpp',
+              }
+            });
+          }
+        }
+      }
+    } catch (ikanppErr) {
+      console.warn('[DetailAPI] iKanPP Line direct resolve failed:', ikanppErr);
     }
   }
 

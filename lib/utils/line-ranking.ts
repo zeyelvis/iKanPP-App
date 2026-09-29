@@ -35,6 +35,7 @@ export const CN_ONLY_SOURCES = new Set(['baofeng', 'dytt', 'json1080', 'youku'])
 
 // 默认基准排序权重 (兜底顺序：干净线路在前，大陆专线中游，广告线路在最后)
 export const DEFAULT_LINE_TOP_ORDER: string[] = [
+  'ikanpp',
   'shadowline',
   'modu',
   'ikun',
