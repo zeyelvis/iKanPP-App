@@ -1,6 +1,6 @@
 import type { VideoSource } from '@/lib/types';
 
-// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-28T09:03:02.607Z）
+// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-29T09:11:25.367Z）
 export const DEFAULT_SOURCES: VideoSource[] = [
   {
     id: 'juliang',
@@ -133,6 +133,16 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     priority: 13,
   },
   {
+    id: 'youku',
+    name: '优酷资源',
+    baseUrl: 'https://api.ukuapi88.com',
+    searchPath: '/api.php/provide/vod',
+    detailPath: '/api.php/provide/vod',
+    group: 'normal',
+    enabled: true,
+    priority: 14,
+  },
+  {
     id: 'haitun',
     name: '海豚资源',
     baseUrl: 'https://hhzyapi.com',
@@ -140,7 +150,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 14,
+    priority: 15,
   },
   {
     id: 'feifan',
@@ -150,7 +160,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 15,
+    priority: 16,
   },
   {
     id: 'huya',
@@ -160,22 +170,12 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 16,
+    priority: 17,
   },
   {
     id: 'jinying',
     name: '金鹰点播',
     baseUrl: 'https://jinyingzy.com',
-    searchPath: '/api.php/provide/vod',
-    detailPath: '/api.php/provide/vod',
-    group: 'normal',
-    enabled: true,
-    priority: 17,
-  },
-  {
-    id: 'youku',
-    name: '优酷资源',
-    baseUrl: 'https://api.ukuapi88.com',
     searchPath: '/api.php/provide/vod',
     detailPath: '/api.php/provide/vod',
     group: 'normal',
