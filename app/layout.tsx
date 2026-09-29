@@ -24,6 +24,7 @@ import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { AddToHomeScreenModal } from '@/components/pwa/AddToHomeScreenModal';
 import { PwaInstallBanner } from '@/components/pwa/PwaInstallBanner';
+import { InAppBrowserBanner } from '@/components/common/InAppBrowserBanner';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -229,6 +230,7 @@ export default function RootLayout({
             <BackToTop />
             <Suspense fallback={null}><ScrollPositionManager /></Suspense>
             <MobileBottomNav />
+            <InAppBrowserBanner />
           </TVProvider>
 
           <ServiceWorkerRegister />

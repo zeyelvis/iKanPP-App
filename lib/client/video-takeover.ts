@@ -1,4 +1,5 @@
 import { checkIsIPadOS } from '@/lib/hooks/mobile/useDeviceDetection';
+import { inAppBrowser } from './in-app';
 
 /**
  * 检测当前环境是否为会强行劫持/接管网页原生 <video> 标签的移动端第三方浏览器
@@ -9,22 +10,22 @@ import { checkIsIPadOS } from '@/lib/hooks/mobile/useDeviceDetection';
  * 
  * 规则：
  * 1. 仅在手机或平板（UA 包含 Android|iPhone|iPad|iPod，或 checkIsIPadOS() 为 true）上生效，电脑版不拦截；
- * 2. 微信、QQ App 内置 WebView（含 MicroMessenger 或 " QQ/"）归内置浏览器引导处理，此处返回 null；
+ * 2. 微信、QQ、微博等 App 内置 WebView 归内置浏览器专用横幅提示，此处返回 null；
  * 3. 匹配命中返回友好中文名称，未命中返回 null。
  */
 export function videoTakeoverBrowser(): string | null {
   if (typeof navigator === 'undefined') return null;
 
-  const ua = navigator.userAgent;
-
-  // 1. 仅在移动端与平板生效
-  const isMobileOrTablet = /Android|iPhone|iPad|iPod/i.test(ua) || checkIsIPadOS();
-  if (!isMobileOrTablet) return null;
-
-  // 2. 微信、QQ App 等内置浏览器由专用横幅提示，不在此处拦截
-  if (/MicroMessenger/i.test(ua) || / QQ\//.test(ua)) {
+  // 1. App 内置浏览器由独立横幅提示引导，不在此处拦截
+  if (inAppBrowser()) {
     return null;
   }
+
+  const ua = navigator.userAgent;
+
+  // 2. 仅在移动端与平板生效
+  const isMobileOrTablet = /Android|iPhone|iPad|iPod/i.test(ua) || checkIsIPadOS();
+  if (!isMobileOrTablet) return null;
 
   // 3. 手机端接管视频的浏览器特征匹配
   if (/Quark\//i.test(ua)) return '夸克浏览器';
