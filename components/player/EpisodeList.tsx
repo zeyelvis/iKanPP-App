@@ -1,54 +1,14 @@
 'use client';
 
 import { useRef, useCallback, useState, useMemo, useEffect } from 'react';
-import Image from 'next/image';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Icons } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
 import { useKeyboardNavigation } from '@/lib/hooks/useKeyboardNavigation';
-import { settingsStore } from '@/lib/store/settings-store';
 import type { VideoResolutionInfo } from './hooks/useVideoResolution';
 import type { ResolutionInfo } from '@/lib/hooks/useResolutionProbe';
-import { getCachedResolution } from '@/lib/player/resolution-cache';
-import { getSourceResolutionBadge, shouldExpandForCurrentSource } from '@/lib/player/source-list-utils';
 import { SourceSelector } from './SourceSelector';
 import { cleanEpisodeName, formatEpisodeGridLabel } from '@/lib/utils/episode-resolver';
-// 4K (2160P) 原画专线字典
-const FOUR_K_SOURCES = new Set([
-  'baofeng', 'baofeng_app', 'hongniu', 'hongniu3', 'haohua_4k', 'blue_4k', 'suoni', 'suoni_sd',
-  'json1080', 'laosiji_4k', 'midnight_4k', 'yutu', 'hsck', 'jingpin'
-]);
-
-// 1080P 蓝光极清秒播专线字典
-const HD_BLURAY_SOURCES = new Set([
-  'juliang', 'feifan', 'feifan_api', 'feifan1', 'guangsu', 'guangsu_http', 'wolong', 'wolong_cj',
-  'zuida', 'zuida_db', 'baidu', 'jisu', 'liangzi', 'kuaiche', 'leba', 'ck', 'tantan', 'sejie', 'wujin', 'wujin_me', 'wujin_cc', 'wujin_net', 'dytt'
-]);
-
-export function isSource4K(s: { source: string; sourceName?: string; typeName?: string }): boolean {
-  // 巨量资源：只有专区或名称带 4K/2160 时才标记 4K
-  if (s.source === 'juliang' || s.sourceName?.includes('巨量')) {
-    return Boolean(s.sourceName?.includes('4K')) ||
-           Boolean(s.sourceName?.includes('2160')) ||
-           Boolean(s.typeName?.includes('4K')) ||
-           Boolean(s.typeName?.includes('2160'));
-  }
-
-  return FOUR_K_SOURCES.has(s.source) ||
-         Boolean(s.sourceName?.includes('4K')) ||
-         Boolean(s.sourceName?.includes('2160')) ||
-         Boolean(s.typeName?.includes('4K')) ||
-         Boolean(s.typeName?.includes('2160')) ||
-         Boolean(s.sourceName?.includes('暴风')) ||
-         Boolean(s.sourceName?.includes('红牛')) ||
-         Boolean(s.sourceName?.includes('索尼')) ||
-         Boolean(s.sourceName?.includes('老司机'));
-}
-
-export function isSourceBluRay(s: { source: string; sourceName?: string }): boolean {
-  return !isSource4K(s) && (HD_BLURAY_SOURCES.has(s.source) || Boolean(s.sourceName?.includes('蓝光')) || Boolean(s.sourceName?.includes('极速')));
-}
 
 interface Episode {
   name?: string;
@@ -94,181 +54,24 @@ export function EpisodeList({
   sources,
   currentSource,
   onSourceChange,
-  currentResolution,
-  sourceResolutions,
-  sourceSectionCollapsed = false,
-  onSourceSectionCollapseChange,
   episodeSectionCollapsed = false,
   onEpisodeSectionCollapseChange,
 }: EpisodeListProps) {
   const listRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const sourceItemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const [sourceExpanded, setSourceExpanded] = useState(false);
-  const [showAllSources, setShowAllSources] = useState(false);
   // list = classic vertical list; grid = multi-column with section pages
   const [episodeLayout, setEpisodeLayout] = useState<'list' | 'grid'>('grid');
-  const [episodePage, setEpisodePage] = useState(0);
+  const [userPage, setUserPage] = useState<number | null>(null);
+  const [prevEpisode, setPrevEpisode] = useState(currentEpisode);
+
+  if (prevEpisode !== currentEpisode) {
+    setPrevEpisode(currentEpisode);
+    setUserPage(null);
+  }
 
   const EPISODES_PER_PAGE = 50;
 
-  // Source latency state
-  const [latencies, setLatencies] = useState<Record<string, number>>({});
-  const [isLoadingLatency, setIsLoadingLatency] = useState(false);
-
-  const showSourceSelector = sources && sources.length > 1 && onSourceChange;
-
-  // Helper: get best resolution badge for a source
-  const getResBadge = useCallback((source: SourceInfo, isCurrent: boolean) => {
-    const probeKey = `${source.source}:${source.id}`;
-    return getSourceResolutionBadge({
-      isCurrent,
-      currentResolution: currentResolution || undefined,
-      probedResolution: sourceResolutions?.[probeKey] || undefined,
-      cachedResolution: getCachedResolution(source.source, source.id) || undefined,
-      remarks: source.remarks,
-    });
-  }, [currentResolution, sourceResolutions]);
-
-  // Current source info
-  const currentSourceInfo = useMemo(() => {
-    if (!sources || !currentSource) return null;
-    return sources.find(s => s.source === currentSource) || null;
-  }, [sources, currentSource]);
-
-  // Sort sources by latency
-  const initialLatencies = useMemo(() => {
-    if (!sources) return {};
-    return sources.reduce<Record<string, number>>((accumulator, source) => {
-      if (source.latency !== undefined) {
-        accumulator[source.source] = source.latency;
-      }
-      return accumulator;
-    }, {});
-  }, [sources]);
-
-  const mergedLatencies = useMemo(() => ({
-    ...initialLatencies,
-    ...latencies,
-  }), [initialLatencies, latencies]);
-
-  const sortedSources = useMemo(() => {
-    if (!sources) return [];
-    return [...sources].sort((a, b) => {
-      const isA4K = isSource4K(a);
-      const isB4K = isSource4K(b);
-
-      if (isA4K && !isB4K) return -1;
-      if (!isA4K && isB4K) return 1;
-
-      const latA = mergedLatencies[a.source] ?? a.latency ?? Infinity;
-      const latB = mergedLatencies[b.source] ?? b.latency ?? Infinity;
-      return latA - latB;
-    });
-  }, [mergedLatencies, sources]);
-
-  const isSourceListOpen = !sourceSectionCollapsed && sourceExpanded;
-  const forceExpandedForCurrentSource = !!currentSource && shouldExpandForCurrentSource(sortedSources, currentSource);
-  const showAllVisibleSources = showAllSources || forceExpandedForCurrentSource;
-
-  useEffect(() => {
-    if (!isSourceListOpen || !currentSource) return;
-
-    const frame = requestAnimationFrame(() => {
-      sourceItemRefs.current[currentSource]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
-    });
-
-    return () => cancelAnimationFrame(frame);
-  }, [currentSource, isSourceListOpen, showAllVisibleSources, sortedSources]);
-
-  // Resolve source ID to its actual baseUrl for pinging
-  const getSourcePingUrl = useCallback((sourceId: string): string | null => {
-    const settings = settingsStore.getSettings();
-    const allConfigs = [
-      ...settings.sources,
-      ...settings.premiumSources,
-    ];
-    const config = allConfigs.find(s => s.id === sourceId);
-    return config?.baseUrl || null;
-  }, []);
-
-  // Initialize latencies from sources
-  useEffect(() => {
-    if (!sources) return;
-    const hasMissing = sources.some((source) => source.latency === undefined);
-
-    // Auto-refresh latencies for sources that don't have them
-    if (hasMissing && sources.length > 1) {
-      const autoRefresh = async () => {
-        const missing = sources.filter(s => s.latency === undefined);
-        const results = await Promise.all(
-          missing.map(async (source) => {
-            try {
-              const pingUrl = getSourcePingUrl(source.source);
-              if (!pingUrl) return { source: source.source, latency: undefined };
-              const response = await fetch('/api/ping', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: pingUrl }),
-              });
-              if (response.ok) {
-                const data = await response.json();
-                return { source: source.source, latency: data.latency as number | undefined };
-              }
-            } catch { /* ignore */ }
-            return { source: source.source, latency: undefined };
-          })
-        );
-        setLatencies(prev => {
-          const updated = { ...prev };
-          results.forEach(({ source, latency }) => {
-            if (latency !== undefined) updated[source] = latency;
-          });
-          return updated;
-        });
-      };
-      autoRefresh();
-    }
-  }, [sources, getSourcePingUrl]);
-
-  // Refresh latencies
-  const refreshLatencies = useCallback(async () => {
-    if (!sources) return;
-    setIsLoadingLatency(true);
-
-    const results = await Promise.all(
-      sources.map(async (source) => {
-        try {
-          const pingUrl = getSourcePingUrl(source.source);
-          if (!pingUrl) return { source: source.source, latency: undefined };
-          const response = await fetch('/api/ping', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: pingUrl }),
-          });
-          if (response.ok) {
-            const data = await response.json();
-            return { source: source.source, latency: data.latency };
-          }
-        } catch {
-          // Ignore errors
-        }
-        return { source: source.source, latency: undefined };
-      })
-    );
-
-    const newLatencies: Record<string, number> = {};
-    results.forEach(({ source, latency }) => {
-      if (latency !== undefined) {
-        newLatencies[source] = latency;
-      }
-    });
-    setLatencies(newLatencies);
-    setIsLoadingLatency(false);
-  }, [sources, getSourcePingUrl]);
+  const showSourceSelector = Boolean(sources && sources.length > 1 && onSourceChange);
 
   // Memoized display episodes - reversed if toggle is on
   const displayEpisodes = useMemo(() => {
@@ -281,18 +84,16 @@ export function EpisodeList({
     return Math.max(1, Math.ceil(displayEpisodes.length / EPISODES_PER_PAGE));
   }, [displayEpisodes]);
 
-  // Keep the current episode's page visible when order/layout changes
-  useEffect(() => {
-    if (!episodes || episodes.length === 0) {
-      setEpisodePage(0);
-      return;
-    }
+  const defaultPage = useMemo(() => {
+    if (!episodes || episodes.length === 0) return 0;
     const displayIndex = isReversed
       ? episodes.length - 1 - currentEpisode
       : currentEpisode;
     const page = Math.floor(displayIndex / EPISODES_PER_PAGE);
-    setEpisodePage(Math.min(Math.max(0, page), Math.max(0, Math.ceil(episodes.length / EPISODES_PER_PAGE) - 1)));
-  }, [currentEpisode, episodes, isReversed, episodeLayout]);
+    return Math.min(Math.max(0, page), Math.max(0, Math.ceil(episodes.length / EPISODES_PER_PAGE) - 1));
+  }, [currentEpisode, episodes, isReversed]);
+
+  const episodePage = userPage !== null ? userPage : defaultPage;
 
   // 自动平滑滚动到当前选中的集数
   useEffect(() => {
@@ -477,7 +278,7 @@ export function EpisodeList({
               {pageRangeLabels.map((label, page) => (
                 <button
                   key={label}
-                  onClick={() => setEpisodePage(page)}
+                  onClick={() => setUserPage(page)}
                   className={`
                     px-2.5 py-1 rounded-[var(--radius-2xl)] text-xs font-medium transition-all duration-200 cursor-pointer
                     ${episodePage === page

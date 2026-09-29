@@ -19,14 +19,14 @@ import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
 import { DEPRECATED_SOURCES, isValidSourceId } from '@/lib/api/video-sources';
 import { getSourceName } from '@/lib/utils/source-names';
 import { storeGroupedSources, retrieveGroupedSources } from '@/lib/utils/grouped-sources-cache';
-import { rankSourcesByPerformance, type LineStats } from '@/lib/utils/line-ranking';
+import { rankSourcesByPerformance, DEFAULT_LINE_TOP_ORDER, AD_PRONE_SOURCES, type LineStats } from '@/lib/utils/line-ranking';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Tv, Clapperboard, Sparkles, User, Star, Film, MonitorPlay, Layers, CheckCircle2 } from 'lucide-react';
+import { User } from 'lucide-react';
 import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { PREBAKED_AVATARS } from '@/lib/data/prebaked-avatars';
-import { extractSeasonAndEpisodeNumber, cleanEpisodeName, formatEpisodeGridLabel } from '@/lib/utils/episode-resolver';
+import { extractSeasonAndEpisodeNumber, cleanEpisodeName } from '@/lib/utils/episode-resolver';
 import { FloatingMiniPlayer } from '@/components/player/FloatingMiniPlayer';
 
 interface TitleAnalysis {
@@ -165,6 +165,15 @@ export function IkanPPPlayerContainer() {
 
     // 过滤掉已下线的废弃源和已知失败源
     allSources = allSources.filter(s => !DEPRECATED_SOURCES.has(s.id) && !failedSourcesRef.current.has(s.id));
+
+    // 按 DEFAULT_LINE_TOP_ORDER 排序，干净线路在前，广告线路在后
+    allSources = [...allSources].sort((a, b) => {
+      const getOrder = (id: string) => {
+        const idx = (DEFAULT_LINE_TOP_ORDER as readonly string[]).indexOf(id);
+        return idx === -1 ? 999 : idx;
+      };
+      return getOrder(a.id) - getOrder(b.id);
+    });
 
     if (source) {
       const preferredSource = allSources.find(s => s.id === source);
@@ -382,16 +391,17 @@ export function IkanPPPlayerContainer() {
                   }
 
                   let sourceScore = 0;
-                  // 黄金调度优先级：巨量香港Anycast纯净全站No.1首选，光速全球高速高可用第二首选，暴风高并发第三首选，无尽、最大紧随其后
-                  if (v.source === 'juliang') sourceScore = 160;
-                  else if (v.source === 'guangsu') sourceScore = 140;
-                  else if (v.source === 'baofeng') sourceScore = 130;
-                  else if (v.source === 'zuida') sourceScore = 120;
-                  else if (v.source === 'wujin') sourceScore = 110;
-                  else if (v.source === 'jisu') sourceScore = 90;
-                  else if (v.source === 'xinlang') sourceScore = 80;
-                  else if (v.source === 'modu') sourceScore = 60;
-                  else if (v.source === 'zy360') sourceScore = 50;
+                  // 干净线路优先打分，广告线路大幅降权靠后
+                  const isAdSource = AD_PRONE_SOURCES.has(v.source);
+                  if (v.source === 'modu' || v.source === 'ikun') sourceScore = 160;
+                  else if (v.source === 'zuida' || v.source === 'feifan') sourceScore = 150;
+                  else if (v.source === 'ruyi' || v.source === 'liangzi') sourceScore = 140;
+                  else if (v.source === 'baofeng' || v.source === 'dytt') sourceScore = 120;
+                  else if (!isAdSource) sourceScore = 100;
+                  else {
+                    // 广告线路（juliang, guangsu, wujin 等）大幅降权
+                    sourceScore = 20;
+                  }
 
                   const totalScore = nameScore + yearScore + qualityScore + episodeScore + sourceScore + typeScore;
 
@@ -428,8 +438,8 @@ export function IkanPPPlayerContainer() {
                   }
 
                   // 极速秒播裁决：
-                  // 1. 全站 No.1 黄金首选巨量资源 (juliang) 无论何时到达，只要匹配立即秒播直出；
-                  // 2. 光速/暴风/最大等高质量骨干源 (totalScore >= 100)：给巨量 800ms 优先冲刺窗口，若巨量超时仍未到达则弹性秒播直出，拒绝白屏干等！
+                  // 1. 干净骨干源（zuida, feifan, modu, ikun 等）只要匹配立即秒播直出；
+                  // 2. 广告线路（juliang, guangsu, wujin 等）给干净线路 800ms 冲刺窗口，若干净线路超时未到达才作为兜底；
                   const isQualified = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && !isTypeMismatched && isNameMatched && !isEpisodeInsufficient && totalScore >= 70;
                   if (isQualified && !redirected && !cancelled) {
                     const isSeasonOrYearMatched = 
@@ -438,10 +448,9 @@ export function IkanPPPlayerContainer() {
 
                     if (isSeasonOrYearMatched) {
                       const elapsed = Date.now() - searchStartTime;
-                      const isJuliang = v.source === 'juliang';
-                      const isHighQualityBackbone = (v.source === 'guangsu' || v.source === 'baofeng' || v.source === 'zuida') && totalScore >= 100;
+                      const isCleanBackbone = !isAdSource && totalScore >= 100;
 
-                      if (isJuliang || (isHighQualityBackbone && elapsed > 800)) {
+                      if (isCleanBackbone || elapsed > 800) {
                         performRedirect(v, isSeriesItem);
                         break;
                       }
@@ -973,23 +982,6 @@ export function IkanPPPlayerContainer() {
     router.replace(`/player?${params.toString()}`, { scroll: false });
   }, [title, entityParam, expectedType, expectedYear, currentEpisode, videoData?.episodes, groupedSources, router]);
 
-  // 影院巨幕模式 (Cinema Stage Mode)
-  const [isCinemaMode, setIsCinemaMode] = useState(false);
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('ikanpp_cinema_mode');
-      if (saved === 'true') setIsCinemaMode(true);
-    } catch {}
-  }, []);
-
-  const toggleCinemaMode = () => {
-    setIsCinemaMode((prev) => {
-      const next = !prev;
-      try { localStorage.setItem('ikanpp_cinema_mode', String(next)); } catch {}
-      return next;
-    });
-  };
-
   const handleBack = useCallback(() => {
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('ikanpp_playing_from_hub');
@@ -1144,19 +1136,14 @@ export function IkanPPPlayerContainer() {
   }
 
   return (
-    <div className={`min-h-screen ${isCinemaMode ? 'bg-[#050505]' : 'bg-(--bg-color)'}`}>
+    <div className="min-h-screen bg-(--bg-color)">
       <JsonLd data={jsonLdData} />
       <Navbar variant="player" isPremiumMode={false} />
 
-      {/* 巨幕模式下的全宽顶部播放器舞台 */}
-      {isCinemaMode ? (
-        <div id="main-player-stage" className="relative w-full bg-black pt-16 pb-6 border-b border-white/5 shadow-2xl overflow-hidden">
-          {/* 影院级环境光晕氛围层 (Cinema Ambient Glow) */}
-          <div 
-            className="absolute -top-24 left-1/2 -translate-x-1/2 w-[120%] h-[300px] bg-gradient-to-b from-purple-900/20 via-red-950/15 to-transparent blur-3xl pointer-events-none -z-0"
-            aria-hidden="true"
-          />
-          <div className="relative max-w-[1680px] mx-auto px-2 sm:px-4 lg:px-6 z-10">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-18 pb-16">
+        {/* 标准网格布局：左侧播放器及操作行，右侧线路与选集 */}
+        <div className="grid lg:grid-cols-3 gap-6">
+          <div id="main-player-stage" className="lg:col-span-2 space-y-3">
             <VideoPlayer
               playUrl={playUrl}
               videoId={videoId || undefined}
@@ -1180,200 +1167,132 @@ export function IkanPPPlayerContainer() {
               onSelectSource={handleSourceChange}
               rating={entityRating || (videoData as { vod_score?: number | string } | null)?.vod_score || null}
             />
-          </div>
-        </div>
-      ) : null}
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-18 pb-16">
-        {/* 标准模式下的网格布局 */}
-        {!isCinemaMode ? (
-          <div className="grid lg:grid-cols-3 gap-6">
-            <div id="main-player-stage" className="lg:col-span-2 space-y-4 sm:space-y-6">
-              <VideoPlayer
-                playUrl={playUrl}
-                videoId={videoId || undefined}
-                currentEpisode={currentEpisode}
-                onBack={handleBack}
-                totalEpisodes={videoData?.episodes?.length || 0}
-                onNextEpisode={handleNextEpisode}
-                isReversed={isReversed}
-                isPremium={false}
-                videoTitle={videoData?.vod_name || title || ''}
-                episodeName={videoData?.episodes?.[currentEpisode]?.name || ''}
-                externalTimeRef={playerTimeRef}
-                nextEpisodeUrl={nextEpisodeUrl}
-                onPlaybackError={handlePlaybackError}
-                connectingMessage={connectingMessage}
-                isLoadingSource={isConnecting}
-                episodes={videoData?.episodes || []}
-                onSelectEpisode={handleSelectEpisodeInPlayer}
-                sources={groupedSources}
-                currentSource={currentSourceId || source || ''}
-                onSelectSource={handleSourceChange}
-                rating={entityRating || (videoData as { vod_score?: number | string } | null)?.vod_score || null}
-              />
-            </div>
+            {/* 播放器下方专属快捷操作行：左侧集名，右侧上一集/下一集/追剧/分享 */}
+            <div className="flex items-center justify-between px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-[#141416] border border-white/10 text-xs select-none">
+              {/* 左侧：当前集名（电视剧显示，电影不显示） */}
+              <div className="flex items-center gap-2 min-w-0">
+                {videoData?.episodes && videoData.episodes.length > 1 ? (
+                  <span className="font-semibold text-white/90 truncate">
+                    {cleanEpisodeName(videoData.episodes[currentEpisode]?.name) || `第 ${currentEpisode + 1} 集`}
+                  </span>
+                ) : (
+                  <span className="font-medium text-white/40 text-[11px]">
+                    正片播放中
+                  </span>
+                )}
+              </div>
 
-            <div className="lg:col-span-1">
-              <div className="lg:sticky lg:top-28 space-y-4 sm:space-y-6">
-                <EpisodeList
-                  episodes={videoData?.episodes || null}
-                  currentEpisode={currentEpisode}
-                  isReversed={isReversed}
-                  onEpisodeClick={handleEpisodeClick}
-                  onToggleReverse={handleToggleReverse}
-                  sources={groupedSources.length > 0 ? groupedSources : undefined}
-                  currentSource={currentSourceId || source || ''}
-                  onSourceChange={handleSourceChange}
-                />
+              {/* 右侧：‹ 上一集、下一集 ›、＋ 追剧、分享 */}
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                {/* ‹ 上一集 */}
+                {videoData?.episodes && videoData.episodes.length > 1 && (
+                  <button
+                    type="button"
+                    disabled={currentEpisode <= 0}
+                    onClick={() => {
+                      if (currentEpisode > 0 && videoData.episodes?.[currentEpisode - 1]) {
+                        handleEpisodeClick(videoData.episodes[currentEpisode - 1], currentEpisode - 1);
+                      }
+                    }}
+                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-all ${
+                      currentEpisode > 0
+                        ? 'bg-white/5 hover:bg-white/10 text-white/90 hover:text-white border-white/10 cursor-pointer'
+                        : 'opacity-40 text-white/40 border-white/5 cursor-not-allowed'
+                    }`}
+                    title={currentEpisode > 0 ? '播放上一集' : '已是第一集'}
+                  >
+                    <span>‹ 上一集</span>
+                  </button>
+                )}
+
+                {/* 下一集 › */}
+                {videoData?.episodes && videoData.episodes.length > 1 && (
+                  <button
+                    type="button"
+                    disabled={!videoData.episodes || currentEpisode >= videoData.episodes.length - 1}
+                    onClick={handleNextEpisode}
+                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-all ${
+                      videoData.episodes && currentEpisode < videoData.episodes.length - 1
+                        ? 'bg-white/5 hover:bg-white/10 text-white/90 hover:text-white border-white/10 cursor-pointer'
+                        : 'opacity-40 text-white/40 border-white/5 cursor-not-allowed'
+                    }`}
+                    title={videoData.episodes && currentEpisode < videoData.episodes.length - 1 ? '播放下一集' : '已是最后一集'}
+                  >
+                    <span>下一集 ›</span>
+                  </button>
+                )}
+
+                {/* 追剧清单收藏 */}
+                {videoData && videoId && (
+                  <div className="flex items-center">
+                    <FavoriteButton
+                      videoId={videoId}
+                      source={source || ''}
+                      title={videoData.vod_name || title || '未知视频'}
+                      poster={videoData.vod_pic}
+                      type={videoData.type_name}
+                      year={videoData.vod_year}
+                      size={16}
+                      isPremium={false}
+                    />
+                  </div>
+                )}
+
+                {/* 分享按钮 */}
+                {videoData && (
+                  <ShareButton
+                    title={videoData.vod_name || title || ''}
+                    poster={videoData.vod_pic}
+                    episodeName={videoData.episodes?.[currentEpisode]?.name}
+                    year={videoData.vod_year}
+                    type={videoData.type_name}
+                    size={16}
+                  />
+                )}
               </div>
             </div>
           </div>
-        ) : null}
 
-        {/* Netflix 级影院信息控制台 */}
+          <div className="lg:col-span-1">
+            <div className="lg:sticky lg:top-28 space-y-4 sm:space-y-6">
+              <EpisodeList
+                episodes={videoData?.episodes || null}
+                currentEpisode={currentEpisode}
+                isReversed={isReversed}
+                onEpisodeClick={handleEpisodeClick}
+                onToggleReverse={handleToggleReverse}
+                sources={groupedSources.length > 0 ? groupedSources : undefined}
+                currentSource={currentSourceId || source || ''}
+                onSourceChange={handleSourceChange}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* 影视基本信息区 */}
         <div className="mt-8 space-y-6">
-          {/* 标题、品质认证徽章与控制按钮行 */}
-          <div className="p-6 rounded-2xl bg-[#16161A]/90 border border-white/10 shadow-xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div className="space-y-2.5">
+          <div className="p-5 sm:p-6 rounded-2xl bg-[#16161A] border border-white/10 shadow-xl">
+            <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
                   {currentTitle}
                 </h1>
                 {videoData?.episodes && videoData.episodes.length > 1 && (
-                  <span className="text-sm font-bold text-red-400 bg-red-500/15 border border-red-500/30 px-2.5 py-0.5 rounded-full">
+                  <span className="text-xs font-bold text-red-400 bg-red-500/15 border border-red-500/30 px-2 py-0.5 rounded-full">
                     {videoData.episodes[currentEpisode]?.name || `第 ${currentEpisode + 1} 集`}
                   </span>
                 )}
               </div>
 
-              {/* 认证徽章 */}
-              <div className="flex flex-wrap items-center gap-2 text-xs text-white/70">
-                <span className="px-2 py-0.5 rounded bg-red-600 text-white font-black tracking-wider text-[11px]">
-                  Ultra HD 4K
-                </span>
-                <span className="px-2 py-0.5 rounded bg-white/15 text-white font-bold border border-white/20 text-[11px]">
-                  HDR10
-                </span>
-                <span className="px-2 py-0.5 rounded bg-white/15 text-white font-bold border border-white/20 text-[11px]">
-                  5.1 环绕声
-                </span>
-                {videoData?.vod_year && (
-                  <span className="text-white/50">· {videoData.vod_year}</span>
-                )}
-                {videoData?.vod_area && (
-                  <span className="text-white/50">· {videoData.vod_area}</span>
-                )}
-                {videoData?.type_name && (
-                  <span className="text-white/50">· {videoData.type_name}</span>
-                )}
+              {/* 真实事实信息行：年份 · 地区 · 类型 */}
+              <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
+                {videoData?.vod_year && <span>{videoData.vod_year}</span>}
+                {videoData?.vod_area && <span>· {videoData.vod_area}</span>}
+                {videoData?.type_name && <span>· {videoData.type_name}</span>}
               </div>
-            </div>
-
-            {/* 操作控制区 */}
-            <div className="flex flex-wrap items-center gap-3 shrink-0">
-              {/* 巨幕影院模式切换按钮 */}
-              <button
-                type="button"
-                onClick={toggleCinemaMode}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
-                  isCinemaMode
-                    ? 'bg-red-600 text-white border-red-500 shadow-lg shadow-red-600/30'
-                    : 'bg-white/10 hover:bg-white/20 text-white/90 hover:text-white border-white/15'
-                }`}
-                title={isCinemaMode ? '退出巨幕影院模式' : '开启巨幕影院模式'}
-              >
-                <MonitorPlay size={16} />
-                <span>{isCinemaMode ? '退出巨幕' : '巨幕影院'}</span>
-              </button>
-
-              {/* 追剧清单收藏 */}
-              {videoData && videoId && (
-                <div className="flex items-center">
-                  <FavoriteButton
-                    videoId={videoId}
-                    source={source || ''}
-                    title={videoData.vod_name || title || '未知视频'}
-                    poster={videoData.vod_pic}
-                    type={videoData.type_name}
-                    year={videoData.vod_year}
-                    size={18}
-                    isPremium={false}
-                  />
-                </div>
-              )}
-
-              {/* 分享按钮 */}
-              {videoData && (
-                <ShareButton
-                  title={videoData.vod_name || title || ''}
-                  poster={videoData.vod_pic}
-                  episodeName={videoData.episodes?.[currentEpisode]?.name}
-                  year={videoData.vod_year}
-                  type={videoData.type_name}
-                  size={18}
-                />
-              )}
-
-              {/* 正在播放线路指示 */}
-              {source && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    const el = document.getElementById('source-selector-section');
-                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-xs text-purple-200 hover:text-white transition-all cursor-pointer font-medium"
-                  title="点击定位至专线面板"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>{getSourceName(source)}</span>
-                  {groupedSources.length > 1 && (
-                    <span className="text-purple-300 font-bold">
-                      ({groupedSources.length} 线)
-                    </span>
-                  )}
-                </button>
-              )}
             </div>
           </div>
-
-          {/* 巨幕模式下的选集面板 */}
-          {isCinemaMode && videoData?.episodes && videoData.episodes.length > 1 && (
-            <div className="p-6 rounded-2xl bg-[#16161A]/90 border border-white/10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Layers size={18} className="text-red-500" />
-                  <h3 className="text-base font-bold text-white">全剧集选集</h3>
-                  <span className="text-xs text-white/50 bg-white/10 px-2 py-0.5 rounded-full">
-                    共 {videoData.episodes.length} 集
-                  </span>
-                </div>
-                <span className="text-xs text-white/40">在播放器内可直接按 E 键或点击「选集」抽屉秒切</span>
-              </div>
-
-              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-2 max-h-60 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-white/20">
-                {videoData.episodes.map((ep, idx) => {
-                  const isCurrent = idx === currentEpisode;
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleEpisodeClick(ep, idx)}
-                      title={cleanEpisodeName(ep.name) || `第 ${idx + 1} 集`}
-                      className={`py-2 px-1 rounded-xl text-xs font-semibold text-center transition-all cursor-pointer border ${
-                        isCurrent
-                          ? 'bg-red-600 text-white border-red-500 shadow-md shadow-red-600/30 ring-2 ring-red-400/50'
-                          : 'bg-white/5 hover:bg-white/15 text-white/70 hover:text-white border-white/10'
-                      }`}
-                    >
-                      {formatEpisodeGridLabel(ep.name, idx)}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
           {/* 演职员圆形肖像滑轨 */}
           {(directorsList.length > 0 || actorsList.length > 0) && (

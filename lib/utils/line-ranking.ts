@@ -13,20 +13,19 @@ export interface LineStats {
   fail: number;
 }
 
-// 带片头赌博/低俗跑马灯广告的传统采集线路
+// 带片头赌博/低俗跑马灯广告的传统采集线路（核实无片头赌博广告的 zuida、feifan 已剔除）
 export const AD_PRONE_SOURCES = new Set([
+  'juliang',
   'guangsu',
   'guangsu_http',
   'wujin',
   'wujin_me',
   'wujin_cc',
   'wujin_net',
-  'juliang',
-  'feifan',
-  'feifan_api',
-  'feifan1',
-  'zuida',
-  'zuida_db',
+  'jisu',
+  'xinlang',
+  'hongniu',
+  'subo',
   'wolong',
   'wolong_cj',
 ]);
@@ -34,21 +33,26 @@ export const AD_PRONE_SOURCES = new Set([
 // 仅对中国大陆地区开放/在海外大概率受阻的线路（在海外通常返回 403/404）
 export const CN_ONLY_SOURCES = new Set(['baofeng', 'dytt', 'json1080', 'youku']);
 
-// 默认基准排序权重 (兜底顺序)
+// 默认基准排序权重 (兜底顺序：干净线路在前，大陆专线中游，广告线路在最后)
 export const DEFAULT_LINE_TOP_ORDER: string[] = [
   'shadowline',
+  'modu',
+  'ikun',
+  'zuida',
+  'feifan',
+  'ruyi',
+  'liangzi',
+  'baofeng',
+  'dytt',
+  'json1080',
+  'youku',
   'juliang',
   'guangsu',
   'wujin',
-  'zuida',
   'jisu',
-  'baofeng',
+  'xinlang',
   'hongniu',
-  'suoni',
-  'feifan',
-  'wolong',
-  'dytt',
-  'kuaiche',
+  'subo',
 ];
 
 /**
