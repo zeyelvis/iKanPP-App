@@ -19,8 +19,7 @@ import { Footer } from "@/components/layout/Footer";
 
 import { Suspense } from 'react';
 import { ReferralCapture } from '@/components/auth/ReferralCapture';
-import { JsonLd, generateWebSiteJsonLd } from '@/components/seo/JsonLd';
-import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
+import { FIRST_HERO_BACKDROP } from '@/lib/data/hero-backdrop';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { AddToHomeScreenModal } from '@/components/pwa/AddToHomeScreenModal';
 import { PwaInstallBanner } from '@/components/pwa/PwaInstallBanner';
@@ -129,12 +128,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const hero = ALL_HOME_DATA.hero[0];
-  const desktopBackdropUrl = hero?.backdrop
-    ? getOptimizedImageUrl(hero.backdrop, { width: 1280, noFallback: true })
+  const desktopBackdropUrl = FIRST_HERO_BACKDROP
+    ? getOptimizedImageUrl(FIRST_HERO_BACKDROP, { width: 1280, noFallback: true })
     : '';
-  const mobileBackdropUrl = hero?.backdrop
-    ? getOptimizedImageUrl(hero.backdrop, { width: 500, noFallback: true })
+  const mobileBackdropUrl = FIRST_HERO_BACKDROP
+    ? getOptimizedImageUrl(FIRST_HERO_BACKDROP, { width: 500, noFallback: true })
     : '';
 
   return (
