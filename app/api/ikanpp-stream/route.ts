@@ -110,6 +110,14 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // 前置拦截：严防 0.0.0.0 毒化链接
+  if (targetUrl.includes('0.0.0.0') || targetUrl.includes('0_0.0.0.0_')) {
+    return new NextResponse(
+      JSON.stringify({ error: 'Stream blocked', message: 'Upstream signed with invalid IP 0.0.0.0' }),
+      { status: 503, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } }
+    );
+  }
+
   try {
     // 关键：PipeCDN 的 Cloudflare WAF 严格核验合法 Referer、Origin 与 UA
     // 注入 Referer 与 Origin 为官方域名，彻底穿透防盗链
@@ -127,30 +135,20 @@ export async function GET(request: NextRequest) {
 
     const upstreamResponse = await fetch(targetUrl, {
       headers: fetchHeaders,
-      signal: AbortSignal.timeout(20000),
+      signal: AbortSignal.timeout(12000),
     });
 
     if (!upstreamResponse.ok) {
-      const errText = await upstreamResponse.text().catch(() => '');
-      const respHeadersObj: Record<string, string> = {};
-      upstreamResponse.headers.forEach((v, k) => { respHeadersObj[k] = v; });
-      
-      const debugInfo = {
-        status: upstreamResponse.status,
-        headers: respHeadersObj,
-        sentHeaders: fetchHeaders,
-        targetUrl,
-        bodySnippet: errText.slice(0, 500)
-      };
-
-      console.error(`[iKanPP-Stream] Upstream Debug:`, JSON.stringify(debugInfo));
-      return new NextResponse(`Upstream debug info:\n${JSON.stringify(debugInfo, null, 2)}`, {
-        status: upstreamResponse.status,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json',
-        },
-      });
+      return new NextResponse(
+        JSON.stringify({ error: 'Upstream error', status: upstreamResponse.status }),
+        {
+          status: upstreamResponse.status,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json',
+          },
+        }
+      );
     }
 
     const contentType = upstreamResponse.headers.get('Content-Type') || '';

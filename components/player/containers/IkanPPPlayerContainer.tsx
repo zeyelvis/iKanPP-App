@@ -1088,6 +1088,18 @@ export function IkanPPPlayerContainer() {
     ? '正在加载流媒体...'
     : undefined;
 
+  // === 终端连接态停滞看门狗：防止任何单线因上游死锁或网络阻断导致停滞超过 6 秒 ===
+  useEffect(() => {
+    if (!isConnecting || isSearchingTitle || !title) return;
+
+    const timer = setTimeout(() => {
+      console.warn(`[Player] Connecting timeout on source '${currentSourceId || source}'. Triggering auto-heal fallback...`);
+      handlePlaybackError('线路连接超时');
+    }, 6000);
+
+    return () => clearTimeout(timer);
+  }, [isConnecting, isSearchingTitle, title, currentSourceId, source, handlePlaybackError]);
+
   if (needsTitleSearch && titleSearchError) {
     return (
       <div className="min-h-screen bg-(--bg-color)">

@@ -34,9 +34,9 @@ async function handleDetailRequest(
   seasonParam?: string | number | null,
   aliasesParam?: string | string[] | null
 ) {
-  if (!id) {
+  if (!id && !titleParam) {
     return NextResponse.json(
-      { success: false, error: 'Missing video ID parameter' },
+      { success: false, error: 'Missing video ID or title parameter' },
       { status: 400 }
     );
   }
@@ -44,9 +44,9 @@ async function handleDetailRequest(
   const sourceId = typeof source === 'object' && source !== null ? source.id : source;
 
   // 1. 专属支持 Jable 原生视频流直解与智能热备（严格限定：显式 jable 源，或无 source 且符合番号规范且非主站 ik 实体）
-  const codeMatch = id.match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
+  const codeMatch = (id || '').match(/([A-Za-z0-9]{2,8}[-_][0-9]{3,8}|FC2[-_]PPV[-_][0-9]{5,8}|T28[-_][0-9]{3,5})/i);
   const isJableExplicit = sourceId === 'jable';
-  const isJableSource = isJableExplicit || (!sourceId && !!codeMatch && !id.startsWith('ik'));
+  const isJableSource = isJableExplicit || (!sourceId && !!codeMatch && !(id || '').startsWith('ik'));
 
   if (isJableSource) {
     try {
@@ -54,6 +54,7 @@ async function handleDetailRequest(
       const videoCode = codeMatch ? codeMatch[0].toUpperCase() : id;
 
       // 尝试直解 Jable
+      if (!id) throw new Error('Missing video ID for Jable');
       const detail = await fetchJableVideoDetail(id);
       if (detail && detail.hlsUrl) {
         const proxiedStreamUrl = detail.hlsUrl.includes('.m3u8')
@@ -187,6 +188,7 @@ async function handleDetailRequest(
       const lineFlag = typeof sourceId === 'string' && sourceId.startsWith('ikanbot_')
         ? sourceId.replace('ikanbot_', '')
         : '';
+      if (!id) throw new Error('Missing video ID for ikanbot');
       const detail = await fetchIkanbotDetail(id);
       if (detail && detail.lines.length > 0) {
         const matchedLine = detail.lines.find(l => l.sourceId === sourceId)
@@ -363,9 +365,13 @@ async function handleDetailRequest(
 
         if (targetMediaKey) {
           const episodeList = await ikanppProvider.getFullEpisodeList(targetMediaKey);
-          if (episodeList && episodeList.length > 0) {
-            // PipeCDN CORS 桥接：浏览器携带 Origin: ikanpp.com 会被 Cloudflare 返回 520，
-            // 必须将 pipecdn.vip 的 m3u8 地址改写为经由 /api/ikanpp-stream 中继的地址
+          // 核心防毒化门禁：核验爱壹帆是否返回了 0.0.0.0 毒化失效链接或全空链接
+          const hasValidPlayableUrl = episodeList && episodeList.length > 0 && episodeList.some(ep => {
+            return ep.url && !ep.url.includes('0.0.0.0') && !ep.url.includes('0_0.0.0.0_');
+          });
+
+          if (hasValidPlayableUrl && episodeList && episodeList.length > 0) {
+            // 真实有效（非 0.0.0.0 的健康链接）
             const relayOrigin = request?.nextUrl?.origin || '';
             const streamEndpoint = relayOrigin ? `${relayOrigin}/api/ikanpp-stream` : '/api/ikanpp-stream';
             const relayedEpisodes = episodeList.map(ep => {
@@ -385,7 +391,7 @@ async function handleDetailRequest(
                 vod_name: matchedTitle || titleParam || 'iKanPP专线 · 极清',
                 vod_pic: matchedPic,
                 type_name: '4K 极清 · 专线中继',
-                episodes: relayedEpisodes, // PipeCDN 经由 /api/ikanpp-stream 边缘中继，.ts 切片零缓冲透传
+                episodes: relayedEpisodes,
                 source: 'ikanpp',
               }
             });
@@ -397,6 +403,55 @@ async function handleDetailRequest(
     }
 
     if (sourceId === 'ikanpp' || sourceId === 'ikanpp_line') {
+      // 专线上游受阻（包括 0.0.0.0 毒链或未收录），启动 iKanPP 专线极速自愈引擎
+      if (titleParam && titleParam.trim().length > 0) {
+        try {
+          const cleanTitle = titleParam.replace(/[《》【】\[\]（）()·\s:：\-]/g, ' ').trim();
+          const fallbackSources = DEFAULT_SOURCES.filter(s => s.enabled !== false && (s.id === 'juliang' || s.id === 'guangsu' || s.id === 'baofeng' || s.id === 'wujin'));
+          const searchRes = await searchVideos(cleanTitle, fallbackSources, 1);
+          for (const res of searchRes) {
+            const candidates = res.results || [];
+            const matched = candidates.find(c => {
+              const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
+              const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
+              return cName === tName;
+            }) || candidates.find(c => {
+              const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
+              const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
+              const lenDiff = Math.abs(cName.length - tName.length);
+              if (cName.includes(tName)) return tName.length > 3 ? lenDiff <= 4 : lenDiff <= 1;
+              if (tName.includes(cName)) return lenDiff <= 1;
+              return false;
+            });
+
+            if (matched && matched.vod_id) {
+              const matchedSource = getSourceById(res.source);
+              if (matchedSource) {
+                const healedDetail = await getVideoDetail(matched.vod_id, matchedSource);
+                if (healedDetail && healedDetail.episodes && healedDetail.episodes.length > 0) {
+                  return NextResponse.json({
+                    success: true,
+                    data: {
+                      ...healedDetail,
+                      vod_id: healedDetail.vod_id || matched.vod_id,
+                      vod_name: healedDetail.vod_name || titleParam,
+                      vod_pic: healedDetail.vod_pic,
+                      type_name: '4K 极清 · iKanPP极速专线',
+                      source: 'ikanpp', // 保持 source 为 ikanpp，让前端无缝接收秒播
+                    },
+                    healed: true,
+                    healedSource: matchedSource.id,
+                    healedId: matched.vod_id,
+                  });
+                }
+              }
+            }
+          }
+        } catch (healErr) {
+          console.warn('[DetailAPI] iKanPP Line fallback heal failed:', healErr);
+        }
+      }
+
       return NextResponse.json({
         success: false,
         error: 'iKanPP专线暂未收录该影片，正在为您调度其他线路...',
@@ -467,6 +522,9 @@ async function handleDetailRequest(
   }
 
   try {
+    if (!id) {
+      throw new Error('No video ID provided, falling back to title search');
+    }
     const videoDetail = await getVideoDetail(id, sourceConfig, titleParam || undefined);
 
     return NextResponse.json({
