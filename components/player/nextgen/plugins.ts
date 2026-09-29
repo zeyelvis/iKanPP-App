@@ -19,6 +19,7 @@ import Volume from 'xgplayer/es/plugins/volume';
 
 import { createHlsConfig, type HlsConfigOptions } from '@/lib/player/hls-config-factory';
 import { checkIsIPadOS } from '@/lib/hooks/mobile/useDeviceDetection';
+import { isStaleBuildError, reloadForNewBuild } from '@/lib/client/stale-build';
 
 export type LoadMode = 'hls' | 'native' | 'unsupported';
 
@@ -117,7 +118,14 @@ export class HlsSource extends BasePlugin {
       return 'native';
     }
 
-    const { default: HlsCtor } = await import('hls.js');
+    let HlsCtor: typeof import('hls.js').default;
+    try {
+      ({ default: HlsCtor } = await import('hls.js'));
+    } catch (error) {
+      // 旧版本页面：刷新到新版本，不当作线路故障（不触发换线路，也不上报失败）
+      if (isStaleBuildError(error) && reloadForNewBuild()) return null;
+      throw error;
+    }
     if (generation !== this.generation) return null; // 存在更新的加载或已被销毁
 
     if (HlsCtor.isSupported()) {

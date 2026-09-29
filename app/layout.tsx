@@ -25,6 +25,7 @@ import { AddToHomeScreenModal } from '@/components/pwa/AddToHomeScreenModal';
 import { PwaInstallBanner } from '@/components/pwa/PwaInstallBanner';
 import { InAppBrowserBanner } from '@/components/common/InAppBrowserBanner';
 import { PageSpeedMonitor } from '@/components/common/PageSpeedMonitor';
+import { StaleBuildGuard } from '@/components/common/StaleBuildGuard';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -236,6 +237,7 @@ export default function RootLayout({
           <ImagePrefetchObserver />
           <AddToHomeScreenModal />
           <PageSpeedMonitor />
+          <StaleBuildGuard />
         </ThemeProvider>
 
         {/* ARIA Live Region for Screen Reader Announcements */}

@@ -495,6 +495,22 @@ IkanPPPlayerContainer / IkanXPlayerContainer (双轨容器，负责线路调度�
 4. **浏览器精准分流**：排除非 Safari 的 iOS 浏览器（CriOS、FxiOS、EdgiOS、UC、Quark 等），仅在原生 Safari 下展示上述步骤；其他浏览器引导复制链接在 Safari 打开；
 5. **防遮挡与全屏安全**：全屏播放模式下坚决不弹窗打断观影；弹窗彻底剔除 `backdrop-blur`，采用纯色深底保证显卡硬件覆盖层不黑屏；独立桌面 App 窗口 (`display-mode: standalone`) 运行时 100% 彻底静默。
 
+---
+
+## 19. 部署后旧页面脚本失效自愈规范 (Stale Build Auto-Recovery Spec)
+
+为彻底解决生产部署更新导致已打开的存量页面（后台标签页、PWA 桌面版）在按需加载脚本时抛出 `ChunkLoadError`、整页崩溃的痛点：
+1. **触发条件**：
+   - 统一由 `lib/client/stale-build.ts` 的 `isStaleBuildError` 判定（覆盖 Chrome、Safari、Firefox、Turbopack 与 webpack 的脚本缺失与动态 import 失败特征）；
+2. **处理方式**：
+   - 捕获后立即触发 `reloadForNewBuild()`，自动刷新到最新部署版本；
+   - **防死循环机制**：利用 `sessionStorage` 限制每 60 秒内最多自动刷新一次，防止真实缺失文件时死循环刷新；超过 60 秒频控后展示友好中文错误页供用户手动选择；
+3. **播放状态无损续播**：
+   - 刷新后通过 URL searchParams 参数保持集数和线路，配合播放器 `shouldAutoPlay` 默认开启及播放历史记录，实现 100% 自动续播；
+4. **指标与调度纯净度铁律**：
+   - 脚本加载失败属于客户端版本更迭，**绝不当作线路故障**；严禁触发 `handlePlaybackError` 换线路，严禁向 `/api/beacon/play` 上报 `ok: false`，绝不污染地区线路质量学习与自愈调度系统。
+
+
 
 
 

@@ -4,9 +4,15 @@ import React, { useSyncExternalStore } from 'react';
 import dynamic from 'next/dynamic';
 import { DesktopVideoPlayer } from './DesktopVideoPlayer';
 import { settingsStore } from '@/lib/store/settings-store';
+import { isStaleBuildError, reloadForNewBuild } from '@/lib/client/stale-build';
+
+function reloadOnStale(error: unknown): Promise<never> {
+  if (isStaleBuildError(error) && reloadForNewBuild()) return new Promise<never>(() => undefined);
+  throw error;
+}
 
 const DynamicXgVideoPlayer = dynamic(
-  () => import('./xg/XgVideoPlayer').then((m) => m.XgVideoPlayer),
+  () => import('./xg/XgVideoPlayer').then((m) => m.XgVideoPlayer).catch(reloadOnStale),
   {
     ssr: false,
     loading: () => (
@@ -21,7 +27,7 @@ const DynamicXgVideoPlayer = dynamic(
 );
 
 const DynamicNextgenVideoPlayer = dynamic(
-  () => import('./nextgen/NextgenVideoPlayer').then((m) => m.NextgenVideoPlayer),
+  () => import('./nextgen/NextgenVideoPlayer').then((m) => m.NextgenVideoPlayer).catch(reloadOnStale),
   {
     ssr: false,
     loading: () => (

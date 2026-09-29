@@ -388,6 +388,52 @@ if (fs.existsSync(nextgenDir)) {
   }
 }
 
+// 14. 部署后旧版本脚本失效自愈门禁 (Stale Build Auto-Recovery Spec)
+const customVpPath = path.resolve('components/player/CustomVideoPlayer.tsx');
+if (fs.existsSync(customVpPath)) {
+  const content = fs.readFileSync(customVpPath, 'utf-8');
+  assert(
+    content.includes('reloadOnStale') && (content.match(/reloadOnStale/g) || []).length >= 3,
+    'CustomVideoPlayer.tsx 必须为 DynamicXgVideoPlayer 与 DynamicNextgenVideoPlayer 配置 reloadOnStale 自愈捕获'
+  );
+}
+
+const pluginsTsPath = path.resolve('components/player/nextgen/plugins.ts');
+if (fs.existsSync(pluginsTsPath)) {
+  const content = fs.readFileSync(pluginsTsPath, 'utf-8');
+  assert(
+    content.includes('isStaleBuildError') && content.includes('reloadForNewBuild'),
+    'components/player/nextgen/plugins.ts 必须在动态 import("hls.js") 中捕获 isStaleBuildError 并执行 reloadForNewBuild'
+  );
+}
+
+const pageErrorPath = path.resolve('app/error.tsx');
+assert(fs.existsSync(pageErrorPath), 'app/error.tsx 页面级错误边界必须存在');
+if (fs.existsSync(pageErrorPath)) {
+  const content = fs.readFileSync(pageErrorPath, 'utf-8');
+  assert(
+    content.includes('isStaleBuildError') && content.includes('reloadForNewBuild'),
+    'app/error.tsx 必须集成 isStaleBuildError 与 reloadForNewBuild 自动重载机制'
+  );
+  assert(
+    !content.includes('backdrop-blur'),
+    'app/error.tsx 严禁包含 backdrop-blur，恪守防黑屏与纯色底规范'
+  );
+}
+
+const globalErrorPath = path.resolve('app/global-error.tsx');
+if (fs.existsSync(globalErrorPath)) {
+  const content = fs.readFileSync(globalErrorPath, 'utf-8');
+  assert(
+    content.includes('window.location.reload()'),
+    'app/global-error.tsx 主按钮必须使用 window.location.reload()，严禁使用无效的 reset'
+  );
+  assert(
+    !content.includes('backdrop-blur'),
+    'app/global-error.tsx 严禁包含 backdrop-blur，恪守防黑屏纯色底规范'
+  );
+}
+
 console.log('\n====================================================');
 if (failed) {
   console.error('🚨 架构契约巡检失败！存在破坏全局稳定性的违规回退，请根据上述报错整改后再行提交！');
