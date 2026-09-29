@@ -31,6 +31,9 @@ export const AD_PRONE_SOURCES = new Set([
   'wolong_cj',
 ]);
 
+// 仅对中国大陆地区开放/在海外大概率受阻的线路（在海外通常返回 403/404）
+export const CN_ONLY_SOURCES = new Set(['baofeng', 'dytt', 'json1080', 'youku']);
+
 // 默认基准排序权重 (兜底顺序)
 export const DEFAULT_LINE_TOP_ORDER: string[] = [
   'shadowline',
@@ -57,18 +60,41 @@ export function computeLineScore(
   globalStats: Record<string, LineStats> = {},
   country: string = 'XX'
 ): number {
-  // 1. 计算全球平滑基准 base
-  let globalBase = 0.8;
-  const g = globalStats[sourceId];
-  if (g && (g.ok > 0 || g.fail > 0)) {
-    globalBase = (g.ok + 10 * 0.8) / (g.ok + g.fail + 10);
-  }
+  let score: number;
 
-  // 2. 计算国家平滑成功率
-  let score = globalBase;
-  const c = countryStats[sourceId];
-  if (c && (c.ok > 0 || c.fail > 0)) {
-    score = (c.ok + 10 * globalBase) / (c.ok + c.fail + 10);
+  if (CN_ONLY_SOURCES.has(sourceId)) {
+    if (country !== 'CN') {
+      // 1a. 在大陆以外：若在该国没有数据，初始分数取 0.1；若有数据，以 0.1 为弱基准平滑计算
+      const c = countryStats[sourceId];
+      if (c && (c.ok > 0 || c.fail > 0)) {
+        score = (c.ok + 10 * 0.1) / (c.ok + c.fail + 10);
+      } else {
+        score = 0.1;
+      }
+    } else {
+      // 1b. 在大陆 (CN)：按普通线路计算，但不借用全球汇总分数（全球数据把大陆内外混在一起）
+      const cnBase = 0.8;
+      const c = countryStats[sourceId];
+      if (c && (c.ok > 0 || c.fail > 0)) {
+        score = (c.ok + 10 * cnBase) / (c.ok + c.fail + 10);
+      } else {
+        score = cnBase;
+      }
+    }
+  } else {
+    // 2. 普通全域线路：计算全球平滑基准 base
+    let globalBase = 0.8;
+    const g = globalStats[sourceId];
+    if (g && (g.ok > 0 || g.fail > 0)) {
+      globalBase = (g.ok + 10 * 0.8) / (g.ok + g.fail + 10);
+    }
+
+    // 计算国家平滑成功率
+    score = globalBase;
+    const c = countryStats[sourceId];
+    if (c && (c.ok > 0 || c.fail > 0)) {
+      score = (c.ok + 10 * globalBase) / (c.ok + c.fail + 10);
+    }
   }
 
   // 3. 赌博广告片头扣分 (-0.15)

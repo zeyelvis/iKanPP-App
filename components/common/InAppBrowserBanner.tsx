@@ -1,35 +1,37 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useSyncExternalStore } from 'react';
 import { usePathname } from 'next/navigation';
 import { Compass, X } from 'lucide-react';
 import { inAppBrowser } from '@/lib/client/in-app';
 
 const STORAGE_KEY = 'ikanpp_in_app_banner_closed';
 
+function subscribe() {
+  return () => {};
+}
+
+function getClientSnapshot(): string | null {
+  const detected = inAppBrowser();
+  if (!detected) return null;
+  try {
+    if (sessionStorage.getItem(STORAGE_KEY) === '1') return null;
+  } catch {}
+  return detected;
+}
+
+function getServerSnapshot(): null {
+  return null;
+}
+
 /**
  * 第三方 App 内置 WebView 提示横幅 (InAppBrowserBanner)
  * 引导微信、QQ、微博、抖音等用户切换至系统默认浏览器，享受原生全屏、无劫持与桌面 App 安装体验
  */
 export function InAppBrowserBanner() {
-  const [appName, setAppName] = useState<string | null>(null);
-  const [isDismissed, setIsDismissed] = useState(true);
+  const appName = useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
+  const [isDismissed, setIsDismissed] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    // 1. 读取内置浏览器特征
-    const detected = inAppBrowser();
-    if (!detected) return;
-
-    // 2. 检查当前会话是否已手动关闭
-    try {
-      const closed = sessionStorage.getItem(STORAGE_KEY);
-      if (closed === '1') return;
-    } catch {}
-
-    setAppName(detected);
-    setIsDismissed(false);
-  }, []);
 
   const handleClose = () => {
     setIsDismissed(true);
@@ -38,7 +40,7 @@ export function InAppBrowserBanner() {
     } catch {}
   };
 
-  // 1. 无内置浏览器或已关闭
+  // 1. 无内置浏览器或已手动关闭
   if (isDismissed || !appName) {
     return null;
   }
@@ -60,26 +62,24 @@ export function InAppBrowserBanner() {
 
   return (
     <div
-      role="alert"
-      className={`fixed ${bottomClass} inset-x-0 z-40 px-3 py-2 sm:px-4 sm:py-2.5 bg-[#181922] border-t border-amber-500/30 shadow-[0_-8px_30px_rgba(0,0,0,0.8)] select-none text-white transition-transform duration-300`}
+      className={`fixed left-0 right-0 z-[80] px-3 transition-transform duration-300 ease-out select-none ${bottomClass}`}
     >
-      <div className="max-w-4xl mx-auto flex items-center justify-between gap-3 text-xs sm:text-sm">
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          <div className="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
-            <Compass size={14} className="animate-spin-slow" />
-          </div>
-          <p className="text-white/90 leading-snug line-clamp-2">
-            你正在{appName}里浏览。点右上角「···」选「在浏览器打开」，播放更流畅，还能全屏、装到桌面。
+      <div className="max-w-md mx-auto bg-[#141416]/95 border border-amber-500/30 text-amber-200 rounded-xl p-3 shadow-[0_8px_30px_rgba(0,0,0,0.8)] flex items-start gap-3">
+        <Compass className="w-5 h-5 text-amber-400 shrink-0 mt-0.5 animate-pulse" />
+        <div className="flex-1 min-w-0 text-xs leading-relaxed text-amber-100/90">
+          <p className="font-semibold text-amber-300">正在使用 {appName} 内置浏览器</p>
+          <p className="text-[11px] text-amber-200/80 mt-0.5">
+            请点击右上角 <span className="font-mono font-bold">•••</span> 选择
+            <span className="font-bold text-white bg-amber-500/20 px-1 py-0.5 rounded mx-0.5">在浏览器打开</span>
+            以获得最佳 4K 原画与防截断全屏体验
           </p>
         </div>
-
         <button
-          type="button"
           onClick={handleClose}
+          className="p-1 -mr-1 -mt-1 text-amber-400/60 hover:text-amber-200 transition-colors cursor-pointer shrink-0"
           aria-label="关闭提示"
-          className="shrink-0 p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10 active:scale-95 transition-all"
         >
-          <X size={16} />
+          <X className="w-4 h-4" />
         </button>
       </div>
     </div>

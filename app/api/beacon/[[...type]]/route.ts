@@ -20,11 +20,16 @@ export async function POST(
   context: { params: Promise<{ type?: string[] }> }
 ) {
   try {
-    // 1. 同源鉴权校验：只接受本站页面发来的请求
+    // 1. 同源鉴权精确校验：严禁包含式匹配（防止 evil.ikanpp.com / ikanpp.com.evil.com 绕过）
     const secFetchSite = request.headers.get('sec-fetch-site');
     const origin = request.headers.get('origin');
     const host = request.headers.get('host');
-    const isSameOrigin = secFetchSite === 'same-origin' || (origin && host && origin.includes(host));
+    let isSameOrigin = secFetchSite === 'same-origin';
+    if (!isSameOrigin && origin && host) {
+      try {
+        isSameOrigin = new URL(origin).host === host;
+      } catch {}
+    }
     if (!isSameOrigin) {
       return new NextResponse('Forbidden', { status: 403 });
     }
@@ -35,12 +40,21 @@ export async function POST(
       return new NextResponse(null, { status: 204 });
     }
 
+    // 3. 请求体大小限制：先查 content-length，再查实际读取长度，超 512 字节返回 413
+    const contentLength = parseInt(request.headers.get('content-length') || '0', 10);
+    if (contentLength > 512) {
+      return new NextResponse('Payload Too Large', { status: 413 });
+    }
+
     const { type = [] } = await context.params;
     const subRoute = type[0] || '';
 
     const text = await request.text();
     if (!text) {
       return new NextResponse(null, { status: 204 });
+    }
+    if (text.length > 512) {
+      return new NextResponse('Payload Too Large', { status: 413 });
     }
 
     let payload: Record<string, unknown> = {};
@@ -55,7 +69,14 @@ export async function POST(
     // ── 分流 1：播放质量上报 (/api/beacon/play 或包含 source 字段) ──
     if (subRoute === 'play' || 'source' in payload) {
       const { source, ok, ms } = payload as { source?: string; ok?: boolean; ms?: number };
-      if (!source || typeof source !== 'string') {
+
+      // 线路名白名单格式强校验：只允许字母、数字、下划线，1~32 字符，防止脏数据注入
+      if (!source || typeof source !== 'string' || !/^[a-z0-9_]{1,32}$/.test(source)) {
+        return new NextResponse(null, { status: 204 });
+      }
+
+      // 服务端防线：午夜专区线路绝不上报至主站 Analytics Engine
+      if (source.startsWith('jable') || source.startsWith('premium_')) {
         return new NextResponse(null, { status: 204 });
       }
 

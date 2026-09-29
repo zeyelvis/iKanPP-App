@@ -88,7 +88,32 @@ const fallbackRank = rankSourcesByPerformance(
   'XX',
   DEFAULT_LINE_TOP_ORDER
 );
-assert.strictEqual(fallbackRank[0].source, 'shadowline', '无网络数据时必须按 DEFAULT_LINE_TOP_ORDER 优雅兜底');
-console.log('✅ [测试 4/4] 离线与冷启动回退兜底测试通过！');
+// 5. 纯大陆地区限制线路 (CN_ONLY_SOURCES) 降权与 CN 正常排序验证
+const thScore = computeLineScore('baofeng', {}, {}, 'TH');
+assert.strictEqual(thScore, 0.1, '在大陆以外无数据时，CN_ONLY 线路评分必须降为 0.1');
+
+const thRank = rankSourcesByPerformance(
+  [{ source: 'baofeng' }, { source: 'jisu' }],
+  {},
+  {},
+  'TH',
+  ['baofeng', 'jisu']
+);
+assert.strictEqual(thRank[0].source, 'jisu', '在海外 (TH) 大陆专线必须排在健康普通线路之后');
+assert.strictEqual(thRank[1].source, 'baofeng', '在海外 (TH) 大陆专线被沉底排在最后');
+
+// 在中国大陆 (CN)：暴风按普通 0.8 基准参与排序
+const cnScore = computeLineScore('baofeng', {}, {}, 'CN');
+assert.strictEqual(cnScore, 0.8, '在中国大陆 (CN) 时，CN_ONLY 线路按普通基准 0.8 计算');
+
+const cnRank = rankSourcesByPerformance(
+  [{ source: 'baofeng' }, { source: 'jisu' }],
+  {},
+  {},
+  'CN',
+  ['baofeng', 'jisu']
+);
+assert.strictEqual(cnRank[0].source, 'baofeng', '在中国大陆 (CN) 暴风应保持正常优先级排序');
+console.log('✅ [测试 5/5] 纯地区限制线路 (CN_ONLY) 海外降权与境内正常排序验证通过！');
 
 console.log('\n🎉 恭喜！地区线路排序引擎所有单元测试 100% 验证通过！');

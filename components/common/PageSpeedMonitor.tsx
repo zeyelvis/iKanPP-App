@@ -31,9 +31,10 @@ export function PageSpeedMonitor() {
     const wasInitiallyHidden = typeof document !== 'undefined' && document.visibilityState === 'hidden';
 
     // 3. 计算预渲染页面的 activationStart
+    type NavigationTimingWithActivation = PerformanceNavigationTiming & { activationStart?: number };
     const navEntries = performance.getEntriesByType('navigation');
-    const nav = (navEntries.length > 0 ? navEntries[0] : null) as PerformanceNavigationTiming | null;
-    const activationStart = (nav as any)?.activationStart || 0;
+    const nav = (navEntries.length > 0 ? navEntries[0] : null) as NavigationTimingWithActivation | null;
+    const activationStart = nav?.activationStart || 0;
 
     let lcpVal: number | null = null;
     let observer: PerformanceObserver | null = null;
@@ -71,8 +72,8 @@ export function PageSpeedMonitor() {
 
         // 重新获取最新的 navigation timing（首字节）
         const latestNavEntries = performance.getEntriesByType('navigation');
-        const latestNav = (latestNavEntries.length > 0 ? latestNavEntries[0] : nav) as PerformanceNavigationTiming | null;
-        const curActivation = (latestNav as any)?.activationStart || activationStart;
+        const latestNav = (latestNavEntries.length > 0 ? latestNavEntries[0] : nav) as NavigationTimingWithActivation | null;
+        const curActivation = latestNav?.activationStart || activationStart;
         const responseStart = latestNav?.responseStart || 0;
         const ttfb = responseStart > 0 ? Math.max(0, Math.round(responseStart - curActivation)) : 0;
 
