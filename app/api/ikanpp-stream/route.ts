@@ -115,12 +115,23 @@ export async function GET(request: NextRequest) {
 
     if (!upstreamResponse.ok) {
       const errText = await upstreamResponse.text().catch(() => '');
-      console.error(`[iKanPP-Stream] Upstream ${upstreamResponse.status}:`, errText.slice(0, 500));
-      return new NextResponse(`Upstream error: ${upstreamResponse.status}\n${errText.slice(0, 2000)}`, {
+      const respHeadersObj: Record<string, string> = {};
+      upstreamResponse.headers.forEach((v, k) => { respHeadersObj[k] = v; });
+      
+      const debugInfo = {
+        status: upstreamResponse.status,
+        headers: respHeadersObj,
+        sentHeaders: fetchHeaders,
+        targetUrl,
+        bodySnippet: errText.slice(0, 500)
+      };
+
+      console.error(`[iKanPP-Stream] Upstream Debug:`, JSON.stringify(debugInfo));
+      return new NextResponse(`Upstream debug info:\n${JSON.stringify(debugInfo, null, 2)}`, {
         status: upstreamResponse.status,
         headers: {
           'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'text/plain',
+          'Content-Type': 'application/json',
         },
       });
     }
