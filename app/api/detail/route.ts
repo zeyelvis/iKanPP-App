@@ -364,14 +364,24 @@ async function handleDetailRequest(
         if (targetMediaKey) {
           const episodeList = await ikanppProvider.getFullEpisodeList(targetMediaKey);
           if (episodeList && episodeList.length > 0) {
+            // PipeCDN CORS 桥接：浏览器携带 Origin: ikanpp.com 会被 Cloudflare 返回 520，
+            // 必须将 pipecdn.vip 的 m3u8 地址改写为经由 /api/ikanpp-stream 中继的地址
+            const relayOrigin = request.nextUrl.origin;
+            const relayedEpisodes = episodeList.map(ep => ({
+              ...ep,
+              url: ep.url && ep.url.includes('pipecdn.vip')
+                ? `${relayOrigin}/api/ikanpp-stream?url=${encodeURIComponent(ep.url)}`
+                : ep.url,
+            }));
+
             return NextResponse.json({
               success: true,
               data: {
                 vod_id: targetMediaKey,
                 vod_name: matchedTitle || titleParam || 'iKanPP专线 · 极清',
                 vod_pic: matchedPic,
-                type_name: '4K 极清 · 直连',
-                episodes: episodeList, // 轨道 A 铁律：100% 浏览器直连第三方 CDN，严禁通过 /api/proxy
+                type_name: '4K 极清 · 专线中继',
+                episodes: relayedEpisodes, // PipeCDN 经由 /api/ikanpp-stream 边缘中继，.ts 切片零缓冲透传
                 source: 'ikanpp',
               }
             });
