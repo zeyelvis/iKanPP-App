@@ -34,11 +34,114 @@ export interface ShadowLineMatchOptions {
   year?: string | number;
   category?: string; // 如 'anime', 'movie', 'tv', 'short', 'variety', 'documentary'
   isShortDramaExpected?: boolean;
+  expectedEpisodes?: number;
+  season?: number | string;
+  director?: string;
+  actors?: string;
+}
+
+const FORM_SUFFIXES = ['剧版', '真人版', '电视剧版', '动画版', '动漫版', '电影版', 'tv版'];
+const RELEASE_TAGS = ['tc', 'hd', '抢先版', '枪版', '高清版'];
+
+export function numToChinese(n: number): string {
+  const digits = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+  if (n <= 10) return digits[n] || String(n);
+  if (n < 20) return '十' + (n % 10 === 0 ? '' : digits[n % 10]);
+  const tens = Math.floor(n / 10);
+  const rem = n % 10;
+  return digits[tens] + '十' + (rem === 0 ? '' : digits[rem]);
+}
+
+function convertSeasonToChinese(str: string): string {
+  let s = str.replace(/第\s*(\d+)\s*[季部期]/gi, (_, d) => `第${numToChinese(parseInt(d, 10))}季`);
+  s = s.replace(/\bseason\s*(\d+)\b/gi, (_, d) => `第${numToChinese(parseInt(d, 10))}季`);
+  s = s.replace(/\bs(\d{1,2})\b/gi, (_, d) => `第${numToChinese(parseInt(d, 10))}季`);
+  return s;
+}
+
+export function normalizeTitleForMatch(rawTitle: string): string {
+  if (!rawTitle) return '';
+  let s = rawTitle;
+  // 1. 全角转半角
+  s = s.replace(/[\uff01-\uff5e]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xfee0)).replace(/\u3000/g, ' ');
+  // 2. 转小写
+  s = s.toLowerCase();
+  // 3. &amp; 转 &
+  s = s.replace(/&amp;/g, '&');
+  // 4. 去掉括号内容
+  s = s.replace(/\([^)]*\)/g, '').replace(/\[[^\]]*\]/g, '').replace(/（[^）]*）/g, '').replace(/【[^】]*】/g, '');
+  // 5. 数字季转中文数字季
+  s = convertSeasonToChinese(s);
+  // 6. 去掉空格和所有中英文标点
+  s = s.replace(/[\s\p{P}\p{S}]/gu, '');
+  return s;
+}
+
+interface MatchCandidateTitleResult {
+  matched: boolean;
+  hasFormSuffix: boolean;
+}
+
+function checkCandidateTitleMatch(candNorm: string, validTargetNames: Set<string>): MatchCandidateTitleResult {
+  // 1. 直接全等
+  if (validTargetNames.has(candNorm)) {
+    return { matched: true, hasFormSuffix: false };
+  }
+
+  // 2. 尝试去掉一次发布标签 (TC, HD, 抢先版, 枪版, 高清版, 或 4位年份)
+  // 注意：一次只去掉一个！
+  for (const tag of RELEASE_TAGS) {
+    if (candNorm.endsWith(tag) && candNorm.length > tag.length) {
+      const stripped = candNorm.slice(0, -tag.length);
+      if (validTargetNames.has(stripped)) {
+        return { matched: true, hasFormSuffix: false };
+      }
+      for (const form of FORM_SUFFIXES) {
+        if (stripped.endsWith(form) && stripped.length > form.length) {
+          const strippedBoth = stripped.slice(0, -form.length);
+          if (validTargetNames.has(strippedBoth)) {
+            return { matched: true, hasFormSuffix: true };
+          }
+        }
+      }
+    }
+  }
+
+  // 4位年份结尾标签 (如 2024, 2025 等)
+  const yearMatch = candNorm.match(/^(.*?)(\d{4})$/);
+  if (yearMatch && yearMatch[1]) {
+    const strippedYear = yearMatch[1];
+    if (validTargetNames.has(strippedYear)) {
+      return { matched: true, hasFormSuffix: false };
+    }
+    for (const form of FORM_SUFFIXES) {
+      if (strippedYear.endsWith(form) && strippedYear.length > form.length) {
+        const strippedBoth = strippedYear.slice(0, -form.length);
+        if (validTargetNames.has(strippedBoth)) {
+          return { matched: true, hasFormSuffix: true };
+        }
+      }
+    }
+  }
+
+  // 3. 尝试去掉形式后缀 (如 剧版, 真人版 等)
+  for (const form of FORM_SUFFIXES) {
+    if (candNorm.endsWith(form) && candNorm.length > form.length) {
+      const strippedForm = candNorm.slice(0, -form.length);
+      if (validTargetNames.has(strippedForm)) {
+        return { matched: true, hasFormSuffix: true };
+      }
+    }
+  }
+
+  return { matched: false, hasFormSuffix: false };
 }
 
 /**
- * 暗影专线多维加权智能消歧匹配器 (ShadowLine Disambiguation Matcher)
- * 彻底消灭正片动漫/影视被同名短剧或垃圾预告营销号顶替的问题
+ * 暗影专线「宁缺毋错」智能消歧匹配器 (ShadowLine Disambiguation Matcher 2.0)
+ * 核心两步流程：
+ * 1. 严格否决条件（一票否决淘汰所有不合格候选，全部淘汰返回 null）
+ * 2. 在通过否决的合格候选之间进行精细化加权打分
  */
 export function matchBestShadowLineCandidate(
   candidates: GzSearchResult[],
@@ -46,86 +149,227 @@ export function matchBestShadowLineCandidate(
 ): GzSearchResult | null {
   if (!candidates || candidates.length === 0) return null;
 
-  const cleanTargetTitle = options.title.replace(/[《》【】\[\]（）()]/g, '').trim().toLowerCase();
-  const targetYear = options.year ? parseInt(String(options.year), 10) : null;
   const rawCat = (options.category || '').toLowerCase();
   const isAnime = rawCat === 'anime' || /动漫|动画/.test(rawCat);
   const isMovie = rawCat === 'movie' || /电影|影院/.test(rawCat);
   const isTv = rawCat === 'tv' || /剧集|电视剧|连续剧/.test(rawCat);
+  const isVariety = rawCat === 'variety' || /综艺/.test(rawCat);
+  const isDoc = rawCat === 'documentary' || /纪录片|记录片/.test(rawCat);
   const isShortDramaExpected = options.isShortDramaExpected || rawCat === 'short' || /短剧/.test(rawCat);
 
-  let bestCandidate: GzSearchResult | null = null;
-  let bestScore = -9999;
+  // 解析目标季数
+  let targetSeason: number | null = null;
+  if (options.season !== undefined && options.season !== null && options.season !== '') {
+    const sNum = parseInt(String(options.season), 10);
+    if (!isNaN(sNum) && sNum > 0) targetSeason = sNum;
+  }
+  if (targetSeason === null) {
+    const sMatch = options.title.match(/第([一二三四五六七八九十\d]+)[季部期]/i) ||
+                   options.title.match(/\bseason\s*(\d+)\b/i) ||
+                   options.title.match(/\bS(\d{1,2})\b/i);
+    if (sMatch) {
+      const sStr = sMatch[1];
+      const cnMap: Record<string, number> = { '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10 };
+      targetSeason = cnMap[sStr] ?? (parseInt(sStr, 10) || null);
+    }
+  }
+
+  // 目标片名规范化基础词
+  const normTarget = normalizeTitleForMatch(options.title);
+  // 去掉目标片名中包含的季信息，得到纯基准名
+  let cleanBaseTarget = normTarget.replace(/第[一二三四五六七八九十\d]+季/g, '');
+
+  const validTargetNames = new Set<string>();
+  if (isMovie) {
+    validTargetNames.add(cleanBaseTarget);
+    validTargetNames.add(normTarget);
+  } else if (targetSeason === 1 || targetSeason === null) {
+    validTargetNames.add(cleanBaseTarget);
+    validTargetNames.add(`${cleanBaseTarget}第一季`);
+    validTargetNames.add(normTarget);
+  } else {
+    // 第 N 季 (N >= 2)
+    const seasonChinese = numToChinese(targetSeason);
+    validTargetNames.add(`${cleanBaseTarget}第${seasonChinese}季`);
+    validTargetNames.add(normTarget);
+  }
+
+  const targetYear = options.year ? parseInt(String(options.year), 10) : null;
+  const E = options.expectedEpisodes && options.expectedEpisodes > 0 ? options.expectedEpisodes : null;
+
+  // 演员/导演名字拆分
+  const targetActors = (options.actors || '')
+    .split(/[\s,，、/|]+/)
+    .map(a => a.trim())
+    .filter(a => a.length >= 2);
+  const targetDirectors = (options.director || '')
+    .split(/[\s,，、/|]+/)
+    .map(d => d.trim())
+    .filter(d => d.length >= 2);
+
+  // 第一步：否决条件严格筛选
+  interface QualifiedCandidate {
+    cand: GzSearchResult;
+    hasFormSuffix: boolean;
+    candNorm: string;
+    candTag0: string;
+  }
+
+  const qualified: QualifiedCandidate[] = [];
 
   for (const cand of candidates) {
-    let score = 0;
-    const candTitle = cand.title.replace(/[《》【】\[\]（）()]/g, '').trim().toLowerCase();
+    const rawCandTitle = cand.title || '';
+    const candNorm = normalizeTitleForMatch(rawCandTitle);
     const candTags = cand.tags || [];
-    const isCandShortDrama = candTags.includes('短剧') || cand.d_type === '29';
-    const isCandAnime = candTags.some(t => t.includes('动漫') || t.includes('动画')) || cand.d_type === '30';
-    const isCandMovie = candTags.some(t => t.includes('电影') || t.includes('影')) || cand.d_type === '1';
-    const isCandTv = candTags.some(t => t.includes('剧') && !t.includes('短剧')) || cand.d_type === '2';
+    const candTag0 = candTags[0] || '';
+    const isCandShortDrama = candTag0 === '短剧' || cand.d_type === '29';
 
-    // 1. 过滤垃圾营销号、速看与预告花絮
-    if (/预告|花絮|解说|速看|一口气看完|精彩片段/.test(candTitle)) {
-      score -= 80;
+    // 否决条件 1: 片名含「解说」，或候选分类是「短剧」
+    if (/解说/.test(rawCandTitle) || /解说/.test(candNorm)) {
+      continue;
+    }
+    if (isCandShortDrama && !isShortDramaExpected) {
+      continue;
     }
 
-    // 2. 片名精确度加权
-    if (candTitle === cleanTargetTitle) {
-      score += 50;
-    } else if (candTitle.startsWith(cleanTargetTitle) || candTitle.endsWith(cleanTargetTitle)) {
-      score += 35;
-    } else if (candTitle.includes(cleanTargetTitle) || cleanTargetTitle.includes(candTitle)) {
-      score += 20;
-    } else {
-      score += 5;
+    // 否决条件 2: 类型不符与动漫/真人连续剧绝对隔离
+    const isCandAnime = candTag0 === '动漫' || cand.d_type === '30' || /动画版|动漫版/.test(rawCandTitle);
+    const isCandLiveTv = (candTag0 === '连续剧' || cand.d_type === '2') && !isCandAnime;
+
+    // 铁律：动漫永远不配给真人连续剧，反过来也一样
+    if (isAnime && (isCandLiveTv || /剧版|真人版|电视剧版/.test(rawCandTitle))) {
+      continue;
+    }
+    if ((isTv || (!isAnime && !isMovie && !isVariety && !isDoc)) && isCandAnime) {
+      continue;
     }
 
-    // 3. 短剧强力防误穿铁律：若期望不是短剧，而候选是短剧，强力扣除 100 分！
-    if (!isShortDramaExpected) {
-      if (isCandShortDrama) {
-        score -= 100;
+    if (isTv) {
+      if (!['连续剧', '综艺', '纪录片'].includes(candTag0) && candTag0 !== '') {
+        continue;
       }
-    } else {
-      // 用户确实在看短剧频道
-      if (isCandShortDrama) {
-        score += 40;
+    } else if (isAnime) {
+      if (!['动漫', '连续剧'].includes(candTag0) && candTag0 !== '') {
+        continue;
       }
-    }
-
-    // 4. 分类亲和性加权
-    if (isAnime) {
-      if (isCandAnime) score += 40;
-      else score -= 30; // 期望动漫却不是动漫，大幅降权
+    } else if (isVariety) {
+      if (!['综艺', '连续剧'].includes(candTag0) && candTag0 !== '') {
+        continue;
+      }
+    } else if (isDoc) {
+      if (!['纪录片', '连续剧'].includes(candTag0) && candTag0 !== '') {
+        continue;
+      }
     } else if (isMovie) {
-      if (isCandMovie) score += 30;
-    } else if (isTv) {
-      if (isCandTv) score += 30;
+      const allowed = ['电影'];
+      if (isAnime || /动画|动漫/.test(rawCat)) allowed.push('动漫');
+      if (isDoc || /纪录|记录/.test(rawCat)) allowed.push('纪录片');
+      if (!allowed.includes(candTag0) && candTag0 !== '') {
+        continue;
+      }
     }
 
-    // 5. 年份加权
-    if (targetYear && cand.year) {
-      const candYearNum = parseInt(cand.year, 10);
-      if (!isNaN(candYearNum)) {
-        const diff = Math.abs(candYearNum - targetYear);
-        if (diff === 0) {
-          score += 25;
-        } else if (diff === 1) {
-          score += 12;
-        } else if (diff >= 3) {
-          score -= 20;
+    // 否决条件 3: 片名不是同一部
+    const matchResult = checkCandidateTitleMatch(candNorm, validTargetNames);
+    if (!matchResult.matched) {
+      continue;
+    }
+
+    // 否决条件 4: 年份相差超过 1 年
+    const candYear = cand.year ? parseInt(cand.year, 10) : null;
+    if (targetYear !== null && !isNaN(targetYear) && candYear !== null && !isNaN(candYear)) {
+      if (Math.abs(targetYear - candYear) > 1) {
+        continue;
+      }
+    }
+
+    // 否决条件 5: 集数
+    const c = cand.episodesCount || 0;
+    if (isMovie) {
+      if (c > 3) {
+        continue;
+      }
+    } else if (E !== null && E > 0 && c > 0) {
+      if (c < E * 0.5 - 1) {
+        continue;
+      }
+      if (targetYear === null && candYear === null) {
+        if (c > E * 1.5 + 2) {
+          continue;
         }
       }
     }
 
-    // 6. 品质加成 (高分正片加分，知名主创加分)
-    if (cand.score && cand.score > 0) {
-      score += Math.min(15, cand.score * 1.5);
+    qualified.push({
+      cand,
+      hasFormSuffix: matchResult.hasFormSuffix,
+      candNorm,
+      candTag0,
+    });
+  }
+
+  // 全部被淘汰就返回 null
+  if (qualified.length === 0) {
+    return null;
+  }
+
+  // 第二步：在合格候选之间进行精细化打分
+  let bestCandidate: GzSearchResult | null = null;
+  let bestScore = -99999;
+
+  for (const q of qualified) {
+    const { cand, hasFormSuffix, candTag0 } = q;
+    let score = 0;
+
+    // 1. 片名得分：完全相同 +30，带形式后缀 +20
+    if (!hasFormSuffix) {
+      score += 30;
+    } else {
+      score += 20;
     }
-    if (cand.director || cand.actors) {
-      score += 10;
+
+    // 2. 类型为首选 +20
+    if (isTv && candTag0 === '连续剧') score += 20;
+    else if (isAnime && candTag0 === '动漫') score += 20;
+    else if (isMovie && candTag0 === '电影') score += 20;
+    else if (isVariety && candTag0 === '综艺') score += 20;
+    else if (isDoc && candTag0 === '纪录片') score += 20;
+
+    // 3. 年份得分：相同 +15，差 1 年 +5
+    const candYear = cand.year ? parseInt(cand.year, 10) : null;
+    if (targetYear !== null && !isNaN(targetYear) && candYear !== null && !isNaN(candYear)) {
+      const diff = Math.abs(targetYear - candYear);
+      if (diff === 0) score += 15;
+      else if (diff === 1) score += 5;
     }
+
+    // 4. 集数得分：越接近 E 越高: +15 * (1 - |c - E| / E)
+    const c = cand.episodesCount || 0;
+    if (E !== null && E > 0 && c > 0) {
+      const ratio = 1 - Math.abs(c - E) / E;
+      if (ratio > 0) {
+        score += 15 * ratio;
+      }
+    }
+
+    // 5. 主演或导演重合得分：每重合一人 +8，最多 +24
+    let peopleOverlap = 0;
+    const candActors = (cand.actors || '')
+      .split(/[\s,，、/|]+/)
+      .map(a => a.trim())
+      .filter(a => a.length >= 2);
+    const candDirectors = (cand.director || '')
+      .split(/[\s,，、/|]+/)
+      .map(d => d.trim())
+      .filter(d => d.length >= 2);
+
+    for (const actor of targetActors) {
+      if (candActors.includes(actor)) peopleOverlap++;
+    }
+    for (const dir of targetDirectors) {
+      if (candDirectors.includes(dir)) peopleOverlap++;
+    }
+    score += Math.min(24, peopleOverlap * 8);
 
     if (score > bestScore) {
       bestScore = score;
@@ -133,16 +377,7 @@ export function matchBestShadowLineCandidate(
     }
   }
 
-  // 兜底保护：若得分过低（如所有结果都完全不匹配且为短剧），宁可返回 null 也不张冠李戴
-  if (bestScore < 0 && !isShortDramaExpected) {
-    const nonShortCandidates = candidates.filter(c => !c.tags?.includes('短剧') && c.d_type !== '29');
-    if (nonShortCandidates.length === 0) {
-      return null;
-    }
-    return nonShortCandidates[0];
-  }
-
-  return bestCandidate || candidates[0];
+  return bestCandidate;
 }
 
 // 默认基线密钥 (若 KV 未配置或降级时使用)

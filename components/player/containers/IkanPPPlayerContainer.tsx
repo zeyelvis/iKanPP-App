@@ -481,6 +481,38 @@ export function IkanPPPlayerContainer() {
     }
   }, [source]);
 
+  const expectedEpisodes = useMemo(() => {
+    let rawList: any[] = [];
+    if (gsKeyParam) {
+      const cached = retrieveGroupedSources(gsKeyParam);
+      if (cached && Array.isArray(cached)) rawList = cached;
+    }
+    if (rawList.length === 0 && groupedSourcesParam) {
+      try {
+        rawList = JSON.parse(groupedSourcesParam);
+      } catch {}
+    }
+    const counts: number[] = [];
+    for (const s of rawList) {
+      const r = s?.remarks;
+      if (r) {
+        const m = String(r).match(/(?:更新至|更新到|连载至|连载到|全|共|ep)\s*(?:第)?\s*(\d+)\s*(?:集|话|期)?/i) ||
+                  String(r).match(/第\s*(\d+)\s*(?:集|话|期)/i) ||
+                  String(r).match(/(\d+)\s*(?:集|话)/i);
+        if (m && m[1]) {
+          const num = parseInt(m[1], 10);
+          if (num > 0 && num < 2000) counts.push(num);
+        }
+      }
+    }
+    if (counts.length === 0) return null;
+    counts.sort((a, b) => a - b);
+    const mid = Math.floor(counts.length / 2);
+    return counts.length % 2 === 0
+      ? Math.round((counts[mid - 1] + counts[mid]) / 2)
+      : counts[mid];
+  }, [gsKeyParam, groupedSourcesParam]);
+
   const {
     videoData,
     playUrl,
@@ -491,7 +523,16 @@ export function IkanPPPlayerContainer() {
     setPlayUrl,
     setVideoError,
     fetchVideoDetails,
-  } = useVideoPlayer(videoId || '', source || '', episodeParam, isReversed, handleSourceUnavailable, title, seasonParam);
+  } = useVideoPlayer(
+    videoId || '',
+    source || '',
+    episodeParam,
+    isReversed,
+    handleSourceUnavailable,
+    title,
+    seasonParam,
+    expectedEpisodes
+  );
 
   const [discoveredSources, setDiscoveredSources] = useState<SourceInfo[]>([]);
 

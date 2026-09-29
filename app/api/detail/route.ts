@@ -27,7 +27,10 @@ async function handleDetailRequest(
   request?: NextRequest,
   titleParam?: string | null,
   categoryParam?: string | null,
-  yearParam?: string | null
+  yearParam?: string | null,
+  expectedEpisodesParam?: string | number | null,
+  seasonParam?: string | number | null,
+  aliasesParam?: string | string[] | null
 ) {
   if (!id) {
     return NextResponse.json(
@@ -224,12 +227,46 @@ async function handleDetailRequest(
         // 如果没有数字 ID，但携带了片名 titleParam，则动态按片名搜寻并执行多维消歧匹配
         if (!targetVodId && titleParam) {
           const cleanTitle = titleParam.replace(/[（(].*?[）)]/g, '').trim();
-          const searchList = await gzProvider.search(cleanTitle);
-          if (searchList && searchList.length > 0) {
-            const matchedCandidate = matchBestShadowLineCandidate(searchList, {
+
+          // 收集多路搜索关键词（本名 + 中文译名/别名并行搜索）
+          const searchKeywords = new Set<string>();
+          searchKeywords.add(cleanTitle);
+
+          if (aliasesParam) {
+            const aliasList = Array.isArray(aliasesParam)
+              ? aliasesParam
+              : String(aliasesParam).split(/[,/|，]/);
+            for (const a of aliasList) {
+              const cleanAlias = a.replace(/[（(].*?[）)]/g, '').trim();
+              if (cleanAlias && cleanAlias !== cleanTitle && /[\u4e00-\u9fa5]/.test(cleanAlias)) {
+                searchKeywords.add(cleanAlias);
+              }
+            }
+          }
+
+          // 多路译名并行搜索，避免串行拖慢起播耗时
+          const searchPromises = Array.from(searchKeywords).map(k => gzProvider.search(k));
+          const searchResults = await Promise.all(searchPromises);
+
+          const candidateMap = new Map<string, any>();
+          for (const list of searchResults) {
+            if (list && Array.isArray(list)) {
+              for (const item of list) {
+                if (!candidateMap.has(item.vod_id)) {
+                  candidateMap.set(item.vod_id, item);
+                }
+              }
+            }
+          }
+
+          const allCandidates = Array.from(candidateMap.values());
+          if (allCandidates.length > 0) {
+            const matchedCandidate = matchBestShadowLineCandidate(allCandidates, {
               title: cleanTitle,
               category: categoryParam || undefined,
               year: yearParam || undefined,
+              expectedEpisodes: expectedEpisodesParam ? Number(expectedEpisodesParam) : undefined,
+              season: seasonParam || undefined,
             });
             if (matchedCandidate) {
               targetVodId = matchedCandidate.vod_id;
@@ -468,8 +505,22 @@ export async function GET(request: NextRequest) {
     const title = searchParams.get('title');
     const category = searchParams.get('category') || searchParams.get('type');
     const year = searchParams.get('year');
+    const expectedEpisodes = searchParams.get('expectedEpisodes');
+    const season = searchParams.get('season');
+    const aliases = searchParams.get('aliases');
 
-    return await handleDetailRequest(id, source, 'GET', request, title, category, year);
+    return await handleDetailRequest(
+      id,
+      source,
+      'GET',
+      request,
+      title,
+      category,
+      year,
+      expectedEpisodes,
+      season,
+      aliases
+    );
   } catch (error) {
     console.error('Detail API error:', error);
 
@@ -486,9 +537,20 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, source, title, category, type, year } = body;
+    const { id, source, title, category, type, year, expectedEpisodes, season, aliases } = body;
 
-    return await handleDetailRequest(id, source, 'POST', request, title, category || type, year);
+    return await handleDetailRequest(
+      id,
+      source,
+      'POST',
+      request,
+      title,
+      category || type,
+      year,
+      expectedEpisodes,
+      season,
+      aliases
+    );
   } catch (error) {
     console.error('Detail API error:', error);
 

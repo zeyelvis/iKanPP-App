@@ -39,7 +39,9 @@ export function useVideoPlayer(
   isReversed: boolean = false,
   onSourceUnavailable?: () => void,
   title?: string | null,
-  seasonParam?: string | null
+  seasonParam?: string | null,
+  expectedEpisodes?: number | null,
+  aliases?: string[] | string | null
 ): UseVideoPlayerReturn {
   const [videoData, setVideoData] = useState<VideoData | null>(null);
   // Initialize loading to true if we have the necessary params to start fetching
@@ -58,6 +60,8 @@ export function useVideoPlayer(
   const isReversedRef = useRef(isReversed);
   const onSourceUnavailableRef = useRef(onSourceUnavailable);
   const titleRef = useRef(title);
+  const expectedEpisodesRef = useRef(expectedEpisodes);
+  const aliasesRef = useRef(aliases);
 
   useEffect(() => {
     episodeParamRef.current = episodeParam;
@@ -79,14 +83,18 @@ export function useVideoPlayer(
     titleRef.current = title;
   }, [title]);
 
+  useEffect(() => {
+    expectedEpisodesRef.current = expectedEpisodes;
+  }, [expectedEpisodes]);
+
+  useEffect(() => {
+    aliasesRef.current = aliases;
+  }, [aliases]);
+
   const fetchVideoDetails = useCallback(async () => {
     if (!videoId || !source) return;
 
     try {
-      // Don't clear error immediately if we are just retrying silently, 
-      // but for manual retry or initial load we should.
-      // Let's clear it to show loading state if we want, or keep it.
-      // Standard behavior: clear error and show loading.
       setVideoError('');
       setLoading(true);
 
@@ -111,13 +119,21 @@ export function useVideoPlayer(
             title: currentTitle,
             category: currentCategory,
             year: currentYear,
+            expectedEpisodes: expectedEpisodesRef.current,
+            season: seasonParamRef.current,
+            aliases: aliasesRef.current,
           })
         });
       } else {
         const titleQuery = currentTitle ? `&title=${encodeURIComponent(currentTitle)}` : '';
         const catQuery = currentCategory ? `&category=${encodeURIComponent(currentCategory)}` : '';
         const yearQuery = currentYear ? `&year=${encodeURIComponent(currentYear)}` : '';
-        response = await fetch(`/api/detail?id=${videoId}&source=${source}${titleQuery}${catQuery}${yearQuery}`);
+        const epQuery = expectedEpisodesRef.current ? `&expectedEpisodes=${expectedEpisodesRef.current}` : '';
+        const sQuery = seasonParamRef.current ? `&season=${encodeURIComponent(seasonParamRef.current)}` : '';
+        const aQuery = aliasesRef.current
+          ? `&aliases=${encodeURIComponent(Array.isArray(aliasesRef.current) ? aliasesRef.current.join(',') : aliasesRef.current)}`
+          : '';
+        response = await fetch(`/api/detail?id=${videoId}&source=${source}${titleQuery}${catQuery}${yearQuery}${epQuery}${sQuery}${aQuery}`);
       }
 
       const data = await response.json();
