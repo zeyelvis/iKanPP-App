@@ -33,10 +33,11 @@ function isAllowedDomain(url: string): boolean {
 }
 
 /**
- * 将 m3u8 清单中的相对路径 .ts 切片地址改写为经由本中继的绝对地址
+ * 将 m3u8 清单中的相对路径 .ts 切片地址改写为经由本中继的地址
  */
-function rewriteM3u8(content: string, baseUrl: string, relayOrigin: string): string {
+function rewriteM3u8(content: string, baseUrl: string, relayOrigin?: string): string {
   const base = new URL(baseUrl);
+  const streamBase = relayOrigin ? `${relayOrigin}/api/ikanpp-stream` : '/api/ikanpp-stream';
   const lines = content.split('\n');
 
   return lines.map(line => {
@@ -48,7 +49,7 @@ function rewriteM3u8(content: string, baseUrl: string, relayOrigin: string): str
       if (uriMatch && uriMatch[1] && !uriMatch[1].includes('/api/ikanpp-stream')) {
         try {
           const absoluteUrl = new URL(uriMatch[1], base).toString();
-          const relayUrl = `${relayOrigin}/api/ikanpp-stream?url=${encodeURIComponent(absoluteUrl)}`;
+          const relayUrl = `${streamBase}?url=${encodeURIComponent(absoluteUrl)}`;
           return trimmed.replace(/URI="[^"]+"/, `URI="${relayUrl}"`);
         } catch {
           return line;
@@ -70,7 +71,7 @@ function rewriteM3u8(content: string, baseUrl: string, relayOrigin: string): str
     // 将相对/绝对 .ts URL 改写为经由本中继的地址
     try {
       const absoluteUrl = new URL(trimmed, base).toString();
-      return `${relayOrigin}/api/ikanpp-stream?url=${encodeURIComponent(absoluteUrl)}`;
+      return `${streamBase}?url=${encodeURIComponent(absoluteUrl)}`;
     } catch {
       return line;
     }
@@ -93,12 +94,21 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // 关键：使用移动端 User-Agent，不携带 Origin 和 Referer，绕过 PipeCDN 的 Cloudflare 防盗链
+    // 关键：PipeCDN 的 Cloudflare WAF 严格核验合法 Referer 与 UA
+    // 注入 Referer: https://www.iyf.tv/ 并剥离 Origin，彻底穿透防盗链
+    const fetchHeaders: Record<string, string> = {
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+      'Referer': 'https://www.iyf.tv/',
+      'Accept': '*/*',
+    };
+
+    const clientRange = request.headers.get('range');
+    if (clientRange) {
+      fetchHeaders['Range'] = clientRange;
+    }
+
     const upstreamResponse = await fetch(targetUrl, {
-      headers: {
-        'User-Agent': 'okhttp/4.12.0',
-        'Accept': '*/*',
-      },
+      headers: fetchHeaders,
       signal: AbortSignal.timeout(20000),
     });
 
@@ -120,7 +130,7 @@ export async function GET(request: NextRequest) {
       const text = await upstreamResponse.text();
 
       if (text.trim().startsWith('#EXTM3U') || text.trim().startsWith('#EXT-X-')) {
-        const rewritten = rewriteM3u8(text, targetUrl, request.nextUrl.origin);
+        const rewritten = rewriteM3u8(text, targetUrl, request?.nextUrl?.origin);
         return new NextResponse(rewritten, {
           status: 200,
           headers: {
