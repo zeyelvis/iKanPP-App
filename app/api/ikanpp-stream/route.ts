@@ -94,11 +94,12 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // 关键：PipeCDN 的 Cloudflare WAF 严格核验合法 Referer 与 UA
-    // 注入 Referer: https://www.iyf.tv/ 并剥离 Origin，彻底穿透防盗链
+    // 关键：PipeCDN 的 Cloudflare WAF 严格核验合法 Referer、Origin 与 UA
+    // 注入 Referer 与 Origin 为官方域名，彻底穿透防盗链
     const fetchHeaders: Record<string, string> = {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
       'Referer': 'https://www.iyf.tv/',
+      'Origin': 'https://www.iyf.tv',
       'Accept': '*/*',
     };
 
@@ -113,7 +114,9 @@ export async function GET(request: NextRequest) {
     });
 
     if (!upstreamResponse.ok) {
-      return new NextResponse(`Upstream error: ${upstreamResponse.status}`, {
+      const errText = await upstreamResponse.text().catch(() => '');
+      console.error(`[iKanPP-Stream] Upstream ${upstreamResponse.status}:`, errText.slice(0, 500));
+      return new NextResponse(`Upstream error: ${upstreamResponse.status}\n${errText.slice(0, 2000)}`, {
         status: upstreamResponse.status,
         headers: {
           'Access-Control-Allow-Origin': '*',
