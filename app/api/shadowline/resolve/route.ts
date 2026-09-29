@@ -53,6 +53,27 @@ function getCorsHeaders(req: NextRequest): Record<string, string> {
   return headers;
 }
 
+function formatCandidate(c: any) {
+  const typeStr = (c.tags && c.tags.length > 0)
+    ? c.tags.join(' / ')
+    : (c.d_type === '29' ? '短剧' : c.d_type === '30' ? '动漫' : c.d_type === '1' ? '电影' : c.d_type === '2' ? '电视剧' : '影视');
+
+  return {
+    vod_id: String(c.vod_id),
+    id: String(c.vod_id),
+    title: c.title,
+    year: c.year,
+    type: typeStr,
+    tags: c.tags || [],
+    episodesCount: c.episodesCount || 0,
+    episodes: c.episodesCount || 0,
+    actors: c.actors || '',
+    director: c.director || '',
+    score: c.score || 0,
+    pic: c.pic || '',
+  };
+}
+
 function extractEpisodeNumber(epStr?: string | number): number | null {
   if (epStr === undefined || epStr === null) return null;
   if (typeof epStr === 'number') return epStr;
@@ -80,27 +101,36 @@ async function handleResolve(req: NextRequest) {
 
   try {
     let title = '';
+    let vodId = '';
     let episode: string | number | undefined;
     let year: string | undefined;
     let category: string | undefined;
+    let includeCandidates = false;
+    let onlyCandidates = false;
 
     if (req.method === 'POST') {
       const body = await req.json().catch(() => ({}));
       title = (body.title || '').trim();
+      vodId = String(body.vodId || body.vod_id || body.id || '').trim();
       episode = body.episode;
       year = body.year;
       category = body.category || body.type;
+      includeCandidates = Boolean(body.candidates || body.includeCandidates || body.list || body.all);
+      onlyCandidates = Boolean(body.onlyCandidates || body.onlyList || body.action === 'search');
     } else {
       const url = new URL(req.url);
       title = (url.searchParams.get('title') || '').trim();
+      vodId = (url.searchParams.get('vodId') || url.searchParams.get('vod_id') || url.searchParams.get('id') || '').trim();
       episode = url.searchParams.get('episode') || undefined;
       year = url.searchParams.get('year') || undefined;
       category = url.searchParams.get('category') || url.searchParams.get('type') || undefined;
+      includeCandidates = url.searchParams.has('candidates') || url.searchParams.has('includeCandidates') || url.searchParams.has('list');
+      onlyCandidates = url.searchParams.get('onlyCandidates') === '1' || url.searchParams.get('onlyList') === '1' || url.searchParams.get('action') === 'search';
     }
 
-    if (!title) {
+    if (!title && !vodId) {
       return NextResponse.json(
-        { success: false, code: 'PARAM_MISSING', message: '片名不能为空' },
+        { success: false, code: 'PARAM_MISSING', message: '片名(title) 或 瓜子编号(vodId) 不能为空' },
         { status: 400, headers: corsHeaders }
       );
     }
@@ -125,17 +155,7 @@ async function handleResolve(req: NextRequest) {
       );
     }
 
-    // 2. 检查单点缓存
-    const cleanTitle = title.replace(/[（(].*?[）)]/g, '').trim();
-    const cacheKey = `sl_res:${cleanTitle}_${category || 'any'}_${episode || 'all'}`;
-    const cached = resolveCache.get(cacheKey);
-    if (cached && cached.expiresAt > Date.now()) {
-      return NextResponse.json(cached.data, {
-        headers: { ...corsHeaders, 'Cache-Control': 'private, max-age=1800' },
-      });
-    }
-
-    // 3. 动态配置 Provider 凭据
+    // 2. 动态配置 Provider 凭据
     gzProvider.updateConfig({
       baseUrl: config.baseUrl,
       key: config.key,
@@ -143,13 +163,95 @@ async function handleResolve(req: NextRequest) {
       enabled: config.enabled,
     });
 
-    // 4. 惰性搜索标的
+    // 3. 功能二：按瓜子编号 (vodId) 直接换取某一部的播放列表 (无需搜索，100% 精准直达)
+    if (vodId) {
+      const cacheKey = `sl_res_vod:${vodId}_${episode || 'all'}`;
+      const cached = resolveCache.get(cacheKey);
+      if (cached && cached.expiresAt > Date.now()) {
+        return NextResponse.json(cached.data, {
+          headers: { ...corsHeaders, 'Cache-Control': 'private, max-age=1800' },
+        });
+      }
+
+      const playList = await gzProvider.getPlayList(vodId);
+      if (!playList || playList.length === 0) {
+        return NextResponse.json(
+          { success: false, code: 'NO_PLAYLIST', message: `瓜子编号 ${vodId} 暂无可用切片播放地址` },
+          { status: 200, headers: corsHeaders }
+        );
+      }
+
+      const epNum = extractEpisodeNumber(episode);
+      let targetIndex = 0;
+      if (epNum !== null && epNum > 0) {
+        const foundIdx = playList.findIndex((ep) => extractEpisodeNumber(ep.episode) === epNum);
+        if (foundIdx !== -1) {
+          targetIndex = foundIdx;
+        } else if (epNum - 1 < playList.length) {
+          targetIndex = epNum - 1;
+        }
+      }
+
+      const selectedEp = playList[targetIndex] || playList[0];
+      const result = {
+        success: true,
+        vodId: vodId,
+        title: title || `影视 #${vodId}`,
+        targetEpisode: {
+          episode: selectedEp.episode,
+          url: selectedEp.url,
+          index: targetIndex,
+        },
+        episodes: playList.map((ep, idx) => ({
+          name: ep.episode,
+          url: ep.url,
+          index: idx,
+        })),
+        timestamp: new Date().toISOString(),
+      };
+
+      resolveCache.set(cacheKey, {
+        data: result,
+        expiresAt: Date.now() + 1000 * 60 * 60 * 2,
+      });
+
+      return NextResponse.json(result, {
+        headers: { ...corsHeaders, 'Cache-Control': 'private, max-age=1800' },
+      });
+    }
+
+    // 4. 按片名搜索候选
+    const cleanTitle = title.replace(/[（(].*?[）)]/g, '').trim();
     const searchResults = await gzProvider.search(cleanTitle);
     if (!searchResults || searchResults.length === 0) {
       return NextResponse.json(
         { success: false, code: 'NOT_FOUND', message: '专线片库暂未收录该影视' },
         { status: 200, headers: corsHeaders }
       );
+    }
+
+    const formattedCandidates = searchResults.map(formatCandidate);
+
+    // 功能一：纯候选列表模式 (如 action=search 或 onlyCandidates=1，直接返回全部候选供挑选)
+    if (onlyCandidates) {
+      return NextResponse.json({
+        success: true,
+        title: cleanTitle,
+        total: formattedCandidates.length,
+        candidates: formattedCandidates,
+        timestamp: new Date().toISOString(),
+      }, {
+        headers: { ...corsHeaders, 'Cache-Control': 'private, max-age=1800' },
+      });
+    }
+
+    // 检查单点缓存
+    const cacheKey = `sl_res:${cleanTitle}_${category || 'any'}_${episode || 'all'}_cand:${includeCandidates ? 1 : 0}`;
+    const cached = resolveCache.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      return NextResponse.json(cached.data, {
+        headers: { ...corsHeaders, 'Cache-Control': 'private, max-age=1800' },
+      });
     }
 
     // 寻找最佳匹配（多维智能消歧算法，彻底防短剧与垃圾营销号误穿）
@@ -161,7 +263,12 @@ async function handleResolve(req: NextRequest) {
 
     if (!matched) {
       return NextResponse.json(
-        { success: false, code: 'NOT_FOUND', message: '专线片库暂未收录该影视正片' },
+        {
+          success: false,
+          code: 'NOT_FOUND',
+          message: '专线片库暂未收录该影视正片',
+          candidates: formattedCandidates,
+        },
         { status: 200, headers: corsHeaders }
       );
     }
@@ -170,7 +277,12 @@ async function handleResolve(req: NextRequest) {
     const playList = await gzProvider.getPlayList(matched.vod_id);
     if (!playList || playList.length === 0) {
       return NextResponse.json(
-        { success: false, code: 'NO_PLAYLIST', message: '专线源暂无可用切片' },
+        {
+          success: false,
+          code: 'NO_PLAYLIST',
+          message: '专线源暂无可用切片',
+          candidates: formattedCandidates,
+        },
         { status: 200, headers: corsHeaders }
       );
     }
@@ -180,11 +292,7 @@ async function handleResolve(req: NextRequest) {
     let targetIndex = 0;
 
     if (epNum !== null && epNum > 0) {
-      // 优先根据集数数字匹配 (epNum 对应第几集，index 为 epNum - 1)
-      const foundIdx = playList.findIndex((ep) => {
-        const n = extractEpisodeNumber(ep.episode);
-        return n === epNum;
-      });
+      const foundIdx = playList.findIndex((ep) => extractEpisodeNumber(ep.episode) === epNum);
       if (foundIdx !== -1) {
         targetIndex = foundIdx;
       } else if (epNum - 1 < playList.length) {
@@ -194,7 +302,7 @@ async function handleResolve(req: NextRequest) {
 
     const selectedEp = playList[targetIndex] || playList[0];
 
-    const result = {
+    const result: Record<string, any> = {
       success: true,
       vodId: matched.vod_id,
       title: matched.title,
@@ -210,6 +318,12 @@ async function handleResolve(req: NextRequest) {
       })),
       timestamp: new Date().toISOString(),
     };
+
+    // 功能一：如果开启了 candidates=1，同时附带全部 10 个候选供其他站挑选
+    if (includeCandidates) {
+      result.totalCandidates = formattedCandidates.length;
+      result.candidates = formattedCandidates;
+    }
 
     // 写入内存缓存 (2小时)
     resolveCache.set(cacheKey, {
