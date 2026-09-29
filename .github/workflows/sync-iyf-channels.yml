@@ -77,6 +77,9 @@ jobs:
           echo "🏆 [7/7] 爱壹帆原生 4 大排序物理倒排索引（添加时间/更新时间/人气高低/评分高低）同步..."
           node scripts/sync-iyf-four-rankings.mjs
 
+          echo "📊 [8/8] 汇总近 7 天地区线路质量与连通率画像并写入 KV..."
+          node scripts/aggregate-line-rankings.mjs
+
       - name: Commit, push, and trigger deploy if data updated
         env:
           GH_TOKEN: ${{ github.token }}

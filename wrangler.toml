@@ -14,3 +14,13 @@ compatibility_flags = ["nodejs_compat"]
 binding = "KVIDEO_KV"
 id = "42311924427747deaf00981d99d58998"
 
+# Workers Analytics Engine 数据集绑定
+[[analytics_engine_datasets]]
+binding = "PLAYBACK"
+dataset = "ikanpp_playback"
+
+[[analytics_engine_datasets]]
+binding = "PAGESPEED"
+dataset = "ikanpp_pagespeed"
+
+

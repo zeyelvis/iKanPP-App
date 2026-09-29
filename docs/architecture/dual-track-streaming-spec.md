@@ -445,6 +445,28 @@ IkanPPPlayerContainer / IkanXPlayerContainer (双轨容器，负责线路调度�
 ### 5. 零暴露流量隐匿策略 (Referrer-Policy: no-referrer)
 - 播放器拉取流媒体 m3u8 与 TS 切片时，全局遵循 `no-referrer` 规范，杜绝向第三方对端源站 CDN 暴露主站域名。
 
+---
+
+## 16. 按地区学习的线路智能排序与自愈调度规范 (Regional Line Ranking Spec) (2026-09 升级)
+
+为彻底解决不同国家/地区网络环境下公网采集源与专线可用性差异过大、固定 `TOP_ORDER` 导致用户反复撞死链的痛点，全站流媒体体系确立按地区自适应学习的线路排序机制：
+
+### 1. 指标上报闭环 (Analytics Engine)
+- **第一帧与报错上报**：新一代播放器在出第一帧（`loadeddata` / `playing`）时通过 `navigator.sendBeacon('/api/beacon/play')` 上报成功及耗时；在调用 `onError` 时上报失败；
+- **双轨隔离铁律**：午夜专区（`isPremium: true` 或 `source === 'jable'`）**绝对不上报**，严禁污染主站指标；
+- **安全与防刷**：接口严格核验同源上下文，拦截爬虫与超过 512 字节的异常载荷，并将国家 (`cf-ipcountry`)、线路、状态写入 Cloudflare Workers Analytics Engine (`ikanpp_playback`)。
+
+### 2. 7 天滑动窗口离线聚合 (Cron Job)
+- 每小时自动化巡检调度 `scripts/aggregate-line-rankings.mjs`，执行 Analytics Engine SQL 汇总近 7 天各国与全球的成功/失败次数；
+- 原子化批量写入 Cloudflare KV 键 `line-rank:{国家}` 与全球汇总键 `line-rank:*`。
+
+### 3. 平滑成功率与 0.14 超车门槛算法 (No Noise Oscillation)
+- **平滑成功率公式**：`rate = (ok + 10 × base) / (ok + fail + 10)`，其中 `base` 优先取全球平滑成功率，无历史数据时取 0.8；
+- **广告源惩罚**：带有片头赌博跑马灯广告的传统采集线路（光速、无尽、巨量等）扣除 0.15 分；
+- **0.14 超车防抖阈值**：只有当一条备选线路的分数比排在它前面的线路**高出 0.14 以上**时才允许超车，单次或偶发网络抖动不引发频繁换序，连续四次失败才会触发自动降级；
+- **非阻塞直出**：播放容器通过 `/api/line-rank` 异步拉取当地画像，加载失败或冷启动时优雅回退至默认基准 `TOP_ORDER`，绝不阻塞起播。
+
+
 
 
 

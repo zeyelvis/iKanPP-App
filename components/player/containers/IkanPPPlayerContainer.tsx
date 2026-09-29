@@ -19,6 +19,7 @@ import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
 import { DEPRECATED_SOURCES, isValidSourceId } from '@/lib/api/video-sources';
 import { getSourceName } from '@/lib/utils/source-names';
 import { storeGroupedSources, retrieveGroupedSources } from '@/lib/utils/grouped-sources-cache';
+import { rankSourcesByPerformance, type LineStats } from '@/lib/utils/line-ranking';
 import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -121,6 +122,28 @@ export function IkanPPPlayerContainer() {
         .catch(() => {});
     }
   }, [entityParam]);
+
+  // 地区线路质量学习数据缓存（非阻塞静默拉取，失败自动降级到默认基准 TOP_ORDER）
+  const lineRankDataRef = useRef<{
+    country: string;
+    countryStats: Record<string, LineStats>;
+    globalStats: Record<string, LineStats>;
+  }>({ country: 'XX', countryStats: {}, globalStats: {} });
+
+  useEffect(() => {
+    fetch('/api/line-rank')
+      .then(res => res.json())
+      .then(d => {
+        if (d && d.success) {
+          lineRankDataRef.current = {
+            country: d.country || 'XX',
+            countryStats: d.countryStats || {},
+            globalStats: d.globalStats || {},
+          };
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // === Title-only 模式：300ms 毫秒级流式秒播仲裁 ===
   const needsTitleSearch = (!videoId || !source) && !!title;
@@ -818,13 +841,13 @@ export function IkanPPPlayerContainer() {
     const validCandidates = groupedSources.filter(
       (s) => s.source && s.source !== currentActiveSource && !failedSourcesRef.current.has(s.source)
     );
-    const candidate = validCandidates.sort((a, b) => {
-      const TOP_ORDER: Record<string, number> = { juliang: 0, guangsu: 1, baofeng: 2, wujin: 3, zuida: 4, jisu: 5, xinlang: 6, dytt: 7, modu: 8, zy360: 9 };
-      const aOrder = TOP_ORDER[a.source] ?? 99;
-      const bOrder = TOP_ORDER[b.source] ?? 99;
-      if (aOrder !== bOrder) return aOrder - bOrder;
-      return 0;
-    })[0];
+    const rankedCandidates = rankSourcesByPerformance(
+      validCandidates,
+      lineRankDataRef.current.countryStats,
+      lineRankDataRef.current.globalStats,
+      lineRankDataRef.current.country
+    );
+    const candidate = rankedCandidates[0];
 
     if (candidate) {
       const params = new URLSearchParams();

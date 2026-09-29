@@ -120,6 +120,20 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     return episodes[nextIdx]?.name || `第 ${nextIdx + 1} 集`;
   }, [hasNext, episodes, currentEpisodeIndex]);
 
+  const loadStartTimeRef = useRef(0);
+  const reportedBeaconRef = useRef(false);
+
+  const reportBeacon = useCallback((ok: boolean) => {
+    if (isPremium || !currentSource || reportedBeaconRef.current) return;
+    reportedBeaconRef.current = true;
+    const ms = Math.round(performance.now() - (loadStartTimeRef.current || performance.now()));
+    if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+      try {
+        navigator.sendBeacon('/api/beacon/play', JSON.stringify({ source: currentSource, ok, ms }));
+      } catch {}
+    }
+  }, [isPremium, currentSource]);
+
   // 回调引用缓存，防止频繁闭包重建
   const onErrorRef = useRef(onError);
   useEffect(() => {
@@ -228,8 +242,17 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
 
     initialSeekDone.current = false;
     setShowNextOverlay(false);
+    loadStartTimeRef.current = performance.now();
+    reportedBeaconRef.current = false;
 
     const cleanUrl = sanitizeStreamUrl(src);
+
+    const onFirstFrame = () => {
+      reportBeacon(true);
+    };
+
+    video.addEventListener('loadeddata', onFirstFrame, { once: true });
+    video.addEventListener('playing', onFirstFrame, { once: true });
 
     const onLoadedMetadata = () => {
       if (!initialSeekDone.current && initialTime > 0) {
@@ -248,6 +271,7 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     const source = player.getPlugin('ngSource') as HlsSource | null;
     void source?.load(cleanUrl).then((mode) => {
       if (mode === 'unsupported') {
+        reportBeacon(false);
         onErrorRef.current?.('unsupported-hls');
       }
       if (mode === 'native' && shouldAutoPlay) {
@@ -257,8 +281,10 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
 
     return () => {
       video.removeEventListener('loadedmetadata', onLoadedMetadata);
+      video.removeEventListener('loadeddata', onFirstFrame);
+      video.removeEventListener('playing', onFirstFrame);
     };
-  }, [src, initialTime, shouldAutoPlay]);
+  }, [src, initialTime, shouldAutoPlay, reportBeacon]);
 
   // 3. 原生 HLS (Safari) 的底层 <video> error 兜底监听
   useEffect(() => {
@@ -267,11 +293,12 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     const onNativeError = () => {
       const source = playerRef.current?.getPlugin('ngSource') as HlsSource | null;
       if (source?.usingHls) return;
+      reportBeacon(false);
       onErrorRef.current?.('media-error');
     };
     video.addEventListener('error', onNativeError);
     return () => video.removeEventListener('error', onNativeError);
-  }, []);
+  }, [reportBeacon]);
 
   // 4. 播放进度与分辨率事件监听
   useEffect(() => {
