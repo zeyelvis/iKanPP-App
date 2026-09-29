@@ -450,15 +450,16 @@ export class IkanppLineProvider {
    */
   public async getPlayData(
     mediaKey: string,
+    videoId: number = 0,
     resolution?: string
   ): Promise<IkanppPlayData[] | null> {
-    const cacheKey = `ikanpp:play:${mediaKey}:${resolution || 'all'}`;
+    const cacheKey = `ikanpp:play:${mediaKey}:${videoId}:${resolution || 'all'}`;
     const cached = memoryCache.get(cacheKey);
     if (cached && cached.expiresAt > Date.now()) return cached.data;
 
     const params: Record<string, string | number> = {
       mediaKey,
-      videoId: 0,
+      videoId,
     };
     if (resolution) {
       params.resolution = resolution;
@@ -476,8 +477,11 @@ export class IkanppLineProvider {
   /**
    * 获取指定画质的最佳可用 m3u8 URL
    */
-  public async getBestFreePlayUrl(mediaKey: string): Promise<{ url: string; resolution: string; resolutionDes: string } | null> {
-    const playData = await this.getPlayData(mediaKey);
+  public async getBestFreePlayUrl(
+    mediaKey: string,
+    videoId: number = 0
+  ): Promise<{ url: string; resolution: string; resolutionDes: string } | null> {
+    const playData = await this.getPlayData(mediaKey, videoId);
     if (!playData) return null;
 
     const freeEntries = playData
@@ -501,24 +505,28 @@ export class IkanppLineProvider {
    * 自动遍历所有分集并获取每集的播放 m3u8 直链
    */
   public async getFullEpisodeList(mediaKey: string): Promise<Array<{ name: string; url: string; index: number }> | null> {
-    // 1. 先拿详情得到所有集数与对应的 episodeKey
     const detail = await this.getVideoDetails(mediaKey);
-    if (!detail) return null;
-
-    // 如果是电影或单集影视，直接拿播放数据
-    if (!detail.episodes || detail.episodes.length === 0) {
-      const best = await this.getBestFreePlayUrl(mediaKey);
+    if (!detail) {
+      // 容灾：如果详情拉取失败，尝试直接拿默认集播放
+      const best = await this.getBestFreePlayUrl(mediaKey, 0);
       if (best) {
         return [{ name: '4K 原画', url: best.url, index: 0 }];
       }
       return null;
     }
 
-    // 多集剧集：并发获取所有分集的播放流
-    // 爱壹帆的 getPlayData 传 mediaKey 返回当前默认/选定集的直链，若有 episodeKey 则传对应 key
+    // 单集电影或无剧集列表
+    if (!detail.episodes || detail.episodes.length <= 1) {
+      const best = await this.getBestFreePlayUrl(mediaKey, 0);
+      if (best) {
+        return [{ name: '4K 原画', url: best.url, index: 0 }];
+      }
+      return null;
+    }
+
+    // 多集电视剧：遍历集数，用 mediaKey + episodeId 并发换取各集播放地址
     const episodePromises = detail.episodes.map(async (ep, idx) => {
-      const epKey = ep.episodeKey || ep.mediaKey || mediaKey;
-      const play = await this.getBestFreePlayUrl(epKey);
+      const play = await this.getBestFreePlayUrl(mediaKey, ep.episodeId || 0);
       return {
         name: ep.title || (idx === 0 ? '第1集' : `第${idx + 1}集`),
         url: play?.url || '',

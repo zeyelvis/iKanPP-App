@@ -381,6 +381,13 @@ async function handleDetailRequest(
     } catch (ikanppErr) {
       console.warn('[DetailAPI] iKanPP Line direct resolve failed:', ikanppErr);
     }
+
+    if (sourceId === 'ikanpp' || sourceId === 'ikanpp_line') {
+      return NextResponse.json({
+        success: false,
+        error: 'iKanPP专线暂未收录该影片，正在为您调度其他线路...',
+      }, { status: 404 });
+    }
   }
 
   // 3. 传统采集源查询
