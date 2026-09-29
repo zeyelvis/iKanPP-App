@@ -466,6 +466,28 @@ IkanPPPlayerContainer / IkanXPlayerContainer (双轨容器，负责线路调度�
 - **0.14 超车防抖阈值**：只有当一条备选线路的分数比排在它前面的线路**高出 0.14 以上**时才允许超车，单次或偶发网络抖动不引发频繁换序，连续四次失败才会触发自动降级；
 - **非阻塞直出**：播放容器通过 `/api/line-rank` 异步拉取当地画像，加载失败或冷启动时优雅回退至默认基准 `TOP_ORDER`，绝不阻塞起播。
 
+---
+
+## 17. 真实用户网页打开速度统计与全球诊断规范 (PageSpeed Analytics Spec)
+
+为精细化掌控全球各地区受限网络及跨洋连通质量：
+1. **指标采集**：全局客户端组件 `<PageSpeedMonitor />` 通过 `PerformanceNavigationTiming` 计算首字节时间 TTFB (`responseStart - activationStart`)，并利用 `PerformanceObserver` 监听最大内容绘制 LCP；
+2. **后台打断豁免**：页面初始处于后台（`visibilityState === 'hidden'`）时不统计 LCP，防止失真；
+3. **低频聚合**：在页面隐藏、`pagehide` 或 20 秒后，通过 `sendBeacon('/api/beacon/page')` 写入 Workers Analytics Engine (`ikanpp_pagespeed`)；
+4. **后台智能分析**：管理后台 (`/admin/analytics`) 实时以 `quantileExactWeighted(0.5)` 与 `quantileExactWeighted(0.75)` 计算各国 TTFB 与 LCP 的中位数与 P75 分位值；
+5. **隐私与隔离**：只按「日期 × 国家 × 页面类型 × 设备」汇总，绝不记录 IP 或用户信息，午夜专区与管理后台绝对不上报。
+
+---
+
+## 18. PWA 装到桌面引导体验对齐规范 (PWA Installation Alignment Spec)
+
+1. **时机铁律**：严禁用户初次打开网站即弹窗骚扰；必须且只能在用户看满第 2 集并出第一帧时由播放器触发计数后方可主动唤起；
+2. **免打扰机制**：用户点击「稍后再说」或关闭后，写入 14 天静默免打扰（`14 * 24 * 60 * 60 * 1000`）；设置页与「我的」页保留常驻入口；
+3. **iOS 26 权威措辞**：严格对齐 iOS 26 新版操作路径：
+   「点 Safari 底部的「共享」（新版 iOS 先点右下角「···」）→ 选「添加到主屏幕」（新版 iOS 在「查看更多」里）→ 以后从桌面图标打开」；
+4. **浏览器精准分流**：排除非 Safari 的 iOS 浏览器（CriOS、FxiOS、EdgiOS、UC、Quark 等），仅在原生 Safari 下展示上述步骤；其他浏览器引导复制链接在 Safari 打开；
+5. **防遮挡与全屏安全**：全屏播放模式下坚决不弹窗打断观影；弹窗彻底剔除 `backdrop-blur`，采用纯色深底保证显卡硬件覆盖层不黑屏；独立桌面 App 窗口 (`display-mode: standalone`) 运行时 100% 彻底静默。
+
 
 
 
