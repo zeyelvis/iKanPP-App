@@ -15,6 +15,8 @@ export const runtime = 'edge';
  *    - blobs: [国家, 页面类型, 设备]
  *    - doubles: [ttfb, lcp或0, 有无lcp]
  */
+let hasWarnedMissingPagespeedBinding = false;
+
 export async function POST(request: NextRequest) {
   try {
     // 1. 同源鉴权校验：只接受本站页面发来的请求
@@ -89,17 +91,25 @@ export async function POST(request: NextRequest) {
     const hasLcp = typeof lcp === 'number' && isFinite(lcp) && lcp >= 0 ? 1 : 0;
     const validLcp = hasLcp === 1 ? Math.min(60000, Math.max(0, Math.round(lcp!))) : 0;
 
+    interface AnalyticsDataset {
+      writeDataPoint(point: { blobs?: string[]; doubles?: number[]; indexes?: string[] }): void;
+    }
+    type AnalyticsEnv = { PAGESPEED?: AnalyticsDataset };
+
     // 9. 写入 Workers Analytics Engine
     const analytics =
-      (process.env as any).PAGESPEED ||
-      (globalThis as any).PAGESPEED ||
-      (request as any).env?.PAGESPEED;
+      (process.env as unknown as AnalyticsEnv).PAGESPEED ||
+      (globalThis as unknown as AnalyticsEnv).PAGESPEED ||
+      (request as unknown as { env?: AnalyticsEnv }).env?.PAGESPEED;
 
     if (analytics && typeof analytics.writeDataPoint === 'function') {
       analytics.writeDataPoint({
         blobs: [country, pageType, device],
         doubles: [validTtfb, validLcp, hasLcp],
       });
+    } else if (!hasWarnedMissingPagespeedBinding) {
+      hasWarnedMissingPagespeedBinding = true;
+      console.warn('[Beacon Page] Workers Analytics Engine PAGESPEED 绑定未生效，请在 Cloudflare Pages 控制台设置中添加绑定。');
     }
 
     return new NextResponse(null, { status: 204 });

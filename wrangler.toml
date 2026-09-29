@@ -14,7 +14,9 @@ compatibility_flags = ["nodejs_compat"]
 binding = "KVIDEO_KV"
 id = "42311924427747deaf00981d99d58998"
 
-# Workers Analytics Engine 数据集绑定
+# Workers Analytics Engine 数据集绑定（声明参考）
+# 注意：Pages 项目的生产环境与预览环境以 Cloudflare 控制台 -> 设置 -> 绑定 为准。
+# 切勿在此添加 pages_build_output_dir，以免覆盖线上已有的变量与绑定配置。
 [[analytics_engine_datasets]]
 binding = "PLAYBACK"
 dataset = "ikanpp_playback"

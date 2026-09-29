@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Events, type SimplePlayer } from 'xgplayer';
+import { ChevronLeft } from 'lucide-react';
 
 import './nextgen-player.css';
 
@@ -68,7 +69,6 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     totalEpisodes = 1,
     currentEpisodeIndex = 0,
     onNextEpisode,
-    isReversed = false,
     videoTitle = '',
     episodeName = '',
     isPremium = false,
@@ -115,6 +115,38 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
   const hasPrev = currentEpisodeIndex > 0;
   const hasNext = currentEpisodeIndex + 1 < totalEpisodes;
 
+  const currentEpisodeIndexRef = useRef(currentEpisodeIndex);
+  useEffect(() => {
+    currentEpisodeIndexRef.current = currentEpisodeIndex;
+  }, [currentEpisodeIndex]);
+
+  const onSelectEpisodeRef = useRef(onSelectEpisode);
+  useEffect(() => {
+    onSelectEpisodeRef.current = onSelectEpisode;
+  }, [onSelectEpisode]);
+
+  const initialTimeRef = useRef(initialTime);
+  useEffect(() => {
+    initialTimeRef.current = initialTime;
+  }, [initialTime]);
+
+  const shouldAutoPlayRef = useRef(shouldAutoPlay);
+  useEffect(() => {
+    shouldAutoPlayRef.current = shouldAutoPlay;
+  }, [shouldAutoPlay]);
+
+  const currentSourceRef = useRef(currentSource);
+  useEffect(() => {
+    currentSourceRef.current = currentSource;
+  }, [currentSource]);
+
+  const handlePrev = useCallback(() => {
+    const cur = currentEpisodeIndexRef.current;
+    if (cur > 0) {
+      onSelectEpisodeRef.current?.(cur - 1);
+    }
+  }, []);
+
   const nextEpisodeName = useMemo(() => {
     if (!hasNext || !episodes || episodes.length === 0) return '';
     const nextIdx = currentEpisodeIndex + 1;
@@ -125,15 +157,21 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
   const reportedBeaconRef = useRef(false);
 
   const reportBeacon = useCallback((ok: boolean) => {
-    if (isPremium || !currentSource || reportedBeaconRef.current) return;
+    const sourceName = currentSourceRef.current;
+    if (isPremium || !sourceName || reportedBeaconRef.current) return;
     reportedBeaconRef.current = true;
     const ms = Math.round(performance.now() - (loadStartTimeRef.current || performance.now()));
     if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
       try {
-        navigator.sendBeacon('/api/beacon/play', JSON.stringify({ source: currentSource, ok, ms }));
+        navigator.sendBeacon('/api/beacon/play', JSON.stringify({ source: sourceName, ok, ms }));
       } catch {}
     }
-  }, [isPremium, currentSource]);
+  }, [isPremium]);
+
+  const reportBeaconRef = useRef(reportBeacon);
+  useEffect(() => {
+    reportBeaconRef.current = reportBeacon;
+  }, [reportBeacon]);
 
   // 回调引用缓存，防止频繁闭包重建
   const onErrorRef = useRef(onError);
@@ -178,16 +216,15 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
       onFatal: (details) => {
         onErrorRef.current?.(details);
       },
-      onPrev: () => {
-        if (currentEpisodeIndex > 0) {
-          onSelectEpisode?.(currentEpisodeIndex - 1);
-        }
-      },
+      onPrev: handlePrev,
       onNext: () => {
         onNextEpisodeRef.current?.();
       },
       onEpisodes: () => {
         setShowEpisodesDrawer(true);
+      },
+      onSources: () => {
+        setShowSourceDrawer(true);
       },
     });
 
@@ -247,9 +284,12 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     reportedBeaconRef.current = false;
 
     const cleanUrl = sanitizeStreamUrl(src);
+    let firstFrameHandled = false;
 
     const onFirstFrame = () => {
-      reportBeacon(true);
+      if (firstFrameHandled) return;
+      firstFrameHandled = true;
+      reportBeaconRef.current(true);
       try {
         const count = recordEpisodeWatch();
         if (count >= 2 && !isPwaInstalledOrStandalone() && !isPwaDismissedIn14Days()) {
@@ -266,11 +306,12 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     video.addEventListener('playing', onFirstFrame, { once: true });
 
     const onLoadedMetadata = () => {
-      if (!initialSeekDone.current && initialTime > 0) {
+      const initTime = initialTimeRef.current;
+      if (!initialSeekDone.current && initTime > 0) {
         initialSeekDone.current = true;
-        video.currentTime = initialTime;
+        video.currentTime = initTime;
       }
-      if (shouldAutoPlay) {
+      if (shouldAutoPlayRef.current) {
         void Promise.resolve(player.play()).catch(() => {
           // 浏览器阻止自动播放属于预期策略，保留中心播放按钮供用户手动点击
         });
@@ -282,10 +323,10 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     const source = player.getPlugin('ngSource') as HlsSource | null;
     void source?.load(cleanUrl).then((mode) => {
       if (mode === 'unsupported') {
-        reportBeacon(false);
+        reportBeaconRef.current(false);
         onErrorRef.current?.('unsupported-hls');
       }
-      if (mode === 'native' && shouldAutoPlay) {
+      if (mode === 'native' && shouldAutoPlayRef.current) {
         void Promise.resolve(player.play()).catch(() => undefined);
       }
     });
@@ -295,7 +336,37 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
       video.removeEventListener('loadeddata', onFirstFrame);
       video.removeEventListener('playing', onFirstFrame);
     };
-  }, [src, initialTime, shouldAutoPlay, reportBeacon]);
+  }, [src]);
+
+  // 控制条快捷按钮动态显隐（上一集/下一集/选集/线路）
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player) return;
+
+    const prevPlugin = player.getPlugin('ngPrev') as { show?: () => void; hide?: () => void } | null;
+    if (prevPlugin) {
+      if (hasPrev) prevPlugin.show?.();
+      else prevPlugin.hide?.();
+    }
+
+    const nextPlugin = player.getPlugin('ngNext') as { show?: () => void; hide?: () => void } | null;
+    if (nextPlugin) {
+      if (hasNext) nextPlugin.show?.();
+      else nextPlugin.hide?.();
+    }
+
+    const episodesPlugin = player.getPlugin('ngEpisodes') as { show?: () => void; hide?: () => void } | null;
+    if (episodesPlugin) {
+      if (episodes && episodes.length > 1) episodesPlugin.show?.();
+      else episodesPlugin.hide?.();
+    }
+
+    const sourcesPlugin = player.getPlugin('ngSources') as { show?: () => void; hide?: () => void } | null;
+    if (sourcesPlugin) {
+      if (sources && sources.length > 1) sourcesPlugin.show?.();
+      else sourcesPlugin.hide?.();
+    }
+  }, [hasPrev, hasNext, episodes, sources]);
 
   // 3. 原生 HLS (Safari) 的底层 <video> error 兜底监听
   useEffect(() => {
@@ -304,12 +375,12 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     const onNativeError = () => {
       const source = playerRef.current?.getPlugin('ngSource') as HlsSource | null;
       if (source?.usingHls) return;
-      reportBeacon(false);
+      reportBeaconRef.current(false);
       onErrorRef.current?.('media-error');
     };
     video.addEventListener('error', onNativeError);
     return () => video.removeEventListener('error', onNativeError);
-  }, [reportBeacon]);
+  }, []);
 
   // 4. 播放进度与分辨率事件监听
   useEffect(() => {
@@ -469,10 +540,22 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     if (!layer || typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
     const session = navigator.mediaSession;
 
-    const artwork = poster
+    let artworkSrc = '';
+    if (poster) {
+      if (poster.startsWith('/') || poster.includes('/api/img-proxy')) {
+        artworkSrc = new URL(poster, window.location.origin).href;
+      } else if (poster.startsWith('http')) {
+        // 外站图片通过本站 /api/img-proxy 代理转为同源，保证 iOS 锁屏和灵动岛正常渲染 (F8)
+        artworkSrc = new URL(`/api/img-proxy?url=${encodeURIComponent(poster)}&w=342`, window.location.origin).href;
+      } else {
+        artworkSrc = new URL(poster, window.location.origin).href;
+      }
+    }
+
+    const artwork = artworkSrc
       ? [
           {
-            src: poster.startsWith('http') ? poster : new URL(poster, window.location.href).href,
+            src: artworkSrc,
             sizes: '342x513',
             type: 'image/jpeg',
           },
@@ -500,7 +583,7 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     set('pause', () => playerRef.current?.pause());
     set('seekbackward', (d) => skip(-(d.seekOffset ?? 10)));
     set('seekforward', (d) => skip(d.seekOffset ?? 10));
-    set('previoustrack', hasPrev ? () => onSelectEpisode?.(currentEpisodeIndex - 1) : null);
+    set('previoustrack', hasPrev ? () => handlePrev() : null);
     set('nexttrack', hasNext ? () => onNextEpisodeRef.current?.() : null);
 
     return () => {
@@ -509,7 +592,7 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
       }
       session.metadata = null;
     };
-  }, [layer, titleBarText, poster, isPremium, hasPrev, hasNext, currentEpisodeIndex, onSelectEpisode]);
+  }, [layer, titleBarText, poster, isPremium, hasPrev, hasNext, handlePrev]);
 
   // 10. iPhone 网页全屏旋转尺寸校准 (准则 14 决策 D1)
   useEffect(() => {
@@ -596,7 +679,7 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
         onNextEpisodeRef.current?.();
       } else if (e.key === '>' || e.key === '<') {
         e.preventDefault();
-        const curIdx = RATES.indexOf(rate as any);
+        const curIdx = RATES.indexOf(rate as (typeof RATES)[number]);
         const nextIdx = e.key === '>' ? Math.min(RATES.length - 1, curIdx + 1) : Math.max(0, curIdx - 1);
         const nextRate = RATES[nextIdx];
         video.playbackRate = nextRate;
@@ -629,6 +712,27 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     <div className="relative w-full aspect-video bg-black rounded-none sm:rounded-2xl overflow-hidden select-none group">
       {/* xgplayer DOM 挂载宿主 */}
       <div ref={hostRef} className="w-full h-full" />
+
+      {/* 非全屏左上角快捷返回胶囊 (F10) */}
+      {onBack && !isFullscreen && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onBack();
+          }}
+          className="absolute top-4 left-4 z-40 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#141416]/90 hover:bg-black/95 border border-white/20 text-white/90 hover:text-white transition-all cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.6)] hover:scale-105 active:scale-95 text-xs font-bold"
+          title={isPremium ? '返回午夜版' : '返回'}
+        >
+          <ChevronLeft size={16} />
+          <span>
+            {isPremium
+              ? '午夜版'
+              : (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('from')
+                  ? ({ movie: '电影', tv: '剧集', anime: '动漫', variety: '综艺', ranking: '榜单', iptv: '直播' } as Record<string, string>)[new URLSearchParams(window.location.search).get('from')!] || '返回'
+                  : '返回')}
+          </span>
+        </button>
+      )}
 
       {/* 专线右上角品牌覆盖角标渲染 */}
       {badge && shouldShowBadge && createPortal(<BrandBadge />, badge)}

@@ -7,6 +7,8 @@ export const runtime = 'edge';
  * 写入 Cloudflare Workers Analytics Engine (ikanpp_playback)
  * 仅用于按地区学习各线路真实连通率，实现智能动态优选
  */
+let hasWarnedMissingPlaybackBinding = false;
+
 export async function POST(request: NextRequest) {
   try {
     // 1. 同源鉴权校验：只接受本站页面发来的请求
@@ -57,17 +59,25 @@ export async function POST(request: NextRequest) {
     const statusStr = ok ? 'ok' : 'fail';
     const durationMs = typeof ms === 'number' && isFinite(ms) && ms >= 0 ? Math.min(60000, ms) : 0;
 
+    interface AnalyticsDataset {
+      writeDataPoint(point: { blobs?: string[]; doubles?: number[]; indexes?: string[] }): void;
+    }
+    type AnalyticsEnv = { PLAYBACK?: AnalyticsDataset };
+
     // 6. 写入 Workers Analytics Engine
     const analytics =
-      (process.env as any).PLAYBACK ||
-      (globalThis as any).PLAYBACK ||
-      (request as any).env?.PLAYBACK;
+      (process.env as unknown as AnalyticsEnv).PLAYBACK ||
+      (globalThis as unknown as AnalyticsEnv).PLAYBACK ||
+      (request as unknown as { env?: AnalyticsEnv }).env?.PLAYBACK;
 
     if (analytics && typeof analytics.writeDataPoint === 'function') {
       analytics.writeDataPoint({
         blobs: [country, source, statusStr],
         doubles: [durationMs],
       });
+    } else if (!hasWarnedMissingPlaybackBinding) {
+      hasWarnedMissingPlaybackBinding = true;
+      console.warn('[Beacon Play] Workers Analytics Engine PLAYBACK 绑定未生效，请在 Cloudflare Pages 控制台设置中添加绑定。');
     }
 
     return new NextResponse(null, { status: 204 });

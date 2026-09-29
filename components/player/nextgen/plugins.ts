@@ -257,6 +257,20 @@ export class NextButton extends ActionButton {
   }
 }
 
+export class SourcesButton extends ActionButton {
+  static get pluginName() {
+    return 'ngSources';
+  }
+
+  static get defaultConfig() {
+    return { position: Plugin.POSITIONS.CONTROLS_RIGHT, index: 1, onClick: null as (() => void) | null };
+  }
+
+  render() {
+    return `<xg-icon class="ng-sources" aria-label="切换线路"><div class="xgplayer-icon btn-text"><span class="icon-text">线路</span></div></xg-icon>`;
+  }
+}
+
 export class EpisodesButton extends ActionButton {
   static get pluginName() {
     return 'ngEpisodes';
@@ -433,9 +447,10 @@ export function createPlayer(options: {
   onPrev: () => void;
   onNext: () => void;
   onEpisodes: () => void;
+  onSources?: () => void;
 }): SimplePlayer {
   const isMobile = detectIsMobileClient();
-  const accent = '#ff6a3d';
+  const accent = '#E50914';
 
   return new SimplePlayer({
     el: options.el,
@@ -461,6 +476,7 @@ export function createPlayer(options: {
       PlayIcon,
       ForwardTenButton,
       NextButton,
+      SourcesButton,
       EpisodesButton,
       TitleBar,
       CastButton,
@@ -482,5 +498,6 @@ export function createPlayer(options: {
     ngPrev: { onClick: options.onPrev },
     ngNext: { onClick: options.onNext },
     ngEpisodes: { onClick: options.onEpisodes },
+    ngSources: { onClick: options.onSources },
   });
 }
