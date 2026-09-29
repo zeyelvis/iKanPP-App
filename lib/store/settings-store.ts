@@ -153,7 +153,7 @@ function getDefaultAppSettings(): AppSettings {
     danmakuDisplayArea: 0.5,
     locale: 'zh-CN',
     blockedCategories: [],
-    playerEngine: 'xgplayer',
+    playerEngine: 'nextgen',
   };
 }
 
@@ -300,7 +300,7 @@ export const settingsStore = {
         danmakuDisplayArea: typeof parsed.danmakuDisplayArea === 'number' ? parsed.danmakuDisplayArea : 0.5,
         locale: parsed.locale === 'zh-TW' ? 'zh-TW' : 'zh-CN',
         blockedCategories: Array.isArray(parsed.blockedCategories) ? parsed.blockedCategories : [],
-        playerEngine: (parsed.playerEngine === 'legacy' || parsed.playerEngine === 'nextgen') ? parsed.playerEngine : 'xgplayer',
+        playerEngine: parsed.playerEngine === 'legacy' ? 'legacy' : 'nextgen',
       };
     } catch {
       // Even if localStorage fails, we should return defaults + ENV subscriptions

@@ -371,9 +371,9 @@
   - XGPlayer 样式定制文件（`components/player/xg/xg-player.css`）强制覆盖：`-webkit-backdrop-filter: none !important; backdrop-filter: none !important;`；
   - 严禁在全屏伪类中将 `:fullscreen` 与 `:-webkit-full-screen` 逗号合写，必须拆解为独立规则块，杜绝显卡驱动触发 Surface Detach 导致画面黑屏。
 
-### 3. 双核 A/B 灰度与自愈回退兜底机制
-- **状态存储集成**：在 `lib/store/settings-store.ts` 中配置 `playerEngine: 'xgplayer' | 'legacy'`，默认值为 `'xgplayer'`；
-- **动态分发入口**：由 `components/player/CustomVideoPlayer.tsx` 统一动态路由分发，若用户遇到特定老旧机型兼容问题，支持在设置中一键平滑回退，保障 100% 播放稳定性。
+### 3. 多核 A/B 灰度与自愈回退兜底机制
+- **状态存储集成**：在 `lib/store/settings-store.ts` 中配置 `playerEngine: 'nextgen' | 'xgplayer' | 'legacy'`，默认值为 `'nextgen'`（新一代内核），`xgplayer` 和 `legacy` 作为回退选项；
+- **动态分发入口**：由 `components/player/CustomVideoPlayer.tsx` 统一动态路由分发，若用户遇到特定老旧机型兼容问题，支持在设置或 URL 参数中平滑回退，保障 100% 播放稳定性。
 
 ---
 
@@ -416,10 +416,11 @@
 IkanPPPlayerContainer / IkanXPlayerContainer (双轨容器，负责线路调度与状态隔离)
   └─ VideoPlayer (中间层，进度保存、出错切源驱动)
        └─ CustomVideoPlayer (多引擎分发调度中枢)
-            ├─ legacy   → DesktopVideoPlayer (经典自研渲染核心)
-            ├─ xgplayer → xg/XgVideoPlayer (字节跳动 xgplayer v3 默认引擎)
-            └─ nextgen  → nextgen/NextgenVideoPlayer (新一代内核，模块化解耦插件与单一真理源配置)
+            ├─ legacy   → DesktopVideoPlayer (经典自研渲染核心，回退兜底)
+            ├─ xgplayer → xg/XgVideoPlayer (字节跳动 xgplayer v3，回退引擎)
+            └─ nextgen  → nextgen/NextgenVideoPlayer (新一代内核，全站默认主力引擎，模块化解耦插件与单一真理源配置)
 ```
+- **默认引擎演进**：全站默认主力引擎正式确立为 `nextgen`，老用户本地缓存自动平滑迁移至新内核，保留 `xgplayer` 和 `legacy` 作为回退选项；
 - **换线路与容灾**：新引擎在遇到播放致命错误时仅调用 `onError(msg)`，中间层 `VideoPlayer` 接管并驱动外层容器执行纯前端切源，新引擎内部不耦合切源业务逻辑；
 - **进度保存**：通过 `onTimeUpdate(t, d)` 统一向上汇报，由中间层持久化存储。
 

@@ -25,7 +25,7 @@
 
 ## 2. 播放器卡顿与自愈红线 (No Aggressive Nudge)
 
-- **现代播放引擎演进**：全站核心播放器已全面升级为**字节跳动 XGPlayer (西瓜播放器 v3)** 插件化架构，支持 Web Worker 后台解复用与多维手势，并保留 `playerEngine: 'xgplayer' | 'legacy' | 'nextgen'` 三核 A/B 灰度配置与回退兜底；
+- **现代播放引擎演进**：全站核心播放器已全面升级为**新一代内核 (nextgen)** 工业级架构，支持 Web Worker/原生 HLS 独立解耦与多维手势，默认引擎为 `nextgen`，并保留 `playerEngine: 'nextgen' | 'xgplayer' | 'legacy'` 三核 A/B 灰度配置与回退兜底，`xgplayer` 和 `legacy` 作为回退选项；
 - **绝对禁忌**：**无论使用何种播放引擎，严禁在任何卡顿检测逻辑中执行 `videoRef.current.currentTime += 0.1` 或任何强行拨快时间轴的操作！**
 - **底层原理**：HLS 协议依赖浏览器的 SourceBuffer 自然流水线。修改 `currentTime` 会强制清空浏览器已下载的所有切片缓冲并重新发起握手请求。在弱网或高延迟地区，这将导致严重的“缓冲 ➔ 被拨快 ➔ 清空缓冲 ➔ 重新握手 ➔ 再次超时”无限死循环。
 - **正规做法**：检测到缓冲等待时，仅通过 `setIsLoading(true)` 显示加载圈，且底层 HLS 必须配置充足的 120s 充裕网络缓冲区。
@@ -614,7 +614,7 @@ iKanPP 全域流媒体播放器（主站轨道 A 与午夜特区轨道 B）必�
   2. **nextgen 引擎 (新一代内核)**：苹果设备（Safari / iOS 浏览器）直连系统原生 HLS 播放（支持 AirPlay 原生投屏并最大化降低能耗）；其他设备采用 `hls.js` 结合 `lib/player/hls-config-factory.ts` 的 `createHlsConfig()` 统一配置；
   3. **legacy 引擎**：经典自研 Native Video 渲染核心，作为极端兼容场景的兜底；
 - **全屏硬件直通防黑屏**：全站各引擎 CSS 强制移除所有 `backdrop-filter: blur`，并严禁在 CSS 中跨引擎合写 `:fullscreen` 与 `:-webkit-full-screen`；
-- **三核 A/B 灰度回退**：`CustomVideoPlayer.tsx` 动态路由分发，地址栏支持 `?engine=nextgen` / `xgplayer` / `legacy` 零侵入测试开关，第一阶段默认保持 `xgplayer`，经全网灰度平稳后再无缝升级为默认；
+- **三核 A/B 灰度回退**：`CustomVideoPlayer.tsx` 动态路由分发，地址栏支持 `?engine=nextgen` / `xgplayer` / `legacy` 零侵入测试开关，全站默认主力引擎为 `nextgen` (新一代内核)，`xgplayer` 和 `legacy` 作为回退选项；
 - **120s 缓冲区锁死**：各引擎底层 HLS 配置强制锁定 120s 充沛深水库与 60s 后向安全区，严守防周期性卡顿红线。
 
 ### 2. 暗影自愈专线分级调度与 100% 零代理直连铁律

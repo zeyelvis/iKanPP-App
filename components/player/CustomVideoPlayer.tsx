@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useSyncExternalStore } from 'react';
 import dynamic from 'next/dynamic';
 import { DesktopVideoPlayer } from './DesktopVideoPlayer';
 import { settingsStore } from '@/lib/store/settings-store';
@@ -62,24 +62,29 @@ interface CustomVideoPlayerProps {
   onSelectSource?: (source: import('./desktop/InPlayerSourceDrawer').SourceItem) => void;
 }
 
+function getClientEngine(): 'xgplayer' | 'legacy' | 'nextgen' {
+  if (typeof window === 'undefined') return 'nextgen';
+  const params = new URLSearchParams(window.location.search);
+  const queryEngine = params.get('engine');
+  if (queryEngine === 'nextgen' || queryEngine === 'xgplayer' || queryEngine === 'legacy') {
+    return queryEngine;
+  }
+  return settingsStore.getSettings().playerEngine || 'nextgen';
+}
+
+function getServerEngine(): 'xgplayer' | 'legacy' | 'nextgen' {
+  return 'nextgen';
+}
+
 /**
  * Smart Video Player that routes to modern Nextgen, XGPlayer, or legacy player based on user preference
  */
 export const CustomVideoPlayer = React.memo(function CustomVideoPlayer(props: CustomVideoPlayerProps) {
-  const [engine, setEngine] = useState<'xgplayer' | 'legacy' | 'nextgen'>('xgplayer');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const queryEngine = params.get('engine');
-      if (queryEngine === 'nextgen' || queryEngine === 'xgplayer' || queryEngine === 'legacy') {
-        setEngine(queryEngine);
-        return;
-      }
-    }
-    const current = settingsStore.getSettings().playerEngine || 'xgplayer';
-    setEngine(current);
-  }, []);
+  const engine = useSyncExternalStore(
+    settingsStore.subscribe.bind(settingsStore),
+    getClientEngine,
+    getServerEngine
+  );
 
   if (engine === 'legacy') {
     return <DesktopVideoPlayer {...props} />;
