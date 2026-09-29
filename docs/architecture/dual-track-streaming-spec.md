@@ -518,8 +518,11 @@ IkanPPPlayerContainer / IkanXPlayerContainer (双轨容器，负责线路调度�
 
 ### 1. 架构定位与双轨铁律恪守
 - **轨道归属**：100% 严格归属于**轨道 A（Track A：普通影视）**；
-- **网络模型**：**100% 浏览器纯直连源站 PipeCDN (`*.pipecdn.vip`)**，`proxyMode` 恒为 `'none'`，`effectiveUseProxy` 恒为 `false`；
-- **零代理零切片改写**：m3u8 播放切片直接由客户端原生或 HLS.js 直连握手，严禁将流量引入 `/api/proxy`，严禁改写任何 `.ts` 切片；
+- **网络模型与 PipeCDN CORS 桥接**：
+  - 核心痛点：PipeCDN (`*.pipecdn.vip`) 边缘 Cloudflare WAF 会强制阻断携带非官方 Origin 的网页浏览器请求（返回 HTTP 520/403），但对无 Origin 的移动端请求完全放行；
+  - 桥接机制：通过轻量级边缘流中继端点 **`/api/ikanpp-stream`**（Edge Runtime，零缓冲零存储 Stream 透传）剥离 Origin，以移动端 UA 转发 PipeCDN 请求，自动改写 m3u8 内部相对路径切片为中继地址；
+  - 绝对隔离：传统采集源（巨量、光速、无尽、极速、暗影专线等）依旧 100% 浏览器直连第三方源站 CDN，严禁经过中继；中继端点仅允许 `pipecdn.vip` 白名单域名通过，且与轨道 B（`/api/proxy`）严格物理隔离；
+- **零存储与零费用**：切片通过 Cloudflare Edge Web Streams 原生透传，不占用服务器磁盘，Cloudflare Pages 出站带宽完全免费；
 - **品牌展示名称**：全站全域 UI 统一命名并展示为 **`⚡ iKanPP专线`**，线路 ID 为 `ikanpp`（兼容 `ikanpp_line`、`iyf`、`titanline`）。
 
 ### 2. 移动端逆向签名与 WAF 穿透

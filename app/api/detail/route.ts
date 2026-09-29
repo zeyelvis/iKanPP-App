@@ -366,11 +366,12 @@ async function handleDetailRequest(
           if (episodeList && episodeList.length > 0) {
             // PipeCDN CORS 桥接：浏览器携带 Origin: ikanpp.com 会被 Cloudflare 返回 520，
             // 必须将 pipecdn.vip 的 m3u8 地址改写为经由 /api/ikanpp-stream 中继的地址
-            const relayOrigin = request.nextUrl.origin;
+            const relayOrigin = request?.nextUrl?.origin || '';
+            const streamEndpoint = relayOrigin ? `${relayOrigin}/api/ikanpp-stream` : '/api/ikanpp-stream';
             const relayedEpisodes = episodeList.map(ep => ({
               ...ep,
               url: ep.url && ep.url.includes('pipecdn.vip')
-                ? `${relayOrigin}/api/ikanpp-stream?url=${encodeURIComponent(ep.url)}`
+                ? `${streamEndpoint}?url=${encodeURIComponent(ep.url)}`
                 : ep.url,
             }));
 
