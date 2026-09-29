@@ -19,6 +19,7 @@ import { PlayerBrandLogo } from '../PlayerBrandLogo';
 import { sanitizeStreamUrl } from '@/lib/utils/stream-sanitizer';
 import { usePlayerSettings } from '../hooks/usePlayerSettings';
 import { filterM3u8Ad } from '@/lib/utils/m3u8-utils';
+import { recordEpisodeWatch, isPwaStandalone as isPwaInstalledOrStandalone, isPwaDismissedIn14Days } from '@/lib/client/pwa-install';
 
 const RATES = [0.5, 0.75, 1, 1.25, 1.5, 2] as const;
 const AUTONEXT_SECONDS = 5;
@@ -249,6 +250,16 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
 
     const onFirstFrame = () => {
       reportBeacon(true);
+      try {
+        const count = recordEpisodeWatch();
+        if (count >= 2 && !isPwaInstalledOrStandalone() && !isPwaDismissedIn14Days()) {
+          setTimeout(() => {
+            if (typeof document !== 'undefined' && !document.fullscreenElement) {
+              window.dispatchEvent(new CustomEvent('ikanpp:show-pwa-modal-auto'));
+            }
+          }, 3000);
+        }
+      } catch {}
     };
 
     video.addEventListener('loadeddata', onFirstFrame, { once: true });

@@ -9,7 +9,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import {
     User, Gift, Film, Palette, Radio, Database,
     Crown, LogOut, Mail, Calendar, Shield, Tv,
-    X, MailCheck, Sparkles
+    X, MailCheck, Sparkles, Smartphone
 } from 'lucide-react';
 import { useUserStore } from '@/lib/store/user-store';
 import { AuthModal } from '@/components/auth/AuthModal';
@@ -298,6 +298,33 @@ function NotLoggedIn({ onLogin }: { onLogin: () => void }) {
             >
                 登录 / 注册
             </button>
+
+            {/* PWA 桌面快捷安装常驻入口 */}
+            <div className="mt-10 max-w-md mx-auto text-left">
+                <div
+                    onClick={() => window.dispatchEvent(new CustomEvent('ikanpp:show-pwa-modal'))}
+                    className="rounded-2xl p-4 bg-white/5 border border-white/10 hover:border-red-500/30 hover:bg-white/[0.08] transition-all cursor-pointer flex items-center justify-between group"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center text-white shadow-md shadow-red-600/20">
+                            <Smartphone size={20} />
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-sm font-bold text-white">安装 iKanPP 到手机桌面</span>
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30">
+                                    常驻入口
+                                </span>
+                            </div>
+                            <p className="text-xs text-slate-400 mt-0.5">像 App 一样常驻桌面，4K 秒开，永不迷路</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-red-400 group-hover:translate-x-0.5 transition-transform font-medium">
+                        <span>添加</span>
+                        <ChevronRight size={14} />
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
@@ -480,6 +507,31 @@ function AccountTab({ user, vipExpiry, onLogin }: { user: any; vipExpiry: string
                             </span>
                         </div>
                     )}
+                </div>
+            </div>
+
+            {/* PWA 桌面快捷安装常驻入口 */}
+            <div
+                onClick={() => window.dispatchEvent(new CustomEvent('ikanpp:show-pwa-modal'))}
+                className="rounded-2xl p-4 sm:p-5 bg-white/5 border border-white/10 hover:border-red-500/30 hover:bg-white/[0.08] transition-all cursor-pointer flex items-center justify-between group"
+            >
+                <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center text-white shadow-md shadow-red-600/20">
+                        <Smartphone size={20} />
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-sm font-bold text-white">安装 iKanPP 到手机桌面</span>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30">
+                                常驻入口
+                            </span>
+                        </div>
+                        <p className="text-xs text-slate-400 mt-0.5">像 App 一样常驻桌面，4K 秒开，永不迷路</p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-1 text-xs text-red-400 group-hover:translate-x-0.5 transition-transform font-medium">
+                    <span>立即添加</span>
+                    <ChevronRight size={14} />
                 </div>
             </div>
 
