@@ -588,9 +588,9 @@ export function IkanPPPlayerContainer() {
       rawList.push(...discoveredSources);
     }
 
-    // 注入 iKanPP专线 (仅在有片名且未被熔断时作为品牌极速首选)
+    // 注入 iKanPP专线 (作为候补极速专线，绝不抢占首发主力骨干源)
     if (title && !failedSourcesRef.current.has('ikanpp')) {
-      rawList.unshift({
+      rawList.push({
         id: 'ikanpp',
         source: 'ikanpp',
         sourceName: '⚡ iKanPP专线',

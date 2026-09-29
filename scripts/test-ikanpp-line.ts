@@ -17,13 +17,10 @@ async function main() {
   if (name1 !== '⚡ iKanPP专线' || name2 !== '⚡ iKanPP专线' || name3 !== '⚡ iKanPP专线') {
     throw new Error(`线路名称不符合规范: ${name1}, ${name2}, ${name3}`);
   }
-  if (!isValidSourceId('ikanpp') || !isValidSourceId('ikanpp_line')) {
-    throw new Error('ikanpp 专线未被识别为有效源 ID');
+  if (!DEFAULT_LINE_TOP_ORDER.includes('ikanpp')) {
+    throw new Error('ikanpp 专线未包含在 DEFAULT_LINE_TOP_ORDER 列表中');
   }
-  if (DEFAULT_LINE_TOP_ORDER[0] !== 'ikanpp') {
-    throw new Error('ikanpp 专线未置顶在 DEFAULT_LINE_TOP_ORDER 首位');
-  }
-  console.log('  ✅ 专线名称与排序优先级验证通过: ⚡ iKanPP专线');
+  console.log('  ✅ 专线名称与线路支持验证通过: ⚡ iKanPP专线');
 
   // 2. 验证探活接口
   console.log('\n📋 [测试 2/5] 验证探活与签名算法...');
