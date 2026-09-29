@@ -6,7 +6,9 @@ import { useHistoryStore, usePremiumHistoryStore } from '@/lib/store/history-sto
 import { CustomVideoPlayer } from './CustomVideoPlayer';
 import { VideoPlayerError } from './VideoPlayerError';
 import { VideoPlayerEmpty } from './VideoPlayerEmpty';
+import { TakeoverNotice } from './TakeoverNotice';
 import { usePlayerSettings } from './hooks/usePlayerSettings';
+import { videoTakeoverBrowser } from '@/lib/client/video-takeover';
 
 interface VideoPlayerProps {
   playUrl: string;
@@ -73,6 +75,12 @@ export const VideoPlayer = React.memo(function VideoPlayer({
   const currentTimeRef = useRef(0);
   const durationRef = useRef(0);
   const SAVE_INTERVAL = 5000; // 5 seconds throttle
+
+  const takeoverBrowser = React.useSyncExternalStore(
+    () => () => {},
+    videoTakeoverBrowser,
+    () => null
+  );
 
   const { showModeIndicator, proxyMode } = usePlayerSettings(isPremium);
   // 普通模式 (iKanPP) 100% 纯前端直连各大主流 CDN，绝不代理也不重写切片；仅 iKanX (isPremium) 允许代理
@@ -205,6 +213,14 @@ export const VideoPlayer = React.memo(function VideoPlayer({
     ? `/api/proxy?url=${encodeURIComponent(playUrl)}&retry=${retryCount}` // Add retry param to force fresh request
     : playUrl;
 
+  if (takeoverBrowser) {
+    return (
+      <div data-no-spatial className="relative group w-full">
+        <TakeoverNotice browserName={takeoverBrowser} />
+      </div>
+    );
+  }
+
   if (!playUrl) {
     if (connectingMessage || isLoadingSource) {
       return (
@@ -259,7 +275,9 @@ export const VideoPlayer = React.memo(function VideoPlayer({
           </span>
         </div>
       )}
-      {videoError ? (
+      {takeoverBrowser ? (
+        <TakeoverNotice browserName={takeoverBrowser} />
+      ) : videoError ? (
         <VideoPlayerError
           error={videoError}
           onBack={onBack}
