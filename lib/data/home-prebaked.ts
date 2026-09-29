@@ -54,7 +54,7 @@ export const PREBAKED_HOME_DATA: {
   "movie": {
     "trendingNav": [
         {
-                "title": "重制",
+                "title": "欢迎来龙餐馆",
                 "updateBadge": ""
         },
         {
@@ -62,15 +62,19 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "欢迎来龙餐馆",
-                "updateBadge": ""
-        },
-        {
                 "title": "魔方小姐",
                 "updateBadge": ""
         },
         {
+                "title": "重制",
+                "updateBadge": ""
+        },
+        {
                 "title": "给阿嬷的情书",
+                "updateBadge": ""
+        },
+        {
+                "title": "大学炸弹客",
                 "updateBadge": ""
         },
         {
@@ -90,15 +94,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "大学炸弹客",
+                "title": "一夜限定",
                 "updateBadge": ""
         },
         {
                 "title": "特立独行",
-                "updateBadge": ""
-        },
-        {
-                "title": "一夜限定",
                 "updateBadge": ""
         }
       ],
@@ -1825,7 +1825,7 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": "1"
+                "updateBadge": ""
         },
         {
                 "title": "我不是大师",
@@ -1837,7 +1837,7 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "无可替代",
-                "updateBadge": "3"
+                "updateBadge": ""
         },
         {
                 "title": "早春晴朗",
@@ -1845,7 +1845,7 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "死有对证",
-                "updateBadge": "1"
+                "updateBadge": ""
         },
         {
                 "title": "交锋",
@@ -1860,8 +1860,8 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "红果果金担担",
-                "updateBadge": "2"
+                "title": "黑岛监狱",
+                "updateBadge": ""
         },
         {
                 "title": "飞到我心上",

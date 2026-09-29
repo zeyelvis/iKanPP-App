@@ -14,7 +14,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "吞噬星空",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "凡人修仙传",
@@ -29,11 +29,23 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "万界独尊",
+        "updateBadge": "1"
+    },
+    {
+        "title": "斗破苍穹年番",
+        "updateBadge": ""
+    },
+    {
         "title": "一斩苍穹",
         "updateBadge": ""
     },
     {
-        "title": "斗破苍穹年番",
+        "title": "炼气十万年",
+        "updateBadge": "1"
+    },
+    {
+        "title": "沧元图",
         "updateBadge": ""
     },
     {
@@ -41,19 +53,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "沧元图",
-        "updateBadge": ""
-    },
-    {
-        "title": "名侦探柯南",
-        "updateBadge": ""
-    },
-    {
         "title": "遮天",
-        "updateBadge": ""
-    },
-    {
-        "title": "无职转生到了异世界就拿出真本事第3季",
         "updateBadge": ""
     }
   ],
@@ -643,11 +643,11 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "一饭封神第2季",
+        "title": "披荆斩棘2026",
         "updateBadge": ""
     },
     {
-        "title": "披荆斩棘2026",
+        "title": "一饭封神第2季",
         "updateBadge": ""
     },
     {
@@ -655,11 +655,11 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "你好星期六",
+        "title": "密室大逃脱第8季",
         "updateBadge": ""
     },
     {
-        "title": "毛雪汪",
+        "title": "你好星期六",
         "updateBadge": ""
     }
   ],
@@ -721,13 +721,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202608251140484004368.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202608261125552551744.jpg",
-        "description": "《舞蹈新风暴》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260928(风暴进行时)。",
+        "description": "《舞蹈新风暴》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260929(第6期下)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260928(风暴进行时)",
+        "episodes_info": "更新至20260929(第6期下)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1237,6 +1237,14 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
+          "title": "今日宜偏爱",
+          "updateBadge": "40"
+      },
+      {
+          "title": "继室拒绝咸鱼躺，又争又抢成团宠 Ai漫剧",
+          "updateBadge": "30"
+      },
+      {
           "title": "她渡天命",
           "updateBadge": "全"
       },
@@ -1274,14 +1282,6 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
       },
       {
           "title": "小蟒不发威，你当我是泥鳅啊！",
-          "updateBadge": "全"
-      },
-      {
-          "title": "弃宗当散修,这宗门我不要了",
-          "updateBadge": "全"
-      },
-      {
-          "title": "抄家后我带纨绔归田了",
           "updateBadge": "全"
       }
   ],
@@ -1413,45 +1413,45 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
           ]
       },
       {
-          "id": "jl_short_638648560014852500",
-          "title": "每天一个小妙招，读心大佬爱上我",
-          "rate": "8.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/a5c146e8cbf0b723a8ba3f4bd4842d110e0af3640c50c2a0f556573b1525a826.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/a5c146e8cbf0b723a8ba3f4bd4842d110e0af3640c50c2a0f556573b1525a826.jpg",
-          "description": "你看完会发现自己全程在替女主捏汗又忍不住笑出声。《每天一个小妙招，读心大佬爱上我》这部六十五集的真人短剧把都市甜宠玩出了新花样，李思君饰演的男主自带读心能力，偏偏碰上陈舒宜饰演的女主满脑子都是各种生活小妙招，两人之间的心理博弈和日常互动火花四溅。一个能看穿所有谎言，另一个却用最接地气的智慧频频打破他...",
+          "id": "jl_short_630027857350885400",
+          "title": "团宠狗师妹，我的师门全是大妖",
+          "rate": "9.3",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/28b5af1e1c9c27edc2075db7aad444021ba29905c248c5a1cbcb34e31dc8af9d.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/28b5af1e1c9c27edc2075db7aad444021ba29905c248c5a1cbcb34e31dc8af9d.jpg",
+          "description": "谁能想到，一部由AI生成的短剧《团宠狗师妹我的师门全是大妖》能如此精彩！24集的内容讲述了现代女孩意外穿越到修仙世界，成为了一个特殊门派的弟子——这个门派的所有成员竟然都是各种大妖。作为AI制作的作品，这部短剧的画面表现力令人惊叹，尤其是那些奇幻生物的塑造，每一只妖怪都有着独特的形态和性格。剧情轻松...",
           "year": "2026",
           "types": [
               "短剧",
-              "其他",
+              "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全3集·已完结",
+          "episodes_info": "全429集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "李思君 / 陈舒宜"
+              "短剧实力派"
           ]
       },
       {
-          "id": "jl_short_638446187648647700",
-          "title": "老公失忆，爆改18岁直球小奶狗",
-          "rate": "8.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/e5497ef3b34d343631ec573f3a1a25f06c1b513fc06b95ad39b10f3d047f29c3.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/e5497ef3b34d343631ec573f3a1a25f06c1b513fc06b95ad39b10f3d047f29c3.jpg",
-          "description": "姜晚音和结婚一年却无夫妻生活的池渊提出离婚时，池渊发生车祸，记忆回到18岁，回到了姜晚音曾经爱上池渊的年纪。池渊黏着姜晚音不断的直球示爱，渐渐拉回姜晚音的心意。同时，姜晚音也逐渐了解到18岁时阳光话唠的池渊，为何在六年后变成了陌生的模样。",
+          "id": "jl_short_633545259321851900",
+          "title": "小蟒不发威，你当我是泥鳅啊！",
+          "rate": "9.1",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/4850507b0e929ae3568a1da2ba695e1bf87723a5cd3009a21fc5bd723171b681.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/4850507b0e929ae3568a1da2ba695e1bf87723a5cd3009a21fc5bd723171b681.jpg",
+          "description": "青年王莽意外遭遇变故，重生为一条小血蟒，获得吞噬进化的特殊能力。为了生存与守护，他在水域与山林间不断吞噬成长，躲避危险，迎战变异巨兽，一路突破险境，越战越强。从渺小幼蟒到强大生灵，他历经生死考验，收服强大伙伴，揭开世界异变的秘密，最终守护家园，开启吞天噬地、不断蜕变的热血进化传奇。",
           "year": "2026",
           "types": [
               "短剧",
               "现代都市",
               "全集连播"
           ],
-          "episodes_info": "全3集·已完结",
+          "episodes_info": "全211集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "苗天添 / 熊安妮"
+              "短剧实力派"
           ]
       }
   ],
@@ -1518,19 +1518,19 @@ export const SHORT_HOME_DATA: PrebakedHomeCategory = {
     },
     {
       id: 'pb_s_top_7',
-      title: "每天一个小妙招，读心大佬爱上我",
-      rate: "8.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/a5c146e8cbf0b723a8ba3f4bd4842d110e0af3640c50c2a0f556573b1525a826.jpg",
+      title: "团宠狗师妹，我的师门全是大妖",
+      rate: "9.3",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/28b5af1e1c9c27edc2075db7aad444021ba29905c248c5a1cbcb34e31dc8af9d.jpg",
       year: "2026",
-      types: ["短剧","其他","全集连播"],
+      types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_8',
-      title: "老公失忆，爆改18岁直球小奶狗",
-      rate: "8.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/e5497ef3b34d343631ec573f3a1a25f06c1b513fc06b95ad39b10f3d047f29c3.jpg",
+      title: "小蟒不发威，你当我是泥鳅啊！",
+      rate: "9.1",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/4850507b0e929ae3568a1da2ba695e1bf87723a5cd3009a21fc5bd723171b681.jpg",
       year: "2026",
       types: ["短剧","现代都市","全集连播"],
       is_new: true,
@@ -1547,7 +1547,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "兰香如故",
-        "updateBadge": "1"
+        "updateBadge": ""
     },
     {
         "title": "我不是大师",
@@ -1559,7 +1559,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "无可替代",
-        "updateBadge": "3"
+        "updateBadge": ""
     },
     {
         "title": "早春晴朗",
@@ -1567,10 +1567,6 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     },
     {
         "title": "死有对证",
-        "updateBadge": "1"
-    },
-    {
-        "title": "交锋",
         "updateBadge": ""
     },
     {
@@ -1578,7 +1574,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "法医秦明之龙番往事",
+        "title": "交锋",
         "updateBadge": ""
     },
     {
@@ -1586,11 +1582,15 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "法医秦明之龙番往事",
+        "updateBadge": ""
+    },
+    {
         "title": "冬城猎凶",
         "updateBadge": ""
     },
     {
-        "title": "我家那闺女2026",
+        "title": "吞噬星空",
         "updateBadge": ""
     }
   ],
@@ -2163,11 +2163,15 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "克拉克森的农场第5季",
+        "updateBadge": ""
+    },
+    {
         "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第5季",
+        "title": "克拉克森的农场第3季",
         "updateBadge": ""
     },
     {
@@ -2175,19 +2179,15 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "史前星球",
-        "updateBadge": ""
-    },
-    {
-        "title": "闪闪的儿科医生",
-        "updateBadge": ""
-    },
-    {
-        "title": "动物打工仔",
-        "updateBadge": ""
-    },
-    {
         "title": "狂坠：波音大调查2",
+        "updateBadge": ""
+    },
+    {
+        "title": "风味人间",
+        "updateBadge": ""
+    },
+    {
+        "title": "征服14座高峰：凡事皆可能 14",
         "updateBadge": ""
     }
   ],

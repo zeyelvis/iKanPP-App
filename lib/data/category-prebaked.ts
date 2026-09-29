@@ -297,6 +297,205 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
   "tv": [
     {
       "id": "pb_cat_tv_1",
+      "title": "假面良人",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/628433a6f94c0cb21931a6322dcff167.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "甜虐爱情",
+        "内地剧"
+      ],
+      "remarks": "第13集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_tv_2",
+      "title": "云雀叫天录",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/238cded6b2966171e52be1ee183fb684.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "年代剧",
+        "传记",
+        "内地剧"
+      ],
+      "remarks": "第33集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_tv_3",
+      "title": "长生契",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/854b29f0b09d28dc0bf8bd539745e052.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "奇幻",
+        "情感",
+        "内地剧"
+      ],
+      "remarks": "第12集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_tv_4",
+      "title": "染指流年",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/5ed0be272550e6744f95787740587cee.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "年代剧",
+        "爱情",
+        "内地剧"
+      ],
+      "remarks": "第10集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_tv_5",
+      "title": "黑岛监狱",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/bc546801ff7ef8532c95880bb285f5e6.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "警匪罪案",
+        "刑侦破案",
+        "悬疑",
+        "内地剧"
+      ],
+      "remarks": "第16集已完结",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_tv_6",
+      "title": "东北有个周东北",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/2a4cb7f84dea5ebd753a04717b80c04a.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "都市喜剧",
+        "创业",
+        "搞笑",
+        "内地剧"
+      ],
+      "remarks": "第12集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_tv_7",
+      "title": "雷霆令",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/0ab7fc247d391d461677393dadaf9b78.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "缉毒题材",
+        "卧底片",
+        "警匪较量",
+        "内地剧"
+      ],
+      "remarks": "第06集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_tv_8",
+      "title": "法医秦明之天谴者",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/eb5cd76927e1363add49f86da6cab437.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "高智商推理",
+        "法医法证",
+        "警匪刑侦",
+        "内地剧"
+      ],
+      "remarks": "第16集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_tv_9",
+      "title": "大刑伺候",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/7061e3bbcfd7d67f2830655b448cacf6.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "甜虐爱情",
+        "古装爱情",
+        "内地剧"
+      ],
+      "remarks": "第10集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_tv_10",
+      "title": "如期",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/a5db9511167ff953ebd55f453004abc8.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "古装爱情",
+        "奇幻爱",
+        "情",
+        "甜虐爱情",
+        "内地剧"
+      ],
+      "remarks": "第17集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_tv_11",
+      "title": "厨娘",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/243c73c82e8ca80fdc4b642de846d545.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "古装爱情",
+        "古装",
+        "内地剧"
+      ],
+      "remarks": "第15集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_tv_12",
+      "title": "今日宜偏爱",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/8daee3f0920e09d1d974db673eec47ec.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "都市爱情",
+        "内地剧"
+      ],
+      "remarks": "第40集已完结",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_tv_13",
+      "title": "夜色将烬",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/7884526f146dccf95b3ccf58c82a7374.jpg",
+      "year": "2026",
+      "types": [
+        "大陆剧",
+        "虐恋",
+        "复仇",
+        "内地剧"
+      ],
+      "remarks": "第8集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_tv_14",
       "title": "无可替代",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/0c6375950ad0aa87234bc1aa8ce096df.jpg",
@@ -310,7 +509,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_2",
+      "id": "pb_cat_tv_15",
       "title": "法医秦明之龙番往事",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/4ac9f92e3a113e08be6ea8bb19232ac9.jpg",
@@ -325,7 +524,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_3",
+      "id": "pb_cat_tv_16",
       "title": "玄门大师",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/86c0642135bc64806f5105547c052fc9.jpg",
@@ -341,7 +540,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": false
     },
     {
-      "id": "pb_cat_tv_4",
+      "id": "pb_cat_tv_17",
       "title": "美丽的秘密",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/af51d242a662ad2b921e57ce9d1c4771.jpg",
@@ -358,7 +557,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": false
     },
     {
-      "id": "pb_cat_tv_5",
+      "id": "pb_cat_tv_18",
       "title": "机关龙城",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/809837deab4565d26b7fa6ddc5068f9d.jpg",
@@ -374,7 +573,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_6",
+      "id": "pb_cat_tv_19",
       "title": "征途",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/52a2eaa4181d764a87ee4761c15f5afc.jpg",
@@ -388,7 +587,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_tv_7",
+      "id": "pb_cat_tv_20",
       "title": "兰香如故",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/ea1f901d18c2ec1083053ba1e243c737.jpg",
@@ -402,270 +601,11 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       ],
       "remarks": "第37集",
       "is_new": true
-    },
-    {
-      "id": "pb_cat_tv_8",
-      "title": "一瓯春",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/fab55811525be3d6e53a950bf168117b.jpg",
-      "year": "2026",
-      "types": [
-        "大陆剧",
-        "古装爱情",
-        "复仇爽剧",
-        "内地剧"
-      ],
-      "remarks": "第24集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_tv_9",
-      "title": "我不是大师",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/df31a636d493b0e715a5978a1c873f64.jpg",
-      "year": "2026",
-      "types": [
-        "大陆剧",
-        "男性传奇",
-        "局中局",
-        "反转",
-        "内地剧"
-      ],
-      "remarks": "第12集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_tv_10",
-      "title": "假面良人",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/628433a6f94c0cb21931a6322dcff167.jpg",
-      "year": "2026",
-      "types": [
-        "大陆剧",
-        "甜虐爱情",
-        "内地剧"
-      ],
-      "remarks": "第12集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_tv_11",
-      "title": "黑岛监狱",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/bc546801ff7ef8532c95880bb285f5e6.jpg",
-      "year": "2026",
-      "types": [
-        "大陆剧",
-        "警匪罪案",
-        "刑侦破案",
-        "悬疑",
-        "内地剧"
-      ],
-      "remarks": "第16集已完结",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_tv_12",
-      "title": "云雀叫天录",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/238cded6b2966171e52be1ee183fb684.jpg",
-      "year": "2026",
-      "types": [
-        "大陆剧",
-        "年代剧",
-        "传记",
-        "内地剧"
-      ],
-      "remarks": "第31集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_tv_13",
-      "title": "长生契",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/854b29f0b09d28dc0bf8bd539745e052.jpg",
-      "year": "2026",
-      "types": [
-        "大陆剧",
-        "奇幻",
-        "情感",
-        "内地剧"
-      ],
-      "remarks": "第11集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_tv_14",
-      "title": "染指流年",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/5ed0be272550e6744f95787740587cee.jpg",
-      "year": "2026",
-      "types": [
-        "大陆剧",
-        "年代剧",
-        "爱情",
-        "内地剧"
-      ],
-      "remarks": "第8集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_tv_15",
-      "title": "大刑伺候",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/7061e3bbcfd7d67f2830655b448cacf6.jpg",
-      "year": "2026",
-      "types": [
-        "大陆剧",
-        "甜虐爱情",
-        "古装爱情",
-        "内地剧"
-      ],
-      "remarks": "第08集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_tv_16",
-      "title": "法医秦明之天谴者",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/eb5cd76927e1363add49f86da6cab437.jpg",
-      "year": "2026",
-      "types": [
-        "大陆剧",
-        "高智商推理",
-        "法医法证",
-        "警匪刑侦",
-        "内地剧"
-      ],
-      "remarks": "第15集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_tv_17",
-      "title": "行镖",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/047f25ce6a0ad2031887e573c86a5b1a.jpg",
-      "year": "2026",
-      "types": [
-        "大陆剧",
-        "东方玄幻",
-        "英雄成长",
-        "内地剧"
-      ],
-      "remarks": "第12集已完结",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_tv_18",
-      "title": "如期",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/a5db9511167ff953ebd55f453004abc8.jpg",
-      "year": "2026",
-      "types": [
-        "大陆剧",
-        "古装爱情",
-        "奇幻爱",
-        "情",
-        "甜虐爱情",
-        "内地剧"
-      ],
-      "remarks": "第16集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_tv_19",
-      "title": "东北有个周东北",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/2a4cb7f84dea5ebd753a04717b80c04a.jpg",
-      "year": "2026",
-      "types": [
-        "大陆剧",
-        "都市喜剧",
-        "创业",
-        "搞笑",
-        "内地剧"
-      ],
-      "remarks": "第8集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_tv_20",
-      "title": "夜色将烬",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/7884526f146dccf95b3ccf58c82a7374.jpg",
-      "year": "2026",
-      "types": [
-        "大陆剧",
-        "虐恋",
-        "复仇",
-        "内地剧"
-      ],
-      "remarks": "第6集",
-      "is_new": true
     }
   ],
   "anime": [
     {
       "id": "pb_cat_anime_1",
-      "title": "吞噬星空",
-      "rate": "6.8",
-      "cover": "https://img.guangsuimage.com/cover/1e81d9ddb81fa08481c942a7f794300e.jpg",
-      "year": "2020",
-      "types": [
-        "中国动漫",
-        "科幻",
-        "动画"
-      ],
-      "remarks": "第243集",
-      "is_new": false
-    },
-    {
-      "id": "pb_cat_anime_2",
-      "title": "斗罗大陆4终极斗罗 合集",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/5aaa24c3ab499a42ff9e8b0be143a1b6.jpg",
-      "year": "2024",
-      "types": [
-        "中国动漫",
-        "玄幻修真",
-        "东方玄幻",
-        "动态漫画"
-      ],
-      "remarks": "第206集",
-      "is_new": false
-    },
-    {
-      "id": "pb_cat_anime_3",
-      "title": "聊不了斋",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/0807f683e88d6d75f1dc152fd35ad613.jpg",
-      "year": "2026",
-      "types": [
-        "中国动漫",
-        "脑洞",
-        "神怪",
-        "奇幻"
-      ],
-      "remarks": "第18集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_anime_4",
-      "title": "禅王渡尘",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/b14f1d742a471207c017cc24b0fa6e87.jpg",
-      "year": "2026",
-      "types": [
-        "中国动漫",
-        "古装",
-        "反转",
-        "虐心"
-      ],
-      "remarks": "第173集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_anime_5",
       "title": "魔道重生的女武神",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/4390d85d9625806b78ad7ecb81044845.jpg",
@@ -676,113 +616,142 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
         "复仇",
         "脑洞"
       ],
-      "remarks": "第194集",
+      "remarks": "第195集",
       "is_new": true
     },
     {
-      "id": "pb_cat_anime_6",
-      "title": "刚毕业就末日：万亿开局当神豪动态漫画",
+      "id": "pb_cat_anime_2",
+      "title": "致亲爱的千夏小姐",
       "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/77aea29ef4b54d9099634379ed790f25.jpg",
-      "year": "2025",
+      "cover": "https://img.guangsuimage.com/cover/5b2873960b25b7de2cac88f4f7e214bd.jpg",
+      "year": "2026",
       "types": [
         "中国动漫",
-        "系统流",
-        "玄幻",
-        "动作"
+        "逆袭",
+        "热血",
+        "反转"
       ],
-      "remarks": "第358集",
+      "remarks": "第2集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_anime_3",
+      "title": "禅王渡尘",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/b14f1d742a471207c017cc24b0fa6e87.jpg",
+      "year": "2026",
+      "types": [
+        "中国动漫",
+        "古装",
+        "反转",
+        "虐心"
+      ],
+      "remarks": "第174集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_anime_4",
+      "title": "万界独尊",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/c712cafa19f7f3dfbd8a72abeac78ec8.jpg",
+      "year": "2021",
+      "types": [
+        "中国动漫",
+        "动画"
+      ],
+      "remarks": "第487集",
+      "is_new": false
+    },
+    {
+      "id": "pb_cat_anime_5",
+      "title": "炼气十万年",
+      "rate": "6.8",
+      "cover": "https://img.guangsuimage.com/cover/bbadbbe23e937b9a3245f81ebebf9e8f.jpg",
+      "year": "2023",
+      "types": [
+        "中国动漫",
+        "动作",
+        "动画",
+        "奇幻",
+        "古装"
+      ],
+      "remarks": "第381集",
+      "is_new": false
+    },
+    {
+      "id": "pb_cat_anime_6",
+      "title": "涅槃称尊",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/3bdf0551665f902bb7f7437f1345d942.jpg",
+      "year": "2026",
+      "types": [
+        "中国动漫",
+        "奇幻",
+        "逆袭",
+        "复仇"
+      ],
+      "remarks": "第40集已完结",
       "is_new": true
     },
     {
       "id": "pb_cat_anime_7",
-      "title": "猿主无痕",
+      "title": "全民诡异：开局掌握零元购",
       "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/36ffd2577182cb420cc64facd45ad846.jpg",
-      "year": "2026",
+      "cover": "https://img.guangsuimage.com/cover/35347250c267d0ac8b34c6d030132d58.jpg",
+      "year": "2025",
       "types": [
         "中国动漫",
-        "玄幻",
         "奇幻",
-        "穿越"
+        "末日",
+        "热血"
       ],
-      "remarks": "第33集已完结",
+      "remarks": "第317集",
       "is_new": true
     },
     {
       "id": "pb_cat_anime_8",
-      "title": "烬火逆途",
+      "title": "全民御兽：开局山海经，我横扫全球",
       "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/169c3beef5d1cfe69bb95f60a6889032.jpg",
-      "year": "2026",
+      "cover": "https://img.guangsuimage.com/cover/222c728d29e2771db2790866a9830032.jpg",
+      "year": "2025",
       "types": [
-        "中国动漫",
-        "奇幻",
-        "复仇",
-        "异能"
+        "中国动漫"
       ],
-      "remarks": "第51集已完结",
+      "remarks": "第333集",
       "is_new": true
     },
     {
       "id": "pb_cat_anime_9",
-      "title": "2049：超能猩云队",
+      "title": "苍绝剑尊",
       "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/f0512c9fd83d905a40e0943ada9b218f.jpg",
+      "cover": "https://img.guangsuimage.com/cover/0e49cbc2133583a88cafb2be2f74c1ee.jpg",
       "year": "2026",
       "types": [
         "中国动漫",
-        "科幻",
-        "搞笑",
-        "冒险"
+        "玄幻",
+        "冒险",
+        "逆袭"
       ],
-      "remarks": "第9集",
+      "remarks": "第182集",
       "is_new": true
     },
     {
       "id": "pb_cat_anime_10",
-      "title": "公主今天保护欲满满",
+      "title": "我家娘子竟是当朝女帝",
       "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/a75ac5104bdd3d3670f44c26117e5c0e.jpg",
+      "cover": "https://img.guangsuimage.com/cover/30242cff0f775d3e3bb483f48e6849a8.jpg",
       "year": "2026",
       "types": [
         "中国动漫",
-        "奇幻",
-        "魔法"
+        "穿越",
+        "古装",
+        "恋爱"
       ],
-      "remarks": "第24集",
+      "remarks": "第26集",
       "is_new": true
     },
     {
       "id": "pb_cat_anime_11",
-      "title": "她会驯服英雄",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/99bb987fa827b87196dfae3e34f9c1ee.jpg",
-      "year": "2026",
-      "types": [
-        "中国动漫",
-        "动漫",
-        "奇幻"
-      ],
-      "remarks": "第23集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_anime_12",
-      "title": "星辰帝女，逆转命运之歌",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/8f94bb7d47dd21a37ea667583dc972d3.jpg",
-      "year": "2026",
-      "types": [
-        "中国动漫",
-        "恋爱",
-        "玄幻"
-      ],
-      "remarks": "第50集已完结",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_anime_13",
       "title": "平行天帝：系统启世",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/b5aa9f33f1ae3ebd21980a3003ee2a12.jpg",
@@ -793,39 +762,11 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
         "冒险",
         "热血"
       ],
-      "remarks": "第67集",
+      "remarks": "第68集",
       "is_new": true
     },
     {
-      "id": "pb_cat_anime_14",
-      "title": "技能无限增幅，爽得我不想当辅助了！动态漫画",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/6269cd730988b8c6df3ba27a0d01eea9.jpg",
-      "year": "2026",
-      "types": [
-        "中国动漫",
-        "穿越",
-        "热血",
-        "冒险"
-      ],
-      "remarks": "第117集",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_anime_15",
-      "title": "无上神帝",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/03af2dab7923447ee070be156ac70bc7.jpg",
-      "year": "2020",
-      "types": [
-        "中国动漫",
-        "动画"
-      ],
-      "remarks": "第644集",
-      "is_new": false
-    },
-    {
-      "id": "pb_cat_anime_16",
+      "id": "pb_cat_anime_12",
       "title": "水鬼怀龙胎,开局揍皇帝",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/f7668cab65409cd357548748f2b9f618.jpg",
@@ -836,13 +777,181 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
         "神怪",
         "恋爱"
       ],
-      "remarks": "第134集",
+      "remarks": "第135集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_anime_13",
+      "title": "一家三口闯仙域",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/9b4cd431c76954eabbeb84dfab50ec8e.jpg",
+      "year": "2026",
+      "types": [
+        "中国动漫",
+        "穿越",
+        "古装"
+      ],
+      "remarks": "第78集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_anime_14",
+      "title": "天道第一序列",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/c90d24f7f3c3bf0291a60677aab4c3c6.jpg",
+      "year": "2026",
+      "types": [
+        "中国动漫",
+        "逆袭",
+        "玄幻",
+        "热血"
+      ],
+      "remarks": "第24集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_anime_15",
+      "title": "从哥布林到哥布林神 动态漫画",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/b5419639a68181f34ce2a65908a4008e.jpg",
+      "year": "2025",
+      "types": [
+        "中国动漫",
+        "冒险",
+        "热血"
+      ],
+      "remarks": "第81集",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_anime_16",
+      "title": "末日狠人：开局囤积万亿物资 动态漫画",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/e261d6435a36803e1c6e6e6c019eb082.jpg",
+      "year": "2025",
+      "types": [
+        "中国动漫"
+      ],
+      "remarks": "第81集",
       "is_new": true
     }
   ],
   "variety": [
     {
       "id": "pb_cat_variety_1",
+      "title": "大哥小助理",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/9dac9db8204abfacece76632f697b6ec.jpg",
+      "year": "2026",
+      "types": [
+        "大陆综艺",
+        "职业体验",
+        "真人秀",
+        "观察"
+      ],
+      "remarks": "第7期母带2",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_variety_2",
+      "title": "创业面对面",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/7f767d771a6ad40dee53b3ea5c79453e.jpg",
+      "year": "2026",
+      "types": [
+        "大陆综艺",
+        "真人秀",
+        "职场",
+        "内地"
+      ],
+      "remarks": "第260928期",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_variety_3",
+      "title": "东方纹样有点东西",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/6c20a9f2b2509a1fbffbf03577d6e778.jpg",
+      "year": "2026",
+      "types": [
+        "大陆综艺",
+        "文化"
+      ],
+      "remarks": "敦煌站第2期",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_variety_4",
+      "title": "伦敦合伙人",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/56448fb13eecfe67571619e16a2f9fea.jpg",
+      "year": "2026",
+      "types": [
+        "大陆综艺",
+        "综艺"
+      ],
+      "remarks": "合伙人日记第8期",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_variety_5",
+      "title": "舞蹈新风暴",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/854748b11de4be0ab4ed4b24f76b94eb.jpg",
+      "year": "2026",
+      "types": [
+        "大陆综艺",
+        "歌舞",
+        "真人秀"
+      ],
+      "remarks": "纯享版第6期",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_variety_6",
+      "title": "飞行嘉宾",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/665c7fbb15456df28a7e8e1f33fc9954.jpg",
+      "year": "2026",
+      "types": [
+        "大陆综艺",
+        "播客"
+      ],
+      "remarks": "第4期",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_variety_7",
+      "title": "密室大逃脱第八季",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/4bd8575441a219bc600c27999928e8ed.jpg",
+      "year": "2026",
+      "types": [
+        "大陆综艺",
+        "悬疑",
+        "密室",
+        "综艺",
+        "推理"
+      ],
+      "remarks": "超前彩蛋第11期",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_variety_8",
+      "title": "不想睡的星期五",
+      "rate": "8.6",
+      "cover": "https://img.guangsuimage.com/cover/813d38364c95c17d1b969aa2364959b4.jpg",
+      "year": "2026",
+      "types": [
+        "大陆综艺",
+        "综艺",
+        "生活"
+      ],
+      "remarks": "超前营夜第11期",
+      "is_new": true
+    },
+    {
+      "id": "pb_cat_variety_9",
       "title": "心动的信号第9季",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/bc6f1f3779c04d2b142bc35d69bd3474.jpg",
@@ -855,7 +964,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_variety_2",
+      "id": "pb_cat_variety_10",
       "title": "向前一步2026",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/8a92fe99ca57b8b5560f69723979ffc7.jpg",
@@ -867,7 +976,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_variety_3",
+      "id": "pb_cat_variety_11",
       "title": "奔跑吧少年第7季",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/19d7bb12e94e1f83d4fdff273181e24d.jpg",
@@ -881,7 +990,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_variety_4",
+      "id": "pb_cat_variety_12",
       "title": "毛雪汪",
       "rate": "7.2",
       "cover": "https://img.guangsuimage.com/cover/1e06ec8cf0abf417f8c787235f66f350.jpg",
@@ -894,7 +1003,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": false
     },
     {
-      "id": "pb_cat_variety_5",
+      "id": "pb_cat_variety_13",
       "title": "我家的两岸故事·思源季",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/b1514746ba42cf57027379281f185e97.jpg",
@@ -908,7 +1017,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_variety_6",
+      "id": "pb_cat_variety_14",
       "title": "我在中国当农人第三季",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/49757c5c1794ebdc0d55bf09839fda7d.jpg",
@@ -922,20 +1031,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_variety_7",
-      "title": "伦敦合伙人",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/56448fb13eecfe67571619e16a2f9fea.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "综艺"
-      ],
-      "remarks": "超长营业第8期",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_variety_8",
+      "id": "pb_cat_variety_15",
       "title": "高手云吉",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/d99d71f9c3784f28e3ae831bc8054044.jpg",
@@ -950,7 +1046,7 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
       "is_new": true
     },
     {
-      "id": "pb_cat_variety_9",
+      "id": "pb_cat_variety_16",
       "title": "一师亦友",
       "rate": "8.6",
       "cover": "https://img.guangsuimage.com/cover/e330b102f21f8a72906f6b9ffae78bb6.jpg",
@@ -960,104 +1056,6 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
         "访谈"
       ],
       "remarks": "第20260927期",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_variety_10",
-      "title": "大哥小助理",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/9dac9db8204abfacece76632f697b6ec.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "职业体验",
-        "真人秀",
-        "观察"
-      ],
-      "remarks": "第7期母带1",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_variety_11",
-      "title": "花儿与少年2026",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/f8063f1b0b35246aaecc6911f3981d81.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "真人秀",
-        "文化"
-      ],
-      "remarks": "七福陪看记第3期",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_variety_12",
-      "title": "星动网球社",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/2549a06a9e3556ebc9ac6433959a1e5a.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "球类",
-        "竞技"
-      ],
-      "remarks": "第2期",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_variety_13",
-      "title": "静请期戴",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/9cd2f6f7b9a713ee65acd9ebe9c66f41.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "播客"
-      ],
-      "remarks": "第8期",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_variety_14",
-      "title": "博物馆夜行指楠",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/00ac8c9b984ddfc64cb9f1923348e225.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "文化",
-        "娱乐",
-        "播客"
-      ],
-      "remarks": "第4期",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_variety_15",
-      "title": "浪里个浪青春版",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/01322d798af83096b047e6ef8b585b74.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "综艺"
-      ],
-      "remarks": "第6期",
-      "is_new": true
-    },
-    {
-      "id": "pb_cat_variety_16",
-      "title": "手信集·青岛篇",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/3e1a813196d7bfc007bedb02c7956842.jpg",
-      "year": "2026",
-      "types": [
-        "大陆综艺",
-        "真人秀",
-        "情感"
-      ],
-      "remarks": "第6期",
       "is_new": true
     }
   ],
