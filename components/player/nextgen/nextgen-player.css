@@ -1,0 +1,154 @@
+/* xgplayer's stylesheet joins Tailwind's base layer: its class selectors still beat the base
+   reset, and the utilities (a later layer) beat its "* { padding: 0; margin: 0 }" reset, so
+   our panels inside the player keep their classes. */
+@import "xgplayer/dist/index.min.css" layer(base);
+
+/* 播放器根节点内部的覆盖层 (NextgenVideoPlayer.tsx)：挂在视频和控制条之上，允许点击穿透 */
+.ng-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+}
+.ng-layer > * {
+  pointer-events: auto;
+}
+
+/* 专线右上角品牌覆盖角标：位于画面之上、控制条之下 (z-index: 5) */
+.ng-badge {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+}
+.ng-badge[hidden] {
+  display: none;
+}
+.ng-badge svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 仅在全屏状态下（系统原生全屏、网页全屏、手机网页横屏全屏）显示的控件：选集、上一集、±10s 快进快退、全屏标题栏 */
+.xgplayer:not(.xgplayer-is-fullscreen):not(.xgplayer-is-cssfullscreen):not(.xgplayer-rotate-fullscreen) .ng-episodes,
+.xgplayer:not(.xgplayer-is-fullscreen):not(.xgplayer-is-cssfullscreen):not(.xgplayer-rotate-fullscreen) .ng-prev,
+.xgplayer:not(.xgplayer-is-fullscreen):not(.xgplayer-is-cssfullscreen):not(.xgplayer-rotate-fullscreen) .ng-seek,
+.xgplayer:not(.xgplayer-is-fullscreen):not(.xgplayer-is-cssfullscreen):not(.xgplayer-rotate-fullscreen) .ng-top {
+  display: none !important;
+}
+
+/* iPhone 网页全屏旋转锁定时禁止背后页面滚动 */
+html.ng-player-full,
+html.ng-player-full body {
+  overflow: hidden;
+}
+
+.xgplayer .ng-seek .xgplayer-icon {
+  position: relative;
+}
+.xgplayer .ng-seek-n {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 8px;
+  font-weight: 700;
+  color: #fff;
+  padding-top: 1px;
+}
+.xgplayer .ng-top {
+  flex: 1;
+  padding-right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 50px;
+  padding-left: 8px;
+  color: #fff;
+  font-size: 15px;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.6);
+}
+.xgplayer .ng-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.xgplayer .ng-clock {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.xgplayer .ng-next .xgplayer-icon svg {
+  display: block;
+}
+
+/* 顶部标题栏 */
+.xgplayer-pc .xg-top-bar {
+  left: 0;
+  right: 0;
+}
+.xgplayer.xgplayer-is-fullscreen .xg-top-bar {
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.45), transparent);
+}
+.xgplayer.xgplayer-is-cssfullscreen .xg-top-bar {
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.45), transparent);
+}
+.xgplayer.xgplayer-rotate-fullscreen .xg-top-bar {
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.45), transparent);
+}
+
+/* 手机屏幕锁定按钮：全屏左侧显示 */
+.xgplayer .ng-lock {
+  display: none;
+  position: absolute;
+  z-index: 9;
+  top: 50%;
+  left: 16px;
+  margin-top: -20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.35);
+  cursor: pointer;
+}
+.xgplayer .ng-lock .xgplayer-icon {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+.xgplayer-mobile.xgplayer-is-fullscreen .ng-lock {
+  display: block;
+}
+.xgplayer-mobile.xgplayer-rotate-fullscreen .ng-lock {
+  display: block;
+}
+.xgplayer.xgplayer-inactive .ng-lock {
+  display: none;
+}
+
+/* 锁屏状态：隐藏控制条和右侧抽屉，仅保留纯净画面和锁屏按钮 */
+.xgplayer.ng-locked .xgplayer-controls {
+  display: none !important;
+}
+.xgplayer.ng-locked .xg-top-bar {
+  display: none !important;
+}
+.xgplayer.ng-locked .xg-right-bar {
+  display: none !important;
+}
+.xgplayer.ng-locked .xgplayer-start {
+  display: none !important;
+}
+.xgplayer.ng-locked .xg-options-list {
+  display: none !important;
+}
+.xgplayer.ng-locked .ng-drawer {
+  display: none !important;
+}
+
+/* 投屏按钮放置在标题栏右侧 */
+.xgplayer .xg-top-bar .ng-cast {
+  margin-left: auto;
+}

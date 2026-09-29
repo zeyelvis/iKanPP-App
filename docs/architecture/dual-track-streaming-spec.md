@@ -405,5 +405,46 @@
 - 支持一键手动静默嗅探（`POST /api/admin/shadowline/sniff`）、Canary 金丝雀探活（`POST /api/admin/shadowline/probe`）与紧急熔断硬锁（`POST /api/admin/shadowline/toggle`）；
 - 每次探活与配置变动强制记入 KV 并保留 90 天审计日志（`admin:audit-log:shadowline`），合规透明可追溯。
 
+---
+
+## 15. 播放器「新一代内核 (nextgen)」流媒体引擎架构规范 (2026-09 升级)
+
+为在保持 XGPlayer 优秀控件手势的同时，进一步优化高码率流媒体加载体验、AirPlay 真正原生投屏、iPhone 网页全屏旋转适配与专线品牌角标覆盖，全站播放器体系引入第三代演进内核「新一代内核 (nextgen)」：
+
+### 1. 核心调用链与架构分层
+```
+IkanPPPlayerContainer / IkanXPlayerContainer (双轨容器，负责线路调度与状态隔离)
+  └─ VideoPlayer (中间层，进度保存、出错切源驱动)
+       └─ CustomVideoPlayer (多引擎分发调度中枢)
+            ├─ legacy   → DesktopVideoPlayer (经典自研渲染核心)
+            ├─ xgplayer → xg/XgVideoPlayer (字节跳动 xgplayer v3 默认引擎)
+            └─ nextgen  → nextgen/NextgenVideoPlayer (新一代内核，模块化解耦插件与单一真理源配置)
+```
+- **换线路与容灾**：新引擎在遇到播放致命错误时仅调用 `onError(msg)`，中间层 `VideoPlayer` 接管并驱动外层容器执行纯前端切源，新引擎内部不耦合切源业务逻辑；
+- **进度保存**：通过 `onTimeUpdate(t, d)` 统一向上汇报，由中间层持久化存储。
+
+### 2. 双模智能加载与单一真理源配置
+- **苹果生态原生直连**：在 Safari、iOS 各类浏览器环境下，直接使用系统原生 HLS 播放（`video.src = m3u8`），以最小 CPU 功耗支持系统级 AirPlay 投屏；
+- **其他平台工场统一**：在 Chromium、Firefox、Edge 等设备上，通过 `import('hls.js')` 动态加载，并强制由 `lib/player/hls-config-factory.ts` 的 `createHlsConfig()` 注入配置；
+- **设备精准识别**：严格调用 `checkIsIPadOS()` 并结合粗指针与触摸事件识别移动端，严禁仅凭 `maxTouchPoints > 1` 误判 Mac 桌面端；
+- **起播看门狗 (15秒截止)**：
+  - 加载后 15 秒内未出现第一帧画面（`loadeddata`），立即触发 `onError('start-timeout')` 驱动容器无缝切线；
+  - 原生播放模式下仅在用户具有播放意图（`play`）时计时，避免自动播放被浏览器拦截时的误切；
+  - 仅负责起播阶段，播放中的缓冲一律由 120s 深水库自然流水线调度，严禁暴力跳转。
+
+### 3. iPhone 网页全屏旋转校准与全屏硬件直通防黑屏
+- **iPhone 网页全屏旋转**：在 iPhone 上采用 `rotateFullscreen: true`，横屏时播放器根节点旋转 90° 铺满视口，并通过 `fitPhoneFullscreen` 依据 `window.innerWidth/innerHeight` 精准校准尺寸，彻底消除顶部灰带与错位；
+- **原生全屏零 Transform**：系统原生全屏（Native Fullscreen）下，`<video>` 行内样式恒定声明 `transform: none`；
+- **全域组件纯色无模糊**：选集抽屉、专线换源抽屉、倒计时弹窗等统一采用高级纯色暗夜背景（`bg-[#141416]/95`），严禁任何 `backdrop-filter`，彻底杜绝 GPU Back-buffer 显存反向回读引发的 Surface Detach 画面黑屏。
+
+### 4. 专线右上角品牌覆盖角标 (Brand Badge)
+- **展示条件**：仅在当前线路为专线（`currentSource === 'shadowline'`）且为主站普通影视（`!isPremium`）时激活；
+- **微米级定位**：基于 `watermarkCover` 纯几何计算，通过 `ResizeObserver` 与分辨率监听，让 iKanPP 矢量品牌角标与原片源标识严格契合；
+- **双轨隔离恪守**：午夜特区（`isPremium: true`）展示专属消融台标，绝不混淆渲染。
+
+### 5. 零暴露流量隐匿策略 (Referrer-Policy: no-referrer)
+- 播放器拉取流媒体 m3u8 与 TS 切片时，全局遵循 `no-referrer` 规范，杜绝向第三方对端源站 CDN 暴露主站域名。
+
+
 
 

@@ -25,10 +25,16 @@
 
 ## 2. 播放器卡顿与自愈红线 (No Aggressive Nudge)
 
-- **现代播放引擎演进**：全站核心播放器已全面升级为**字节跳动 XGPlayer (西瓜播放器 v3)** 插件化架构，支持 Web Worker 后台解复用与多维手势，并保留 `playerEngine: 'xgplayer' | 'legacy'` 双核 A/B 灰度配置与回退兜底；
+- **现代播放引擎演进**：全站核心播放器已全面升级为**字节跳动 XGPlayer (西瓜播放器 v3)** 插件化架构，支持 Web Worker 后台解复用与多维手势，并保留 `playerEngine: 'xgplayer' | 'legacy' | 'nextgen'` 三核 A/B 灰度配置与回退兜底；
 - **绝对禁忌**：**无论使用何种播放引擎，严禁在任何卡顿检测逻辑中执行 `videoRef.current.currentTime += 0.1` 或任何强行拨快时间轴的操作！**
 - **底层原理**：HLS 协议依赖浏览器的 SourceBuffer 自然流水线。修改 `currentTime` 会强制清空浏览器已下载的所有切片缓冲并重新发起握手请求。在弱网或高延迟地区，这将导致严重的“缓冲 ➔ 被拨快 ➔ 清空缓冲 ➔ 重新握手 ➔ 再次超时”无限死循环。
 - **正规做法**：检测到缓冲等待时，仅通过 `setIsLoading(true)` 显示加载圈，且底层 HLS 必须配置充足的 120s 充裕网络缓冲区。
+- **画面冻结看门狗例外 (Frozen Picture Watchdog Exception, 决策 D3)**：
+  - **现象定位**：现代桌面浏览器（如 Chrome）在标签页置于后台切回前台时，GPU 可能会挂起视频帧解码管线，出现「声音正常流淌、时钟指针前进，但画面彻底黑屏或定格在历史画面」的静默冻结现象；
+  - **触发条件**：仅在同时满足「页面处于可见状态（`document.visibilityState === 'visible'`）、未暂停、未处于 seek 状态、`readyState >= 3`、视频具备正向分辨率、不在画中画、不在无线投屏（AirPlay）」且「时钟前进量 > 0.3 秒，但总视频帧数 `totalVideoFrames` 连续 2 秒完全无新帧」时方可触发；
+  - **原地救活**：将 `video.currentTime` 赋值为其**当前值本身（原地重定位：`video.currentTime = video.currentTime`，严禁向前拨动时间轴）**，促使显卡解码器从已下载的 SourceBuffer 原地重新挂载帧管线；
+  - **频控熔断**：每集最多允许触发 3 次，两次触发间隔必须至少 10 秒；
+  - **绝非卡顿处理**：此看门狗必须依赖时钟指针正在前进才会计算（缓冲卡顿等待时时钟指针静止，永不触发），且原地重定位绝不清除前向缓冲池，与破坏缓冲区的卡顿快拨有本质物理区别。
 
 ---
 
@@ -305,6 +311,13 @@ iKanPP 全域视频播放器（包含桌面端、移动端、网页全屏与系�
      - 在 `useFullscreenControls.ts` 及任何全屏监听逻辑中，**严禁执行 `void v.offsetHeight;` 或读取任何几何布局属性**，杜绝显卡在申请与切换 Hardware Overlay Plane 的毫秒级窗口期被强制重排死锁；
      - 统一采用 W3C 原生 `video.requestVideoFrameCallback()` 与 `requestAnimationFrame` 微调 `opacity: 0.999 -> 1`，纯 Compositor 线程标记脏图层，解决 macOS Space 动画后 Framebuffer 挂起未 SwapBuffers 的问题；
   5. **自动化门禁全域覆盖永久守护**：由 `scripts/test-architecture-integrity.mjs` 在代码提交与 CI 构建中自动扫描上述所有播放器组件、全屏容器透明度、CSS 伪类块及全屏 Hook，任何类名或属性违规立即强制阻断发布。
+
+### 3. iPhone 网页全屏旋转校准例外 (iPhone Rotate Fullscreen Exception, 决策 D1)
+- **适用范围**：仅限 iPhone / iPod 移动端 Safari 在 `xgplayer` 的网页全屏（`rotateFullscreen: true`）场景；
+- **机制原理**：iOS 针对 `<video>` 不开放 W3C 标准的 DOM 元素级原生全屏 API（仅提供跳出网页的 QuickTime 原生全屏器）。为了提供不跳出网页的 App 级沉浸式全屏，播放器根节点必须在竖屏进入网页全屏时应用 90° 旋转（`rotate(90deg)`）铺满视口，并依据 `window.innerWidth/innerHeight` 动态校准宽高；
+- **铁律边界**：
+  1. 此例外**仅限网页全屏旋转容器**，系统原生全屏（Native Fullscreen）下 `<video>` 及其父容器依然**绝对严禁施加任何 transform**；
+  2. 旋转校准代码严禁读取 `offsetHeight` 或调用 `getComputedStyle`，严禁引发同步强制重排。
 
 
 ---
@@ -595,11 +608,14 @@ iKanPP 全域流媒体播放器（主站轨道 A 与午夜特区轨道 B）必�
 
 随着全站流媒体播放器全面升级至字节跳动工业级 XGPlayer v3 体系并正式落地「暗影自愈专线 (ShadowLine Engine)」，本项目确立以下最高工程标准：
 
-### 1. 字节跳动 XGPlayer 工业级渲染核心与插件解耦铁律
-- **核心定位**：全站播放器以 `xgplayer@^3.0.26` 与 `xgplayer-hls@^3.0.26` 为第一基线引擎，通过 Web Worker 独立线程解复用（Demuxing），主渲染线程 CPU 耗时立降 40%，杜绝高码率 4K 片源掉帧；
-- **全屏硬件直通防黑屏**：`components/player/xg/xg-player.css` 强制移除所有 `backdrop-filter: blur`，并严禁在 CSS 中合写 `:fullscreen` 与 `:-webkit-full-screen`；
-- **双核 A/B 灰度回退**：`CustomVideoPlayer.tsx` 动态路由分发，用户可在 `settingsStore` 中选择 `playerEngine: 'xgplayer' | 'legacy'`，保障极端兼容性场景下的零停机自愈回退；
-- **120s 缓冲区锁死**：HLS 插件强制配置 `targetBufferLength: 120`，严守防周期性卡顿红线。
+### 1. 现代工业级播放引擎矩阵与双轨解耦铁律 (XGPlayer & Nextgen Core)
+- **多引擎支持与演进**：全站播放器体系支持三大引擎动态路由分发（`playerEngine: 'xgplayer' | 'legacy' | 'nextgen'`）：
+  1. **xgplayer 引擎**：使用 `xgplayer@^3.0.26` 与 `xgplayer-hls@^3.0.26`，通过 Web Worker 独立线程解复用；
+  2. **nextgen 引擎 (新一代内核)**：苹果设备（Safari / iOS 浏览器）直连系统原生 HLS 播放（支持 AirPlay 原生投屏并最大化降低能耗）；其他设备采用 `hls.js` 结合 `lib/player/hls-config-factory.ts` 的 `createHlsConfig()` 统一配置；
+  3. **legacy 引擎**：经典自研 Native Video 渲染核心，作为极端兼容场景的兜底；
+- **全屏硬件直通防黑屏**：全站各引擎 CSS 强制移除所有 `backdrop-filter: blur`，并严禁在 CSS 中跨引擎合写 `:fullscreen` 与 `:-webkit-full-screen`；
+- **三核 A/B 灰度回退**：`CustomVideoPlayer.tsx` 动态路由分发，地址栏支持 `?engine=nextgen` / `xgplayer` / `legacy` 零侵入测试开关，第一阶段默认保持 `xgplayer`，经全网灰度平稳后再无缝升级为默认；
+- **120s 缓冲区锁死**：各引擎底层 HLS 配置强制锁定 120s 充沛深水库与 60s 后向安全区，严守防周期性卡顿红线。
 
 ### 2. 暗影自愈专线分级调度与 100% 零代理直连铁律
 - **分级双层模型**：巨量/光速等公开 MacCMS 源站作为承担 95% 流量的第一主力层；暗影专线作为冷门首发与 4K 自压制的第二特种层；

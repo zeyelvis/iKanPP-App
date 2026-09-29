@@ -338,6 +338,56 @@ if (fs.existsSync(hlsFactoryPath)) {
   );
 }
 
+// 12. 播放器新一代内核 (nextgen) 架构与安全铁律巡检
+const nextgenDir = path.resolve('components/player/nextgen');
+if (fs.existsSync(nextgenDir)) {
+  const nextgenFiles = fs.readdirSync(nextgenDir);
+  for (const file of nextgenFiles) {
+    const filePath = path.join(nextgenDir, file);
+    if (!fs.statSync(filePath).isFile()) continue;
+    const content = fs.readFileSync(filePath, 'utf-8');
+
+    assert(
+      !content.includes('backdrop-blur') && !content.includes('backdropFilter'),
+      `components/player/nextgen/${file} 严禁包含 backdrop-blur 或 backdropFilter，全屏模式下必须使用高级纯色暗夜底色`
+    );
+
+    assert(
+      !content.includes('offsetHeight') && !content.includes('getComputedStyle'),
+      `components/player/nextgen/${file} 严禁包含 offsetHeight 或 getComputedStyle，全屏与渲染逻辑严禁引发同步强制重排`
+    );
+
+    assert(
+      !content.includes('currentTime +='),
+      `components/player/nextgen/${file} 严禁包含 currentTime +=，坚决捍卫准则 2 播放器防强行拨快铁律`
+    );
+
+    const sanitizedForCheck = content.replace(/ikanpp/gi, '');
+    assert(
+      !/kanpp/i.test(sanitizedForCheck) && !content.includes('看片片'),
+      `components/player/nextgen/${file} 严禁包含 kanpp 或 看片片 等专有词汇，恪守保密与品牌规范`
+    );
+  }
+
+  const nextgenPlayerPath = path.join(nextgenDir, 'NextgenVideoPlayer.tsx');
+  if (fs.existsSync(nextgenPlayerPath)) {
+    const content = fs.readFileSync(nextgenPlayerPath, 'utf-8');
+    assert(
+      content.includes('React.memo('),
+      'NextgenVideoPlayer.tsx 必须使用 React.memo 包裹导出，实现 0 重绘隔离'
+    );
+  }
+
+  const nextgenPluginsPath = path.join(nextgenDir, 'plugins.ts');
+  if (fs.existsSync(nextgenPluginsPath)) {
+    const content = fs.readFileSync(nextgenPluginsPath, 'utf-8');
+    assert(
+      content.includes('createHlsConfig') && content.includes('checkIsIPadOS'),
+      'components/player/nextgen/plugins.ts 必须引入 createHlsConfig 与 checkIsIPadOS，恪守单一真理源配置与设备精准识别'
+    );
+  }
+}
+
 console.log('\n====================================================');
 if (failed) {
   console.error('🚨 架构契约巡检失败！存在破坏全局稳定性的违规回退，请根据上述报错整改后再行提交！');

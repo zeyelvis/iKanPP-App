@@ -20,6 +20,21 @@ const DynamicXgVideoPlayer = dynamic(
   }
 );
 
+const DynamicNextgenVideoPlayer = dynamic(
+  () => import('./nextgen/NextgenVideoPlayer').then((m) => m.NextgenVideoPlayer),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full aspect-video bg-black rounded-none sm:rounded-2xl flex items-center justify-center text-slate-500 text-xs">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+          <span>正在启动新一代内核 (Nextgen) 播放引擎...</span>
+        </div>
+      </div>
+    ),
+  }
+);
+
 interface CustomVideoPlayerProps {
   src: string;
   poster?: string;
@@ -48,18 +63,30 @@ interface CustomVideoPlayerProps {
 }
 
 /**
- * Smart Video Player that routes to either modern XGPlayer or legacy player based on user preference
+ * Smart Video Player that routes to modern Nextgen, XGPlayer, or legacy player based on user preference
  */
 export const CustomVideoPlayer = React.memo(function CustomVideoPlayer(props: CustomVideoPlayerProps) {
-  const [engine, setEngine] = useState<'xgplayer' | 'legacy'>('xgplayer');
+  const [engine, setEngine] = useState<'xgplayer' | 'legacy' | 'nextgen'>('xgplayer');
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const queryEngine = params.get('engine');
+      if (queryEngine === 'nextgen' || queryEngine === 'xgplayer' || queryEngine === 'legacy') {
+        setEngine(queryEngine);
+        return;
+      }
+    }
     const current = settingsStore.getSettings().playerEngine || 'xgplayer';
     setEngine(current);
   }, []);
 
   if (engine === 'legacy') {
     return <DesktopVideoPlayer {...props} />;
+  }
+
+  if (engine === 'nextgen') {
+    return <DynamicNextgenVideoPlayer {...props} />;
   }
 
   return <DynamicXgVideoPlayer {...props} />;

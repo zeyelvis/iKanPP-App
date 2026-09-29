@@ -70,7 +70,7 @@ export interface AppSettings {
   danmakuDisplayArea: number; // 0.25 | 0.5 | 0.75 | 1.0
   locale: LocaleOption; // 'zh-CN' (Simplified) or 'zh-TW' (Traditional)
   blockedCategories: string[]; // Category keywords to hide from search results (e.g. '伦理')
-  playerEngine: 'xgplayer' | 'legacy'; // 播放器引擎: 'xgplayer' (字节西瓜播放器) | 'legacy' (经典自研播放器)
+  playerEngine: 'xgplayer' | 'legacy' | 'nextgen'; // 播放器引擎: 'xgplayer' (字节西瓜播放器) | 'legacy' (经典自研播放器) | 'nextgen' (新一代内核)
 }
 
 import { exportSettings, importSettings, SEARCH_HISTORY_KEY, WATCH_HISTORY_KEY } from './settings-helpers';
@@ -300,7 +300,7 @@ export const settingsStore = {
         danmakuDisplayArea: typeof parsed.danmakuDisplayArea === 'number' ? parsed.danmakuDisplayArea : 0.5,
         locale: parsed.locale === 'zh-TW' ? 'zh-TW' : 'zh-CN',
         blockedCategories: Array.isArray(parsed.blockedCategories) ? parsed.blockedCategories : [],
-        playerEngine: parsed.playerEngine === 'legacy' ? 'legacy' : 'xgplayer',
+        playerEngine: (parsed.playerEngine === 'legacy' || parsed.playerEngine === 'nextgen') ? parsed.playerEngine : 'xgplayer',
       };
     } catch {
       // Even if localStorage fails, we should return defaults + ENV subscriptions
