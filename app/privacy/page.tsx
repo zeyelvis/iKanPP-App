@@ -71,6 +71,7 @@ export default function PrivacyPolicy() {
                         <ul className="list-disc list-inside space-y-2 opacity-70">
                             <li>本站使用 Cookie 和 LocalStorage 来维持登录状态和存储用户偏好设置。</li>
                             <li>我们不使用第三方广告追踪 Cookie。</li>
+                            <li><strong>性能与加载统计</strong>：为优化全球各地区网络连通与秒开速度，系统只按「日期 × 国家 × 页面类型 × 设备」汇总加载时间，不记 IP、不设 Cookie、没有任何识别标识。</li>
                             <li>您可以通过浏览器设置管理或删除 Cookie，但这可能影响部分功能的正常使用。</li>
                         </ul>
                     </section>

@@ -500,6 +500,79 @@ ${posterUrl ? `\n![《${item.title}》官方高清海报](${posterUrl})\n` : ''}
       });
     }
 
+    // 8.5 各国打开速度分析：/api/admin/analytics/speed
+    if (path === 'analytics/speed') {
+      const days = parseInt(searchParams.get('days') || '7', 10);
+      const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CF_ACCOUNT_ID || '14fe742dbeae906ff678ebc64d8a5775';
+      const API_TOKEN = process.env.CLOUDFLARE_API_TOKEN || process.env.CF_API_TOKEN || '';
+      const API_KEY = process.env.CLOUDFLARE_API_KEY || process.env.CF_API_KEY || '';
+      const EMAIL = process.env.CLOUDFLARE_EMAIL || process.env.CF_EMAIL || 'zeyelvis@gmail.com';
+
+      let rows: Array<{
+        country: string;
+        sampleCount: number;
+        ttfbP50: number;
+        ttfbP75: number;
+        lcpP50: number;
+        lcpP75: number;
+      }> = [];
+
+      if (API_TOKEN || API_KEY) {
+        try {
+          const sql = `
+            SELECT
+              blob1 AS country,
+              count() AS sample_count,
+              round(quantileExactWeighted(0.5)(double1, _sample_interval)) AS ttfb_p50,
+              round(quantileExactWeighted(0.75)(double1, _sample_interval)) AS ttfb_p75,
+              round(quantileExactWeighted(0.5)(double2, _sample_interval)) AS lcp_p50,
+              round(quantileExactWeighted(0.75)(double2, _sample_interval)) AS lcp_p75
+            FROM ikanpp_pagespeed
+            WHERE timestamp >= NOW() - INTERVAL '${days}' DAY
+            GROUP BY country
+            ORDER BY sample_count DESC
+          `;
+
+          const headers: Record<string, string> = {
+            'Content-Type': 'text/plain',
+          };
+          if (API_TOKEN) {
+            headers['Authorization'] = `Bearer ${API_TOKEN}`;
+          } else {
+            headers['X-Auth-Key'] = API_KEY;
+            headers['X-Auth-Email'] = EMAIL;
+          }
+
+          const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/analytics_engine/sql`, {
+            method: 'POST',
+            headers,
+            body: sql,
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            const sqlRows = data?.data || [];
+            rows = sqlRows.map((r: any) => ({
+              country: String(r.country || 'XX').toUpperCase(),
+              sampleCount: Number(r.sample_count || 0),
+              ttfbP50: Number(r.ttfb_p50 || 0),
+              ttfbP75: Number(r.ttfb_p75 || 0),
+              lcpP50: Number(r.lcp_p50 || 0),
+              lcpP75: Number(r.lcp_p75 || 0),
+            }));
+          }
+        } catch (e) {
+          console.warn('[Analytics Speed API] 查询失败:', e);
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        rows,
+        total: rows.length,
+      });
+    }
+
     // 9. 系统健康：/api/admin/system/health
     if (path === 'system/health') {
       let kvConnected = false;

@@ -11,6 +11,9 @@ import {
   RefreshCw,
   Sparkles,
   ArrowUpRight,
+  Gauge,
+  Zap,
+  Globe,
 } from 'lucide-react';
 
 interface QueryRow {
@@ -34,19 +37,52 @@ interface PageRow {
   isNeedsCtrOptimization: boolean;
 }
 
+interface SpeedRow {
+  country: string;
+  sampleCount: number;
+  ttfbP50: number;
+  ttfbP75: number;
+  lcpP50: number;
+  lcpP75: number;
+}
+
+const COUNTRY_NAMES: Record<string, string> = {
+  CN: '中国大陆',
+  US: '美国',
+  HK: '中国香港',
+  TW: '中国台湾',
+  JP: '日本',
+  SG: '新加坡',
+  MY: '马来西亚',
+  KR: '韩国',
+  AU: '澳大利亚',
+  CA: '加拿大',
+  GB: '英国',
+  DE: '德国',
+  FR: '法国',
+  VN: '越南',
+  TH: '泰国',
+  PH: '菲律宾',
+  ID: '印尼',
+  MM: '缅甸',
+  RU: '俄罗斯',
+};
+
 export default function AdminAnalyticsPage() {
-  const [tab, setTab] = useState<'queries' | 'pages'>('queries');
+  const [tab, setTab] = useState<'queries' | 'pages' | 'speed'>('queries');
   const [queries, setQueries] = useState<QueryRow[]>([]);
   const [pages, setPages] = useState<PageRow[]>([]);
+  const [speedRows, setSpeedRows] = useState<SpeedRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-      const [qRes, pRes] = await Promise.all([
+      const [qRes, pRes, sRes] = await Promise.all([
         fetch('/api/admin/analytics/queries'),
         fetch('/api/admin/analytics/pages'),
+        fetch('/api/admin/analytics/speed?days=7'),
       ]);
 
       if (qRes.ok) {
@@ -56,6 +92,10 @@ export default function AdminAnalyticsPage() {
       if (pRes.ok) {
         const pData = await pRes.json();
         if (pData.success) setPages(pData.rows || []);
+      }
+      if (sRes.ok) {
+        const sData = await sRes.json();
+        if (sData.success) setSpeedRows(sData.rows || []);
       }
     } catch (e) {
       console.error('[Fetch Analytics] 异常:', e);
@@ -78,19 +118,24 @@ export default function AdminAnalyticsPage() {
     p.page.toLowerCase().includes(search.toLowerCase())
   );
 
+  const filteredSpeedRows = speedRows.filter((r) =>
+    r.country.toLowerCase().includes(search.toLowerCase()) ||
+    (COUNTRY_NAMES[r.country] && COUNTRY_NAMES[r.country].includes(search))
+  );
+
   return (
     <div className="space-y-6">
       {/* 标题栏 */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
-            <span>Google Search Console 数据分析</span>
+            <span>网站访问与性能分析</span>
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-mono">
-              GSC Analytics
+              Web & Speed Analytics
             </span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            过去 30 天真实搜索流量、第 11~30 位次级冲榜词挖掘与页面点击率 (CTR) 诊断
+            过去 30 天真实搜索流量、页面点击率 (CTR) 与全球真实用户网页打开速度 (TTFB / LCP) 诊断
           </p>
         </div>
 
@@ -106,7 +151,7 @@ export default function AdminAnalyticsPage() {
 
       {/* 选项卡切换与快速过滤 */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center p-1 bg-white/5 rounded-xl border border-white/10 self-start">
+        <div className="flex flex-wrap items-center p-1 bg-white/5 rounded-xl border border-white/10 self-start gap-1">
           <button
             onClick={() => setTab('queries')}
             className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
@@ -130,6 +175,18 @@ export default function AdminAnalyticsPage() {
             <FileText className="w-3.5 h-3.5" />
             <span>页面曝光与 CTR 诊断 ({pages.length})</span>
           </button>
+
+          <button
+            onClick={() => setTab('speed')}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              tab === 'speed'
+                ? 'bg-red-600 text-white shadow-sm'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Gauge className="w-3.5 h-3.5" />
+            <span>各国网页打开速度 ({speedRows.length})</span>
+          </button>
         </div>
 
         <div className="relative w-full sm:w-64">
@@ -138,7 +195,7 @@ export default function AdminAnalyticsPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="过滤关键词或片名..."
+            placeholder="过滤关键词、国家或片名..."
             className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-slate-400 focus:outline-hidden focus:border-red-500/50"
           />
         </div>
@@ -298,6 +355,100 @@ export default function AdminAnalyticsPage() {
                       </td>
                     </tr>
                   ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* 视图 3: 各国网页打开速度 (TTFB & LCP) 表格 */}
+      {tab === 'speed' && (
+        <div className="admin-glass-panel rounded-2xl overflow-hidden border border-white/10">
+          <div className="overflow-x-auto admin-scrollbar">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-white/10 bg-white/[0.02] text-slate-400 font-medium">
+                  <th className="py-3 px-4">国家 / 地区</th>
+                  <th className="py-3 px-4">真实样本量</th>
+                  <th className="py-3 px-4">首字节 TTFB (P50 中位数)</th>
+                  <th className="py-3 px-4">首字节 TTFB (P75)</th>
+                  <th className="py-3 px-4">最大内容绘制 LCP (P50)</th>
+                  <th className="py-3 px-4">最大内容绘制 LCP (P75)</th>
+                  <th className="py-3 px-4 text-right">网络体验评级</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {loading ? (
+                  <tr>
+                    <td colSpan={7} className="py-16 text-center text-slate-400">
+                      <div className="inline-flex items-center gap-2">
+                        <RefreshCw className="w-4 h-4 animate-spin text-blue-500" />
+                        <span>正在拉取全球网页打开速度 (Analytics Engine) 指标...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredSpeedRows.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-16 text-center text-slate-400 space-y-2">
+                      <div className="text-slate-300 font-medium">暂无近 7 天网页加载速度样本数据</div>
+                      <p className="text-[11px] text-slate-500 max-w-md mx-auto">
+                        真实用户在各国家和地区访问本站时，浏览器将自动上报 TTFB 与 LCP 首帧指标至 Cloudflare Workers Analytics Engine (ikanpp_pagespeed)。
+                      </p>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredSpeedRows.map((row, idx) => {
+                    const countryName = COUNTRY_NAMES[row.country] || '其他地区';
+                    const isUltraFast = row.ttfbP50 > 0 && row.ttfbP50 <= 300 && (row.lcpP50 === 0 || row.lcpP50 <= 1500);
+                    const isGood = row.ttfbP50 > 0 && row.ttfbP50 <= 800 && (row.lcpP50 === 0 || row.lcpP50 <= 3000);
+
+                    return (
+                      <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
+                        <td className="py-3 px-4 font-semibold text-white">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20 text-[11px]">
+                              {row.country}
+                            </span>
+                            <span>{countryName}</span>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4 font-mono text-slate-300">
+                          {row.sampleCount.toLocaleString()} 次
+                        </td>
+                        <td className="py-3 px-4 font-mono font-semibold text-slate-200">
+                          {row.ttfbP50 > 0 ? `${row.ttfbP50} ms` : '-'}
+                        </td>
+                        <td className="py-3 px-4 font-mono text-slate-400">
+                          {row.ttfbP75 > 0 ? `${row.ttfbP75} ms` : '-'}
+                        </td>
+                        <td className="py-3 px-4 font-mono font-semibold text-slate-200">
+                          {row.lcpP50 > 0 ? `${row.lcpP50} ms` : '-'}
+                        </td>
+                        <td className="py-3 px-4 font-mono text-slate-400">
+                          {row.lcpP75 > 0 ? `${row.lcpP75} ms` : '-'}
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          {isUltraFast ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[11px]">
+                              <Zap className="w-3 h-3" />
+                              <span>极速秒开</span>
+                            </span>
+                          ) : isGood ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[11px]">
+                              <Globe className="w-3 h-3" />
+                              <span>体验良好</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[11px]">
+                              <AlertCircle className="w-3 h-3" />
+                              <span>建议优化</span>
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
