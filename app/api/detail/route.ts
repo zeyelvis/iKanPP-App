@@ -368,12 +368,15 @@ async function handleDetailRequest(
             // 必须将 pipecdn.vip 的 m3u8 地址改写为经由 /api/ikanpp-stream 中继的地址
             const relayOrigin = request?.nextUrl?.origin || '';
             const streamEndpoint = relayOrigin ? `${relayOrigin}/api/ikanpp-stream` : '/api/ikanpp-stream';
-            const relayedEpisodes = episodeList.map(ep => ({
-              ...ep,
-              url: ep.url && ep.url.includes('pipecdn.vip')
-                ? `${streamEndpoint}?url=${encodeURIComponent(ep.url)}`
-                : ep.url,
-            }));
+            const relayedEpisodes = episodeList.map(ep => {
+              const videoId = (ep as any).videoId ?? 0;
+              const epMediaKey = (ep as any).mediaKey || targetMediaKey;
+              const streamUrl = `${streamEndpoint}?mediaKey=${encodeURIComponent(epMediaKey)}&videoId=${videoId}&url=${encodeURIComponent(ep.url)}`;
+              return {
+                ...ep,
+                url: ep.url && ep.url.includes('pipecdn.vip') ? streamUrl : ep.url,
+              };
+            });
 
             return NextResponse.json({
               success: true,

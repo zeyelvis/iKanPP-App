@@ -451,11 +451,14 @@ export class IkanppLineProvider {
   public async getPlayData(
     mediaKey: string,
     videoId: number = 0,
-    resolution?: string
+    resolution?: string,
+    skipCache: boolean = false
   ): Promise<IkanppPlayData[] | null> {
     const cacheKey = `ikanpp:play:${mediaKey}:${videoId}:${resolution || 'all'}`;
-    const cached = memoryCache.get(cacheKey);
-    if (cached && cached.expiresAt > Date.now()) return cached.data;
+    if (!skipCache) {
+      const cached = memoryCache.get(cacheKey);
+      if (cached && cached.expiresAt > Date.now()) return cached.data;
+    }
 
     const params: Record<string, string | number> = {
       mediaKey,
@@ -479,9 +482,10 @@ export class IkanppLineProvider {
    */
   public async getBestFreePlayUrl(
     mediaKey: string,
-    videoId: number = 0
+    videoId: number = 0,
+    skipCache: boolean = false
   ): Promise<{ url: string; resolution: string; resolutionDes: string } | null> {
-    const playData = await this.getPlayData(mediaKey, videoId);
+    const playData = await this.getPlayData(mediaKey, videoId, undefined, skipCache);
     if (!playData) return null;
 
     const freeEntries = playData
@@ -504,13 +508,13 @@ export class IkanppLineProvider {
    * 获取整部影视的完整分集直链列表
    * 自动遍历所有分集并获取每集的播放 m3u8 直链
    */
-  public async getFullEpisodeList(mediaKey: string): Promise<Array<{ name: string; url: string; index: number }> | null> {
+  public async getFullEpisodeList(mediaKey: string): Promise<Array<{ name: string; url: string; index: number; videoId?: number; mediaKey?: string }> | null> {
     const detail = await this.getVideoDetails(mediaKey);
     if (!detail) {
       // 容灾：如果详情拉取失败，尝试直接拿默认集播放
       const best = await this.getBestFreePlayUrl(mediaKey, 0);
       if (best) {
-        return [{ name: '4K 原画', url: best.url, index: 0 }];
+        return [{ name: '4K 原画', url: best.url, index: 0, videoId: 0, mediaKey }];
       }
       return null;
     }
@@ -519,7 +523,7 @@ export class IkanppLineProvider {
     if (!detail.episodes || detail.episodes.length <= 1) {
       const best = await this.getBestFreePlayUrl(mediaKey, 0);
       if (best) {
-        return [{ name: '4K 原画', url: best.url, index: 0 }];
+        return [{ name: '4K 原画', url: best.url, index: 0, videoId: 0, mediaKey }];
       }
       return null;
     }
@@ -531,6 +535,8 @@ export class IkanppLineProvider {
         name: ep.title || (idx === 0 ? '第1集' : `第${idx + 1}集`),
         url: play?.url || '',
         index: idx,
+        videoId: ep.episodeId || 0,
+        mediaKey,
       };
     });
 

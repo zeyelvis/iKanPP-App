@@ -17,6 +17,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { ikanppProvider } from '@/lib/services/providers/iyf-provider';
 
 export const runtime = 'edge';
 
@@ -79,7 +80,23 @@ function rewriteM3u8(content: string, baseUrl: string, relayOrigin?: string): st
 }
 
 export async function GET(request: NextRequest) {
-  const targetUrl = request.nextUrl.searchParams.get('url');
+  let targetUrl = request.nextUrl.searchParams.get('url');
+  const mediaKey = request.nextUrl.searchParams.get('mediaKey');
+  const videoId = request.nextUrl.searchParams.get('videoId');
+
+  // 核心破局机制：就地自洽调度 (On-Demand Edge Resolve)
+  // 当请求携带 mediaKey 时，由当前执行中继的 Edge 节点现场向爱壹帆换取带本节点出网 IP 的实时签名！
+  // 保证签名中的 IP 与当前 Edge 节点出口 IP 100% 绝对一致，彻底解决 PipeCDN IIS 403 Credentials 校验失败问题！
+  if (mediaKey) {
+    try {
+      const freshPlay = await ikanppProvider.getBestFreePlayUrl(mediaKey, Number(videoId || '0'), true);
+      if (freshPlay && freshPlay.url) {
+        targetUrl = freshPlay.url;
+      }
+    } catch (e) {
+      console.warn('[iKanPP-Stream] On-demand resolve failed, fallback to url param:', e);
+    }
+  }
 
   if (!targetUrl) {
     return new NextResponse('Missing url parameter', { status: 400 });
