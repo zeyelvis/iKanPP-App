@@ -24,9 +24,40 @@ const CORS_HEADERS: Record<string, string> = {
   'Access-Control-Max-Age': '86400',
 };
 
-function jsonWithCors(body: any, init?: { status?: number; headers?: Record<string, string> }) {
+function jsonWithCors(
+  body: any,
+  init?: { status?: number; headers?: Record<string, string> },
+  episodeParam?: string | number | null
+) {
   const status = init?.status || 200;
   const extraHeaders = init?.headers || {};
+
+  if (body && body.data) {
+    const episodes = body.data.episodes || [];
+    let targetIndex = 0;
+    if (episodeParam !== undefined && episodeParam !== null && episodeParam !== '') {
+      const epNum = parseInt(String(episodeParam), 10);
+      if (!isNaN(epNum) && epNum > 0) {
+        targetIndex = Math.min(epNum - 1, Math.max(0, episodes.length - 1));
+      }
+    }
+    const currentEpisodeItem = episodes[targetIndex] || null;
+    const playUrl = currentEpisodeItem?.url || body.data.vod_play_url || null;
+
+    body.data.play_url = playUrl;
+    body.data.current_episode = episodes.length > 0 ? targetIndex + 1 : 1;
+    body.data.total_episodes = episodes.length;
+    body.data.quality = '4K/1080P 极清';
+    body.data.line = body.data.source || 'ikanpp';
+
+    // 顶层平铺便捷字段，方便外部项目直接取值
+    body.play_url = playUrl;
+    body.current_episode = episodes.length > 0 ? targetIndex + 1 : 1;
+    body.total_episodes = episodes.length;
+    body.quality = '4K/1080P 极清';
+    body.line = body.data.source || 'ikanpp';
+  }
+
   return NextResponse.json(body, {
     status,
     headers: {
@@ -53,8 +84,11 @@ async function handleDetailRequest(
   episodeParam?: string | number | null,
   extraParams?: Record<string, any>
 ) {
+  const reply = (b: any, init?: { status?: number; headers?: Record<string, string> }) =>
+    jsonWithCors(b, init, episodeParam);
+
   if (!id && !titleParam) {
-    return jsonWithCors(
+    return reply(
       { success: false, error: 'Missing video ID or title parameter' },
       { status: 400 }
     );
@@ -80,7 +114,7 @@ async function handleDetailRequest(
           ? `/api/proxy?url=${encodeURIComponent(detail.hlsUrl)}&referer=${encodeURIComponent('https://jable.tv/')}`
           : detail.hlsUrl;
 
-        return NextResponse.json({
+        return reply({
           success: true,
           data: {
             vod_id: id,
@@ -141,7 +175,7 @@ async function handleDetailRequest(
                 ? `/api/proxy?url=${encodeURIComponent(rawUrl)}`
                 : rawUrl;
 
-              return NextResponse.json({
+              return reply({
                 success: true,
                 data: {
                   vod_id: String(matched.vod_id),
@@ -167,7 +201,7 @@ async function handleDetailRequest(
             try {
               const fullDetail = await getVideoDetail(matched.vod_id, matchedSourceConfig);
               if (fullDetail && fullDetail.episodes && fullDetail.episodes.length > 0) {
-                return NextResponse.json({
+                return reply({
                   success: true,
                   data: {
                     vod_id: String(matched.vod_id),
@@ -195,7 +229,7 @@ async function handleDetailRequest(
       console.error('[DetailAPI] Jable stream resolve error:', e);
     }
 
-    return NextResponse.json({
+    return reply({
       success: false,
       error: '该影片暂无可用播放流，正在为您调度其他线路...',
     }, { status: 404 });
@@ -214,7 +248,7 @@ async function handleDetailRequest(
           || detail.lines.find(l => l.flag === lineFlag)
           || detail.lines[0];
         if (matchedLine) {
-          return NextResponse.json({
+          return reply({
             success: true,
             data: {
               vod_id: id,
@@ -439,7 +473,7 @@ async function handleDetailRequest(
             if (matchedSource) {
               const healedDetail = await getVideoDetail(matched.vod_id, matchedSource);
               if (healedDetail && healedDetail.episodes && healedDetail.episodes.length > 0) {
-                return NextResponse.json({
+                return reply({
                   success: true,
                   data: healedDetail,
                   healed: true,
@@ -455,7 +489,7 @@ async function handleDetailRequest(
       }
     }
 
-    return NextResponse.json(
+    return reply(
       { success: false, error: '暂未配置该视频线路' },
       { status: 200 }
     );
@@ -467,7 +501,7 @@ async function handleDetailRequest(
     }
     const videoDetail = await getVideoDetail(id, sourceConfig, titleParam || undefined);
 
-    return NextResponse.json({
+    return reply({
       success: true,
       data: videoDetail,
     }, {
@@ -518,7 +552,7 @@ async function handleDetailRequest(
             }
             const episodes = parseEpisodes(playUrls[selectedIndex] || '');
             if (episodes.length > 0) {
-              return NextResponse.json({
+              return reply({
                 success: true,
                 data: {
                   vod_id: matched.vod_id,
@@ -546,7 +580,7 @@ async function handleDetailRequest(
           if (matched.vod_id && String(matched.vod_id) !== String(id)) {
             const healedDetail = await getVideoDetail(matched.vod_id, sourceConfig, cleanTitle);
             if (healedDetail && healedDetail.episodes && healedDetail.episodes.length > 0) {
-              return NextResponse.json({
+              return reply({
                 success: true,
                 data: healedDetail,
                 healed: true,
@@ -572,7 +606,7 @@ async function handleDetailRequest(
             if (crossSource) {
               const crossDetail = await getVideoDetail(crossMatched.vod_id, crossSource, cleanTitle);
               if (crossDetail && crossDetail.episodes && crossDetail.episodes.length > 0) {
-                return NextResponse.json({
+                return reply({
                   success: true,
                   data: crossDetail,
                   healed: true,
@@ -590,7 +624,7 @@ async function handleDetailRequest(
 
     console.error('Detail API error:', error);
 
-    return NextResponse.json(
+    return reply(
       {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch video detail',
