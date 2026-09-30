@@ -54,11 +54,15 @@ export const PREBAKED_HOME_DATA: {
   "movie": {
     "trendingNav": [
         {
-                "title": "一个部门的诞生",
+                "title": "欢迎来龙餐馆",
                 "updateBadge": ""
         },
         {
-                "title": "欢迎来龙餐馆",
+                "title": "坂本日常",
+                "updateBadge": ""
+        },
+        {
+                "title": "一个部门的诞生",
                 "updateBadge": ""
         },
         {
@@ -70,19 +74,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "重制",
-                "updateBadge": ""
-        },
-        {
                 "title": "大学炸弹客",
                 "updateBadge": ""
         },
         {
-                "title": "爱情假说",
+                "title": "重制",
                 "updateBadge": ""
         },
         {
-                "title": "死亡赌局",
+                "title": "爱情假说",
                 "updateBadge": ""
         },
         {
@@ -94,11 +94,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "特立独行",
+                "title": "死亡赌局",
                 "updateBadge": ""
         },
         {
-                "title": "夜王",
+                "title": "特立独行",
                 "updateBadge": ""
         }
       ],
@@ -1828,24 +1828,28 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "无可替代",
+                "title": "一瓯春",
+                "updateBadge": "5"
+        },
+        {
+                "title": "死有对证",
                 "updateBadge": "1"
         },
         {
                 "title": "我不是大师",
-                "updateBadge": ""
+                "updateBadge": "2"
         },
         {
-                "title": "一瓯春",
-                "updateBadge": ""
+                "title": "无可替代",
+                "updateBadge": "2"
         },
         {
                 "title": "早春晴朗",
                 "updateBadge": ""
         },
         {
-                "title": "死有对证",
-                "updateBadge": ""
+                "title": "法医秦明之龙番往事",
+                "updateBadge": "1"
         },
         {
                 "title": "交锋",
@@ -1856,19 +1860,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
-                "title": "法医秦明之龙番往事",
+                "title": "百花杀",
                 "updateBadge": ""
-        },
-        {
-                "title": "消失的裂痕",
-                "updateBadge": "5"
         },
         {
                 "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
-                "title": "冬城猎凶",
+                "title": "花开锦绣",
                 "updateBadge": ""
         }
       ],
@@ -1896,13 +1896,13 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609241200270068364.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609241345244520726.jpg",
-                "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至14集 | 共24集。",
+                "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至16集 | 共24集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至14集 | 共24集",
+                "episodes_info": "更新至16集 | 共24集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1913,13 +1913,13 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609221204050427723.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609221304100431020.jpg",
-                "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至15集 | 共24集。",
+                "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至16集 | 共24集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至15集 | 共24集",
+                "episodes_info": "更新至16集 | 共24集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1930,13 +1930,13 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
                 "backdrop": "https://static.iyf.tv/upload/user/202609171141024107110.jpg",
-                "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至25集 | 共30集。",
+                "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：30集全。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至25集 | 共30集",
+                "episodes_info": "30集全",
                 "type": "tv",
                 "is_new": true,
                 "playable": true

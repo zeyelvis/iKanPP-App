@@ -13,11 +13,15 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "遮天",
-        "updateBadge": ""
+        "title": "灵境行者",
+        "updateBadge": "1"
     },
     {
         "title": "凡人修仙传",
+        "updateBadge": ""
+    },
+    {
+        "title": "遮天",
         "updateBadge": ""
     },
     {
@@ -25,15 +29,15 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "师兄啊师兄",
-        "updateBadge": "1"
-    },
-    {
-        "title": "斗破苍穹年番",
+        "title": "牧神记",
         "updateBadge": ""
     },
     {
-        "title": "牧神记",
+        "title": "师兄啊师兄",
+        "updateBadge": ""
+    },
+    {
+        "title": "斗破苍穹年番",
         "updateBadge": ""
     },
     {
@@ -41,19 +45,15 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "一念永恒完结季",
+        "title": "从零开始的异世界生活第4季",
+        "updateBadge": "1"
+    },
+    {
+        "title": "一斩苍穹",
         "updateBadge": ""
     },
     {
         "title": "沧元图",
-        "updateBadge": ""
-    },
-    {
-        "title": "光阴之外",
-        "updateBadge": ""
-    },
-    {
-        "title": "一斩苍穹",
         "updateBadge": ""
     }
   ],
@@ -632,7 +632,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
     {
         "title": "心动的信号第9季",
-        "updateBadge": ""
+        "updateBadge": "3"
     },
     {
         "title": "密室大逃脱第8季",
@@ -755,13 +755,13 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202607311122522270150.jpg",
         "backdrop": "https://static.iyf.tv/upload/user/202608031821302167723.jpg",
-        "description": "《心动的信号第9季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260929(第9期下纯享)。",
+        "description": "《心动的信号第9季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20261006(第10期下)。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至20260929(第9期下纯享)",
+        "episodes_info": "更新至20261006(第10期下)",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1237,302 +1237,302 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
 export const SHORT_HOME_DATA: PrebakedHomeCategory = {
   trendingNav: [
       {
-          "title": "这真千金，是东北虎吧",
-          "updateBadge": "HOT"
-      },
-      {
-          "title": "季爷今天真香了吗",
+          "title": "全日制浪漫",
           "updateBadge": "全"
       },
       {
-          "title": "公公甩资让我离婚，前夫婚礼上我惊艳全场",
-          "updateBadge": "HOT"
-      },
-      {
-          "title": "定局者",
-          "updateBadge": "HOT"
-      },
-      {
-          "title": "婚礼当天，新娘她不忍了",
-          "updateBadge": "HOT"
-      },
-      {
-          "title": "全村都在看，影帝下地狂追前女友",
-          "updateBadge": "HOT"
-      },
-      {
-          "title": "朝九晚五的月光",
-          "updateBadge": "HOT"
-      },
-      {
-          "title": "重生60，我有情报系统",
-          "updateBadge": "HOT"
-      },
-      {
-          "title": "我真不想重生啊",
-          "updateBadge": "HOT"
-      },
-      {
-          "title": "霍总，夫人比您还能演",
-          "updateBadge": "HOT"
-      },
-      {
-          "title": "重生黑蛇：我的妹妹竟是女帝转世！",
+          "title": "寿宴掀桌，隐忍四年我封神",
           "updateBadge": "全"
       },
       {
-          "title": "十赌九输，姐劝你回头",
-          "updateBadge": "HOT"
+          "title": "京城小福主，万物助我行",
+          "updateBadge": "全"
+      },
+      {
+          "title": "是闪婚的关系呀",
+          "updateBadge": "全"
+      },
+      {
+          "title": "八零嫁傻，他宠妻无度",
+          "updateBadge": "全"
+      },
+      {
+          "title": "离婚吧，叶小姐她不忍了",
+          "updateBadge": "全"
+      },
+      {
+          "title": "龙鳞兵王遇世家千金",
+          "updateBadge": "全"
+      },
+      {
+          "title": "我小小鹦鹉，整顿职场一把好手",
+          "updateBadge": "全"
+      },
+      {
+          "title": "陆先生的命定妻她飒又野",
+          "updateBadge": "全"
+      },
+      {
+          "title": "只哄你一个",
+          "updateBadge": "全"
+      },
+      {
+          "title": "乐园：不眠之城",
+          "updateBadge": "全"
+      },
+      {
+          "title": "武则天传奇",
+          "updateBadge": "全"
       }
   ],
   hero: [
       {
-          "id": "jl_short_639002091121016800",
-          "title": "狂龙踏北域",
-          "rate": "9.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/d7cb2b858f33f81aa0ebd6993c22d49ea14c6899a5dccc540d33a361d7529732.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/d7cb2b858f33f81aa0ebd6993c22d49ea14c6899a5dccc540d33a361d7529732.jpg",
-          "description": "沈凡出狱后，凭借五位师娘传授的绝学一路横扫。他先救下被黑龙帮欺辱的嫂子，又闯入龙家婚宴救出被逼婚的未婚妻柳清竹，却得知龙家背后站着江城主。从龙家老祖到高矮护法，从江城主到赵震、周天齐，沈凡一路碾压，杀伐果断。最终他突破通天境，直捣战神殿，在镇北战神面前历数其三罪当诛，一剑斩落仇敌头颅，为六年前惨遭灭...",
+          "id": "jl_short_638775319129555700",
+          "title": "白裙之欢",
+          "rate": "8.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/6a2019e8ebaab43a437bdeed1cdfa3a69efa56ccf1ba8622a37a55fd7773e345.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/6a2019e8ebaab43a437bdeed1cdfa3a69efa56ccf1ba8622a37a55fd7773e345.jpg",
+          "description": "一条白裙究竟藏着多少不可告人的秘密？《白裙之欢》用65集的篇幅，围绕王皓祯、张晋宜和一航三人之间错综复杂的情感羁绊层层剥茧。王皓祯饰演的角色深陷执念，张晋宜则以极具穿透力的眼神戏将内心的挣扎与渴望演绎得入木三分，一航的加入更是让这段关系彻底失衡，三人在爱恨边缘反复试探。剧情没有停留在表面的都市情感拉...",
           "year": "2026",
           "types": [
               "短剧",
-              "反转爽剧",
+              "其他",
               "全集连播"
           ],
-          "episodes_info": "全3集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "周煜枫 / 闫妍"
+              "王皓祯＆张晋宜＆一航"
           ]
       },
       {
-          "id": "jl_short_638964011152506900",
-          "title": "重生当天，我替姐姐联姻了",
-          "rate": "9.2",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/16aaf6fc44ddb3a494774da8a05e32a85ea0c1d83138848a6b5a9b25f0aabcd4.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/16aaf6fc44ddb3a494774da8a05e32a85ea0c1d83138848a6b5a9b25f0aabcd4.jpg",
-          "description": "重生题材年年火，但敢在睁眼第一天就直接顶替姐姐嫁入虎狼之家的设定确实少见。《重生当天，我替姐姐联姻了》共75集，由何连飞与姚宇晨搭档出演这部真人短剧。何连飞将女主那份破釜沉舟的果决演得极具说服力，姚宇晨则把联姻对象从冷漠防备到深陷其中的转变处理得层次分明，两人配合默契十足。剧情核心在于女主利用前世记...",
+          "id": "jl_short_630026870464839700",
+          "title": "全日制浪漫",
+          "rate": "8.7",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/18f5e70faa4a32ef57f8992d953d32dab2103e80fa235f994faa24166b84279b.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/18f5e70faa4a32ef57f8992d953d32dab2103e80fa235f994faa24166b84279b.jpg",
+          "description": "暂无简介，敬请期待",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "郭昊钧＆何田田"
+          ]
+      },
+      {
+          "id": "jl_short_631380435716341800",
+          "title": "寿宴掀桌，隐忍四年我封神",
+          "rate": "8.7",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/2e4edde6b8b2c7ba85c8483468eec6f2b47ee31895c77a5276113c6f1e527037.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/2e4edde6b8b2c7ba85c8483468eec6f2b47ee31895c77a5276113c6f1e527037.jpg",
+          "description": "暂无简介，敬请期待",
           "year": "2026",
           "types": [
               "短剧",
               "年代穿越",
               "全集连播"
           ],
-          "episodes_info": "全3集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "何连飞 / 姚宇晨"
+              "商琪&侯青念&孙嘉欣"
           ]
       },
       {
-          "id": "jl_short_638856975014232300",
-          "title": "林太太高调掀桌了",
+          "id": "jl_short_630918229103083500",
+          "title": "京城小福主，万物助我行",
           "rate": "8.7",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/a2a81f22e2296ef3ddb9100e3964365c684815135d79aa06bcb49e4e32f7eecc.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/a2a81f22e2296ef3ddb9100e3964365c684815135d79aa06bcb49e4e32f7eecc.jpg",
-          "description": "豪门主妇觉醒的戏码年年有，但像《林太太高调掀桌了》这样直接把桌子掀出花来的真不多见。刘清心饰演的林太太前期隐忍克制，后期彻底撕破脸皮开启复仇模式，65集里每一场对峙都火花四溅。谢海青与她的对手戏张力拉满，两人从貌合神离的夫妻变成针锋相对的宿敌，演技碰撞相当过瘾。当下女性独立意识题材正热，这部剧精准踩...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全3集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "刘清心&谢海青"
-          ]
-      },
-      {
-          "id": "jl_short_639002091255234600",
-          "title": "我修法宝就能变强",
-          "rate": "8.7",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/5a7749ac4d28455b6439f0b4c8aadd5e05f1e69b1813d959dd829da82f001892.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/5a7749ac4d28455b6439f0b4c8aadd5e05f1e69b1813d959dd829da82f001892.jpg",
-          "description": "看着主角一次次将残破法器淬炼成绝世神兵，那种脚踏实地的成长感让人胸腔发热。《我修法宝就能变强》这部83集的真人短剧，由徐晨皓和张星伊搭档演绎了一段不走寻常路的修仙历程。徐晨皓饰演的男主摒弃了传统的打坐练气，将所有精力倾注于修复和升级法宝，每一件兵器的蜕变都直接反哺自身修为。张星伊在剧中与他配合默契，...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "其他",
-              "全集连播"
-          ],
-          "episodes_info": "全3集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "徐晨皓 / 张星伊"
-          ]
-      },
-      {
-          "id": "jl_short_638970102221373400",
-          "title": "亿万斯年",
-          "rate": "8.7",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/bde929428d8f1ef746629f9997010fa9c1fd5c52872aab848704efdb1982d677.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/bde929428d8f1ef746629f9997010fa9c1fd5c52872aab848704efdb1982d677.jpg",
-          "description": "鬼马音乐少女苏格，与身为制陶师的爷爷相依为命。一次偶然相遇，天才钢琴家孟斯年被苏格的音乐才华吸引，主动靠近。两人开启拌嘴逗趣、相爱相杀的日常，苏格勇敢追爱，虽然青涩，却热烈大胆，她的撩拨让孟斯年把持不住，总是无奈又正经地警告苏格不要调戏自己，苏格毫不畏惧，甚至主动吻了他。孟斯年也逐渐被她感染，展露少...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "其他",
-              "全集连播"
-          ],
-          "episodes_info": "全3集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "赵振栋 / 马秋元"
-          ]
-      },
-      {
-          "id": "jl_short_639008170513006600",
-          "title": "战王老爸带我飞",
-          "rate": "8.4",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/17a735cd46901f515ea472f3e5ad0bc0e0b0cbfb63c26534af090a09530bd5b4.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/17a735cd46901f515ea472f3e5ad0bc0e0b0cbfb63c26534af090a09530bd5b4.jpg",
-          "description": "隐退战王陆战天卸甲归田，一心务农陪伴儿子陆辰。陆辰持玉佩赴海城履行娃娃亲，却遭柳家嫌弃羞辱。陆辰凭借一身本领屡屡化险为夷，邂逅善良的柳晨妃，二人互生情愫。陆战天暗中动用旧部守护儿子，却不许暴露身份，希望他独立成长。陆辰接连对抗纨绔恶少与权势滔天的南王势力，危机爆发之际，战王戴面具现身救场。订婚宴上，...",
-          "year": "2026",
-          "types": [
-              "短剧",
-              "现代都市",
-              "全集连播"
-          ],
-          "episodes_info": "全3集·已完结",
-          "type": "tv",
-          "is_new": true,
-          "playable": true,
-          "actors": [
-              "贾凯文 / 黄宁馨"
-          ]
-      },
-      {
-          "id": "jl_short_638970101818720300",
-          "title": "双珠换嫁掌荣华",
-          "rate": "9.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/ef491e01de59a489c6f60ce5789064e802d8a7c43808b8e8248dec92e6ce7fe4.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/ef491e01de59a489c6f60ce5789064e802d8a7c43808b8e8248dec92e6ce7fe4.jpg",
-          "description": "扬州双姝沈绿珠、沈蓝珠，为保全家族被迫换嫁远走他乡。姐姐沈绿珠，嫁予燕国公府纨绔世子赵烈，二人从欢喜冤家相爱相杀，到霸气驯夫彼此真心交付，打闹下藏着双向守护的甜；妹妹沈蓝珠成为金淮序的继室，两人猜忌拉扯、破冰和解，在交锋中慢慢懂得彼此。一边是桀骜世子被驯服，热烈直白的欢喜冤家；一边是腹黑文臣步步温柔...",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/cc875b1bad6a3fda94e78382d7c45df8f92096ab3fec2f2193f888d592e9f09a.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/cc875b1bad6a3fda94e78382d7c45df8f92096ab3fec2f2193f888d592e9f09a.jpg",
+          "description": "暂无简介，敬请期待",
           "year": "2026",
           "types": [
               "短剧",
               "古装仙侠",
               "全集连播"
           ],
-          "episodes_info": "全3集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "何善凯 / 李十七"
+              "周士超＆朱家妮＆陆希娅＆欧元杰"
           ]
       },
       {
-          "id": "jl_short_638964011253170200",
-          "title": "此地良宵",
+          "id": "jl_short_631045664020627500",
+          "title": "是闪婚的关系呀",
           "rate": "8.3",
-          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/a8f7d96128970f7383dff3236382a87f9a88ea5952d4954056f51bbad326c145.jpg",
-          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/a8f7d96128970f7383dff3236382a87f9a88ea5952d4954056f51bbad326c145.jpg",
-          "description": "你看完会觉得时间被偷走了，《此地良宵》这41集的节奏密不透风。马法洋和李百万两位演员在这部真人短剧里搭档，一个眼神凌厉一个气质沉稳，对手戏火花四溅。故事围绕夜色下的暗流涌动展开，两人在利益与情感的拉扯中步步为营，每一次交锋都带着试探底线的危险气息。马法洋把角色的隐忍演得入木三分，李百万则把张扬拿捏得...",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/cc73f091114f36fe63a253aa4144ee9c64b1cc387c1058d9898e4e7250a76834.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/cc73f091114f36fe63a253aa4144ee9c64b1cc387c1058d9898e4e7250a76834.jpg",
+          "description": "暂无简介，敬请期待",
           "year": "2026",
           "types": [
               "短剧",
-              "其他",
+              "女频恋爱",
               "全集连播"
           ],
-          "episodes_info": "全3集·已完结",
+          "episodes_info": "全80集·已完结",
           "type": "tv",
           "is_new": true,
           "playable": true,
           "actors": [
-              "马法洋 / 李百万"
+              "王道铁＆澄芓"
+          ]
+      },
+      {
+          "id": "jl_short_630910300442329100",
+          "title": "八零嫁傻，他宠妻无度",
+          "rate": "9.0",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/25f4e6d898dc0624934b9ac53593b055b3dfb47d437f3b3223219adcbd5990d3.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/25f4e6d898dc0624934b9ac53593b055b3dfb47d437f3b3223219adcbd5990d3.jpg",
+          "description": "暂无简介，敬请期待",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "年代穿越",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "陈露茜＆柴昊辰＆展铭＆李乐彤"
+          ]
+      },
+      {
+          "id": "jl_short_630912395144855600",
+          "title": "离婚吧，叶小姐她不忍了",
+          "rate": "8.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/5bc717688a3652f516acff759c1af09009cdb3fe2f4a60f02e764ed411e7db5b.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/5bc717688a3652f516acff759c1af09009cdb3fe2f4a60f02e764ed411e7db5b.jpg",
+          "description": "暂无简介，敬请期待",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "纪俊良＆郝韵"
+          ]
+      },
+      {
+          "id": "jl_short_631374394794442800",
+          "title": "龙鳞兵王遇世家千金",
+          "rate": "9.4",
+          "cover": "https://empimage.slcache.com/metadata/artwork/source/poster/e40f2de2a97fbc5a4836e46eb36ffcfb67f98a896fa083d951096aa9f6d12624.jpg",
+          "backdrop": "https://empimage.slcache.com/metadata/artwork/source/poster/e40f2de2a97fbc5a4836e46eb36ffcfb67f98a896fa083d951096aa9f6d12624.jpg",
+          "description": "暂无简介，敬请期待",
+          "year": "2026",
+          "types": [
+              "短剧",
+              "现代都市",
+              "全集连播"
+          ],
+          "episodes_info": "全80集·已完结",
+          "type": "tv",
+          "is_new": true,
+          "playable": true,
+          "actors": [
+              "雷孙强＆盛佳琦"
           ]
       }
   ],
   top10: [
     {
       id: 'pb_s_top_1',
-      title: "狂龙踏北域",
-      rate: "9.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/d7cb2b858f33f81aa0ebd6993c22d49ea14c6899a5dccc540d33a361d7529732.jpg",
+      title: "白裙之欢",
+      rate: "8.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/6a2019e8ebaab43a437bdeed1cdfa3a69efa56ccf1ba8622a37a55fd7773e345.jpg",
       year: "2026",
-      types: ["短剧","反转爽剧","全集连播"],
+      types: ["短剧","其他","全集连播"],
       is_new: true,
       playable: true
     },
     {
       id: 'pb_s_top_2',
-      title: "重生当天，我替姐姐联姻了",
-      rate: "9.2",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/16aaf6fc44ddb3a494774da8a05e32a85ea0c1d83138848a6b5a9b25f0aabcd4.jpg",
+      title: "全日制浪漫",
+      rate: "8.7",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/18f5e70faa4a32ef57f8992d953d32dab2103e80fa235f994faa24166b84279b.jpg",
+      year: "2026",
+      types: ["短剧","现代都市","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_3',
+      title: "寿宴掀桌，隐忍四年我封神",
+      rate: "8.7",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/2e4edde6b8b2c7ba85c8483468eec6f2b47ee31895c77a5276113c6f1e527037.jpg",
       year: "2026",
       types: ["短剧","年代穿越","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_3',
-      title: "林太太高调掀桌了",
-      rate: "8.7",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/a2a81f22e2296ef3ddb9100e3964365c684815135d79aa06bcb49e4e32f7eecc.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
       id: 'pb_s_top_4',
-      title: "我修法宝就能变强",
+      title: "京城小福主，万物助我行",
       rate: "8.7",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/5a7749ac4d28455b6439f0b4c8aadd5e05f1e69b1813d959dd829da82f001892.jpg",
-      year: "2026",
-      types: ["短剧","其他","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_5',
-      title: "亿万斯年",
-      rate: "8.7",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/bde929428d8f1ef746629f9997010fa9c1fd5c52872aab848704efdb1982d677.jpg",
-      year: "2026",
-      types: ["短剧","其他","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_6',
-      title: "战王老爸带我飞",
-      rate: "8.4",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/17a735cd46901f515ea472f3e5ad0bc0e0b0cbfb63c26534af090a09530bd5b4.jpg",
-      year: "2026",
-      types: ["短剧","现代都市","全集连播"],
-      is_new: true,
-      playable: true
-    },
-    {
-      id: 'pb_s_top_7',
-      title: "双珠换嫁掌荣华",
-      rate: "9.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/ef491e01de59a489c6f60ce5789064e802d8a7c43808b8e8248dec92e6ce7fe4.jpg",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/cc875b1bad6a3fda94e78382d7c45df8f92096ab3fec2f2193f888d592e9f09a.jpg",
       year: "2026",
       types: ["短剧","古装仙侠","全集连播"],
       is_new: true,
       playable: true
     },
     {
-      id: 'pb_s_top_8',
-      title: "此地良宵",
+      id: 'pb_s_top_5',
+      title: "是闪婚的关系呀",
       rate: "8.3",
-      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/a8f7d96128970f7383dff3236382a87f9a88ea5952d4954056f51bbad326c145.jpg",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/cc73f091114f36fe63a253aa4144ee9c64b1cc387c1058d9898e4e7250a76834.jpg",
       year: "2026",
-      types: ["短剧","其他","全集连播"],
+      types: ["短剧","女频恋爱","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_6',
+      title: "八零嫁傻，他宠妻无度",
+      rate: "9.0",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/25f4e6d898dc0624934b9ac53593b055b3dfb47d437f3b3223219adcbd5990d3.jpg",
+      year: "2026",
+      types: ["短剧","年代穿越","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_7',
+      title: "离婚吧，叶小姐她不忍了",
+      rate: "8.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/5bc717688a3652f516acff759c1af09009cdb3fe2f4a60f02e764ed411e7db5b.jpg",
+      year: "2026",
+      types: ["短剧","现代都市","全集连播"],
+      is_new: true,
+      playable: true
+    },
+    {
+      id: 'pb_s_top_8',
+      title: "龙鳞兵王遇世家千金",
+      rate: "9.4",
+      cover: "https://empimage.slcache.com/metadata/artwork/source/poster/e40f2de2a97fbc5a4836e46eb36ffcfb67f98a896fa083d951096aa9f6d12624.jpg",
+      year: "2026",
+      types: ["短剧","现代都市","全集连播"],
       is_new: true,
       playable: true
     }
@@ -1550,39 +1550,39 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "无可替代",
+        "title": "一瓯春",
+        "updateBadge": "5"
+    },
+    {
+        "title": "死有对证",
         "updateBadge": "1"
     },
     {
         "title": "我不是大师",
-        "updateBadge": ""
+        "updateBadge": "2"
     },
     {
-        "title": "一瓯春",
-        "updateBadge": ""
+        "title": "无可替代",
+        "updateBadge": "2"
     },
     {
         "title": "早春晴朗",
         "updateBadge": ""
     },
     {
-        "title": "死有对证",
-        "updateBadge": ""
-    },
-    {
         "title": "心动的信号第9季",
-        "updateBadge": ""
+        "updateBadge": "3"
     },
     {
-        "title": "交锋",
-        "updateBadge": ""
-    },
-    {
-        "title": "雷霆令",
-        "updateBadge": "2"
+        "title": "余红旧事",
+        "updateBadge": "4"
     },
     {
         "title": "法医秦明之龙番往事",
+        "updateBadge": "1"
+    },
+    {
+        "title": "交锋",
         "updateBadge": ""
     },
     {
@@ -1590,8 +1590,8 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "消失的裂痕",
-        "updateBadge": "5"
+        "title": "雷霆令",
+        "updateBadge": "2"
     }
   ],
   hero: [
@@ -1690,13 +1690,13 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609241200270068364.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202609241345244520726.jpg",
-        "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至14集 | 共24集。",
+        "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至16集 | 共24集。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至14集 | 共24集",
+        "episodes_info": "更新至16集 | 共24集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -1707,13 +1707,13 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "rate": "8.8",
         "cover": "https://static.iyf.tv/upload/video/202609221204050427723.gif",
         "backdrop": "https://static.iyf.tv/upload/user/202609221304100431020.jpg",
-        "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至15集 | 共24集。",
+        "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至16集 | 共24集。",
         "year": "2026",
         "types": [
             "热门",
             "连续剧"
         ],
-        "episodes_info": "更新至15集 | 共24集",
+        "episodes_info": "更新至16集 | 共24集",
         "type": "tv",
         "is_new": true,
         "playable": true
@@ -2163,7 +2163,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "行星地球1",
+        "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
     {
@@ -2171,19 +2171,19 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "克拉克森的农场第4季",
+        "updateBadge": ""
+    },
+    {
         "title": "克拉克森的农场第3季",
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第2季",
+        "title": "寻色中国",
         "updateBadge": ""
     },
     {
-        "title": "史前星球",
-        "updateBadge": ""
-    },
-    {
-        "title": "地球2100",
+        "title": "世界第二次大战：前线经历",
         "updateBadge": ""
     },
     {
