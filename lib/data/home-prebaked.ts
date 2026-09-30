@@ -62,10 +62,6 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "重制",
-                "updateBadge": ""
-        },
-        {
                 "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
@@ -74,7 +70,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "年会不能停！2",
+                "title": "重制",
                 "updateBadge": ""
         },
         {
@@ -82,15 +78,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "死亡赌局",
-                "updateBadge": ""
-        },
-        {
                 "title": "爱情假说",
                 "updateBadge": ""
         },
         {
-                "title": "特立独行",
+                "title": "死亡赌局",
                 "updateBadge": ""
         },
         {
@@ -98,7 +90,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "一夜限定",
+                "title": "年会不能停！2",
+                "updateBadge": ""
+        },
+        {
+                "title": "特立独行",
+                "updateBadge": ""
+        },
+        {
+                "title": "夜王",
                 "updateBadge": ""
         }
       ],
@@ -1828,6 +1828,10 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "无可替代",
+                "updateBadge": "1"
+        },
+        {
                 "title": "我不是大师",
                 "updateBadge": ""
         },
@@ -1836,15 +1840,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "无可替代",
+                "title": "早春晴朗",
                 "updateBadge": ""
         },
         {
                 "title": "死有对证",
-                "updateBadge": "1"
-        },
-        {
-                "title": "早春晴朗",
                 "updateBadge": ""
         },
         {
@@ -1853,22 +1853,22 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "雷霆令",
-                "updateBadge": ""
+                "updateBadge": "2"
         },
         {
                 "title": "法医秦明之龙番往事",
                 "updateBadge": ""
         },
         {
-                "title": "冬城猎凶",
+                "title": "消失的裂痕",
+                "updateBadge": "5"
+        },
+        {
+                "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
-                "title": "消失的裂痕",
-                "updateBadge": "1"
-        },
-        {
-                "title": "花开锦绣",
+                "title": "冬城猎凶",
                 "updateBadge": ""
         }
       ],
@@ -1879,13 +1879,13 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609281206530631824.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609291602440264518.jpg",
-                "description": "《无可替代》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至05集 | 共20集。",
+                "description": "《无可替代》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至07集 | 共20集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至05集 | 共20集",
+                "episodes_info": "更新至07集 | 共20集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
