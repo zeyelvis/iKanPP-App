@@ -16,6 +16,7 @@ import { getShadowLineConfig } from '@/lib/services/shadowline-service';
 import { gzProvider, matchBestShadowLineCandidate } from '@/lib/services/providers/gz-provider';
 import { getIkanppLineConfig } from '@/lib/services/ikanpp-line-service';
 import { ikanppProvider, matchBestIkanppLineCandidate } from '@/lib/services/providers/iyf-provider';
+import { resolveIkanppLineMedia } from '@/lib/services/ikanpp-line-resolver';
 
 export const runtime = 'edge';
 
@@ -303,155 +304,42 @@ async function handleDetailRequest(
     }
   }
 
-  // 2.6 专属支持 iKanPP专线 (iKanPP Line Engine) 毫秒直解 (轨道 A 纯直连零代理)
+  // 2.6 专属支持 iKanPP专线 (iKanPP Line Engine) 毫秒直解与骨干极速自愈 (轨道 A 纯直连零代理)
   if (sourceId === 'ikanpp' || sourceId === 'ikanpp_line' || sourceId === 'iyf' || sourceId === 'titanline') {
-    try {
-      const config = await getIkanppLineConfig();
-      if (config.enabled) {
-        let targetMediaKey = id && id !== 'ikanpp' && id !== 'ikanpp_line' && id !== 'iyf' && id !== 'titanline' && !id.startsWith('ik') && id.length >= 8 && id.length <= 16
-          ? id
-          : null;
-        let matchedTitle = titleParam || '';
-        let matchedPic = '';
+    const resolved = await resolveIkanppLineMedia({
+      title: titleParam,
+      id,
+      category: categoryParam,
+      year: yearParam,
+      expectedEpisodes: expectedEpisodesParam ? Number(expectedEpisodesParam) : undefined,
+      season: seasonParam,
+      aliases: aliasesParam,
+      relayOrigin: request?.nextUrl?.origin || '',
+    });
 
-        // 如果没有直接传入 mediaKey，但携带了片名 titleParam，则动态按片名搜寻并执行多维消歧匹配
-        if (!targetMediaKey && titleParam) {
-          const cleanTitle = titleParam.replace(/[（(].*?[）)]/g, '').trim();
-          const searchKeywords = new Set<string>();
-          searchKeywords.add(cleanTitle);
-
-          if (aliasesParam) {
-            const aliasList = Array.isArray(aliasesParam)
-              ? aliasesParam
-              : String(aliasesParam).split(/[,/|，]/);
-            for (const a of aliasList) {
-              const cleanAlias = a.replace(/[（(].*?[）)]/g, '').trim();
-              if (cleanAlias && cleanAlias !== cleanTitle && /[\u4e00-\u9fa5]/.test(cleanAlias)) {
-                searchKeywords.add(cleanAlias);
-              }
-            }
-          }
-
-          const searchPromises = Array.from(searchKeywords).map(k => ikanppProvider.searchByTitle(k));
-          const searchResults = await Promise.all(searchPromises);
-
-          const candidateMap = new Map<string, any>();
-          for (const list of searchResults) {
-            if (list && Array.isArray(list)) {
-              for (const item of list) {
-                if (!candidateMap.has(item.mediaKey)) {
-                  candidateMap.set(item.mediaKey, item);
-                }
-              }
-            }
-          }
-
-          const allCandidates = Array.from(candidateMap.values());
-          if (allCandidates.length > 0) {
-            const matchedCandidate = matchBestIkanppLineCandidate(allCandidates, {
-              title: cleanTitle,
-              category: categoryParam || undefined,
-              year: yearParam || undefined,
-              expectedEpisodes: expectedEpisodesParam ? Number(expectedEpisodesParam) : undefined,
-              season: seasonParam || undefined,
-            });
-            if (matchedCandidate) {
-              targetMediaKey = matchedCandidate.mediaKey;
-              matchedTitle = matchedCandidate.title;
-              matchedPic = matchedCandidate.coverImgUrl;
-            }
-          }
-        }
-
-        if (targetMediaKey) {
-          const episodeList = await ikanppProvider.getFullEpisodeList(targetMediaKey);
-          // 核心防毒化门禁：核验爱壹帆是否返回了 0.0.0.0 毒化失效链接或全空链接
-          const hasValidPlayableUrl = episodeList && episodeList.length > 0 && episodeList.some(ep => {
-            return ep.url && !ep.url.includes('0.0.0.0') && !ep.url.includes('0_0.0.0.0_');
-          });
-
-          if (hasValidPlayableUrl && episodeList && episodeList.length > 0) {
-            // 真实有效（非 0.0.0.0 的健康链接）
-            const relayOrigin = request?.nextUrl?.origin || '';
-            const streamEndpoint = relayOrigin ? `${relayOrigin}/api/ikanpp-stream` : '/api/ikanpp-stream';
-            const relayedEpisodes = episodeList.map(ep => {
-              const videoId = (ep as any).videoId ?? 0;
-              const epMediaKey = (ep as any).mediaKey || targetMediaKey;
-              const streamUrl = `${streamEndpoint}?mediaKey=${encodeURIComponent(epMediaKey)}&videoId=${videoId}&url=${encodeURIComponent(ep.url)}`;
-              return {
-                ...ep,
-                url: ep.url && ep.url.includes('pipecdn.vip') ? streamUrl : ep.url,
-              };
-            });
-
-            return NextResponse.json({
-              success: true,
-              data: {
-                vod_id: targetMediaKey,
-                vod_name: matchedTitle || titleParam || 'iKanPP专线 · 极清',
-                vod_pic: matchedPic,
-                type_name: '4K 极清 · 专线中继',
-                episodes: relayedEpisodes,
-                source: 'ikanpp',
-              }
-            });
-          }
-        }
-      }
-    } catch (ikanppErr) {
-      console.warn('[DetailAPI] iKanPP Line direct resolve failed:', ikanppErr);
+    if (resolved) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          vod_id: resolved.vod_id,
+          vod_name: resolved.vod_name,
+          vod_pic: resolved.vod_pic,
+          vod_year: resolved.vod_year,
+          vod_actor: resolved.vod_actor,
+          vod_director: resolved.vod_director,
+          vod_content: resolved.vod_content,
+          vod_remarks: resolved.vod_remarks,
+          type_name: resolved.type_name,
+          episodes: resolved.episodes,
+          source: 'ikanpp',
+        },
+        healed: !!resolved.healed,
+        healedSource: resolved.healedSource,
+        healedId: resolved.healedId,
+      });
     }
 
     if (sourceId === 'ikanpp' || sourceId === 'ikanpp_line') {
-      // 专线上游受阻（包括 0.0.0.0 毒链或未收录），启动 iKanPP 专线极速自愈引擎
-      if (titleParam && titleParam.trim().length > 0) {
-        try {
-          const cleanTitle = titleParam.replace(/[《》【】\[\]（）()·\s:：\-]/g, ' ').trim();
-          const fallbackSources = DEFAULT_SOURCES.filter(s => s.enabled !== false && (s.id === 'juliang' || s.id === 'guangsu' || s.id === 'baofeng' || s.id === 'wujin'));
-          const searchRes = await searchVideos(cleanTitle, fallbackSources, 1);
-          for (const res of searchRes) {
-            const candidates = res.results || [];
-            const matched = candidates.find(c => {
-              const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
-              const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
-              return cName === tName;
-            }) || candidates.find(c => {
-              const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
-              const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
-              const lenDiff = Math.abs(cName.length - tName.length);
-              if (cName.includes(tName)) return tName.length > 3 ? lenDiff <= 4 : lenDiff <= 1;
-              if (tName.includes(cName)) return lenDiff <= 1;
-              return false;
-            });
-
-            if (matched && matched.vod_id) {
-              const matchedSource = getSourceById(res.source);
-              if (matchedSource) {
-                const healedDetail = await getVideoDetail(matched.vod_id, matchedSource);
-                if (healedDetail && healedDetail.episodes && healedDetail.episodes.length > 0) {
-                  return NextResponse.json({
-                    success: true,
-                    data: {
-                      ...healedDetail,
-                      vod_id: healedDetail.vod_id || matched.vod_id,
-                      vod_name: healedDetail.vod_name || titleParam,
-                      vod_pic: healedDetail.vod_pic,
-                      type_name: '4K 极清 · iKanPP极速专线',
-                      source: 'ikanpp', // 保持 source 为 ikanpp，让前端无缝接收秒播
-                    },
-                    healed: true,
-                    healedSource: matchedSource.id,
-                    healedId: matched.vod_id,
-                  });
-                }
-              }
-            }
-          }
-        } catch (healErr) {
-          console.warn('[DetailAPI] iKanPP Line fallback heal failed:', healErr);
-        }
-      }
-
       return NextResponse.json({
         success: false,
         error: 'iKanPP专线暂未收录该影片，正在为您调度其他线路...',
