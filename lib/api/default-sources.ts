@@ -1,6 +1,6 @@
 import type { VideoSource } from '@/lib/types';
 
-// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-29T09:11:25.367Z）
+// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-30T09:05:39.589Z）
 export const DEFAULT_SOURCES: VideoSource[] = [
   {
     id: 'juliang',
@@ -153,6 +153,16 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     priority: 15,
   },
   {
+    id: 'ikun',
+    name: 'iKun资源',
+    baseUrl: 'https://ikunzyapi.com',
+    searchPath: '/api.php/provide/vod',
+    detailPath: '/api.php/provide/vod',
+    group: 'normal',
+    enabled: true,
+    priority: 16,
+  },
+  {
     id: 'feifan',
     name: '非凡资源',
     baseUrl: 'https://api.ffzyapi.com',
@@ -160,7 +170,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 16,
+    priority: 17,
   },
   {
     id: 'huya',
@@ -170,7 +180,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 17,
+    priority: 18,
   },
   {
     id: 'jinying',
@@ -180,22 +190,12 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 18,
-  },
-  {
-    id: 'subo',
-    name: '速博资源',
-    baseUrl: 'https://subocaiji.com',
-    searchPath: '/api.php/provide/vod',
-    detailPath: '/api.php/provide/vod',
-    group: 'normal',
-    enabled: true,
     priority: 19,
   },
   {
-    id: 'ikun',
-    name: 'iKun资源',
-    baseUrl: 'https://ikunzyapi.com',
+    id: 'lezi',
+    name: '乐子资源',
+    baseUrl: 'https://cj.lziapi.com',
     searchPath: '/api.php/provide/vod',
     detailPath: '/api.php/provide/vod',
     group: 'normal',
@@ -203,9 +203,9 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     priority: 20,
   },
   {
-    id: 'lezi',
-    name: '乐子资源',
-    baseUrl: 'https://cj.lziapi.com',
+    id: 'subo',
+    name: '速博资源',
+    baseUrl: 'https://subocaiji.com',
     searchPath: '/api.php/provide/vod',
     detailPath: '/api.php/provide/vod',
     group: 'normal',
