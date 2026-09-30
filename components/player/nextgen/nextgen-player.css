@@ -241,13 +241,30 @@ html.ng-player-full body {
   color: rgba(255, 255, 255, 0.6) !important;
 }
 
-/* 5. 右侧网格：网页全屏、1x 倍速、音量、画中画、系统全屏（单行规整排列） */
+/* 5. 右侧网格：网页全屏、1x 倍速、音量、画中画、系统全屏（单行规整排列，绝对对齐图二顺序） */
 .xgplayer .xg-right-grid {
   display: flex !important;
+  flex-direction: row !important;
   align-items: center !important;
-  gap: 18px !important;
+  gap: 16px !important;
   justify-content: flex-end !important;
   height: 100% !important;
+}
+
+.xgplayer .xgplayer-cssfullscreen {
+  order: 1 !important;
+}
+.xgplayer .xgplayer-playbackrate {
+  order: 2 !important;
+}
+.xgplayer .xgplayer-volume {
+  order: 3 !important;
+}
+.xgplayer .xgplayer-pip {
+  order: 4 !important;
+}
+.xgplayer .xgplayer-fullscreen {
+  order: 5 !important;
 }
 
 .xgplayer .xg-right-grid > * {
@@ -259,14 +276,150 @@ html.ng-player-full body {
   padding: 0 !important;
 }
 
-.xgplayer .xg-right-grid .xgplayer-icon svg {
+/* 核心：限制图标容器为单图标尺寸，严禁溢出 */
+.xgplayer .xgplayer-icon {
+  width: 22px !important;
+  height: 22px !important;
+  overflow: hidden !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+}
+
+.xgplayer .xgplayer-icon svg {
   width: 20px !important;
   height: 20px !important;
   fill: rgba(255, 255, 255, 0.85) !important;
   transition: fill 0.15s ease, transform 0.15s ease !important;
 }
-.xgplayer .xg-right-grid .xgplayer-icon:hover svg {
+.xgplayer .xgplayer-icon:hover svg {
   fill: #FFFFFF !important;
+}
+
+/* 倍速按钮：精致极简文字 */
+.xgplayer .xgplayer-playbackrate {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+  background: transparent !important;
+  border: none !important;
+}
+.xgplayer .xgplayer-playbackrate .icon-text {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  line-height: 1 !important;
+}
+.xgplayer .xgplayer-playbackrate:hover .icon-text {
+  color: #FFFFFF !important;
+}
+
+/* 倍速弹出层菜单 */
+.xgplayer .xg-options-list {
+  background: rgba(20, 20, 22, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+  padding: 6px 0 !important;
+}
+.xgplayer .xg-options-list .option-item {
+  color: rgba(255, 255, 255, 0.75) !important;
+  font-size: 13px !important;
+  padding: 6px 16px !important;
+  transition: background 0.15s ease, color 0.15s ease !important;
+}
+.xgplayer .xg-options-list .option-item:hover,
+.xgplayer .xg-options-list .option-item.selected {
+  color: #FFFFFF !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ========================================================
+   状态驱动的图标互斥显示硬锁 (State-Driven Single Icon Lock)
+   彻底杜绝 SVG 被外部重置为 display: block 导致的多图标并存重叠错位
+   ======================================================== */
+
+/* 1. 播放 / 暂停切换 */
+.xgplayer .xg-icon-pause {
+  display: none !important;
+}
+.xgplayer .xg-icon-play {
+  display: block !important;
+}
+.xgplayer.xgplayer-playing .xg-icon-play,
+.xgplayer[data-state="play"] .xg-icon-play,
+.xgplayer-play[data-state="play"] .xg-icon-play {
+  display: none !important;
+}
+.xgplayer.xgplayer-playing .xg-icon-pause,
+.xgplayer[data-state="play"] .xg-icon-pause,
+.xgplayer-play[data-state="play"] .xg-icon-pause {
+  display: block !important;
+}
+
+/* 2. 音量图标切换（默认仅显示正常音量喇叭） */
+.xgplayer .xg-volume-small,
+.xgplayer .xg-volume-mute {
+  display: none !important;
+}
+.xgplayer .xg-volume {
+  display: block !important;
+}
+.xgplayer.xgplayer-muted .xg-volume,
+.xgplayer.xgplayer-muted .xg-volume-small,
+.xgplayer-volume[data-state="mute"] .xg-volume,
+.xgplayer-volume[data-state="mute"] .xg-volume-small {
+  display: none !important;
+}
+.xgplayer.xgplayer-muted .xg-volume-mute,
+.xgplayer-volume[data-state="mute"] .xg-volume-mute {
+  display: block !important;
+}
+.xgplayer-volume[data-state="small"] .xg-volume,
+.xgplayer-volume[data-state="small"] .xg-volume-mute {
+  display: none !important;
+}
+.xgplayer-volume[data-state="small"] .xg-volume-small {
+  display: block !important;
+}
+
+/* 3. 系统全屏图标切换 */
+.xgplayer .xg-exit-fullscreen {
+  display: none !important;
+}
+.xgplayer .xg-get-fullscreen {
+  display: block !important;
+}
+.xgplayer.xgplayer-is-fullscreen .xg-get-fullscreen {
+  display: none !important;
+}
+.xgplayer.xgplayer-is-fullscreen .xg-exit-fullscreen {
+  display: block !important;
+}
+
+/* 4. 网页全屏图标切换 */
+.xgplayer .xgplayer-cssfullscreen svg:nth-child(2) {
+  display: none !important;
+}
+.xgplayer .xgplayer-cssfullscreen svg:nth-child(1) {
+  display: block !important;
+}
+.xgplayer.xgplayer-is-cssfullscreen .xgplayer-cssfullscreen svg:nth-child(1) {
+  display: none !important;
+}
+.xgplayer.xgplayer-is-cssfullscreen .xgplayer-cssfullscreen svg:nth-child(2) {
+  display: block !important;
+}
+
+/* 5. 画中画图标切换 */
+.xgplayer .xgplayer-pip svg:nth-child(2) {
+  display: none !important;
+}
+.xgplayer .xgplayer-pip svg:nth-child(1) {
+  display: block !important;
 }
 
 /* 倍速按钮：精致极简文字 */
