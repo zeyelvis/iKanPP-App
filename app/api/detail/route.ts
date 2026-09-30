@@ -396,6 +396,10 @@ async function handleDetailRequest(
         healed: isHealed,
         healedSource: healedSourceId,
         healedId: healedVodId,
+      }, {
+        headers: {
+          'Cache-Control': 'public, s-maxage=600, max-age=300, stale-while-revalidate=86400',
+        },
       });
     }
 
@@ -598,6 +602,10 @@ async function handleDetailRequest(
         healed: isHealed,
         healedSource: healedSourceId,
         healedId: healedVodId,
+      }, {
+        headers: {
+          'Cache-Control': 'public, s-maxage=600, max-age=300, stale-while-revalidate=86400',
+        },
       });
     }
 
