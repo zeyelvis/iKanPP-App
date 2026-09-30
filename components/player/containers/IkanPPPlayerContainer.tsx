@@ -28,6 +28,7 @@ import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/compone
 import { PREBAKED_AVATARS } from '@/lib/data/prebaked-avatars';
 import { extractSeasonAndEpisodeNumber, cleanEpisodeName } from '@/lib/utils/episode-resolver';
 import { FloatingMiniPlayer } from '@/components/player/FloatingMiniPlayer';
+import { getSkipMarkers, saveSkipMarkers, formatTimeSeconds, type SkipMarkers } from '@/lib/player/skip-markers';
 
 interface TitleAnalysis {
   rawTitle: string;
@@ -505,6 +506,46 @@ export function IkanPPPlayerContainer() {
   const [isReversed, setIsReversed] = useState(() => {
     return settingsStore.getSettings().episodeReverseOrder || false;
   });
+
+  // 片头片尾自定义记忆打点
+  const [skipMarkers, setSkipMarkers] = useState<SkipMarkers>(() => getSkipMarkers(title || ''));
+  const [skipToast, setSkipToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (title) {
+      setSkipMarkers(getSkipMarkers(title));
+    }
+  }, [title]);
+
+  const handleMarkIntro = useCallback(() => {
+    const cur = playerTimeRef.current;
+    if (typeof cur !== 'number' || cur < 0) return;
+    const rounded = Math.round(cur);
+    const updated = { ...skipMarkers, intro: rounded };
+    setSkipMarkers(updated);
+    saveSkipMarkers(title || '', updated);
+    setSkipToast(`已标记片头 (${formatTimeSeconds(rounded)})，后续集数将自动秒跳片头`);
+    setTimeout(() => setSkipToast(null), 3500);
+  }, [title, skipMarkers]);
+
+  const handleMarkOutro = useCallback(() => {
+    const cur = playerTimeRef.current;
+    if (typeof cur !== 'number' || cur <= 0) return;
+    const rounded = Math.round(cur);
+    const updated = { ...skipMarkers, outro: rounded };
+    setSkipMarkers(updated);
+    saveSkipMarkers(title || '', updated);
+    setSkipToast(`已标记片尾 (${formatTimeSeconds(rounded)})，播至此处将自动连播下一集`);
+    setTimeout(() => setSkipToast(null), 3500);
+  }, [title, skipMarkers]);
+
+  const handleClearMarker = useCallback((type: 'intro' | 'outro') => {
+    const updated = { ...skipMarkers, [type]: null };
+    setSkipMarkers(updated);
+    saveSkipMarkers(title || '', updated);
+    setSkipToast(`已清除${type === 'intro' ? '片头' : '片尾'}跳过标记`);
+    setTimeout(() => setSkipToast(null), 2500);
+  }, [title, skipMarkers]);
 
   const failedSourcesRef = useRef<Set<string>>(new Set());
   const handleSourceUnavailable = useCallback(() => {
@@ -1188,14 +1229,15 @@ export function IkanPPPlayerContainer() {
               currentSource={currentSourceId || source || ''}
               onSelectSource={handleSourceChange}
               rating={entityRating || (videoData as { vod_score?: number | string } | null)?.vod_score || null}
+              skipMarkers={skipMarkers}
             />
 
-            {/* 播放器下方专属快捷操作行：左侧集名，右侧上一集/下一集/追剧/分享 */}
-            <div className="flex items-center justify-between px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-[#141416] border border-white/10 text-xs select-none">
-              {/* 左侧：当前集名（电视剧显示，电影不显示） */}
-              <div className="flex items-center gap-2 min-w-0">
+            {/* 播放器下方专属快捷操作行：左侧集名与片头片尾打点，右侧上一集/下一集/追剧/分享 */}
+            <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-[#141416] border border-white/10 text-xs select-none relative">
+              {/* 左侧：当前集名 + 片头/片尾快捷打点 */}
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-wrap">
                 {videoData?.episodes && videoData.episodes.length > 1 ? (
-                  <span className="font-semibold text-white/90 truncate">
+                  <span className="font-semibold text-white/90 truncate max-w-[140px] sm:max-w-xs">
                     {cleanEpisodeName(videoData.episodes[currentEpisode]?.name) || `第 ${currentEpisode + 1} 集`}
                   </span>
                 ) : (
@@ -1203,6 +1245,61 @@ export function IkanPPPlayerContainer() {
                     正片播放中
                   </span>
                 )}
+
+                {/* 片头片尾快捷打点胶囊群 */}
+                <div className="flex items-center gap-1.5 border-l border-white/10 pl-2 sm:pl-3">
+                  {/* 片头打点 */}
+                  <button
+                    type="button"
+                    onClick={handleMarkIntro}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium transition-all cursor-pointer border ${
+                      skipMarkers.intro !== null
+                        ? 'bg-amber-500/15 border-amber-500/40 text-amber-300 hover:bg-amber-500/25'
+                        : 'bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10'
+                    }`}
+                    title={skipMarkers.intro !== null ? `已标记片头至 ${formatTimeSeconds(skipMarkers.intro)}，点击重新打点` : '记录当前播放时间为片头，后续集数自动跳过'}
+                  >
+                    <span>{skipMarkers.intro !== null ? `片头 ${formatTimeSeconds(skipMarkers.intro)}` : '片头到这'}</span>
+                    {skipMarkers.intro !== null && (
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleClearMarker('intro');
+                        }}
+                        className="hover:text-red-400 p-0.5 ml-0.5 text-xs opacity-70 hover:opacity-100"
+                        title="清除片头标记"
+                      >
+                        ×
+                      </span>
+                    )}
+                  </button>
+
+                  {/* 片尾打点 */}
+                  <button
+                    type="button"
+                    onClick={handleMarkOutro}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium transition-all cursor-pointer border ${
+                      skipMarkers.outro !== null
+                        ? 'bg-amber-500/15 border-amber-500/40 text-amber-300 hover:bg-amber-500/25'
+                        : 'bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10'
+                    }`}
+                    title={skipMarkers.outro !== null ? `已标记片尾至 ${formatTimeSeconds(skipMarkers.outro)}，点击重新打点` : '记录当前播放时间为片尾，播至此处自动连播下一集'}
+                  >
+                    <span>{skipMarkers.outro !== null ? `片尾 ${formatTimeSeconds(skipMarkers.outro)}` : '片尾从这'}</span>
+                    {skipMarkers.outro !== null && (
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleClearMarker('outro');
+                        }}
+                        className="hover:text-red-400 p-0.5 ml-0.5 text-xs opacity-70 hover:opacity-100"
+                        title="清除片尾标记"
+                      >
+                        ×
+                      </span>
+                    )}
+                  </button>
+                </div>
               </div>
 
               {/* 右侧：‹ 上一集、下一集 ›、＋ 追剧、分享 */}
@@ -1273,6 +1370,16 @@ export function IkanPPPlayerContainer() {
                   />
                 )}
               </div>
+
+              {/* 快捷操作反馈 Toast */}
+              {skipToast && (
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 animate-in fade-in zoom-in-95">
+                  <div className="px-3.5 py-1.5 rounded-full bg-black/90 border border-amber-500/40 text-amber-300 text-xs font-medium shadow-2xl flex items-center gap-2 whitespace-nowrap">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                    <span>{skipToast}</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -1288,6 +1395,11 @@ export function IkanPPPlayerContainer() {
                 currentSource={currentSourceId || source || ''}
                 onSourceChange={handleSourceChange}
               />
+
+              {/* 键盘快捷键提示条 (对齐现代化高级流媒体体验) */}
+              <div className="hidden lg:flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#141416]/70 border border-white/5 text-[11px] text-white/40 select-none">
+                <span>快捷键：空格 暂停 · ← → 快退进 · ↑ ↓ 音量 · &lt; &gt; 调倍速 · F 全屏</span>
+              </div>
             </div>
           </div>
         </div>

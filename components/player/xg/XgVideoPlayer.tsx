@@ -45,6 +45,7 @@ export interface XgVideoPlayerProps {
   sources?: Array<SourceItem>;
   currentSource?: string;
   onSelectSource?: (source: SourceItem) => void;
+  skipMarkers?: import('@/lib/player/skip-markers').SkipMarkers;
 }
 
 export function XgVideoPlayer({

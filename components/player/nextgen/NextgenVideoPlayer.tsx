@@ -21,6 +21,7 @@ import { sanitizeStreamUrl } from '@/lib/utils/stream-sanitizer';
 import { usePlayerSettings } from '../hooks/usePlayerSettings';
 import { filterM3u8Ad } from '@/lib/utils/m3u8-utils';
 import { recordEpisodeWatch, isPwaStandalone as isPwaInstalledOrStandalone, isPwaDismissedIn14Days } from '@/lib/client/pwa-install';
+import { formatTimeSeconds } from '@/lib/player/skip-markers';
 
 const RATES = [0.5, 0.75, 1, 1.25, 1.5, 2] as const;
 const AUTONEXT_SECONDS = 5;
@@ -79,6 +80,7 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     sources = [],
     currentSource = '',
     onSelectSource,
+    skipMarkers,
   } = props;
 
   const hostRef = useRef<HTMLDivElement>(null);
@@ -95,6 +97,17 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
   const [showSourceDrawer, setShowSourceDrawer] = useState(false);
   const [showNextOverlay, setShowNextOverlay] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [skipNotice, setSkipNotice] = useState<string | null>(null);
+
+  // 片头片尾跳过守护
+  const introSkippedRef = useRef(false);
+  const outroTriggeredRef = useRef(false);
+
+  // 换集或换源重置跳过守护
+  useEffect(() => {
+    introSkippedRef.current = false;
+    outroTriggeredRef.current = false;
+  }, [src, currentEpisodeIndex]);
 
   // 存储隔离：主站与午夜特区严格分库存储倍速偏好
   const rateKey = isPremium ? 'ng-rate-premium' : 'ng-rate';
@@ -387,8 +400,37 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     const video = videoRef.current;
     if (!video) return;
 
+    // 动态同步全屏标题栏
+    const titlePlugin = playerRef.current?.getPlugin('ngTitle') as { setTitle?: (t: string) => void } | null;
+    if (titlePlugin?.setTitle) {
+      const full = videoTitle ? (episodeName ? `${videoTitle} · ${episodeName}` : videoTitle) : '';
+      titlePlugin.setTitle(full);
+    }
+
     const handleTimeUpdate = () => {
-      onTimeUpdate?.(video.currentTime, video.duration || 0);
+      const cur = video.currentTime;
+      const dur = video.duration || 0;
+      onTimeUpdate?.(cur, dur);
+
+      // 1. 自动跳过片头
+      if (!introSkippedRef.current && skipMarkers?.intro && skipMarkers.intro > 0) {
+        if (cur < skipMarkers.intro && cur >= 0) {
+          introSkippedRef.current = true;
+          video.currentTime = skipMarkers.intro;
+          setSkipNotice(`已为您自动跳过片头 (${formatTimeSeconds(skipMarkers.intro)})`);
+          setTimeout(() => setSkipNotice(null), 3500);
+        } else if (cur >= skipMarkers.intro) {
+          introSkippedRef.current = true;
+        }
+      }
+
+      // 2. 自动跳过片尾连播下一集
+      if (!outroTriggeredRef.current && skipMarkers?.outro && skipMarkers.outro > 0 && dur > 0) {
+        if (cur >= skipMarkers.outro && hasNext) {
+          outroTriggeredRef.current = true;
+          onNextEpisodeRef.current?.();
+        }
+      }
     };
 
     const handleEnded = () => {
@@ -422,7 +464,7 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
       video.removeEventListener('loadedmetadata', checkResolution);
       video.removeEventListener('resize', checkResolution);
     };
-  }, [onTimeUpdate, hasNext]);
+  }, [onTimeUpdate, hasNext, skipMarkers, videoTitle, episodeName]);
 
   // 5. 倍速状态持久化
   useEffect(() => {
@@ -787,6 +829,15 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
                   onSelectSource?.(s);
                 }}
               />
+            )}
+            {/* 自动跳过片头轻微提示 */}
+            {skipNotice && (
+              <div className="absolute top-16 left-6 z-40 pointer-events-none transition-all duration-300 animate-in fade-in slide-in-from-left-4">
+                <div className="px-3.5 py-1.5 rounded-full bg-black/85 border border-white/20 text-white text-xs font-medium shadow-2xl flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                  <span>{skipNotice}</span>
+                </div>
+              </div>
             )}
           </>,
           layer

@@ -66,6 +66,7 @@ interface CustomVideoPlayerProps {
   sources?: Array<import('./desktop/InPlayerSourceDrawer').SourceItem>;
   currentSource?: string;
   onSelectSource?: (source: import('./desktop/InPlayerSourceDrawer').SourceItem) => void;
+  skipMarkers?: import('@/lib/player/skip-markers').SkipMarkers;
 }
 
 function getClientEngine(): 'xgplayer' | 'legacy' | 'nextgen' {

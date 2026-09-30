@@ -29,9 +29,10 @@
   height: 100%;
 }
 
-/* 仅在全屏状态下（系统原生全屏、网页全屏、手机网页横屏全屏）显示的控件：选集、上一集、±10s 快进快退、全屏标题栏 */
+/* 仅在全屏状态下（系统原生全屏、网页全屏、手机网页横屏全屏）显示的控件：选集、上一集、下一集、±10s 快进快退、全屏标题栏 */
 .xgplayer:not(.xgplayer-is-fullscreen):not(.xgplayer-is-cssfullscreen):not(.xgplayer-rotate-fullscreen) .ng-episodes,
 .xgplayer:not(.xgplayer-is-fullscreen):not(.xgplayer-is-cssfullscreen):not(.xgplayer-rotate-fullscreen) .ng-prev,
+.xgplayer:not(.xgplayer-is-fullscreen):not(.xgplayer-is-cssfullscreen):not(.xgplayer-rotate-fullscreen) .ng-next,
 .xgplayer:not(.xgplayer-is-fullscreen):not(.xgplayer-is-cssfullscreen):not(.xgplayer-rotate-fullscreen) .ng-seek,
 .xgplayer:not(.xgplayer-is-fullscreen):not(.xgplayer-is-cssfullscreen):not(.xgplayer-rotate-fullscreen) .ng-top {
   display: none !important;
@@ -254,17 +255,20 @@ html.ng-player-full body {
 .xgplayer .xgplayer-cssfullscreen {
   order: 1 !important;
 }
-.xgplayer .xgplayer-playbackrate {
+.xgplayer .ng-episodes {
   order: 2 !important;
 }
-.xgplayer .xgplayer-volume {
+.xgplayer .xgplayer-playbackrate {
   order: 3 !important;
 }
-.xgplayer .xgplayer-pip {
+.xgplayer .xgplayer-volume {
   order: 4 !important;
 }
-.xgplayer .xgplayer-fullscreen {
+.xgplayer .xgplayer-pip {
   order: 5 !important;
+}
+.xgplayer .xgplayer-fullscreen {
+  order: 6 !important;
 }
 
 .xgplayer .xg-right-grid > * {

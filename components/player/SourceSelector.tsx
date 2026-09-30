@@ -176,8 +176,8 @@ export function SourceSelector({
                 transition-all duration-200 cursor-pointer text-xs font-medium border select-none
                 ${
                   isCurrent
-                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white border-purple-400/60 shadow-md shadow-purple-600/30 scale-[1.01] z-10'
-                    : 'bg-[#18181C] hover:bg-[#202026] text-white/90 border-white/10 hover:border-purple-500/40'
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white border-amber-300/60 shadow-lg shadow-orange-600/25 scale-[1.01] z-10'
+                    : 'bg-[#18181C] hover:bg-[#202026] text-white/90 border-white/10 hover:border-amber-500/40'
                 }
               `}
               title={source.sourceName || source.source}
@@ -199,12 +199,16 @@ export function SourceSelector({
                 </span>
               </div>
 
-              {/* 右侧：片头广告真实标注 */}
-              {hasAd && (
-                <span className="text-[10px] text-white/40 border border-white/10 px-1 py-0.2 rounded shrink-0 ml-1">
+              {/* 右侧：专线极清/片头广告真实标注 */}
+              {source.source === 'shadowline' ? (
+                <span className={`text-[10px] px-1 py-0.2 rounded shrink-0 ml-1 font-semibold ${isCurrent ? 'bg-black/30 text-amber-200' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'}`}>
+                  4K原画
+                </span>
+              ) : hasAd ? (
+                <span className={`text-[10px] px-1 py-0.2 rounded shrink-0 ml-1 ${isCurrent ? 'bg-black/20 text-white/70' : 'text-white/40 border border-white/10'}`}>
                   片头广告
                 </span>
-              )}
+              ) : null}
             </button>
           );
         })}

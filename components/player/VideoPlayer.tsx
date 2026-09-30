@@ -41,6 +41,7 @@ interface VideoPlayerProps {
   currentSource?: string;
   onSelectSource?: (source: import('./desktop/InPlayerSourceDrawer').SourceItem) => void;
   rating?: string | number | null;
+  skipMarkers?: import('@/lib/player/skip-markers').SkipMarkers;
 }
 
 export const VideoPlayer = React.memo(function VideoPlayer({
@@ -65,6 +66,7 @@ export const VideoPlayer = React.memo(function VideoPlayer({
   sources,
   currentSource,
   onSelectSource,
+  skipMarkers,
 }: VideoPlayerProps) {
   const [videoError, setVideoError] = useState<string>('');
   const [useProxy, setUseProxy] = useState(false);
@@ -307,6 +309,7 @@ export const VideoPlayer = React.memo(function VideoPlayer({
           sources={sources}
           currentSource={currentSource}
           onSelectSource={onSelectSource}
+          skipMarkers={skipMarkers}
         />
       )}
     </div>
