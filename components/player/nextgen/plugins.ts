@@ -458,7 +458,7 @@ export function createPlayer(options: {
   onSources?: () => void;
 }): SimplePlayer {
   const isMobile = detectIsMobileClient();
-  const accent = '#E50914';
+  const accent = '#FFFFFF';
 
   return new SimplePlayer({
     el: options.el,
@@ -477,35 +477,28 @@ export function createPlayer(options: {
     plugins: [
       HlsSource,
       Progress,
-      MiniProgress,
       Time,
-      PrevButton,
-      BackTenButton,
       PlayIcon,
-      ForwardTenButton,
-      NextButton,
-      SourcesButton,
-      EpisodesButton,
       TitleBar,
       CastButton,
+      CssFullScreen,
       PlaybackRate,
+      Volume,
+      PIP,
       Fullscreen,
       Poster,
-      Start,
       Loading,
       Enter,
-      ...(isMobile ? [MobilePlugin, LockButton] : [Volume, PIP, Keyboard, PCPlugin, CssFullScreen]),
+      ...(isMobile ? [MobilePlugin, LockButton] : [Keyboard, PCPlugin]),
     ],
-    play: { index: 2 },
-    time: { index: 5 },
-    fullscreen: fullscreenMode(),
-    pip: { showIcon: true },
+    play: { index: 0 },
+    time: { index: 1 },
+    cssFullScreen: { index: 0 },
+    volume: { index: 2 },
+    pip: { index: 3, showIcon: true },
+    fullscreen: { index: 4, ...fullscreenMode() },
     keyboard: { seekStep: 10, keyCodeMap: { right: { disable: true } } },
     mobile: { disablePress: false, pressRate: 2 },
     ngSource: { hlsOptions: options.hlsOptions, onFatal: options.onFatal },
-    ngPrev: { onClick: options.onPrev },
-    ngNext: { onClick: options.onNext },
-    ngEpisodes: { onClick: options.onEpisodes },
-    ngSources: { onClick: options.onSources },
   });
 }

@@ -152,3 +152,213 @@ html.ng-player-full body {
 .xgplayer .xg-top-bar .ng-cast {
   margin-left: auto;
 }
+
+/* ========================================================
+   极简专业流媒体控制条定制 (Minimalist Streaming Controls)
+   1:1 像素级对齐主流高端流媒体纯净体验
+   ======================================================== */
+
+/* 1. 彻底消灭一切浮动丑陋 Tooltip 脏文字 */
+.xgplayer .xg-tips,
+.xgplayer .xg-tip,
+.xgplayer-tooltip {
+  display: none !important;
+}
+
+/* 2. 彻底消灭重复起播层与未激活播放图层 */
+.xgplayer .xgplayer-start,
+.xgplayer .xg-start-inner {
+  display: none !important;
+}
+
+/* 3. 控制条容器整体悬浮与高级渐变阴影 */
+.xgplayer .xgplayer-controls {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.45) 55%, transparent 100%) !important;
+  height: 52px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  padding: 0 !important;
+}
+
+.xgplayer .xg-inner-controls {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: 42px !important;
+  padding: 0 16px 4px 16px !important;
+  box-sizing: border-box !important;
+}
+
+/* 4. 左侧网格：播放按钮 + 时间显示（同水平线垂直居中，绝不折行） */
+.xgplayer .xg-left-grid {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  height: 100% !important;
+}
+
+.xgplayer .xgplayer-play {
+  width: 28px !important;
+  height: 28px !important;
+  display: grid !important;
+  place-items: center !important;
+  cursor: pointer !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.xgplayer .xgplayer-play .xgplayer-icon svg {
+  width: 22px !important;
+  height: 22px !important;
+  fill: #FFFFFF !important;
+}
+
+.xgplayer .xgplayer-time {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  user-select: none !important;
+}
+.xgplayer .xgplayer-time .time-current {
+  color: #FFFFFF !important;
+}
+.xgplayer .xgplayer-time .time-separator {
+  color: rgba(255, 255, 255, 0.4) !important;
+  margin: 0 2px !important;
+}
+.xgplayer .xgplayer-time .time-duration {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* 5. 右侧网格：网页全屏、1x 倍速、音量、画中画、系统全屏（单行规整排列） */
+.xgplayer .xg-right-grid {
+  display: flex !important;
+  align-items: center !important;
+  gap: 18px !important;
+  justify-content: flex-end !important;
+  height: 100% !important;
+}
+
+.xgplayer .xg-right-grid > * {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.xgplayer .xg-right-grid .xgplayer-icon svg {
+  width: 20px !important;
+  height: 20px !important;
+  fill: rgba(255, 255, 255, 0.85) !important;
+  transition: fill 0.15s ease, transform 0.15s ease !important;
+}
+.xgplayer .xg-right-grid .xgplayer-icon:hover svg {
+  fill: #FFFFFF !important;
+}
+
+/* 倍速按钮：精致极简文字 */
+.xgplayer .xgplayer-playbackrate {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  padding: 2px 4px !important;
+  line-height: 1 !important;
+  border-radius: 4px !important;
+  transition: color 0.15s ease !important;
+}
+.xgplayer .xgplayer-playbackrate:hover {
+  color: #FFFFFF !important;
+}
+
+/* 音量按钮控制条 */
+.xgplayer .xgplayer-volume .xgplayer-slider {
+  border-radius: 4px !important;
+}
+
+/* 6. 极细高级感进度条 (Progress Bar) */
+.xgplayer .xgplayer-progress {
+  height: 3px !important;
+  transition: height 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  position: relative !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.xgplayer .xgplayer-controls:hover .xgplayer-progress,
+.xgplayer .xgplayer-progress:hover {
+  height: 5px !important;
+}
+
+/* 缓冲进度 */
+.xgplayer .xgplayer-progress-cache {
+  background: rgba(255, 255, 255, 0.4) !important;
+  border-radius: 2px !important;
+}
+
+/* 播放进度：纯白高级光轨 */
+.xgplayer .xgplayer-progress-played {
+  background: #FFFFFF !important;
+  border-radius: 2px !important;
+}
+
+/* 进度小圆点：默认收缩隐藏，悬停进度条时优雅浮现 */
+.xgplayer .xgplayer-progress-btn {
+  width: 12px !important;
+  height: 12px !important;
+  background: #FFFFFF !important;
+  border-radius: 50% !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
+  opacity: 0 !important;
+  transform: scale(0) !important;
+  transition: transform 0.15s ease, opacity 0.15s ease !important;
+}
+.xgplayer .xgplayer-progress:hover .xgplayer-progress-btn {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+}
+
+/* 7. 中间 Loading 动画：1:1 复刻 iOS 经典 12 瓣菊花 Spinner */
+.xgplayer .xgplayer-loading {
+  width: 48px !important;
+  height: 48px !important;
+}
+.xgplayer .xgplayer-loading svg,
+.xgplayer .xgplayer-loading .xgplayer-loading-inner {
+  display: none !important;
+}
+.xgplayer .xgplayer-loading::after {
+  content: '' !important;
+  display: block !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  background: conic-gradient(
+    rgba(255, 255, 255, 1) 0deg,
+    rgba(255, 255, 255, 0.8) 60deg,
+    rgba(255, 255, 255, 0.4) 180deg,
+    rgba(255, 255, 255, 0.1) 300deg,
+    transparent 360deg
+  ) !important;
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3px)) !important;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3px)) !important;
+  animation: ng-spin 0.8s linear infinite !important;
+}
+
+@keyframes ng-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
