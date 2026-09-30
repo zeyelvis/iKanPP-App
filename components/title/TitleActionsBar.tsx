@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
 import { Play, Plus, Check, Share2, ThumbsUp, Sparkles, BellRing } from 'lucide-react';
 import { useFavoritesStore } from '@/lib/store/favorites-store';
-import { startWatching } from '@/lib/client/watch-fragment';
+import { parseWatchFragment, startWatching, subscribeWatchFragment } from '@/lib/client/watch-fragment';
 import { useTitleHistory } from '@/lib/store/title-history';
 import { TitleEntity } from '@/lib/types/entity';
 import { getEpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
@@ -37,6 +37,14 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
   const isFav = useFavoritesStore((s) => s.isFavorite(entity.entityId, 'ikanpp'));
 
   const effectiveTitle = playTitle || entity.title;
+
+  // 本页正在播放时（片段里有播放请求）不再显示大播放按钮：播放器就在上方
+  const playing = useSyncExternalStore(
+    subscribeWatchFragment,
+    () => parseWatchFragment(window.location.hash).requested,
+    () => false,
+  );
+  const showPlay = !playing || isClassicNoSource;
 
   // 联动播放历史：只订阅本片（播放器每 5 秒保存进度，铁律 22）
   const historyItem = useTitleHistory([effectiveTitle, entity.title]);
@@ -107,40 +115,42 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
       <div className="w-full md:hidden">
         <div className="flex flex-col gap-2.5 w-full">
           {/* 主播放按钮：100% 满宽横跨、高亮利落小圆角 */}
-          <button
-            onClick={handlePlay}
-            id="btn-netflix-play"
-            className={`group relative w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-extrabold text-base shadow-lg transition-all cursor-pointer disabled:opacity-75 ${
-              isClassicNoSource
-                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30'
-                : 'bg-white hover:bg-white/95 text-black shadow-white/10 active:scale-[0.98]'
-            }`}
-          >
-            {isClassicNoSource ? (
-              <>
-                <BellRing className="w-5 h-5 text-amber-400" />
-                <span>经典馆藏 · 预约求片</span>
-              </>
-            ) : (
-              <>
-                <Play className="w-5 h-5 fill-black text-black" />
-                <span>
-                  {lastEpisodeInfo && entity.type === 'tv'
-                    ? `继续观看 ${lastEpisodeInfo.label}`
-                    : '播放'}
-                </span>
-              </>
-            )}
+          {showPlay ? (
+            <button
+              onClick={handlePlay}
+              id="btn-netflix-play"
+              className={`group relative w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-extrabold text-base shadow-lg transition-all cursor-pointer disabled:opacity-75 ${
+                isClassicNoSource
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30'
+                  : 'bg-white hover:bg-white/95 text-black shadow-white/10 active:scale-[0.98]'
+              }`}
+            >
+              {isClassicNoSource ? (
+                <>
+                  <BellRing className="w-5 h-5 text-amber-400" />
+                  <span>经典馆藏 · 预约求片</span>
+                </>
+              ) : (
+                <>
+                  <Play className="w-5 h-5 fill-black text-black" />
+                  <span>
+                    {lastEpisodeInfo && entity.type === 'tv'
+                      ? `继续观看 ${lastEpisodeInfo.label}`
+                      : '播放'}
+                  </span>
+                </>
+              )}
 
-            {hasHistory && historyPercent > 0 && !isClassicNoSource && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-xl overflow-hidden">
-                <div
-                  className="h-full bg-red-600 transition-all duration-300"
-                  style={{ width: `${historyPercent}%` }}
-                />
-              </div>
-            )}
-          </button>
+              {hasHistory && historyPercent > 0 && !isClassicNoSource && (
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-xl overflow-hidden">
+                  <div
+                    className="h-full bg-red-600 transition-all duration-300"
+                    style={{ width: `${historyPercent}%` }}
+                  />
+                </div>
+              )}
+            </button>
+          ) : null}
 
           {/* Netflix 标配轻盈无框垂直图标列 */}
           <div className="flex items-center justify-around w-full py-1.5 px-2 border-b border-white/5 pb-2.5">
@@ -187,40 +197,42 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
       <div className="hidden md:block">
         <div className="flex items-center gap-3 lg:gap-4 flex-nowrap">
         {/* 立即播放大按钮 */}
-        <button
-          onClick={handlePlay}
-          id="btn-netflix-play-desktop"
-          className={`group relative flex items-center justify-center gap-3 px-8 lg:px-10 py-3.5 lg:py-4 rounded-2xl font-black text-base lg:text-lg shadow-2xl transition-all duration-200 cursor-pointer disabled:opacity-75 shrink-0 ${
-            isClassicNoSource
-              ? 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 shadow-amber-950/30'
-              : 'bg-white hover:bg-white/90 text-black shadow-white/20 hover:scale-[1.02] active:scale-[0.98]'
-          }`}
-        >
-          {isClassicNoSource ? (
-            <>
-              <BellRing className="w-5 h-5 lg:w-6 lg:h-6 text-amber-400 group-hover:scale-110 transition-transform" />
-              <span>经典馆藏 · 预约求片</span>
-            </>
-          ) : (
-            <>
-              <Play className="w-5 h-5 lg:w-6 lg:h-6 fill-black text-black group-hover:scale-110 transition-transform" />
-              <span>
-                {lastEpisodeInfo && entity.type === 'tv'
-                  ? `继续观看 ${lastEpisodeInfo.label}`
-                  : '立即播放'}
-              </span>
-            </>
-          )}
+        {showPlay ? (
+          <button
+            onClick={handlePlay}
+            id="btn-netflix-play-desktop"
+            className={`group relative flex items-center justify-center gap-3 px-8 lg:px-10 py-3.5 lg:py-4 rounded-2xl font-black text-base lg:text-lg shadow-2xl transition-all duration-200 cursor-pointer disabled:opacity-75 shrink-0 ${
+              isClassicNoSource
+                ? 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 shadow-amber-950/30'
+                : 'bg-white hover:bg-white/90 text-black shadow-white/20 hover:scale-[1.02] active:scale-[0.98]'
+            }`}
+          >
+            {isClassicNoSource ? (
+              <>
+                <BellRing className="w-5 h-5 lg:w-6 lg:h-6 text-amber-400 group-hover:scale-110 transition-transform" />
+                <span>经典馆藏 · 预约求片</span>
+              </>
+            ) : (
+              <>
+                <Play className="w-5 h-5 lg:w-6 lg:h-6 fill-black text-black group-hover:scale-110 transition-transform" />
+                <span>
+                  {lastEpisodeInfo && entity.type === 'tv'
+                    ? `继续观看 ${lastEpisodeInfo.label}`
+                    : '立即播放'}
+                </span>
+              </>
+            )}
 
-          {hasHistory && historyPercent > 0 && !isClassicNoSource && (
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-2xl overflow-hidden">
-              <div
-                className="h-full bg-red-600 transition-all duration-300"
-                style={{ width: `${historyPercent}%` }}
-              />
-            </div>
-          )}
-        </button>
+            {hasHistory && historyPercent > 0 && !isClassicNoSource && (
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-2xl overflow-hidden">
+                <div
+                  className="h-full bg-red-600 transition-all duration-300"
+                  style={{ width: `${historyPercent}%` }}
+                />
+              </div>
+            )}
+          </button>
+        ) : null}
 
         {/* 追剧清单 */}
         <button

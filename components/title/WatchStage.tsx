@@ -42,7 +42,7 @@ const Player = dynamic(
 function StageSkeleton() {
   return (
     <div className="grid lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 aspect-video rounded-xl bg-black border border-white/10 grid place-items-center">
+      <div className="lg:col-span-2 -mx-3 sm:mx-0 aspect-video sm:rounded-xl bg-black sm:border sm:border-white/10 grid place-items-center">
         <div className="w-10 h-10 rounded-full border-2 border-white/20 border-t-red-500 animate-spin" aria-label="加载中" />
       </div>
     </div>
@@ -157,8 +157,9 @@ export function WatchStage({ entityId, playTitle, displayTitle, type, year, numb
         <Player params={params} replace={replace} open={open} variant="embedded" below={header} />
       ) : (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2 lg:row-start-1">
-            <div className="relative aspect-video overflow-hidden rounded-xl bg-black border border-white/10">
+          {/* 手机上贴边，和开播后的画面一致 */}
+          <div className="lg:col-span-2 lg:row-start-1 -mx-3 sm:mx-0">
+            <div className="relative aspect-video overflow-hidden sm:rounded-xl bg-black sm:border sm:border-white/10">
               {still ? (
                 // Native <img> (铁律 9): the page's largest picture, painted before any script.
                 // eslint-disable-next-line @next/next/no-img-element

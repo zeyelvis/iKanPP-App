@@ -171,6 +171,13 @@ html.ng-player-full body {
   display: none !important;
 }
 
+/* 画面铺满播放器、上下居中留黑，控制条浮在画面上。全站 img, video { height: auto } 的重置优先级更高，
+   会让宽于 16:9 的片源贴顶显示、底部空出一条黑边，控制条就像是落在画面下方 */
+.xgplayer video {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 /* 3. 控制条容器整体悬浮与高级深邃渐变阴影 */
 .xgplayer .xgplayer-controls {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.45) 50%, rgba(0, 0, 0, 0.08) 85%, transparent 100%) !important;
