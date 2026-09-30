@@ -29,10 +29,9 @@
   height: 100%;
 }
 
-/* 仅在全屏状态下（系统原生全屏、网页全屏、手机网页横屏全屏）显示的控件：选集、上一集、下一集、±10s 快进快退、全屏标题栏 */
+/* 仅在全屏状态下（系统原生全屏、网页全屏、手机网页横屏全屏）显示的控件：选集、上一集、±10s 快进快退、全屏标题栏（注：下一集 ng-next 保持小窗与全屏双端常驻，1:1 对齐原生设计） */
 .xgplayer:not(.xgplayer-is-fullscreen):not(.xgplayer-is-cssfullscreen):not(.xgplayer-rotate-fullscreen) .ng-episodes,
 .xgplayer:not(.xgplayer-is-fullscreen):not(.xgplayer-is-cssfullscreen):not(.xgplayer-rotate-fullscreen) .ng-prev,
-.xgplayer:not(.xgplayer-is-fullscreen):not(.xgplayer-is-cssfullscreen):not(.xgplayer-rotate-fullscreen) .ng-next,
 .xgplayer:not(.xgplayer-is-fullscreen):not(.xgplayer-is-cssfullscreen):not(.xgplayer-rotate-fullscreen) .ng-seek,
 .xgplayer:not(.xgplayer-is-fullscreen):not(.xgplayer-is-cssfullscreen):not(.xgplayer-rotate-fullscreen) .ng-top {
   display: none !important;
@@ -174,8 +173,8 @@ html.ng-player-full body {
 
 /* 3. 控制条容器整体悬浮与高级深邃渐变阴影 */
 .xgplayer .xgplayer-controls {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.65) 50%, rgba(0, 0, 0, 0.15) 85%, transparent 100%) !important;
-  height: 60px !important;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.45) 50%, rgba(0, 0, 0, 0.08) 85%, transparent 100%) !important;
+  height: 52px !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-end !important;
@@ -187,171 +186,198 @@ html.ng-player-full body {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  height: 48px !important;
+  height: 40px !important;
   padding: 0 16px 4px 16px !important;
   box-sizing: border-box !important;
 }
 
-/* 4. 左侧网格：播放按钮 + 上下一集 + 时间显示（同水平线垂直居中，绝不折行） */
+/* 4. 左侧网格：播放按钮 + 下一集 + 时间显示（同水平线垂直居中，1:1 对齐参考图） */
 .xgplayer .xg-left-grid {
   display: flex !important;
   align-items: center !important;
-  gap: 6px !important;
+  gap: 16px !important;
   height: 100% !important;
 }
 
-/* 主播放 / 暂停按钮（38x38 舒适触控区 + 圆角微高光悬停） */
+/* 主播放 / 暂停按钮（纯净纯白三角，极简灵动，无死板灰底） */
 .xgplayer .xgplayer-play {
-  width: 38px !important;
-  height: 38px !important;
+  width: 28px !important;
+  height: 28px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  border-radius: 10px !important;
   cursor: pointer !important;
   background: transparent !important;
   border: none !important;
   outline: none !important;
   padding: 0 !important;
   margin: 0 !important;
-  transition: background 0.15s ease, transform 0.1s ease !important;
+  transition: transform 0.1s ease, opacity 0.15s ease !important;
 }
 .xgplayer .xgplayer-play:hover {
-  background: rgba(255, 255, 255, 0.15) !important;
+  opacity: 0.85 !important;
 }
 .xgplayer .xgplayer-play:active {
   transform: scale(0.92) !important;
 }
 .xgplayer .xgplayer-play .xgplayer-icon {
-  width: 24px !important;
-  height: 24px !important;
+  width: 20px !important;
+  height: 20px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 }
 .xgplayer .xgplayer-play .xgplayer-icon svg {
-  width: 22px !important;
-  height: 22px !important;
+  width: 18px !important;
+  height: 18px !important;
   fill: #FFFFFF !important;
 }
 
-/* 上一集 / 下一集 / ±10s 快退快进 */
-.xgplayer .ng-prev,
-.xgplayer .ng-next,
-.xgplayer .ng-seek {
-  width: 36px !important;
-  height: 36px !important;
+/* 下一集按钮（ng-next）：1:1 对齐参考图中的纯白向右箭头加竖线，小窗/全屏双端常驻 */
+.xgplayer .ng-next {
+  width: 28px !important;
+  height: 28px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  border-radius: 8px !important;
   cursor: pointer !important;
-  transition: background 0.15s ease, transform 0.1s ease !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  transition: transform 0.1s ease, opacity 0.15s ease !important;
+}
+.xgplayer .ng-next:hover {
+  opacity: 0.85 !important;
+}
+.xgplayer .ng-next:active {
+  transform: scale(0.92) !important;
+}
+.xgplayer .ng-next .xgplayer-icon {
+  width: 20px !important;
+  height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.xgplayer .ng-next svg {
+  width: 18px !important;
+  height: 18px !important;
+  fill: #FFFFFF !important;
+}
+
+/* 上一集与快进快退（全屏专属） */
+.xgplayer .ng-prev,
+.xgplayer .ng-seek {
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  background: transparent !important;
+  transition: transform 0.1s ease, opacity 0.15s ease !important;
 }
 .xgplayer .ng-prev:hover,
-.xgplayer .ng-next:hover,
 .xgplayer .ng-seek:hover {
-  background: rgba(255, 255, 255, 0.12) !important;
+  opacity: 0.85 !important;
 }
 .xgplayer .ng-prev:active,
-.xgplayer .ng-next:active,
 .xgplayer .ng-seek:active {
   transform: scale(0.92) !important;
 }
 .xgplayer .ng-prev .xgplayer-icon,
-.xgplayer .ng-next .xgplayer-icon,
 .xgplayer .ng-seek .xgplayer-icon {
-  width: 22px !important;
-  height: 22px !important;
+  width: 20px !important;
+  height: 20px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 }
 .xgplayer .ng-prev svg,
-.xgplayer .ng-next svg,
 .xgplayer .ng-seek svg {
-  width: 20px !important;
-  height: 20px !important;
-  fill: rgba(255, 255, 255, 0.9) !important;
+  width: 18px !important;
+  height: 18px !important;
+  fill: #FFFFFF !important;
 }
 
-/* 时间排版 */
+/* 时间排版：00:03 / 01:58:37 */
 .xgplayer .xgplayer-time {
   display: flex !important;
   align-items: center !important;
-  gap: 4px !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  gap: 0 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
   font-size: 13px !important;
-  font-weight: 500 !important;
+  font-weight: 400 !important;
   font-variant-numeric: tabular-nums !important;
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: #FFFFFF !important;
   line-height: 1 !important;
-  margin-left: 6px !important;
+  margin-left: 2px !important;
   user-select: none !important;
 }
 .xgplayer .xgplayer-time .time-current {
   color: #FFFFFF !important;
-  font-weight: 600 !important;
+  font-weight: 500 !important;
 }
 .xgplayer .xgplayer-time .time-separator {
-  color: rgba(255, 255, 255, 0.35) !important;
-  margin: 0 3px !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  margin: 0 4px !important;
 }
 .xgplayer .xgplayer-time .time-duration {
-  color: rgba(255, 255, 255, 0.6) !important;
+  color: rgba(255, 255, 255, 0.65) !important;
 }
 
-/* 5. 右侧网格：网页全屏、选集、倍速胶囊、音量、画中画、系统全屏 */
+/* 5. 右侧网格：绝对 1:1 对齐用户参考图顺序：画中画(1) -> 1x倍速(2) -> 音量(3) -> 网页全屏(4) -> 全屏(5) */
 .xgplayer .xg-right-grid {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
-  gap: 6px !important;
+  gap: 18px !important;
   justify-content: flex-end !important;
   height: 100% !important;
 }
 
-.xgplayer .xgplayer-cssfullscreen {
+.xgplayer .xgplayer-pip {
   order: 1 !important;
 }
-.xgplayer .ng-episodes {
+.xgplayer .xgplayer-playbackrate {
   order: 2 !important;
 }
-.xgplayer .xgplayer-playbackrate {
+.xgplayer .xgplayer-volume {
   order: 3 !important;
 }
-.xgplayer .xgplayer-volume {
+.xgplayer .xgplayer-cssfullscreen {
   order: 4 !important;
 }
-.xgplayer .xgplayer-pip {
+.xgplayer .xgplayer-fullscreen {
   order: 5 !important;
 }
-.xgplayer .xgplayer-fullscreen {
-  order: 6 !important;
+.xgplayer .ng-episodes {
+  order: 0 !important;
 }
 
-/* 按钮统一容器规范：36x36 舒适触控区 + 8px 圆角轻反馈 */
+/* 右侧图标纯净呈现：无多余灰色边框，纯白高透 */
 .xgplayer .xgplayer-cssfullscreen,
 .xgplayer .xgplayer-fullscreen,
 .xgplayer .xgplayer-pip,
 .xgplayer .ng-episodes {
-  width: 36px !important;
-  height: 36px !important;
+  width: 26px !important;
+  height: 26px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  border-radius: 8px !important;
   cursor: pointer !important;
   background: transparent !important;
   margin: 0 !important;
   padding: 0 !important;
-  transition: background 0.15s ease, transform 0.1s ease !important;
+  transition: opacity 0.15s ease, transform 0.1s ease !important;
 }
 .xgplayer .xgplayer-cssfullscreen:hover,
 .xgplayer .xgplayer-fullscreen:hover,
 .xgplayer .xgplayer-pip:hover,
 .xgplayer .ng-episodes:hover {
-  background: rgba(255, 255, 255, 0.12) !important;
+  opacity: 0.8 !important;
 }
 .xgplayer .xgplayer-cssfullscreen:active,
 .xgplayer .xgplayer-fullscreen:active,
@@ -364,8 +390,8 @@ html.ng-player-full body {
 .xgplayer .xgplayer-fullscreen .xgplayer-icon,
 .xgplayer .xgplayer-pip .xgplayer-icon,
 .xgplayer .ng-episodes .xgplayer-icon {
-  width: 22px !important;
-  height: 22px !important;
+  width: 20px !important;
+  height: 20px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -374,41 +400,32 @@ html.ng-player-full body {
 .xgplayer .xgplayer-fullscreen svg,
 .xgplayer .xgplayer-pip svg,
 .xgplayer .ng-episodes svg {
-  width: 21px !important;
-  height: 21px !important;
-  fill: rgba(255, 255, 255, 0.9) !important;
-  transition: fill 0.15s ease !important;
-}
-.xgplayer .xgplayer-cssfullscreen:hover svg,
-.xgplayer .xgplayer-fullscreen:hover svg,
-.xgplayer .xgplayer-pip:hover svg,
-.xgplayer .ng-episodes:hover svg {
+  width: 19px !important;
+  height: 19px !important;
   fill: #FFFFFF !important;
 }
 
-/* 倍速按钮：现代化半透明极简胶囊药丸 (1.0x / 1.25x / 1.5x) */
+/* 倍速按钮：1:1 绝对复刻参考图中的黑色微透圆角胶囊 (pill) [1x] */
 .xgplayer .xgplayer-playbackrate {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  height: 28px !important;
-  min-width: 44px !important;
-  padding: 0 8px !important;
-  border-radius: 6px !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  height: 22px !important;
+  min-width: 36px !important;
+  padding: 0 10px !important;
+  border-radius: 9999px !important;
+  background: rgba(0, 0, 0, 0.45) !important;
+  border: none !important;
   cursor: pointer !important;
-  transition: all 0.15s ease !important;
+  transition: background 0.15s ease, opacity 0.15s ease !important;
   user-select: none !important;
   box-sizing: border-box !important;
 }
 .xgplayer .xgplayer-playbackrate:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-color: rgba(255, 255, 255, 0.35) !important;
-  transform: scale(1.03) !important;
+  background: rgba(0, 0, 0, 0.7) !important;
 }
 .xgplayer .xgplayer-playbackrate:active {
-  transform: scale(0.96) !important;
+  transform: scale(0.95) !important;
 }
 .xgplayer .xgplayer-playbackrate .xgplayer-icon {
   width: auto !important;
@@ -422,10 +439,10 @@ html.ng-player-full body {
 .xgplayer .xgplayer-playbackrate .icon-text,
 .xgplayer .xgplayer-playbackrate span {
   font-size: 12px !important;
-  font-weight: 600 !important;
+  font-weight: 500 !important;
   color: #FFFFFF !important;
-  line-height: 1 !important;
-  letter-spacing: 0.3px !important;
+  line-height: 22px !important;
+  letter-spacing: 0.2px !important;
   white-space: nowrap !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
@@ -455,34 +472,30 @@ html.ng-player-full body {
 /* 音量控制按钮与滑动面板 */
 .xgplayer .xgplayer-volume {
   position: relative !important;
-  width: 36px !important;
-  height: 36px !important;
+  width: 26px !important;
+  height: 26px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  border-radius: 8px !important;
   cursor: pointer !important;
   background: transparent !important;
   margin: 0 !important;
   padding: 0 !important;
-  transition: background 0.15s ease, transform 0.1s ease !important;
+  transition: opacity 0.15s ease !important;
 }
 .xgplayer .xgplayer-volume:hover {
-  background: rgba(255, 255, 255, 0.12) !important;
+  opacity: 0.8 !important;
 }
 .xgplayer .xgplayer-volume .xgplayer-icon {
-  width: 22px !important;
-  height: 22px !important;
+  width: 20px !important;
+  height: 20px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 }
 .xgplayer .xgplayer-volume svg {
-  width: 22px !important;
-  height: 22px !important;
-  fill: rgba(255, 255, 255, 0.9) !important;
-}
-.xgplayer .xgplayer-volume:hover svg {
+  width: 20px !important;
+  height: 20px !important;
   fill: #FFFFFF !important;
 }
 
@@ -611,18 +624,18 @@ html.ng-player-full body {
   display: block !important;
 }
 
-/* 6. 极细专业流媒体进度条体系 (Progress Bar System) */
+/* 6. 极细标准流媒体进度条体系 (1:1 绝对对齐参考图) */
 .xgplayer .xgplayer-progress {
   display: flex !important;
   align-items: center !important;
   position: relative !important;
-  height: 14px !important;
+  height: 10px !important;
   width: 100% !important;
   min-width: 10px !important;
   outline: none !important;
   cursor: pointer !important;
   background: transparent !important;
-  padding: 0 16px !important;
+  padding: 0 12px !important;
   margin: 0 !important;
   box-sizing: border-box !important;
 }
@@ -630,17 +643,17 @@ html.ng-player-full body {
 .xgplayer .xgplayer-progress-outer {
   position: relative !important;
   width: 100% !important;
-  height: 3.5px !important;
-  border-radius: 9999px !important;
+  height: 2.5px !important;
+  border-radius: 1px !important;
   background: rgba(255, 255, 255, 0.22) !important;
   cursor: pointer !important;
-  transition: height 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: height 0.15s ease !important;
 }
 
 .xgplayer .xgplayer-controls:hover .xgplayer-progress-outer,
 .xgplayer .xgplayer-progress:hover .xgplayer-progress-outer,
 .xgplayer .xgplayer-progress.active .xgplayer-progress-outer {
-  height: 5.5px !important;
+  height: 4px !important;
 }
 
 .xgplayer .xgplayer-progress-inner {
@@ -654,7 +667,7 @@ html.ng-player-full body {
 .xgplayer .xgplayer-progress-cache {
   display: block !important;
   height: 100% !important;
-  background: rgba(255, 255, 255, 0.42) !important;
+  background: rgba(255, 255, 255, 0.38) !important;
   border-radius: inherit !important;
   position: absolute !important;
   top: 0 !important;
@@ -669,25 +682,24 @@ html.ng-player-full body {
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35) !important;
 }
 
-/* 进度白光手柄：平时优雅缩小隐藏，鼠标悬停时平滑弹出 */
+/* 进度圆点手柄：平时隐藏，鼠标悬停时优雅弹出微小圆点 */
 .xgplayer .xgplayer-progress-btn {
   display: block !important;
   position: absolute !important;
   top: 50% !important;
   left: 0 !important;
-  width: 13px !important;
-  height: 13px !important;
+  width: 10px !important;
+  height: 10px !important;
   border-radius: 50% !important;
   background: #FFFFFF !important;
   border: none !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
   pointer-events: none !important;
   box-sizing: border-box !important;
   transform: translate(-50%, -50%) scale(0) !important;
-  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: transform 0.15s ease !important;
 }
 
 .xgplayer .xgplayer-progress-btn:before {
