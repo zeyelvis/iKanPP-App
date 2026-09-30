@@ -296,24 +296,34 @@ html.ng-player-full body {
   fill: #FFFFFF !important;
 }
 
-/* 倍速按钮：精致极简文字 */
+/* 倍速按钮：精致极简文字 (对齐图二 1x) */
 .xgplayer .xgplayer-playbackrate {
   font-size: 13px !important;
   font-weight: 500 !important;
-  color: rgba(255, 255, 255, 0.85) !important;
+  color: #FFFFFF !important;
   padding: 0 !important;
   margin: 0 !important;
   line-height: 1 !important;
   background: transparent !important;
   border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 24px !important;
+  height: 22px !important;
+  cursor: pointer !important;
 }
-.xgplayer .xgplayer-playbackrate .icon-text {
+.xgplayer .xgplayer-playbackrate .icon-text,
+.xgplayer .xgplayer-playbackrate span {
   font-size: 13px !important;
   font-weight: 500 !important;
-  color: rgba(255, 255, 255, 0.85) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
   line-height: 1 !important;
+  display: inline-block !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
-.xgplayer .xgplayer-playbackrate:hover .icon-text {
+.xgplayer .xgplayer-playbackrate:hover .icon-text,
+.xgplayer .xgplayer-playbackrate:hover span {
   color: #FFFFFF !important;
 }
 
