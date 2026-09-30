@@ -37,6 +37,29 @@ function jsonWithCors(body: any, init?: { status?: number; headers?: Record<stri
     },
   });
 }
+// ==========================================
+// iKanPP 专线高频热点内存缓存 (TTL 10 分钟)
+// 显著消除对爱壹帆 API 的高频网络往返，实现毫秒级瞬间响应
+// ==========================================
+interface IkanppLineCacheItem {
+  data: any;
+  isHealed: boolean;
+  healedSourceId?: string;
+  healedVodId?: string | number;
+  expiresAt: number;
+}
+
+const ikanppLineMemoryCache = new Map<string, IkanppLineCacheItem>();
+const IKANPP_CACHE_TTL_MS = 10 * 60 * 1000; // 10 分钟
+
+function cleanExpiredIkanppCache() {
+  const now = Date.now();
+  for (const [key, item] of ikanppLineMemoryCache.entries()) {
+    if (item.expiresAt <= now) {
+      ikanppLineMemoryCache.delete(key);
+    }
+  }
+}
 
 /**
  * Shared handler for fetching video details
@@ -325,6 +348,57 @@ async function handleDetailRequest(
 
   // 2.6 专属支持 iKanPP专线 (iKanPP Line Engine) 毫秒直解与骨干极速自愈 (轨道 A 纯直连零代理)
   if (sourceId === 'ikanpp' || sourceId === 'ikanpp_line' || sourceId === 'iyf' || sourceId === 'titanline') {
+    const cleanCacheTitle = (titleParam || '').replace(/[（(].*?[）)]/g, '').trim().toLowerCase();
+    const cacheKey = `ikanpp:${id || ''}:${cleanCacheTitle}:${yearParam || ''}:${categoryParam || ''}`;
+
+    // 1. 优先尝试命中短时内存缓存 (TTL 10 分钟，0ms 纯内存命中，彻底消除爱壹帆 API 网络往返)
+    const cached = ikanppLineMemoryCache.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      const resolvedData = cached.data;
+      const isHealed = cached.isHealed;
+      const healedSourceId = cached.healedSourceId;
+      const healedVodId = cached.healedVodId;
+
+      const episodes = resolvedData.episodes || [];
+      let playUrl = episodes[0]?.url || '';
+      let rawPlayUrl = episodes[0]?.raw_url || episodes[0]?.url || '';
+      let currentEpisodeNum = 1;
+      let currentEpisodeName = episodes[0]?.name || '';
+
+      if (episodeParam !== undefined && episodeParam !== null && String(episodeParam).trim() !== '') {
+        const epNum = parseInt(String(episodeParam).replace(/[^\d]/g, ''), 10);
+        if (!isNaN(epNum) && epNum > 0 && epNum <= episodes.length) {
+          playUrl = episodes[epNum - 1]?.url || playUrl;
+          rawPlayUrl = episodes[epNum - 1]?.raw_url || episodes[epNum - 1]?.url || rawPlayUrl;
+          currentEpisodeNum = epNum;
+          currentEpisodeName = episodes[epNum - 1]?.name || currentEpisodeName;
+        }
+      }
+
+      return jsonWithCors({
+        code: 200,
+        success: true,
+        msg: 'ok',
+        cached: true,
+        data: {
+          ...resolvedData,
+          total_episodes: episodes.length,
+          current_episode: currentEpisodeNum,
+          current_episode_name: currentEpisodeName,
+          play_url: playUrl,
+          raw_play_url: rawPlayUrl,
+          headers: {
+            'Referer': 'https://www.iyf.tv/',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+          },
+          quality: '4K/1080P 极清',
+        },
+        healed: isHealed,
+        healedSource: healedSourceId,
+        healedId: healedVodId,
+      });
+    }
+
     let resolvedData: any = null;
     let isHealed = false;
     let healedSourceId: string | undefined;
@@ -405,6 +479,7 @@ async function handleDetailRequest(
               return {
                 ...ep,
                 url: ep.url && ep.url.includes('pipecdn.vip') ? streamUrl : ep.url,
+                raw_url: ep.url,
               };
             });
 
@@ -473,9 +548,22 @@ async function handleDetailRequest(
     }
 
     if (resolvedData) {
+      // 写入短时热点内存缓存 (TTL 10 分钟)
+      if (ikanppLineMemoryCache.size >= 300) {
+        cleanExpiredIkanppCache();
+      }
+      ikanppLineMemoryCache.set(cacheKey, {
+        data: resolvedData,
+        isHealed,
+        healedSourceId,
+        healedVodId,
+        expiresAt: Date.now() + IKANPP_CACHE_TTL_MS,
+      });
+
       // 提取针对外部项目的便捷字段
       const episodes = resolvedData.episodes || [];
       let playUrl = episodes[0]?.url || '';
+      let rawPlayUrl = episodes[0]?.raw_url || episodes[0]?.url || '';
       let currentEpisodeNum = 1;
       let currentEpisodeName = episodes[0]?.name || '';
 
@@ -483,6 +571,7 @@ async function handleDetailRequest(
         const epNum = parseInt(String(episodeParam).replace(/[^\d]/g, ''), 10);
         if (!isNaN(epNum) && epNum > 0 && epNum <= episodes.length) {
           playUrl = episodes[epNum - 1]?.url || playUrl;
+          rawPlayUrl = episodes[epNum - 1]?.raw_url || episodes[epNum - 1]?.url || rawPlayUrl;
           currentEpisodeNum = epNum;
           currentEpisodeName = episodes[epNum - 1]?.name || currentEpisodeName;
         }
@@ -492,12 +581,18 @@ async function handleDetailRequest(
         code: 200,
         success: true,
         msg: 'ok',
+        cached: false,
         data: {
           ...resolvedData,
           total_episodes: episodes.length,
           current_episode: currentEpisodeNum,
           current_episode_name: currentEpisodeName,
           play_url: playUrl,
+          raw_play_url: rawPlayUrl,
+          headers: {
+            'Referer': 'https://www.iyf.tv/',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+          },
           quality: '4K/1080P 极清',
         },
         healed: isHealed,
