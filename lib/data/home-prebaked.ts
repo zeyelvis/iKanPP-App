@@ -58,19 +58,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "坂本日常",
-                "updateBadge": ""
-        },
-        {
                 "title": "一个部门的诞生",
                 "updateBadge": ""
         },
         {
-                "title": "给阿嬷的情书",
+                "title": "坂本日常",
                 "updateBadge": ""
         },
         {
-                "title": "魔方小姐",
+                "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
         {
@@ -82,6 +78,14 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "年会不能停！2",
+                "updateBadge": ""
+        },
+        {
+                "title": "魔方小姐",
+                "updateBadge": ""
+        },
+        {
                 "title": "爱情假说",
                 "updateBadge": ""
         },
@@ -90,15 +94,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "年会不能停！2",
+                "title": "特立独行",
                 "updateBadge": ""
         },
         {
                 "title": "死亡赌局",
-                "updateBadge": ""
-        },
-        {
-                "title": "特立独行",
                 "updateBadge": ""
         }
       ],
@@ -1828,23 +1828,27 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "我不是大师",
+                "updateBadge": "2"
+        },
+        {
                 "title": "一瓯春",
                 "updateBadge": "5"
+        },
+        {
+                "title": "无可替代",
+                "updateBadge": ""
         },
         {
                 "title": "死有对证",
                 "updateBadge": "1"
         },
         {
-                "title": "我不是大师",
-                "updateBadge": "2"
-        },
-        {
-                "title": "无可替代",
-                "updateBadge": "2"
-        },
-        {
                 "title": "早春晴朗",
+                "updateBadge": ""
+        },
+        {
+                "title": "交锋",
                 "updateBadge": ""
         },
         {
@@ -1852,19 +1856,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "1"
         },
         {
-                "title": "交锋",
-                "updateBadge": ""
-        },
-        {
                 "title": "雷霆令",
-                "updateBadge": "2"
-        },
-        {
-                "title": "百花杀",
                 "updateBadge": ""
         },
         {
-                "title": "飞到我心上",
+                "title": "冬城猎凶",
+                "updateBadge": ""
+        },
+        {
+                "title": "黑岛监狱",
                 "updateBadge": ""
         },
         {
