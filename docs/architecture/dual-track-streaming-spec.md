@@ -110,7 +110,8 @@
    - **订阅隔离**：详情页组件只订阅本片的观看记录（`lib/store/title-history.ts`），播放器每 5 秒保存进度不会引起详情页重渲染（准则 22）；
    - **真实 308**：规范 URL 重定向必须是 HTTP 308。详情页不设 `loading.tsx`，重定向与 `notFound()` 在首字节前完成（否则只能输出 200 + meta refresh 的假重定向与软 404）；浏览器经 308 会保留 # 片段。
 2. **`/player` 兜底**：
-   - 带 `entity` 的旧链接（分享、书签、外链）由服务端 308 到详情页，集数、季数、线路转为 # 片段；标准 ID 直达规范 URL，雷达临时 ID 只输出 `/title/片名`（准则 13.4）；
+   - 带 `entity` 的旧链接（分享、书签、外链）由 `middleware.ts` 308 到详情页（`lib/utils/player-link.ts`），集数、季数、线路转为 # 片段；标准 ID 直达规范 URL，雷达临时 ID 只输出 `/title/片名`（准则 13.4）。`/player` 本身保持静态页，不新增边缘函数（全站边缘函数共用 25 MiB 上限）；
+   - 详情页的播放器代码只在浏览器加载（`typeof window` 构建期裁剪），不进入详情页的边缘函数；
    - 午夜特区（`premium=1`）以及只有片源视频 ID、没有本站作品的链接（观看历史、收藏、片源搜索结果）继续在 `/player` 播放；
    - **索引策略**：保持 `noindex, nofollow`，robots.txt 放行以便爬虫读取 noindex（准则 19.2）；
    - **状态轻量化**：多线路数据通过 `sessionStorage` (`gsKey`) 传递，绝不将 `groupedSources` JSON 巨石写入 URL。

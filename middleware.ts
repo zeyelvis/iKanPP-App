@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
+import { titlePageForPlayerLink } from '@/lib/utils/player-link';
 
 /**
  * Middleware — 多域名智能路由 + SEO 域名物理隔离
@@ -114,6 +115,13 @@ export function middleware(request: NextRequest) {
         const response = NextResponse.next();
         response.headers.set('X-Robots-Tag', 'noindex, follow');
         return response;
+    }
+
+    // 详情页即播放页：带 entity 的播放链接（旧分享、书签、外链）308 到详情页，
+    // 集数、季数、线路写进 # 片段（浏览器经 308 保留片段）；无本站作品的片源链接留在 /player
+    if (pathname === '/player') {
+        const target = titlePageForPlayerLink(url.searchParams);
+        if (target) return NextResponse.redirect(new URL(target, url), 308);
     }
 
     // 历史播放器旧 URL 规范化 301 重定向至实体详情页：

@@ -1,46 +1,23 @@
+'use client';
+
 import { Suspense } from 'react';
-import { permanentRedirect } from 'next/navigation';
-import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
-import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
-import { PlayerRouter } from './PlayerRouter';
-
-export const runtime = 'edge';
-
-type Query = Record<string, string | string[] | undefined>;
-
-const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v)?.trim() || '';
+import { useSearchParams } from 'next/navigation';
+import { IkanPPPlayerContainer } from '@/components/player/containers/IkanPPPlayerContainer';
+import { IkanXPlayerContainer } from '@/components/player/containers/IkanXPlayerContainer';
 
 /**
- * A title's episodes play on its title page now (详情页即播放页): a link to one of the site's
- * titles (entity=…) goes there, with the episode, season and line in the fragment. Premium links
- * and links to a source's video without a title of ours keep this player.
+ * 播放器顶级路由入口（Dual-Track Architecture 分发器）
+ * - 普通全年龄影视：分发至 IkanPPPlayerContainer（毫秒级秒播仲裁、多剧集选集抽屉、弹幕、豆瓣推荐、全套 SEO 结构化）
+ * - 午夜成人专区：分发至 IkanXPlayerContainer（番号直推引擎、防盗链中继、沉浸暗黑界面、100% 隔离主站）
  */
-function titlePageFor(q: Query): string | null {
-  const entity = first(q.entity);
-  if (!entity || first(q.premium) === '1') return null;
-  const title = first(q.title);
-  const season = parseSeasonFromTitle(title);
-  const id = /^ik\d{6}$/i.test(entity) ? entity.toLowerCase() : undefined;
-  // Only a standard ID goes into the URL; a radar title's temporary ID never does (铁律 13.4).
-  const path = getTitleCanonicalHref({ entityId: id, title: season ? season.baseTitle : title });
-  if (path === '/') return null;
+function PlayerRouter() {
+  const searchParams = useSearchParams();
+  const isPremium = searchParams.get('premium') === '1';
 
-  const fragment = new URLSearchParams();
-  const s = Number(first(q.season)) || season?.seasonNumber || 0;
-  if (s > 0) fragment.set('s', String(s));
-  const ep = first(q.episode) || first(q.ep);
-  if (ep) fragment.set('ep', ep);
-  const line = first(q.source);
-  if (/^[a-z0-9_]{1,24}$/.test(line)) fragment.set('line', line);
-  const f = fragment.toString();
-  // The Location header takes ASCII only: the Chinese slug goes percent-encoded.
-  return `/title/${encodeURIComponent(path.replace(/^\/title\//, ''))}#${f || 'play'}`;
+  return isPremium ? <IkanXPlayerContainer /> : <IkanPPPlayerContainer />;
 }
 
-export default async function PlayerPage({ searchParams }: { searchParams: Promise<Query> }) {
-  const target = titlePageFor(await searchParams);
-  if (target) permanentRedirect(target);
-
+export default function PlayerPage() {
   return (
     <Suspense
       fallback={

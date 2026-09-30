@@ -21,7 +21,12 @@ import { seasonPlayTitle } from '@/lib/utils/season-resolver';
  * and line then live in the fragment (lib/client/watch-fragment.ts).
  */
 
-const loadPlayer = () => import('@/components/player/containers/IkanPPPlayerContainer').then((m) => m.IkanPPPlayer);
+// The player only ever mounts in the browser. The typeof guard is resolved at build time, which
+// keeps its code out of the server bundle (the site's edge functions share a 25 MiB limit).
+const loadPlayer = () =>
+  typeof window === 'undefined'
+    ? Promise.reject(new Error('The player loads in the browser only'))
+    : import('@/components/player/containers/IkanPPPlayerContainer').then((m) => m.IkanPPPlayer);
 
 // On a page from before a deploy the player's script is gone: reload onto the current build
 // (the fragment keeps the episode), showing the skeleton meanwhile.
