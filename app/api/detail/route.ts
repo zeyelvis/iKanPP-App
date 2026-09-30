@@ -75,7 +75,8 @@ async function handleDetailRequest(
   expectedEpisodesParam?: string | number | null,
   seasonParam?: string | number | null,
   aliasesParam?: string | string[] | null,
-  episodeParam?: string | number | null
+  episodeParam?: string | number | null,
+  extraParams?: Record<string, any>
 ) {
   if (!id && !titleParam) {
     return jsonWithCors(
@@ -268,8 +269,12 @@ async function handleDetailRequest(
           enabled: config.enabled,
         });
 
+        const onlyCandidates = Boolean(extraParams?.onlyCandidates || extraParams?.action === 'search');
+        const includeCandidates = Boolean(extraParams?.includeCandidates || extraParams?.candidates);
+
         let targetVodId = id && id !== 'shadowline' && !isNaN(Number(id)) ? id : null;
         let matchedTitle = titleParam || '';
+        let allFormattedCandidates: any[] = [];
 
         // 如果没有数字 ID，但携带了片名 titleParam，则动态按片名搜寻并执行多维消歧匹配
         if (!targetVodId && titleParam) {
@@ -307,6 +312,31 @@ async function handleDetailRequest(
           }
 
           const allCandidates = Array.from(candidateMap.values());
+          allFormattedCandidates = allCandidates.map(c => ({
+            vodId: c.vod_id,
+            vod_id: c.vod_id,
+            title: c.title,
+            vod_name: c.title,
+            year: c.year,
+            category: c.category,
+            totalEpisodes: c.total_episodes,
+            pic: c.pic,
+          }));
+
+          if (onlyCandidates) {
+            return jsonWithCors({
+              success: true,
+              title: cleanTitle,
+              total: allFormattedCandidates.length,
+              candidates: allFormattedCandidates,
+              timestamp: new Date().toISOString(),
+            }, {
+              headers: {
+                'Cache-Control': 'public, s-maxage=1800, max-age=600, stale-while-revalidate=86400',
+              },
+            });
+          }
+
           if (allCandidates.length > 0) {
             const matchedCandidate = matchBestShadowLineCandidate(allCandidates, {
               title: cleanTitle,
@@ -325,18 +355,66 @@ async function handleDetailRequest(
         if (targetVodId) {
           const playList = await gzProvider.getPlayList(targetVodId);
           if (playList && playList.length > 0) {
-            return NextResponse.json({
+            const epNum = episodeParam ? parseInt(String(episodeParam).replace(/[^\d]/g, ''), 10) : 1;
+            let targetIndex = 0;
+            if (!isNaN(epNum) && epNum > 0) {
+              const foundIdx = playList.findIndex((ep) => {
+                const num = parseInt((ep.episode || '').replace(/[^\d]/g, ''), 10);
+                return num === epNum;
+              });
+              if (foundIdx !== -1) {
+                targetIndex = foundIdx;
+              } else if (epNum - 1 < playList.length) {
+                targetIndex = epNum - 1;
+              }
+            }
+            const selectedEp = playList[targetIndex] || playList[0];
+
+            const epList = playList.map((ep, idx) => ({
+              name: ep.episode || (idx === 0 ? '4K 极清' : `第${idx + 1}集`),
+              url: ep.url, // 轨道 A 铁律：100% 浏览器直连第三方 CDN，严禁通过 /api/proxy
+              index: idx,
+            }));
+
+            // 针对老版 /api/shadowline/resolve 和新版通用 detail 接口全面超集兼容
+            const responsePayload: Record<string, any> = {
               success: true,
+              vodId: targetVodId,
+              title: matchedTitle || titleParam || '4K 原画',
+              targetEpisode: {
+                episode: selectedEp.episode || (targetIndex === 0 ? '4K 极清' : `第${targetIndex + 1}集`),
+                url: selectedEp.url,
+                index: targetIndex,
+              },
+              episodes: epList,
+              play_url: selectedEp.url,
+              raw_play_url: selectedEp.url,
+              total_episodes: epList.length,
+              current_episode: targetIndex + 1,
+              current_episode_name: selectedEp.episode || (targetIndex === 0 ? '4K 极清' : `第${targetIndex + 1}集`),
+              timestamp: new Date().toISOString(),
               data: {
                 vod_id: targetVodId,
                 vod_name: matchedTitle || titleParam || '4K 原画',
                 type_name: '4K 原画 · 直连',
-                episodes: playList.map((ep, idx) => ({
-                  name: ep.episode || (idx === 0 ? '4K 极清' : `第${idx + 1}集`),
-                  url: ep.url, // 轨道 A 铁律：100% 浏览器直连第三方 CDN，严禁通过 /api/proxy
-                })),
+                episodes: epList,
+                play_url: selectedEp.url,
+                raw_play_url: selectedEp.url,
+                total_episodes: epList.length,
+                current_episode: targetIndex + 1,
                 source: 'shadowline',
-              }
+              },
+            };
+
+            if (includeCandidates && allFormattedCandidates.length > 0) {
+              responsePayload.totalCandidates = allFormattedCandidates.length;
+              responsePayload.candidates = allFormattedCandidates;
+            }
+
+            return jsonWithCors(responsePayload, {
+              headers: {
+                'Cache-Control': 'public, s-maxage=1800, max-age=600, stale-while-revalidate=86400',
+              },
             });
           }
         }
@@ -829,8 +907,10 @@ export async function OPTIONS() {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const id = searchParams.get('id');
-    const source = searchParams.get('source') || (request.nextUrl.pathname.includes('ikanpp-line') ? 'ikanpp' : null);
+    const isShadowlineRoute = request.nextUrl.pathname.includes('shadowline');
+    const isIkanppRoute = request.nextUrl.pathname.includes('ikanpp-line');
+    const id = searchParams.get('id') || (isShadowlineRoute ? (searchParams.get('vodId') || searchParams.get('vod_id')) : null);
+    const source = searchParams.get('source') || (isIkanppRoute ? 'ikanpp' : isShadowlineRoute ? 'shadowline' : null);
     const title = searchParams.get('title');
     const category = searchParams.get('category') || searchParams.get('type');
     const year = searchParams.get('year');
@@ -838,6 +918,11 @@ export async function GET(request: NextRequest) {
     const season = searchParams.get('season');
     const aliases = searchParams.get('aliases');
     const episode = searchParams.get('episode') || searchParams.get('ep');
+    const extraParams = {
+      candidates: searchParams.has('candidates') || searchParams.has('includeCandidates') || searchParams.has('list'),
+      includeCandidates: searchParams.has('candidates') || searchParams.has('includeCandidates') || searchParams.has('list'),
+      onlyCandidates: searchParams.get('onlyCandidates') === '1' || searchParams.get('onlyList') === '1' || searchParams.get('action') === 'search',
+    };
 
     return await handleDetailRequest(
       id,
@@ -850,7 +935,8 @@ export async function GET(request: NextRequest) {
       expectedEpisodes,
       season,
       aliases,
-      episode
+      episode,
+      extraParams
     );
   } catch (error) {
     console.error('Detail API error:', error);
@@ -869,12 +955,20 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
-    const { id, source, title, category, type, year, expectedEpisodes, season, aliases, episode, ep } = body;
-    const finalSource = source || request.nextUrl.searchParams.get('source') || (request.nextUrl.pathname.includes('ikanpp-line') ? 'ikanpp' : null);
+    const isShadowlineRoute = request.nextUrl.pathname.includes('shadowline');
+    const isIkanppRoute = request.nextUrl.pathname.includes('ikanpp-line');
+    const { id, source, title, category, type, year, expectedEpisodes, season, aliases, episode, ep, vodId, vod_id } = body;
+    const finalId = id || (isShadowlineRoute ? (vodId || vod_id) : null);
+    const finalSource = source || request.nextUrl.searchParams.get('source') || (isIkanppRoute ? 'ikanpp' : isShadowlineRoute ? 'shadowline' : null);
     const finalEpisode = episode !== undefined ? episode : ep;
+    const extraParams = {
+      candidates: Boolean(body.candidates || body.includeCandidates || body.list || body.all),
+      includeCandidates: Boolean(body.candidates || body.includeCandidates || body.list || body.all),
+      onlyCandidates: Boolean(body.onlyCandidates || body.onlyList || body.action === 'search'),
+    };
 
     return await handleDetailRequest(
-      id,
+      finalId,
       finalSource,
       'POST',
       request,
@@ -884,7 +978,8 @@ export async function POST(request: NextRequest) {
       expectedEpisodes,
       season,
       aliases,
-      finalEpisode
+      finalEpisode,
+      extraParams
     );
   } catch (error) {
     console.error('Detail API error:', error);
