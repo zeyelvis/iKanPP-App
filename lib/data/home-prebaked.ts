@@ -66,19 +66,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "魔方小姐",
-                "updateBadge": ""
-        },
-        {
                 "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
         {
-                "title": "死亡赌局",
-                "updateBadge": ""
-        },
-        {
-                "title": "大学炸弹客",
+                "title": "魔方小姐",
                 "updateBadge": ""
         },
         {
@@ -86,7 +78,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "生死尽头",
+                "title": "大学炸弹客",
+                "updateBadge": ""
+        },
+        {
+                "title": "死亡赌局",
                 "updateBadge": ""
         },
         {
@@ -98,7 +94,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "玩具总动员5",
+                "title": "生死尽头",
+                "updateBadge": ""
+        },
+        {
+                "title": "一夜限定",
                 "updateBadge": ""
         }
       ],
@@ -1825,26 +1825,26 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": "1"
-        },
-        {
-                "title": "一瓯春",
-                "updateBadge": "1"
+                "updateBadge": ""
         },
         {
                 "title": "我不是大师",
-                "updateBadge": "2"
+                "updateBadge": ""
+        },
+        {
+                "title": "一瓯春",
+                "updateBadge": ""
         },
         {
                 "title": "无可替代",
-                "updateBadge": "2"
-        },
-        {
-                "title": "早春晴朗",
                 "updateBadge": ""
         },
         {
                 "title": "死有对证",
+                "updateBadge": "1"
+        },
+        {
+                "title": "早春晴朗",
                 "updateBadge": ""
         },
         {
@@ -1852,20 +1852,20 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "法医秦明之龙番往事",
-                "updateBadge": "2"
-        },
-        {
                 "title": "雷霆令",
-                "updateBadge": "6"
+                "updateBadge": ""
         },
         {
-                "title": "飞到我心上",
+                "title": "法医秦明之龙番往事",
                 "updateBadge": ""
         },
         {
                 "title": "冬城猎凶",
                 "updateBadge": ""
+        },
+        {
+                "title": "消失的裂痕",
+                "updateBadge": "1"
         },
         {
                 "title": "花开锦绣",
@@ -1875,6 +1875,23 @@ export const PREBAKED_HOME_DATA: {
     "hero": [
         {
                 "id": "iyf_hero_tv_1",
+                "title": "无可替代",
+                "rate": "8.8",
+                "cover": "https://static.iyf.tv/upload/video/202609281206530631824.gif",
+                "backdrop": "https://static.iyf.tv/upload/user/202609291602440264518.jpg",
+                "description": "《无可替代》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至05集 | 共20集。",
+                "year": "2026",
+                "types": [
+                        "热门",
+                        "连续剧"
+                ],
+                "episodes_info": "更新至05集 | 共20集",
+                "type": "tv",
+                "is_new": true,
+                "playable": true
+        },
+        {
+                "id": "iyf_hero_tv_2",
                 "title": "我不是大师",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609241200270068364.gif",
@@ -1891,7 +1908,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_2",
+                "id": "iyf_hero_tv_3",
                 "title": "法医秦明之龙番往事",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609221204050427723.gif",
@@ -1908,7 +1925,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_3",
+                "id": "iyf_hero_tv_4",
                 "title": "一瓯春",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609171140224075880.jpg",
@@ -1925,7 +1942,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_4",
+                "id": "iyf_hero_tv_5",
                 "title": "兰香如故",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609111404160476768.gif",
@@ -1942,7 +1959,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_5",
+                "id": "iyf_hero_tv_6",
                 "title": "冬城猎凶",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609100710231001184.jpg",
@@ -1959,7 +1976,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_6",
+                "id": "iyf_hero_tv_7",
                 "title": "深渊无间",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609091238023882533.gif",
@@ -1976,7 +1993,7 @@ export const PREBAKED_HOME_DATA: {
                 "playable": true
         },
         {
-                "id": "iyf_hero_tv_7",
+                "id": "iyf_hero_tv_8",
                 "title": "交锋",
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609061321182110656.gif",
@@ -1988,23 +2005,6 @@ export const PREBAKED_HOME_DATA: {
                         "连续剧"
                 ],
                 "episodes_info": "40集全",
-                "type": "tv",
-                "is_new": true,
-                "playable": true
-        },
-        {
-                "id": "iyf_hero_tv_8",
-                "title": "生逢其时",
-                "rate": "8.8",
-                "cover": "https://static.iyf.tv/upload/video/202609031658525831647.jpg",
-                "backdrop": "https://static.iyf.tv/upload/user/202609031729152940543.jpg",
-                "description": "《生逢其时》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至23集 | 共26集。",
-                "year": "2026",
-                "types": [
-                        "热门",
-                        "连续剧"
-                ],
-                "episodes_info": "更新至23集 | 共26集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
