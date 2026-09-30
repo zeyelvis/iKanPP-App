@@ -512,36 +512,11 @@ IkanPPPlayerContainer / IkanXPlayerContainer (双轨容器，负责线路调度�
 
 ---
 
-## 20. iKanPP专线核心流媒体调度与毫秒直解规范 (iKanPP Line Engine Spec) (2026-09 升级)
+## 20. iKanPP专线退役说明与纯粹直连架构回归 (Retired & Direct Play Spec) (2026-09)
 
-为提供全站最顶级的画质与秒开体验，iKanPP 正式确立自研**「iKanPP专线 (iKanPP Line Engine)」**作为主站首选核心直连通道：
-
-### 1. 架构定位与双轨铁律恪守
-- **轨道归属**：100% 严格归属于**轨道 A（Track A：普通影视）**；
-- **网络模型与 PipeCDN CORS 桥接**：
-  - 核心痛点：PipeCDN (`*.pipecdn.vip`) 边缘 Cloudflare WAF 会强制阻断携带非官方 Origin 的网页浏览器请求（返回 HTTP 520/403），但对无 Origin 的移动端请求完全放行；
-  - 桥接机制：通过轻量级边缘流中继端点 **`/api/ikanpp-stream`**（Edge Runtime，零缓冲零存储 Stream 透传）剥离 Origin，以移动端 UA 转发 PipeCDN 请求，自动改写 m3u8 内部相对路径切片为中继地址；
-  - 绝对隔离：传统采集源（巨量、光速、无尽、极速、暗影专线等）依旧 100% 浏览器直连第三方源站 CDN，严禁经过中继；中继端点仅允许 `pipecdn.vip` 白名单域名通过，且与轨道 B（`/api/proxy`）严格物理隔离；
-- **零存储与零费用**：切片通过 Cloudflare Edge Web Streams 原生透传，不占用服务器磁盘，Cloudflare Pages 出站带宽完全免费；
-- **品牌展示名称**：全站全域 UI 统一命名并展示为 **`⚡ iKanPP专线`**，线路 ID 为 `ikanpp`（兼容 `ikanpp_line`、`iyf`、`titanline`）。
-
-### 2. 移动端逆向签名与 WAF 穿透
-- **移动端 API 直通**：对接 `https://api.tripdata.app/` 移动端专有通道，天然无 Cloudflare Turnstile 验证码拦截；
-- **动态 MD5 签名机制**：
-  - 对每个请求自动追加 Unix 时间戳参数 `_t=<timestamp>`；
-  - 严格按照移动端原生拦截器算法生成签名：`x-sign = MD5(fullQuery + timestamp + '57688*1-331@')`；
-  - 携带 Android / okhttp 原生安全请求头，保证接口稳定性与防阻断。
-
-### 3. 片名毫秒搜索与多维消歧匹配
-- **毫秒直通搜索**：通过 `POST api/List/GetTitleGetData` 检索片库候选；
-- **多维消歧匹配器 (`matchBestIkanppLineCandidate`)**：
-  - 核心片名完全匹配优先（权重 100）；
-  - 影视类型严格隔离：当用户请求正片电影/电视剧时，强制拦截同名微短剧与垃圾营销号视频；
-  - 年份与类型协同打分，确保 100% 命中权威正片。
-
-### 4. 线路排序与候补专线调度
-- **稳定优先与防劫持**：`DEFAULT_LINE_TOP_ORDER` 默认保持浏览器 100% 极速秒开的骨干源（巨量、光速、暗影专线等）优先起播，`ikanpp` 专线作为候补专线注入播放列表，绝不霸道篡位首发首位，确保全网所有用户 0 阻断起播；
-- **静默熔断保护**：集成 `getIkanppLineConfig()` 与 `getIkanppLineHealth()`，支持后台一键熔断与自动健康探活。
+- **退役背景**：原爱壹帆源站（PipeCDN）因强依赖移动端逆向签名、出网 IP 绑定、防盗链与切片中继代理，不仅链路复杂、容易受到 0.0.0.0 毒化干扰，且中继代理机制背离了轨道 A「100% 浏览器 Direct Play 纯直连」的极简极速原则；
+- **架构决议**：全面取消该专线及 `/api/ikanpp-stream` 中继端点，释放 Edge Function 打包体积；
+- **最终架构**：全站轨道 A 核心播放调度永久专注于**「⚡ 暗影自愈专线 (4K 原画直连，瓜子源)」**与全网骨干源（巨量、光速、无尽、暴风等），100% 直连第三方 CDN，零中继零代理，保障全平台毫秒级稳定秒开。
 
 
 

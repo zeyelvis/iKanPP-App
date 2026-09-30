@@ -15,7 +15,7 @@
     "sync:hero:variety": "node scripts/sync-iyf-hero.mjs --target=variety",
     "sync:hero:doc": "node scripts/sync-iyf-hero.mjs --target=doc",
     "sync:all": "node scripts/sync-ikanbot-sources.mjs && node scripts/sync-iyf-hero.mjs",
-    "test:arch": "node scripts/test-architecture-integrity.mjs && node scripts/test-regression-suite.mjs && npx tsx scripts/test-latest-titles-404.mjs && npx tsx scripts/test-shadowline-matching.ts && npx tsx scripts/test-line-ranking.ts && npx tsx scripts/test-ikanpp-line.ts && npx tsx scripts/test-stale-build.ts",
+    "test:arch": "node scripts/test-architecture-integrity.mjs && node scripts/test-regression-suite.mjs && npx tsx scripts/test-latest-titles-404.mjs && npx tsx scripts/test-shadowline-matching.ts && npx tsx scripts/test-line-ranking.ts && npx tsx scripts/test-stale-build.ts",
     "test:404": "npx tsx scripts/test-latest-titles-404.mjs",
     "prepare": "git config core.hooksPath scripts/git-hooks || true",
     "pages:build": "npx @cloudflare/next-on-pages@1",

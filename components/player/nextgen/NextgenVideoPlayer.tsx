@@ -442,7 +442,7 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
   }, [rateKey]);
 
   // 6. 专线右上角品牌覆盖角标 (Watermark Cover Placement)
-  const isSpecialLine = currentSource === 'shadowline' || currentSource === 'ikanpp' || currentSource === 'ikanpp_line';
+  const isSpecialLine = currentSource === 'shadowline';
   const shouldShowBadge = isSpecialLine && !isPremium;
 
   useEffect(() => {

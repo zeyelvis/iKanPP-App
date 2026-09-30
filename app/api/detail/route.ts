@@ -14,8 +14,6 @@ import { fetchIkanbotDetail } from '@/lib/server/ikanbot';
 import { parseEpisodes } from '@/lib/api/parsers';
 import { getShadowLineConfig } from '@/lib/services/shadowline-service';
 import { gzProvider, matchBestShadowLineCandidate } from '@/lib/services/providers/gz-provider';
-import { getIkanppLineConfig } from '@/lib/services/ikanpp-line-service';
-import { ikanppProvider, matchBestIkanppLineCandidate } from '@/lib/services/providers/iyf-provider';
 
 export const runtime = 'edge';
 
@@ -36,29 +34,6 @@ function jsonWithCors(body: any, init?: { status?: number; headers?: Record<stri
       ...extraHeaders,
     },
   });
-}
-// ==========================================
-// iKanPP 专线高频热点内存缓存 (TTL 10 分钟)
-// 显著消除对爱壹帆 API 的高频网络往返，实现毫秒级瞬间响应
-// ==========================================
-interface IkanppLineCacheItem {
-  data: any;
-  isHealed: boolean;
-  healedSourceId?: string;
-  healedVodId?: string | number;
-  expiresAt: number;
-}
-
-const ikanppLineMemoryCache = new Map<string, IkanppLineCacheItem>();
-const IKANPP_CACHE_TTL_MS = 10 * 60 * 1000; // 10 分钟
-
-function cleanExpiredIkanppCache() {
-  const now = Date.now();
-  for (const [key, item] of ikanppLineMemoryCache.entries()) {
-    if (item.expiresAt <= now) {
-      ikanppLineMemoryCache.delete(key);
-    }
-  }
 }
 
 /**
@@ -424,278 +399,6 @@ async function handleDetailRequest(
     }
   }
 
-  // 2.6 专属支持 iKanPP专线 (iKanPP Line Engine) 毫秒直解与骨干极速自愈 (轨道 A 纯直连零代理)
-  if (sourceId === 'ikanpp' || sourceId === 'ikanpp_line' || sourceId === 'iyf' || sourceId === 'titanline') {
-    const cleanCacheTitle = (titleParam || '').replace(/[（(].*?[）)]/g, '').trim().toLowerCase();
-    const cacheKey = `ikanpp:${id || ''}:${cleanCacheTitle}:${yearParam || ''}:${categoryParam || ''}`;
-
-    // 1. 优先尝试命中短时内存缓存 (TTL 10 分钟，0ms 纯内存命中，彻底消除爱壹帆 API 网络往返)
-    const cached = ikanppLineMemoryCache.get(cacheKey);
-    if (cached && cached.expiresAt > Date.now()) {
-      const resolvedData = cached.data;
-      const isHealed = cached.isHealed;
-      const healedSourceId = cached.healedSourceId;
-      const healedVodId = cached.healedVodId;
-
-      const episodes = resolvedData.episodes || [];
-      let playUrl = episodes[0]?.url || '';
-      let rawPlayUrl = episodes[0]?.raw_url || episodes[0]?.url || '';
-      let currentEpisodeNum = 1;
-      let currentEpisodeName = episodes[0]?.name || '';
-
-      if (episodeParam !== undefined && episodeParam !== null && String(episodeParam).trim() !== '') {
-        const epNum = parseInt(String(episodeParam).replace(/[^\d]/g, ''), 10);
-        if (!isNaN(epNum) && epNum > 0 && epNum <= episodes.length) {
-          playUrl = episodes[epNum - 1]?.url || playUrl;
-          rawPlayUrl = episodes[epNum - 1]?.raw_url || episodes[epNum - 1]?.url || rawPlayUrl;
-          currentEpisodeNum = epNum;
-          currentEpisodeName = episodes[epNum - 1]?.name || currentEpisodeName;
-        }
-      }
-
-      return jsonWithCors({
-        code: 200,
-        success: true,
-        msg: 'ok',
-        cached: true,
-        data: {
-          ...resolvedData,
-          total_episodes: episodes.length,
-          current_episode: currentEpisodeNum,
-          current_episode_name: currentEpisodeName,
-          play_url: playUrl,
-          raw_play_url: rawPlayUrl,
-          headers: {
-            'Referer': 'https://www.iyf.tv/',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-          },
-          quality: '4K/1080P 极清',
-        },
-        healed: isHealed,
-        healedSource: healedSourceId,
-        healedId: healedVodId,
-      }, {
-        headers: {
-          'Cache-Control': 'public, s-maxage=600, max-age=300, stale-while-revalidate=86400',
-        },
-      });
-    }
-
-    let resolvedData: any = null;
-    let isHealed = false;
-    let healedSourceId: string | undefined;
-    let healedVodId: string | number | undefined;
-
-    try {
-      const config = await getIkanppLineConfig();
-      if (config.enabled) {
-        let targetMediaKey = id && id !== 'ikanpp' && id !== 'ikanpp_line' && id !== 'iyf' && id !== 'titanline' && !id.startsWith('ik') && id.length >= 8 && id.length <= 16
-          ? id
-          : null;
-        let matchedTitle = titleParam || '';
-        let matchedPic = '';
-
-        // 如果没有直接传入 mediaKey，但携带了片名 titleParam，则动态按片名搜寻并执行多维消歧匹配
-        if (!targetMediaKey && titleParam) {
-          const cleanTitle = titleParam.replace(/[（(].*?[）)]/g, '').trim();
-          const searchKeywords = new Set<string>();
-          searchKeywords.add(cleanTitle);
-
-          if (aliasesParam) {
-            const aliasList = Array.isArray(aliasesParam)
-              ? aliasesParam
-              : String(aliasesParam).split(/[,/|，]/);
-            for (const a of aliasList) {
-              const cleanAlias = a.replace(/[（(].*?[）)]/g, '').trim();
-              if (cleanAlias && cleanAlias !== cleanTitle && /[\u4e00-\u9fa5]/.test(cleanAlias)) {
-                searchKeywords.add(cleanAlias);
-              }
-            }
-          }
-
-          const searchPromises = Array.from(searchKeywords).map(k => ikanppProvider.searchByTitle(k));
-          const searchResults = await Promise.all(searchPromises);
-
-          const candidateMap = new Map<string, any>();
-          for (const list of searchResults) {
-            if (list && Array.isArray(list)) {
-              for (const item of list) {
-                if (!candidateMap.has(item.mediaKey)) {
-                  candidateMap.set(item.mediaKey, item);
-                }
-              }
-            }
-          }
-
-          const allCandidates = Array.from(candidateMap.values());
-          if (allCandidates.length > 0) {
-            const matchedCandidate = matchBestIkanppLineCandidate(allCandidates, {
-              title: cleanTitle,
-              category: categoryParam || undefined,
-              year: yearParam || undefined,
-              expectedEpisodes: expectedEpisodesParam ? Number(expectedEpisodesParam) : undefined,
-              season: seasonParam || undefined,
-            });
-            if (matchedCandidate) {
-              targetMediaKey = matchedCandidate.mediaKey;
-              matchedTitle = matchedCandidate.title;
-              matchedPic = matchedCandidate.coverImgUrl;
-            }
-          }
-        }
-
-        if (targetMediaKey) {
-          const episodeList = await ikanppProvider.getFullEpisodeList(targetMediaKey);
-          // 核心防毒化门禁：核验爱壹帆是否返回了 0.0.0.0 毒化失效链接或全空链接
-          const hasValidPlayableUrl = episodeList && episodeList.length > 0 && episodeList.some(ep => {
-            return ep.url && !ep.url.includes('0.0.0.0') && !ep.url.includes('0_0.0.0.0_');
-          });
-
-          if (hasValidPlayableUrl && episodeList && episodeList.length > 0) {
-            const relayOrigin = request?.nextUrl?.origin || 'https://www.ikanpp.com';
-            const streamEndpoint = `${relayOrigin}/api/ikanpp-stream`;
-            const relayedEpisodes = episodeList.map(ep => {
-              const videoId = (ep as any).videoId ?? 0;
-              const epMediaKey = (ep as any).mediaKey || targetMediaKey;
-              const streamUrl = `${streamEndpoint}?mediaKey=${encodeURIComponent(epMediaKey)}&videoId=${videoId}&url=${encodeURIComponent(ep.url)}`;
-              return {
-                ...ep,
-                url: ep.url && ep.url.includes('pipecdn.vip') ? streamUrl : ep.url,
-                raw_url: ep.url,
-              };
-            });
-
-            resolvedData = {
-              vod_id: targetMediaKey,
-              vod_name: matchedTitle || titleParam || 'iKanPP专线 · 极清',
-              vod_pic: matchedPic,
-              type_name: '4K 极清 · 专线中继',
-              episodes: relayedEpisodes,
-              source: 'ikanpp',
-            };
-          }
-        }
-      }
-    } catch (ikanppErr) {
-      console.warn('[DetailAPI] iKanPP Line direct resolve failed:', ikanppErr);
-    }
-
-    // 若专线上游受阻（包括 0.0.0.0 毒链或未收录），启动 iKanPP 专线极速自愈引擎
-    if (!resolvedData && titleParam && titleParam.trim().length > 0) {
-      try {
-        const cleanTitle = titleParam.replace(/[《》【】\[\]（）()·\s:：\-]/g, ' ').trim();
-        const fallbackSources = DEFAULT_SOURCES.filter(
-          s => s.enabled !== false && (s.id === 'juliang' || s.id === 'guangsu' || s.id === 'baofeng' || s.id === 'wujin')
-        );
-        const searchRes = await searchVideos(cleanTitle, fallbackSources, 1);
-        for (const res of searchRes) {
-          const candidates = res.results || [];
-          const matched = candidates.find(c => {
-            const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
-            const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
-            return cName === tName;
-          }) || candidates.find(c => {
-            const cName = (c.vod_name || '').replace(/[《》【】\[\]（）()·\s:：\-]/g, '').toLowerCase();
-            const tName = cleanTitle.replace(/\s+/g, '').toLowerCase();
-            const lenDiff = Math.abs(cName.length - tName.length);
-            if (cName.includes(tName)) return tName.length > 3 ? lenDiff <= 4 : lenDiff <= 1;
-            if (tName.includes(cName)) return lenDiff <= 1;
-            return false;
-          });
-
-          if (matched && matched.vod_id) {
-            const matchedSource = getSourceById(res.source);
-            if (matchedSource) {
-              const healedDetail = await getVideoDetail(matched.vod_id, matchedSource);
-              if (healedDetail && healedDetail.episodes && healedDetail.episodes.length > 0) {
-                resolvedData = {
-                  ...healedDetail,
-                  vod_id: healedDetail.vod_id || matched.vod_id,
-                  vod_name: healedDetail.vod_name || titleParam,
-                  vod_pic: healedDetail.vod_pic,
-                  type_name: '4K 极清 · iKanPP极速专线',
-                  source: 'ikanpp',
-                };
-                isHealed = true;
-                healedSourceId = matchedSource.id;
-                healedVodId = matched.vod_id;
-                break;
-              }
-            }
-          }
-        }
-      } catch (healErr) {
-        console.warn('[DetailAPI] iKanPP Line fallback heal failed:', healErr);
-      }
-    }
-
-    if (resolvedData) {
-      // 写入短时热点内存缓存 (TTL 10 分钟)
-      if (ikanppLineMemoryCache.size >= 300) {
-        cleanExpiredIkanppCache();
-      }
-      ikanppLineMemoryCache.set(cacheKey, {
-        data: resolvedData,
-        isHealed,
-        healedSourceId,
-        healedVodId,
-        expiresAt: Date.now() + IKANPP_CACHE_TTL_MS,
-      });
-
-      // 提取针对外部项目的便捷字段
-      const episodes = resolvedData.episodes || [];
-      let playUrl = episodes[0]?.url || '';
-      let rawPlayUrl = episodes[0]?.raw_url || episodes[0]?.url || '';
-      let currentEpisodeNum = 1;
-      let currentEpisodeName = episodes[0]?.name || '';
-
-      if (episodeParam !== undefined && episodeParam !== null && String(episodeParam).trim() !== '') {
-        const epNum = parseInt(String(episodeParam).replace(/[^\d]/g, ''), 10);
-        if (!isNaN(epNum) && epNum > 0 && epNum <= episodes.length) {
-          playUrl = episodes[epNum - 1]?.url || playUrl;
-          rawPlayUrl = episodes[epNum - 1]?.raw_url || episodes[epNum - 1]?.url || rawPlayUrl;
-          currentEpisodeNum = epNum;
-          currentEpisodeName = episodes[epNum - 1]?.name || currentEpisodeName;
-        }
-      }
-
-      return jsonWithCors({
-        code: 200,
-        success: true,
-        msg: 'ok',
-        cached: false,
-        data: {
-          ...resolvedData,
-          total_episodes: episodes.length,
-          current_episode: currentEpisodeNum,
-          current_episode_name: currentEpisodeName,
-          play_url: playUrl,
-          raw_play_url: rawPlayUrl,
-          headers: {
-            'Referer': 'https://www.iyf.tv/',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-          },
-          quality: '4K/1080P 极清',
-        },
-        healed: isHealed,
-        healedSource: healedSourceId,
-        healedId: healedVodId,
-      }, {
-        headers: {
-          'Cache-Control': 'public, s-maxage=600, max-age=300, stale-while-revalidate=86400',
-        },
-      });
-    }
-
-    if (sourceId === 'ikanpp' || sourceId === 'ikanpp_line') {
-      return jsonWithCors({
-        code: 404,
-        success: false,
-        error: 'iKanPP专线暂未收录该影片，正在为您调度其他线路...',
-      }, { status: 404 });
-    }
-  }
-
   // 3. 传统采集源查询
   let sourceConfig;
   if (typeof source === 'object') {
@@ -908,9 +611,8 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const isShadowlineRoute = request.nextUrl.pathname.includes('shadowline');
-    const isIkanppRoute = request.nextUrl.pathname.includes('ikanpp-line');
     const id = searchParams.get('id') || (isShadowlineRoute ? (searchParams.get('vodId') || searchParams.get('vod_id')) : null);
-    const source = searchParams.get('source') || (isIkanppRoute ? 'ikanpp' : isShadowlineRoute ? 'shadowline' : null);
+    const source = searchParams.get('source') || (isShadowlineRoute ? 'shadowline' : null);
     const title = searchParams.get('title');
     const category = searchParams.get('category') || searchParams.get('type');
     const year = searchParams.get('year');
@@ -956,10 +658,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
     const isShadowlineRoute = request.nextUrl.pathname.includes('shadowline');
-    const isIkanppRoute = request.nextUrl.pathname.includes('ikanpp-line');
     const { id, source, title, category, type, year, expectedEpisodes, season, aliases, episode, ep, vodId, vod_id } = body;
     const finalId = id || (isShadowlineRoute ? (vodId || vod_id) : null);
-    const finalSource = source || request.nextUrl.searchParams.get('source') || (isIkanppRoute ? 'ikanpp' : isShadowlineRoute ? 'shadowline' : null);
+    const finalSource = source || request.nextUrl.searchParams.get('source') || (isShadowlineRoute ? 'shadowline' : null);
     const finalEpisode = episode !== undefined ? episode : ep;
     const extraParams = {
       candidates: Boolean(body.candidates || body.includeCandidates || body.list || body.all),

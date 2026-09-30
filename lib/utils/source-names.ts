@@ -40,10 +40,6 @@ export function getSourceName(sourceId: string): string {
     'shadowline': '⚡ 暗影专线 · 4K原画',
     'shadow': '⚡ 暗影专线 · 4K原画',
     'gz360': '⚡ 暗影专线 · 4K原画',
-    'ikanpp': '⚡ iKanPP专线',
-    'ikanpp_line': '⚡ iKanPP专线',
-    'iyf': '⚡ iKanPP专线',
-    'titanline': '⚡ iKanPP专线',
   };
   return sourceNames[sourceId] || sourceId;
 }

@@ -38,16 +38,12 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Sitemap 动态分卷与 iKanPP 专线跨项目 API Rewrite
+  // Sitemap 动态分卷与暗影专线跨项目 API Rewrite
   async rewrites() {
     return [
       {
         source: '/sitemap-titles-:page.xml',
         destination: '/api/seo/sitemap-titles/:page',
-      },
-      {
-        source: '/api/ikanpp-line',
-        destination: '/api/detail?source=ikanpp',
       },
       {
         source: '/api/shadowline/resolve',
