@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Star, Clock, Calendar, Film, ArrowLeft, Clapperboard, User, Sparkles, CheckCircle2, Play } from 'lucide-react';
 import { getEntityBySlug, getEntityById, getEntityByTitle, getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity, isSafeRecentTitleItem, kvDelete } from '@/lib/services/entity-kv';
-import { getGenreBySlug } from '@/lib/data/genres';
+import { genrePagePath } from '@/lib/data/genres';
 import { parseEntitySlug, normalizeTitle, isStrictSafeEntity, generateSlug, getTitleCanonicalHref, decodeMangledHexSlug, hasTitleOverlap } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, enrichEntityByTMDBId, fetchTMDBDetails, fetchTMDBAiredEpisodeCount, resolveRealBackdrop, isFakeBackdrop } from '@/lib/services/entity-enrichment';
 import { getFastPersonAvatars } from '@/lib/services/person-avatar';
@@ -28,7 +28,8 @@ import { normalizeVideoType } from '@/lib/utils/taxonomy';
 import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
-import { generateFullSpectrumKeywords } from '@/lib/utils/seo-keyword-generator';
+import { generateFullSpectrumKeywords, isFillerDescription } from '@/lib/utils/seo-keyword-generator';
+import { regionLabel } from '@/lib/utils/region-label';
 import { isEntityIndexable } from '@/lib/data/seo-rules/seo-keyword-system';
 import { FlagTW, FlagHK } from '@/components/ui/RegionFlags';
 import { getPrebakedAiInsight } from '@/lib/data/prebaked-ai-insights';
@@ -816,7 +817,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const isSeriesLike = entity.type === 'tv' || entity.type === 'anime';
   const displayTitle = seasonTag && !entity.title.includes(seasonTag) ? `${entity.title} ${seasonTag}` : entity.title;
   const yearSuffix = entity.year ? ` (${entity.year})` : '';
-  const pageTitle = `${displayTitle}${yearSuffix} - 剧情、演职员与在线观看信息 | iKanPP 爱看片片`;
+  // 片名在前、紧跟用户的真实搜索意图（片名 + 在线观看），频道与面包屑同源（综艺、纪录片不误标为电视剧）
+  const pageTitle = `${displayTitle}${yearSuffix} 在线观看 - ${resolveEntityChannel(entity).name} | iKanPP 爱看片片`;
   // 动态构建高信息密度、千人千面的 Meta Description（杜绝模板化被 Google 惩罚）
   const regionText = entity.region ? entity.region.slice(0, 4) : '';
   const primaryGenre = (entity.genres && entity.genres.length > 0) ? entity.genres[0] : '';
@@ -852,6 +854,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   const ogImage = resolvedBackdrop || entity.cover;
 
+  const synopsis = [entity.description, entity.aiContent?.uniqueSynopsis].find((t) => !isFillerDescription(t)) || '';
+
   // 🌟 自动化构建全光谱长尾关键词与意图捕获矩阵 (Programmatic White-Hat SEO & Intent Harvesting)
   const seoSpectrum = generateFullSpectrumKeywords({
     title: displayTitle,
@@ -862,13 +866,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     actors: entity.actors,
     region: entity.region,
     numberOfEpisodes: entity.numberOfEpisodes,
-    description: entity.description,
+    // 占位套话不算简介：依次取真实简介、编辑简介，都没有就不写
+    description: synopsis,
   });
 
-  const hookPrefix = entity.aiContent?.hook ? `${entity.aiContent.hook} ` : '';
+  // 宣传语只在有真实简介时使用：没有简介时它只能凭片名想象剧情（准则 19）
+  const hook = synopsis ? entity.aiContent?.hook?.trim() || '' : '';
+  const hookPrefix = hook ? `${hook}${/[。！？!?…]$/.test(hook) ? '' : '。'}` : '';
   const metaDescription = `${hookPrefix}${seoSpectrum.metaDescription}`;
 
   return {
+    // 页面自身的 <title> 与 meta description（此前只写进了 openGraph/twitter，页面一直显示全站默认标题）
+    title: pageTitle,
+    description: metaDescription,
     // 依循规范 21.3 节：仅输出少量核心实体词，彻底杜绝 meta keyword 堆叠
     keywords: seoSpectrum.keywords.slice(0, 5),
     alternates: {
@@ -1113,8 +1123,8 @@ export default async function TitlePage({ params }: Props) {
           {isTv && entity.status ? (
             <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-white/70">{entity.status}</span>
           ) : null}
-          {entity.region && (
-            <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-white/60">{entity.region}</span>
+          {regionLabel(entity.region) && (
+            <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-white/60">{regionLabel(entity.region)}</span>
           )}
         </div>
 
@@ -1122,16 +1132,17 @@ export default async function TitlePage({ params }: Props) {
         {entity.genres && entity.genres.length > 0 ? (
           <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-5">
             {entity.genres.map(genre => {
-              const gInfo = getGenreBySlug(genre);
-              const href = gInfo ? `/genre/${gInfo.slug}` : `/genre/${encodeURIComponent(genre)}`;
-              return (
-                <Link
-                  key={genre}
-                  href={href}
-                  className="px-2.5 sm:px-3 py-0.5 sm:py-1 text-[11px] sm:text-xs font-semibold rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors border border-white/10"
-                >
+              // 只链接站内确有页面的题材（/genre/drama）；没有页面的题材只显示文字，避免死链
+              const href = genrePagePath(genre);
+              const chip = 'px-2.5 sm:px-3 py-0.5 sm:py-1 text-[11px] sm:text-xs font-semibold rounded-full bg-white/10 text-white/80 border border-white/10';
+              return href ? (
+                <Link key={genre} href={href} className={`${chip} hover:bg-white/20 hover:text-white transition-colors`}>
                   {genre}
                 </Link>
+              ) : (
+                <span key={genre} className={chip}>
+                  {genre}
+                </span>
               );
             })}
           </div>
@@ -1164,7 +1175,7 @@ export default async function TitlePage({ params }: Props) {
         <span>剧情梗概 (STORYLINE)</span>
       </h2>
       <p className="text-white/85 text-sm sm:text-base leading-relaxed">
-        {(!entity.description || entity.description.includes('是一部优质精彩影视作品')) && entity.aiContent?.uniqueSynopsis
+        {isFillerDescription(entity.description) && entity.aiContent?.uniqueSynopsis
           ? entity.aiContent.uniqueSynopsis
           : (entity.description || `${entity.title} 是一部优质的${entity.year || ''}年${channelName}作品。`)}
       </p>

@@ -14,8 +14,17 @@ import {
   KEYWORD_TEMPLATES,
   GENERIC_MODIFIERS,
 } from '@/lib/data/seo-rules/seo-keyword-system';
+import { regionLabel } from './region-label';
 
-
+/**
+ * Text that does not describe the title: a placeholder written when the synopsis was missing
+ * ("X 是 2025 年上线的优质电影。提供全网多源…"), or a write-up saying the story is not known yet
+ * ("截至现有公开资料…尚未披露"). Not shown as a description.
+ */
+export function isFillerDescription(text: string | null | undefined): boolean {
+  if (!text || !text.trim()) return true;
+  return /是一部优质|年上线的优质|提供全网多源|尽在\s*iKanPP|尚未披露|现有公开资料|仅从片名|构成臆测/.test(text);
+}
 
 export interface KeywordGeneratorInput {
   title: string;
@@ -113,7 +122,7 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
   const mediaLabel = isAnime ? '动漫' : isSeries ? '电视剧' : type === 'variety' ? '综艺' : type === 'documentary' ? '纪录片' : '电影';
 
   const primaryGenre = genres[0] || '';
-  const primaryCountry = region ? region.split(/[·,\s/]/)[0].slice(0, 4) : '';
+  const primaryCountry = regionLabel(region);
   const validActs = actors.filter(a => a && !['知名导演', '实力主演', '未知', '暂无'].includes(a.trim()));
   const validDirs = directors.filter(d => d && !['知名导演', '实力主演', '未知', '暂无'].includes(d.trim()));
   const primaryActor = validActs[0] || '';
@@ -250,7 +259,8 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
   if (primaryGenre) discoveryChips.push(`${primaryGenre}${mediaLabel}排行榜`);
 
   // ====== 9. 真实可信 Meta Description 构造 (依循规范第 9.2 节) ======
-  const tagParts = [year, primaryCountry, primaryGenre, mediaLabel].filter(Boolean);
+  // 去重：题材本身就是类型名（如「电影」）时只保留一次
+  const tagParts = Array.from(new Set([year, primaryCountry, primaryGenre, mediaLabel].filter(Boolean)));
   const signalPrefix = tagParts.length > 0 ? `【${tagParts.join('·')}】` : '';
 
   const castParts: string[] = [];
@@ -258,7 +268,7 @@ export function generateFullSpectrumKeywords(input: KeywordGeneratorInput): Keyw
   if (validActs.length > 0) castParts.push(`主演：${validActs.slice(0, 3).join('、')}`);
   const castStr = castParts.length > 0 ? `${castParts.join('；')}。` : '';
 
-  let cleanDesc = description
+  let cleanDesc = (isFillerDescription(description) ? '' : description)
     .replace(/(?:导演|主演)\s*[:：]\s*(?:知名导演|实力主演)[，。、\s]*/g, '')
     .replace(/在线观看，支持海外华人免翻墙极速高清播放。/g, '')
     .replace(/在线观看，全网高清影视资源。/g, '')

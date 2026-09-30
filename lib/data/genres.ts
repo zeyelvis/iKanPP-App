@@ -38,3 +38,23 @@ export function getGenreBySlug(slug: string): GenreInfo | null {
     desc: `精彩的${decodeURIComponent(slug)}题材影视作品推荐`,
   };
 }
+
+/** Names titles use for a genre that has a page under another name. */
+const GENRE_ALIASES: Record<string, string> = {
+  纪录: 'documentary',
+  动画: 'animation',
+};
+
+/**
+ * The path of a genre's page, by its name (剧情) or slug (drama); null when the site has no page
+ * for it. Only GENRE_MAP's genres have pages, under their slugs: /genre/剧情 is a 404.
+ */
+export function genrePagePath(nameOrSlug: string | null | undefined): string | null {
+  const key = (nameOrSlug || '').trim();
+  if (!key) return null;
+  const info =
+    GENRE_MAP[key.toLowerCase()] ??
+    Object.values(GENRE_MAP).find((g) => g.name === key) ??
+    (GENRE_ALIASES[key] ? GENRE_MAP[GENRE_ALIASES[key]] : undefined);
+  return info ? `/genre/${info.slug}` : null;
+}

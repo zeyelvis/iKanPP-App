@@ -3,6 +3,7 @@ import Link from 'next/link';
 import highPotentialData from '@/lib/data/seo-high-potential.json';
 import { generateFullSpectrumKeywords } from '@/lib/utils/seo-keyword-generator';
 import { TitleEntity } from '@/lib/types/entity';
+import { genrePagePath } from '@/lib/data/genres';
 
 interface RelatedSearchChipsProps {
   currentTitle: string;
@@ -18,10 +19,11 @@ const KNOWN_GENRES = [
 function resolveCanonicalHref(query: string, currentGenre?: string, entity?: TitleEntity): string | null {
   const cleanQ = query.trim();
 
-  // 1. 优先匹配题材分类 (/genre/[name])
+  // 1. 优先匹配题材分类：只链接站内确有页面的题材（/genre/drama），中文题材网址是 404
   for (const g of KNOWN_GENRES) {
     if (cleanQ.includes(g)) {
-      return `/genre/${encodeURIComponent(g)}`;
+      const path = genrePagePath(g);
+      if (path) return path;
     }
   }
 
@@ -43,8 +45,9 @@ function resolveCanonicalHref(query: string, currentGenre?: string, entity?: Tit
   }
 
   // 3. 兜底回退到当前作品的合法分类
-  if (currentGenre && KNOWN_GENRES.includes(currentGenre)) {
-    return `/genre/${encodeURIComponent(currentGenre)}`;
+  const currentGenrePath = currentGenre && KNOWN_GENRES.includes(currentGenre) ? genrePagePath(currentGenre) : null;
+  if (currentGenrePath) {
+    return currentGenrePath;
   }
 
   if (entity?.type) {
