@@ -194,8 +194,15 @@ html.ng-player-full body {
   align-items: center !important;
   justify-content: space-between !important;
   height: 40px !important;
-  padding: 0 16px 4px 16px !important;
+  padding: 0 16px !important;
   box-sizing: border-box !important;
+}
+
+/* 图标只用弹性居中。xgplayer 自带的 top: 50% + translateY(-50%) 是给从顶部排起的图标用的，
+   和上面的弹性居中叠加后，每个图标会再往下偏（按钮高 − 图标高）÷ 2，按钮高度不同就高低不齐 */
+.xgplayer xg-icon .xgplayer-icon {
+  top: 0 !important;
+  transform: none !important;
 }
 
 /* 4. 左侧网格：播放按钮 + 下一集 + 时间显示（同水平线垂直居中，1:1 对齐参考图） */
@@ -335,6 +342,26 @@ html.ng-player-full body {
   color: rgba(255, 255, 255, 0.65) !important;
 }
 
+/* 手机：xgplayer 把时间放进中间一栏（当前时间 · 进度条 · 总时长），左侧那份时间要隐藏；
+   上面的 display: flex !important 会把它强制显示出来，挤到第二行，进度条只剩一小截 */
+.xgplayer-mobile .xg-left-grid .xgplayer-time {
+  display: none !important;
+}
+/* 按钮一行排开，不换行；进度条占满中间剩余宽度 */
+.xgplayer .xg-left-grid,
+.xgplayer .xg-right-grid {
+  flex-wrap: nowrap !important;
+  flex-shrink: 0 !important;
+}
+.xgplayer .xg-center-grid {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+.xgplayer-mobile .xg-left-grid,
+.xgplayer-mobile .xg-right-grid {
+  gap: 12px !important;
+}
+
 /* 5. 右侧网格：绝对 1:1 对齐用户参考图顺序：画中画(1) -> 1x倍速(2) -> 音量(3) -> 网页全屏(4) -> 全屏(5) */
 .xgplayer .xg-right-grid {
   display: flex !important;
@@ -412,24 +439,31 @@ html.ng-player-full body {
   fill: #FFFFFF !important;
 }
 
-/* 倍速按钮：1:1 绝对复刻参考图中的黑色微透圆角胶囊 (pill) [1x] */
+/* 倍速：纯文字「1x」，和其他图标同一条线 */
 .xgplayer .xgplayer-playbackrate {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  height: 22px !important;
-  min-width: 36px !important;
-  padding: 0 10px !important;
-  border-radius: 9999px !important;
-  background: rgba(0, 0, 0, 0.45) !important;
+  height: 26px !important;
+  min-width: 28px !important;
+  padding: 0 2px !important;
+  background: transparent !important;
   border: none !important;
   cursor: pointer !important;
-  transition: background 0.15s ease, opacity 0.15s ease !important;
+  transition: opacity 0.15s ease !important;
   user-select: none !important;
   box-sizing: border-box !important;
 }
 .xgplayer .xgplayer-playbackrate:hover {
-  background: rgba(0, 0, 0, 0.7) !important;
+  opacity: 0.8 !important;
+}
+/* 宽度随文字（xgplayer 默认给文字按钮的文字 52px 最小宽度，手机上会把进度条挤短） */
+.xgplayer .xgplayer-playbackrate,
+.xgplayer .xgplayer-playbackrate .xgplayer-icon.btn-text {
+  width: auto !important;
+}
+.xgplayer .xgplayer-playbackrate .btn-text span {
+  min-width: 0 !important;
 }
 .xgplayer .xgplayer-playbackrate:active {
   transform: scale(0.95) !important;
@@ -445,10 +479,10 @@ html.ng-player-full body {
 }
 .xgplayer .xgplayer-playbackrate .icon-text,
 .xgplayer .xgplayer-playbackrate span {
-  font-size: 12px !important;
+  font-size: 14px !important;
   font-weight: 500 !important;
   color: #FFFFFF !important;
-  line-height: 22px !important;
+  line-height: 26px !important;
   letter-spacing: 0.2px !important;
   white-space: nowrap !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
@@ -684,7 +718,7 @@ html.ng-player-full body {
 .xgplayer .xgplayer-progress-played {
   display: block !important;
   height: 100% !important;
-  background: #FFFFFF !important;
+  background: #EF4444 !important;
   border-radius: inherit !important;
   position: absolute !important;
   top: 0 !important;

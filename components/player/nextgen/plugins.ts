@@ -458,7 +458,7 @@ export function createPlayer(options: {
   onSources?: () => void;
 }): SimplePlayer {
   const isMobile = detectIsMobileClient();
-  const accent = '#FFFFFF';
+  const accent = '#EF4444';
 
   return new SimplePlayer({
     el: options.el,
@@ -484,16 +484,15 @@ export function createPlayer(options: {
       Time,
       TitleBar,
       CastButton,
-      CssFullScreen,
       EpisodesButton,
       PlaybackRate,
-      Volume,
-      PIP,
       Fullscreen,
       Poster,
       Loading,
       Enter,
-      ...(isMobile ? [MobilePlugin, LockButton] : [Keyboard, PCPlugin]),
+      // Phones, as the reference player: volume is on the hardware buttons and the swipe gesture;
+      // with 画中画 and 网页全屏 too, the buttons did not fit one row beside the progress bar.
+      ...(isMobile ? [MobilePlugin, LockButton] : [Volume, PIP, CssFullScreen, Keyboard, PCPlugin]),
     ],
     ngPrev: { index: 0, onClick: options.onPrev },
     ngBack10: { index: 1 },
