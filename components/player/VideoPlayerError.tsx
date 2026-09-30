@@ -5,7 +5,8 @@ import { Icons } from '@/components/ui/Icon';
 
 interface VideoPlayerErrorProps {
     error: string;
-    onBack: () => void;
+    /** The back button; none when absent (the player is embedded in a title page). */
+    onBack?: () => void;
     onRetry: () => void;
     retryCount: number;
     maxRetries: number;
@@ -49,13 +50,15 @@ export function VideoPlayerError({
 
                 {/* Action Buttons */}
                 <div className="flex gap-3 justify-center flex-wrap">
-                    <button
-                        onClick={onBack}
-                        className="btn-glass px-4 py-2 flex items-center gap-2 cursor-pointer"
-                    >
-                        <Icons.ChevronLeft size={18} />
-                        <span>返回</span>
-                    </button>
+                    {onBack ? (
+                        <button
+                            onClick={onBack}
+                            className="btn-glass px-4 py-2 flex items-center gap-2 cursor-pointer"
+                        >
+                            <Icons.ChevronLeft size={18} />
+                            <span>返回</span>
+                        </button>
+                    ) : null}
                     <button
                         onClick={() => {
                             const el = document.getElementById('source-selector-section');

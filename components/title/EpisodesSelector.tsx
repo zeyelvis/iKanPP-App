@@ -1,13 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Play, Tv, Sparkles } from 'lucide-react';
-import { useHistoryStore } from '@/lib/store/history-store';
+import { writeWatchFragment } from '@/lib/client/watch-fragment';
+import { useTitleHistory } from '@/lib/store/title-history';
 import { extractEpisodeNumber, cleanEpisodeName } from '@/lib/utils/episode-resolver';
 import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
-import { fetchTitleProbe, subscribeTitleProbe, getCachedTitleProbe } from '@/lib/utils/title-probe';
-import { isValidSourceId } from '@/lib/api/video-sources';
+import { fetchTitleProbe, subscribeTitleProbe } from '@/lib/utils/title-probe';
 
 interface SpecialEpisodeItem {
   name: string;
@@ -15,26 +14,25 @@ interface SpecialEpisodeItem {
 }
 
 interface EpisodesSelectorProps {
-  entityId: string;
   title: string;
   type: string;
   totalEpisodes?: number;
   numberOfSeasons?: number;
   currentSeason?: number;
   episodeHighlights?: Record<number, string>;
+  /** `panel`: the narrow column beside the player on a title page. */
+  layout?: 'wide' | 'panel';
 }
 
 export function EpisodesSelector({
-  entityId,
   title,
   type,
   totalEpisodes = 24,
   numberOfSeasons = 1,
   currentSeason = 1,
   episodeHighlights,
+  layout = 'wide',
 }: EpisodesSelectorProps) {
-  const router = useRouter();
-  const { viewingHistory } = useHistoryStore();
   const [hoveredEpisode, setHoveredEpisode] = useState<number | null>(null);
 
   // 智能提取母片名与当前季数
@@ -48,16 +46,19 @@ export function EpisodesSelector({
     ? `${baseTitle}第${selectedSeason}季`
     : (parsed && parsed.seasonNumber === 1 ? `${baseTitle}第1季` : (numberOfSeasons > 1 ? `${baseTitle}第1季` : title));
 
+  // This title's history entry, not the whole history: the player on this page saves the
+  // position every 5 seconds, which re-ran the episode lookup below each time (铁律 22).
+  const historyItem = useTitleHistory([activeTitle, title], { progress: false });
+
   // 动态真实集数状态（初始以传入的 totalEpisodes 兜底，探测到真实源后自动精确对齐）
   const [realTotalEpisodes, setRealTotalEpisodes] = useState<number | null>(null);
   const [realEpisodeNames, setRealEpisodeNames] = useState<Record<number, string>>({});
   const [specialEpisodes, setSpecialEpisodes] = useState<SpecialEpisodeItem[]>([]);
-  const [realSource, setRealSource] = useState<string | null>(null);
-  const [realVodId, setRealVodId] = useState<string | number | null>(null);
 
   const count = Math.max(1, realTotalEpisodes ?? totalEpisodes ?? (type === 'tv' ? 24 : 1));
 
-  const [currentEpisode, setCurrentEpisode] = useState<number>(1);
+  // 仅在有观看记录或刚选过集时标记「在看」
+  const [currentEpisode, setCurrentEpisode] = useState<number | null>(null);
   const [watchedEpisodes, setWatchedEpisodes] = useState<Set<number>>(new Set());
   const [activeTab, setActiveTab] = useState<number>(0);
 
@@ -73,20 +74,7 @@ export function EpisodesSelector({
     setSpecialEpisodes([]);
 
     // 1. 本地播放历史优先快速填充
-    const historyItem = viewingHistory.find(
-      h => h.title?.trim().toLowerCase() === activeTitle.trim().toLowerCase() ||
-           h.title?.trim().toLowerCase() === title.trim().toLowerCase()
-    );
-
     if (historyItem?.episodes && historyItem.episodes.length > 0) {
-      if (historyItem.source && isValidSourceId(historyItem.source)) {
-        setRealSource(historyItem.source);
-        if (historyItem.videoId) setRealVodId(historyItem.videoId);
-      } else {
-        setRealSource(null);
-        setRealVodId(null);
-      }
-
       const nameMap: Record<number, string> = {};
       let maxHistoryEp = 0;
       const historySpecials: SpecialEpisodeItem[] = [];
@@ -119,8 +107,6 @@ export function EpisodesSelector({
       if (cancelled) return;
       if (data && data.success && data.totalEpisodes && data.totalEpisodes > 0) {
         setRealTotalEpisodes(data.totalEpisodes);
-        if (data.source && isValidSourceId(data.source)) setRealSource(data.source);
-        if (data.id) setRealVodId(data.id);
 
         if (Array.isArray(data.specialEpisodes) && data.specialEpisodes.length > 0) {
           setSpecialEpisodes(data.specialEpisodes);
@@ -153,15 +139,10 @@ export function EpisodesSelector({
       cancelled = true;
       unsubscribe();
     };
-  }, [activeTitle, title, viewingHistory]);
+  }, [activeTitle, historyItem]);
 
   useEffect(() => {
     // 从播放历史中定位该影视的观看集数
-    const historyItem = viewingHistory.find(
-      h => h.title?.trim().toLowerCase() === activeTitle.trim().toLowerCase() ||
-           h.title?.trim().toLowerCase() === title.trim().toLowerCase()
-    );
-
     if (historyItem) {
       // 优先从历史切片名称精确提取真实正片编号，杜绝因特别篇插塞导致的下标偏移
       const currentEpObj = historyItem.episodes?.[historyItem.episodeIndex];
@@ -181,58 +162,18 @@ export function EpisodesSelector({
       }
       setWatchedEpisodes(set);
     }
-  }, [activeTitle, title, viewingHistory, count, GROUP_SIZE]);
+  }, [historyItem, count, GROUP_SIZE]);
 
+  // Episodes play in the page's player (WatchStage), which picks the line by what plays best
+  // in the viewer's country: only the episode and season go into the fragment.
+  const seasonForPlayer = numberOfSeasons > 1 || selectedSeason > 1 ? selectedSeason : null;
   const handleSelectEpisode = (ep: number) => {
-    let playId = realVodId;
-    let playSource = realSource;
-
-    const cached = getCachedTitleProbe(activeTitle);
-    if (cached?.source === 'juliang' && cached.id) {
-      playId = cached.id;
-      playSource = 'juliang';
-    }
-
-    const params = new URLSearchParams({
-      entity: entityId,
-      title: activeTitle,
-      type: type === 'tv' ? 'tv' : 'movie',
-      episode: String(ep),
-    });
-    if (selectedSeason && selectedSeason > 0) {
-      params.set('season', String(selectedSeason));
-    }
-    if (playId && playSource && isValidSourceId(playSource)) {
-      params.set('id', String(playId));
-      params.set('source', playSource);
-    }
-    router.push(`/player?${params.toString()}`);
+    setCurrentEpisode(ep);
+    writeWatchFragment({ ep: String(ep), season: seasonForPlayer }, { reveal: true });
   };
 
   const handleSelectSpecial = (special: SpecialEpisodeItem) => {
-    let playId = realVodId;
-    let playSource = realSource;
-
-    const cached = getCachedTitleProbe(activeTitle);
-    if (cached?.source === 'juliang' && cached.id) {
-      playId = cached.id;
-      playSource = 'juliang';
-    }
-
-    const params = new URLSearchParams({
-      entity: entityId,
-      title: activeTitle,
-      type: type === 'tv' ? 'tv' : 'movie',
-      episode: special.name,
-    });
-    if (selectedSeason && selectedSeason > 0) {
-      params.set('season', String(selectedSeason));
-    }
-    if (playId && playSource && isValidSourceId(playSource)) {
-      params.set('id', String(playId));
-      params.set('source', playSource);
-    }
-    router.push(`/player?${params.toString()}`);
+    writeWatchFragment({ ep: special.name, season: seasonForPlayer }, { reveal: true });
   };
 
   // 生成当前分页的集数数组
@@ -318,7 +259,7 @@ export function EpisodesSelector({
       </div>
 
       {/* 集数矩阵网格 */}
-      <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2 sm:gap-2.5">
+      <div className={`grid gap-2 sm:gap-2.5 ${layout === 'panel' ? 'grid-cols-5 sm:grid-cols-8 lg:grid-cols-5' : 'grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12'}`}>
         {episodeList.map(ep => {
           const isCurrent = ep === currentEpisode;
           const isWatched = watchedEpisodes.has(ep);
@@ -368,8 +309,8 @@ export function EpisodesSelector({
 
       {/* 官方团队分集精选看点导视 (悬停或当前在看集数) */}
       {(() => {
-        const activeEpNum = hoveredEpisode || currentEpisode;
-        const activeHighlight = episodeHighlights?.[activeEpNum];
+        const activeEpNum = hoveredEpisode ?? currentEpisode;
+        const activeHighlight = activeEpNum != null ? episodeHighlights?.[activeEpNum] : undefined;
         if (!activeHighlight) return null;
 
         return (

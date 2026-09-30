@@ -118,27 +118,12 @@ const KnowledgeCard = memo(function KnowledgeCard({
           : '连载剧集'
     : '高清电影';
 
+  // 详情页即播放页：播放按钮直达详情页，在页内原地起播（集数与季数写在 # 片段里）
   const latestSeasonNum = entity.numberOfSeasons || 1;
-  const latestSeasonPlayUrl = `/player?${new URLSearchParams({
-    title: `${entity.title}第${latestSeasonNum}季`,
-    type: 'tv',
-    episode: '1',
-    season: String(latestSeasonNum),
-  }).toString()}`;
-
-  const season1PlayUrl = `/player?${new URLSearchParams({
-    title: entity.title,
-    type: 'tv',
-    episode: '1',
-    season: '1',
-  }).toString()}`;
-
-  const playUrl = `/player?${new URLSearchParams({
-    title: effectiveTitle,
-    type: isSeries ? 'tv' : 'movie',
-    episode: '1',
-    ...(userSeasonInfo ? { season: String(userSeasonInfo.seasonNumber) } : {}),
-  }).toString()}`;
+  const baseDetailUrl = getTitleCanonicalHref(entity);
+  const latestSeasonPlayUrl = `${baseDetailUrl}#s=${latestSeasonNum}&ep=1`;
+  const season1PlayUrl = `${baseDetailUrl}#s=1&ep=1`;
+  const playUrl = `${detailUrl}#play`;
 
   return (
     <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-neutral-950/80 backdrop-blur-xl group transition-all duration-300 hover:border-white/20 flex flex-col justify-between h-full">

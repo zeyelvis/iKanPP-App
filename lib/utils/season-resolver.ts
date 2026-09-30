@@ -167,3 +167,16 @@ export function matchesTargetSeason(vodName: string, targetSeason: number): bool
   }
   return parsed.seasonNumber === targetSeason;
 }
+
+/**
+ * The name the player searches the sources by for a season of a title: 片名第N季 for later
+ * seasons, 片名第1季 when the show has several, else the title itself (as the episode selector).
+ */
+export function seasonPlayTitle(title: string, season: number | null | undefined, numberOfSeasons = 1): string {
+  const parsed = parseSeasonFromTitle(title);
+  const base = parsed ? parsed.baseTitle : title;
+  const s = season ?? parsed?.seasonNumber ?? 1;
+  if (s > 1) return `${base}第${s}季`;
+  if ((parsed && parsed.seasonNumber === 1) || numberOfSeasons > 1) return `${base}第1季`;
+  return title;
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, type ReadonlyURLSearchParams } from 'next/navigation';
 import { settingsStore } from '@/lib/store/settings-store';
 import { resolveEpisodeIndex } from '@/lib/utils/episode-resolver';
 
@@ -41,7 +41,9 @@ export function useVideoPlayer(
   title?: string | null,
   seasonParam?: string | null,
   expectedEpisodes?: number | null,
-  aliases?: string[] | string | null
+  aliases?: string[] | string | null,
+  /** The playback state (type, year) when it is not the page's query string (a title page). */
+  stateParams?: URLSearchParams | ReadonlyURLSearchParams | null
 ): UseVideoPlayerReturn {
   const [videoData, setVideoData] = useState<VideoData | null>(null);
   // Initialize loading to true if we have the necessary params to start fetching
@@ -49,7 +51,8 @@ export function useVideoPlayer(
   const [currentEpisode, setCurrentEpisode] = useState(0);
   const [playUrl, setPlayUrl] = useState('');
   const [videoError, setVideoError] = useState<string>('');
-  const searchParams = useSearchParams();
+  const pageParams = useSearchParams();
+  const searchParams = stateParams ?? pageParams;
   const currentCategory = searchParams?.get('type') || searchParams?.get('category') || '';
   const currentYear = searchParams?.get('year') || '';
 

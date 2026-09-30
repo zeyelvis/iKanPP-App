@@ -19,8 +19,7 @@ import { AiOverviewCapsule } from '@/components/seo/AiOverviewCapsule';
 import highPotentialKeywordsData from '@/lib/data/seo-high-potential.json';
 import { TitleActionsBar } from '@/components/title/TitleActionsBar';
 import { EpisodesSelector } from '@/components/title/EpisodesSelector';
-import { StickyBottomPlayCTA } from '@/components/title/StickyBottomPlayCTA';
-import { MobileHeroStage } from '@/components/title/MobileHeroStage';
+import { WatchStage } from '@/components/title/WatchStage';
 import { CastRail } from '@/components/title/CastRail';
 import { AiUniqueReview } from '@/components/title/AiUniqueReview';
 import { AiFaqSection } from '@/components/title/AiFaqSection';
@@ -1019,7 +1018,7 @@ export default async function TitlePage({ params }: Props) {
       title: item.title,
       cover: item.cover,
       backdrop: item.backdrop || item.cover,
-      year: item.year || '2026',
+      year: item.year || '',
       type: (item.type || entity.type) as 'movie' | 'tv' | 'anime',
       genres: item.types || [primaryGenre],
       directors: item.directors || [],
@@ -1046,6 +1045,137 @@ export default async function TitlePage({ params }: Props) {
   const isTrueBackdrop = !isFakeBackdrop(resolvedBackdrop, entity.cover);
   const heroBackdrop = getOptimizedImageUrl(resolvedBackdrop || entity.cover, { variant: 'backdrop', isChinaMainland });
   const entityCover = getOptimizedImageUrl(entity.cover, { variant: 'detail', isChinaMainland });
+
+  // 片头信息：播放区下方（开播后仍在播放器下方）。只展示真实数据（铁律 19）。
+  const header = (
+    <article className="flex gap-4 sm:gap-6">
+      {entity.cover ? (
+        <div className="hidden sm:block relative shrink-0 w-28 lg:w-32 aspect-2/3 rounded-xl overflow-hidden border border-white/15 bg-black/40 shadow-xl shadow-black/60">
+          <Image src={entityCover} alt={`${entity.title} 封面海报`} fill sizes="128px" className="object-cover" />
+        </div>
+      ) : null}
+      <div className="min-w-0 flex-1 flex flex-col items-start text-left">
+        {/* 唯一语义主标题 H1 */}
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight mb-2 sm:mb-3 flex flex-wrap items-center gap-2 sm:gap-3">
+          <span>{entity.title}</span>
+          {isSeasonSpecified && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-xl bg-red-600/90 text-white font-black text-sm sm:text-lg tracking-wide">
+              {seasonTag}
+            </span>
+          )}
+          {entity.originalTitle && entity.originalTitle !== entity.title && (
+            <span className="w-full block text-xs sm:text-base font-light text-white/50 tracking-normal font-sans">
+              {entity.originalTitle}
+            </span>
+          )}
+        </h1>
+
+        {/* 港台公映译名徽章 */}
+        {(entity.aiContent?.taiwanTitle || entity.aiContent?.hongkongTitle) && (
+          <div className="w-full flex flex-wrap items-center gap-2 mb-2 sm:mb-3 text-xs sm:text-sm font-medium">
+            {entity.aiContent.taiwanTitle && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
+                <FlagTW className="w-3.5 h-2.5 sm:w-4 sm:h-3" />
+                <span>台译：</span>
+                <strong className="font-bold text-white">{entity.aiContent.taiwanTitle}</strong>
+              </span>
+            )}
+            {entity.aiContent.hongkongTitle && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+                <FlagHK className="w-3.5 h-2.5 sm:w-4 sm:h-3" />
+                <span>港译：</span>
+                <strong className="font-bold text-white">{entity.aiContent.hongkongTitle}</strong>
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* 基本信息：评分 / 年份 / 时长 / 集数 / 地区 */}
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-white/80 mb-2.5 sm:mb-4">
+          {entity.rate && (
+            <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold">
+              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+              {entity.rate} 分
+            </span>
+          )}
+          {entity.year && (
+            <span className="px-2 py-0.5 rounded-md bg-white/10 border border-white/10 font-semibold">{entity.year}</span>
+          )}
+          {entity.runtime ? (
+            <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-white/60">
+              <Clock className="w-3 h-3" />
+              {entity.runtime} 分钟
+            </span>
+          ) : null}
+          {isTv && entity.numberOfEpisodes && entity.numberOfEpisodes > 1 ? (
+            <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-white/70">共 {entity.numberOfEpisodes} 集</span>
+          ) : null}
+          {isTv && entity.status ? (
+            <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-white/70">{entity.status}</span>
+          ) : null}
+          {entity.region && (
+            <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-white/60">{entity.region}</span>
+          )}
+        </div>
+
+        {/* 题材分类标签 */}
+        {entity.genres && entity.genres.length > 0 ? (
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-5">
+            {entity.genres.map(genre => {
+              const gInfo = getGenreBySlug(genre);
+              const href = gInfo ? `/genre/${gInfo.slug}` : `/genre/${encodeURIComponent(genre)}`;
+              return (
+                <Link
+                  key={genre}
+                  href={href}
+                  className="px-2.5 sm:px-3 py-0.5 sm:py-1 text-[11px] sm:text-xs font-semibold rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors border border-white/10"
+                >
+                  {genre}
+                </Link>
+              );
+            })}
+          </div>
+        ) : null}
+
+        {/* 主控行动区 (播放 / 追剧清单 / 分享 / 推荐) */}
+        <div className="w-full">
+          <TitleActionsBar
+            entity={entity}
+            playTitle={effectiveSearchTitle}
+            relatedTitles={combinedRelated.slice(0, 6).map(r => ({
+              entityId: r.entityId,
+              slug: r.slug,
+              title: r.title,
+              cover: r.cover,
+              year: r.year,
+              rate: r.rate,
+            }))}
+          />
+        </div>
+      </div>
+    </article>
+  );
+
+  // AEO 剧情梗概 (Storyline / Answer Capsule)
+  const storyline = (
+    <section className="p-5 sm:p-7 rounded-2xl bg-white/4 border border-white/10 shadow-xl">
+      <h2 className="text-xs uppercase tracking-wider font-bold text-white/40 mb-3 flex items-center gap-2">
+        <span>📖</span>
+        <span>剧情梗概 (STORYLINE)</span>
+      </h2>
+      <p className="text-white/85 text-sm sm:text-base leading-relaxed">
+        {(!entity.description || entity.description.includes('是一部优质精彩影视作品')) && entity.aiContent?.uniqueSynopsis
+          ? entity.aiContent.uniqueSynopsis
+          : (entity.description || `${entity.title} 是一部优质的${entity.year || ''}年${channelName}作品。`)}
+      </p>
+
+      {/* E-E-A-T 影视背书 */}
+      <div className="flex items-center gap-2 text-xs text-white/35 mt-5 pt-4 border-t border-white/5">
+        <span>🛡️</span>
+        <span>影视资料由 iKanPP 影视库团队整理校对</span>
+      </div>
+    </section>
+  );
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white selection:bg-red-600 selection:text-white relative">
@@ -1078,275 +1208,67 @@ export default async function TitlePage({ params }: Props) {
         }}
       />
 
-      {/* 顶部导航：在大剧照上方全透明浮动穿透，与首页/各频道 100% 保持一致 */}
-      <Navbar
-        activeCategory={entity.type === 'tv' ? 'tv' : 'movie'}
-        transparentFloat={Boolean(heroBackdrop)}
-      />
+      <Navbar activeCategory={entity.type === 'tv' ? 'tv' : 'movie'} />
 
-      {/* Netflix 级沉浸式通顶全屏背景大画幅 (Hero Billboard Backdrop) */}
-      <div className="relative w-full overflow-hidden">
-        {heroBackdrop && (
-          <div className="absolute inset-x-0 top-0 h-[68vh] sm:h-[80vh] lg:h-[88vh] w-full select-none pointer-events-none z-0">
-            <Image
-              src={heroBackdrop}
-              alt={`${entity.title} 剧照大图`}
-              fill
-              priority
-              sizes="100vw"
-              className={
-                isTrueBackdrop
-                  ? "object-cover object-center opacity-30 sm:opacity-45 lg:opacity-55 filter brightness-95 saturate-[1.15] transition-all duration-700"
-                  : "object-cover object-top opacity-20 filter blur-3xl scale-125 transition-all duration-700"
-              }
-            />
-            {/* 1. 顶部自然防眩羽化遮罩：柔和保护全透明浮动 Navbar 文字与搜索框 */}
-            <div
-              className="absolute inset-x-0 top-0 pointer-events-none"
-              style={{
-                height: '180px',
-                background: 'linear-gradient(to bottom, rgba(10, 10, 15, 0.88) 0%, rgba(10, 10, 15, 0.5) 45%, rgba(10, 10, 15, 0.15) 75%, transparent 100%)',
-              }}
-            />
-            {/* 2. 底部自然平滑羽化：向上优雅延展约 320px，与下方内容完全无缝融合 */}
-            <div
-              className="absolute inset-x-0 bottom-0 pointer-events-none"
-              style={{
-                height: '320px',
-                background: 'linear-gradient(to top, #0A0A0F 0%, rgba(10, 10, 15, 0.95) 25%, rgba(10, 10, 15, 0.65) 55%, rgba(10, 10, 15, 0.18) 82%, transparent 100%)',
-              }}
-            />
-            {/* 3. 侧边向右压暗文字背景 */}
-            <div className="absolute inset-0 bg-linear-to-r from-[#0A0A0F] via-[#0A0A0F]/85 to-transparent sm:max-w-4xl" />
-          </div>
-        )}
+      {/* 播放区：详情页即播放页，在本页原地播放 */}
+      <div className="relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 pb-10">
+        {/* 面包屑导航 (Breadcrumbs) */}
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-sm text-white/50 mb-3 sm:mb-5 overflow-x-auto whitespace-nowrap scrollbar-none">
+          <Link href="/" className="hover:text-white transition-colors">
+            首页
+          </Link>
+          <span>/</span>
+          <Link href={channelPath} className="hover:text-white transition-colors">
+            {channelName}
+          </Link>
+          <span>/</span>
+          <span className="text-white/80 font-medium truncate max-w-[180px] sm:max-w-xs">
+            {entity.title}
+            {isSeasonSpecified && <span className="text-red-400 font-bold ml-1.5">{seasonTag}</span>}
+          </span>
+        </nav>
 
-        {/* 核心视觉区：有通顶大图时优雅避让浮动 Navbar */}
-        <div className={`relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 z-10 ${
-          heroBackdrop ? 'pt-20 sm:pt-24 lg:pt-28' : 'pt-4 sm:pt-8'
-        }`}>
-          {/* 面包屑导航 (Breadcrumbs) - 移动端紧凑排布 */}
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-sm text-white/50 mb-2.5 sm:mb-8 overflow-x-auto whitespace-nowrap scrollbar-none">
-            <Link href="/" className="hover:text-white transition-colors">
-              首页
-            </Link>
-            <span>/</span>
-            <Link href={channelPath} className="hover:text-white transition-colors">
-              {channelName}
-            </Link>
-            <span>/</span>
-            <span className="text-white/80 font-medium truncate max-w-[180px] sm:max-w-xs">
-              {entity.title}
-              {isSeasonSpecified && <span className="text-red-400 font-bold ml-1.5">{seasonTag}</span>}
-            </span>
-          </nav>
-
-          {/* 影视主体大横幅 (Hero Article) */}
-          <article className="grid grid-cols-1 md:grid-cols-12 gap-2.5 md:gap-8 lg:gap-12 pb-4 sm:pb-16 items-end">
-            {/* 左侧海报区：移动端 16:9 宽屏剧照舞台（点击秒播） vs 桌面端 2:3 立体大悬浮海报 */}
-            <div className="md:col-span-4 lg:col-span-3">
-              {/* 1. 移动端 16:9 全画幅沉浸式舞台 (仅在小于 md 渲染，带源秒开直达快车道) */}
-              <div className="block md:hidden w-full mb-1">
-                <MobileHeroStage
-                  entityId={entity.entityId}
+        <WatchStage
+          entityId={entity.entityId}
+          playTitle={effectiveSearchTitle}
+          displayTitle={entity.title}
+          type={entity.type}
+          year={entity.year}
+          numberOfSeasons={entity.numberOfSeasons || 1}
+          season={seasonInfo?.seasonNumber ?? null}
+          still={heroBackdrop || null}
+          stillIsPoster={!isTrueBackdrop}
+          header={header}
+          panel={
+            isTv ? (
+              <section aria-label="选集" className="p-4 sm:p-5 rounded-2xl bg-white/4 border border-white/10 shadow-xl">
+                <EpisodesSelector
                   title={effectiveSearchTitle}
                   type={entity.type}
-                  heroBackdrop={heroBackdrop}
-                  displayTitle={entity.title}
+                  totalEpisodes={entity.numberOfEpisodes || 24}
+                  numberOfSeasons={entity.numberOfSeasons || 1}
+                  currentSeason={seasonInfo?.seasonNumber || 1}
+                  episodeHighlights={entity.aiContent?.episodeHighlights}
+                  layout="panel"
                 />
-              </div>
-
-              {/* 2. 桌面端 2:3 黄金比例悬浮立体海报 (hidden md:block) */}
-              <div className="hidden md:block relative aspect-2/3 w-full max-w-[260px] lg:max-w-[290px] rounded-2xl overflow-hidden shadow-2xl shadow-black/80 border border-white/15 bg-black/40 group">
-                {entity.cover ? (
-                  <Image
-                    src={entityCover}
-                    alt={`${entity.title} 封面海报`}
-                    fill
-                    sizes="(max-width: 768px) 280px, (max-width: 1200px) 25vw, 320px"
-                    priority
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-white/30">
-                    <Film className="w-12 h-12" />
-                  </div>
-                )}
-                {/* 海报右上角悬浮评分 */}
-                {entity.rate && (
-                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-xl bg-black/75 backdrop-blur-md border border-amber-500/30 flex items-center gap-1 shadow-lg">
-                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                    <span className="font-black text-amber-400 text-xs sm:text-sm">{entity.rate}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* 右侧：电影巨幕主标题、规格徽章与行动栏 (移动端全宽自适应，桌面端网格靠左) */}
-            <div className="w-full md:col-span-8 lg:col-span-9 flex flex-col justify-end items-start text-left">
-              {/* 唯一语义主标题 H1 */}
-              <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight mb-1.5 sm:mb-3 drop-shadow-md text-left flex flex-wrap items-center gap-2 sm:gap-3">
-                <span>{entity.title}</span>
-                {isSeasonSpecified && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-xl bg-red-600/90 text-white font-black text-sm sm:text-2xl lg:text-3xl tracking-wide shadow-lg shadow-red-950/40">
-                    {seasonTag}
-                  </span>
-                )}
-                {entity.originalTitle && entity.originalTitle !== entity.title && (
-                  <span className="w-full block text-xs sm:text-2xl font-light text-white/50 mt-0.5 sm:mt-1 tracking-normal font-sans">
-                    {entity.originalTitle}
-                  </span>
-                )}
-              </h1>
-
-              {/* 港台公映译名徽章 (场景 5：通吃全球泛华语搜索流量) */}
-              {(entity.aiContent?.taiwanTitle || entity.aiContent?.hongkongTitle) && (
-                <div className="w-full flex flex-wrap items-center gap-2 mb-2 sm:mb-4 text-xs sm:text-sm font-medium">
-                  {entity.aiContent.taiwanTitle && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
-                      <FlagTW className="w-3.5 h-2.5 sm:w-4 sm:h-3" />
-                      <span>台译：</span>
-                      <strong className="font-bold text-white">{entity.aiContent.taiwanTitle}</strong>
-                    </span>
-                  )}
-                  {entity.aiContent.hongkongTitle && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
-                      <FlagHK className="w-3.5 h-2.5 sm:w-4 sm:h-3" />
-                      <span>港译：</span>
-                      <strong className="font-bold text-white">{entity.aiContent.hongkongTitle}</strong>
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {/* Netflix 风格视听规格徽章行 */}
-              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2.5 text-xs sm:text-sm text-white/80 mb-2 sm:mb-6">
-                {/* 评分胶囊 */}
-                {entity.rate && (
-                  <span className="flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md sm:rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold text-[11px] sm:text-sm">
-                    ★ {entity.rate} 分
-                  </span>
-                )}
-
-                {/* 年份 */}
-                <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md sm:rounded-lg bg-white/10 border border-white/10 font-semibold text-[11px] sm:text-sm">
-                  {entity.year || '2024'}
-                </span>
-
-                {/* 画质规格徽章 */}
-                <span className="px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-black bg-red-600/90 text-white tracking-wider border border-red-500/40">
-                  4K ULTRA HD
-                </span>
-                <span className="px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold bg-white/10 text-white/90 border border-white/15">
-                  HDR10
-                </span>
-                <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[11px] font-bold bg-white/10 text-white/90 border border-white/15">
-                  DOLBY ATMOS
-                </span>
-
-                {/* 时长 / 集数 */}
-                {entity.runtime ? (
-                  <span className="flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md sm:rounded-lg bg-white/5 border border-white/10 text-white/60 text-[11px] sm:text-sm">
-                    <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                    {entity.runtime} 分钟
-                  </span>
-                ) : null}
-
-                {isTv && (
-                  <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md sm:rounded-lg bg-white/5 border border-white/10 text-white/70 text-[11px] sm:text-sm">
-                    {entity.numberOfEpisodes && entity.numberOfEpisodes > 1
-                      ? `全 ${entity.numberOfEpisodes} 集`
-                      : (entity.status === '完结' ? '全集' : '连载中')}
-                  </span>
-                )}
-
-                {entity.region && (
-                  <span className="hidden sm:inline-block px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-white/60">
-                    {entity.region}
-                  </span>
-                )}
-              </div>
-
-              {/* 题材分类标签 */}
-              <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2.5 sm:mb-6">
-                {entity.genres?.map(genre => {
-                  const gInfo = getGenreBySlug(genre);
-                  const href = gInfo ? `/genre/${gInfo.slug}` : `/genre/${encodeURIComponent(genre)}`;
-                  return (
-                    <Link
-                      key={genre}
-                      href={href}
-                      className="px-2.5 sm:px-3 py-0.5 sm:py-1 text-[11px] sm:text-xs font-semibold rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors border border-white/10"
-                    >
-                      {genre}
-                    </Link>
-                  );
-                })}
-              </div>
-
-              {/* Netflix 主控行动区 (立即播放 / 追剧清单 / 分享 / 推荐) */}
-              <div className="w-full mb-2 sm:mb-6">
-                <TitleActionsBar
-                  entity={entity}
-                  playTitle={effectiveSearchTitle}
-                  relatedTitles={combinedRelated.slice(0, 6).map(r => ({
-                    entityId: r.entityId,
-                    slug: r.slug,
-                    title: r.title,
-                    cover: r.cover,
-                    year: r.year,
-                    rate: r.rate,
-                  }))}
-                />
-              </div>
-            </div>
-          </article>
-        </div>
+              </section>
+            ) : (
+              storyline
+            )
+          }
+        />
       </div>
 
       {/* 主体内容布局区 */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-28">
-        {/* AEO 剧情梗概 (Storyline / Answer Capsule) */}
-        <section className="p-5 sm:p-7 rounded-2xl bg-white/4 border border-white/10 backdrop-blur-md mb-10 shadow-xl">
-          <h2 className="text-xs uppercase tracking-wider font-bold text-white/40 mb-3 flex items-center gap-2">
-            <span>📖</span>
-            <span>剧情梗概 (STORYLINE)</span>
-          </h2>
-          <p className="text-white/85 text-sm sm:text-base leading-relaxed">
-            {(!entity.description || entity.description.includes('是一部优质精彩影视作品')) && entity.aiContent?.uniqueSynopsis
-              ? entity.aiContent.uniqueSynopsis
-              : (entity.description || `${entity.title} 是一部优质的${entity.year || ''}年${channelName}作品。`)}
-          </p>
-
-          {/* E-E-A-T 影视背书 */}
-          <div className="flex items-center gap-2 text-xs text-white/35 mt-5 pt-4 border-t border-white/5">
-            <span>🛡️</span>
-            <span>影视资料由 iKanPP 影视库团队整理校对</span>
-            <span>·</span>
-            <span>最新核验于 {entity.year || '2024'} 年</span>
-          </div>
-        </section>
+        {/* AEO 剧情梗概：电视剧在此；电影在播放区旁 */}
+        {isTv ? <div className="mb-10">{storyline}</div> : null}
 
         {/* 场景 1：AI 独家深度影评与高光剧情看点 (消灭 Thin Content) */}
         <AiUniqueReview entity={entity} />
 
         {/* 场景 2：Google FAQPage 常见问题与观影答疑折叠胶囊 */}
         <AiFaqSection entity={entity} />
-
-        {/* 电视剧/动漫专用选集控制台 (Episodes Selector) */}
-        {isTv && (
-          <section className="mb-14 p-5 sm:p-7 rounded-2xl bg-white/4 border border-white/10 backdrop-blur-md shadow-xl">
-            <EpisodesSelector
-              entityId={entity.entityId}
-              title={effectiveSearchTitle}
-              type={entity.type}
-              totalEpisodes={entity.numberOfEpisodes || 24}
-              numberOfSeasons={entity.numberOfSeasons || 1}
-              currentSeason={seasonInfo?.seasonNumber || 1}
-              episodeHighlights={entity.aiContent?.episodeHighlights}
-            />
-          </section>
-        )}
 
         {/* 演职员圆形名牌滑轨 (Cast & Crew Rail) - 客户端自愈补全组件 */}
         {(validDirectors.length > 0 || validActors.length > 0) && (
@@ -1413,7 +1335,7 @@ export default async function TitlePage({ params }: Props) {
                       {rel.title}
                     </h3>
                     <p className="text-xs text-white/40 mt-0.5">
-                      {rel.year || '2024'} · {rel.genres?.[0] || '影视'}
+                      {[rel.year, rel.genres?.[0]].filter(Boolean).join(' · ') || '影视'}
                     </p>
                   </div>
                 </Link>
@@ -1425,9 +1347,6 @@ export default async function TitlePage({ params }: Props) {
         {/* 关联热搜与深度内链集群 (Phase 2 SEO High-Potential Mesh) */}
         <RelatedSearchChips currentTitle={entity.title} currentGenre={primaryGenre} entity={entity} limit={12} />
       </main>
-
-      {/* 移动端专属常驻吸底快捷播放栏 */}
-      <StickyBottomPlayCTA entity={entity} playTitle={effectiveSearchTitle} />
     </div>
   );
 }

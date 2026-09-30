@@ -95,17 +95,21 @@ export function EpisodeList({
 
   const episodePage = userPage !== null ? userPage : defaultPage;
 
-  // 自动平滑滚动到当前选中的集数
+  // 自动平滑滚动到当前选中的集数：只滚动列表自身，不带动整个页面
+  // （scrollIntoView 会连同窗口一起滚，把页面从播放器拉到选集列表）
   useEffect(() => {
     if (!episodes || episodes.length === 0) return;
     const targetDisplayIdx = isReversed
       ? episodes.length - 1 - currentEpisode
       : currentEpisode;
     const timer = setTimeout(() => {
-      buttonRefs.current[targetDisplayIdx]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-      });
+      const button = buttonRefs.current[targetDisplayIdx];
+      const box = listRef.current;
+      if (!button || !box) return;
+      const b = button.getBoundingClientRect();
+      const c = box.getBoundingClientRect();
+      if (b.top < c.top) box.scrollBy({ top: b.top - c.top, behavior: 'smooth' });
+      else if (b.bottom > c.bottom) box.scrollBy({ top: b.bottom - c.bottom, behavior: 'smooth' });
     }, 250);
     return () => clearTimeout(timer);
   }, [currentEpisode, episodes, isReversed, episodePage]);

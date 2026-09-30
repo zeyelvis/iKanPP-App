@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, type ReadonlyURLSearchParams } from 'next/navigation';
 import { useHistoryStore, usePremiumHistoryStore } from '@/lib/store/history-store';
 import { CustomVideoPlayer } from './CustomVideoPlayer';
 import { VideoPlayerError } from './VideoPlayerError';
@@ -14,7 +14,10 @@ interface VideoPlayerProps {
   playUrl: string;
   videoId?: string;
   currentEpisode: number;
-  onBack: () => void;
+  /** The back button; none when absent. */
+  onBack?: () => void;
+  /** The playback state (source, title, t); the page's query string when absent. */
+  params?: URLSearchParams | ReadonlyURLSearchParams;
   // Episode navigation props for auto-skip/auto-next
   totalEpisodes?: number;
   onNextEpisode?: () => void;
@@ -49,6 +52,7 @@ export const VideoPlayer = React.memo(function VideoPlayer({
   videoId,
   currentEpisode,
   onBack,
+  params,
   totalEpisodes,
   onNextEpisode,
   isReversed = false,
@@ -94,7 +98,9 @@ export const VideoPlayer = React.memo(function VideoPlayer({
   const addToHistory = isPremium
     ? usePremiumHistoryStore((s) => s.addToHistory)
     : useHistoryStore((s) => s.addToHistory);
-  const searchParams = useSearchParams();
+  // Embedded in a title page the state is not in the query string: the container passes it.
+  const pageParams = useSearchParams();
+  const searchParams = params ?? pageParams;
 
   // Get video metadata from URL params
   const source = searchParams.get('source') || '';

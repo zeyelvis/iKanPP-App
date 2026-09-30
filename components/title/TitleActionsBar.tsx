@@ -1,15 +1,13 @@
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
-import { Play, Plus, Check, Share2, ThumbsUp, Loader2, Sparkles, BellRing } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Play, Plus, Check, Share2, ThumbsUp, Sparkles, BellRing } from 'lucide-react';
 import { useFavoritesStore } from '@/lib/store/favorites-store';
-import { useHistoryStore } from '@/lib/store/history-store';
+import { startWatching } from '@/lib/client/watch-fragment';
+import { useTitleHistory } from '@/lib/store/title-history';
 import { TitleEntity } from '@/lib/types/entity';
-import { getEpisodeDisplayInfo, EpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
-import { fetchTitleProbe, subscribeTitleProbe, resolvePlayTarget } from '@/lib/utils/title-probe';
-import { isValidSourceId } from '@/lib/api/video-sources';
-import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
+import { getEpisodeDisplayInfo } from '@/lib/utils/episode-resolver';
+import { fetchTitleProbe, subscribeTitleProbe } from '@/lib/utils/title-probe';
 import { ClassicDemandModal } from './ClassicDemandModal';
 import { AiViralShareModal } from '@/components/share/AiViralShareModal';
 
@@ -27,8 +25,6 @@ interface TitleActionsBarProps {
 }
 
 export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: TitleActionsBarProps) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isLiked, setIsLiked] = useState(false);
   const [isClassicNoSource, setIsClassicNoSource] = useState(false);
@@ -36,31 +32,24 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   // 联动收藏/追剧 store
-  const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore();
-  const [isFav, setIsFav] = useState(false);
-
-  // 联动播放历史 store
-  const { viewingHistory } = useHistoryStore();
-  const [lastEpisodeInfo, setLastEpisodeInfo] = useState<EpisodeDisplayInfo>({
-    label: '第 1 集',
-    paramValue: '1',
-    episodeNumber: 1,
-    isSpecial: false,
-  });
-  const [hasHistory, setHasHistory] = useState(false);
-  const [historyPercent, setHistoryPercent] = useState<number>(0);
-  const [historySource, setHistorySource] = useState<string | null>(null);
-  const [historyVodId, setHistoryVodId] = useState<string | number | null>(null);
-  const [probedTarget, setProbedTarget] = useState<{ id?: string | number; source?: string }>({});
+  const { addFavorite, removeFavorite } = useFavoritesStore();
+  // 以 entityId 作为 videoId；水合时按服务端快照（未收藏）渲染，随后更新
+  const isFav = useFavoritesStore((s) => s.isFavorite(entity.entityId, 'ikanpp'));
 
   const effectiveTitle = playTitle || entity.title;
 
+  // 联动播放历史：只订阅本片（播放器每 5 秒保存进度，铁律 22）
+  const historyItem = useTitleHistory([effectiveTitle, entity.title]);
+  const hasHistory = !!historyItem;
+  const lastEpisodeInfo = historyItem ? getEpisodeDisplayInfo(historyItem.episodes, historyItem.episodeIndex) : null;
+  const historyPercent =
+    historyItem && historyItem.duration > 0 ? Math.min(100, Math.round((historyItem.playbackPosition / historyItem.duration) * 100)) : 0;
+
   useEffect(() => {
-    // 提前在后台秒级拉取骨干源的真实 ID，打通 0ms 直达快车道（携带类型与年份硬核对齐）
+    // 后台探测是否有片源：全网无源时播放按钮改为求片
     fetchTitleProbe(effectiveTitle, entity.type, entity.year);
     const unsubscribe = subscribeTitleProbe(effectiveTitle, (res) => {
       if (res && res.id && res.source) {
-        setProbedTarget({ id: res.id, source: res.source });
         setIsClassicNoSource(false);
       } else if (res && res.success === false) {
         // 探测完成确认全网 0 源
@@ -70,86 +59,18 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
     return () => unsubscribe();
   }, [effectiveTitle, entity.type, entity.year]);
 
-  useEffect(() => {
-    // 检查收藏状态 (以 entityId 作为 videoId)
-    setIsFav(isFavorite(entity.entityId, 'ikanpp'));
-
-    // 检查历史观看进度 (以 title 模糊匹配)
-    const historyItem = viewingHistory.find(
-      h => h.title?.trim().toLowerCase() === effectiveTitle.trim().toLowerCase() ||
-           h.title?.trim().toLowerCase() === entity.title.trim().toLowerCase()
-    );
-    if (historyItem) {
-      setHasHistory(true);
-      const displayInfo = getEpisodeDisplayInfo(historyItem.episodes, historyItem.episodeIndex);
-      setLastEpisodeInfo(displayInfo);
-      if (historyItem.source && isValidSourceId(historyItem.source)) {
-        setHistorySource(historyItem.source);
-        if (historyItem.videoId) setHistoryVodId(historyItem.videoId);
-      } else {
-        setHistorySource(null);
-        setHistoryVodId(null);
-      }
-      if (historyItem.duration && historyItem.duration > 0) {
-        const pct = Math.min(100, Math.round((historyItem.playbackPosition / historyItem.duration) * 100));
-        setHistoryPercent(pct);
-      }
-    }
-  }, [entity.entityId, entity.title, effectiveTitle, isFavorite, viewingHistory]);
-
-  const handlePlay = async (param: string = lastEpisodeInfo.paramValue) => {
-    let playId: string | number | null | undefined = null;
-    let playSource: string | null | undefined = null;
-
-    // 1. 黄金第一优先级：若当前已探测命中巨量资源，新老用户均 100% 绝对优先以巨量起播
-    if (probedTarget.source === 'juliang' && probedTarget.id) {
-      playId = probedTarget.id;
-      playSource = 'juliang';
-    } else {
-      // 2. 超短竞速 100ms 抢抓骨干源探测（优先巨量 Anycast 纯净源，杜绝主线程卡顿）
-      const fast = await resolvePlayTarget(effectiveTitle, 100, entity.type, entity.year);
-      if (fast.source === 'juliang' && fast.id) {
-        playId = fast.id;
-        playSource = 'juliang';
-      } else if (isValidSourceId(probedTarget.source) && probedTarget.id) {
-        playId = probedTarget.id;
-        playSource = probedTarget.source;
-      } else if (fast.id && fast.source && isValidSourceId(fast.source)) {
-        playId = fast.id;
-        playSource = fast.source;
-      }
-    }
-
-    // 🌟 核心防线：若确认全网无源或为经典无源条目，绝不盲目跳播放器导致404，直接打开优雅求片弹窗
-    const isYearOld = entity.year && parseInt(entity.year, 10) < 1990;
-    if (!playId && !playSource && (isClassicNoSource || isYearOld)) {
-      setIsClassicNoSource(true);
+  // Plays in the page's player (WatchStage), from where the viewer left off; it picks the line.
+  const handlePlay = () => {
+    if (isClassicNoSource) {
       setIsDemandModalOpen(true);
       return;
     }
-
-    startTransition(() => {
-      const params = new URLSearchParams({
-        entity: entity.entityId,
-        title: effectiveTitle,
-        type: entity.type === 'tv' ? 'tv' : 'movie',
-        episode: String(param),
-      });
-      if (entity.year) params.set('year', String(entity.year));
-      const effectiveSeason = lastEpisodeInfo.seasonNumber || parseSeasonFromTitle(effectiveTitle)?.seasonNumber;
-      if (effectiveSeason) params.set('season', String(effectiveSeason));
-      if (playId && playSource) {
-        params.set('id', String(playId));
-        params.set('source', playSource);
-      }
-      router.push(`/player?${params.toString()}`);
-    });
+    startWatching(lastEpisodeInfo ? { ep: lastEpisodeInfo.paramValue, season: lastEpisodeInfo.seasonNumber ?? null } : {});
   };
 
   const handleToggleFavorite = () => {
     if (isFav) {
       removeFavorite(entity.entityId, 'ikanpp');
-      setIsFav(false);
       showToast('已从追剧清单中移除');
     } else {
       addFavorite({
@@ -160,7 +81,6 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
         type: entity.genres?.[0] || (entity.type === 'tv' ? '电视剧' : '电影'),
         year: entity.year,
       });
-      setIsFav(true);
       showToast('已加入追剧清单');
     }
   };
@@ -188,8 +108,7 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
         <div className="flex flex-col gap-2.5 w-full">
           {/* 主播放按钮：100% 满宽横跨、高亮利落小圆角 */}
           <button
-            onClick={() => handlePlay(lastEpisodeInfo.paramValue)}
-            disabled={isPending}
+            onClick={handlePlay}
             id="btn-netflix-play"
             className={`group relative w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-extrabold text-base shadow-lg transition-all cursor-pointer disabled:opacity-75 ${
               isClassicNoSource
@@ -197,12 +116,7 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
                 : 'bg-white hover:bg-white/95 text-black shadow-white/10 active:scale-[0.98]'
             }`}
           >
-            {isPending ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span>正在查询片源...</span>
-              </>
-            ) : isClassicNoSource ? (
+            {isClassicNoSource ? (
               <>
                 <BellRing className="w-5 h-5 text-amber-400" />
                 <span>经典馆藏 · 预约求片</span>
@@ -211,7 +125,7 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
               <>
                 <Play className="w-5 h-5 fill-black text-black" />
                 <span>
-                  {hasHistory && entity.type === 'tv'
+                  {lastEpisodeInfo && entity.type === 'tv'
                     ? `继续观看 ${lastEpisodeInfo.label}`
                     : '播放'}
                 </span>
@@ -274,8 +188,7 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
         <div className="flex items-center gap-3 lg:gap-4 flex-nowrap">
         {/* 立即播放大按钮 */}
         <button
-          onClick={() => handlePlay(lastEpisodeInfo.paramValue)}
-          disabled={isPending}
+          onClick={handlePlay}
           id="btn-netflix-play-desktop"
           className={`group relative flex items-center justify-center gap-3 px-8 lg:px-10 py-3.5 lg:py-4 rounded-2xl font-black text-base lg:text-lg shadow-2xl transition-all duration-200 cursor-pointer disabled:opacity-75 shrink-0 ${
             isClassicNoSource
@@ -283,12 +196,7 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
               : 'bg-white hover:bg-white/90 text-black shadow-white/20 hover:scale-[1.02] active:scale-[0.98]'
           }`}
         >
-          {isPending ? (
-            <>
-              <Loader2 className="w-5 h-5 lg:w-6 lg:h-6 animate-spin" />
-              <span>正在查询片源...</span>
-            </>
-          ) : isClassicNoSource ? (
+          {isClassicNoSource ? (
             <>
               <BellRing className="w-5 h-5 lg:w-6 lg:h-6 text-amber-400 group-hover:scale-110 transition-transform" />
               <span>经典馆藏 · 预约求片</span>
@@ -297,7 +205,7 @@ export function TitleActionsBar({ entity, playTitle, relatedTitles = [] }: Title
             <>
               <Play className="w-5 h-5 lg:w-6 lg:h-6 fill-black text-black group-hover:scale-110 transition-transform" />
               <span>
-                {hasHistory && entity.type === 'tv'
+                {lastEpisodeInfo && entity.type === 'tv'
                   ? `继续观看 ${lastEpisodeInfo.label}`
                   : '立即播放'}
               </span>

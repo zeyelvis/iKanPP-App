@@ -117,7 +117,7 @@ export async function fetchTitleProbe(
         const result: TitleProbeResult = json;
         probeCache.set(key, { data: result, timestamp: Date.now() });
 
-        // 通知所有订阅者（如 EpisodesSelector、TitleActionsBar、StickyBottomCTA）
+        // 通知所有订阅者（如 EpisodesSelector、TitleActionsBar）
         const set = listeners.get(key);
         if (set) {
           set.forEach(fn => fn(result));
