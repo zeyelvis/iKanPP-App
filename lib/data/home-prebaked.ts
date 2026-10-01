@@ -70,6 +70,14 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "魔方小姐",
+                "updateBadge": ""
+        },
+        {
+                "title": "爱情假说",
+                "updateBadge": ""
+        },
+        {
                 "title": "大学炸弹客",
                 "updateBadge": ""
         },
@@ -82,23 +90,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "魔方小姐",
-                "updateBadge": ""
-        },
-        {
-                "title": "爱情假说",
-                "updateBadge": ""
-        },
-        {
                 "title": "生死尽头",
                 "updateBadge": ""
         },
         {
-                "title": "特立独行",
+                "title": "死亡赌局",
                 "updateBadge": ""
         },
         {
-                "title": "死亡赌局",
+                "title": "特立独行",
                 "updateBadge": ""
         }
       ],
@@ -1829,11 +1829,11 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "我不是大师",
-                "updateBadge": "2"
+                "updateBadge": ""
         },
         {
                 "title": "一瓯春",
-                "updateBadge": "5"
+                "updateBadge": ""
         },
         {
                 "title": "无可替代",
@@ -1853,7 +1853,7 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "法医秦明之龙番往事",
-                "updateBadge": "1"
+                "updateBadge": ""
         },
         {
                 "title": "雷霆令",
@@ -1864,11 +1864,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "黑岛监狱",
+                "title": "花开锦绣",
                 "updateBadge": ""
         },
         {
-                "title": "花开锦绣",
+                "title": "飞到我心上",
                 "updateBadge": ""
         }
       ],
