@@ -179,15 +179,25 @@ if (fs.existsSync(faqCompPath)) {
   );
 }
 
-// 12. 品牌纯净度与防投毒门禁：严禁在首屏推荐预烘焙数据中残留 static.iyf.tv 第三方水印图片
-const homeExtraPath = path.resolve('lib/data/home-prebaked-extra.ts');
-if (fs.existsSync(homeExtraPath)) {
-  const content = fs.readFileSync(homeExtraPath, 'utf-8');
-  assert(
-    !content.includes('static.iyf.tv'),
-    'home-prebaked-extra.ts 必须 100% 清除 static.iyf.tv 第三方水印海报，全面使用 TMDB 官方纯净海报'
-  );
+// 12. 品牌纯净度与防投毒门禁：严禁在全站前台预烘焙数据中残留 static.iyf.tv 第三方水印图片
+const watermarkedCheckFiles = [
+  { path: 'lib/data/home-prebaked.ts', desc: '首页大厅焦点轮播与核心推荐预烘焙数据' },
+  { path: 'lib/data/home-prebaked-extra.ts', desc: '全专区深度预烘焙数据' },
+  { path: 'lib/data/latest-titles-prebaked.ts', desc: '最新上线增量流预烘焙数据' },
+  { path: 'lib/data/hero-backdrop.ts', desc: '首页首屏默认宽屏巨幕大图' },
+];
+
+for (const item of watermarkedCheckFiles) {
+  const fullPath = path.resolve(item.path);
+  if (fs.existsSync(fullPath)) {
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    assert(
+      !content.includes('static.iyf.tv'),
+      `${item.path} (${item.desc}) 必须 100% 清除 static.iyf.tv 第三方水印海报与剧照，全面使用 TMDB 官方 4K 纯净物料`
+    );
+  }
 }
+
 
 // 10. 全屏黑屏三层物理防线回归测试
 // 10a. compatibility.css 必须包含全屏容器内 backdrop-filter 强制禁用规则
