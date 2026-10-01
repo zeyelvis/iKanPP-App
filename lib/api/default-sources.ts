@@ -1,6 +1,6 @@
 import type { VideoSource } from '@/lib/types';
 
-// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-09-30T09:05:39.589Z）
+// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-10-01T09:32:07.177Z）
 export const DEFAULT_SOURCES: VideoSource[] = [
   {
     id: 'juliang',
@@ -33,16 +33,6 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     priority: 3,
   },
   {
-    id: 'wujin',
-    name: '无尽资源',
-    baseUrl: 'https://api.wujinapi.com',
-    searchPath: '/api.php/provide/vod',
-    detailPath: '/api.php/provide/vod',
-    group: 'normal',
-    enabled: true,
-    priority: 4,
-  },
-  {
     id: 'zuida',
     name: '最大资源',
     baseUrl: 'https://api.zuidapi.com',
@@ -50,7 +40,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 5,
+    priority: 4,
   },
   {
     id: 'jisu',
@@ -60,7 +50,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 6,
+    priority: 5,
   },
   {
     id: 'xinlang',
@@ -70,7 +60,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/xinlangapi.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 7,
+    priority: 6,
   },
   {
     id: 'dytt',
@@ -80,7 +70,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 8,
+    priority: 7,
   },
   {
     id: 'modu',
@@ -90,7 +80,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 9,
+    priority: 8,
   },
   {
     id: 'zy360',
@@ -100,7 +90,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 10,
+    priority: 9,
   },
   {
     id: 'json1080',
@@ -110,7 +100,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/inc/apijson.php',
     group: 'normal',
     enabled: true,
-    priority: 11,
+    priority: 10,
   },
   {
     id: 'liangzi',
@@ -120,7 +110,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 12,
+    priority: 11,
   },
   {
     id: 'ruyi',
@@ -130,17 +120,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 13,
-  },
-  {
-    id: 'youku',
-    name: '优酷资源',
-    baseUrl: 'https://api.ukuapi88.com',
-    searchPath: '/api.php/provide/vod',
-    detailPath: '/api.php/provide/vod',
-    group: 'normal',
-    enabled: true,
-    priority: 14,
+    priority: 12,
   },
   {
     id: 'haitun',
@@ -150,7 +130,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 15,
+    priority: 13,
   },
   {
     id: 'ikun',
@@ -160,7 +140,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 16,
+    priority: 14,
   },
   {
     id: 'feifan',
@@ -170,7 +150,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 17,
+    priority: 15,
   },
   {
     id: 'huya',
@@ -180,7 +160,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 18,
+    priority: 16,
   },
   {
     id: 'jinying',
@@ -190,7 +170,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 19,
+    priority: 17,
   },
   {
     id: 'lezi',
@@ -200,7 +180,17 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 20,
+    priority: 18,
+  },
+  {
+    id: 'youku',
+    name: '优酷资源',
+    baseUrl: 'https://api.ukuapi88.com',
+    searchPath: '/api.php/provide/vod',
+    detailPath: '/api.php/provide/vod',
+    group: 'normal',
+    enabled: true,
+    priority: 19,
   },
   {
     id: 'subo',
@@ -210,7 +200,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 21,
+    priority: 20,
   },
   {
     id: 'hongniu',
@@ -220,7 +210,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 22,
+    priority: 21,
   },
   {
     id: 'jingyu',
@@ -230,7 +220,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 23,
+    priority: 22,
   },
   {
     id: 'moduys',
@@ -240,7 +230,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 24,
+    priority: 23,
   },
   {
     id: 'modu_dm',
@@ -250,6 +240,6 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 25,
+    priority: 24,
   },
 ];
