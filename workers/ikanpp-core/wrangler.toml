@@ -16,7 +16,7 @@ id = "42311924427747deaf00981d99d58998"
 ENVIRONMENT = "production"
 VERSION = "1.0.0"
 
-# 统一域名路由配置（按需在 Cloudflare 控制台或启用自定义域名时生效）
-# routes = [
-#   { pattern = "core.ikanpp.com/*", zone_name = "ikanpp.com" }
-# ]
+# 边缘每小时定时入库巡检 Cron (任务 3.4)
+[triggers]
+crons = ["0 * * * *"]
+

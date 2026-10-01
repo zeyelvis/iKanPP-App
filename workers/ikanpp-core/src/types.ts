@@ -4,8 +4,11 @@
 
 export interface Env {
   KVIDEO_KV: KVNamespace;
+  DB?: D1Database;
   ENVIRONMENT?: string;
   VERSION?: string;
+  TMDB_API_KEY?: string;
+  CRON_SECRET?: string;
 }
 
 export interface EpisodeItem {

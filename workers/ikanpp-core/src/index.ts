@@ -11,6 +11,8 @@
 import { Env, ResolveParams, LineResponsePayload, isCleanChineseTitle } from './types';
 import { getShadowLineConfig, searchShadowLine, getShadowLinePlayList, matchBestCandidate } from './shadowline';
 import { searchCollectorSources } from './collector';
+import { handleBrowseRequest } from './browse';
+import { runEdgeIngestPipeline } from './workflow';
 
 const CORS_HEADERS: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
@@ -54,7 +56,23 @@ export default {
       });
     }
 
-    // 3. 专线流直解路由 (/api/ikanpp-line, /api/ikanpp-line/resolve, /api/shadowline/resolve)
+    // 3. 片库多维检索路由 (D1 SQL 原生查询与 KV 降级)
+    if (path === '/api/library/browse' || path === '/api/browse') {
+      return handleBrowseRequest(request, env);
+    }
+
+    // 4. 边缘入库流水线手动触发
+    if (path === '/api/cron/sync' || path === '/api/edge/ingest') {
+      const authHeader = request.headers.get('Authorization') || '';
+      const secret = env.CRON_SECRET || 'ikanpp-cron-sync-secret';
+      if (!authHeader.includes(secret) && url.searchParams.get('key') !== secret) {
+        return jsonResponse({ success: false, error: 'Unauthorized' }, 401);
+      }
+      const res = await runEdgeIngestPipeline(env);
+      return jsonResponse(res);
+    }
+
+    // 5. 专线流直解路由 (/api/ikanpp-line, /api/ikanpp-line/resolve, /api/shadowline/resolve)
     if (
       path === '/api/ikanpp-line' ||
       path === '/api/ikanpp-line/resolve' ||
@@ -65,6 +83,11 @@ export default {
 
     // 4. 未匹配路由
     return jsonResponse({ success: false, error: 'Not Found' }, 404);
+  },
+
+  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+    console.log('[Core Worker Cron] 定时任务触发:', event.cron);
+    ctx.waitUntil(runEdgeIngestPipeline(env));
   },
 };
 
