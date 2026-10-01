@@ -21,6 +21,10 @@ const securityHeaders = [
     key: 'X-XSS-Protection',
     value: '1; mode=block',
   },
+  {
+    key: 'Alt-Svc',
+    value: 'h3=":443"; ma=86400',
+  },
 ];
 
 const nextConfig: NextConfig = {
