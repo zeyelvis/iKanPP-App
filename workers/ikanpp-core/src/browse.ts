@@ -64,14 +64,30 @@ export async function handleBrowseRequest(
       const dataStmt = env.DB.prepare(query).bind(...bindings);
       const { results } = await dataStmt.all();
 
+      // 归一化字段对齐前端规范
+      const normalizedList = (results || []).map((item: any) => ({
+        ...item,
+        rate: item.rate || (item.rating !== undefined && item.rating !== null ? String(item.rating) : '0'),
+        cover: item.cover || item.poster || '',
+        poster: item.poster || item.cover || '',
+        tag: item.tag || (Array.isArray(item.tags) ? item.tags.join('/') : (item.tags || '')),
+        type_name: item.type_name || item.category || '',
+      }));
+
+      const totalPages = Math.ceil(total / pageSize);
+
       return new Response(JSON.stringify({
         success: true,
+        code: 200,
         source: 'd1_sql',
         page,
         pageSize,
+        limit: pageSize,
         total,
-        totalPages: Math.ceil(total / pageSize),
-        results: results || [],
+        totalPages,
+        pagecount: totalPages,
+        results: normalizedList,
+        list: normalizedList,
       }), {
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
@@ -109,16 +125,30 @@ export async function handleBrowseRequest(
       return { id };
     });
 
-    const results = await Promise.all(entityPromises);
+    const rawResults = await Promise.all(entityPromises);
+    const normalizedList = rawResults.map((item: any) => ({
+      ...item,
+      rate: item.rate || (item.rating !== undefined && item.rating !== null ? String(item.rating) : '0'),
+      cover: item.cover || item.poster || '',
+      poster: item.poster || item.cover || '',
+      tag: item.tag || (Array.isArray(item.tags) ? item.tags.join('/') : (item.tags || '')),
+      type_name: item.type_name || item.category || '',
+    }));
+
+    const totalPages = Math.ceil(total / pageSize);
 
     return new Response(JSON.stringify({
       success: true,
+      code: 200,
       source: 'kv_fallback',
       page,
       pageSize,
+      limit: pageSize,
       total,
-      totalPages: Math.ceil(total / pageSize),
-      results,
+      totalPages,
+      pagecount: totalPages,
+      results: normalizedList,
+      list: normalizedList,
     }), {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',

@@ -57,6 +57,10 @@ const nextConfig: NextConfig = {
         source: '/api/ikanpp-line/resolve',
         destination: 'https://ikanpp-core-worker.zeyelvis.workers.dev/api/ikanpp-line/resolve',
       },
+      {
+        source: '/api/library/browse',
+        destination: 'https://ikanpp-core-worker.zeyelvis.workers.dev/api/library/browse',
+      },
     ];
   },
 
