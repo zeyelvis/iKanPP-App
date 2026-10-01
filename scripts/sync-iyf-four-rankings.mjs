@@ -79,9 +79,26 @@ async function getPConfig() {
   return injectJson.config[0].pConfig;
 }
 
+function getAuthHeaders() {
+  const rawKey = process.env.CLOUDFLARE_API_TOKEN || API_KEY;
+  const email = process.env.CLOUDFLARE_EMAIL || EMAIL;
+  const isGlobalKey = /^[0-9a-f]{37}$/i.test(rawKey);
+  if (isGlobalKey && email) {
+    return {
+      'X-Auth-Email': email,
+      'X-Auth-Key': rawKey,
+    };
+  }
+  const token = rawKey.replace(/^Bearer\s+/i, '');
+  return {
+    'Authorization': `Bearer ${token}`,
+  };
+}
+
 async function kvBulkPut(pairs) {
-  if (!API_KEY) {
-    console.warn(`⚠️ [4大排序] 未提供 KV API Key，跳过 Bulk 写入`);
+  const rawKey = process.env.CLOUDFLARE_API_TOKEN || API_KEY;
+  if (!rawKey) {
+    console.warn(`⚠️ [4大排序] 未提供 KV API Key/Token，跳过 Bulk 写入`);
     return;
   }
   const BATCH_SIZE = 1000;
@@ -95,8 +112,7 @@ async function kvBulkPut(pairs) {
       const res = await fetch(url, {
         method: 'PUT',
         headers: {
-          'X-Auth-Email': EMAIL,
-          'X-Auth-Key': API_KEY,
+          ...getAuthHeaders(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(batch),
@@ -115,13 +131,19 @@ async function kvBulkPut(pairs) {
 }
 
 async function kvGet(key) {
+  const rawKey = process.env.CLOUDFLARE_API_TOKEN || API_KEY;
+  if (!rawKey) return null;
   const url = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/storage/kv/namespaces/${NAMESPACE_ID}/values/${encodeURIComponent(key)}`;
-  const res = await fetch(url, {
-    headers: { 'X-Auth-Email': EMAIL, 'X-Auth-Key': API_KEY }
-  });
-  if (res.status === 404) return null;
-  if (!res.ok) return null;
-  return await res.text();
+  try {
+    const res = await fetch(url, {
+      headers: getAuthHeaders()
+    });
+    if (res.status === 404) return null;
+    if (!res.ok) return null;
+    return await res.text();
+  } catch {
+    return null;
+  }
 }
 
 async function main() {
@@ -135,20 +157,73 @@ async function main() {
   const titleToEntityId = new Map();
   let maxIdNum = 1000;
 
+  const recordEntry = (title, id) => {
+    if (!title || !id) return;
+    const clean = title.trim();
+    if (!clean) return;
+    if (!titleToEntityId.has(clean)) {
+      titleToEntityId.set(clean, id);
+    }
+    const m = id.match(/^ik(\d{6})$/i);
+    if (m) {
+      const n = parseInt(m[1], 10);
+      if (n > maxIdNum) maxIdNum = n;
+    }
+  };
+
   const sitemapBackupPath = path.resolve(CACHE_DIR, 'sitemap_catalog_backup.json');
   if (fs.existsSync(sitemapBackupPath)) {
-    const sitemapData = JSON.parse(fs.readFileSync(sitemapBackupPath, 'utf-8'));
-    for (const item of sitemapData) {
-      if (Array.isArray(item) && item[0] && item[1]) {
-        titleToEntityId.set(item[1].trim(), item[0]);
-        const m = item[0].match(/^ik(\d{6})$/i);
-        if (m) {
-          const n = parseInt(m[1], 10);
-          if (n > maxIdNum) maxIdNum = n;
+    try {
+      const sitemapData = JSON.parse(fs.readFileSync(sitemapBackupPath, 'utf-8'));
+      if (Array.isArray(sitemapData)) {
+        for (const item of sitemapData) {
+          if (Array.isArray(item) && item[0] && item[1]) {
+            recordEntry(item[1], item[0]);
+          }
+        }
+      }
+    } catch {}
+  }
+
+  // 若本地缓存条目不足，直接从 Cloudflare 生产 KV 实时拉取 sitemap:catalog
+  if (titleToEntityId.size < 500) {
+    console.log('🔄 本地字典为空或不足，正在从 Cloudflare 生产 KV 实时拉取 sitemap:catalog...');
+    try {
+      const remoteCatalog = await kvGet('sitemap:catalog');
+      if (remoteCatalog) {
+        const parsed = JSON.parse(remoteCatalog);
+        if (Array.isArray(parsed)) {
+          for (const item of parsed) {
+            if (Array.isArray(item) && item[0] && item[1]) {
+              recordEntry(item[1], item[0]);
+            }
+          }
+          console.log(`✅ 从 Cloudflare 生产 KV 成功装载 ${parsed.length} 条官方建档索引`);
+        }
+      }
+    } catch (err) {
+      console.warn('⚠️ 远程 KV sitemap:catalog 读取跳过:', err.message);
+    }
+  }
+
+  // 从本地预烘焙文件中补充全站核心影视
+  try {
+    const prebakedPaths = [
+      path.resolve(process.cwd(), 'lib/data/latest-titles-prebaked.ts'),
+      path.resolve(process.cwd(), 'lib/data/category-prebaked.ts'),
+      path.resolve(process.cwd(), 'lib/data/home-prebaked.ts'),
+      path.resolve(process.cwd(), 'lib/data/home-prebaked-extra.ts'),
+    ];
+    for (const p of prebakedPaths) {
+      if (fs.existsSync(p)) {
+        const content = fs.readFileSync(p, 'utf-8');
+        const idMatches = content.matchAll(/id:\s*['"](ik\d{6})['"].*?title:\s*['"]([^'"]+)['"]/gs);
+        for (const m of idMatches) {
+          recordEntry(m[2], m[1]);
         }
       }
     }
-  }
+  } catch {}
 
   console.log(`✅ 片名映射字典装载完毕: ${titleToEntityId.size} 条真实建档实体`);
 
@@ -207,10 +282,12 @@ async function main() {
             if (!isCleanChineseTitle(title)) continue;
             seenTitles.add(title);
 
-            const entityId = titleToEntityId.get(title);
+            let entityId = titleToEntityId.get(title);
             if (!entityId) {
-              // 生产库中暂无该条目，安全跳过，绝不塞入虚空 ID 污染倒排索引
-              continue;
+              // 自动自愈建档：若为爱壹帆最新上线的合法华语作品，为其动态分配合法 ID
+              maxIdNum++;
+              entityId = `ik${String(maxIdNum).padStart(6, '0')}`;
+              recordEntry(title, entityId);
             }
 
             orderedIds.push(entityId);
@@ -266,10 +343,14 @@ async function main() {
       }
 
       console.log(`\n  ✅ 【${channel.name}】${sortMode.label} 索引构建完毕: ${orderedIds.length} 部`);
-      kvIndexPairs.push({
-        key: `${sortMode.indexPrefix}:${channel.key}`,
-        value: orderedIds,
-      });
+      if (orderedIds.length >= 5) {
+        kvIndexPairs.push({
+          key: `${sortMode.indexPrefix}:${channel.key}`,
+          value: orderedIds,
+        });
+      } else {
+        console.warn(`  ⚠️ [安全熔断] 【${channel.name}】${sortMode.label} 结果数不足 5 部，跳过覆盖以保护生产数据`);
+      }
     }
   }
 

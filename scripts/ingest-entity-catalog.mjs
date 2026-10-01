@@ -378,15 +378,30 @@ function inferEntityMeta(ent) {
   return { region, lang, status };
 }
 
+function getAuthHeaders() {
+  const rawKey = process.env.CLOUDFLARE_API_TOKEN || API_KEY;
+  const email = process.env.CLOUDFLARE_EMAIL || EMAIL;
+  const isGlobalKey = /^[0-9a-f]{37}$/i.test(rawKey);
+  if (isGlobalKey && email) {
+    return {
+      'X-Auth-Email': email,
+      'X-Auth-Key': rawKey,
+    };
+  }
+  const token = rawKey.replace(/^Bearer\s+/i, '');
+  return {
+    'Authorization': `Bearer ${token}`,
+  };
+}
+
 // ── Cloudflare KV API 封装 ────────────────────────────────────────
 
 async function kvGet(key) {
+  const rawKey = process.env.CLOUDFLARE_API_TOKEN || API_KEY;
+  if (!rawKey) return null;
   const url = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/storage/kv/namespaces/${NAMESPACE_ID}/values/${encodeURIComponent(key)}`;
   const res = await fetch(url, {
-    headers: {
-      'X-Auth-Email': EMAIL,
-      'X-Auth-Key': API_KEY,
-    },
+    headers: getAuthHeaders(),
   });
   if (res.status === 404) return null;
   if (!res.ok) {
@@ -397,6 +412,11 @@ async function kvGet(key) {
 
 async function kvBulkPut(pairs) {
   if (!pairs || pairs.length === 0) return;
+  const rawKey = process.env.CLOUDFLARE_API_TOKEN || API_KEY;
+  if (!rawKey) {
+    console.warn(`⚠️ [实体入库] 未配置 KV API Key/Token，跳过 Bulk 写入`);
+    return;
+  }
   const BATCH_SIZE = 1000;
   for (let i = 0; i < pairs.length; i += BATCH_SIZE) {
     const batch = pairs.slice(i, i + BATCH_SIZE).map(p => ({
@@ -407,8 +427,7 @@ async function kvBulkPut(pairs) {
     const res = await fetch(url, {
       method: 'PUT',
       headers: {
-        'X-Auth-Email': EMAIL,
-        'X-Auth-Key': API_KEY,
+        ...getAuthHeaders(),
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(batch),
