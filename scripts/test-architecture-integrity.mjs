@@ -179,6 +179,16 @@ if (fs.existsSync(faqCompPath)) {
   );
 }
 
+// 12. 品牌纯净度与防投毒门禁：严禁在首屏推荐预烘焙数据中残留 static.iyf.tv 第三方水印图片
+const homeExtraPath = path.resolve('lib/data/home-prebaked-extra.ts');
+if (fs.existsSync(homeExtraPath)) {
+  const content = fs.readFileSync(homeExtraPath, 'utf-8');
+  assert(
+    !content.includes('static.iyf.tv'),
+    'home-prebaked-extra.ts 必须 100% 清除 static.iyf.tv 第三方水印海报，全面使用 TMDB 官方纯净海报'
+  );
+}
+
 // 10. 全屏黑屏三层物理防线回归测试
 // 10a. compatibility.css 必须包含全屏容器内 backdrop-filter 强制禁用规则
 const compatCssPath = path.resolve('app/styles/compatibility.css');

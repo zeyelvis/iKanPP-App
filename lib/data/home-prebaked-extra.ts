@@ -63,7 +63,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "title": "时光代理人第3季",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202608182003170363776.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg",
         "description": "《时光代理人第3季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至09集 | 共12集。",
         "year": "2026",
         "types": [
@@ -80,7 +80,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "title": "我独自盗墓",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/auWQytep71FZx1XHFqY8WaHSuDD.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202607201054385434470.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/auWQytep71FZx1XHFqY8WaHSuDD.jpg",
         "description": "《我独自盗墓》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至12集。",
         "year": "2026",
         "types": [
@@ -97,7 +97,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "title": "世界最强的后卫 迷宫国的新人探索者",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/5vhYO0hMacNlyNDaYlS2HRXOtoZ.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202607201048254853458.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/5vhYO0hMacNlyNDaYlS2HRXOtoZ.jpg",
         "description": "《世界最强的后卫 迷宫国的新人探索者》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至12集。",
         "year": "2026",
         "types": [
@@ -114,7 +114,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "title": "暗黑灯火",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/k446fZqGvCVsVstjUq7KQIK1PqX.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202607201046254625074.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/k446fZqGvCVsVstjUq7KQIK1PqX.jpg",
         "description": "《暗黑灯火》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：12集全。",
         "year": "2026",
         "types": [
@@ -131,7 +131,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "title": "从0位居民开始的边境领主大人",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/oz6Aet1VmsjxA70oGIhiaNnXxuk.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202607061804190474502.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/oz6Aet1VmsjxA70oGIhiaNnXxuk.jpg",
         "description": "《从0位居民开始的边境领主大人》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：12集全。",
         "year": "2026",
         "types": [
@@ -148,7 +148,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "title": "LV999的村民",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/pwtHWJ2yblGRJenW9THxGGDEjIZ.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202607061703590386002.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/pwtHWJ2yblGRJenW9THxGGDEjIZ.jpg",
         "description": "《LV999的村民》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至12集。",
         "year": "2026",
         "types": [
@@ -165,7 +165,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "title": "斩神之凡尘神域第2季",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/yEURCDODP6noWXQsQ97VMVdupfq.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202606251206380640678.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/yEURCDODP6noWXQsQ97VMVdupfq.jpg",
         "description": "《斩神之凡尘神域第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：15集全。",
         "year": "2026",
         "types": [
@@ -182,7 +182,7 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "title": "镖人第2季",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/8yaYVj6FDv33wZYnhDAcmXDJsfY.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202606111233583373778.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/8yaYVj6FDv33wZYnhDAcmXDJsfY.jpg",
         "description": "《镖人第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至08集 | 共8集。",
         "year": "2026",
         "types": [
@@ -669,7 +669,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "title": "打歌2026",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202609111853405324148.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg",
         "description": "《打歌2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260927(上班直播第3期)。",
         "year": "2026",
         "types": [
@@ -686,7 +686,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "title": "我家那闺女2026",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/8gV9bRO0jVhjOPGD2s2HzyWtl9V.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202609111844144414888.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/8gV9bRO0jVhjOPGD2s2HzyWtl9V.jpg",
         "description": "《我家那闺女2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260928(加更版)。",
         "year": "2026",
         "types": [
@@ -703,7 +703,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "title": "花儿与少年第8季",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/s4WOcsEQ1pLjdKWEy7dcFDlWfI4.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202609111843274326403.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/s4WOcsEQ1pLjdKWEy7dcFDlWfI4.jpg",
         "description": "《花儿与少年第8季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20261001(超前营业)。",
         "year": "2026",
         "types": [
@@ -720,7 +720,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "title": "舞蹈新风暴",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/jej7FfIvWZyLSMoNbPP3MkEByob.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202608261125552551744.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/jej7FfIvWZyLSMoNbPP3MkEByob.jpg",
         "description": "《舞蹈新风暴》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260930(Plus)。",
         "year": "2026",
         "types": [
@@ -737,7 +737,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "title": "披荆斩棘2026",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/8gV9bRO0jVhjOPGD2s2HzyWtl9V.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202608261125002570740.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/8gV9bRO0jVhjOPGD2s2HzyWtl9V.jpg",
         "description": "《披荆斩棘2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20261001(“聚”乐部)。",
         "year": "2026",
         "types": [
@@ -754,7 +754,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "title": "心动的信号第9季",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/qFplFFQy6zMMplHItcrMAtBEseO.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202608031821302167723.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/qFplFFQy6zMMplHItcrMAtBEseO.jpg",
         "description": "《心动的信号第9季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20261001(第9期加更下)。",
         "year": "2026",
         "types": [
@@ -771,7 +771,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "title": "一饭封神第2季",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/9dyojjMqquQX30ombDixuZsBISl.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202607271339373917253.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/9dyojjMqquQX30ombDixuZsBISl.jpg",
         "description": "《一饭封神第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20261001(第10期下美食竞技纯享版)。",
         "year": "2026",
         "types": [
@@ -788,7 +788,7 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "title": "家乡美食大赛",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/1ZOAVVMtbtnDmBxwlzfv8iU53ZP.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202607271339253947372.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/1ZOAVVMtbtnDmBxwlzfv8iU53ZP.jpg",
         "description": "《家乡美食大赛》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260927。",
         "year": "2026",
         "types": [
@@ -1600,7 +1600,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "title": "一个部门的诞生",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/qFplFFQy6zMMplHItcrMAtBEseO.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202609221322272268801.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/qFplFFQy6zMMplHItcrMAtBEseO.jpg",
         "description": "《一个部门的诞生》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·喜剧。",
         "year": "2026",
         "types": [
@@ -1618,7 +1618,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "title": "特立独行",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/dWtKXfN97AMW5n3S6QoUVUMCU2S.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202609051300230076622.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/dWtKXfN97AMW5n3S6QoUVUMCU2S.jpg",
         "description": "《特立独行》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·剧情。",
         "year": "2026",
         "types": [
@@ -1636,7 +1636,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "title": "给阿嬷的情书",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202608311427362725454.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
         "description": "《给阿嬷的情书》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·剧情。",
         "year": "2026",
         "types": [
@@ -1654,7 +1654,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "title": "玩具总动员5",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202608181642524253486.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
         "description": "《玩具总动员5》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·动画。",
         "year": "2026",
         "types": [
@@ -1672,7 +1672,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "title": "无可替代",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/gLbtMLqbN6fgYsTuHFvzJu7Hopi.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202609291602440264518.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/gLbtMLqbN6fgYsTuHFvzJu7Hopi.jpg",
         "description": "《无可替代》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至08集 | 共20集。",
         "year": "2026",
         "types": [
@@ -1689,7 +1689,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "title": "我不是大师",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/eZmV0ziikof0upIm8s6Vz2pC9pp.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202609241345244520726.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/eZmV0ziikof0upIm8s6Vz2pC9pp.jpg",
         "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至17集 | 共24集。",
         "year": "2026",
         "types": [
@@ -1706,7 +1706,7 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "title": "法医秦明之龙番往事",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/y862upNdtW5zu4VT6d0PQxJv5ov.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202609221304100431020.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/y862upNdtW5zu4VT6d0PQxJv5ov.jpg",
         "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至16集 | 共24集。",
         "year": "2026",
         "types": [
@@ -2197,7 +2197,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "title": "欢迎来地球",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/8QxetEwQbBqKdue2SlhZO2fKPUO.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202112091949424954364.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/8QxetEwQbBqKdue2SlhZO2fKPUO.jpg",
         "description": "《欢迎来地球》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至06。",
         "year": "2026",
         "types": [
@@ -2215,7 +2215,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "title": "泰国洞穴救援",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/8LAmKiUASJ8OJvercPtE36i4lnA.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202112091952445271577.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/8LAmKiUASJ8OJvercPtE36i4lnA.jpg",
         "description": "《泰国洞穴救援》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至01。",
         "year": "2026",
         "types": [
@@ -2233,7 +2233,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "title": "内马尔：不完美的完美球星",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/dWtKXfN97AMW5n3S6QoUVUMCU2S.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202201251530113070365.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/dWtKXfN97AMW5n3S6QoUVUMCU2S.jpg",
         "description": "《内马尔：不完美的完美球星》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至03。",
         "year": "2026",
         "types": [
@@ -2251,7 +2251,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "title": "屏住呼吸：挑战冰潜记录",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/efAxEHMvlgE4qterU0FWwovxkOa.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202205081330223010852.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/efAxEHMvlgE4qterU0FWwovxkOa.jpg",
         "description": "《屏住呼吸：挑战冰潜记录》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至01。",
         "year": "2026",
         "types": [
@@ -2269,7 +2269,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "title": "史前星球",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/ubahGAUSZmZsTVwjKcZpQh7vcIK.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202205231415071565331.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/ubahGAUSZmZsTVwjKcZpQh7vcIK.jpg",
         "description": "《史前星球》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至05。",
         "year": "2026",
         "types": [
@@ -2287,7 +2287,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "title": "王朝第2季",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/zqfwHwSs0vSRplFmFMeWddgha0x.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202206021338273860323.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/zqfwHwSs0vSRplFmFMeWddgha0x.jpg",
         "description": "《王朝第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至05。",
         "year": "2026",
         "types": [
@@ -2305,7 +2305,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "title": "漫威616",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/wBOIVb6zgsnfRhvCgdX04pLaYXQ.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202210111143344353824.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/wBOIVb6zgsnfRhvCgdX04pLaYXQ.jpg",
         "description": "《漫威616》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至08。",
         "year": "2026",
         "types": [
@@ -2323,7 +2323,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "title": "欢迎来到雷克斯汉姆",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/efAxEHMvlgE4qterU0FWwovxkOa.jpg",
-        "backdrop": "https://static.iyf.tv/upload/user/202210111143484364636.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w500/efAxEHMvlgE4qterU0FWwovxkOa.jpg",
         "description": "《欢迎来到雷克斯汉姆》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至18。",
         "year": "2026",
         "types": [
