@@ -174,9 +174,9 @@ async function enrichMovieData(slideItem, index, forceType = null) {
   // 1. 尝试从 TMDB 获取官方大剧照与详情
   const tmdbData = await fetchTMDB(title, contentType);
 
-  // 2. 确定最佳图片（从源头彻底杜绝水印：严禁使用任何 iyf 第三方图片，100% TMDB 官方 4K 纯净资产）
-  const SAFE_DEFAULT_COVER = 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
-  const SAFE_DEFAULT_BACKDROP = 'https://image.tmdb.org/t/p/w1280/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
+  // 2. 确定最佳图片（从源头彻底杜绝水印：严禁使用任何 iyf 第三方图片，100% TMDB 官方 4K 纯净资产，保底中性黑曜石）
+  const SAFE_DEFAULT_COVER = '/placeholder-poster.svg';
+  const SAFE_DEFAULT_BACKDROP = '/placeholder-poster.svg';
 
   let backdrop = tmdbData?.backdrop;
   if (!backdrop || backdrop.includes('iyf.tv')) {
@@ -646,8 +646,8 @@ async function syncDocumentaryChannel() {
       id: `iyf_hero_doc_${docHeroItems.length + 1}`,
       title: s.title,
       rate: s.rate,
-      cover: (tmdbData?.poster && !tmdbData.poster.includes('iyf.tv')) ? tmdbData.poster : 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg',
-      backdrop: (tmdbData?.backdrop && !tmdbData.backdrop.includes('iyf.tv')) ? tmdbData.backdrop : 'https://image.tmdb.org/t/p/w1280/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg',
+      cover: (tmdbData?.poster && !tmdbData.poster.includes('iyf.tv')) ? tmdbData.poster : '/placeholder-poster.svg',
+      backdrop: (tmdbData?.backdrop && !tmdbData.backdrop.includes('iyf.tv')) ? tmdbData.backdrop : '/placeholder-poster.svg',
       description: tmdbData?.overview || `豆瓣 ${s.rate} 分神作纪录片，BBC/央视史诗级殿堂级巨制，全集 4K 超清畅享。`,
       year: tmdbData?.year || '2024',
       types: ['纪录片', '自然', '历史'],

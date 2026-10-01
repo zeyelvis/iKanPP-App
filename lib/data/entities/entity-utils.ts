@@ -418,10 +418,10 @@ export function isStrictSafeEntity(entity: {
 }
 
 /**
- * 官方推荐的纯净 4K 保底海报与背景（杜绝任何第三方水印）
+ * 官方推荐的纯净保底中性海报与背景（杜绝任何第三方水印，杜绝单一影片误杀）
  */
-export const SAFE_DEFAULT_POSTER = 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
-export const SAFE_DEFAULT_BACKDROP = 'https://image.tmdb.org/t/p/w1280/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
+export const SAFE_DEFAULT_POSTER = '/placeholder-poster.svg';
+export const SAFE_DEFAULT_BACKDROP = '/placeholder-poster.svg';
 
 /**
  * 校验图片是否携带第三方水印域名或非法违规特征
@@ -431,13 +431,14 @@ export function isWatermarkedImage(url: string | null | undefined): boolean {
   const lower = url.toLowerCase();
   return (
     lower.includes('static.iyf.tv') ||
-    lower.includes('iyf.tv')
+    lower.includes('iyf.tv') ||
+    lower.includes('static.ikanpp.com')
   );
 }
 
 /**
  * 全域媒体防投毒清洗器
- * 凡包含第三方水印域名，自动强制替换为官方 4K 纯净保底物料
+ * 凡包含第三方水印域名，自动强制替换为官方纯净中性物料
  */
 export function sanitizeMediaUrl(url: string | null | undefined, fallbackType: 'poster' | 'backdrop' = 'poster'): string {
   if (!url || typeof url !== 'string') {

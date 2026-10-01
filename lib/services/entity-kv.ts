@@ -183,6 +183,7 @@ export async function getEntityById(entityId: string): Promise<TitleEntity | nul
             await kvPut(`slug:${correctSlug}`, cleanId);
           } catch {}
         })();
+      }
       return parsed;
     } catch {}
   }

@@ -456,7 +456,27 @@ if (fs.existsSync(globalErrorPath)) {
   );
 }
 
-console.log('\n====================================================');
+// 15. 预烘焙数据与核心物料爱壹帆水印零容忍铁律 (Zero-Tolerance Watermark Spec)
+const prebakedFilesToCheck = [
+  'lib/data/home-prebaked.ts',
+  'lib/data/home-prebaked-extra.ts',
+  'lib/data/latest-titles-prebaked.ts',
+  'lib/data/category-prebaked.ts',
+  'lib/data/hero-backdrop.ts',
+  'lib/data/new-scraped-titles.json',
+];
+
+for (const rel of prebakedFilesToCheck) {
+  const p = path.resolve(rel);
+  if (fs.existsSync(p)) {
+    const raw = fs.readFileSync(p, 'utf-8');
+    const matches = raw.match(/static\.iyf\.tv/g) || [];
+    assert(
+      matches.length === 0,
+      `${rel} 包含 ${matches.length} 处 static.iyf.tv 水印链接，必须保持 0 处纯净，严禁带水印上线！`
+    );
+  }
+}
 if (failed) {
   console.error('🚨 架构契约巡检失败！存在破坏全局稳定性的违规回退，请根据上述报错整改后再行提交！');
   process.exit(1);

@@ -62,10 +62,10 @@ async function fetchTmdbAssets(title) {
     }
   } catch {}
 
-  // 3. 高保真好莱坞通配优质海报兜底
+  // 3. 通用优雅黑曜石保底海报
   return {
-    poster: 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg',
-    backdrop: 'https://image.tmdb.org/t/p/w1280/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg',
+    poster: '/placeholder-poster.svg',
+    backdrop: '/placeholder-poster.svg',
   };
 }
 
@@ -134,9 +134,9 @@ async function main() {
     await sleep(200);
   }
 
-  // 二次保底清扫：若仍有孤立的 static.iyf.tv，一律替换为 TMDB 官方纯净大图
-  content = content.replace(/https:\/\/static\.iyf\.tv\/upload\/video\/[a-zA-Z0-9_.]+/g, 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg');
-  content = content.replace(/https:\/\/static\.iyf\.tv\/upload\/user\/[a-zA-Z0-9_.]+/g, 'https://image.tmdb.org/t/p/w1280/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg');
+  // 二次保底清扫：若仍有孤立的 static.iyf.tv，一律替换为纯净中性大图
+  content = content.replace(/https:\/\/static\.iyf\.tv\/upload\/video\/[a-zA-Z0-9_.]+/g, '/placeholder-poster.svg');
+  content = content.replace(/https:\/\/static\.iyf\.tv\/upload\/user\/[a-zA-Z0-9_.]+/g, '/placeholder-poster.svg');
 
   const countAfter = (content.match(/static\.iyf\.tv/g) || []).length;
   console.log(`🎉 清洗完成！清洗后 static.iyf.tv 数量: ${countAfter} 处（原为 ${countBefore} 处）`);

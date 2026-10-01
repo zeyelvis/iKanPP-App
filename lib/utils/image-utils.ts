@@ -137,8 +137,11 @@ export function getOptimizedImageUrl(
     return resizedTmdbUrl;
   }
 
-  // 4. 处理防盗链与第三方源（豆瓣、第三方源等：防防盗链并杜绝客户端暴露源站，统一走 img-proxy 接入 R2 镜像）
-  if (isDouban || isIyf) {
+  // 4. 处理防盗链与第三方源（豆瓣防盗链走 img-proxy，带水印的 iyf 域名直接阻断输出纯净占位图）
+  if (isIyf) {
+    return '/placeholder-poster.svg';
+  }
+  if (isDouban) {
     const noFallbackQuery = options?.noFallback ? '&nofallback=1' : '';
     return `/api/img-proxy?url=${encodeURIComponent(url)}&w=${targetWidth}${noFallbackQuery}`;
   }

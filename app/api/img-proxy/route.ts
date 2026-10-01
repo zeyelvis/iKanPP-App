@@ -31,6 +31,11 @@ export async function GET(request: NextRequest) {
         return new NextResponse('URL not allowed', { status: 403 });
     }
 
+    // 🌟 水印图片硬拦截：杜绝爱壹帆水印图渗透进入 R2 镜像或下发客户端
+    if (url.includes('iyf.tv') || url.includes('static.iyf')) {
+        return NextResponse.redirect(new URL('/placeholder-poster.svg', request.url), 302);
+    }
+
     // 1. 计算标准 R2 存储 Key (格式: {source}/{width}/{filename})
     const r2Key = getR2KeyFromUrl(url, requestedWidth);
 

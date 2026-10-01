@@ -830,8 +830,8 @@ async function runIngestion(options = {}) {
               type: chConfig.channel,
               year: releaseYear,
               description: tmdbDetail.overview || `${vodName} 在线观看，支持海外华人免翻墙极速高清播放。`,
-              cover: tmdbDetail.poster_path ? `https://image.tmdb.org/t/p/w500${tmdbDetail.poster_path}` : (item.vod_pic && !item.vod_pic.includes('iyf.tv') ? item.vod_pic : 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg'),
-              backdrop: tmdbDetail.backdrop_path ? `https://image.tmdb.org/t/p/w1280${tmdbDetail.backdrop_path}` : (item.vod_pic && !item.vod_pic.includes('iyf.tv') ? item.vod_pic : 'https://image.tmdb.org/t/p/w1280/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg'),
+              cover: tmdbDetail.poster_path ? `https://image.tmdb.org/t/p/w500${tmdbDetail.poster_path}` : (item.vod_pic && !item.vod_pic.includes('iyf.tv') ? item.vod_pic : '/placeholder-poster.svg'),
+              backdrop: tmdbDetail.backdrop_path ? `https://image.tmdb.org/t/p/w1280${tmdbDetail.backdrop_path}` : (item.vod_pic && !item.vod_pic.includes('iyf.tv') ? item.vod_pic : '/placeholder-poster.svg'),
               rate: tmdbDetail.vote_average ? tmdbDetail.vote_average.toFixed(1) : '8.8',
               genres: genres.length > 0 ? genres : [cat.name.replace(/片|剧|动漫|综艺/, '')],
               directors: rawDirectors,
@@ -848,7 +848,7 @@ async function runIngestion(options = {}) {
             };
           } else {
             // TMDB 未匹配时（如短剧或极小众冷门剧），保留采集站高质量元数据兜底
-            const safePic = item.vod_pic && !item.vod_pic.includes('iyf.tv') ? item.vod_pic : 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
+            const safePic = item.vod_pic && !item.vod_pic.includes('iyf.tv') ? item.vod_pic : '/placeholder-poster.svg';
             entity = {
               entityId,
               slug,

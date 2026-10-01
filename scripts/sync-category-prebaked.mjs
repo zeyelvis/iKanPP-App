@@ -135,9 +135,9 @@ async function fetchVodByCategory(typeIds, limit = 24) {
 }
 
 function sanitizeCoverPic(pic) {
-  if (!pic || typeof pic !== 'string') return 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
+  if (!pic || typeof pic !== 'string') return '/placeholder-poster.svg';
   if (pic.includes('iyf.tv') || pic.includes('static.iyf.tv')) {
-    return 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
+    return '/placeholder-poster.svg';
   }
   return pic;
 }
