@@ -134,6 +134,14 @@ async function fetchVodByCategory(typeIds, limit = 24) {
   return [];
 }
 
+function sanitizeCoverPic(pic) {
+  if (!pic || typeof pic !== 'string') return 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
+  if (pic.includes('iyf.tv') || pic.includes('static.iyf.tv')) {
+    return 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
+  }
+  return pic;
+}
+
 /**
  * 通过 TMDB 补充高清海报与评分
  */
@@ -141,7 +149,7 @@ async function enrichWithTmdb(title, defaultPic, defaultScore) {
   const q = cleanTitle(title);
   if (!q) {
     return {
-      cover: defaultPic || '/placeholder-poster.svg',
+      cover: sanitizeCoverPic(defaultPic),
       rate: defaultScore && defaultScore !== '0.0' ? defaultScore : '8.5',
     };
   }
@@ -163,7 +171,7 @@ async function enrichWithTmdb(title, defaultPic, defaultScore) {
   } catch { /* fallback to default */ }
 
   return {
-    cover: defaultPic || '/placeholder-poster.svg',
+    cover: sanitizeCoverPic(defaultPic),
     rate: defaultScore && defaultScore !== '0.0' ? defaultScore : '8.6',
   };
 }

@@ -185,6 +185,8 @@ const watermarkedCheckFiles = [
   { path: 'lib/data/home-prebaked-extra.ts', desc: '全专区深度预烘焙数据' },
   { path: 'lib/data/latest-titles-prebaked.ts', desc: '最新上线增量流预烘焙数据' },
   { path: 'lib/data/hero-backdrop.ts', desc: '首页首屏默认宽屏巨幕大图' },
+  { path: 'lib/data/category-prebaked.ts', desc: '全站 7 大专区分类预烘焙数据' },
+  { path: 'lib/data/new-scraped-titles.json', desc: '采集站最新影视增量清单' },
 ];
 
 for (const item of watermarkedCheckFiles) {
@@ -192,8 +194,8 @@ for (const item of watermarkedCheckFiles) {
   if (fs.existsSync(fullPath)) {
     const content = fs.readFileSync(fullPath, 'utf-8');
     assert(
-      !content.includes('static.iyf.tv'),
-      `${item.path} (${item.desc}) 必须 100% 清除 static.iyf.tv 第三方水印海报与剧照，全面使用 TMDB 官方 4K 纯净物料`
+      !content.includes('static.iyf.tv') && !content.includes('iyf.tv/upload'),
+      `${item.path} (${item.desc}) 必须 100% 清除 static.iyf.tv 及第三方水印海报与剧照，全面使用 TMDB 官方 4K 纯净物料`
     );
   }
 }

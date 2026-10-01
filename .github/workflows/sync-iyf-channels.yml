@@ -80,6 +80,14 @@ jobs:
           echo "📊 [8/8] 汇总近 7 天地区线路质量与连通率画像并写入 KV..."
           node scripts/aggregate-line-rankings.mjs
 
+      - name: Pipeline Safety Guard: Watermark Auto-Heal & Architecture Gate
+        run: |
+          echo "🛡️ [Guard 1/2] 触发自动化去水印清洗兜底网..."
+          node scripts/heal-home-prebaked-watermarks.mjs
+
+          echo "🛡️ [Guard 2/2] 执行架构完整性与品牌纯净度绝对门禁测试..."
+          node scripts/test-architecture-integrity.mjs
+
       - name: Commit, push, and trigger deploy if data updated
         env:
           GH_TOKEN: ${{ github.token }}
@@ -87,7 +95,7 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-          MODIFIED_FILES="lib/data/home-prebaked.ts lib/data/home-prebaked-extra.ts lib/data/latest-titles-prebaked.ts lib/data/category-prebaked.ts lib/data/new-scraped-titles.json"
+          MODIFIED_FILES="lib/data/home-prebaked.ts lib/data/home-prebaked-extra.ts lib/data/latest-titles-prebaked.ts lib/data/category-prebaked.ts lib/data/new-scraped-titles.json lib/data/hero-backdrop.ts"
 
           if [[ -n $(git status --porcelain $MODIFIED_FILES) ]]; then
             TARGET="${{ github.event.inputs.channel || 'all_channels' }}"

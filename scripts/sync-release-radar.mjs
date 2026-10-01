@@ -677,9 +677,22 @@ async function processChannelShowcase(channel, trendingMap) {
     // TMDB 物料补齐
     const tmdb = await fetchTmdbMeta(raw.title, targetType, raw.year);
 
-    // 确定高清海报与背景（杜绝变形带水印图）
-    const cover = tmdb?.cover || (raw.rawCover && raw.rawCover.startsWith('http') ? raw.rawCover : '/placeholder-poster.svg');
-    const backdrop = tmdb?.backdrop || cover;
+    // 确定高清海报与背景（杜绝变形与任何带有第三方水印的图片，100% 官方 4K 纯净物料）
+    const SAFE_POSTER = 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
+    const SAFE_BACKDROP = 'https://image.tmdb.org/t/p/w1280/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
+
+    let cover = tmdb?.cover;
+    if (!cover || cover.includes('iyf.tv')) {
+      if (raw.rawCover && raw.rawCover.startsWith('http') && !raw.rawCover.includes('iyf.tv')) {
+        cover = raw.rawCover;
+      } else {
+        cover = SAFE_POSTER;
+      }
+    }
+    let backdrop = tmdb?.backdrop;
+    if (!backdrop || backdrop.includes('iyf.tv')) {
+      backdrop = SAFE_BACKDROP;
+    }
     const rate = tmdb?.rate || (raw.rawRate && raw.rawRate !== '0.0' ? parseFloat(raw.rawRate).toFixed(1) : '8.8');
     const finalYear = tmdb?.year || raw.year || '2026';
     const updateBadge = formatUpdateBadge(raw.updateBadgeRaw, targetType);
@@ -755,8 +768,8 @@ async function writeKvEntities(items) {
       canonicalSlug: decodedSlug,
       type: item.type || 'tv',
       year: item.year || '2026',
-      cover: item.cover,
-      backdrop: item.backdrop || item.cover,
+      cover: (!item.cover || item.cover.includes('iyf.tv')) ? 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg' : item.cover,
+      backdrop: (!item.backdrop || item.backdrop.includes('iyf.tv')) ? 'https://image.tmdb.org/t/p/w1280/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg' : (item.backdrop || item.cover),
       overview: item.overview || `${title} 是 ${item.year || '2026'} 年上线的优质影视。提供全网多源纯直连极速播放，画质高清流畅，尽在 iKanPP 爱看片片。`,
       description: item.overview || `${title} 是 ${item.year || '2026'} 年上线的优质影视。提供全网多源纯直连极速播放，画质高清流畅，尽在 iKanPP 爱看片片。`,
       genres: item.genres || [(item.type === 'movie' ? '电影' : '电视剧')],

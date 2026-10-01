@@ -1,5 +1,5 @@
 import { TitleEntity } from '@/lib/types/entity';
-import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie, hasTitleOverlap, isCleanChineseTitle, isStrictSafeEntity, decodeMangledHexSlug } from '@/lib/data/entities/entity-utils';
+import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie, hasTitleOverlap, isCleanChineseTitle, isStrictSafeEntity, decodeMangledHexSlug, sanitizeMediaUrl, isWatermarkedImage } from '@/lib/data/entities/entity-utils';
 
 /**
  * 影视实体精简卡片项（用于「最新上线」货架与 RSS Feed 0ms 瞬间直出）
@@ -354,6 +354,12 @@ export async function saveEntity(entity: TitleEntity, options?: { syncGlobalInde
   }
 
   const id = entity.entityId.toLowerCase();
+  // 🌟 终极图片防投毒与自愈锁：凡包含第三方水印域名，自动强制替换为官方 4K 纯净保底物料
+  entity.cover = sanitizeMediaUrl(entity.cover, 'poster');
+  if (entity.backdrop) {
+    entity.backdrop = sanitizeMediaUrl(entity.backdrop, 'backdrop');
+  }
+
   // 权威规范 Slug 强制预热与持久化
   if (!entity.canonicalSlug || /(?:e[0-9a-f]-[0-9a-f]{2}){2,}/i.test(entity.canonicalSlug)) {
     const cleanSlug = generateSlug(entity.title || entity.slug);
@@ -1028,6 +1034,8 @@ export function isSafeRecentTitleItem(item: RecentTitleItem): boolean {
   const t = item.title;
   // 1. 严格华语合法标题过滤（阻断日文假名、韩文、无中文字符纯外文、违规黑名单）
   if (!isCleanChineseTitle(t)) return false;
+  // 1.5 终极去水印过滤：严禁任何包含第三方水印域名的图片进入「最新上线」横轨
+  if (isWatermarkedImage(item.cover) || (item.backdrop && isWatermarkedImage(item.backdrop))) return false;
   // 2. 极低评分异常垃圾片阻断
   if (item.rate && parseFloat(item.rate) <= 3.0 && item.year && parseInt(item.year, 10) < 2024) return false;
   // 3. 强力防张冠李戴阻断：1978 年老电影《希望》（ik100710）严禁作为最新上线影视渗透横轨
