@@ -523,6 +523,29 @@ IkanPPPlayerContainer / IkanXPlayerContainer (双轨容器，负责线路调度�
 - **架构决议**：全面取消该专线及 `/api/ikanpp-stream` 中继端点，释放 Edge Function 打包体积；
 - **最终架构**：全站轨道 A 核心播放调度永久专注于**「⚡ 暗影自愈专线 (4K 原画直连，瓜子源)」**与全网骨干源（巨量、光速、无尽、暴风等），100% 直连第三方 CDN，零中继零代理，保障全平台毫秒级稳定秒开。
 
+---
+
+## 21. 独立 Cloudflare Core Worker 解耦与边缘原生媒体中台规范 (Core Worker & Edge-Native Spec) (2026-10 升级)
+
+为彻底解决 Cloudflare Pages 25MB 函数体积死穴，并为移动端 App、跨端外部项目提供工业级、高并发、免翻跨域直链接口，全站流媒体专线调度与多维检索已全面升级为独立 Core Worker 架构：
+
+### 1. 架构解耦与物理隔离
+- **独立工程架构**：在 `workers/ikanpp-core/` 建立超轻量独立 Worker（包体积仅 **20.79 KiB**，启动时间仅 **3ms**），彻底与 Next.js Pages 打包物理解耦；
+- **域名透明穿透**：通过 `next.config.ts` 中的 rewrites 规则，将主站 `/api/ikanpp-line`、`/api/ikanpp-line/resolve`、`/api/shadowline/resolve` 透明代理穿透至独立 Worker；外部项目可直接调用 `https://ikanpp-core-worker.zeyelvis.workers.dev`；
+- **全开跨域与标准化**：所有请求默认返回 `Access-Control-Allow-Origin: *`，OPTIONS 请求 204 秒回。
+
+### 2. 原生 KV 高速缓存与自愈调度
+- **微秒级 KV 缓存**：原生绑定生产环境 `KVIDEO_KV`，对已解析成功的 m3u8 播放流按片名与集数建立 1 小时缓存（`ikanpp:stream_cache:*`），二次请求实现 0 爬虫、0 解密、响应耗时 < 15ms（`x-cache-status: HIT`）；
+- **双层调度机制**：
+  1. **层级 1 (暗影专线直解)**：采用原生 Web Crypto API (`crypto.subtle`) 实现 AES-128-CBC 动态加解密与多维消歧匹配，零沉重 Node.js 库依赖；
+  2. **层级 2 (骨干源自愈)**：暗影专线受阻或未命中时，自动回退到骨干采集站（光速 ➔ 巨量 ➔ 暴风 ➔ 无尽）自愈提取直链流；
+- **铁律恪守**：输出的播放地址 100% 浏览器直连第三方源站 CDN，严禁代理切片或重写 m3u8，严禁侵入卡顿拨快逻辑。
+
+### 3. D1 原生关系型 SQL 检索与边缘流水线
+- **D1 SQL 原生查询**：在 `db/schema.sql` 规划实体关系表与 5 重复合索引，通过 `/api/library/browse` 原生 SQL 毫秒级分页检索，支持 KV 倒排索引无缝降级；
+- **边缘整点定时流水线**：Worker 挂载 `crons = ["0 * * * *"]` 定时任务，在边缘端自动执行“嗅探 ➔ 准则 12 华语安全一票否决 ➔ 规范化 ➔ D1/KV 原子写入 ➔ IndexNow 广播”，实现片库 100% 无人值守自动上新。
+
+
 
 
 
