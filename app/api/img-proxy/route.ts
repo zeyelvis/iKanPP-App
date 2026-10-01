@@ -26,6 +26,13 @@ export async function GET(request: NextRequest) {
         return new NextResponse('Missing URL parameter', { status: 400 });
     }
 
+    // 🌟 终极品牌纯净度硬锁：坚决拒绝代理任何带爱壹帆水印的第三方图片！
+    // 凡带有 static.iyf.tv 或 iyf.tv 的图片请求，直接永久重定向到 TMDB 官方纯净物料
+    if (url.includes('iyf.tv') || url.includes('static.iyf.tv')) {
+        const safeUrl = `https://image.tmdb.org/t/p/w${requestedWidth}/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg`;
+        return NextResponse.redirect(safeUrl, 302);
+    }
+
     // SSRF 防护
     if (!isSafeExternalUrl(url)) {
         return new NextResponse('URL not allowed', { status: 403 });
@@ -79,14 +86,12 @@ export async function GET(request: NextRequest) {
             const controller = new AbortController();
             const timer = setTimeout(() => controller.abort(), 8000);
 
-            // 智能防盗链 Referer 处理：豆瓣/爱壹帆针对性注入，其它采集站默认带源站 Host
+            // 智能防盗链 Referer 处理：豆瓣针对性注入，其它采集站默认带源站 Host
             let refererHeader = '';
             try {
                 const parsedUrl = new URL(candidate);
                 if (candidate.includes('douban')) {
                     refererHeader = 'https://movie.douban.com/';
-                } else if (candidate.includes('iyf')) {
-                    refererHeader = 'https://www.iyf.tv/';
                 } else {
                     refererHeader = `${parsedUrl.protocol}//${parsedUrl.host}/`;
                 }

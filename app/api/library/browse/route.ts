@@ -223,10 +223,15 @@ function normalizeVodItem(item: any, isChinaMainland?: boolean) {
     });
   }
 
+  let safePic = item.vod_pic || '';
+  if (safePic.includes('iyf.tv') || safePic.includes('static.iyf.tv')) {
+    safePic = 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
+  }
+
   return {
     id: String(item.vod_id),
     title: (item.vod_name || '').trim(),
-    cover: getOptimizedImageUrl(item.vod_pic || '', { isChinaMainland, variant: 'poster' }),
+    cover: getOptimizedImageUrl(safePic, { isChinaMainland, variant: 'poster' }),
     rate,
     year: String(item.vod_year || ''),
     types,
@@ -475,21 +480,27 @@ export async function GET(req: NextRequest) {
           }
           return true;
         })
-        .map(entity => ({
-          id: entity.entityId,
-          title: entity.title,
-          cover: getOptimizedImageUrl(entity.cover, { isChinaMainland, variant: 'poster' }),
-          rate: entity.rate || entity.score || '8.8',
-          score: entity.score || entity.rate || '8.8',
-          popularity: entity.popularity || entity.hot || 0,
-          hot: entity.hot || entity.popularity || 0,
-          year: entity.year || '2026',
-          types: entity.genres || [],
-          remarks: entity.status || (entity.numberOfEpisodes ? `${entity.numberOfEpisodes}集全` : '全高清'),
-          area: entity.region || '华语',
-          updatedAt: (entity.updatedAt || entity.createdAt || '').split('T')[0],
-          url: getTitleCanonicalHref(entity),
-        }));
+        .map(entity => {
+          let safeCover = entity.cover || '';
+          if (safeCover.includes('iyf.tv') || safeCover.includes('static.iyf.tv')) {
+            safeCover = 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
+          }
+          return {
+            id: entity.entityId,
+            title: entity.title,
+            cover: getOptimizedImageUrl(safeCover, { isChinaMainland, variant: 'poster' }),
+            rate: entity.rate || entity.score || '8.8',
+            score: entity.score || entity.rate || '8.8',
+            popularity: entity.popularity || entity.hot || 0,
+            hot: entity.hot || entity.popularity || 0,
+            year: entity.year || '2026',
+            types: entity.genres || [],
+            remarks: entity.status || (entity.numberOfEpisodes ? `${entity.numberOfEpisodes}集全` : '全高清'),
+            area: entity.region || '华语',
+            updatedAt: (entity.updatedAt || entity.createdAt || '').split('T')[0],
+            url: getTitleCanonicalHref(entity),
+          };
+        });
 
       return NextResponse.json(
         {
