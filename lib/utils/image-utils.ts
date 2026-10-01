@@ -110,25 +110,8 @@ export function getOptimizedImageUrl(
     ? options.isChinaMainland
     : isClientRestrictedRegion();
 
-  // 若已经是本站代理 URL，检查其内部是否包裹了违规水印域名
-  if (url.includes('/api/img-proxy')) {
-    if (url.includes('iyf.tv')) {
-      const safeCleanTmdbUrl = `https://image.tmdb.org/t/p/w${targetWidth}/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg`;
-      return `/api/img-proxy?url=${encodeURIComponent(safeCleanTmdbUrl)}&w=${targetWidth}`;
-    }
-    return url;
-  }
-
-  // 🌟 终极品牌纯净度防线：绝对禁止爱壹帆水印图片流向浏览器！
-  // 凡命中 static.iyf.tv 或 iyf.tv 的图片，绝对不予代理放行，100% 物理替换为 TMDB 官方纯净物料
-  if (url.includes('iyf.tv') || url.includes('static.iyf.tv')) {
-    const safeCleanTmdbUrl = `https://image.tmdb.org/t/p/w${targetWidth}/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg`;
-    if (shouldUseProxy) {
-      const noFallbackQuery = options?.noFallback ? '&nofallback=1' : '';
-      return `/api/img-proxy?url=${encodeURIComponent(safeCleanTmdbUrl)}&w=${targetWidth}${noFallbackQuery}`;
-    }
-    return safeCleanTmdbUrl;
-  }
+  // 若已经是本站代理 URL，直接放行，杜绝嵌套代理
+  if (url.includes('/api/img-proxy')) return url;
 
   if (!url.startsWith('http')) {
     return url.startsWith('/') ? url : '/placeholder-poster.svg';
@@ -136,6 +119,7 @@ export function getOptimizedImageUrl(
 
   const isTmdb = url.includes('image.tmdb.org') || url.includes('tmdb.org');
   const isDouban = url.includes('doubanio.com') || url.includes('douban.com');
+  const isIyf = url.includes('iyf.tv');
 
   // 3. 处理 TMDB 资源
   if (isTmdb) {
@@ -153,8 +137,8 @@ export function getOptimizedImageUrl(
     return resizedTmdbUrl;
   }
 
-  // 4. 处理防盗链与第三方源（豆瓣等：防防盗链并杜绝客户端暴露第三方源站，全球统一走 img-proxy 接入 R2 镜像）
-  if (isDouban) {
+  // 4. 处理防盗链与第三方源（豆瓣、第三方源等：防防盗链并杜绝客户端暴露源站，统一走 img-proxy 接入 R2 镜像）
+  if (isDouban || isIyf) {
     const noFallbackQuery = options?.noFallback ? '&nofallback=1' : '';
     return `/api/img-proxy?url=${encodeURIComponent(url)}&w=${targetWidth}${noFallbackQuery}`;
   }

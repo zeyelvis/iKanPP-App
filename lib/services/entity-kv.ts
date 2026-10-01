@@ -183,26 +183,6 @@ export async function getEntityById(entityId: string): Promise<TitleEntity | nul
             await kvPut(`slug:${correctSlug}`, cleanId);
           } catch {}
         })();
-      }
-
-      // 🌟 终极图片防投毒与读时自愈：凡从数据库读出的实体若带有爱壹帆水印封面或背景，就地自愈为官方纯净物料
-      let watermarkHealed = false;
-      if (parsed.cover && (parsed.cover.includes('iyf.tv') || parsed.cover.includes('static.iyf.tv'))) {
-        parsed.cover = 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
-        watermarkHealed = true;
-      }
-      if (parsed.backdrop && (parsed.backdrop.includes('iyf.tv') || parsed.backdrop.includes('static.iyf.tv'))) {
-        parsed.backdrop = 'https://image.tmdb.org/t/p/w1280/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
-        watermarkHealed = true;
-      }
-      if (watermarkHealed) {
-        (async () => {
-          try {
-            await kvPut(`entity:${cleanId}`, JSON.stringify(parsed));
-          } catch {}
-        })();
-      }
-
       return parsed;
     } catch {}
   }
@@ -216,12 +196,6 @@ export async function getEntityById(entityId: string): Promise<TitleEntity | nul
       parsed.actors = (parsed.actors || []).filter(a => a && a !== '实力主演');
       if (parsed.canonicalSlug && /(?:e[0-9a-f]-[0-9a-f]{2}){2,}/i.test(parsed.canonicalSlug)) {
         parsed.canonicalSlug = `${cleanId}-${generateSlug(parsed.title)}`.toLowerCase();
-      }
-      if (parsed.cover && (parsed.cover.includes('iyf.tv') || parsed.cover.includes('static.iyf.tv'))) {
-        parsed.cover = 'https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
-      }
-      if (parsed.backdrop && (parsed.backdrop.includes('iyf.tv') || parsed.backdrop.includes('static.iyf.tv'))) {
-        parsed.backdrop = 'https://image.tmdb.org/t/p/w1280/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg';
       }
       return parsed;
     } catch {}
