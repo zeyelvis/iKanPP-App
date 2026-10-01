@@ -4,17 +4,53 @@
  * 统管凭证别名兼容、重试退避与非阻塞降级，彻底杜绝单脚本凭证不一致与未捕获异常
  */
 
+import fs from 'fs';
+import path from 'path';
+
+// 自动检测并载入 .env.local 与 .env 环境变量（本地运行与离线脚本支持）
+(function autoLoadEnv() {
+  const envFiles = ['.env.local', '.env'];
+  for (const file of envFiles) {
+    const fullPath = path.resolve(process.cwd(), file);
+    if (fs.existsSync(fullPath)) {
+      try {
+        const content = fs.readFileSync(fullPath, 'utf8');
+        for (const line of content.split('\n')) {
+          const trimmed = line.trim();
+          if (!trimmed || trimmed.startsWith('#')) continue;
+          const eqIdx = trimmed.indexOf('=');
+          if (eqIdx > 0) {
+            const key = trimmed.slice(0, eqIdx).trim();
+            const val = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, '');
+            if (!process.env[key]) {
+              process.env[key] = val;
+            }
+          }
+        }
+      } catch {}
+    }
+  }
+})();
+
 export function getKvConfig() {
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CF_KV_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a';
-  const namespaceId = process.env.CLOUDFLARE_NAMESPACE_ID || process.env.CF_KV_NAMESPACE_ID || '42311924427747deaf00981d99d58998';
-  const apiKey = process.env.CLOUDFLARE_API_KEY || process.env.CF_KV_API_KEY || process.env.CF_API_KEY || process.env.CLOUDFLARE_AUTH_KEY || '';
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CF_KV_ACCOUNT_ID || process.env.CF_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a';
+  const namespaceId = process.env.CLOUDFLARE_KV_NAMESPACE_ID || process.env.CLOUDFLARE_NAMESPACE_ID || process.env.CF_KV_NAMESPACE_ID || '42311924427747deaf00981d99d58998';
+  const apiKey = process.env.CLOUDFLARE_API_KEY || process.env.CLOUDFLARE_API_TOKEN || process.env.CF_API_TOKEN || process.env.CF_KV_API_KEY || process.env.CF_API_KEY || process.env.CLOUDFLARE_AUTH_KEY || '';
   const email = process.env.CLOUDFLARE_EMAIL || process.env.CF_KV_EMAIL || process.env.CF_EMAIL || process.env.CLOUDFLARE_AUTH_EMAIL || 'zeyelvis@gmail.com';
 
   const baseUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}`;
-  const headers = {
-    'X-Auth-Email': email,
-    'X-Auth-Key': apiKey,
-  };
+  
+  const headers = {};
+  if (apiKey) {
+    const isGlobalKey = /^[0-9a-f]{37}$/i.test(apiKey);
+    if (isGlobalKey && email) {
+      headers['X-Auth-Email'] = email;
+      headers['X-Auth-Key'] = apiKey;
+    } else {
+      const cleanToken = apiKey.replace(/^Bearer\s+/i, '');
+      headers['Authorization'] = `Bearer ${cleanToken}`;
+    }
+  }
 
   return { accountId, namespaceId, apiKey, email, baseUrl, headers, hasKey: Boolean(apiKey) };
 }

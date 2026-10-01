@@ -14,7 +14,32 @@ import path from 'path';
  * 6. 导出新片片名列表至 lib/data/new-scraped-titles.json 供 SEO Entity 模块自动化消费
  */
 
-const TMDB_API_KEY = '';
+// 自动检测并载入 .env.local 与 .env 环境变量
+(function autoLoadEnv() {
+  const envFiles = ['.env.local', '.env'];
+  for (const file of envFiles) {
+    const fullPath = path.resolve(process.cwd(), file);
+    if (fs.existsSync(fullPath)) {
+      try {
+        const content = fs.readFileSync(fullPath, 'utf8');
+        for (const line of content.split('\n')) {
+          const trimmed = line.trim();
+          if (!trimmed || trimmed.startsWith('#')) continue;
+          const eqIdx = trimmed.indexOf('=');
+          if (eqIdx > 0) {
+            const key = trimmed.slice(0, eqIdx).trim();
+            const val = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, '');
+            if (!process.env[key]) {
+              process.env[key] = val;
+            }
+          }
+        }
+      } catch {}
+    }
+  }
+})();
+
+const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const GUANGSU_API = 'https://api.guangsuapi.com/api.php/provide/vod';
 const JISU_API = 'https://jszyapi.com/api.php/provide/vod';

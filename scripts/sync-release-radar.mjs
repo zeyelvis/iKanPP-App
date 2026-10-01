@@ -18,25 +18,53 @@ import crypto from 'crypto';
  * 7. 双重输出：预烘焙直出 lib/data/latest-titles-prebaked.ts + 生产环境 KV recent:* 受控写入。
  */
 
+// 自动检测并载入 .env.local 与 .env 环境变量
+(function autoLoadEnv() {
+  const envFiles = ['.env.local', '.env'];
+  for (const file of envFiles) {
+    const fullPath = path.resolve(process.cwd(), file);
+    if (fs.existsSync(fullPath)) {
+      try {
+        const content = fs.readFileSync(fullPath, 'utf8');
+        for (const line of content.split('\n')) {
+          const trimmed = line.trim();
+          if (!trimmed || trimmed.startsWith('#')) continue;
+          const eqIdx = trimmed.indexOf('=');
+          if (eqIdx > 0) {
+            const key = trimmed.slice(0, eqIdx).trim();
+            const val = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, '');
+            if (!process.env[key]) {
+              process.env[key] = val;
+            }
+          }
+        }
+      } catch {}
+    }
+  }
+})();
+
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 
 // Cloudflare KV 配置
-const CF_KV_ACCOUNT_ID = process.env.CF_KV_ACCOUNT_ID || process.env.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a';
-const CF_KV_NAMESPACE_ID = process.env.CF_KV_NAMESPACE_ID || process.env.CLOUDFLARE_NAMESPACE_ID || '42311924427747deaf00981d99d58998';
-const CF_KV_API_KEY = process.env.CLOUDFLARE_API_TOKEN || process.env.CF_KV_API_KEY || process.env.CLOUDFLARE_API_KEY || '';
-const CF_KV_EMAIL = process.env.CF_KV_EMAIL || process.env.CLOUDFLARE_EMAIL || 'zeyelvis@gmail.com';
+const CF_KV_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CF_KV_ACCOUNT_ID || process.env.CF_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a';
+const CF_KV_NAMESPACE_ID = process.env.CLOUDFLARE_KV_NAMESPACE_ID || process.env.CLOUDFLARE_NAMESPACE_ID || process.env.CF_KV_NAMESPACE_ID || '42311924427747deaf00981d99d58998';
+const CF_KV_API_KEY = process.env.CLOUDFLARE_API_KEY || process.env.CLOUDFLARE_API_TOKEN || process.env.CF_API_TOKEN || process.env.CF_KV_API_KEY || process.env.CF_API_KEY || process.env.CLOUDFLARE_AUTH_KEY || '';
+const CF_KV_EMAIL = process.env.CLOUDFLARE_EMAIL || process.env.CF_KV_EMAIL || process.env.CF_EMAIL || process.env.CLOUDFLARE_AUTH_EMAIL || 'zeyelvis@gmail.com';
 
 const KV_BASE_URL = `https://api.cloudflare.com/client/v4/accounts/${CF_KV_ACCOUNT_ID}/storage/kv/namespaces/${CF_KV_NAMESPACE_ID}`;
 
 function getKvHeaders() {
   const headers = {};
-  const token = process.env.CLOUDFLARE_API_TOKEN || CF_KV_API_KEY;
-  if (token && (token.length === 40 || !CF_KV_EMAIL || token.startsWith('Bearer '))) {
-    headers['Authorization'] = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
-  } else if (CF_KV_API_KEY && CF_KV_EMAIL) {
-    headers['X-Auth-Email'] = CF_KV_EMAIL;
-    headers['X-Auth-Key'] = CF_KV_API_KEY;
+  if (CF_KV_API_KEY) {
+    const isGlobalKey = /^[0-9a-f]{37}$/i.test(CF_KV_API_KEY);
+    if (isGlobalKey && CF_KV_EMAIL) {
+      headers['X-Auth-Email'] = CF_KV_EMAIL;
+      headers['X-Auth-Key'] = CF_KV_API_KEY;
+    } else {
+      const cleanToken = CF_KV_API_KEY.replace(/^Bearer\s+/i, '');
+      headers['Authorization'] = `Bearer ${cleanToken}`;
+    }
   }
   return headers;
 }
@@ -287,14 +315,51 @@ async function fetchIyfLastAdd(cid = '0,1', page = 1, pageSize = 50) {
 
 // ── 采集站真实入库流（按 vod_time 倒序） ─────────────────────────────────────
 
+// ── 采集站真实入库流（光速 + 极速双擎调度，按 vod_time 倒序） ───────────────
+
 async function fetchCollectorStream(typeIds = [6, 13]) {
   const items = [];
+  const sources = [
+    { name: 'guangsu', base: 'https://api.guangsuapi.com/api.php/provide/vod' },
+    { name: 'jisu', base: 'https://jszyapi.com/api.php/provide/vod' },
+  ];
+
+  // 1. 针对专区类别拉取各采集源前 20 条
   for (const tid of typeIds.slice(0, 3)) {
+    for (const src of sources) {
+      try {
+        const url = `${src.base}?ac=detail&t=${tid}&pg=1&pagesize=20`;
+        const res = await fetch(url, {
+          headers: { 'User-Agent': 'Mozilla/5.0' },
+          signal: AbortSignal.timeout(4500),
+        });
+        if (!res.ok) continue;
+        const data = await res.json();
+        const list = data?.list || [];
+        for (const vod of list) {
+          if (!vod.vod_name) continue;
+          items.push({
+            source: src.name,
+            title: vod.vod_name.trim(),
+            year: vod.vod_year || String(new Date().getFullYear()),
+            vod_remarks: vod.vod_remarks,
+            cover: vod.vod_pic,
+            vod_time: vod.vod_time,
+            vod_class: vod.vod_class,
+            score: vod.vod_score,
+          });
+        }
+      } catch {}
+    }
+  }
+
+  // 2. 补充抓取最近 24 小时入库的优质新片/新番/热剧
+  for (const src of sources) {
     try {
-      const url = `https://api.guangsuapi.com/api.php/provide/vod?ac=detail&t=${tid}&pg=1&pagesize=15`;
+      const url = `${src.base}?ac=detail&h=24&pagesize=25`;
       const res = await fetch(url, {
         headers: { 'User-Agent': 'Mozilla/5.0' },
-        signal: AbortSignal.timeout(5000),
+        signal: AbortSignal.timeout(4500),
       });
       if (!res.ok) continue;
       const data = await res.json();
@@ -302,7 +367,7 @@ async function fetchCollectorStream(typeIds = [6, 13]) {
       for (const vod of list) {
         if (!vod.vod_name) continue;
         items.push({
-          source: 'collector',
+          source: src.name,
           title: vod.vod_name.trim(),
           year: vod.vod_year || String(new Date().getFullYear()),
           vod_remarks: vod.vod_remarks,
@@ -314,6 +379,7 @@ async function fetchCollectorStream(typeIds = [6, 13]) {
       }
     } catch {}
   }
+
   return items;
 }
 
