@@ -58,11 +58,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "坂本日常",
+                "title": "一个部门的诞生",
                 "updateBadge": ""
         },
         {
-                "title": "一个部门的诞生",
+                "title": "坂本日常",
                 "updateBadge": ""
         },
         {
@@ -70,11 +70,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "生死尽头",
+                "title": "魔方小姐",
                 "updateBadge": ""
         },
         {
-                "title": "大学炸弹客",
+                "title": "生死尽头",
                 "updateBadge": ""
         },
         {
@@ -82,15 +82,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "魔方小姐",
+                "title": "大学炸弹客",
                 "updateBadge": ""
         },
         {
                 "title": "重制",
-                "updateBadge": ""
-        },
-        {
-                "title": "特立独行",
                 "updateBadge": ""
         },
         {
@@ -99,6 +95,10 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "死亡赌局",
+                "updateBadge": ""
+        },
+        {
+                "title": "特立独行",
                 "updateBadge": ""
         }
       ],
@@ -1856,6 +1856,10 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "中头奖还是要上班",
+                "updateBadge": "2"
+        },
+        {
                 "title": "雷霆令",
                 "updateBadge": "2"
         },
@@ -1865,10 +1869,6 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "花开锦绣",
-                "updateBadge": ""
-        },
-        {
-                "title": "冬城猎凶",
                 "updateBadge": ""
         }
       ],

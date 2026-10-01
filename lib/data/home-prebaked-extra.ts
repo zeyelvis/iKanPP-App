@@ -21,19 +21,11 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "1"
     },
     {
-        "title": "海贼王",
-        "updateBadge": ""
-    },
-    {
         "title": "凡人修仙传",
         "updateBadge": ""
     },
     {
-        "title": "遮天",
-        "updateBadge": ""
-    },
-    {
-        "title": "牧神记",
+        "title": "海贼王",
         "updateBadge": ""
     },
     {
@@ -41,19 +33,27 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
+        "title": "牧神记",
+        "updateBadge": ""
+    },
+    {
+        "title": "遮天",
+        "updateBadge": ""
+    },
+    {
+        "title": "沧元图",
+        "updateBadge": ""
+    },
+    {
         "title": "吞噬星空",
         "updateBadge": ""
     },
     {
-        "title": "逆天邪神3D",
+        "title": "光阴之外",
         "updateBadge": ""
     },
     {
-        "title": "东大高武学院",
-        "updateBadge": "1"
-    },
-    {
-        "title": "沧元图",
+        "title": "灵境行者",
         "updateBadge": ""
     }
   ],
@@ -635,16 +635,20 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": "2"
     },
     {
-        "title": "花儿与少年第8季",
-        "updateBadge": "1"
+        "title": "现在就出发第4季",
+        "updateBadge": "11"
     },
     {
-        "title": "披荆斩棘2026",
+        "title": "花儿与少年第8季",
         "updateBadge": "1"
     },
     {
         "title": "密室大逃脱第8季",
         "updateBadge": ""
+    },
+    {
+        "title": "披荆斩棘2026",
+        "updateBadge": "1"
     },
     {
         "title": "我家那闺女2026",
@@ -657,10 +661,6 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
     {
         "title": "大哥小助理",
         "updateBadge": "1"
-    },
-    {
-        "title": "现在就出发第3季",
-        "updateBadge": ""
     }
   ],
   hero: [
@@ -1566,16 +1566,20 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "仙逆弑仙之战",
-        "updateBadge": "1"
-    },
-    {
         "title": "早春晴朗",
         "updateBadge": ""
     },
     {
+        "title": "仙逆弑仙之战",
+        "updateBadge": "1"
+    },
+    {
         "title": "心动的信号第9季",
         "updateBadge": "2"
+    },
+    {
+        "title": "现在就出发第4季",
+        "updateBadge": "11"
     },
     {
         "title": "余红旧事",
@@ -1588,10 +1592,6 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
     {
         "title": "法医秦明之龙番往事",
         "updateBadge": ""
-    },
-    {
-        "title": "诛仙4",
-        "updateBadge": "1"
     }
   ],
   hero: [
@@ -2163,15 +2163,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "克拉克森的农场第2季",
-        "updateBadge": ""
-    },
-    {
-        "title": "克拉克森的农场第5季",
-        "updateBadge": ""
-    },
-    {
         "title": "克拉克森的农场第3季",
+        "updateBadge": ""
+    },
+    {
+        "title": "克拉克森的农场第2季",
         "updateBadge": ""
     },
     {
@@ -2179,7 +2175,11 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "空中浩劫第一季",
+        "title": "克拉克森的农场第5季",
+        "updateBadge": ""
+    },
+    {
+        "title": "失焦命案：被遗忘的女童",
         "updateBadge": ""
     },
     {
@@ -2187,7 +2187,7 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
         "updateBadge": ""
     },
     {
-        "title": "风味人间",
+        "title": "空中浩劫第九季",
         "updateBadge": ""
     }
   ],
