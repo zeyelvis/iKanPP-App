@@ -58,23 +58,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "一个部门的诞生",
-                "updateBadge": ""
-        },
-        {
                 "title": "坂本日常",
                 "updateBadge": ""
         },
         {
+                "title": "一个部门的诞生",
+                "updateBadge": ""
+        },
+        {
                 "title": "给阿嬷的情书",
-                "updateBadge": ""
-        },
-        {
-                "title": "魔方小姐",
-                "updateBadge": ""
-        },
-        {
-                "title": "年会不能停！2",
                 "updateBadge": ""
         },
         {
@@ -86,7 +78,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "爱情假说",
+                "title": "年会不能停！2",
+                "updateBadge": ""
+        },
+        {
+                "title": "魔方小姐",
                 "updateBadge": ""
         },
         {
@@ -94,11 +90,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "死亡赌局",
+                "title": "特立独行",
                 "updateBadge": ""
         },
         {
-                "title": "特立独行",
+                "title": "爱情假说",
+                "updateBadge": ""
+        },
+        {
+                "title": "死亡赌局",
                 "updateBadge": ""
         }
       ],
@@ -1825,22 +1825,22 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": ""
-        },
-        {
-                "title": "一瓯春",
-                "updateBadge": ""
-        },
-        {
-                "title": "我不是大师",
-                "updateBadge": ""
+                "updateBadge": "1"
         },
         {
                 "title": "无可替代",
-                "updateBadge": ""
+                "updateBadge": "1"
+        },
+        {
+                "title": "我不是大师",
+                "updateBadge": "1"
         },
         {
                 "title": "死有对证",
+                "updateBadge": "1"
+        },
+        {
+                "title": "一瓯春",
                 "updateBadge": ""
         },
         {
@@ -1848,11 +1848,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "交锋",
+                "title": "法医秦明之龙番往事",
                 "updateBadge": ""
         },
         {
-                "title": "法医秦明之龙番往事",
+                "title": "交锋",
                 "updateBadge": ""
         },
         {
@@ -1860,7 +1860,7 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "2"
         },
         {
-                "title": "冬城猎凶",
+                "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
@@ -1868,8 +1868,8 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "黑岛监狱",
-                "updateBadge": "1"
+                "title": "冬城猎凶",
+                "updateBadge": ""
         }
       ],
     "hero": [
@@ -1879,13 +1879,13 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609281206530631824.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609291602440264518.jpg",
-                "description": "《无可替代》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至07集 | 共20集。",
+                "description": "《无可替代》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至08集 | 共20集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至07集 | 共20集",
+                "episodes_info": "更新至08集 | 共20集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1896,13 +1896,13 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609241200270068364.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609241345244520726.jpg",
-                "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至16集 | 共24集。",
+                "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至17集 | 共24集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至16集 | 共24集",
+                "episodes_info": "更新至17集 | 共24集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
@@ -1947,13 +1947,13 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://static.iyf.tv/upload/video/202609111404160476768.gif",
                 "backdrop": "https://static.iyf.tv/upload/user/202609111848394812246.jpg",
-                "description": "《兰香如故》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至38集 | 共47集。",
+                "description": "《兰香如故》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至39集 | 共47集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至38集 | 共47集",
+                "episodes_info": "更新至39集 | 共47集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
