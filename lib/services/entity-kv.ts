@@ -927,6 +927,10 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
 
               const chunkEntities = (await Promise.all(nextSlice.map(id => getEntityById(id)))).filter(Boolean) as TitleEntity[];
               for (const ent of chunkEntities) {
+                // 🌟 核心防线：坚决剔除 1978 年老电影《希望》(ik100710) 冒充 2026 年新片
+                if (ent.entityId === 'ik100710' || (ent.title === '希望' && ent.year && parseInt(ent.year, 10) < 2000)) {
+                  continue;
+                }
                 items.push(ent);
                 if (items.length === limit) break;
               }
@@ -1026,6 +1030,8 @@ export function isSafeRecentTitleItem(item: RecentTitleItem): boolean {
   if (!isCleanChineseTitle(t)) return false;
   // 2. 极低评分异常垃圾片阻断
   if (item.rate && parseFloat(item.rate) <= 3.0 && item.year && parseInt(item.year, 10) < 2024) return false;
+  // 3. 强力防张冠李戴阻断：1978 年老电影《希望》（ik100710）严禁作为最新上线影视渗透横轨
+  if (item.entityId === 'ik100710' || (item.title === '希望' && item.year && parseInt(item.year, 10) < 2000)) return false;
   return true;
 }
 

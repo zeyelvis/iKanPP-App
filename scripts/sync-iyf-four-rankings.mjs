@@ -249,9 +249,9 @@ async function main() {
               .map(p => p.entityId);
           } catch {}
         }
-        // 确保战略先锋爆款（如《生化危机：爆发夜》ik020581 与 韩国巨制《希望》ik100710）永远常驻在电影和全站第一线
+        // 确保战略先锋爆款（如《生化危机：爆发夜》ik020581）永远常驻在电影和全站第一线（坚决剔除1978年老片《希望》ik100710）
         if (channel.key === 'movie' || channel.key === 'all') {
-          const mustHaves = ['ik020581', 'ik100710'];
+          const mustHaves = ['ik020581'];
           for (let i = mustHaves.length - 1; i >= 0; i--) {
             const id = mustHaves[i];
             pioneerIds = [id, ...pioneerIds.filter(p => p !== id)];

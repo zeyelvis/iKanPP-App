@@ -466,21 +466,30 @@ export async function GET(req: NextRequest) {
     const shouldServeKV = kvResult && kvResult.total > 0 && (isMatureChannel || hasSufficientEntities);
 
     if (shouldServeKV) {
-      const list = kvResult.items.map(entity => ({
-        id: entity.entityId,
-        title: entity.title,
-        cover: getOptimizedImageUrl(entity.cover, { isChinaMainland, variant: 'poster' }),
-        rate: entity.rate || entity.score || '8.8',
-        score: entity.score || entity.rate || '8.8',
-        popularity: entity.popularity || entity.hot || 0,
-        hot: entity.hot || entity.popularity || 0,
-        year: entity.year || '2026',
-        types: entity.genres || [],
-        remarks: entity.status || (entity.numberOfEpisodes ? `${entity.numberOfEpisodes}集全` : '全高清'),
-        area: entity.region || '华语',
-        updatedAt: (entity.updatedAt || entity.createdAt || '').split('T')[0],
-        url: getTitleCanonicalHref(entity),
-      }));
+      const list = kvResult.items
+        .filter(entity => {
+          // 🌟 强力内容安全与老片碰撞硬核剔除：
+          // 杜绝 1978 年老电影《希望》（ik100710）冒充 2026 年韩国新片《希望》出现在新片流中
+          if (entity.entityId === 'ik100710' || (entity.title === '希望' && entity.year && parseInt(entity.year, 10) < 2000)) {
+            return false;
+          }
+          return true;
+        })
+        .map(entity => ({
+          id: entity.entityId,
+          title: entity.title,
+          cover: getOptimizedImageUrl(entity.cover, { isChinaMainland, variant: 'poster' }),
+          rate: entity.rate || entity.score || '8.8',
+          score: entity.score || entity.rate || '8.8',
+          popularity: entity.popularity || entity.hot || 0,
+          hot: entity.hot || entity.popularity || 0,
+          year: entity.year || '2026',
+          types: entity.genres || [],
+          remarks: entity.status || (entity.numberOfEpisodes ? `${entity.numberOfEpisodes}集全` : '全高清'),
+          area: entity.region || '华语',
+          updatedAt: (entity.updatedAt || entity.createdAt || '').split('T')[0],
+          url: getTitleCanonicalHref(entity),
+        }));
 
       return NextResponse.json(
         {
@@ -559,6 +568,11 @@ export async function GET(req: NextRequest) {
       vodClass.includes('解说') ||
       !isCleanChineseTitle(cleanTitle)
     ) {
+      continue;
+    }
+
+    // 杜绝 1978 年老电影《希望》混入
+    if (cleanTitle === '希望' && item.vod_year && parseInt(item.vod_year, 10) < 2000) {
       continue;
     }
 

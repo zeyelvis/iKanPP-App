@@ -253,14 +253,33 @@ async function fetchTmdbDetail(title, year, type = 'movie') {
       return null;
     }
 
-    // 优先匹配年份最接近的
-    let hit = results[0];
+    // 优先匹配年份完全吻合或相差 <= 1 年的条目
+    let hit = null;
     if (year) {
-      const matchedYear = results.find(r => {
+      hit = results.find(r => {
         const release = r.release_date || r.first_air_date || '';
         return release.startsWith(String(year));
       });
-      if (matchedYear) hit = matchedYear;
+      if (!hit) {
+        const yNum = parseInt(year, 10);
+        hit = results.find(r => {
+          const rYear = parseInt((r.release_date || r.first_air_date || '0').slice(0, 4), 10);
+          return Math.abs(rYear - yNum) <= 1;
+        });
+      }
+    }
+
+    // 🌟 核心防线：院线先锋雷达严禁年代偏离！
+    // 若指定了新片年份（如 2026），但 TMDB 结果相差大于 2 年（如命中 1978 年老片《希望》），坚决阻断张冠李戴！
+    if (!hit) {
+      if (year && results.length > 0) {
+        const topYear = parseInt((results[0].release_date || results[0].first_air_date || '0').slice(0, 4), 10);
+        if (Math.abs(topYear - parseInt(year, 10)) > 2) {
+          console.log(`   ⛔ [年代偏离阻断] 目标寻找 ${year} 年新片《${title}》，TMDB 首条为 ${topYear} 年作品，拒绝张冠李戴！`);
+          return null;
+        }
+      }
+      hit = results[0];
     }
 
     return {
@@ -546,8 +565,8 @@ async function main() {
   // 5. 自动无缝置顶融合四大排序与 recent:*
   console.log('🔄 [双轨融合] 正在将首发先锋片单注入四大排序首位与最新上线横轨...');
   
-  // 🌟 确保战略级超级院线新片（《生化危机：爆发夜》ik020581 与 韩国科幻巨制《希望》ik100710）恒定排在最前列
-  const TOP_FLAGSHIPS = ['ik020581', 'ik100710'];
+  // 🌟 确保战略级超级院线新片（《生化危机：爆发夜》ik020581）恒定排在最前列（坚决杜绝1978年同名老片《希望》ik100710）
+  const TOP_FLAGSHIPS = ['ik020581'];
   const moviePioneerIds = [...TOP_FLAGSHIPS, ...moviePioneers.filter(p => !TOP_FLAGSHIPS.includes(p.entityId)).map(p => p.entityId)];
   const allPioneerIds = [...TOP_FLAGSHIPS, ...pioneers.filter(p => !TOP_FLAGSHIPS.includes(p.entityId)).map(p => p.entityId)];
 
