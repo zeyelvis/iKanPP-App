@@ -2,6 +2,17 @@
  * iKanPP Core Worker Types & Standards
  */
 
+export interface ExecutionContext {
+  waitUntil(promise: Promise<any>): void;
+  passThroughOnException(): void;
+}
+
+export interface ScheduledEvent {
+  cron: string;
+  type: string;
+  scheduledTime: number;
+}
+
 export interface Env {
   KVIDEO_KV: KVNamespace;
   DB?: D1Database;
