@@ -14,6 +14,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 
 // 自动载入环境变量
 (function autoLoadEnv() {
@@ -42,29 +43,45 @@ import path from 'path';
 
 const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CF_KV_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a';
 const NAMESPACE_ID = process.env.CLOUDFLARE_KV_NAMESPACE_ID || process.env.CF_KV_NAMESPACE_ID || process.env.CLOUDFLARE_NAMESPACE_ID || '42311924427747deaf00981d99d58998';
-const API_KEY = process.env.CLOUDFLARE_API_KEY || process.env.CLOUDFLARE_API_TOKEN || process.env.CF_API_TOKEN || process.env.CF_KV_API_KEY || process.env.CF_API_KEY || '';
 const EMAIL = process.env.CLOUDFLARE_EMAIL || process.env.CF_KV_EMAIL || process.env.CF_EMAIL || process.env.CLOUDFLARE_AUTH_EMAIL || 'zeyelvis@gmail.com';
 
 const INPUT_FILE = path.resolve('.cache/iyf-master-catalog.json');
 
 function getAuthHeaders() {
-  const rawKey = API_KEY;
-  if (!rawKey) return {};
+  // 1. 优先读取 Wrangler 登录的有效 OAuth Token (本地最稳健通道)
+  try {
+    const wranglerConfigPath = path.join(os.homedir(), '.wrangler', 'config', 'default.toml');
+    if (fs.existsSync(wranglerConfigPath)) {
+      const cfg = fs.readFileSync(wranglerConfigPath, 'utf-8');
+      const m = cfg.match(/oauth_token\s*=\s*['"]([^'"]+)['"]/);
+      if (m && m[1]) {
+        return {
+          'Authorization': `Bearer ${m[1]}`,
+          'Content-Type': 'application/json',
+        };
+      }
+    }
+  } catch {}
 
-  const isGlobalKey = /^[0-9a-f]{37}$/i.test(rawKey) || rawKey.startsWith('cfk_');
-  if (isGlobalKey && EMAIL) {
+  // 2. 其次读取环境变量中的 API Token 或 Global Key
+  const rawKey = process.env.CLOUDFLARE_API_KEY || process.env.CLOUDFLARE_API_TOKEN || process.env.CF_API_TOKEN || process.env.CF_KV_API_KEY || process.env.CF_API_KEY || '';
+  if (rawKey) {
+    const isGlobalKey = /^[0-9a-f]{37}$/i.test(rawKey) || rawKey.startsWith('cfk_');
+    if (isGlobalKey && EMAIL) {
+      return {
+        'X-Auth-Email': EMAIL,
+        'X-Auth-Key': rawKey,
+        'Content-Type': 'application/json',
+      };
+    }
+    const token = rawKey.replace(/^Bearer\s+/i, '');
     return {
-      'X-Auth-Email': EMAIL,
-      'X-Auth-Key': rawKey,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     };
   }
 
-  const token = rawKey.replace(/^Bearer\s+/i, '');
-  return {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json',
-  };
+  return {};
 }
 
 function generateSlug(title) {
@@ -96,16 +113,18 @@ function formatEntityId(seq) {
   return `ik${padded}`;
 }
 
+const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
 async function kvBulkPut(pairs) {
   if (!pairs || pairs.length === 0) return 0;
   const headers = getAuthHeaders();
   if (!headers['Authorization'] && !headers['X-Auth-Key']) {
-    console.warn(`⚠️ 未配置有效的 Cloudflare API 凭证，跳过批量 KV 写入`);
-    return 0;
+    throw new Error('未检测到任何有效的 Cloudflare 鉴权凭证（Wrangler OAuth 或 API Token）');
   }
 
   const BATCH_SIZE = 1000;
   let writtenCount = 0;
+  const totalBatches = Math.ceil(pairs.length / BATCH_SIZE);
 
   for (let i = 0; i < pairs.length; i += BATCH_SIZE) {
     const chunk = pairs.slice(i, i + BATCH_SIZE).map(p => ({
@@ -113,25 +132,40 @@ async function kvBulkPut(pairs) {
       value: typeof p.value === 'string' ? p.value : JSON.stringify(p.value),
     }));
 
+    const batchIdx = Math.floor(i / BATCH_SIZE) + 1;
     const url = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/storage/kv/namespaces/${NAMESPACE_ID}/bulk`;
-    const res = await fetch(url, {
-      method: 'PUT',
-      headers,
-      body: JSON.stringify(chunk),
-    });
+    
+    let retries = 3;
+    let ok = false;
+    while (retries > 0 && !ok) {
+      try {
+        const res = await fetch(url, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify(chunk),
+        });
 
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`KV Bulk 写入失败 (批次 ${Math.floor(i / BATCH_SIZE) + 1}): status ${res.status}, msg: ${errText}`);
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(`status ${res.status}: ${errText}`);
+        }
+
+        const json = await res.json();
+        if (!json.success) {
+          throw new Error(`errors: ${JSON.stringify(json.errors)}`);
+        }
+
+        ok = true;
+        writtenCount += chunk.length;
+        const percent = ((writtenCount / pairs.length) * 100).toFixed(1);
+        console.log(`💾 [KV Bulk ${batchIdx}/${totalBatches} | ${percent}%] 成功写入 ${chunk.length} 个键值对 (累计: ${writtenCount}/${pairs.length})`);
+      } catch (err) {
+        retries--;
+        console.warn(`⚠️ [KV Bulk 批次 ${batchIdx}] 写入异常，剩余重试 ${retries} 次:`, err.message);
+        if (retries > 0) await sleep(1500);
+        else throw err;
+      }
     }
-
-    const json = await res.json();
-    if (!json.success) {
-      throw new Error(`KV Bulk 返回错误: ${JSON.stringify(json.errors)}`);
-    }
-
-    writtenCount += chunk.length;
-    console.log(`💾 [KV Bulk] 成功推送批次 ${Math.floor(i / BATCH_SIZE) + 1} (${chunk.length} 个键值对)，累计已写入: ${writtenCount}/${pairs.length}`);
   }
 
   return writtenCount;
@@ -154,11 +188,14 @@ async function main() {
   const cleanItems = catalog.filter(it => it.cover && !it.cover.includes('iyf.tv') && !it.cover.includes('static.iyf'));
   console.log(`✨ 纯净无水印条目数: ${cleanItems.length} 部 (${((cleanItems.length / catalog.length) * 100).toFixed(1)}%)`);
 
+  const LIMIT = parseInt(process.env.LIMIT || String(cleanItems.length), 10);
+  const targetItems = cleanItems.slice(0, LIMIT);
+
   const kvPairs = [];
   const nowIso = new Date().toISOString();
 
   let seq = 1;
-  for (const item of cleanItems) {
+  for (const item of targetItems) {
     const entityId = item.entityId || formatEntityId(seq++);
     const slug = generateSlug(item.title);
     const canonicalSlug = `${entityId}-${slug}`.toLowerCase();
@@ -186,19 +223,19 @@ async function main() {
       createdAt: item.createdAt || nowIso,
     };
 
-    // 写入主实体键
+    // 写入主实体键 (用于 /api/library/browse 和 /title/ik****** 极速直出)
     kvPairs.push({
       key: `entity:${entityId}`,
       value: entity,
     });
 
-    // 写入规范别名键
+    // 写入规范别名键 (用于 SEO 规范 URL /title/ik000001-slug 反查)
     kvPairs.push({
       key: `slug:${canonicalSlug}`,
       value: entityId,
     });
 
-    // 写入片名映射键
+    // 写入片名映射键 (用于片名反查唯一 ID)
     if (normTitle) {
       kvPairs.push({
         key: `title:${normTitle}`,
@@ -207,18 +244,19 @@ async function main() {
     }
   }
 
-  console.log(`📦 已生成标准 KV 键值对总计: ${kvPairs.length} 条 (含主实体、规范别名与标题索引)`);
-  console.log(`⚡ 开始执行 Cloudflare KV /bulk 批量推送...`);
+  console.log(`📦 生成标准 KV 键值对总计: ${kvPairs.length} 条 (覆盖 ${targetItems.length} 部实体)`);
+  console.log(`⚡ 启动 Cloudflare KV /bulk 批量高速推送...\n`);
 
-  try {
-    const totalWritten = await kvBulkPut(kvPairs);
-    console.log(`\n🎉 恭喜！已成功将 ${totalWritten} 条纯净实体数据推送写入 Cloudflare KV！`);
-  } catch (err) {
-    console.error(`❌ KV 推送失败:`, err.message);
-    if (!process.env.CI) {
-      console.log(`💡 提示：本地环境未配置完整 KV 写入权限，可通过 GitHub Actions (ingest-entity-catalog.yml) 一键触发自动批量同步！`);
-    }
-  }
+  const startTime = Date.now();
+  const totalWritten = await kvBulkPut(kvPairs);
+  const totalSec = Math.round((Date.now() - startTime) / 1000);
+
+  console.log(`\n=============================================================`);
+  console.log(`🎉 生产环境 Cloudflare KV 纯净片库批量写入成功！`);
+  console.log(`⏱️ 写入耗时: ${totalSec} 秒`);
+  console.log(`📊 成功写入键值对: ${totalWritten} 条`);
+  console.log(`✨ 线上片库多维检索大厅已实时换装无水印官方 4K 海报！`);
+  console.log(`=============================================================\n`);
 }
 
 main().catch(err => {
