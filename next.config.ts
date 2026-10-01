@@ -47,15 +47,15 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/api/shadowline/resolve',
-        destination: '/api/detail?source=shadowline',
+        destination: 'https://ikanpp-core-worker.zeyelvis.workers.dev/api/shadowline/resolve',
       },
       {
         source: '/api/ikanpp-line',
-        destination: '/api/detail?source=ikanpp',
+        destination: 'https://ikanpp-core-worker.zeyelvis.workers.dev/api/ikanpp-line',
       },
       {
         source: '/api/ikanpp-line/resolve',
-        destination: '/api/detail?source=ikanpp',
+        destination: 'https://ikanpp-core-worker.zeyelvis.workers.dev/api/ikanpp-line/resolve',
       },
     ];
   },
