@@ -74,7 +74,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "爱情假说",
+                "title": "年会不能停！2",
+                "updateBadge": ""
+        },
+        {
+                "title": "生死尽头",
                 "updateBadge": ""
         },
         {
@@ -82,15 +86,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "爱情假说",
+                "updateBadge": ""
+        },
+        {
                 "title": "重制",
-                "updateBadge": ""
-        },
-        {
-                "title": "年会不能停！2",
-                "updateBadge": ""
-        },
-        {
-                "title": "生死尽头",
                 "updateBadge": ""
         },
         {
@@ -1828,11 +1828,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "我不是大师",
+                "title": "一瓯春",
                 "updateBadge": ""
         },
         {
-                "title": "一瓯春",
+                "title": "我不是大师",
                 "updateBadge": ""
         },
         {
@@ -1841,7 +1841,7 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "死有对证",
-                "updateBadge": "1"
+                "updateBadge": ""
         },
         {
                 "title": "早春晴朗",
@@ -1857,7 +1857,7 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "雷霆令",
-                "updateBadge": ""
+                "updateBadge": "2"
         },
         {
                 "title": "冬城猎凶",
@@ -1868,8 +1868,8 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "飞到我心上",
-                "updateBadge": ""
+                "title": "黑岛监狱",
+                "updateBadge": "1"
         }
       ],
     "hero": [
