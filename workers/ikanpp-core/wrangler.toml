@@ -1,0 +1,22 @@
+# ==============================================================================
+# iKanPP Core Worker (Cloudflare Native Edge Streaming & Resolve Engine)
+# ==============================================================================
+
+name = "ikanpp-core-worker"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+# 生产环境已绑定的原生 KVIDEO_KV 命名空间
+[[kv_namespaces]]
+binding = "KVIDEO_KV"
+id = "42311924427747deaf00981d99d58998"
+
+[vars]
+ENVIRONMENT = "production"
+VERSION = "1.0.0"
+
+# 统一域名路由配置（按需在 Cloudflare 控制台或启用自定义域名时生效）
+# routes = [
+#   { pattern = "core.ikanpp.com/*", zone_name = "ikanpp.com" }
+# ]

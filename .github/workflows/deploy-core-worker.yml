@@ -1,0 +1,37 @@
+name: Deploy iKanPP Core Worker
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'workers/ikanpp-core/**'
+  workflow_dispatch:
+
+jobs:
+  deploy-worker:
+    name: Deploy Core Worker to Cloudflare
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: |
+          npm ci || npm install
+
+      - name: Type check Core Worker
+        run: |
+          npx tsc --noEmit --project workers/ikanpp-core/tsconfig.json
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config workers/ikanpp-core/wrangler.toml
