@@ -49,6 +49,14 @@ const nextConfig: NextConfig = {
         source: '/api/shadowline/resolve',
         destination: '/api/detail?source=shadowline',
       },
+      {
+        source: '/api/ikanpp-line',
+        destination: '/api/detail?source=ikanpp',
+      },
+      {
+        source: '/api/ikanpp-line/resolve',
+        destination: '/api/detail?source=ikanpp',
+      },
     ];
   },
 

@@ -645,8 +645,9 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const isShadowlineRoute = request.nextUrl.pathname.includes('shadowline');
+    const isIkanppLineRoute = request.nextUrl.pathname.includes('ikanpp-line');
     const id = searchParams.get('id') || (isShadowlineRoute ? (searchParams.get('vodId') || searchParams.get('vod_id')) : null);
-    const source = searchParams.get('source') || (isShadowlineRoute ? 'shadowline' : null);
+    const source = searchParams.get('source') || (isIkanppLineRoute ? 'ikanpp' : (isShadowlineRoute ? 'shadowline' : null));
     const title = searchParams.get('title');
     const category = searchParams.get('category') || searchParams.get('type');
     const year = searchParams.get('year');
@@ -692,9 +693,10 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
     const isShadowlineRoute = request.nextUrl.pathname.includes('shadowline');
+    const isIkanppLineRoute = request.nextUrl.pathname.includes('ikanpp-line');
     const { id, source, title, category, type, year, expectedEpisodes, season, aliases, episode, ep, vodId, vod_id } = body;
     const finalId = id || (isShadowlineRoute ? (vodId || vod_id) : null);
-    const finalSource = source || request.nextUrl.searchParams.get('source') || (isShadowlineRoute ? 'shadowline' : null);
+    const finalSource = source || request.nextUrl.searchParams.get('source') || (isIkanppLineRoute ? 'ikanpp' : (isShadowlineRoute ? 'shadowline' : null));
     const finalEpisode = episode !== undefined ? episode : ep;
     const extraParams = {
       candidates: Boolean(body.candidates || body.includeCandidates || body.list || body.all),
