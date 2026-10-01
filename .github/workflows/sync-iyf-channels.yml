@@ -94,6 +94,7 @@ jobs:
             echo "✅ 检测到预烘焙影视、最新集数与分类大厅数据更新，正在提交..."
             git add $MODIFIED_FILES
             git commit -m "chore(sync): 自动同步全站专区 [$TARGET] 轮播、集数更新、分类大厅与 SEO 实体"
+            git pull --rebase origin main || true
             git push
             echo "🎉 数据已成功推送到远程仓库（git push 将自然触发 Cloudflare Pages 自动部署，杜绝重复触发浪费配额）！"
           else
