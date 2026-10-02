@@ -1,308 +1,229 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Download, Sparkles, CheckCircle2, ChevronRight, Apple, Settings, ShieldCheck, Share, PlusSquare, Smartphone } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { CheckCircle2, Download, X } from 'lucide-react';
 import {
-  isPwaStandalone,
-  isPwaDismissedIn14Days,
   dismissPwaFor14Days,
-  isTrueIOSSafari,
+  inAppBrowser,
+  iosProfileAvailable,
   isIOSDevice,
+  isMacSafari,
+  isPwaDismissedIn14Days,
+  isPwaStandalone,
+  promptInstall,
+  useInstallPath,
 } from '@/lib/client/pwa-install';
 
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+/**
+ * 装到桌面 (AddToHomeScreenModal)
+ *
+ * 规范契约（方案第 6 节）：
+ * 1. 时机：用户看过第 2 集之后才主动弹出（播放器出第一帧时计数，ikanpp:show-pwa-modal-auto），
+ *    且只在真能安装的地方弹：浏览器给出安装事件的一键安装，iPhone / iPad Safari 给步骤；
+ * 2. 免打扰：点「以后再说」/关闭后 14 天内不再主动弹；装过或在桌面窗口里彻底静默；
+ * 3. 从「我的」、导航栏手动打开（ikanpp:show-pwa-modal）时，按设备给出能用的方法；
+ * 4. 微信、QQ 等 App 内置浏览器由全站 InAppBrowserBanner 提示；手动打开时卡片里说明先换浏览器；
+ * 5. 卡片在底部导航上方，不盖住页面和播放器；严禁 backdrop-blur。
+ */
+
+/** Safari 的「共享」图标，让步骤指得准。 */
+function ShareIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden className="inline-block -translate-y-px align-middle">
+      <path d="M12 3v12M8 7l4-4 4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7 10H5.5A1.5 1.5 0 0 0 4 11.5v8A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 18.5 10H17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
 }
 
-/**
- * PWA 强桌面锁留存卡片 (AddToHomeScreenModal)
- * 
- * 规范契约（方案第 6 节）：
- * 1. 时机：用户看过第 2 集之后才主动弹出（播放器出第一帧时计数），而不是一打开网站就弹；
- * 2. 免打扰：点「以后再说」/关闭后 14 天内不再主动弹；
- * 3. 独立窗口 (display-mode: standalone) 彻底静默；
- * 4. iOS 26 专属措辞对齐：
- *    「点 Safari 底部的「共享」（新版 iOS 先点右下角「···」）→ 选「添加到主屏幕」（新版 iOS 在「查看更多」里）→ 以后从桌面图标打开」；
- * 5. 只在 iOS Safari 显示 iOS 步骤，其他第三方 iOS 浏览器不显示；
- * 6. 弹窗不能遮挡播放器，严禁使用 backdrop-blur。
- */
+const PERKS = ['全屏看剧，没有浏览器地址栏', '从桌面图标直接打开，不用再找网址'];
+
+const CARD =
+  'fixed inset-x-3 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-[1001] rounded-2xl bg-[#141416] border border-white/10 p-4 text-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.9)] lg:bottom-6 lg:left-auto lg:right-6 lg:w-96 animate-fade-in';
+
+function Steps({ items }: { items: React.ReactNode[] }) {
+  return (
+    <ol className="space-y-2 rounded-xl bg-white/5 p-3 text-xs text-white/90 border border-white/10">
+      {items.map((item, i) => (
+        <li key={i} className="flex items-start gap-2.5">
+          <span className="w-5 h-5 rounded-full bg-red-600/80 flex items-center justify-center text-[10px] font-bold shrink-0">{i + 1}</span>
+          <span className="pt-0.5">{item}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/** iPhone / iPad：苹果不提供安装框，只能给步骤（对齐 iOS 26 新界面）。 */
+function IosSteps() {
+  return (
+    <Steps
+      items={[
+        <>
+          点 Safari 底部的「共享」<ShareIcon />
+          <span className="text-white/50">（新版 iOS 先点右下角「···」）</span>
+        </>,
+        <>
+          选「添加到主屏幕」，点「添加」<span className="text-white/50">（新版 iOS 在「查看更多」里）</span>
+        </>,
+        <>以后从桌面上的 iKanPP 图标打开</>,
+      ]}
+    />
+  );
+}
+
+/** 浏览器不给安装框时（手动打开才会走到这里），按设备说明能用的方法。 */
+function OtherWays() {
+  if (isIOSDevice()) {
+    return <p className="text-xs leading-relaxed text-white/80">iPhone / iPad 只有 Safari 能把网站装到桌面：请复制本页链接，用 Safari 打开后再点「共享」→「添加到主屏幕」。</p>;
+  }
+  if (isMacSafari()) {
+    return <Steps items={['点菜单栏的「文件」', '选「添加到程序坞」', '以后从程序坞里的 iKanPP 打开']} />;
+  }
+  if (/Android/i.test(navigator.userAgent)) {
+    return <Steps items={['打开浏览器菜单（右上角「⋮」或底部「≡」）', '选「添加到主屏幕」或「安装应用」', '以后从桌面上的 iKanPP 图标打开']} />;
+  }
+  return <p className="text-xs leading-relaxed text-white/80">用 Chrome 或 Edge 打开本站，点地址栏右侧的「安装」图标，即可像应用一样单独打开 iKanPP。</p>;
+}
+
 export function AddToHomeScreenModal() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
-  const [isSafari, setIsSafari] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  
-  // iOS 描述文件安装步骤状态：'ready' (默认展示 iOS 26 标准步骤) | 'downloaded' (已下载描述文件提示去设置安装)
-  const [iosStep, setIosStep] = useState<'ready' | 'downloaded'>('ready');
+  const path = useInstallPath();
+  const [open, setOpen] = useState(false);
+  const [manual, setManual] = useState(false);
+  const [profileSent, setProfileSent] = useState(false);
+  const app = path === 'in-app' ? inAppBrowser() : null;
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    // 1. 若当前已经是以独立 PWA / 全屏 App 模式运行，彻底静默
-    if (isPwaStandalone()) return;
-
-    // 2. 主动唤起事件监听（手动从设置/我的页/Navbar 点击触发，无论是否免打扰均展示）
-    const handleManualTrigger = () => {
-      setIosStep('ready');
-      setIsOpen(true);
+    const showManual = () => {
+      setManual(true);
+      setProfileSent(false);
+      setOpen(true);
     };
-    window.addEventListener('ikanpp:show-pwa-modal', handleManualTrigger);
-
-    // 3. 自动唤起事件监听（看满第 2 集出第一帧后触发）
-    const handleAutoTrigger = () => {
-      // 全屏时不打断观影，防遮挡播放器
-      if (document.fullscreenElement) return;
-      if (isPwaDismissedIn14Days() || isPwaStandalone()) return;
-      setIosStep('ready');
-      setIsOpen(true);
+    // 播放器看满第 2 集后发出；能不能装、要不要提示，由下面的 path 判断。
+    const showAuto = () => {
+      if (document.fullscreenElement || isPwaDismissedIn14Days() || isPwaStandalone()) return;
+      setManual(false);
+      setOpen(true);
     };
-    window.addEventListener('ikanpp:show-pwa-modal-auto', handleAutoTrigger);
+    window.addEventListener('ikanpp:show-pwa-modal', showManual);
+    window.addEventListener('ikanpp:show-pwa-modal-auto', showAuto);
 
-    // 4. 支持通过 URL 参数 (?pwa=1 或 ?install=1) 主动唤起
-    const searchParams = new URLSearchParams(window.location.search);
-    if (searchParams.get('pwa') === '1' || searchParams.get('pwa') === 'true' || searchParams.get('install') === '1') {
-      setIosStep('ready');
-      setIsOpen(true);
-    }
-
-    // 5. 设备与浏览器精准推断
-    setIsIOS(isIOSDevice());
-    setIsSafari(isTrueIOSSafari());
-
-    // 6. 监听 Android / Chrome 的原生安装候选事件
-    const handleBeforeInstall = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
-    };
-    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    // 通过 URL 参数 (?pwa=1 或 ?install=1) 主动唤起
+    const q = new URLSearchParams(window.location.search);
+    if (q.get('pwa') === '1' || q.get('pwa') === 'true' || q.get('install') === '1') showManual();
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
-      window.removeEventListener('ikanpp:show-pwa-modal', handleManualTrigger);
-      window.removeEventListener('ikanpp:show-pwa-modal-auto', handleAutoTrigger);
+      window.removeEventListener('ikanpp:show-pwa-modal', showManual);
+      window.removeEventListener('ikanpp:show-pwa-modal-auto', showAuto);
     };
   }, []);
 
   useEffect(() => {
-    if (!isOpen) return;
-
-    // 监听 ESC 键关闭
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        handleDismiss();
-      }
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      setOpen(false);
+      if (!manual) dismissPwaFor14Days();
     };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, manual]);
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
-
-  const handleDismiss = () => {
-    setIsOpen(false);
-    dismissPwaFor14Days();
+  const later = () => {
+    setOpen(false);
+    if (!manual) dismissPwaFor14Days();
   };
 
-  // Android / Chrome 原生一键直装
-  const handleAndroidInstall = async () => {
-    if (deferredPrompt) {
-      try {
-        await deferredPrompt.prompt();
-        const choice = await deferredPrompt.userChoice;
-        if (choice.outcome === 'accepted') {
-          setIsOpen(false);
-        }
-      } catch (err) {
-        console.warn('PWA prompt error:', err);
-      }
-      setDeferredPrompt(null);
-    } else {
-      handleDismiss();
-    }
-  };
-
-  // iOS 描述文件备选直装通道
-  const handleIosProfileInstall = () => {
-    setIosStep('downloaded');
-    window.location.href = '/api/pwa/ios-profile';
-  };
-
-  if (!isOpen) return null;
+  if (!open) return null;
+  // 微信、QQ 等内置浏览器装不了：手动打开时说明先换浏览器（自动提示由 InAppBrowserBanner 负责）。
+  if (app) {
+    if (!manual) return null;
+    return (
+      <div role="dialog" aria-label="把 iKanPP 装到桌面" className={`${CARD} flex items-start gap-3 text-sm`}>
+        <p className="flex-1 leading-relaxed text-white/90">
+          {app}里不能装到桌面。点右上角「···」选「在浏览器打开」，再从浏览器里装到桌面。
+        </p>
+        <button type="button" aria-label="关闭" onClick={later} className="shrink-0 p-1 text-white/50 hover:text-white">
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  }
+  // 自动弹出只在真能安装时出现；手动打开总给出说明。
+  if (!manual && path !== 'prompt' && path !== 'ios') return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-3 sm:p-6 bg-black/80 animate-fade-in select-none"
-      onClick={handleDismiss}
-      role="dialog"
-      aria-modal="true"
-      aria-label="添加到手机桌面"
-    >
-      <div
-        className="relative w-full max-w-sm rounded-3xl bg-[#141416] border border-white/10 p-5 sm:p-6 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.95)] text-white space-y-4 max-h-[calc(100dvh-5rem)] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* 顶部图标与关闭按钮 */}
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-red-600/30">
-              iK
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <h3 className="font-bold text-base tracking-wide text-white">装到桌面 极速看剧</h3>
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-red-500/20 border border-red-500/30 text-red-300">
-                  体验对齐
-                </span>
-              </div>
-              <p className="text-xs text-slate-300/80 mt-0.5">像 App 一样常驻手机桌面 · 秒开 0 广告</p>
-            </div>
-          </div>
-          <button
-            onClick={handleDismiss}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-90 flex items-center justify-center text-white/60 hover:text-white transition-all cursor-pointer"
-            aria-label="关闭"
-          >
-            ✕
-          </button>
+    <div role="dialog" aria-label="把 iKanPP 装到桌面" className={CARD}>
+      <div className="flex items-start gap-3">
+        <img src="/icon-192.png" alt="" width={48} height={48} className="w-12 h-12 shrink-0 rounded-xl" />
+        <div className="min-w-0 flex-1">
+          <p className="font-semibold text-sm">{path === 'installed' ? 'iKanPP 已经装到桌面了' : '把 iKanPP 装到桌面，像 App 一样看剧'}</p>
+          {path === 'installed' ? (
+            <p className="mt-1 text-xs text-white/60">从桌面（或程序坞）上的 iKanPP 图标打开即可。</p>
+          ) : (
+            <ul className="mt-1 space-y-0.5 text-xs text-white/60">
+              {PERKS.map((p) => (
+                <li key={p}>· {p}</li>
+              ))}
+            </ul>
+          )}
         </div>
+        <button type="button" aria-label="关闭" onClick={later} className="shrink-0 p-1 text-white/50 hover:text-white">
+          <X className="w-4 h-4" />
+        </button>
+      </div>
 
-        {/* 核心亮点标签 */}
-        <div className="grid grid-cols-3 gap-2 py-1 text-center">
-          <div className="rounded-xl bg-white/5 p-2 border border-white/5">
-            <div className="text-xs font-semibold text-red-400">0 弹窗广告</div>
-            <div className="text-[10px] text-white/40">纯净沉浸</div>
-          </div>
-          <div className="rounded-xl bg-white/5 p-2 border border-white/5">
-            <div className="text-xs font-semibold text-emerald-400">4K 原画秒开</div>
-            <div className="text-[10px] text-white/40">CDN 直连</div>
-          </div>
-          <div className="rounded-xl bg-white/5 p-2 border border-white/5">
-            <div className="text-xs font-semibold text-amber-400">永不迷路</div>
-            <div className="text-[10px] text-white/40">独立窗口</div>
-          </div>
-        </div>
-
-        {/* 平台分流内容 */}
-        {isIOS ? (
-          // ==================== 苹果 iOS 专属流程 ====================
-          <div className="space-y-3.5">
-            {isSafari ? (
-              // 真正的 iOS Safari：100% 绝对对齐 iOS 26 新界面 3 步规范
-              iosStep === 'ready' ? (
-                <div className="space-y-3">
-                  <div className="rounded-2xl bg-white/5 p-3.5 border border-white/10 space-y-2.5 text-xs text-white/90">
-                    <div className="flex items-start gap-2.5">
-                      <span className="w-5 h-5 rounded-full bg-red-600/80 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-                        1
-                      </span>
-                      <span>点 Safari 底部的「共享」（新版 iOS 先点右下角「···」）</span>
-                    </div>
-                    <div className="flex items-start gap-2.5">
-                      <span className="w-5 h-5 rounded-full bg-red-600/80 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-                        2
-                      </span>
-                      <span>选「添加到主屏幕」（新版 iOS 在「查看更多」里）</span>
-                    </div>
-                    <div className="flex items-start gap-2.5">
-                      <span className="w-5 h-5 rounded-full bg-red-600/80 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-                        3
-                      </span>
-                      <span>以后从桌面图标打开</span>
-                    </div>
-                  </div>
-
-                  {/* 备选快捷描述文件直装 */}
-                  <div className="pt-1 flex gap-2">
-                    <button
-                      type="button"
-                      onClick={handleDismiss}
-                      className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:scale-[0.98] font-medium text-xs text-white/70 transition-all text-center"
-                    >
-                      以后再说
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleIosProfileInstall}
-                      className="flex-[1.5] py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 active:scale-[0.98] font-bold text-xs text-white transition-all text-center shadow-lg shadow-red-600/30 flex items-center justify-center gap-1.5"
-                    >
-                      <Apple className="w-3.5 h-3.5 fill-white" />
-                      <span>一键直装描述文件</span>
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                // 描述文件已触发下载
-                <div className="rounded-2xl bg-white/5 p-4 border border-white/10 space-y-3 text-xs">
-                  <div className="flex items-center gap-2 text-emerald-400 font-bold">
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>描述文件已开始下载！</span>
-                  </div>
-                  <div className="space-y-2 text-white/90">
-                    <p>1. 若弹出系统提示，请点<strong>「允许」</strong>；</p>
-                    <p>2. 打开 iPhone<strong>「设置」</strong>，点击顶部<strong>「已下载描述文件」</strong>完成安装。</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleDismiss}
-                    className="w-full py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 font-medium text-xs transition-all text-center"
-                  >
-                    我知道了
-                  </button>
-                </div>
-              )
-            ) : (
-              // 非 Safari 的第三方 iOS 浏览器：规范明确不显示 iOS 步骤
-              <div className="rounded-2xl bg-white/5 p-4 border border-white/10 space-y-3 text-xs text-slate-300">
-                <div className="flex items-center gap-2 text-amber-400 font-bold">
-                  <Smartphone className="w-4 h-4" />
-                  <span>建议使用 Safari 打开本页</span>
-                </div>
-                <p className="leading-relaxed">
-                  当前浏览器暂不支持直接添加到桌面。请复制当前链接，在 iPhone 自带的 <strong>Safari 浏览器</strong> 中打开，即可一键装到桌面。
-                </p>
-                <div className="pt-1 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={handleDismiss}
-                    className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 font-medium text-xs transition-all text-center"
-                  >
-                    以后再说
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (typeof navigator !== 'undefined' && navigator.clipboard) {
-                        navigator.clipboard.writeText(window.location.href);
-                      }
-                      handleDismiss();
-                    }}
-                    className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 font-bold text-xs text-white text-center shadow-lg shadow-red-600/30"
-                  >
-                    复制链接
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          // ==================== 安卓 Android / Chrome 原生一键直装 ====================
-          <div className="pt-2 flex gap-2.5">
+      {path === 'ios' ? (
+        <div className="mt-3 space-y-2">
+          <IosSteps />
+          {profileSent ? (
+            <p className="flex items-start gap-1.5 text-xs text-emerald-400">
+              <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+              描述文件已开始下载：若弹出提示请点「允许」，再到「设置」顶部的「已下载描述文件」里安装。
+            </p>
+          ) : iosProfileAvailable() ? (
             <button
               type="button"
-              onClick={handleDismiss}
-              className="flex-1 py-3 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-[0.98] font-medium text-xs transition-all text-white/70"
+              onClick={() => {
+                setProfileSent(true);
+                window.location.href = '/api/pwa/ios-profile';
+              }}
+              className="text-xs text-white/50 underline underline-offset-2 hover:text-white/80"
             >
+              或者安装描述文件（需要在「设置」里确认）
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
+      {path === 'none' ? (
+        <div className="mt-3">
+          <OtherWays />
+        </div>
+      ) : null}
+
+      <div className="mt-3 flex justify-end gap-2">
+        {path === 'prompt' ? (
+          <>
+            <button type="button" onClick={later} className="rounded-full px-4 py-2 text-xs text-white/60 hover:text-white">
               以后再说
             </button>
             <button
               type="button"
-              onClick={handleAndroidInstall}
-              className="flex-[1.5] py-3 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 active:scale-[0.98] font-bold text-xs tracking-wider transition-all shadow-xl shadow-red-600/30 flex items-center justify-center gap-1.5 text-white"
+              onClick={async () => {
+                const installed = await promptInstall();
+                if (installed) setOpen(false);
+              }}
+              className="rounded-full bg-gradient-to-r from-red-600 to-rose-600 px-5 py-2 text-xs font-bold text-white shadow-lg shadow-red-600/30 flex items-center gap-1.5"
             >
-              <Download className="w-4 h-4" />
-              <span>一键添加至桌面</span>
+              <Download className="w-3.5 h-3.5" />
+              安装到桌面
             </button>
-          </div>
+          </>
+        ) : (
+          <button type="button" onClick={later} className="rounded-full bg-white/10 px-5 py-2 text-xs font-medium text-white/80 hover:bg-white/20">
+            {path === 'ios' && !manual ? '以后再说' : '知道了'}
+          </button>
         )}
       </div>
     </div>

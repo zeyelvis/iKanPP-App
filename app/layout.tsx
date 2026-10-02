@@ -22,7 +22,7 @@ import { ReferralCapture } from '@/components/auth/ReferralCapture';
 import { FIRST_HERO_BACKDROP } from '@/lib/data/hero-backdrop';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { AddToHomeScreenModal } from '@/components/pwa/AddToHomeScreenModal';
-import { PwaInstallBanner } from '@/components/pwa/PwaInstallBanner';
+import { PWA_INSTALL_CAPTURE_SCRIPT } from '@/lib/client/pwa-capture';
 import { InAppBrowserBanner } from '@/components/common/InAppBrowserBanner';
 import { PageSpeedMonitor } from '@/components/common/PageSpeedMonitor';
 import { StaleBuildGuard } from '@/components/common/StaleBuildGuard';
@@ -210,6 +210,8 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="apple-touch-icon" href="/icon.png" />
+        {/* 装到桌面：Chrome 的安装事件常早于水合发出，先由内联脚本接住（lib/client/pwa-install.ts） */}
+        <script dangerouslySetInnerHTML={{ __html: PWA_INSTALL_CAPTURE_SCRIPT }} />
         {/* Theme Color (for browser address bar) */}
         <meta name="theme-color" content="#000000" />
         {/* Mobile viewport */}
@@ -223,7 +225,6 @@ export default function RootLayout({
           <TVProvider>
             <TVNavigationInitializer />
             <AdKeywordsWrapper />
-            <PwaInstallBanner />
             <Suspense><ReferralCapture /></Suspense>
             {children}
             <Footer />

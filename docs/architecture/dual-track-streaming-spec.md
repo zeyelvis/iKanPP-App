@@ -494,11 +494,18 @@ IkanPPPlayerContainer / IkanXPlayerContainer (双轨容器，负责线路调度�
 ## 18. PWA 装到桌面引导体验对齐规范 (PWA Installation Alignment Spec)
 
 1. **时机铁律**：严禁用户初次打开网站即弹窗骚扰；必须且只能在用户看满第 2 集并出第一帧时由播放器触发计数后方可主动唤起；
-2. **免打扰机制**：用户点击「稍后再说」或关闭后，写入 14 天静默免打扰（`14 * 24 * 60 * 60 * 1000`）；设置页与「我的」页保留常驻入口；
+2. **免打扰机制**：用户点击「以后再说」或关闭后，写入 14 天静默免打扰（`14 * 24 * 60 * 60 * 1000`）；设置页与「我的」页保留常驻入口；
 3. **iOS 26 权威措辞**：严格对齐 iOS 26 新版操作路径：
    「点 Safari 底部的「共享」（新版 iOS 先点右下角「···」）→ 选「添加到主屏幕」（新版 iOS 在「查看更多」里）→ 以后从桌面图标打开」；
 4. **浏览器精准分流**：排除非 Safari 的 iOS 浏览器（CriOS、FxiOS、EdgiOS、UC、Quark 等），仅在原生 Safari 下展示上述步骤；其他浏览器引导复制链接在 Safari 打开；
 5. **防遮挡与全屏安全**：全屏播放模式下坚决不弹窗打断观影；弹窗彻底剔除 `backdrop-blur`，采用纯色深底保证显卡硬件覆盖层不黑屏；独立桌面 App 窗口 (`display-mode: standalone`) 运行时 100% 彻底静默。
+6. **只在真能安装的地方主动提示**（`lib/client/pwa-install.ts` 的 `useInstallPath`）：浏览器给出安装事件的（安卓 Chrome、Edge 等）显示「安装到桌面」一键按钮；iPhone / iPad 原生 Safari 显示上述步骤；其余情况自动弹出一律静默，只在用户手动打开（「我的」、导航栏、`?pwa=1`）时按设备给出可行方法（安卓浏览器菜单、Mac Safari「文件 → 添加到程序坞」、电脑 Chrome/Edge 地址栏安装图标）。
+7. **安装事件提前接住**：Chrome 的 `beforeinstallprompt` 只发一次且常早于水合，必须由根布局 `<head>` 内联脚本（`lib/client/pwa-capture.ts`，不带 `'use client'`）先存到 `window.__ikInstall`，严禁只在组件 `useEffect` 里监听（会漏掉，按钮形同虚设）。
+8. **安装记忆**：`appinstalled` 或安装框里点「安装」后写入 `ikanpp_pwa_installed`，普通浏览器标签页里也不再提示；手动打开显示「已经装到桌面了」。
+9. **卡片不遮挡**：提示为底部导航上方的卡片（电脑端右下角），严禁全屏遮罩；微信、QQ 等 App 内置浏览器由全站 `InAppBrowserBanner` 提示「在浏览器打开」，安装卡片不重复弹出。
+10. **设备识别**：iPad 一律经 `checkIsIPadOS`（准则 22，Mac 触控板也报多点触控）；UA 含 Android 的绝不视为苹果设备。
+11. **iOS 描述文件**：作为 Safari 步骤下方的备选入口（`/api/pwa/ios-profile`）。签名证书到期日写在 `IOS_PROFILE_SIGNED_UNTIL`（当前 2026-12-27），到期后入口自动隐藏，避免 iPhone 显示「未验证」；重新签名后同步更新该日期。
+12. **图标**：manifest 提供 192 / 512 及单独的 maskable 512；图标必须是纯色底或真透明，严禁把编辑器的透明棋盘格烘焙进像素（2026-10 前的 `icon.png` 即是此问题）。
 
 ---
 
