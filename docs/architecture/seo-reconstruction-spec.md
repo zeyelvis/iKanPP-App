@@ -127,7 +127,7 @@ interface TitleEntity {
 
 | 功能模块 | 文件路径 | 架构核心职责 |
 | :--- | :--- | :--- |
-| **实体详情页 (SSR)** | [app/title/[slug]/page.tsx](file:///Users/zeyelvis/KVideo/app/title/[slug]/page.tsx) | 真实 Meta、单一 @graph、HTTP 308 重定向、GEO 胶囊与内链集群 |
+| **实体详情页 (SSR)** | [app/title/[slug]/page.tsx](file:///Users/zeyelvis/KVideo/app/title/[slug]/page.tsx) | 模块化组装：`_lib/resolve-entity.ts` (0ms预烘焙/防毒化/自愈)、`_lib/enrich-metadata.ts` (动态SEO Meta)、`_components/` (Hero/Synopsis/Related/SEO模块) |
 | **单一 Schema 注入器** | [components/seo/TitleJsonLd.tsx](file:///Users/zeyelvis/KVideo/components/seo/TitleJsonLd.tsx) | 单一 `@graph`：`WebSite` + `WebPage` + `Movie`/`TVSeries` + `BreadcrumbList` |
 | **AI Overview 胶囊** | [components/seo/AiOverviewCapsule.tsx](file:///Users/zeyelvis/KVideo/components/seo/AiOverviewCapsule.tsx) | 真实事实档案，无默认占位符，空值优雅隐藏 |
 | **热搜与内链网组件** | [components/seo/RelatedSearchChips.tsx](file:///Users/zeyelvis/KVideo/components/seo/RelatedSearchChips.tsx) | 规范分类与语义标签内链，消除伪搜索跳转 |
@@ -143,4 +143,9 @@ interface TitleEntity {
 | **IndexNow 安全接口** | [app/api/seo/indexnow/route.ts](file:///Users/zeyelvis/KVideo/app/api/seo/indexnow/route.ts) | 封禁 GET 推送，强制 POST Bearer Token 鉴权 |
 | **全站 URL 审计工具** | [scripts/seo/audit-urls.mjs](file:///Users/zeyelvis/KVideo/scripts/seo/audit-urls.mjs) | 规范 20.3 节自动化审计工具，输出 JSON 与 Markdown 报表 |
 | **去重回填作业工具** | [scripts/seo/dedupe-backfill.mjs](file:///Users/zeyelvis/KVideo/scripts/seo/dedupe-backfill.mjs) | scan/plan/apply/verify 四阶段去重，带 `--confirm` 安全锁 |
+| **年份程序化聚合页** | [app/year/[year]/page.tsx](file:///Users/zeyelvis/KVideo/app/year/[year]/page.tsx) | 年份程序化裂变，按年份聚合高分与热门影片，高保真骨架与 ItemListJsonLd |
+| **地区程序化聚合页** | [app/region/[region]/page.tsx](file:///Users/zeyelvis/KVideo/app/region/[region]/page.tsx) | 地区程序化裂变，华语/欧美/日韩/泰剧等主流地区聚合与薄内容守卫 |
+| **统一影人聚合页**   | [app/person/[slug]/page.tsx](file:///Users/zeyelvis/KVideo/app/person/[slug]/page.tsx) | 统一演职员与导演年表，双轨代表作合并，Person 知识图谱对齐 |
+| **年份地图切片**     | [app/sitemap-years.xml/route.ts](file:///Users/zeyelvis/KVideo/app/sitemap-years.xml/route.ts) | 真实 material lastmod 与年份收录门禁 |
+| **地区地图切片**     | [app/sitemap-regions.xml/route.ts](file:///Users/zeyelvis/KVideo/app/sitemap-regions.xml/route.ts) | 真实 material lastmod 与地区收录门禁 |
 | **双轨流媒体架构准则**| [AGENTS.md](file:///Users/zeyelvis/KVideo/AGENTS.md) | 工程底线、双轨流媒体绝对隔离与性能规范 |

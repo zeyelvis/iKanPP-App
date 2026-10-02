@@ -28,61 +28,10 @@ import { JsonLd, generateMediaJsonLd, generateBreadcrumbJsonLd } from '@/compone
 import { PREBAKED_AVATARS } from '@/lib/data/prebaked-avatars';
 import { extractSeasonAndEpisodeNumber, cleanEpisodeName } from '@/lib/utils/episode-resolver';
 import { FloatingMiniPlayer } from '@/components/player/FloatingMiniPlayer';
-import { getSkipMarkers, saveSkipMarkers, formatTimeSeconds, type SkipMarkers } from '@/lib/player/skip-markers';
-
-interface TitleAnalysis {
-  rawTitle: string;
-  pureTitle: string;
-  seasonNumber: number | null;
-  subtitles: string[];
-}
-
-function analyzeTitle(titleStr: string): TitleAnalysis {
-  const raw = (titleStr || '').trim();
-
-  let seasonNumber: number | null = null;
-  const sMatch = raw.match(/第([一二三四五六七八九十\d]+)[季部期]/i) || 
-                 raw.match(/\bseason\s*(\d+)\b/i) || 
-                 raw.match(/\bS(\d{1,2})\b/i);
-  if (sMatch) {
-    const sStr = sMatch[1];
-    const cnMap: Record<string, number> = { '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10 };
-    seasonNumber = cnMap[sStr] ?? (parseInt(sStr, 10) || null);
-  }
-
-  // 提取冒号、空格、破折号拆解的有效子词（如 "爱情公寓：辣味英雄传" 拆解为 ["爱情公寓", "辣味英雄传"]）
-  const subtitles = raw
-    .split(/[:：·•\-\s_／/]+/)
-    .map(s => s.replace(/[《》【】\[\]（）()]/g, '').trim().toLowerCase())
-    .filter(s => s.length >= 2);
-
-  const pure = raw
-    .replace(/[\(（]?(19\d\d|20\d\d)[\)）]?/g, '')
-    .replace(/第[一二三四五六七八九十\d]+[季部期]/gi, '')
-    .replace(/season\s*\d+/gi, '')
-    .replace(/\bS\d{1,2}\b/gi, '')
-    .replace(/(前篇|后篇|最终季|终章|完结篇|序章|特别篇|剧场版|番外篇|番外|大电影|电影版|真人版|动画版|重制版|重置版|精选版|典藏版)/gi, '')
-    .replace(/(国语版|粤语版|双语版|原声版|中字版|纯享版|未删减版|加长版)/gi, '')
-    .replace(/[《》【】\[\]（）()·\s:：\-—_]/g, '')
-    .replace(/(19\d\d|20\d\d)$/g, '') // 🌟 核心防线：剥离末尾紧随的4位年份（如"生化危机：爆发夜2026" -> "生化危机爆发夜"）
-    .toLowerCase()
-    .trim();
-
-  return { rawTitle: raw, pureTitle: pure, seasonNumber, subtitles };
-}
-
-function isSeriesTypeName(typeName: string): boolean {
-  if (!typeName) return false;
-  const tn = typeName.toLowerCase();
-  if (tn.endsWith('片') && !tn.includes('纪录片')) return false;
-  return (
-    tn.includes('连续剧') ||
-    tn.includes('电视剧') ||
-    tn.includes('动漫') ||
-    tn.includes('动画') ||
-    (tn.includes('剧') && !tn.includes('剧情') && !tn.includes('喜剧'))
-  );
-}
+import { analyzeTitle, isSeriesTypeName } from '@/components/player/utils/title-analyzer';
+import { useTitleSearchScheduler } from '@/components/player/hooks/useTitleSearchScheduler';
+import { usePlayerSkipMarkers } from '@/components/player/hooks/usePlayerSkipMarkers';
+import { formatTimeSeconds } from '@/lib/player/skip-markers';
 
 export interface IkanPPPlayerProps {
   /** The playback state, in the form /player keeps in its query string. */
@@ -193,360 +142,26 @@ export const IkanPPPlayer = memo(function IkanPPPlayer({ params: searchParams, r
       .catch(() => {});
   }, []);
 
+  const playerTimeRef = useRef(0);
+  const failedSourcesRef = useRef<Set<string>>(new Set());
+
   // === Title-only 模式：300ms 毫秒级流式秒播仲裁 ===
-  const needsTitleSearch = (!videoId || !source) && !!title;
-  const [titleSearching, setTitleSearching] = useState(() => needsTitleSearch);
-  const [titleSearchError, setTitleSearchError] = useState('');
-
-  useEffect(() => {
-    if ((videoId && source) || !title) return;
-
-    let cancelled = false;
-    setTitleSearching(true);
-    setTitleSearchError('');
-
-    const appSettings = settingsStore.getSettings();
-    let allSources = appSettings.sources?.filter((s: VideoSource) => s.enabled !== false) || [];
-    if (allSources.length === 0) {
-      allSources = DEFAULT_SOURCES as VideoSource[];
-    }
-
-    // 过滤掉已下线的废弃源和已知失败源
-    allSources = allSources.filter(s => !DEPRECATED_SOURCES.has(s.id) && !failedSourcesRef.current.has(s.id));
-
-    // 按 DEFAULT_LINE_TOP_ORDER 排序，干净线路在前，广告线路在后
-    allSources = [...allSources].sort((a, b) => {
-      const getOrder = (id: string) => {
-        const idx = (DEFAULT_LINE_TOP_ORDER as readonly string[]).indexOf(id);
-        return idx === -1 ? 999 : idx;
-      };
-      return getOrder(a.id) - getOrder(b.id);
-    });
-
-    if (source) {
-      const preferredSource = allSources.find(s => s.id === source);
-      if (preferredSource) {
-        allSources = [preferredSource, ...allSources.filter(s => s.id !== source)];
-      }
-    }
-
-    const cleanTitle = title.replace(/[《》【】\[\]（）()]/g, ' ').replace(/\s+/g, ' ').trim();
-    let redirected = false;
-    const searchStartTime = Date.now();
-
-    (async () => {
-      try {
-        const response = await fetch('/api/search-parallel', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: cleanTitle, sources: allSources, page: 1 }),
-        });
-
-        if (cancelled) return;
-
-        if (!response.ok || !response.body) {
-          if (!cancelled && !redirected) {
-            setTitleSearchError('全网搜索暂时繁忙，请点击重试');
-            setTitleSearching(false);
-          }
-          return;
-        }
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-        const foundSources: SourceInfo[] = [];
-
-        const targetAnalysis = analyzeTitle(title);
-        const targetYear = expectedYear ? parseInt(expectedYear, 10) : null;
-        const fallbackCandidates: Array<{ _video: any; _score: number; _isSeries: boolean }> = [];
-
-        const performRedirect = (targetVideo: any, isSeries: boolean) => {
-          if (redirected || cancelled) return;
-          redirected = true;
-          const params = new URLSearchParams();
-          params.set('id', String(targetVideo.vod_id));
-          params.set('source', targetVideo.source);
-          params.set('title', title);
-          if (entityParam) params.set('entity', entityParam);
-          if (episodeParam) {
-            params.set('episode', episodeParam);
-          }
-          if (seasonParam) {
-            params.set('season', seasonParam);
-          }
-          const resolvedType = isSeries ? 'tv' : (expectedType || 'movie');
-          params.set('type', resolvedType);
-          if (expectedYear) params.set('year', expectedYear);
-          if (foundSources.length > 0) {
-            const gsKey = storeGroupedSources(foundSources);
-            if (gsKey) params.set('gsKey', gsKey);
-          }
-          replace(params.toString());
-        };
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done || cancelled || redirected) break;
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-
-          for (const line of lines) {
-            if (!line.startsWith('data: ')) continue;
-            try {
-              const data = JSON.parse(line.slice(6));
-              if (data.type === 'videos' && Array.isArray(data.videos) && data.videos.length > 0) {
-                for (const v of data.videos) {
-                  const rawName = (v.vod_name || '').trim();
-                  const typeName = (v.type_name || '').toLowerCase();
-                  const remarks = (v.vod_remarks || '').toLowerCase();
-                  const candAnalysis = analyzeTitle(rawName);
-
-                  const isTrailer = remarks.includes('预告') || rawName.includes('预告') || remarks.includes('花絮') || rawName.includes('花絮');
-                  const isCommentary = rawName.includes('解说') || remarks.includes('解说') || rawName.includes('看点');
-                  const isMusical = rawName.includes('音乐剧') || rawName.includes('舞台剧') || remarks.includes('音乐剧');
-
-                  let candYear: number | null = null;
-                  if (v.vod_year) {
-                    const parsed = parseInt(String(v.vod_year).trim(), 10);
-                    if (!isNaN(parsed) && parsed > 1900 && parsed < 2100) candYear = parsed;
-                  }
-                  if (!candYear) {
-                    const ym = rawName.match(/\b(19\d\d|20\d\d)\b/);
-                    if (ym) candYear = parseInt(ym[1], 10);
-                  }
-
-                  let isExactYearMatch = false;
-                  let yearScore = 0;
-                  let isYearMismatched = false;
-
-                  if (targetYear) {
-                    if (candYear) {
-                      if (candYear === targetYear) {
-                        yearScore = 150;
-                        isExactYearMatch = true;
-                      } else if (Math.abs(candYear - targetYear) === 1) {
-                        yearScore = 80;
-                      } else if (Math.abs(candYear - targetYear) <= 2) {
-                        yearScore = 30;
-                      } else {
-                        yearScore = -300;
-                        isYearMismatched = true;
-                      }
-                    } else {
-                      yearScore = 20;
-                    }
-                  }
-
-                  const isSeriesItem = isSeriesTypeName(v.type_name || '') || (v.vod_remarks && /更新|全\d+集|第\d+集|连载/i.test(v.vod_remarks)) || candAnalysis.seasonNumber !== null;
-
-                  // 🌟 核心防线：影视类型硬性隔离门禁（电影与连续剧绝对隔离）
-                  let typeScore = 0;
-                  let isTypeMismatched = false;
-                  if (expectedType === 'movie' && isSeriesItem) {
-                    typeScore = -800;
-                    isTypeMismatched = true;
-                  } else if (expectedType === 'tv' && !isSeriesItem && !seasonParam) {
-                    typeScore = -120;
-                  }
-
-                  let nameScore = 0;
-                  let isExactName = false;
-                  let isHighConfidenceMatch = false;
-
-                  if (candAnalysis.pureTitle === targetAnalysis.pureTitle) {
-                    isExactName = true;
-                    if (isSeriesItem) {
-                      if (targetAnalysis.seasonNumber !== null) {
-                        if (candAnalysis.seasonNumber === targetAnalysis.seasonNumber) {
-                          nameScore = 180;
-                        } else {
-                          nameScore = 60;
-                        }
-                      } else {
-                        if (candAnalysis.seasonNumber === 1 || candAnalysis.seasonNumber === null) {
-                          nameScore = 160;
-                        } else {
-                          nameScore = 100;
-                        }
-                      }
-                    } else {
-                      nameScore = 140;
-                    }
-                  } else {
-                    // 二级高置信度模糊匹配：
-                    // A. 目标有特异副标题时，候选必须包含该特异副标题（如目标"生化危机：爆发夜"，候选必须包含"爆发夜"）
-                    const hasSharedSpecificSubtitle = targetAnalysis.subtitles.length > 1
-                      ? targetAnalysis.subtitles.slice(1).some(st => st.length >= 2 && candAnalysis.pureTitle.includes(st))
-                      : targetAnalysis.subtitles.some(st => st.length >= 3 && candAnalysis.pureTitle.includes(st));
-
-                    // B. 纯片名互相包含且重合长度 >= 3，但严格防范短母题吞噬长子题与短片名被长片名反向吞噬（杜绝 2 字"希望"被 6 字"有希望的男人"冒充）
-                    const lenDiff = Math.abs(candAnalysis.pureTitle.length - targetAnalysis.pureTitle.length);
-                    const isCandValidLonger = candAnalysis.pureTitle.includes(targetAnalysis.pureTitle) && (
-                      targetAnalysis.pureTitle.length > 3
-                        ? lenDiff <= 4
-                        : (lenDiff <= 1 || candAnalysis.pureTitle.replace(/(19\d\d|20\d\d)$/, '') === targetAnalysis.pureTitle)
-                    );
-                    const isTargetValidLonger = targetAnalysis.pureTitle.includes(candAnalysis.pureTitle) && lenDiff <= 1;
-                    const isSubstringOverlap = isCandValidLonger || isTargetValidLonger;
-
-                    if (hasSharedSpecificSubtitle || isSubstringOverlap) {
-                      isHighConfidenceMatch = true;
-                      nameScore = hasSharedSpecificSubtitle ? 140 : 110;
-                    } else if (
-                      targetAnalysis.subtitles.length <= 1 &&
-                      targetAnalysis.pureTitle.length > 3 &&
-                      ((candAnalysis.pureTitle.length >= 4 && targetAnalysis.pureTitle.includes(candAnalysis.pureTitle)) ||
-                       (targetAnalysis.pureTitle.length >= 4 && candAnalysis.pureTitle.includes(targetAnalysis.pureTitle)))
-                    ) {
-                      nameScore = 50;
-                    } else {
-                      nameScore = -300;
-                    }
-                  }
-
-                  let qualityScore = 0;
-                  if (remarks.includes('4k') || remarks.includes('2160')) qualityScore += 30;
-                  if (remarks.includes('1080') || remarks.includes('hd') || remarks.includes('正片')) qualityScore += 20;
-                  if (isTrailer || isCommentary) qualityScore -= 500;
-                  if (isMusical) qualityScore -= 400;
-
-                  let episodeScore = 0;
-                  let isEpisodeInsufficient = false;
-                  if (episodeParam && isSeriesItem) {
-                    const reqEpNum = parseInt(episodeParam, 10);
-                    if (!isNaN(reqEpNum) && reqEpNum > 0) {
-                      let maxEpInSource: number | null = null;
-                      const epMatch = remarks.match(/(?:更新至|更新到|连载至|连载到|全|共|ep)\s*(?:第)?\s*(\d+)\s*(?:集|话|期)?/i) ||
-                                      remarks.match(/第\s*(\d+)\s*(?:集|话|期)/i) ||
-                                      remarks.match(/(\d+)\s*(?:集|话)/i);
-                      if (epMatch) {
-                        const parsed = parseInt(epMatch[1], 10);
-                        if (!isNaN(parsed) && parsed > 0 && parsed < 2000) {
-                          maxEpInSource = parsed;
-                        }
-                      }
-                      if (maxEpInSource !== null) {
-                        if (maxEpInSource >= reqEpNum) {
-                          episodeScore = 60;
-                        } else {
-                          episodeScore = -500;
-                          isEpisodeInsufficient = true;
-                        }
-                      }
-                    }
-                  }
-
-                  let sourceScore = 0;
-                  // 干净线路优先打分，广告线路大幅降权靠后
-                  const isAdSource = AD_PRONE_SOURCES.has(v.source);
-                  if (v.source === 'modu' || v.source === 'ikun') sourceScore = 160;
-                  else if (v.source === 'zuida' || v.source === 'feifan') sourceScore = 150;
-                  else if (v.source === 'ruyi' || v.source === 'liangzi') sourceScore = 140;
-                  else if (v.source === 'baofeng' || v.source === 'dytt') sourceScore = 120;
-                  else if (!isAdSource) sourceScore = 100;
-                  else {
-                    // 广告线路（juliang, guangsu, wujin 等）大幅降权
-                    sourceScore = 20;
-                  }
-
-                  const totalScore = nameScore + yearScore + qualityScore + episodeScore + sourceScore + typeScore;
-
-                  // 记录非预告片的所有相关备选源，用于最终兜底保障
-                  if (!isTrailer && !isCommentary && !isMusical && !isTypeMismatched && totalScore > 0) {
-                    fallbackCandidates.push({ _video: v, _score: totalScore, _isSeries: isSeriesItem });
-                  }
-
-                  const isNameMatched = isExactName || isHighConfidenceMatch;
-                  const isStrictCandidate = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && !isTypeMismatched && isNameMatched && !isEpisodeInsufficient &&
-                    (isSeriesItem || !targetYear || !candYear || Math.abs(candYear - targetYear) <= 2);
-
-                  if (isStrictCandidate) {
-                    const existingIdx = foundSources.findIndex(s => s.source === v.source);
-                    const newSourceItem: SourceInfo & { _score?: number; _video?: any; _isSeries?: boolean } = {
-                      id: v.vod_id,
-                      source: v.source,
-                      sourceName: v.sourceDisplayName || getSourceName(v.source),
-                      latency: v.latency,
-                      pic: v.vod_pic,
-                      typeName: v.type_name,
-                      _score: totalScore,
-                      _video: v,
-                      _isSeries: isSeriesItem,
-                    };
-                    if (existingIdx === -1) {
-                      foundSources.push(newSourceItem);
-                    } else {
-                      const oldItem = foundSources[existingIdx] as any;
-                      if ((oldItem._score ?? 0) < totalScore) {
-                        foundSources[existingIdx] = newSourceItem;
-                      }
-                    }
-                  }
-
-                  // 极速秒播裁决：
-                  // 1. 干净骨干源（zuida, feifan, modu, ikun 等）只要匹配立即秒播直出；
-                  // 2. 广告线路（juliang, guangsu, wujin 等）给干净线路 800ms 冲刺窗口，若干净线路超时未到达才作为兜底；
-                  const isQualified = !isTrailer && !isCommentary && !isMusical && !isYearMismatched && !isTypeMismatched && isNameMatched && !isEpisodeInsufficient && totalScore >= 70;
-                  if (isQualified && !redirected && !cancelled) {
-                    const isSeasonOrYearMatched = 
-                      (isSeriesItem && (targetAnalysis.seasonNumber !== null ? candAnalysis.seasonNumber === targetAnalysis.seasonNumber : (candAnalysis.seasonNumber === 1 || candAnalysis.seasonNumber === null))) ||
-                      (!isSeriesItem && (isExactYearMatch || !targetYear || !candYear || Math.abs(candYear - (targetYear || 0)) <= 2));
-
-                    if (isSeasonOrYearMatched) {
-                      const elapsed = Date.now() - searchStartTime;
-                      const isCleanBackbone = !isAdSource && totalScore >= 100;
-
-                      if (isCleanBackbone || elapsed > 800) {
-                        performRedirect(v, isSeriesItem);
-                        break;
-                      }
-                    }
-                  }
-                }
-              }
-            } catch { /* ignore */ }
-          }
-          if (redirected) break;
-        }
-
-        if (!redirected && !cancelled) {
-          if (foundSources.length > 0) {
-            const best = (foundSources as any[]).sort((a, b) => (b._score ?? 0) - (a._score ?? 0))[0];
-            if (best?._video) {
-              performRedirect(best._video, best._isSeries ?? false);
-            } else {
-              tryFallbackPlay();
-            }
-          } else {
-            tryFallbackPlay();
-          }
-        }
-
-        function tryFallbackPlay() {
-          if (fallbackCandidates.length > 0) {
-            const bestFallback = fallbackCandidates.sort((a, b) => b._score - a._score)[0];
-            if (bestFallback?._video) {
-              performRedirect(bestFallback._video, bestFallback._isSeries);
-              return;
-            }
-          }
-          setTitleSearchError('未找到与该片名匹配的高质量正片片源，请尝试精确片名搜索');
-          setTitleSearching(false);
-        }
-      } catch (err: any) {
-        if (!cancelled && !redirected) {
-          setTitleSearchError(err.message || '全网搜索失败，请点击重试');
-          setTitleSearching(false);
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [videoId, title, source, expectedYear, expectedType, episodeParam, replace]);
+  const {
+    needsTitleSearch,
+    titleSearching,
+    titleSearchError,
+  } = useTitleSearchScheduler({
+    videoId,
+    source,
+    title,
+    expectedYear,
+    expectedType,
+    episodeParam,
+    seasonParam,
+    entityParam,
+    replace,
+    failedSourcesRef,
+  });
 
   // === 播放核心状态 ===
   const [currentSourceId, setCurrentSourceId] = useState<string>(source || '');
@@ -555,46 +170,14 @@ export const IkanPPPlayer = memo(function IkanPPPlayer({ params: searchParams, r
   });
 
   // 片头片尾自定义记忆打点
-  const [skipMarkers, setSkipMarkers] = useState<SkipMarkers>(() => getSkipMarkers(title || ''));
-  const [skipToast, setSkipToast] = useState<string | null>(null);
+  const {
+    skipMarkers,
+    skipToast,
+    handleMarkIntro,
+    handleMarkOutro,
+    handleClearMarker,
+  } = usePlayerSkipMarkers(title, playerTimeRef);
 
-  useEffect(() => {
-    if (title) {
-      setSkipMarkers(getSkipMarkers(title));
-    }
-  }, [title]);
-
-  const handleMarkIntro = useCallback(() => {
-    const cur = playerTimeRef.current;
-    if (typeof cur !== 'number' || cur < 0) return;
-    const rounded = Math.round(cur);
-    const updated = { ...skipMarkers, intro: rounded };
-    setSkipMarkers(updated);
-    saveSkipMarkers(title || '', updated);
-    setSkipToast(`已标记片头 (${formatTimeSeconds(rounded)})，后续集数将自动秒跳片头`);
-    setTimeout(() => setSkipToast(null), 3500);
-  }, [title, skipMarkers]);
-
-  const handleMarkOutro = useCallback(() => {
-    const cur = playerTimeRef.current;
-    if (typeof cur !== 'number' || cur <= 0) return;
-    const rounded = Math.round(cur);
-    const updated = { ...skipMarkers, outro: rounded };
-    setSkipMarkers(updated);
-    saveSkipMarkers(title || '', updated);
-    setSkipToast(`已标记片尾 (${formatTimeSeconds(rounded)})，播至此处将自动连播下一集`);
-    setTimeout(() => setSkipToast(null), 3500);
-  }, [title, skipMarkers]);
-
-  const handleClearMarker = useCallback((type: 'intro' | 'outro') => {
-    const updated = { ...skipMarkers, [type]: null };
-    setSkipMarkers(updated);
-    saveSkipMarkers(title || '', updated);
-    setSkipToast(`已清除${type === 'intro' ? '片头' : '片尾'}跳过标记`);
-    setTimeout(() => setSkipToast(null), 2500);
-  }, [title, skipMarkers]);
-
-  const failedSourcesRef = useRef<Set<string>>(new Set());
   const handleSourceUnavailable = useCallback(() => {
     if (source) {
       failedSourcesRef.current.add(source);
@@ -939,7 +522,6 @@ export const IkanPPPlayer = memo(function IkanPPPlayer({ params: searchParams, r
     };
   }, [videoData?.type_name, expectedType, embedded]);
 
-  const playerTimeRef = useRef(0);
   const sourceErrorCountsRef = useRef<Map<string, number>>(new Map());
 
   // 线路异常智能自愈

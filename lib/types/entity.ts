@@ -5,6 +5,7 @@ export interface TitleEntity {
   tmdbId: string;              // TMDB 官方条目 ID，例如 "278"
   tmdbType: 'movie' | 'tv';    // TMDB 媒体类型
   doubanId?: string;           // 豆瓣 ID，可选
+  imdbId?: string;             // IMDb ID，可选，例如 "tt0111161"
   title: string;               // 中文主标题，例如 "肖申克的救赎"
   originalTitle?: string;      // 原语言标题，例如 "The Shawshank Redemption"
   type: 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string; // iKanPP 归类：电影 / 剧集 / 动漫 / 综艺 / 纪录片

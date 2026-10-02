@@ -128,7 +128,7 @@ export function CategoryHubSkeleton({
       </header>
 
       {/* 2. 影院级全景巨幕 Hero 区域 */}
-      <section className="relative w-full h-[68vh] min-h-140 sm:h-[75vh] lg:h-[82vh] max-h-210 overflow-hidden select-none">
+      <section className="relative w-full h-[44vh] min-h-[300px] max-h-[420px] sm:h-[48vh] sm:min-h-[360px] sm:max-h-[480px] lg:h-[52vh] xl:h-[56vh] 2xl:h-[58vh] lg:min-h-[440px] lg:max-h-[580px] mb-0 overflow-hidden select-none">
         {desktopBackdropUrl && (
           <picture className="absolute inset-0 w-full h-full">
             <source media="(max-width: 640px)" srcSet={mobileBackdropUrl} />
@@ -137,13 +137,27 @@ export function CategoryHubSkeleton({
               alt={hero.title}
               fetchPriority="high"
               decoding="sync"
-              className="w-full h-full object-cover object-center transform scale-102"
+              className="w-full h-full object-cover"
+              style={{ objectPosition: 'center 15%' }}
             />
           </picture>
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/40 to-transparent z-10" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0F]/90 via-[#0A0A0F]/30 to-transparent z-10" />
+        {/* 电影级暗黑羽化与渐变遮罩系统 */}
+        <div
+          className="absolute inset-x-0 top-0 pointer-events-none z-10"
+          style={{
+            height: '120px',
+            background: 'linear-gradient(to bottom, rgba(10, 10, 15, 0.82) 0%, rgba(10, 10, 15, 0.4) 50%, transparent 100%)',
+          }}
+        />
+        <div
+          className="absolute inset-x-0 bottom-0 pointer-events-none z-10"
+          style={{
+            height: '220px',
+            background: 'linear-gradient(to top, #0A0A0F 0%, rgba(10, 10, 15, 0.92) 30%, rgba(10, 10, 15, 0.5) 65%, transparent 100%)',
+          }}
+        />
 
         <div className="absolute inset-x-0 bottom-0 z-20 w-full flex flex-col justify-end pb-3 sm:pb-4 lg:pb-5">
           <div className="fluid-container relative">

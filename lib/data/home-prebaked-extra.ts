@@ -59,138 +59,154 @@ export const ANIME_HOME_DATA: PrebakedHomeCategory = {
   ],
   hero: [
     {
-        "id": "iyf_hero_tv_1",
-        "title": "时光代理人第3季",
+        "id": "iyf_hero_anime_1",
+        "tmdbId": "123542",
+        "title": "时光代理人",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg",
-        "description": "《时光代理人第3季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至09集 | 共12集。",
-        "year": "2026",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/w3agwUSMpJ4X9t1jGrDtqqRPjDQ.jpg",
+        "description": "《时光代理人》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：超能力悬疑国漫。",
+        "year": "2021",
         "types": [
             "热门",
-            "连续剧"
+            "动漫",
+            "悬疑"
         ],
-        "episodes_info": "更新至09集 | 共12集",
-        "type": "tv",
+        "episodes_info": "超能力悬疑国漫",
+        "type": "anime",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_tv_2",
-        "title": "我独自盗墓",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/auWQytep71FZx1XHFqY8WaHSuDD.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/auWQytep71FZx1XHFqY8WaHSuDD.jpg",
-        "description": "《我独自盗墓》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至12集。",
-        "year": "2026",
-        "types": [
-            "热门",
-            "连续剧"
-        ],
-        "episodes_info": "更新至12集",
-        "type": "tv",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_tv_3",
-        "title": "世界最强的后卫 迷宫国的新人探索者",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/5vhYO0hMacNlyNDaYlS2HRXOtoZ.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/5vhYO0hMacNlyNDaYlS2HRXOtoZ.jpg",
-        "description": "《世界最强的后卫 迷宫国的新人探索者》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至12集。",
-        "year": "2026",
-        "types": [
-            "热门",
-            "连续剧"
-        ],
-        "episodes_info": "更新至12集",
-        "type": "tv",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_tv_4",
-        "title": "暗黑灯火",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/k446fZqGvCVsVstjUq7KQIK1PqX.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/k446fZqGvCVsVstjUq7KQIK1PqX.jpg",
-        "description": "《暗黑灯火》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：12集全。",
-        "year": "2026",
-        "types": [
-            "热门",
-            "连续剧"
-        ],
-        "episodes_info": "12集全",
-        "type": "tv",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_tv_5",
-        "title": "从0位居民开始的边境领主大人",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/oz6Aet1VmsjxA70oGIhiaNnXxuk.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/oz6Aet1VmsjxA70oGIhiaNnXxuk.jpg",
-        "description": "《从0位居民开始的边境领主大人》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：12集全。",
-        "year": "2026",
-        "types": [
-            "热门",
-            "连续剧"
-        ],
-        "episodes_info": "12集全",
-        "type": "tv",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_tv_6",
-        "title": "LV999的村民",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/pwtHWJ2yblGRJenW9THxGGDEjIZ.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/pwtHWJ2yblGRJenW9THxGGDEjIZ.jpg",
-        "description": "《LV999的村民》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至12集。",
-        "year": "2026",
-        "types": [
-            "热门",
-            "连续剧"
-        ],
-        "episodes_info": "更新至12集",
-        "type": "tv",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_tv_7",
-        "title": "斩神之凡尘神域第2季",
-        "rate": "8.8",
+        "id": "iyf_hero_anime_2",
+        "tmdbId": "259231",
+        "title": "斩神之凡尘神域",
+        "rate": "9.0",
         "cover": "https://image.tmdb.org/t/p/w500/yEURCDODP6noWXQsQ97VMVdupfq.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/yEURCDODP6noWXQsQ97VMVdupfq.jpg",
-        "description": "《斩神之凡尘神域第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：15集全。",
-        "year": "2026",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/aZCidnkhigXUUdhgNDB2qCSaAwl.jpg",
+        "description": "《斩神之凡尘神域》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：第2季热播。",
+        "year": "2024",
         "types": [
             "热门",
-            "连续剧"
+            "动漫",
+            "玄幻"
         ],
-        "episodes_info": "15集全",
-        "type": "tv",
+        "episodes_info": "第2季热播",
+        "type": "anime",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_tv_8",
-        "title": "镖人第2季",
+        "id": "iyf_hero_anime_3",
+        "tmdbId": "107463",
+        "title": "镖人",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/8yaYVj6FDv33wZYnhDAcmXDJsfY.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/8yaYVj6FDv33wZYnhDAcmXDJsfY.jpg",
-        "description": "《镖人第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至08集 | 共8集。",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/r56087oqO4gJrK5HI0Lxu07mMXQ.jpg",
+        "description": "《镖人》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：硬派武侠国漫。",
+        "year": "2023",
+        "types": [
+            "热门",
+            "动漫",
+            "武侠"
+        ],
+        "episodes_info": "硬派武侠国漫",
+        "type": "anime",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_anime_4",
+        "tmdbId": "79481",
+        "title": "斗破苍穹",
+        "rate": "8.6",
+        "cover": "https://image.tmdb.org/t/p/w500/oyoahIcdamTXwjIaL3CqZ1v5CLl.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/cTCn2EO69SERNfhaezJMoqBom4G.jpg",
+        "description": "《斗破苍穹》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：年番热播中。",
+        "year": "2017",
+        "types": [
+            "热门",
+            "动漫",
+            "热血"
+        ],
+        "episodes_info": "年番热播中",
+        "type": "anime",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_anime_5",
+        "tmdbId": "223911",
+        "title": "仙逆",
+        "rate": "9.2",
+        "cover": "https://image.tmdb.org/t/p/w500/zlJ4dqSnoraUSB821BZEGUcveP9.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/crn53sSGWRZ8wAtEGso52nepEkz.jpg",
+        "description": "《仙逆》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至最新集。",
+        "year": "2023",
+        "types": [
+            "热门",
+            "动漫",
+            "修真"
+        ],
+        "episodes_info": "更新至最新集",
+        "type": "anime",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_anime_6",
+        "tmdbId": "124003",
+        "title": "完美世界",
+        "rate": "8.7",
+        "cover": "https://image.tmdb.org/t/p/w500/mNJPCv2dLADVVSgLlzsMJoXdTmb.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/eoOvPxcMxJDeZsJdM5Ppbprd6OX.jpg",
+        "description": "《完美世界》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：热门玄幻巨制。",
+        "year": "2021",
+        "types": [
+            "热门",
+            "动漫",
+            "玄幻"
+        ],
+        "episodes_info": "热门玄幻巨制",
+        "type": "anime",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_anime_7",
+        "tmdbId": "101172",
+        "title": "吞噬星空",
+        "rate": "8.5",
+        "cover": "https://image.tmdb.org/t/p/w500/dShQsQFLSivwCIRjC7crsnznPXY.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/lDVOl7wTFUIqwlSrWsGjBCHt3fQ.jpg",
+        "description": "《吞噬星空》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：科幻机甲热血。",
+        "year": "2020",
+        "types": [
+            "热门",
+            "动漫",
+            "科幻"
+        ],
+        "episodes_info": "科幻机甲热血",
+        "type": "anime",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_anime_8",
+        "tmdbId": "300267",
+        "title": "世界最强的后卫 迷宫国的新人探索者",
+        "rate": "8.2",
+        "cover": "https://image.tmdb.org/t/p/w500/5vhYO0hMacNlyNDaYlS2HRXOtoZ.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/93G5xLkTan3fdkUzQVvCcf8IAMx.jpg",
+        "description": "《世界最强的后卫 迷宫国的新人探索者》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：异界冒险新番。",
         "year": "2026",
         "types": [
             "热门",
-            "连续剧"
+            "动漫",
+            "冒险"
         ],
-        "episodes_info": "更新至08集 | 共8集",
-        "type": "tv",
+        "episodes_info": "异界冒险新番",
+        "type": "anime",
         "is_new": true,
         "playable": true
     }
@@ -665,138 +681,154 @@ export const VARIETY_HOME_DATA: PrebakedHomeCategory = {
   ],
   hero: [
     {
-        "id": "iyf_hero_tv_1",
-        "title": "打歌2026",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/8uBae3fsFRhYNrNBxuWJCXlBFKE.jpg",
-        "description": "《打歌2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260927(上班直播第3期)。",
-        "year": "2026",
-        "types": [
-            "热门",
-            "连续剧"
-        ],
-        "episodes_info": "更新至20260927(上班直播第3期)",
-        "type": "tv",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_tv_2",
-        "title": "我家那闺女2026",
-        "rate": "8.8",
+        "id": "iyf_hero_variety_1",
+        "tmdbId": "126490",
+        "title": "我家那闺女",
+        "rate": "8.5",
         "cover": "https://image.tmdb.org/t/p/w500/8gV9bRO0jVhjOPGD2s2HzyWtl9V.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/8gV9bRO0jVhjOPGD2s2HzyWtl9V.jpg",
-        "description": "《我家那闺女2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260928(加更版)。",
-        "year": "2026",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/yA4mTJfmB0hwslIJPMZXeYbtj0k.jpg",
+        "description": "《我家那闺女》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：亲情观察真人秀。",
+        "year": "2019",
         "types": [
             "热门",
-            "连续剧"
+            "综艺",
+            "真人秀"
         ],
-        "episodes_info": "更新至20260928(加更版)",
-        "type": "tv",
+        "episodes_info": "亲情观察真人秀",
+        "type": "variety",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_tv_3",
-        "title": "花儿与少年第8季",
-        "rate": "8.8",
+        "id": "iyf_hero_variety_2",
+        "tmdbId": "121876",
+        "title": "花儿与少年",
+        "rate": "8.9",
         "cover": "https://image.tmdb.org/t/p/w500/s4WOcsEQ1pLjdKWEy7dcFDlWfI4.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/s4WOcsEQ1pLjdKWEy7dcFDlWfI4.jpg",
-        "description": "《花儿与少年第8季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20261001(超前营业)。",
-        "year": "2026",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/kIgzX0QdvK3vtaoHBpj9fUy7DP9.jpg",
+        "description": "《花儿与少年》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：治愈系旅行漫游。",
+        "year": "2014",
         "types": [
             "热门",
-            "连续剧"
+            "综艺",
+            "旅行"
         ],
-        "episodes_info": "更新至20261001(超前营业)",
-        "type": "tv",
+        "episodes_info": "治愈系旅行漫游",
+        "type": "variety",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_tv_4",
+        "id": "iyf_hero_variety_3",
+        "tmdbId": "94773",
         "title": "舞蹈新风暴",
-        "rate": "8.8",
+        "rate": "9.1",
         "cover": "https://image.tmdb.org/t/p/w500/jej7FfIvWZyLSMoNbPP3MkEByob.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/jej7FfIvWZyLSMoNbPP3MkEByob.jpg",
-        "description": "《舞蹈新风暴》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260930(Plus)。",
-        "year": "2026",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/WQSOHT9QFxMMpQ4TAscX3f9IMO.jpg",
+        "description": "《舞蹈新风暴》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：顶级舞者竞技盛宴。",
+        "year": "2019",
         "types": [
             "热门",
-            "连续剧"
+            "综艺",
+            "舞蹈"
         ],
-        "episodes_info": "更新至20260930(Plus)",
-        "type": "tv",
+        "episodes_info": "顶级舞者竞技盛宴",
+        "type": "variety",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_tv_5",
-        "title": "披荆斩棘2026",
+        "id": "iyf_hero_variety_4",
+        "tmdbId": "131040",
+        "title": "披荆斩棘",
         "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/8gV9bRO0jVhjOPGD2s2HzyWtl9V.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/8gV9bRO0jVhjOPGD2s2HzyWtl9V.jpg",
-        "description": "《披荆斩棘2026》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20261001(“聚”乐部)。",
-        "year": "2026",
+        "cover": "https://image.tmdb.org/t/p/w500/hB5wJgHi7g04zcTTn92bshEKkQ4.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/ySzItvbTqSJ3feKiueMFwAlH17y.jpg",
+        "description": "《披荆斩棘》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：全能音乐竞演。",
+        "year": "2021",
         "types": [
             "热门",
-            "连续剧"
+            "综艺",
+            "音乐"
         ],
-        "episodes_info": "更新至20261001(“聚”乐部)",
-        "type": "tv",
+        "episodes_info": "全能音乐竞演",
+        "type": "variety",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_tv_6",
-        "title": "心动的信号第9季",
-        "rate": "8.8",
+        "id": "iyf_hero_variety_5",
+        "tmdbId": "103147",
+        "title": "心动的信号",
+        "rate": "8.3",
         "cover": "https://image.tmdb.org/t/p/w500/qFplFFQy6zMMplHItcrMAtBEseO.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/qFplFFQy6zMMplHItcrMAtBEseO.jpg",
-        "description": "《心动的信号第9季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20261001(第9期加更下)。",
-        "year": "2026",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/eoky4vypEBIWCoY3lMLvEOShVLy.jpg",
+        "description": "《心动的信号》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：都市恋爱推理社交。",
+        "year": "2018",
         "types": [
             "热门",
-            "连续剧"
+            "综艺",
+            "情感"
         ],
-        "episodes_info": "更新至20261001(第9期加更下)",
-        "type": "tv",
+        "episodes_info": "都市恋爱推理社交",
+        "type": "variety",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_tv_7",
-        "title": "一饭封神第2季",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/9dyojjMqquQX30ombDixuZsBISl.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/9dyojjMqquQX30ombDixuZsBISl.jpg",
-        "description": "《一饭封神第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20261001(第10期下美食竞技纯享版)。",
-        "year": "2026",
+        "id": "iyf_hero_variety_6",
+        "tmdbId": "98031",
+        "title": "奔跑吧",
+        "rate": "8.4",
+        "cover": "https://image.tmdb.org/t/p/w500/jOl12DTFiMcp9ga2KaEKwt5H8oo.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/pXss1GWhPOcf6SrmRJ4JSkIU3sE.jpg",
+        "description": "《奔跑吧》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：王牌国民户外竞技。",
+        "year": "2014",
         "types": [
             "热门",
-            "连续剧"
+            "综艺",
+            "竞技"
         ],
-        "episodes_info": "更新至20261001(第10期下美食竞技纯享版)",
-        "type": "tv",
+        "episodes_info": "王牌国民户外竞技",
+        "type": "variety",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_tv_8",
-        "title": "家乡美食大赛",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/1ZOAVVMtbtnDmBxwlzfv8iU53ZP.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/1ZOAVVMtbtnDmBxwlzfv8iU53ZP.jpg",
-        "description": "《家乡美食大赛》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至20260927。",
-        "year": "2026",
+        "id": "iyf_hero_variety_7",
+        "tmdbId": "89620",
+        "title": "极限挑战",
+        "rate": "8.7",
+        "cover": "https://image.tmdb.org/t/p/w500/nYsiHMplUCBFazdAOVr1gQaGy34.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/nSj6EKpNtNCd84OT1MNK9XAUlPM.jpg",
+        "description": "《极限挑战》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：烧脑幽默生存战。",
+        "year": "2015",
         "types": [
             "热门",
-            "连续剧"
+            "综艺",
+            "游戏"
         ],
-        "episodes_info": "更新至20260927",
-        "type": "tv",
+        "episodes_info": "烧脑幽默生存战",
+        "type": "variety",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_variety_8",
+        "tmdbId": "88580",
+        "title": "王牌对王牌",
+        "rate": "8.6",
+        "cover": "https://image.tmdb.org/t/p/w500/dJLq9SHSJ04sVghgStXR1ypGHDA.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/z04L1YRsQ1x7H4tN2BqIKD0Ker0.jpg",
+        "description": "《王牌对王牌》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：大咖经典重现对决。",
+        "year": "2016",
+        "types": [
+            "热门",
+            "综艺",
+            "搞笑"
+        ],
+        "episodes_info": "大咖经典重现对决",
+        "type": "variety",
         "is_new": true,
         "playable": true
     }
@@ -1596,29 +1628,12 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
   ],
   hero: [
     {
-        "id": "iyf_hero_movie_1",
-        "title": "一个部门的诞生",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/qFplFFQy6zMMplHItcrMAtBEseO.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/qFplFFQy6zMMplHItcrMAtBEseO.jpg",
-        "description": "《一个部门的诞生》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·喜剧。",
-        "year": "2026",
-        "types": [
-            "热门",
-            "喜剧",
-            "电影"
-        ],
-        "episodes_info": "电影·喜剧",
-        "type": "movie",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_movie_2",
+        "id": "iyf_hero_all_1",
+        "tmdbId": "1353926",
         "title": "特立独行",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/dWtKXfN97AMW5n3S6QoUVUMCU2S.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/dWtKXfN97AMW5n3S6QoUVUMCU2S.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
         "description": "《特立独行》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·剧情。",
         "year": "2026",
         "types": [
@@ -1632,47 +1647,12 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "playable": true
     },
     {
-        "id": "iyf_hero_movie_3",
-        "title": "给阿嬷的情书",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
-        "description": "《给阿嬷的情书》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·剧情。",
-        "year": "2026",
-        "types": [
-            "热门",
-            "剧情",
-            "电影"
-        ],
-        "episodes_info": "电影·剧情",
-        "type": "movie",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_movie_4",
-        "title": "玩具总动员5",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
-        "description": "《玩具总动员5》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·动画。",
-        "year": "2026",
-        "types": [
-            "热门",
-            "动画",
-            "电影"
-        ],
-        "episodes_info": "电影·动画",
-        "type": "movie",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_tv_5",
+        "id": "iyf_hero_all_2",
+        "tmdbId": "297982",
         "title": "无可替代",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/gLbtMLqbN6fgYsTuHFvzJu7Hopi.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/gLbtMLqbN6fgYsTuHFvzJu7Hopi.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/rNFBrko4F5RQ5E9YktBRXVqwzjl.jpg",
         "description": "《无可替代》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至08集 | 共20集。",
         "year": "2026",
         "types": [
@@ -1685,28 +1665,50 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         "playable": true
     },
     {
-        "id": "iyf_hero_tv_6",
-        "title": "我不是大师",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/eZmV0ziikof0upIm8s6Vz2pC9pp.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/eZmV0ziikof0upIm8s6Vz2pC9pp.jpg",
-        "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至17集 | 共24集。",
-        "year": "2026",
+        "id": "iyf_hero_all_3",
+        "tmdbId": "259231",
+        "title": "斩神之凡尘神域",
+        "rate": "9.0",
+        "cover": "https://image.tmdb.org/t/p/w500/yEURCDODP6noWXQsQ97VMVdupfq.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/aZCidnkhigXUUdhgNDB2qCSaAwl.jpg",
+        "description": "《斩神之凡尘神域》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：第2季热播。",
+        "year": "2024",
         "types": [
             "热门",
-            "连续剧"
+            "动漫",
+            "玄幻"
         ],
-        "episodes_info": "更新至17集 | 共24集",
-        "type": "tv",
+        "episodes_info": "第2季热播",
+        "type": "anime",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_tv_7",
+        "id": "iyf_hero_all_4",
+        "tmdbId": "1396674",
+        "title": "一个部门的诞生",
+        "rate": "8.8",
+        "cover": "https://image.tmdb.org/t/p/w500/azv0T4WEDjaaRe7ZeiegUEsKMHs.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/eW7S7tCPWQW50Bt1YHF0FPI1m16.jpg",
+        "description": "《一个部门的诞生》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·喜剧。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "喜剧",
+            "电影"
+        ],
+        "episodes_info": "电影·喜剧",
+        "type": "movie",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_all_5",
+        "tmdbId": "287994",
         "title": "法医秦明之龙番往事",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/y862upNdtW5zu4VT6d0PQxJv5ov.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/y862upNdtW5zu4VT6d0PQxJv5ov.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/8GW3Gw2QNluHkZs65JQZbWExmgJ.jpg",
         "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至16集 | 共24集。",
         "year": "2026",
         "types": [
@@ -1715,6 +1717,63 @@ export const ALL_HOME_DATA: PrebakedHomeCategory = {
         ],
         "episodes_info": "更新至16集 | 共24集",
         "type": "tv",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_all_6",
+        "tmdbId": "131040",
+        "title": "披荆斩棘",
+        "rate": "8.8",
+        "cover": "https://image.tmdb.org/t/p/w500/hB5wJgHi7g04zcTTn92bshEKkQ4.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/ySzItvbTqSJ3feKiueMFwAlH17y.jpg",
+        "description": "《披荆斩棘》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：全能音乐竞演。",
+        "year": "2021",
+        "types": [
+            "热门",
+            "综艺",
+            "音乐"
+        ],
+        "episodes_info": "全能音乐竞演",
+        "type": "variety",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_all_7",
+        "tmdbId": "223911",
+        "title": "仙逆",
+        "rate": "9.2",
+        "cover": "https://image.tmdb.org/t/p/w500/zlJ4dqSnoraUSB821BZEGUcveP9.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/crn53sSGWRZ8wAtEGso52nepEkz.jpg",
+        "description": "《仙逆》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：国漫顶流热播。",
+        "year": "2023",
+        "types": [
+            "热门",
+            "动漫",
+            "修真"
+        ],
+        "episodes_info": "国漫顶流热播",
+        "type": "anime",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_all_8",
+        "tmdbId": "1499071",
+        "title": "寒战1994",
+        "rate": "8.8",
+        "cover": "https://image.tmdb.org/t/p/w500/8NaaLrhXbhuXmjndCKmgaJvLTb1.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/gIpIMTZKhDNqFsoSj04sKZfV0g0.jpg",
+        "description": "《寒战1994》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·警匪犯罪。",
+        "year": "2026",
+        "types": [
+            "热门",
+            "剧情",
+            "电影"
+        ],
+        "episodes_info": "电影·警匪犯罪",
+        "type": "movie",
         "is_new": true,
         "playable": true
     }
@@ -2193,146 +2252,154 @@ export const DOCUMENTARY_HOME_DATA: PrebakedHomeCategory = {
   ],
   hero: [
     {
-        "id": "iyf_hero_documentary_1",
+        "id": "iyf_hero_doc_1",
+        "tmdbId": "127700",
         "title": "欢迎来地球",
         "rate": "8.8",
         "cover": "https://image.tmdb.org/t/p/w500/8QxetEwQbBqKdue2SlhZO2fKPUO.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/8QxetEwQbBqKdue2SlhZO2fKPUO.jpg",
-        "description": "《欢迎来地球》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至06。",
-        "year": "2026",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/be8s04cLyXXEqjBT24YPYdDSZKB.jpg",
+        "description": "《欢迎来地球》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：探索极境自然奇观。",
+        "year": "2021",
         "types": [
+            "热门",
             "纪录片",
-            "自然",
-            "探索"
+            "自然"
         ],
-        "episodes_info": "更新至06",
-        "type": "tv",
+        "episodes_info": "探索极境自然奇观",
+        "type": "documentary",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_documentary_2",
+        "id": "iyf_hero_doc_2",
+        "tmdbId": "680058",
         "title": "泰国洞穴救援",
-        "rate": "8.8",
+        "rate": "8.9",
         "cover": "https://image.tmdb.org/t/p/w500/8LAmKiUASJ8OJvercPtE36i4lnA.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/8LAmKiUASJ8OJvercPtE36i4lnA.jpg",
-        "description": "《泰国洞穴救援》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至01。",
-        "year": "2026",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/gOBKWe6lHlt8srk11TFlDuBtl0H.jpg",
+        "description": "《泰国洞穴救援》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：绝境生命救援奇迹。",
+        "year": "2021",
         "types": [
+            "热门",
             "纪录片",
-            "自然",
-            "探索"
+            "灾难"
         ],
-        "episodes_info": "更新至01",
-        "type": "tv",
+        "episodes_info": "绝境生命救援奇迹",
+        "type": "documentary",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_documentary_3",
-        "title": "内马尔：不完美的完美球星",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/dWtKXfN97AMW5n3S6QoUVUMCU2S.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/dWtKXfN97AMW5n3S6QoUVUMCU2S.jpg",
-        "description": "《内马尔：不完美的完美球星》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至03。",
-        "year": "2026",
-        "types": [
-            "纪录片",
-            "自然",
-            "探索"
-        ],
-        "episodes_info": "更新至03",
-        "type": "tv",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_documentary_4",
+        "id": "iyf_hero_doc_3",
+        "tmdbId": "958080",
         "title": "屏住呼吸：挑战冰潜记录",
-        "rate": "8.8",
+        "rate": "8.6",
         "cover": "https://image.tmdb.org/t/p/w500/efAxEHMvlgE4qterU0FWwovxkOa.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/efAxEHMvlgE4qterU0FWwovxkOa.jpg",
-        "description": "《屏住呼吸：挑战冰潜记录》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至01。",
-        "year": "2026",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/scgGJYnxLiLCcLIpeXiQgJBldQW.jpg",
+        "description": "《屏住呼吸：挑战冰潜记录》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：极限冰下自由潜。",
+        "year": "2022",
         "types": [
+            "热门",
             "纪录片",
-            "自然",
-            "探索"
+            "极限"
         ],
-        "episodes_info": "更新至01",
-        "type": "tv",
+        "episodes_info": "极限冰下自由潜",
+        "type": "documentary",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_documentary_5",
-        "title": "史前星球",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/ubahGAUSZmZsTVwjKcZpQh7vcIK.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/ubahGAUSZmZsTVwjKcZpQh7vcIK.jpg",
-        "description": "《史前星球》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至05。",
-        "year": "2026",
-        "types": [
-            "纪录片",
-            "自然",
-            "探索"
-        ],
-        "episodes_info": "更新至05",
-        "type": "tv",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_documentary_6",
-        "title": "王朝第2季",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/zqfwHwSs0vSRplFmFMeWddgha0x.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/zqfwHwSs0vSRplFmFMeWddgha0x.jpg",
-        "description": "《王朝第2季》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至05。",
-        "year": "2026",
-        "types": [
-            "纪录片",
-            "自然",
-            "探索"
-        ],
-        "episodes_info": "更新至05",
-        "type": "tv",
-        "is_new": true,
-        "playable": true
-    },
-    {
-        "id": "iyf_hero_documentary_7",
+        "id": "iyf_hero_doc_4",
+        "tmdbId": "102693",
         "title": "漫威616",
-        "rate": "8.8",
+        "rate": "8.5",
         "cover": "https://image.tmdb.org/t/p/w500/wBOIVb6zgsnfRhvCgdX04pLaYXQ.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/wBOIVb6zgsnfRhvCgdX04pLaYXQ.jpg",
-        "description": "《漫威616》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至08。",
-        "year": "2026",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/f7PJT5Vvc99vjEmo6JyfDs3p3ei.jpg",
+        "description": "《漫威616》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：探索漫威历史与文化。",
+        "year": "2020",
         "types": [
+            "热门",
             "纪录片",
-            "自然",
-            "探索"
+            "影视"
         ],
-        "episodes_info": "更新至08",
-        "type": "tv",
+        "episodes_info": "探索漫威历史与文化",
+        "type": "documentary",
         "is_new": true,
         "playable": true
     },
     {
-        "id": "iyf_hero_documentary_8",
-        "title": "欢迎来到雷克斯汉姆",
-        "rate": "8.8",
-        "cover": "https://image.tmdb.org/t/p/w500/efAxEHMvlgE4qterU0FWwovxkOa.jpg",
-        "backdrop": "https://image.tmdb.org/t/p/w500/efAxEHMvlgE4qterU0FWwovxkOa.jpg",
-        "description": "《欢迎来到雷克斯汉姆》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至18。",
-        "year": "2026",
+        "id": "iyf_hero_doc_5",
+        "tmdbId": "1044",
+        "title": "地球脉动",
+        "rate": "9.8",
+        "cover": "https://image.tmdb.org/t/p/w500/t8hU4uV3fUur9HRtjp00jyYcFs.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/qmRUwosX4BsCj6QanpBYScLl3Sp.jpg",
+        "description": "《地球脉动》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：BBC神级史诗自然巨作。",
+        "year": "2006",
         "types": [
+            "热门",
             "纪录片",
-            "自然",
-            "探索"
+            "自然"
         ],
-        "episodes_info": "更新至18",
-        "type": "tv",
+        "episodes_info": "BBC神级史诗自然巨作",
+        "type": "documentary",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_doc_6",
+        "tmdbId": "13579",
+        "title": "蓝色星球",
+        "rate": "9.7",
+        "cover": "https://image.tmdb.org/t/p/w500/21GV0Wn0m6dwOp4LgzIEqCMa00J.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/nDim8mbOWaddIDjmcnBKhevKiyF.jpg",
+        "description": "《蓝色星球》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：深邃海洋震撼奇观。",
+        "year": "2001",
+        "types": [
+            "热门",
+            "纪录片",
+            "海洋"
+        ],
+        "episodes_info": "深邃海洋震撼奇观",
+        "type": "documentary",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_doc_7",
+        "tmdbId": "90790",
+        "title": "七个世界，一个星球",
+        "rate": "9.7",
+        "cover": "https://image.tmdb.org/t/p/w500/rpXcRlP0m72rw4rJYXBnYXcsnJQ.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/5SeRUwZTHuiOnLfcxXqfew1P0Ug.jpg",
+        "description": "《七个世界，一个星球》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：七大洲生命赞歌。",
+        "year": "2019",
+        "types": [
+            "热门",
+            "纪录片",
+            "生态"
+        ],
+        "episodes_info": "七大洲生命赞歌",
+        "type": "documentary",
+        "is_new": true,
+        "playable": true
+    },
+    {
+        "id": "iyf_hero_doc_8",
+        "tmdbId": "83880",
+        "title": "我们的星球",
+        "rate": "9.6",
+        "cover": "https://image.tmdb.org/t/p/w500/9tlCyJcyvumObLYHDqAUe01etS1.jpg",
+        "backdrop": "https://image.tmdb.org/t/p/w1280/p8EUX6MPSNLxVwqO3fCYTi896Ro.jpg",
+        "description": "《我们的星球》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：地球壮丽生灵探索。",
+        "year": "2019",
+        "types": [
+            "热门",
+            "纪录片",
+            "自然"
+        ],
+        "episodes_info": "地球壮丽生灵探索",
+        "type": "documentary",
         "is_new": true,
         "playable": true
     }

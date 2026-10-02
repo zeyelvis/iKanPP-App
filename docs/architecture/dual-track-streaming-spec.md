@@ -263,7 +263,7 @@
 1. **骨干探测仲裁容差机制 (`app/api/title-episodes/route.ts`)**：
    - 彻底消除非正片预告/花絮切片对正片的虚假集数干扰：电影（<=3集）或剧集集数差异在 8 集以内（或相对误差在 10% 以内）时，严格以源权重仲裁，巨量资源稳居第一；
    - 杜绝其他采集源因多包含几个预告片而挤掉巨量纯净正片。
-2. **流式并发搜源秒播仲裁 (`IkanPPPlayerContainer.tsx`)**：
+2. **流式并发搜源秒播仲裁 (`IkanPPPlayerContainer.tsx` / `useTitleSearchScheduler.ts`)**：
    - 在流式搜索中，只有命中 `v.source === 'juliang'` 才能秒播，其他源等待流收集完成后按权重仲裁，杜绝低延迟次级源抢跑。
 3. **老用户历史与本地配置自愈升级 (`settings-store.ts`, `TitleActionsBar.tsx`, `HistoryItem.tsx`)**：
    - 老用户打开网站，`getSettings()` 自动检测本地源顺序，若首位不是巨量资源立即自动覆写修正；

@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-02T00:45:13.897Z",
+  "lastUpdated": "2026-10-02T15:39:53.246Z",
   "totalEntities": 33,
   "priorityACount": 9,
   "priorityBCount": 24,
@@ -227,43 +227,6 @@
       ]
     },
     {
-      "entityTitle": "布达佩斯大饭店",
-      "entityType": "movie",
-      "primaryTargetUrl": "https://www.ikanpp.com/title/%E5%B8%83%E8%BE%BE%E4%BD%A9%E6%96%AF%E5%A4%A7%E9%A5%AD%E5%BA%97",
-      "priority": "A",
-      "watchKeywords": [
-        "布达佩斯大饭店 线上看",
-        "布达佩斯大饭店 在线观看",
-        "布达佩斯大饭店 在线看"
-      ],
-      "freeKeywords": [
-        "布达佩斯大饭店 免费观看",
-        "布达佩斯大饭店 免费在线观看"
-      ],
-      "qualityKeywords": [
-        "布达佩斯大饭店 4K超清",
-        "布达佩斯大饭店 1080P免翻墙"
-      ],
-      "completionKeywords": [
-        "布达佩斯大饭店 完整版",
-        "布达佩斯大饭店 未删减版"
-      ],
-      "freshnessKeywords": [
-        "布达佩斯大饭店 最新上映"
-      ],
-      "informationalKeywords": [
-        "布达佩斯大饭店 剧情介绍",
-        "布达佩斯大饭店 演员表",
-        "布达佩斯大饭店 结局"
-      ],
-      "recommendedFaqQueries": [
-        "海外如何免翻墙《布达佩斯大饭店》线上看完整版？",
-        "《布达佩斯大饭店》可以在哪里免费在线观看 4K 超清画质？",
-        "《布达佩斯大饭店》剧情主要讲了什么？有哪些看点？",
-        "iKanPP 观看《布达佩斯大饭店》需要会员充值或看弹窗广告吗？"
-      ]
-    },
-    {
       "entityTitle": "实习医生格蕾",
       "entityType": "movie",
       "primaryTargetUrl": "https://www.ikanpp.com/title/%E5%AE%9E%E4%B9%A0%E5%8C%BB%E7%94%9F%E6%A0%BC%E8%95%BE",
@@ -298,6 +261,43 @@
         "《实习医生格蕾》可以在哪里免费在线观看 4K 超清画质？",
         "《实习医生格蕾》剧情主要讲了什么？有哪些看点？",
         "iKanPP 观看《实习医生格蕾》需要会员充值或看弹窗广告吗？"
+      ]
+    },
+    {
+      "entityTitle": "布达佩斯大饭店",
+      "entityType": "movie",
+      "primaryTargetUrl": "https://www.ikanpp.com/title/%E5%B8%83%E8%BE%BE%E4%BD%A9%E6%96%AF%E5%A4%A7%E9%A5%AD%E5%BA%97",
+      "priority": "A",
+      "watchKeywords": [
+        "布达佩斯大饭店 线上看",
+        "布达佩斯大饭店 在线观看",
+        "布达佩斯大饭店 在线看"
+      ],
+      "freeKeywords": [
+        "布达佩斯大饭店 免费观看",
+        "布达佩斯大饭店 免费在线观看"
+      ],
+      "qualityKeywords": [
+        "布达佩斯大饭店 4K超清",
+        "布达佩斯大饭店 1080P免翻墙"
+      ],
+      "completionKeywords": [
+        "布达佩斯大饭店 完整版",
+        "布达佩斯大饭店 未删减版"
+      ],
+      "freshnessKeywords": [
+        "布达佩斯大饭店 最新上映"
+      ],
+      "informationalKeywords": [
+        "布达佩斯大饭店 剧情介绍",
+        "布达佩斯大饭店 演员表",
+        "布达佩斯大饭店 结局"
+      ],
+      "recommendedFaqQueries": [
+        "海外如何免翻墙《布达佩斯大饭店》线上看完整版？",
+        "《布达佩斯大饭店》可以在哪里免费在线观看 4K 超清画质？",
+        "《布达佩斯大饭店》剧情主要讲了什么？有哪些看点？",
+        "iKanPP 观看《布达佩斯大饭店》需要会员充值或看弹窗广告吗？"
       ]
     },
     {

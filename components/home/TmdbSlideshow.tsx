@@ -171,8 +171,8 @@ function HeroBackdrop({
         <img
           src={prevSrc}
           alt=""
-          className="absolute inset-0 w-full h-full object-cover scale-105 pointer-events-none"
-          style={{ objectPosition: 'center 20%' }}
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          style={{ objectPosition: 'center 15%' }}
         />
       )}
 
@@ -187,38 +187,38 @@ function HeroBackdrop({
             loading="eager"
             decoding="sync"
             onError={handleBackdropError}
-            className={`w-full h-full object-cover scale-105 ${
+            className={`w-full h-full object-cover ${
               currentIndex > 0 && isSwapped ? 'animate-fade-in duration-700' : 'opacity-100'
             }`}
-            style={{ objectPosition: 'center 20%' }}
+            style={{ objectPosition: 'center 15%' }}
           />
         </picture>
       )}
 
-      {/* 4. 纯净极简电影级自然羽化系统（仅保留头部与底部自然平滑渐变，还原大片通透沉浸感） */}
-      {/* 顶部自然防眩羽化：柔和保护全透明浮动 Navbar 文字与搜索框，向下自然淡出 */}
+      {/* 4. 纯净极简电影级自然羽化系统（还原大片通透沉浸感，保留主体画质细节） */}
+      {/* 顶部自然防眩羽化：柔和保护全透明浮动 Navbar 文字与搜索框 */}
       <div
         className="absolute inset-x-0 top-0 pointer-events-none"
         style={{
-          height: '180px',
-          background: 'linear-gradient(to bottom, rgba(10, 10, 15, 0.88) 0%, rgba(10, 10, 15, 0.5) 45%, rgba(10, 10, 15, 0.15) 75%, transparent 100%)',
+          height: '120px',
+          background: 'linear-gradient(to bottom, rgba(10, 10, 15, 0.82) 0%, rgba(10, 10, 15, 0.4) 50%, transparent 100%)',
         }}
       />
 
-      {/* 底部自然平滑羽化：向上优雅延展约 320px，刚好柔和托衬贴底控制栏，并与下方页面无缝融合 */}
+      {/* 底部自然平滑羽化：向上适度延展约 220px，轻柔托衬贴底控制栏，保留中心主体大画面 */}
       <div
         className="absolute inset-x-0 bottom-0 pointer-events-none"
         style={{
-          height: '320px',
-          background: 'linear-gradient(to top, #0A0A0F 0%, rgba(10, 10, 15, 0.95) 25%, rgba(10, 10, 15, 0.65) 55%, rgba(10, 10, 15, 0.18) 82%, transparent 100%)',
+          height: '220px',
+          background: 'linear-gradient(to top, #0A0A0F 0%, rgba(10, 10, 15, 0.92) 30%, rgba(10, 10, 15, 0.5) 65%, transparent 100%)',
         }}
       />
       {/* 底边极细纯黑衔接层：确保底部边缘与下方内容轨道色值完全一致 */}
       <div
         className="absolute inset-x-0 bottom-0 pointer-events-none"
         style={{
-          height: '60px',
-          background: 'linear-gradient(to top, #0A0A0F 0%, rgba(10, 10, 15, 0.85) 60%, transparent 100%)',
+          height: '40px',
+          background: 'linear-gradient(to top, #0A0A0F 0%, rgba(10, 10, 15, 0.8) 70%, transparent 100%)',
         }}
       />
     </div>
@@ -342,7 +342,11 @@ export function HeroSlideshow({
 
   if (currentData.length === 0) {
     return (
-      <div className={`relative w-full ${compact ? 'h-[50vh] sm:h-[58vh] lg:h-[64vh]' : 'h-[52vh] sm:h-[62vh] lg:h-[70vh]'} max-h-180 rounded-2xl sm:rounded-3xl overflow-hidden bg-white/5 animate-pulse mb-8 border border-white/5`} />
+      <div className={`relative w-full ${
+        compact
+          ? 'h-[44vh] min-h-[280px] sm:h-[48vh] sm:min-h-[340px] lg:h-[52vh] max-h-[500px]'
+          : 'h-[44vh] min-h-[300px] max-h-[420px] sm:h-[48vh] sm:min-h-[360px] sm:max-h-[480px] lg:h-[52vh] xl:h-[56vh] 2xl:h-[58vh] lg:min-h-[440px] lg:max-h-[580px]'
+      } rounded-2xl sm:rounded-3xl overflow-hidden bg-white/5 animate-pulse mb-8 border border-white/5`} />
     );
   }
 
@@ -401,8 +405,8 @@ export function HeroSlideshow({
     <div
       className={`relative w-full ${
         compact
-          ? 'h-[50vh] min-h-85 sm:h-[58vh] lg:h-[64vh] max-h-160 mb-6 sm:mb-8 rounded-2xl sm:rounded-3xl border border-white/10 shadow-2xl overflow-hidden'
-          : 'h-[68vh] min-h-140 sm:h-[75vh] lg:h-[82vh] max-h-210 mb-0 overflow-hidden'
+          ? 'h-[44vh] min-h-[280px] sm:h-[48vh] sm:min-h-[340px] lg:h-[52vh] max-h-[500px] mb-6 sm:mb-8 rounded-2xl sm:rounded-3xl border border-white/10 shadow-2xl overflow-hidden'
+          : 'h-[44vh] min-h-[300px] max-h-[420px] sm:h-[48vh] sm:min-h-[360px] sm:max-h-[480px] lg:h-[52vh] xl:h-[56vh] 2xl:h-[58vh] lg:min-h-[440px] lg:max-h-[580px] mb-0 overflow-hidden'
       } group select-none`}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
@@ -419,8 +423,8 @@ export function HeroSlideshow({
 
       {/* 2. 方案 A：短剧专区原生 9:16 高清竖版海报居中立体浮雕呈现 */}
       {contentType === 'short' && (active.cover || active.backdrop) && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-28 sm:pb-32 lg:pb-36 z-15">
-          <div className="relative w-[130px] h-[195px] sm:w-[170px] sm:h-[255px] lg:w-[210px] lg:h-[315px] rounded-2xl overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.95)] border border-white/30 ring-1 ring-white/20 transition-transform duration-500 hover:scale-103">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-20 sm:pb-24 lg:pb-28 z-15">
+          <div className="relative w-[110px] h-[165px] sm:w-[140px] sm:h-[210px] lg:w-[180px] lg:h-[270px] rounded-2xl overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.95)] border border-white/30 ring-1 ring-white/20 transition-transform duration-500 hover:scale-103">
             <img
               src={active.cover || active.backdrop || ''}
               alt={active.title}

@@ -17,8 +17,11 @@
 - [Variety Shows Hub](https://www.ikanpp.com/variety): Top Chinese variety shows, reality TV, comedy, and music stages.
 - [Documentaries Hub](https://www.ikanpp.com/documentary): 4K BBC/Discovery nature, history, culinary, and social culture documentaries.
 - [Rankings](https://www.ikanpp.com/ranking): Real-time audience popularity, highest ratings, and trending charts.
+- [Yearly Archives](https://www.ikanpp.com/year/2026): Annual releases, 2026 theatrical premieres, and golden era classics.
+- [Regional Hubs](https://www.ikanpp.com/region/mainland): Chinese mainland dramas, Hong Kong classics, Taiwan series, Hollywood, and Asian cinema.
 
 ## Full Knowledge Base
 For the full machine-readable catalog and real-time releases, refer to:
 - [Full LLM Feed](https://www.ikanpp.com/llms-full.txt)
 - [Official Sitemap](https://www.ikanpp.com/sitemap.xml)
+- [Sitemap Index](https://www.ikanpp.com/sitemap-index.xml)

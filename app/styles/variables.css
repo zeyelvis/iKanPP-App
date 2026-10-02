@@ -1,5 +1,49 @@
 /* CSS Custom Properties */
 :root {
+    /* ══════════════════════════════════════════════════════════════
+       🎨 iKanPP Design System 2.0 — 减法版统一设计令牌 (Design Tokens)
+       极简暗黑电影感 + 4px 韵律网格 + 统一动效曲线
+       ══════════════════════════════════════════════════════════════ */
+    /* ── 核心色彩（极简暗黑电影感）── */
+    --color-bg-primary:     hsl(240 10% 4%);       /* 深邃暗幕 #0A0A0F */
+    --color-bg-card:        hsl(240 8% 7%);        /* 卡片底色 #111116 */
+    --color-bg-elevated:    hsl(240 6% 10%);       /* 浮层/模态框 #17171C */
+    --color-bg-glass:       hsl(240 10% 8% / 0.7); /* 毛玻璃 */
+
+    --color-accent:         hsl(0 85% 60%);        /* iKanPP 标志红 #E50914 */
+    --color-accent-hover:   hsl(0 85% 50%);        /* 悬停红 */
+    --color-accent-glow:    hsl(0 85% 60% / 0.25); /* 品牌红光 */
+    --color-gold:           hsl(45 100% 60%);      /* 豆瓣/TMDB 评分金 */
+    --color-online:         hsl(160 80% 55%);      /* 在线/自愈绿 */
+
+    --color-text-primary:   hsl(0 0% 95%);         /* 主文本高亮 */
+    --color-text-secondary: hsl(0 0% 65%);         /* 次级说明文本 */
+    --color-text-muted:     hsl(0 0% 40%);         /* 弱化占位文本 */
+
+    /* ── 圆角系统 ── */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
+
+    /* ── 间距系统（4px 韵律）── */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+
+    /* ── 动效系统 ── */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 400ms;
+
     --font-family-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
 
     /* Light Mode Palette */

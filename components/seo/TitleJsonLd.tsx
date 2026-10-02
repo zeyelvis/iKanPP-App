@@ -25,6 +25,12 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
   if (entity.tmdbId && /^\d+$/.test(entity.tmdbId)) {
     sameAsUrls.push(`https://www.themoviedb.org/${isTv ? 'tv' : 'movie'}/${entity.tmdbId}`);
   }
+  if (entity.doubanId && /^\d+$/.test(entity.doubanId)) {
+    sameAsUrls.push(`https://movie.douban.com/subject/${entity.doubanId}`);
+  }
+  if (entity.imdbId && /^tt\d+$/i.test(entity.imdbId.trim())) {
+    sameAsUrls.push(`https://www.imdb.com/title/${entity.imdbId.trim()}`);
+  }
 
   // 过滤不可信的默认占位词
   const validDirectors = (entity.directors || []).filter(d => d && !['知名导演', '未知', '暂无'].includes(d.trim()));
@@ -59,6 +65,16 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
           'http://schema.org/DesktopWebPlatform',
           'http://schema.org/MobileWebPlatform',
         ],
+        inLanguage: 'zh-CN',
+      },
+      expectsAcceptanceOf: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+        eligibleRegion: {
+          '@type': 'Country',
+          name: 'Worldwide',
+        },
       },
     },
     sameAs: sameAsUrls.length > 0 ? sameAsUrls : undefined,
@@ -111,37 +127,18 @@ export function TitleJsonLd({ entity, siteUrl = 'https://www.ikanpp.com' }: Titl
   };
 
   // 3. 规范单一 @graph 结构，消除虚假评分人数、伪造 VideoObject 及机械 FAQ
-  const graphElements: any[] = [
-    {
-      '@id': `${siteUrl}/#website`,
-      '@type': 'WebSite',
-      name: 'iKanPP 爱看片片',
-      url: siteUrl,
-    },
-    workNode,
-    breadcrumbNode,
-  ];
-
-  // 4. FAQPage 结构化问答节点 (场景 2：直接点亮 Google 搜索折叠问答下拉框)
-  const faqs = entity.aiContent?.faqs;
-  if (faqs && faqs.length > 0) {
-    graphElements.push({
-      '@type': 'FAQPage',
-      '@id': `${currentUrl}#faq`,
-      mainEntity: faqs.map(f => ({
-        '@type': 'Question',
-        name: f.question,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: f.answer,
-        },
-      })),
-    });
-  }
-
   const graphSchema = {
     '@context': 'https://schema.org',
-    '@graph': graphElements,
+    '@graph': [
+      {
+        '@id': `${siteUrl}/#website`,
+        '@type': 'WebSite',
+        name: 'iKanPP 爱看片片',
+        url: siteUrl,
+      },
+      workNode,
+      breadcrumbNode,
+    ],
   };
 
   return (

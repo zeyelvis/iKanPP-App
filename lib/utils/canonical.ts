@@ -31,7 +31,7 @@ export function getCanonicalTitleUrl(entity: MinimalTitleEntity): string {
 /**
  * 获取演职员权威相对路径
  */
-export function getCanonicalPersonPath(type: 'actor' | 'director', name: string): string {
+export function getCanonicalPersonPath(type: 'actor' | 'director' | 'person', name: string): string {
   const cleanName = encodeURIComponent(name.trim());
   return `/${type}/${cleanName}`;
 }
@@ -41,6 +41,27 @@ export function getCanonicalPersonPath(type: 'actor' | 'director', name: string)
  */
 export function getCanonicalGenrePath(slug: string): string {
   return `/genre/${encodeURIComponent(slug.trim())}`;
+}
+
+/**
+ * 获取年份聚合权威相对路径
+ */
+export function getCanonicalYearPath(year: string): string {
+  return `/year/${encodeURIComponent(year.trim())}`;
+}
+
+/**
+ * 获取地区聚合权威相对路径
+ */
+export function getCanonicalRegionPath(region: string): string {
+  return `/region/${encodeURIComponent(region.trim())}`;
+}
+
+/**
+ * 获取题材与年份组合聚合权威相对路径
+ */
+export function getCanonicalGenreYearPath(genreSlug: string, year: string): string {
+  return `/genre/${encodeURIComponent(genreSlug.trim())}/year/${encodeURIComponent(year.trim())}`;
 }
 
 /**

@@ -92,6 +92,54 @@ export function MainSiteJsonLd() {
               },
             ],
           },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            itemListElement: [
+              {
+                '@type': 'SiteNavigationElement',
+                position: 1,
+                name: '电影大厅',
+                description: '全球 4K 院线巨制与经典高分电影',
+                url: 'https://www.ikanpp.com/movie',
+              },
+              {
+                '@type': 'SiteNavigationElement',
+                position: 2,
+                name: '电视剧集',
+                description: '华语黄金档热播剧与全球连载美剧韩剧',
+                url: 'https://www.ikanpp.com/tv',
+              },
+              {
+                '@type': 'SiteNavigationElement',
+                position: 3,
+                name: '动漫新番',
+                description: '热门日本新番与人气国创修仙动画',
+                url: 'https://www.ikanpp.com/anime',
+              },
+              {
+                '@type': 'SiteNavigationElement',
+                position: 4,
+                name: '风云榜单',
+                description: '全网实时热搜与高口碑影视风云榜',
+                url: 'https://www.ikanpp.com/ranking',
+              },
+              {
+                '@type': 'SiteNavigationElement',
+                position: 5,
+                name: '综艺娱乐',
+                description: '热门爆笑真人秀与音乐脱口秀综艺',
+                url: 'https://www.ikanpp.com/variety',
+              },
+              {
+                '@type': 'SiteNavigationElement',
+                position: 6,
+                name: '人文纪录',
+                description: '探索自然人文历史的高清优质纪录片',
+                url: 'https://www.ikanpp.com/documentary',
+              },
+            ],
+          },
         ]),
       }}
     />
