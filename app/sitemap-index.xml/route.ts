@@ -27,9 +27,6 @@ export async function GET() {
     { url: `${BASE_URL}/sitemap.xml`, lastmod: todayStr },
     { url: `${BASE_URL}/sitemap-topics.xml`, lastmod: todayStr },
     { url: `${BASE_URL}/sitemap-genres.xml`, lastmod: todayStr },
-    { url: `${BASE_URL}/sitemap-years.xml`, lastmod: todayStr },
-    { url: `${BASE_URL}/sitemap-regions.xml`, lastmod: todayStr },
-    { url: `${BASE_URL}/sitemap-combos.xml`, lastmod: todayStr },
     { url: `${BASE_URL}/sitemap-people.xml`, lastmod: todayStr },
   ];
 
