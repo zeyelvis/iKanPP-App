@@ -922,8 +922,9 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
             }
 
             // 🌟 核心防线：Auto-Replenish 缺额自愈填补流水线
-            // 无论遇到任何下架、空键或幽灵 ID，绝不允许返回少于 limit 个条目导致网格末行空缺
+            // 无论遇到任何下架、空键、无封面或幽灵 ID，绝不允许返回少于 limit 个条目导致网格末行空缺
             const items: TitleEntity[] = [];
+            const seenTitlesInPage = new Set<string>();
             let cursor = startIndex;
             const CHUNK_SIZE = limit + 8;
 
@@ -933,10 +934,21 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
 
               const chunkEntities = (await Promise.all(nextSlice.map(id => getEntityById(id)))).filter(Boolean) as TitleEntity[];
               for (const ent of chunkEntities) {
-                // 🌟 核心防线：坚决剔除 1978 年老电影《希望》(ik100710) 冒充 2026 年新片
+                // 🌟 核心防线 1：坚决剔除 1978 年老电影《希望》(ik100710) 冒充 2026 年新片
                 if (ent.entityId === 'ik100710' || (ent.title === '希望' && ent.year && parseInt(ent.year, 10) < 2000)) {
                   continue;
                 }
+                // 🌟 核心防线 2：坚决过滤无封面或占位图异常条目，确保大厅 100% 满屏精美官方真实海报
+                if (!ent.cover || ent.cover.includes('placeholder') || ent.cover.includes('no-poster')) {
+                  continue;
+                }
+                // 🌟 核心防线 3：单页片名去重，彻底消除同名重复条目（如不同历史 ID 导致的重复《逐玉》、《凡人修仙传》）
+                const normTitle = (ent.title || '').trim().toLowerCase();
+                if (normTitle && seenTitlesInPage.has(normTitle)) {
+                  continue;
+                }
+                if (normTitle) seenTitlesInPage.add(normTitle);
+
                 items.push(ent);
                 if (items.length === limit) break;
               }
@@ -1006,6 +1018,9 @@ export async function queryEntities(filters: QueryEntitiesFilters = {}): Promise
 
     const chunkEntities = (await Promise.all(nextSlice.map(id => getEntityById(id)))).filter(Boolean) as TitleEntity[];
     for (const ent of chunkEntities) {
+      if (!ent.cover || ent.cover.includes('placeholder') || ent.cover.includes('no-poster')) {
+        continue;
+      }
       items.push(ent);
       if (items.length === limit) break;
     }

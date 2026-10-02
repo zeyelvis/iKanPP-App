@@ -100,9 +100,9 @@ export async function handleBrowseRequest(
     }
   }
 
-  // 2. 降级方案：从 KVIDEO_KV 倒排索引读取
+  // 2. 降级方案：从 KVIDEO_KV 倒排索引读取 (带 Auto-Replenish 缺额自愈与单页片名绝对去重防线)
   try {
-    let indexKey = `index:${sort === 'rating' ? 'score' : sort === 'popularity' ? 'popularity' : 'time_added'}:${category}`;
+    let indexKey = `index:${sort === 'rating' ? 'score' : sort === 'popularity' ? 'popularity' : sort === 'time_updated' ? 'time_updated' : 'time_added'}:${category}`;
     const rawIds = await env.KVIDEO_KV.get(indexKey);
     let ids: string[] = [];
     if (rawIds) {
@@ -111,29 +111,83 @@ export async function handleBrowseRequest(
       } catch {}
     }
 
-    const total = ids.length;
-    const pageIds = ids.slice(offset, offset + pageSize);
-
-    // 并发批量获取实体元数据
-    const entityPromises = pageIds.map(async (id) => {
-      const rawEntity = await env.KVIDEO_KV.get(`entity:${id}`);
-      if (rawEntity) {
+    // 锚定真实片库底座总数 (AGENTS.md 准则 18 铁律: 绝不能拿倒排切片长度当大厅总数)
+    let total = ids.length;
+    if (category === 'all') {
+      const rawAll = await env.KVIDEO_KV.get('index:all');
+      if (rawAll) {
         try {
-          return JSON.parse(rawEntity);
+          const allArr = JSON.parse(rawAll);
+          if (Array.isArray(allArr) && allArr.length > total) {
+            total = allArr.length;
+          }
         } catch {}
       }
-      return { id };
-    });
+    } else {
+      const rawChannel = await env.KVIDEO_KV.get(`channel:${category}`);
+      if (rawChannel) {
+        try {
+          const chArr = JSON.parse(rawChannel);
+          if (Array.isArray(chArr) && chArr.length > total) {
+            total = chArr.length;
+          }
+        } catch {}
+      }
+    }
 
-    const rawResults = await Promise.all(entityPromises);
-    const normalizedList = rawResults.map((item: any) => ({
-      ...item,
-      rate: item.rate || (item.rating !== undefined && item.rating !== null ? String(item.rating) : '0'),
-      cover: item.cover || item.poster || '',
-      poster: item.poster || item.cover || '',
-      tag: item.tag || (Array.isArray(item.tags) ? item.tags.join('/') : (item.tags || '')),
-      type_name: item.type_name || item.category || '',
-    }));
+    // 🌟 核心防线：Auto-Replenish 缺额自愈与单页片名绝对去重流水线
+    const normalizedList: any[] = [];
+    const seenTitlesInPage = new Set<string>();
+    let cursor = offset;
+    const CHUNK_SIZE = pageSize + 8;
+
+    while (normalizedList.length < pageSize && cursor < ids.length) {
+      const nextSlice = ids.slice(cursor, cursor + CHUNK_SIZE);
+      cursor += nextSlice.length;
+
+      const rawEntities = await Promise.all(
+        nextSlice.map(async (id) => {
+          const raw = await env.KVIDEO_KV.get(`entity:${id}`);
+          if (raw) {
+            try { return JSON.parse(raw); } catch {}
+          }
+          return null;
+        })
+      );
+
+      for (const ent of rawEntities) {
+        if (!ent || !ent.title) continue;
+
+        // 🌟 防线 1: 坚决剔除 1978 年老电影《希望》(ik100710) 冒充 2026 新片
+        if (ent.entityId === 'ik100710' || (ent.title === '希望' && ent.year && parseInt(ent.year, 10) < 2000)) {
+          continue;
+        }
+
+        // 🌟 防线 2: 过滤无封面或包含 placeholder 的占位图
+        const cover = ent.cover || ent.poster || '';
+        if (!cover || cover.includes('placeholder') || cover.includes('no-poster')) {
+          continue;
+        }
+
+        // 🌟 防线 3: 单页片名绝对去重，彻底消除同名重复条目
+        const normTitle = ent.title.replace(/[《》【】\[\]（）()·\s:：\-]/g, '').trim().toLowerCase();
+        if (normTitle && seenTitlesInPage.has(normTitle)) {
+          continue;
+        }
+        if (normTitle) seenTitlesInPage.add(normTitle);
+
+        normalizedList.push({
+          ...ent,
+          rate: ent.rate || (ent.rating !== undefined && ent.rating !== null ? String(ent.rating) : '0'),
+          cover,
+          poster: cover,
+          tag: ent.tag || (Array.isArray(ent.tags) ? ent.tags.join('/') : (ent.tags || '')),
+          type_name: ent.type_name || ent.category || '',
+        });
+
+        if (normalizedList.length === pageSize) break;
+      }
+    }
 
     const totalPages = Math.ceil(total / pageSize);
 

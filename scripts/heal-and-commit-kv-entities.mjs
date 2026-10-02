@@ -191,7 +191,7 @@ async function main() {
   const LIMIT = parseInt(process.env.LIMIT || String(cleanItems.length), 10);
   const targetItems = cleanItems.slice(0, LIMIT);
 
-  const kvPairs = [];
+  const kvMap = new Map();
   const nowIso = new Date().toISOString();
 
   let seq = 1;
@@ -224,27 +224,20 @@ async function main() {
     };
 
     // 写入主实体键 (用于 /api/library/browse 和 /title/ik****** 极速直出)
-    kvPairs.push({
-      key: `entity:${entityId}`,
-      value: entity,
-    });
+    kvMap.set(`entity:${entityId}`, entity);
 
     // 写入规范别名键 (用于 SEO 规范 URL /title/ik000001-slug 反查)
-    kvPairs.push({
-      key: `slug:${canonicalSlug}`,
-      value: entityId,
-    });
+    kvMap.set(`slug:${canonicalSlug}`, entityId);
 
-    // 写入片名映射键 (用于片名反查唯一 ID)
-    if (normTitle) {
-      kvPairs.push({
-        key: `title:${normTitle}`,
-        value: entityId,
-      });
+    // 写入片名映射键 (唯一片名，保留热度最高或优先入库者)
+    if (normTitle && !kvMap.has(`title:${normTitle}`)) {
+      kvMap.set(`title:${normTitle}`, entityId);
     }
   }
 
-  console.log(`📦 生成标准 KV 键值对总计: ${kvPairs.length} 条 (覆盖 ${targetItems.length} 部实体)`);
+  const kvPairs = Array.from(kvMap.entries()).map(([key, value]) => ({ key, value }));
+
+  console.log(`📦 生成标准去重 KV 键值对总计: ${kvPairs.length} 条 (覆盖 ${targetItems.length} 部实体)`);
   console.log(`⚡ 启动 Cloudflare KV /bulk 批量高速推送...\n`);
 
   const startTime = Date.now();
