@@ -508,22 +508,25 @@ export const PREBAKED_LATEST_TITLES: Record<string, LatestPrebakedItem[]> = {
       "createdAt": "2026-10-01T18:01:52.249Z"
     },
     {
-      "entityId": "ik_radar_movie_4",
+      "entityId": "ik111782",
       "tmdbId": "1607127",
-      "title": "一击3",
-      "slug": "一击3",
-      "cover": "https://image.tmdb.org/t/p/w500/qIJQIHYFR6c0mqwjG0Wgs1cdbSf.jpg",
+      "title": "一击3：最后一击",
+      "slug": "ik111782-一击3-最后一击",
+      "cover": "https://image.tmdb.org/t/p/w500/niQ4NBh2jqAf1hDZP5m6ReWFAb7.jpg",
       "backdrop": "https://image.tmdb.org/t/p/w1280/8giIQcHpxgsPVP6c7aQtHl3txuh.jpg",
-      "rate": "7.4",
+      "rate": "8.0",
       "year": "2026",
       "type": "movie",
       "channelKey": "movie",
       "genres": [
+        "动作",
+        "惊悚",
         "电影"
       ],
-      "updateBadge": "正片",
-      "qualityBadge": "1080P",
-      "createdAt": "2026-10-01T17:31:52.249Z"
+      "updateBadge": "4K超清",
+      "qualityBadge": "4K",
+      "platformBadge": "首发先锋",
+      "createdAt": "2026-09-22T16:19:41.551Z"
     },
     {
       "entityId": "ik_radar_movie_5",

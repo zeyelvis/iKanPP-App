@@ -225,10 +225,39 @@ export async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntit
   // 🌟 优先级 0：显式历史遗留/更名 URL 映射表（防止历史老词、历史合并条目丢失权重）
   const LEGACY_SLUG_REDIRECTS: Record<string, string> = {
     'ik002038-the-bill': 'ik007343-杀死比尔-血色全传', // 历史将杀死比尔错配至 2038，后纠正至 7343
+    'ik111782-最后一击': 'ik111782-一击3-最后一击', // 2026 动作大片《一击3：最后一击》权威规范 URL（阻断落入 2021 老片 ik113804）
+    'ik111782': 'ik111782-一击3-最后一击',
+    '一击3-最后一击': 'ik111782-一击3-最后一击',
+    '一击3': 'ik111782-一击3-最后一击',
   };
   const legacyTarget = LEGACY_SLUG_REDIRECTS[decodedSlug.toLowerCase()];
   if (legacyTarget) {
-    const targetEntity = (await getEntityBySlug(legacyTarget)) || (legacyTarget.startsWith('ik') ? await getEntityById(legacyTarget.slice(0, 8)) : null);
+    let targetEntity = (await getEntityBySlug(legacyTarget)) || (legacyTarget.startsWith('ik') ? await getEntityById(legacyTarget.slice(0, 8)) : null);
+    if (!targetEntity) {
+      const pPool = getAllPrebakedDisplayItems();
+      const pHit = pPool.find(p => p && (p.entityId === legacyTarget.slice(0, 8) || p.slug === legacyTarget || getEntityCanonicalSlug(p as any) === legacyTarget));
+      if (pHit) {
+        targetEntity = {
+          entityId: pHit.entityId || legacyTarget.slice(0, 8),
+          title: pHit.title,
+          slug: pHit.slug || legacyTarget,
+          canonicalSlug: legacyTarget,
+          cover: pHit.cover || '',
+          backdrop: pHit.backdrop || '',
+          rate: pHit.rate || '8.0',
+          year: pHit.year || '2026',
+          type: pHit.type || 'movie',
+          genres: pHit.genres || ['电影'],
+          tmdbId: pHit.tmdbId,
+          tmdbType: pHit.tmdbType,
+          description: pHit.description || '',
+          directors: pHit.directors || [],
+          actors: pHit.actors || [],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        } as TitleEntity;
+      }
+    }
     if (targetEntity) return enrichEpisodeCount(targetEntity);
   }
 
@@ -355,6 +384,11 @@ export async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntit
       (decodedClean && (item.title === decodedClean || itemTitleNorm === normalizeTitle(decodedClean) || itemTitleSlug === decodedClean)) ||
       (decodedSlugHex && (item.title === decodedSlugHex || itemTitleNorm === normalizeTitle(decodedSlugHex) || itemTitleSlug === decodedSlugHex))
     ) {
+      return true;
+    }
+
+    // 4. 支持主副标题与系列简称比对（例如 "一击3" 匹配 "一击3：最后一击"）
+    if (hasTitleOverlap(item.title, cleanTitle) || hasTitleOverlap(item.title, decodedSlug)) {
       return true;
     }
 
@@ -514,14 +548,24 @@ export async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntit
  * 格式恒为: ${entityId}-${slug}
  */
 export function getEntityCanonicalSlug(entity: TitleEntity): string {
+  const id = (entity.entityId || (entity as any).id || '').toLowerCase();
+  // 🌟 特例硬锁：2026 院线硬核新片《一击3：最后一击》(ik111782) 规范 slug 恒为 ik111782-一击3-最后一击
+  if (id === 'ik111782' || (entity.title && entity.title.includes('一击3'))) {
+    return 'ik111782-一击3-最后一击';
+  }
+
   if (entity.canonicalSlug && entity.canonicalSlug.trim()) {
     const rawCanonical = entity.canonicalSlug.trim().toLowerCase();
     // 🚨 严禁使用连字符十六进制乱码作为 canonicalSlug
     if (!/(?:e[0-9a-f]-[0-9a-f]{2}){2,}/i.test(rawCanonical)) {
-      return rawCanonical;
+      // 🌟 强一致校验：若 rawCanonical 严重脱离当前实体真实中文标题（例如标题有主标题但 canonicalSlug 只有副标题）
+      // 坚决丢弃残缺的历史 canonicalSlug，重新按 entity.title 计算
+      const expectedSlugPart = generateSlug(entity.title || '').toLowerCase();
+      if (!expectedSlugPart || rawCanonical.includes(expectedSlugPart) || hasTitleOverlap(rawCanonical, entity.title)) {
+        return rawCanonical;
+      }
     }
   }
-  const id = (entity.entityId || (entity as any).id || '').toLowerCase();
   const hasStandardId = /^ik\d{6}$/i.test(id);
 
   let baseText = (entity.title || '').trim();
@@ -556,8 +600,8 @@ export function getEntityCanonicalSlug(entity: TitleEntity): string {
     computedSlug = `${id}-${cleanSlugPart}`;
   }
 
-  // 🌟 若发现原 entity.canonicalSlug 受损或缺失，就地修正内存字段并异步自愈写回 KV
-  if (hasStandardId && (!entity.canonicalSlug || /(?:e[0-9a-f]-[0-9a-f]{2}){2,}/i.test(entity.canonicalSlug))) {
+  // 🌟 若发现原 entity.canonicalSlug 受损、缺失或不匹配，就地修正内存字段并异步自愈写回 KV
+  if (hasStandardId && (!entity.canonicalSlug || entity.canonicalSlug !== computedSlug || /(?:e[0-9a-f]-[0-9a-f]{2}){2,}/i.test(entity.canonicalSlug))) {
     entity.canonicalSlug = computedSlug;
     saveEntity(entity).catch(() => {});
   }
@@ -591,19 +635,29 @@ export async function resolveEntity(rawSlugParam: string): Promise<TitleEntity |
     if (candidateTitle && /[\u4e00-\u9fff]/.test(candidateTitle)) {
       try {
         const prebakedPool = getAllPrebakedDisplayItems();
-        const pMatch = prebakedPool.find(p => p && (p.title === candidateTitle || normalizeTitle(p.title) === normalizeTitle(candidateTitle)));
+        const pMatch = prebakedPool.find(p => p && (
+          p.title === candidateTitle ||
+          normalizeTitle(p.title) === normalizeTitle(candidateTitle) ||
+          hasTitleOverlap(candidateTitle, p.title)
+        ));
         let healed: TitleEntity | null = null;
         if (pMatch && pMatch.tmdbId) {
           healed = await getEntityByTmdb(pMatch.tmdbType || ((pMatch.type === 'tv' || pMatch.type === 'anime') ? 'tv' : 'movie'), pMatch.tmdbId);
         }
         if (!healed) {
           healed = await getEntityByTitle(candidateTitle);
-          if (healed && pMatch) {
-            const tmdbConflict = pMatch.tmdbId && healed.tmdbId && String(pMatch.tmdbId) !== String(healed.tmdbId);
-            const yearDiff = pMatch.year && healed.year ? Math.abs(parseInt(pMatch.year, 10) - parseInt(healed.year, 10)) : 0;
-            const thaiLeak = healed.originalTitle && /[\u0e00-\u0e7f]/.test(healed.originalTitle) && pMatch.year && parseInt(pMatch.year, 10) >= 2025;
-            if (tmdbConflict || yearDiff > 1 || thaiLeak) {
-              healed = null;
+          if (healed) {
+            // 🌟 拦截同名老片反向夺舍：若候选词指向《最后一击》/《一击3》，而查出的 healed 为 2021 年同名老片 (ik113804)，坚决拦截并修正为 2026 新片 ik111782！
+            if (healed.entityId === 'ik113804' || (candidateTitle.includes('一击') && healed.year === '2021')) {
+              const newOne = await getEntityById('ik111782');
+              if (newOne) healed = newOne;
+            } else if (pMatch) {
+              const tmdbConflict = pMatch.tmdbId && healed.tmdbId && String(pMatch.tmdbId) !== String(healed.tmdbId);
+              const yearDiff = pMatch.year && healed.year ? Math.abs(parseInt(pMatch.year, 10) - parseInt(healed.year, 10)) : 0;
+              const thaiLeak = healed.originalTitle && /[\u0e00-\u0e7f]/.test(healed.originalTitle) && pMatch.year && parseInt(pMatch.year, 10) >= 2025;
+              if (tmdbConflict || yearDiff > 1 || thaiLeak) {
+                healed = null;
+              }
             }
           }
         }

@@ -462,9 +462,13 @@ async function main() {
 
     maxEntitySeq += 1;
     const newEntityId = `ik${String(maxEntitySeq).padStart(6, '0')}`;
+    const cleanFinalTitle = tmdbData.title || title;
+    const cleanSlugPart = cleanFinalTitle.replace(/[:：\s]+/g, '-').toLowerCase();
+    const finalCanonicalSlug = `${newEntityId}-${cleanSlugPart}`;
     const newEntity = {
       entityId: newEntityId,
-      slug: title.replace(/[:：\s]+/g, '-'),
+      slug: finalCanonicalSlug,
+      canonicalSlug: finalCanonicalSlug,
       tmdbId: tmdbData.tmdbId,
       tmdbType: tmdbData.tmdbType,
       title: tmdbData.title,
@@ -600,6 +604,7 @@ async function main() {
     tmdbId: "1423191",
     title: "生化危机：爆发夜",
     slug: "生化危机-爆发夜",
+    canonicalSlug: "生化危机-爆发夜",
     cover: "https://image.tmdb.org/t/p/w500/qMvRqzzDVfQpLi5ZoKwttTQdaJe.jpg",
     backdrop: "https://image.tmdb.org/t/p/w1280/1CIaRYKf3zg2Xyce1CSfCMg2Vfw.jpg",
     rate: "8.1",
@@ -611,14 +616,45 @@ async function main() {
     qualityBadge: "TC",
     createdAt: new Date().toISOString()
   };
+  const oneLastShotRecent = {
+    entityId: "ik111782",
+    tmdbId: "1607127",
+    title: "一击3：最后一击",
+    slug: "ik111782-一击3-最后一击",
+    canonicalSlug: "ik111782-一击3-最后一击",
+    cover: "https://image.tmdb.org/t/p/w500/niQ4NBh2jqAf1hDZP5m6ReWFAb7.jpg",
+    backdrop: "https://image.tmdb.org/t/p/w1280/8giIQcHpxgsPVP6c7aQtHl3txuh.jpg",
+    rate: "8.0",
+    year: "2026",
+    type: "movie",
+    channelKey: "movie",
+    genres: ["动作", "惊悚", "电影"],
+    updateBadge: "4K超清",
+    qualityBadge: "4K",
+    platformBadge: "首发先锋",
+    createdAt: "2026-09-22T16:19:41.551Z"
+  };
+
+  const sanitizeRecentList = (list) => {
+    return list.map(it => {
+      const itId = (it.entityId || it.id || '').toLowerCase();
+      if (itId === 'ik111782' || (it.title && it.title.includes('一击3'))) {
+        return oneLastShotRecent;
+      }
+      return it;
+    });
+  };
+
+  const FLAGSHIP_IDS = ['ik020581', 'ik111782'];
+
   const rawRecentM = await kvGet('recent:movie');
   let recentM = rawRecentM ? JSON.parse(rawRecentM) : [];
-  recentM = [residentEvilRecent, ...recentM.filter(it => (it.entityId || it.id) !== 'ik020581')].slice(0, 24);
+  recentM = [residentEvilRecent, oneLastShotRecent, ...sanitizeRecentList(recentM).filter(it => !FLAGSHIP_IDS.includes(it.entityId || it.id))].slice(0, 24);
   await kvPut('recent:movie', recentM);
 
   const rawRecentAll = await kvGet('recent:all');
   let recentAll = rawRecentAll ? JSON.parse(rawRecentAll) : [];
-  recentAll = [residentEvilRecent, ...recentAll.filter(it => (it.entityId || it.id) !== 'ik020581')].slice(0, 24);
+  recentAll = [residentEvilRecent, oneLastShotRecent, ...sanitizeRecentList(recentAll).filter(it => !FLAGSHIP_IDS.includes(it.entityId || it.id))].slice(0, 24);
   await kvPut('recent:all', recentAll);
 
   // 6. 为首发先锋影片自动检测并补充 AI 独家深度视点与 FAQ 胶囊 (消灭 Thin Content，霸占 Google 搜索首屏)

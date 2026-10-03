@@ -219,6 +219,23 @@ export function hasTitleOverlap(a: string, b: string): boolean {
     if (seasonSuffixRegex.test(diff)) return true;
   }
 
+  // 2.1 显式主副标题解构判定（如 "一击3：最后一击" vs "最后一击" 或 "一击3"）
+  // 凡带有显式层级分隔符（冒号、破折号、间隔号）的影视作品，其拆解后的主标题或副标题若与目标精确一致，判定为同一作品的副标题/简称！
+  // 严格保留对无分隔符恶意加前后缀条目（如《老蔡的奥德赛》vs《奥德赛》）的物理阻断拦截
+  const separatorRegex = /[:：\-_—·\s]+/;
+  if (separatorRegex.test(a) || separatorRegex.test(b)) {
+    const segsA = a.split(separatorRegex).map(s => normalizeTitle(s)).filter(s => s && s.length >= 2);
+    const segsB = b.split(separatorRegex).map(s => normalizeTitle(s)).filter(s => s && s.length >= 2);
+    for (const seg of segsA) {
+      if (seg === normB) return true;
+      if (normB.startsWith(seg) && seasonSuffixRegex.test(normB.slice(seg.length))) return true;
+    }
+    for (const seg of segsB) {
+      if (seg === normA) return true;
+      if (normA.startsWith(seg) && seasonSuffixRegex.test(normA.slice(seg.length))) return true;
+    }
+  }
+
   const chineseA = normA.match(/[\u4e00-\u9fff]/g) || [];
   const chineseB = normB.match(/[\u4e00-\u9fff]/g) || [];
 

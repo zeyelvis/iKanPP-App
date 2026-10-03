@@ -68,15 +68,16 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     },
     {
       "id": "pb_cat_movie_4",
-      "title": "一击3",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/af92dca3544d5e5ed05682bdb9b863b6.jpg",
+      "title": "一击3：最后一击",
+      "rate": "8.0",
+      "cover": "https://image.tmdb.org/t/p/w500/niQ4NBh2jqAf1hDZP5m6ReWFAb7.jpg",
       "year": "2026",
       "types": [
         "动作片",
-        "动作"
+        "动作",
+        "惊悚"
       ],
-      "remarks": "正片",
+      "remarks": "4K超清",
       "is_new": true
     },
     {
@@ -1544,15 +1545,16 @@ export const PREBAKED_CATEGORY_ITEMS: Record<string, PrebakedCategoryItem[]> = {
     },
     {
       "id": "pb_cat_rank_4",
-      "title": "一击3",
-      "rate": "8.6",
-      "cover": "https://img.guangsuimage.com/cover/af92dca3544d5e5ed05682bdb9b863b6.jpg",
+      "title": "一击3：最后一击",
+      "rate": "8.0",
+      "cover": "https://image.tmdb.org/t/p/w500/niQ4NBh2jqAf1hDZP5m6ReWFAb7.jpg",
       "year": "2026",
       "types": [
         "动作片",
-        "动作"
+        "动作",
+        "惊悚"
       ],
-      "remarks": "正片",
+      "remarks": "4K超清",
       "is_new": true
     },
     {

@@ -1069,6 +1069,23 @@ export async function listRecentEntities(limit = 20, type?: string): Promise<Rec
   const channelKey = validChannels.includes(normalizedChannel) ? normalizedChannel : 'all';
   const targetKey = channelKey === 'all' ? 'recent:all' : `recent:${channelKey}`;
 
+  // 辅助映射：确保战略级先锋新片 slug 100% 权威规范，杜绝历史受损 slug 下发
+  const normalizeRecentItems = (items: RecentTitleItem[]): RecentTitleItem[] => {
+    return items.map(item => {
+      const id = (item.entityId || (item as any).id || '').toLowerCase();
+      if (id === 'ik111782' || (item.title && item.title.includes('一击3'))) {
+        return {
+          ...item,
+          entityId: 'ik111782',
+          title: '一击3：最后一击',
+          slug: 'ik111782-一击3-最后一击',
+          canonicalSlug: 'ik111782-一击3-最后一击',
+        };
+      }
+      return item;
+    });
+  };
+
   // 1. 尝试从 Cloudflare KV 获取增量缓存（经过双重安全过滤）
   const raw = await kvGet(targetKey);
   if (raw) {
@@ -1077,7 +1094,7 @@ export async function listRecentEntities(limit = 20, type?: string): Promise<Rec
       if (Array.isArray(items) && items.length > 0) {
         const safeItems = items.filter(isSafeRecentTitleItem);
         if (safeItems.length > 0) {
-          return safeItems.slice(0, limit);
+          return normalizeRecentItems(safeItems).slice(0, limit);
         }
       }
     } catch (e) {
@@ -1094,7 +1111,7 @@ export async function listRecentEntities(limit = 20, type?: string): Promise<Rec
       if (Array.isArray(items) && items.length > 0) {
         const safeItems = items.filter(isSafeRecentTitleItem);
         if (safeItems.length > 0) {
-          return safeItems.slice(0, limit);
+          return normalizeRecentItems(safeItems).slice(0, limit);
         }
       }
     } catch {}

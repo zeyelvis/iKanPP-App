@@ -198,7 +198,7 @@ export default function LatestTitlesRail({
   const [items, setItems] = useState<RecentTitleItem[]>(() => prebakedList.slice(0, 20));
   const [isLoaded, setIsLoaded] = useState(true);
 
-  const CACHE_KEY = `kvideo-latest-titles-v8-${type || 'all'}`;
+  const CACHE_KEY = `kvideo-latest-titles-v9-${type || 'all'}`;
 
   // 严格安全内容过滤器（彻底杜绝日文假名、纯外文无中文条目与垃圾脏数据进入主站展示）
   const filterSafeItems = (rawList: RecentTitleItem[]): RecentTitleItem[] => {
@@ -209,6 +209,19 @@ export default function LatestTitlesRail({
       // 2. 极低评分异常老片阻断
       if (item.rate && parseFloat(item.rate) <= 3.0 && item.year && parseInt(item.year, 10) < 2024) return false;
       return true;
+    }).map(item => {
+      const id = (item.entityId || (item as any).id || '').toLowerCase();
+      // 🌟 强一致规范化：确保 2026 新片《一击3：最后一击》(ik111782) 规范 slug 恒为 ik111782-一击3-最后一击
+      if (id === 'ik111782' || (item.title && item.title.includes('一击3'))) {
+        return {
+          ...item,
+          entityId: 'ik111782',
+          title: '一击3：最后一击',
+          slug: 'ik111782-一击3-最后一击',
+          canonicalSlug: 'ik111782-一击3-最后一击',
+        };
+      }
+      return item;
     });
   };
 
@@ -217,10 +230,10 @@ export default function LatestTitlesRail({
     let active = true;
     if (typeof window !== 'undefined') {
       try {
-        // 清理旧版本被污染的历史 localStorage 缓存（v4, v5, v6, v7）
+        // 清理旧版本被污染的历史 localStorage 缓存（v4, v5, v6, v7, v8）
         for (let i = localStorage.length - 1; i >= 0; i--) {
           const k = localStorage.key(i);
-          if (k && (k.startsWith('kvideo-latest-titles-v4-') || k.startsWith('kvideo-latest-titles-v5-') || k.startsWith('kvideo-latest-titles-v6-') || k.startsWith('kvideo-latest-titles-v7-'))) {
+          if (k && (k.startsWith('kvideo-latest-titles-v4-') || k.startsWith('kvideo-latest-titles-v5-') || k.startsWith('kvideo-latest-titles-v6-') || k.startsWith('kvideo-latest-titles-v7-') || k.startsWith('kvideo-latest-titles-v8-'))) {
             localStorage.removeItem(k);
           }
         }
