@@ -708,6 +708,18 @@ export async function resolveEntity(rawSlugParam: string): Promise<TitleEntity |
     } catch {}
   }
 
+  if (entity) {
+    // 🌟 终极标题纯净化与自愈：坚决剥离历史残留的纯数字加冒号脏前缀（如 "33：一击3：最后一击" -> "一击3：最后一击"）
+    if (entity.title && /^\d+[:：]\s*/.test(entity.title)) {
+      const sanitized = entity.title.replace(/^\d+[:：]\s*/, '').trim();
+      if (sanitized) {
+        entity.title = sanitized;
+        entity.canonicalSlug = getEntityCanonicalSlug(entity);
+        saveEntity(entity).catch(() => {});
+      }
+    }
+  }
+
   return entity;
 }
 
@@ -719,6 +731,9 @@ export async function resolveEntity(rawSlugParam: string): Promise<TitleEntity |
  * 2. 若集数需要刷新或补全，一律转入后台非阻塞异步执行，绝不阻塞用户首屏关键路径
  */
 export async function enrichEpisodeCount(entity: TitleEntity): Promise<TitleEntity> {
+  if (entity?.title && /^\d+[:：]\s*/.test(entity.title)) {
+    entity.title = entity.title.replace(/^\d+[:：]\s*/, '').trim();
+  }
   if (entity.type === 'movie') return entity;
 
   const hasValidEpisodes = entity.type === 'tv'

@@ -63,6 +63,12 @@ export default async function TitlePage({ params }: Props) {
     notFound();
   }
 
+  // 标题纯净化守护网：彻底剥离历史残留的纯数字加冒号脏前缀（如 "33：一击3：最后一击" -> "一击3：最后一击"）
+  if (entity.title && /^\d+[:：]\s*/.test(entity.title)) {
+    entity.title = entity.title.replace(/^\d+[:：]\s*/, '').trim();
+    saveEntity(entity).catch(() => {});
+  }
+
   // 季数智能解析：若 URL / Slug 带有具体季数（如 "时光代理人第3季"），在母条目上精准对齐当季
   const { entityId: parsedId, slug: innerSlug } = parseEntitySlug(decodedSlug);
   const rawTitleFromSlug = innerSlug || (parsedId ? '' : decodedSlug);

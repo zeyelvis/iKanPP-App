@@ -39,7 +39,8 @@ export async function generateTitleMetadata(slug: string): Promise<Metadata> {
   const canonicalSlug = getEntityCanonicalSlug(entity);
 
   // 多分类与真实标题定义
-  const displayTitle = seasonTag && !entity.title.includes(seasonTag) ? `${entity.title} ${seasonTag}` : entity.title;
+  const cleanTitle = (entity.title || '').replace(/^\d+[:：]\s*/, '').trim();
+  const displayTitle = seasonTag && !cleanTitle.includes(seasonTag) ? `${cleanTitle} ${seasonTag}` : cleanTitle;
   const yearSuffix = entity.year ? ` (${entity.year})` : '';
   const pageTitle = `${displayTitle}${yearSuffix} 在线观看 - ${resolveEntityChannel(entity).name} | iKanPP 爱看片片`;
 

@@ -877,7 +877,18 @@ export async function resolveSeriesSequelFromTMDB(
   };
 
   const targetNum = parseNum(numRaw);
-  if (targetNum < 1 || targetNum > 20 || baseTitle.length < 1) return null;
+  // 铁律：baseTitle 必须包含实际汉字或英文单词，严禁纯数字作为系列母片名（杜绝 "33" 拆解为 3 和 3 引发虚假匹配）
+  if (targetNum < 1 || targetNum > 20 || baseTitle.length < 1 || /^\d+$/.test(baseTitle) || !/[\u4e00-\u9fff\w]/.test(baseTitle)) return null;
+
+  const safeMergeTitle = async (ent: TitleEntity, searchClean: string) => {
+    // 铁律：若搜索词为纯数字、或 ent.title 已经包含冒号（已具备主副标题），严禁拼接重写！
+    if (/^\d+$/.test(searchClean) || /^\d+[:：]/.test(ent.title) || ent.title.includes('：') || ent.title.includes(':')) return;
+    if (ent.title.includes(searchClean) || searchClean.includes(ent.title)) return;
+    const mergedTitle = `${searchClean}：${ent.title}`;
+    ent.title = mergedTitle;
+    ent.slug = generateSlug(mergedTitle);
+    await saveEntity(ent);
+  };
 
   try {
     // 1. 若用户输入附带副标题（如 "一击3：最后一击"），优先尝试副标题直接命中
@@ -933,13 +944,7 @@ export async function resolveSeriesSequelFromTMDB(
               // 命中目标第 N 部！转换为 TitleEntity
               const entity = await convertHitToEntity(targetPart, 'movie', clean);
               if (entity && entity.cover) {
-                // 如果标题不含用户搜索词，将用户常用民间搜索词与官方译名融合（如 "一击3：最后一击"）
-                if (!entity.title.includes(clean) && !clean.includes(entity.title)) {
-                  const mergedTitle = `${clean}：${entity.title}`;
-                  entity.title = mergedTitle;
-                  entity.slug = generateSlug(mergedTitle);
-                  await saveEntity(entity);
-                }
+                await safeMergeTitle(entity, clean);
                 return entity;
               }
             }
@@ -964,12 +969,7 @@ export async function resolveSeriesSequelFromTMDB(
           if (firstHit && firstHit.id) {
             const entity = await convertHitToEntity(firstHit, 'movie', clean);
             if (entity && entity.cover) {
-              if (!entity.title.includes(clean) && !clean.includes(entity.title)) {
-                const mergedTitle = `${clean}：${entity.title}`;
-                entity.title = mergedTitle;
-                entity.slug = generateSlug(mergedTitle);
-                await saveEntity(entity);
-              }
+              await safeMergeTitle(entity, clean);
               return entity;
             }
           }
@@ -1002,12 +1002,7 @@ export async function resolveSeriesSequelFromTMDB(
               if (matchedMovie?.id) {
                 const entity = await convertHitToEntity(matchedMovie, 'movie', clean);
                 if (entity && entity.cover) {
-                  if (!entity.title.includes(clean) && !clean.includes(entity.title)) {
-                    const mergedTitle = `${clean}：${entity.title}`;
-                    entity.title = mergedTitle;
-                    entity.slug = generateSlug(mergedTitle);
-                    await saveEntity(entity);
-                  }
+                  await safeMergeTitle(entity, clean);
                   return entity;
                 }
               }
