@@ -19,5 +19,8 @@ export interface LatestPrebakedItem {
   updateBadge: string;
   platformBadge?: string;
   qualityBadge?: string;
+  directors?: string[];
+  actors?: string[];
+  description?: string;
   createdAt: string;
 }

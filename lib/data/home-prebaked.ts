@@ -1888,7 +1888,21 @@ export const PREBAKED_HOME_DATA: {
                 "rate": "8.8",
                 "cover": "https://image.tmdb.org/t/p/w500/gLbtMLqbN6fgYsTuHFvzJu7Hopi.jpg",
                 "backdrop": "https://image.tmdb.org/t/p/w1280/rNFBrko4F5RQ5E9YktBRXVqwzjl.jpg",
-                "description": "《无可替代》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至08集 | 共20集。",
+                "description": "少女徐迟在目睹母亲因离婚而自杀，发誓这一生绝对不要成为被代替的弱者。为此，她以普通院校毕业生的身份，凭借自己超乎常人的拼搏与机敏，成为了一名专业出色的咨询顾问。业界精英合伙人叶信之在职业生涯之初曾被上司夺走成果，性格变得孤傲严苛。两人在职场中相遇、碰撞与携手成长，最终在竞争与救赎中确认了彼此不可替代的价值。",
+                "directors": [
+                        "陈铭章"
+                ],
+                "actors": [
+                        "赵今麦",
+                        "魏大勋",
+                        "周奇",
+                        "白冰",
+                        "胡意旋",
+                        "田轩宁",
+                        "王媛可",
+                        "林小宅",
+                        "李子锋"
+                ],
                 "year": "2026",
                 "types": [
                         "热门",

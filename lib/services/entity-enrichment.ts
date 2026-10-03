@@ -577,7 +577,25 @@ export async function enrichEntityFromTMDBDetail(
   if (existingEntityId) {
     entityId = existingEntityId;
   } else {
-    existingToUpdate = (await getEntityByTitle(mainTitle)) || (requestTitle ? await getEntityByTitle(requestTitle) : null);
+    // 优先通过权威 TMDB ID 精准查找是否已存在对应实体
+    existingToUpdate = await getEntityByTmdb(actualType, String(detail.id));
+    if (!existingToUpdate) {
+      const candidateByTitle = (await getEntityByTitle(mainTitle)) || (requestTitle ? await getEntityByTitle(requestTitle) : null);
+      if (candidateByTitle) {
+        // 🌟 强一致同名异作消歧：若 tmdbId 冲突或年份相差 > 1 年，坚决判定为不同作品，不可复用旧实体 ID
+        const tmdbConflict = candidateByTitle.tmdbId && String(candidateByTitle.tmdbId) !== String(detail.id);
+        const candYear = candidateByTitle.year ? parseInt(candidateByTitle.year, 10) : 0;
+        const rawDate = detail.release_date || detail.first_air_date || '';
+        const curYear = targetYear ? parseInt(targetYear, 10) : (rawDate ? parseInt(rawDate.slice(0, 4), 10) : 0);
+        const yearDiff = candYear && curYear ? Math.abs(candYear - curYear) : 0;
+        if (!tmdbConflict && yearDiff <= 1) {
+          existingToUpdate = candidateByTitle;
+        } else {
+          console.warn(`[enrichEntityFromTMDBDetail 同名异作消歧] 标题 "${mainTitle}" 命中历史实体 (id=${candidateByTitle.entityId}, tmdb=${candidateByTitle.tmdbId}, year=${candYear})，但与当前详情 (tmdb=${detail.id}, year=${curYear}) 冲突，分配全新实体 ID`);
+        }
+      }
+    }
+
     if (existingToUpdate) {
       entityId = existingToUpdate.entityId;
     } else {

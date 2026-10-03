@@ -5,6 +5,7 @@ import {
   getEntityBySlug,
   getEntityById,
   getEntityByTitle,
+  getEntityByTmdb,
   saveEntity,
   isSafeRecentTitleItem,
   kvDelete,
@@ -78,8 +79,9 @@ export function getAllPrebakedDisplayItems(): PrebakedDisplayItem[] {
             backdrop: it.backdrop,
             rate: it.rate,
             genres: it.genres,
-            directors: [],
-            actors: [],
+            directors: (it as any).directors || [],
+            actors: (it as any).actors || [],
+            description: (it as any).description || (it as any).overview,
             updateBadge: it.updateBadge,
             numberOfEpisodes: it.updateBadge ? parseInt(it.updateBadge.replace(/\D/g, ''), 10) || 1 : 1,
             numberOfSeasons: 1,
@@ -96,31 +98,53 @@ export function getAllPrebakedDisplayItems(): PrebakedDisplayItem[] {
       if (Array.isArray(sectionVal)) {
         for (const it of sectionVal) {
           const itTitle = it?.title || (it as any)?.name;
-          if (itTitle && !seenTitles.has(itTitle)) {
-            seenTitles.add(itTitle);
-            const rawId = (it as any).id;
-            const hasIkId = typeof rawId === 'string' && rawId.startsWith('ik');
-            const rawTmdbId = (it as any).tmdbId;
-            const itemType = (it as any).type || ((it as any).category === 'movie' ? 'movie' : 'tv');
-            items.push({
-              entityId: hasIkId ? rawId : undefined,
-              tmdbId: rawTmdbId ? String(rawTmdbId) : undefined,
-              tmdbType: (itemType === 'tv' || itemType === 'anime') ? 'tv' : 'movie',
-              title: itTitle,
-              slug: (it as any).slug,
-              type: itemType,
-              year: (it as any).year ? String((it as any).year) : undefined,
-              cover: (it as any).cover,
-              backdrop: (it as any).backdrop,
-              rate: (it as any).rate ? String((it as any).rate) : undefined,
-              genres: (it as any).genres,
-              directors: (it as any).directors,
-              actors: (it as any).actors,
-              description: (it as any).description || (it as any).overview,
-              updateBadge: (it as any).badge || (it as any).updateBadge,
-              numberOfEpisodes: (it as any).episodes || ((it as any).badge ? parseInt(String((it as any).badge).replace(/\D/g, ''), 10) || undefined : undefined),
-              numberOfSeasons: (it as any).seasons || 1,
-            });
+          if (itTitle) {
+            const exist = items.find(x => x.title === itTitle);
+            if (exist) {
+              if ((!exist.directors || exist.directors.length === 0) && (it as any).directors?.length) {
+                exist.directors = (it as any).directors;
+              }
+              if ((!exist.actors || exist.actors.length === 0) && (it as any).actors?.length) {
+                exist.actors = (it as any).actors;
+              }
+              if (!exist.description && ((it as any).description || (it as any).overview)) {
+                exist.description = (it as any).description || (it as any).overview;
+              }
+              if (!exist.backdrop && (it as any).backdrop) {
+                exist.backdrop = (it as any).backdrop;
+              }
+              if (!exist.tmdbId && (it as any).tmdbId) {
+                exist.tmdbId = String((it as any).tmdbId);
+              }
+              continue;
+            }
+
+            if (!seenTitles.has(itTitle)) {
+              seenTitles.add(itTitle);
+              const rawId = (it as any).id;
+              const hasIkId = typeof rawId === 'string' && rawId.startsWith('ik');
+              const rawTmdbId = (it as any).tmdbId;
+              const itemType = (it as any).type || ((it as any).category === 'movie' ? 'movie' : 'tv');
+              items.push({
+                entityId: hasIkId ? rawId : undefined,
+                tmdbId: rawTmdbId ? String(rawTmdbId) : undefined,
+                tmdbType: (itemType === 'tv' || itemType === 'anime') ? 'tv' : 'movie',
+                title: itTitle,
+                slug: (it as any).slug,
+                type: itemType,
+                year: (it as any).year ? String((it as any).year) : undefined,
+                cover: (it as any).cover,
+                backdrop: (it as any).backdrop,
+                rate: (it as any).rate ? String((it as any).rate) : undefined,
+                genres: (it as any).genres,
+                directors: (it as any).directors,
+                actors: (it as any).actors,
+                description: (it as any).description || (it as any).overview,
+                updateBadge: (it as any).badge || (it as any).updateBadge,
+                numberOfEpisodes: (it as any).episodes || ((it as any).badge ? parseInt(String((it as any).badge).replace(/\D/g, ''), 10) || undefined : undefined),
+                numberOfSeasons: (it as any).seasons || 1,
+              });
+            }
           }
         }
       }
@@ -244,6 +268,25 @@ export async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntit
     } else if (!isSafeRecentTitleItem(entity as any) || !isStrictSafeEntity(entity).safe) {
       entity = null;
     } else {
+      // 🌟 强一致同名异作消歧门禁（彻底解决 2026 新剧被 2020 同名老泰剧等历史条目覆盖问题）：
+      // 若全站前台展示池 (prebakedItems) 中正在热播宣传同名影视，且其明确绑定了权威 tmdbId 或特定年份，
+      // 而当前从 KV 查出的 entity 与之严重冲突（TMDB ID 不符或年份相差 > 1 年），坚决放弃该旧实体！
+      const prebakedPool = getAllPrebakedDisplayItems();
+      const pConflict = prebakedPool.find(p => p && (p.title === entity!.title || p.title === expectedTitle));
+      if (pConflict) {
+        const tmdbConflict = pConflict.tmdbId && entity.tmdbId && String(pConflict.tmdbId) !== String(entity.tmdbId);
+        const yearDiff = pConflict.year && entity.year ? Math.abs(parseInt(pConflict.year, 10) - parseInt(entity.year, 10)) : 0;
+        const yearConflict = yearDiff > 1;
+        const thaiLanguageLeak = entity.originalTitle && /[\u0e00-\u0e7f]/.test(entity.originalTitle) && pConflict.year && parseInt(pConflict.year, 10) >= 2025;
+
+        if (tmdbConflict || yearConflict || thaiLanguageLeak) {
+          console.warn(`[resolveEntityRaw 同名异作消歧拦截] 历史 KV 实体与前台热播新剧严重冲突，丢弃冲突老条目: title="${entity.title}", kvTmdb=${entity.tmdbId}, pTmdb=${pConflict.tmdbId}, kvYear=${entity.year}, pYear=${pConflict.year}`);
+          entity = null;
+        }
+      }
+    }
+
+    if (entity) {
       const isMissingCover = !entity.cover || entity.cover.trim() === '';
       const isMissingCast = (!entity.directors || entity.directors.length === 0) && (!entity.actors || entity.actors.length === 0);
       const hasDirtyPinyinCast = (entity.actors || []).some(a => /^[A-Za-z\s]{4,}$/.test(a));
@@ -319,12 +362,27 @@ export async function resolveEntityRaw(rawSlugParam: string): Promise<TitleEntit
   });
 
   if (prebakedHit) {
-    // 1. 优先尝试从本地/KV 0ms 读取已持久化的完整实体
-    let existing = await getEntityByTitle(prebakedHit.title);
-    if (existing && !hasTitleOverlap(prebakedHit.title, existing.title)) {
-      console.warn(`[resolveEntityRaw Prebaked 防毒化拦截] 预置项 "${prebakedHit.title}" 与 KV existing.title "${existing.title}" 不符，丢弃脏数据`);
-      existing = null;
+    // 1. 优先尝试从本地/KV 0ms 读取已持久化的完整实体（权威 TMDB ID 绝对优先，杜绝同名老片反客为主）
+    let existing = prebakedHit.tmdbId
+      ? await getEntityByTmdb(prebakedHit.tmdbType || ((prebakedHit.type === 'tv' || prebakedHit.type === 'anime') ? 'tv' : 'movie'), prebakedHit.tmdbId)
+      : null;
+
+    if (!existing) {
+      existing = await getEntityByTitle(prebakedHit.title);
+      if (existing) {
+        const isNotOverlap = !hasTitleOverlap(prebakedHit.title, existing.title);
+        const tmdbConflict = prebakedHit.tmdbId && existing.tmdbId && String(prebakedHit.tmdbId) !== String(existing.tmdbId);
+        const yearDiff = prebakedHit.year && existing.year ? Math.abs(parseInt(prebakedHit.year, 10) - parseInt(existing.year, 10)) : 0;
+        const yearConflict = yearDiff > 1;
+        const thaiLanguageLeak = existing.originalTitle && /[\u0e00-\u0e7f]/.test(existing.originalTitle) && prebakedHit.year && parseInt(prebakedHit.year, 10) >= 2025;
+
+        if (isNotOverlap || tmdbConflict || yearConflict || thaiLanguageLeak) {
+          console.warn(`[resolveEntityRaw Prebaked 防同名串台拦截] 预置新片 "${prebakedHit.title}"(tmdb=${prebakedHit.tmdbId}, year=${prebakedHit.year}) 与 KV existing(title="${existing.title}", tmdb=${existing.tmdbId}, year=${existing.year}) 冲突，丢弃冲突老条目`);
+          existing = null;
+        }
+      }
     }
+
     if (existing && existing.cover && existing.cover.trim() !== '') {
       return enrichEpisodeCount(existing);
     }
@@ -532,7 +590,23 @@ export async function resolveEntity(rawSlugParam: string): Promise<TitleEntity |
 
     if (candidateTitle && /[\u4e00-\u9fff]/.test(candidateTitle)) {
       try {
-        const healed = await getEntityByTitle(candidateTitle);
+        const prebakedPool = getAllPrebakedDisplayItems();
+        const pMatch = prebakedPool.find(p => p && (p.title === candidateTitle || normalizeTitle(p.title) === normalizeTitle(candidateTitle)));
+        let healed: TitleEntity | null = null;
+        if (pMatch && pMatch.tmdbId) {
+          healed = await getEntityByTmdb(pMatch.tmdbType || ((pMatch.type === 'tv' || pMatch.type === 'anime') ? 'tv' : 'movie'), pMatch.tmdbId);
+        }
+        if (!healed) {
+          healed = await getEntityByTitle(candidateTitle);
+          if (healed && pMatch) {
+            const tmdbConflict = pMatch.tmdbId && healed.tmdbId && String(pMatch.tmdbId) !== String(healed.tmdbId);
+            const yearDiff = pMatch.year && healed.year ? Math.abs(parseInt(pMatch.year, 10) - parseInt(healed.year, 10)) : 0;
+            const thaiLeak = healed.originalTitle && /[\u0e00-\u0e7f]/.test(healed.originalTitle) && pMatch.year && parseInt(pMatch.year, 10) >= 2025;
+            if (tmdbConflict || yearDiff > 1 || thaiLeak) {
+              healed = null;
+            }
+          }
+        }
         if (healed && isSafeRecentTitleItem(healed as any) && isStrictSafeEntity(healed).safe) {
           entity = healed;
         } else {
@@ -547,11 +621,33 @@ export async function resolveEntity(rawSlugParam: string): Promise<TitleEntity |
   }
 
   // 🌟 核心规范化：若命中的实体 ID 不是标准 6 位 ik\d{6}（例如 ik_radar_... 或豆瓣数字 ID），
-  // 强制通过片名从 KV 查出其真正的 6 位标准实体，保证前台 URL 与 301 重定向基线 100% 为纯净的 ik\d{6}
+  // 尝试规范化为主键实体，但必须严格执行同名异作消歧门禁，严禁李代桃僵！
   const currentId = entity.entityId || (entity as any).id || '';
   if (!/^ik\d{6}$/i.test(currentId)) {
     try {
-      const realEntity = await getEntityByTitle(entity.title);
+      let realEntity: TitleEntity | null = null;
+      // 1. 若当前实体持有权威 tmdbId，优先按精准 TMDB ID 检查是否存在标准 6 位实体
+      if (entity.tmdbId) {
+        realEntity = await getEntityByTmdb(entity.tmdbType || ((entity.type === 'tv' || entity.type === 'anime') ? 'tv' : 'movie'), entity.tmdbId);
+      }
+
+      // 2. 若未按 TMDB 命中，才尝试按标题查询，但必须通过全维度同名冲突核验
+      if (!realEntity) {
+        const candidate = await getEntityByTitle(entity.title);
+        if (candidate && candidate.entityId && /^ik\d{6}$/i.test(candidate.entityId)) {
+          const tmdbConflict = entity.tmdbId && candidate.tmdbId && String(entity.tmdbId) !== String(candidate.tmdbId);
+          const yearDiff = entity.year && candidate.year ? Math.abs(parseInt(entity.year, 10) - parseInt(candidate.year, 10)) : 0;
+          const yearConflict = yearDiff > 1;
+          const thaiConflict = candidate.originalTitle && /[\u0e00-\u0e7f]/.test(candidate.originalTitle) && entity.year && parseInt(entity.year, 10) >= 2025;
+
+          if (!tmdbConflict && !yearConflict && !thaiConflict) {
+            realEntity = candidate;
+          } else {
+            console.warn(`[resolveEntity 规范化防串台拦截] 阻止将当前新剧 "${entity.title}" (tmdb=${entity.tmdbId}, year=${entity.year}) 错误替换为冲突老实体 (id=${candidate.entityId}, tmdb=${candidate.tmdbId}, year=${candidate.year})`);
+          }
+        }
+      }
+
       if (realEntity && realEntity.entityId && /^ik\d{6}$/i.test(realEntity.entityId)) {
         entity = realEntity;
       }
