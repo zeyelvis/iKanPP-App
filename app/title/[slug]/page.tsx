@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { notFound, permanentRedirect, RedirectType } from 'next/navigation';
 import Link from 'next/link';
 import { headers } from 'next/headers';
-import { getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor } from '@/lib/services/entity-kv';
+import { getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity } from '@/lib/services/entity-kv';
 import { parseEntitySlug, generateSlug } from '@/lib/data/entities/entity-utils';
 import { searchAndEnrichFromTMDB, isFakeBackdrop } from '@/lib/services/entity-enrichment';
 import { getFastPersonAvatars } from '@/lib/services/person-avatar';
