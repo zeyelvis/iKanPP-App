@@ -1,6 +1,6 @@
 import type { VideoSource } from '@/lib/types';
 
-// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-10-03T08:40:07.056Z）
+// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-10-04T08:54:55.942Z）
 export const DEFAULT_SOURCES: VideoSource[] = [
   {
     id: 'juliang',
@@ -113,16 +113,6 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     priority: 11,
   },
   {
-    id: 'liangzi',
-    name: '量子资源',
-    baseUrl: 'http://cj.lziapi.com',
-    searchPath: '/api.php/provide/vod',
-    detailPath: '/api.php/provide/vod',
-    group: 'normal',
-    enabled: true,
-    priority: 12,
-  },
-  {
     id: 'haitun',
     name: '海豚资源',
     baseUrl: 'https://hhzyapi.com',
@@ -130,7 +120,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 13,
+    priority: 12,
   },
   {
     id: 'feifan',
@@ -140,7 +130,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 14,
+    priority: 13,
   },
   {
     id: 'huya',
@@ -150,12 +140,22 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 15,
+    priority: 14,
   },
   {
     id: 'jinying',
     name: '金鹰点播',
     baseUrl: 'https://jinyingzy.com',
+    searchPath: '/api.php/provide/vod',
+    detailPath: '/api.php/provide/vod',
+    group: 'normal',
+    enabled: true,
+    priority: 15,
+  },
+  {
+    id: 'liangzi',
+    name: '量子资源',
+    baseUrl: 'http://cj.lziapi.com',
     searchPath: '/api.php/provide/vod',
     detailPath: '/api.php/provide/vod',
     group: 'normal',
@@ -173,9 +173,9 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     priority: 17,
   },
   {
-    id: 'ikun',
-    name: 'iKun资源',
-    baseUrl: 'https://ikunzyapi.com',
+    id: 'youku',
+    name: '优酷资源',
+    baseUrl: 'https://api.ukuapi88.com',
     searchPath: '/api.php/provide/vod',
     detailPath: '/api.php/provide/vod',
     group: 'normal',
@@ -183,9 +183,9 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     priority: 18,
   },
   {
-    id: 'youku',
-    name: '优酷资源',
-    baseUrl: 'https://api.ukuapi88.com',
+    id: 'ikun',
+    name: 'iKun资源',
+    baseUrl: 'https://ikunzyapi.com',
     searchPath: '/api.php/provide/vod',
     detailPath: '/api.php/provide/vod',
     group: 'normal',
