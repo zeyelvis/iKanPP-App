@@ -63,7 +63,15 @@ export async function GET(request: NextRequest) {
     try {
         let videos: JableVideoItem[] = await fetchJableList(path, params);
 
-        // 如果 Jable 抓取结果为空（如搜索冷门词或遇临时限流），双轨自动降级到备用专线池
+        // 1. 若 Jable 官方源受限，对于首页大厅四大榜单与全部影片，优先采用每日定时巡检预烘焙的纯正番号大作库 (0ms 瞬时直出)
+        const isMainHallMode = ['today', 'weekly', 'monthly', 'latest'].includes(mode) && !q && !category;
+
+        if (videos.length === 0 && isMainHallMode) {
+            const { PREBAKED_PREMIUM_DATA } = await import('@/lib/data/premium-prebaked');
+            videos = PREBAKED_PREMIUM_DATA as any;
+        }
+
+        // 2. 对于特定关键词或分类搜索，若 Jable 为空则降级至专线池智能检索
         if (videos.length === 0) {
             console.log(`[JableAPI] Jable returned empty, falling back to backup sources for query: ${q || category || mode}`);
             const fallbackRes = await fetch(`${request.nextUrl.origin}/api/premium/category`, {
@@ -90,7 +98,6 @@ export async function GET(request: NextRequest) {
         }
 
         if (videos.length === 0) {
-            // 极速预烘焙数据终极兜底
             const { PREBAKED_PREMIUM_DATA } = await import('@/lib/data/premium-prebaked');
             videos = PREBAKED_PREMIUM_DATA as any;
         }

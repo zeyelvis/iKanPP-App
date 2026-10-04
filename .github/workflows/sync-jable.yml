@@ -1,0 +1,51 @@
+name: Auto Sync iKanX Jable & Midnight Radar
+
+on:
+  schedule:
+    # 每天固定巡检更新（北京时间凌晨 03:30，UTC 19:30）
+    - cron: '30 19 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  sync-jable:
+    name: Sync Jable Radar & Prebaked Dataset
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run Jable & Midnight Radar Sync
+        run: |
+          echo "🚀 [iKanX] 启动 Jable 每日新片与番号雷达全自动巡检..."
+          node scripts/cron/sync-jable-radar.mjs
+
+      - name: Commit, push, and trigger deploy if data updated
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+          MODIFIED_FILES="lib/data/premium-prebaked.ts"
+
+          if [[ -n $(git status --porcelain $MODIFIED_FILES) ]]; then
+            echo "⚡ 检测到午夜专区预烘焙新片数据更新，正在自动提交..."
+            git add $MODIFIED_FILES
+            git commit -m "chore(premium): 自动同步 Jable 每日新片与日本番号大作 [skip ci]"
+            git push origin HEAD:${{ github.ref_name }}
+            
+            echo "🚀 触发 Cloudflare Pages 生产编译上线..."
+            gh workflow run deploy.yml || true
+            echo "🎉 [完成] iKanX 新片数据已更新并推入发布流水线！"
+          else
+            echo "✅ 预烘焙片库已是最新状态，无需重新部署。"
+          fi
