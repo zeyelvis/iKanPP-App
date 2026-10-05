@@ -119,6 +119,9 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  verification: {
+    yandex: 'ea53fb2514874f51',
+  },
   other: {
     'mobile-web-app-capable': 'yes',
   },
@@ -139,6 +142,9 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" className="dark" suppressHydrationWarning>
       <head>
+        {/* 🌐 Yandex 官方站长所有权验证 */}
+        <meta name="yandex-verification" content="ea53fb2514874f51" />
+
         {/* 🚀 LCP 极速攻坚：首屏巨幕剧照全站最高优先级预加载，彻底消灭 850ms Resource Load Delay */}
         {desktopBackdropUrl && (
           <link
