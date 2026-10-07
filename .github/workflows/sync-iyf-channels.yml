@@ -80,7 +80,7 @@ jobs:
           echo "📊 [8/8] 汇总近 7 天地区线路质量与连通率画像并写入 KV..."
           node scripts/aggregate-line-rankings.mjs
 
-      - name: Pipeline Safety Guard: Watermark Auto-Heal & Architecture Gate
+      - name: "Pipeline Safety Guard: Watermark Auto-Heal & Architecture Gate"
         run: |
           echo "🛡️ [Guard 1/2] 触发自动化去水印清洗兜底网..."
           node scripts/heal-home-prebaked-watermarks.mjs
