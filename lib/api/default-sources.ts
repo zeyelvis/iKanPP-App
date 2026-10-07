@@ -1,6 +1,6 @@
 import type { VideoSource } from '@/lib/types';
 
-// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-10-06T09:31:57.402Z）
+// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-10-07T09:27:51.650Z）
 export const DEFAULT_SOURCES: VideoSource[] = [
   {
     id: 'juliang',
@@ -123,6 +123,16 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     priority: 12,
   },
   {
+    id: 'huya',
+    name: '虎牙资源',
+    baseUrl: 'https://www.huyaapi.com',
+    searchPath: '/api.php/provide/vod',
+    detailPath: '/api.php/provide/vod',
+    group: 'normal',
+    enabled: true,
+    priority: 13,
+  },
+  {
     id: 'feifan',
     name: '非凡资源',
     baseUrl: 'https://api.ffzyapi.com',
@@ -130,7 +140,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 13,
+    priority: 14,
   },
   {
     id: 'jinying',
@@ -140,7 +150,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 14,
+    priority: 15,
   },
   {
     id: 'youku',
@@ -150,7 +160,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 15,
+    priority: 16,
   },
   {
     id: 'subo',
@@ -160,7 +170,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 16,
+    priority: 17,
   },
   {
     id: 'liangzi',
@@ -170,7 +180,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 17,
+    priority: 18,
   },
   {
     id: 'ruyi',
@@ -180,7 +190,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 18,
+    priority: 19,
   },
   {
     id: 'ikun',
@@ -190,7 +200,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 19,
+    priority: 20,
   },
   {
     id: 'lezi',
@@ -200,7 +210,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 20,
+    priority: 21,
   },
   {
     id: 'hongniu',
@@ -210,7 +220,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 21,
+    priority: 22,
   },
   {
     id: 'jingyu',
@@ -220,7 +230,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 22,
+    priority: 23,
   },
   {
     id: 'moduys',
@@ -230,7 +240,7 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 23,
+    priority: 24,
   },
   {
     id: 'modu_dm',
@@ -240,6 +250,6 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     detailPath: '/api.php/provide/vod',
     group: 'normal',
     enabled: true,
-    priority: 24,
+    priority: 25,
   },
 ];
