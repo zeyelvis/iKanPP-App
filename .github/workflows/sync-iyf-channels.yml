@@ -2,8 +2,10 @@ name: Auto Sync IYF Channels & Drama Hero Slides
 
 on:
   schedule:
-    # 每小时整点全自动巡检同步（100% 绝对对齐 AGENTS.md 准则 6，运行在日本专属 Runner 零消耗 GitHub 配额）
-    - cron: '0 * * * *'
+    # 每小时第 23 分全自动巡检同步（AGENTS.md 准则 6，运行在日本专属 Runner 零消耗 GitHub 配额）。
+    # 避开整点：GitHub 在每小时 0 分负载最高，整点的定时任务常被推迟或直接丢弃
+    # （2026-09 实测 cron '0 * * * *' 每天只跑了 3~6 次）。
+    - cron: '23 * * * *'
   workflow_dispatch:
     inputs:
       channel:

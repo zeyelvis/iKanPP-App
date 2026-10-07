@@ -99,7 +99,7 @@
    - **IndexNow**：批量向 Bing 与 Yandex 推送最新 URL（HTTP 200），5 分钟内感知；
    - **Google Indexing API**：向 Googlebot 申请 Priority A 极速抓取通道；
 2. **全自动闭环频次**：
-   - 挂载于 `.github/workflows/sync-iyf-channels.yml`，**每小时整点全自动巡检执行（`0 * * * *`）**，形成“全网嗅探 ➔ 4K建档 ➔ 物理置顶 ➔ 全网广播”的无人值守闭环。
+   - 挂载于 `.github/workflows/sync-iyf-channels.yml`，**每小时第 23 分全自动巡检执行（`23 * * * *`）**，形成“全网嗅探 ➔ 4K建档 ➔ 物理置顶 ➔ 全网广播”的无人值守闭环。
 
 ### 3.5 模块 E：同名新老电影张冠李戴阻断与年代偏离熔断铁律 (Recency Guard vs Title Collision)
 1. **现象定位与事故复盘**：

@@ -108,7 +108,7 @@ $$\text{iKanPP (爱看片片)} \Longleftrightarrow \begin{cases}
 * **价值**：Bing 收到 IndexNow 广播后，其索引库直接与 Copilot、ChatGPT 联网检索协同。
 
 ### 4.2 每小时新片更新与 Sitemap 活跃度维稳
-* **底层驱动**：`.github/workflows/sync-iyf-channels.yml` 正在以 `0 * * * *`（每小时整点）高频执行。
+* **底层驱动**：`.github/workflows/sync-iyf-channels.yml` 正在以 `23 * * * *`（每小时第 23 分）高频执行。
 * **SEO 价值**：高频的内容增量会持续刷新各频道的 `lastmod` 时间戳。搜索引擎抓取器会根据站点内容更新的活跃度，自动维持对该域名的爬取预算。
 
 ### 4.3 蜘蛛日志自测分析法（无需国内站长后台）

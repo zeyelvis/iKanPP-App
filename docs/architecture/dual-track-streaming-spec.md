@@ -250,7 +250,7 @@
   3. **控制层**：贴底三栏布局无缝联动爱壹帆 1:1 规范，保持左侧主标题与立即播放 CTA、中栏 12 席（6 + 6）短剧速报标签矩阵、右侧 8 席缩略卡片。
 
 ### 7. 自动化全流程闭环与 SEO 索引
-- 由 `scripts/sync-juliang-short-dramas.mjs` 与 `.github/workflows/sync-iyf-channels.yml` 每小时整点闭环执行；
+- 由 `scripts/sync-juliang-short-dramas.mjs` 与 `.github/workflows/sync-iyf-channels.yml` 每小时第 23 分闭环执行；
 - 数据变更自动刷新 `SHORT_HOME_DATA`，并在提交后自动触发 Cloudflare Pages 编译部署；
 - 增量爆款短剧实时写入 `new-scraped-titles.json`，秒级触发 IndexNow 全网搜索引擎主动广播收录。
 
@@ -304,7 +304,7 @@
 
 ### 5. 双重落地与持续自动化
 - **预烘焙文件**：生成写入 `lib/data/latest-titles-prebaked.ts`，为全站提供 SSR 0ms 直出骨架；
-- **KV 持久化**：由 `.github/workflows/sync-iyf-channels.yml` 每小时整点调度 `scripts/sync-release-radar.mjs`，通过 Cloudflare KV REST API 自动更新生产环境 `recent:*` 系列键；
+- **KV 持久化**：由 `.github/workflows/sync-iyf-channels.yml` 每小时第 23 分调度 `scripts/sync-release-radar.mjs`，通过 Cloudflare KV REST API 自动更新生产环境 `recent:*` 系列键；
 - **客户端缓存无缝升级**：前台组件将缓存版本升级至 `v8`，并自动清理历史旧版本缓存。
 
 ---
