@@ -90,15 +90,15 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "魔方小姐",
-                "updateBadge": ""
-        },
-        {
-                "title": "生死尽头",
+                "title": "年会不能停！2",
                 "updateBadge": ""
         },
         {
                 "title": "特立独行",
+                "updateBadge": ""
+        },
+        {
+                "title": "魔方小姐",
                 "updateBadge": ""
         }
       ],
@@ -1829,7 +1829,7 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "无可替代",
-                "updateBadge": "1"
+                "updateBadge": ""
         },
         {
                 "title": "我不是大师",
@@ -1849,10 +1849,14 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "一瓯春",
-                "updateBadge": "1"
+                "updateBadge": ""
         },
         {
                 "title": "法医秦明之龙番往事",
+                "updateBadge": ""
+        },
+        {
+                "title": "交锋",
                 "updateBadge": ""
         },
         {
@@ -1860,16 +1864,12 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": "1"
         },
         {
-                "title": "交锋",
-                "updateBadge": ""
-        },
-        {
                 "title": "雷霆令",
                 "updateBadge": ""
         },
         {
-                "title": "逐玉",
-                "updateBadge": ""
+                "title": "魔女嘉莉",
+                "updateBadge": "8"
         }
       ],
     "hero": [
