@@ -54,7 +54,27 @@ export const PREBAKED_HOME_DATA: {
   "movie": {
     "trendingNav": [
         {
+                "title": "蜘蛛侠：崭新之日",
+                "updateBadge": ""
+        },
+        {
+                "title": "坠落2：死点",
+                "updateBadge": ""
+        },
+        {
+                "title": "功夫女足",
+                "updateBadge": ""
+        },
+        {
+                "title": "潜伏6",
+                "updateBadge": ""
+        },
+        {
                 "title": "欢迎来龙餐馆",
+                "updateBadge": ""
+        },
+        {
+                "title": "猛攻",
                 "updateBadge": ""
         },
         {
@@ -62,11 +82,11 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "坂本日常",
+                "title": "给阿嬷的情书",
                 "updateBadge": ""
         },
         {
-                "title": "给阿嬷的情书",
+                "title": "爱情假说",
                 "updateBadge": ""
         },
         {
@@ -78,26 +98,6 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
-                "title": "年会不能停！2",
-                "updateBadge": ""
-        },
-        {
-                "title": "大学炸弹客",
-                "updateBadge": ""
-        },
-        {
-                "title": "重制",
-                "updateBadge": ""
-        },
-        {
-                "title": "爱情假说",
-                "updateBadge": ""
-        },
-        {
-                "title": "死亡赌局",
-                "updateBadge": ""
-        },
-        {
                 "title": "特立独行",
                 "updateBadge": ""
         }
@@ -105,11 +105,10 @@ export const PREBAKED_HOME_DATA: {
     "hero": [
         {
                 "id": "iyf_hero_movie_1",
-                "tmdbId": "1396674",
                 "title": "一个部门的诞生",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/azv0T4WEDjaaRe7ZeiegUEsKMHs.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/eW7S7tCPWQW50Bt1YHF0FPI1m16.jpg",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
                 "description": "《一个部门的诞生》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·喜剧。",
                 "year": "2026",
                 "types": [
@@ -124,11 +123,10 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "id": "iyf_hero_movie_2",
-                "tmdbId": "1353926",
                 "title": "特立独行",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/dWtKXfN97AMW5n3S6QoUVUMCU2S.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
                 "description": "《特立独行》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
@@ -143,11 +141,10 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "id": "iyf_hero_movie_3",
-                "tmdbId": "1671548",
                 "title": "给阿嬷的情书",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/s0sC3hPPX4OobLNfdl2iSs2vtvI.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/dzWGnIAjUafpmY57F6vnm44FwWB.jpg",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
                 "description": "《给阿嬷的情书》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
@@ -162,11 +159,10 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "id": "iyf_hero_movie_4",
-                "tmdbId": "1084244",
                 "title": "玩具总动员5",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/oo46YfPuMcV9t7KsTiaMVUVRjvJ.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/4D1pdB27uph7J8HQzNf8QvvH9bn.jpg",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
                 "description": "《玩具总动员5》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·动画。",
                 "year": "2026",
                 "types": [
@@ -181,11 +177,10 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "id": "iyf_hero_movie_5",
-                "tmdbId": "1499071",
                 "title": "寒战1994",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/8NaaLrhXbhuXmjndCKmgaJvLTb1.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/gIpIMTZKhDNqFsoSj04sKZfV0g0.jpg",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
                 "description": "《寒战1994》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
@@ -200,11 +195,10 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "id": "iyf_hero_movie_6",
-                "tmdbId": "1314481",
                 "title": "穿普拉达的女王2",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/zGQyw7v2dvb2FNDdVUJFcaPrD5y.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/Af907x5h9W1wVis8XrSd7ynTWuy.jpg",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
                 "description": "《穿普拉达的女王2》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
@@ -219,11 +213,10 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "id": "iyf_hero_movie_7",
-                "tmdbId": "1421609",
                 "title": "我的妈耶",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/cE15hXnCv6VfADRCo69n83BRNsS.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/tRg0CIV7HQVKcdd2Jabv4GdhEVF.jpg",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
                 "description": "《我的妈耶》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·剧情。",
                 "year": "2026",
                 "types": [
@@ -238,11 +231,10 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "id": "iyf_hero_movie_8",
-                "tmdbId": "1305781",
                 "title": "镖人：风起大漠",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/ki0ilBYgbOZKUuE1NN53FYWK9zQ.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/29pJrsosphUdOMRDm4gCdhSkluI.jpg",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
                 "description": "《镖人：风起大漠》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：电影·动作。",
                 "year": "2026",
                 "types": [
@@ -1833,7 +1825,7 @@ export const PREBAKED_HOME_DATA: {
     "trendingNav": [
         {
                 "title": "兰香如故",
-                "updateBadge": "1"
+                "updateBadge": ""
         },
         {
                 "title": "无可替代",
@@ -1841,14 +1833,14 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "title": "我不是大师",
-                "updateBadge": "1"
+                "updateBadge": ""
         },
         {
                 "title": "死有对证",
                 "updateBadge": "1"
         },
         {
-                "title": "一瓯春",
+                "title": "魅影神捕",
                 "updateBadge": ""
         },
         {
@@ -1856,106 +1848,88 @@ export const PREBAKED_HOME_DATA: {
                 "updateBadge": ""
         },
         {
+                "title": "一瓯春",
+                "updateBadge": "1"
+        },
+        {
                 "title": "法医秦明之龙番往事",
                 "updateBadge": ""
+        },
+        {
+                "title": "地狱大状",
+                "updateBadge": "1"
         },
         {
                 "title": "交锋",
                 "updateBadge": ""
         },
         {
-                "title": "中头奖还是要上班",
-                "updateBadge": "2"
-        },
-        {
                 "title": "雷霆令",
-                "updateBadge": "2"
-        },
-        {
-                "title": "飞到我心上",
                 "updateBadge": ""
         },
         {
-                "title": "花开锦绣",
+                "title": "逐玉",
                 "updateBadge": ""
         }
       ],
     "hero": [
         {
                 "id": "iyf_hero_tv_1",
-                "tmdbId": "297982",
                 "title": "无可替代",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/gLbtMLqbN6fgYsTuHFvzJu7Hopi.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/rNFBrko4F5RQ5E9YktBRXVqwzjl.jpg",
-                "description": "少女徐迟在目睹母亲因离婚而自杀，发誓这一生绝对不要成为被代替的弱者。为此，她以普通院校毕业生的身份，凭借自己超乎常人的拼搏与机敏，成为了一名专业出色的咨询顾问。业界精英合伙人叶信之在职业生涯之初曾被上司夺走成果，性格变得孤傲严苛。两人在职场中相遇、碰撞与携手成长，最终在竞争与救赎中确认了彼此不可替代的价值。",
-                "directors": [
-                        "陈铭章"
-                ],
-                "actors": [
-                        "赵今麦",
-                        "魏大勋",
-                        "周奇",
-                        "白冰",
-                        "胡意旋",
-                        "田轩宁",
-                        "王媛可",
-                        "林小宅",
-                        "李子锋"
-                ],
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
+                "description": "《无可替代》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至14集 | 共20集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至08集 | 共20集",
+                "episodes_info": "更新至14集 | 共20集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
         },
         {
                 "id": "iyf_hero_tv_2",
-                "tmdbId": "289078",
                 "title": "我不是大师",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/eZmV0ziikof0upIm8s6Vz2pC9pp.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/eTlMy2amueTqJBFZm5x14GGhZxH.jpg",
-                "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至17集 | 共24集。",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
+                "description": "《我不是大师》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：24集全。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至17集 | 共24集",
+                "episodes_info": "24集全",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
         },
         {
                 "id": "iyf_hero_tv_3",
-                "tmdbId": "287994",
                 "title": "法医秦明之龙番往事",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/y862upNdtW5zu4VT6d0PQxJv5ov.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/8GW3Gw2QNluHkZs65JQZbWExmgJ.jpg",
-                "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至16集 | 共24集。",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
+                "description": "《法医秦明之龙番往事》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至21集 | 共24集。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至16集 | 共24集",
+                "episodes_info": "更新至21集 | 共24集",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
         },
         {
                 "id": "iyf_hero_tv_4",
-                "tmdbId": "294990",
                 "title": "一瓯春",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/2WmnEfppQZ73qIX9agjvu99453q.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/k3aKIWf48yCKnbCjk2b2Tea32Vk.jpg",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
                 "description": "《一瓯春》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：30集全。",
                 "year": "2026",
                 "types": [
@@ -1969,29 +1943,27 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "id": "iyf_hero_tv_5",
-                "tmdbId": "282326",
                 "title": "兰香如故",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/kfurXRMH1ZkUoyT5HN72zLTQxzZ.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/mZSewqVlY4F2F2Axm7hiG6KBOBp.jpg",
-                "description": "《兰香如故》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至39集 | 共47集。",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
+                "description": "《兰香如故》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：47集全。",
                 "year": "2026",
                 "types": [
                         "热门",
                         "连续剧"
                 ],
-                "episodes_info": "更新至39集 | 共47集",
+                "episodes_info": "47集全",
                 "type": "tv",
                 "is_new": true,
                 "playable": true
         },
         {
                 "id": "iyf_hero_tv_6",
-                "tmdbId": "290863",
                 "title": "冬城猎凶",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/8nenduIuctLj2YBjWHG8pFs1X6R.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/28u4q3fPzXmbyf3BoiWweUOuuzj.jpg",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
                 "description": "《冬城猎凶》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：18集全。",
                 "year": "2026",
                 "types": [
@@ -2005,11 +1977,10 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "id": "iyf_hero_tv_7",
-                "tmdbId": "301489",
                 "title": "深渊无间",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/b9ngtGNgaHBbLihRrT0MsPRY0GW.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/s9YSQAJtXjimsjBVsqLtJNnIjEs.jpg",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
                 "description": "《深渊无间》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：更新至13集 | 共16集。",
                 "year": "2026",
                 "types": [
@@ -2023,11 +1994,10 @@ export const PREBAKED_HOME_DATA: {
         },
         {
                 "id": "iyf_hero_tv_8",
-                "tmdbId": "294486",
                 "title": "交锋",
                 "rate": "8.8",
-                "cover": "https://image.tmdb.org/t/p/w500/gRe5FZjMWw8xXzWk1hxWuNQckOg.jpg",
-                "backdrop": "https://image.tmdb.org/t/p/w1280/lYDwHYOR8PROQfSJGZ8LqvwUVcW.jpg",
+                "cover": "/placeholder-poster.svg",
+                "backdrop": "/placeholder-poster.svg",
                 "description": "《交锋》由 iKanPP 官方编辑精选推荐，全网 4K 超清极速秒播。当前状态：40集全。",
                 "year": "2026",
                 "types": [
