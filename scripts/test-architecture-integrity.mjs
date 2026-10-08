@@ -47,7 +47,7 @@ for (const relPath of generatorScripts) {
   }
 }
 
-// 3. API 端点 Cron Secret 默认鉴权保障验证：杜绝云端由于缺少环境变量返回 401
+// 3. 定时触发接口的口令只能来自环境变量：仓库公开，代码里的默认口令等于没有口令（2026-10-08）
 const apiRoutes = [
   'app/api/seo/entity-pipeline/route.ts',
   'app/api/seo/tmdb-changes/route.ts',
@@ -57,8 +57,8 @@ for (const relPath of apiRoutes) {
   if (fs.existsSync(fullPath)) {
     const content = fs.readFileSync(fullPath, 'utf-8');
     assert(
-      content.includes("process.env.CRON_SECRET || 'ikanpp-cron-sync-secret'"),
-      `${relPath} 必须包含安全的 CRON_SECRET 兜底默认值，杜绝云端定时触发 401 阻断`
+      !content.includes("'ikanpp-cron-sync-secret'") && !/process\.env\.CRON_SECRET\s*\|\|/.test(content),
+      `${relPath} 严禁为 CRON_SECRET 设置写在代码里的默认值（仓库公开），未配置时必须拒绝请求`
     );
   }
 }

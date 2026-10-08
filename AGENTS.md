@@ -506,8 +506,9 @@ iKanPP 全域自动化运维流水线与数据同步中枢必须永久恪守以�
 - **消灭重复代码**：所有涉及 Cloudflare KV、D1、外部 API 调用的脚本，必须统一调用共享辅助库（如 `scripts/common/kv-helper.mjs`），严禁在几十个独立脚本中机械复制粘贴 `fetch` 与凭证读取逻辑；
 - **多别名全覆盖**：所有读取环境凭证的基础设施必须默认兼容 `CLOUDFLARE_API_KEY || CF_KV_API_KEY || CF_API_KEY || CLOUDFLARE_AUTH_KEY` 等全部历史别名，杜绝因环境变量名差异引发的云端鉴权失败。
 
-### 4. API 端点 Cron Secret 安全默认值防线 (Safe Cron Secret Default)
-- 所有对外暴露由 GitHub Actions 或第三方定时触发的接口（如 `/api/seo/entity-pipeline`、`/api/seo/tmdb-changes`），其鉴权逻辑必须内置安全默认 Secret 兜底（`process.env.CRON_SECRET || 'ikanpp-cron-sync-secret'`），彻底杜绝由于云端 Pages 未手动配置环境变量而产生的 401 阻断。
+### 4. 定时触发接口口令只来自环境变量 (Cron Secret From Environment Only, 2026-10-08)
+- 所有由 GitHub Actions 或第三方定时触发的接口（如 `/api/seo/entity-pipeline`、`/api/seo/tmdb-changes`）只能从环境变量 `CRON_SECRET` 读取口令，**严禁在代码里写默认值**：本仓库是公开的，写在代码里的口令等于没有口令，任何人都能反复触发入库与编号分配。
+- 未配置 `CRON_SECRET` 时接口一律返回 401（失败即关闭）；调用方通过请求头 `x-cron-secret` 传递口令，不放在网址参数里。由 `scripts/test-architecture-integrity.mjs` 检查 3 持续拦截。
 
 ### 5. 架构守卫与前置门禁双重拦截机制 (Architecture Integrity Linter Gate)
 - **本地与 CI 双门禁**：全站配置统一的架构契约巡检器 `scripts/test-architecture-integrity.mjs` 与防 404 门禁 `scripts/test-latest-titles-404.mjs`，并通过 `npm run test:arch` 统一编排；

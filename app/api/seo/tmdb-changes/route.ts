@@ -8,7 +8,9 @@ export const runtime = 'edge';
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
-const CRON_SECRET = process.env.CRON_SECRET || 'ikanpp-cron-sync-secret';
+// 只认环境变量，不设默认值：仓库是公开的，写在代码里的默认口令等于没有口令，谁都能反复
+// 触发入库（调 TMDB、写 KV、分配新编号）。未配置 CRON_SECRET 时接口对所有人关闭（401）。
+const CRON_SECRET = process.env.CRON_SECRET;
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 
 interface TMDBChangeItem {
