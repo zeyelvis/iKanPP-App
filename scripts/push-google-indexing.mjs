@@ -181,6 +181,9 @@ function extractLatestTargetUrls() {
 
 
 async function main() {
+  // 已停用（2026-10-08）：Google 只允许招聘和直播页面使用 Indexing API，不再为影视页推送。
+  console.log('[Google Indexing] 已停用：影视页的收录交给站点地图和 IndexNow。');
+  process.exit(0);
   // 🌟 Google 官方安全铁律与 v5.0 SEO 执行规范：
   // Google Indexing API 仅限 JobPosting 或包含 BroadcastEvent 的真实直播流；
   // 普通影视详情页批量提交会被 Google 判定为 API 滥用并招致全站降权。

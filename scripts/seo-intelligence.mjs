@@ -87,25 +87,12 @@ async function getGoogleAccessToken(sa) {
   return data.access_token;
 }
 
-// 3. Google Indexing API 单条推送 (支持 URL_UPDATED 与 URL_DELETED 死链清退)
-async function pushToGoogleIndexing(url, token, type = 'URL_UPDATED') {
-  try {
-    const res = await fetch('https://indexing.googleapis.com/v3/urlNotifications:publish', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        url,
-        type,
-      }),
-      signal: AbortSignal.timeout(6000),
-    });
-    return res.ok;
-  } catch {
-    return false;
-  }
+// 3. Google Indexing API：已停用（2026-10-08）。
+// Google 只允许招聘和直播页面使用 Indexing API，影视页推送违反其政策；URL_DELETED 更会让
+// Google 移除仍在排名的页面。这里永远返回 false，不再发出任何请求；影视页的收录交给站点
+// 地图和只推变化网址的 IndexNow。
+async function pushToGoogleIndexing() {
+  return false;
 }
 
 // 4. IndexNow 批量多网关广播 (Bing, Yandex, IndexNow)

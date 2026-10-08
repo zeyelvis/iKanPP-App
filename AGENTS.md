@@ -375,7 +375,7 @@ iKanPP 全域流媒体平台在应对院线新片、热播剧集与新番动漫�
 
 ### 4. 自动化即时多引擎闪电广播流水线 (Instant Search Syndication Pipeline)
 - 每次构建部署完成后（`.github/workflows/deploy.yml`）或新片增量入库后，必须全自动并发触发两大广播链路：
-  1. **Google Indexing API 闪电广播**：通过 `scripts/push-google-indexing.mjs`，根据 Priority A 级策略将最新上线影视的规范 URL 提交至 Google Indexing API，触发 Googlebot 在 5~15 分钟内入站抓取，抢占首发搜索红利；单日推送严格控制在 30~50 条以内以防超额；
+  1. **Google Indexing API 已停用（2026-10-08）**：Google 只允许招聘（JobPosting）与直播（BroadcastEvent）页面使用 Indexing API，影视页一律不推（见准则 19.4）；`scripts/push-google-indexing.mjs` 与 `scripts/seo-intelligence.mjs` 的推送已改为空操作，影视页收录依靠站点地图与 IndexNow；
   2. **IndexNow 即时全网广播**：通过 `scripts/push-indexnow.mjs` 将全量 URL 广播给 Bing 与 Yandex，实现 1 小时内直通 OpenAI ChatGPT 联网搜索候选池。
 
 ### 5. 动态相关探索内链网络 (Dynamic Internal Linking Mesh)
