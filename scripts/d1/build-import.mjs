@@ -218,72 +218,132 @@ db.exec("COMMIT");
 console.log(`网址片段：规范 ${canon} 个，别名 ${alias} 个（slug:* 原始 ${slugRows.length} 个）`);
 
 // ---- 6. 以快照里的落地页为准确定规范网址 -----------------------------------------------------
-// Google 收录的内容就在快照里最终返回 200 的作品页上：这些网址原样作为该作品的规范网址。
-// 网址里没有编号的（如 /title/蜘蛛侠-崭新之日），先按片段表、再按片名与年份找到作品。
-// 同一作品有多个落地页时，点击多的那个作规范网址，其余作别名（以后 308 过去）。
+// Google 收录的内容就在快照里最终返回 200 的作品页上。落地页属于哪部作品，以页面标题里的片名、年份、类型为准，
+// 不以网址里的编号为准：编号曾被反复改指（同一分钟内的现场补录拿到同一个号，后建的覆盖先建的），
+// 快照里不少跳转目标的编号此刻已是另一部作品。
+// - 依次试：网址里的编号、片段表、片名（规范化后）+ 年份（差 ≤ 1）；必须片名对得上。页面标题里的类型不可靠
+//   （星际穿越标成电视剧、动画电影标成动漫），只在同名多部时用来排序；
+// - 落地页的片段只有在不带编号、或带的正是该作品自己的编号时，才能作为规范网址；同一作品有多个这样的
+//   落地页时点击多的那个作规范网址，其余作别名（308 过去）；
+// - 落地页片段与 Search Console 网址片段都改指到认定的作品（不抢别的作品的规范片段）。
 const clicksByUrl = new Map(gsc.map((r) => [r.url, r.clicks + r.impressions / 100]));
 const landings = baseline
   .filter((b) => b.status === 200 && b.final && pathOf(b.final).startsWith("/title/"))
   .sort((a, b) => (clicksByUrl.get(a.url) ?? 0) - (clicksByUrl.get(b.url) ?? 0));
-const getTitle = db.prepare("SELECT id, state, merged_into FROM titles WHERE id = ?");
+const KIND = { 电影: "movie", 电视剧: "tv", 动漫: "anime", 综艺: "variety", 纪录片: "documentary", 短剧: "short" };
+const unescape = (t) => String(t ?? "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#x27;|&#39;/g, "'");
+const pageInfo = (title) => {
+  const m = unescape(title).match(/^(.*?)\s*(?:\((\d{4})\))?\s*在线观看\s*-\s*([^|\s]+)/);
+  return m ? { name: m[1].trim(), year: num(m[2]), kind: KIND[m[3]] ?? null } : { name: null, year: null, kind: null };
+};
+const normName = (s) => String(s ?? "").toLowerCase().replace(/[（(][^）)]*[）)]/g, "").replace(/[^\p{L}\p{N}]+/gu, "");
+const nameMatch = (a, b) => {
+  const x = normName(a), y = normName(b);
+  return Boolean(x && y) && (x === y || (Math.min(x.length, y.length) >= 3 && (x.startsWith(y) || y.startsWith(x))));
+};
+/** 同一编号的译名变化（雪降花 / 雪滴花）：字符重合 ≥ 60%。只用于网址里的编号本身，不用于按片名找作品。 */
+const similarName = (a, b) => {
+  const x = new Set(normName(a)), y = new Set(normName(b));
+  if (!x.size || !y.size) return false;
+  return [...x].filter((c) => y.has(c)).length / Math.min(x.size, y.size) >= 0.6;
+};
+const getTitle = db.prepare("SELECT id, state, merged_into, name, year, kind, popularity FROM titles WHERE id = ?");
 const liveRow = (id) => {
   let t = getTitle.get(id);
   for (let i = 0; t && t.state === "merged" && i < 5; i++) t = getTitle.get(t.merged_into);
   return t && t.state === "live" ? t : null;
 };
-const bySlug = db.prepare("SELECT title_id FROM slugs WHERE slug = ?");
-const byNameYear = db.prepare("SELECT id FROM titles WHERE state = 'live' AND name = ? AND (year = ? OR ? IS NULL) ORDER BY popularity DESC, id LIMIT 2");
+const byNorm = new Map();
+for (const t of db.prepare("SELECT id, name, year, kind, popularity FROM titles WHERE state = 'live' AND name IS NOT NULL").all()) {
+  const k = normName(t.name);
+  if (k) byNorm.set(k, [...(byNorm.get(k) ?? []), t]);
+}
+const bySlug = db.prepare("SELECT title_id, canonical FROM slugs WHERE slug = ?");
+/** 落地页 → 作品（片名必须对得上）。 */
+function resolveLanding(b) {
+  const seg = pathOf(b.final).slice("/title/".length);
+  const info = pageInfo(b.title);
+  if (!info.name) return null;
+  const ok = (t) => t && nameMatch(t.name, info.name) && (!info.year || !t.year || Math.abs(t.year - info.year) <= 1);
+  const own = toId((seg.match(/^(ik\d{6})/i) ?? [])[1]);
+  const viaId = own ? liveRow(own) : null;
+  if (ok(viaId)) return viaId;
+  const hit = bySlug.get(seg);
+  const viaSlug = hit ? liveRow(hit.title_id) : null;
+  if (ok(viaSlug)) return viaSlug;
+  const cands = (byNorm.get(normName(info.name)) ?? []).filter(ok);
+  cands.sort((a, b) => Number(b.kind === info.kind) - Number(a.kind === info.kind) || (b.popularity ?? 0) - (a.popularity ?? 0) || a.id - b.id);
+  if (cands[0]) return cands[0];
+  // 片库里没有同名作品，而网址自己的编号是一部译名相近、年份相符的作品：认作同一部（译名改过）。
+  const yearOk = (t) => !info.year || !t.year || Math.abs(t.year - info.year) <= 1;
+  return viaId && yearOk(viaId) && similarName(viaId.name, info.name) ? viaId : null;
+}
 const dropSlug = db.prepare("DELETE FROM slugs WHERE slug = ?");
 const demote = db.prepare("UPDATE slugs SET canonical = 0 WHERE title_id = ? AND canonical = 1");
-const addCanonical = db.prepare("INSERT INTO slugs (slug, title_id, canonical, source) VALUES (?, ?, 1, 'snapshot-landing')");
+const addSlug = db.prepare("INSERT INTO slugs (slug, title_id, canonical, source) VALUES (?, ?, ?, ?)");
+/** 把片段指到作品（不抢别的作品的规范片段）。 */
+const pointSlug = (seg, id, source) => {
+  const cur = bySlug.get(seg);
+  if (cur?.canonical && cur.title_id !== id) return;
+  if (cur && cur.title_id === id) return;
+  dropSlug.run(seg);
+  addSlug.run(seg, id, 0, source);
+};
 const unresolved = [];
-let fromLanding = 0;
+const landingTitle = new Map(); // Search Console 网址 → 认定的作品编号
+let asCanonical = 0, asAlias = 0;
 db.exec("BEGIN");
 for (const b of landings) {
-  const seg = pathOf(b.final).slice("/title/".length);
-  const own = toId((seg.match(/^(ik\d{6})/i) ?? [])[1]);
-  let t = null;
-  if (own) {
-    const row = getTitle.get(own);
-    // 编号并入了别的编号：这个落地页留作别名，由规范编号的落地页决定规范网址。
-    if (row?.state === "merged") continue;
-    t = liveRow(own);
-  } else {
-    const hit = bySlug.get(seg);
-    t = hit ? liveRow(hit.title_id) : null;
-    if (!t) {
-      const name = (b.title ?? "").replace(/\s*\((\d{4})\).*$/, "").trim();
-      const year = num(((b.title ?? "").match(/\((\d{4})\)/) ?? [])[1]);
-      const rows = name ? byNameYear.all(name, year, year) : [];
-      t = rows.length ? liveRow(rows[0].id) : null;
-    }
-  }
+  const t = resolveLanding(b);
   if (!t) {
-    unresolved.push({ url: b.url, final: pathOf(b.final), title: b.title });
+    unresolved.push({ url: b.url, final: pathOf(b.final), title: b.title, clicks: clicksByUrl.get(b.url) ?? 0 });
     continue;
   }
-  dropSlug.run(seg);
-  demote.run(t.id);
-  addCanonical.run(seg, t.id);
-  fromLanding++;
+  landingTitle.set(b.url, t.id);
+  const seg = pathOf(b.final).slice("/title/".length);
+  const segId = toId((seg.match(/^(ik\d{6})/i) ?? [])[1]);
+  if (!segId || segId === t.id) {
+    const cur = bySlug.get(seg);
+    if (!(cur?.canonical && cur.title_id !== t.id)) {
+      dropSlug.run(seg);
+      demote.run(t.id);
+      addSlug.run(seg, t.id, 1, "snapshot-landing");
+      asCanonical++;
+    }
+  } else {
+    pointSlug(seg, t.id, "snapshot-landing-alias");
+    asAlias++;
+  }
+  const urlSeg = pathOf(b.url).slice("/title/".length);
+  if (pathOf(b.url).startsWith("/title/") && urlSeg !== seg) pointSlug(urlSeg, t.id, "snapshot-url-alias");
 }
 db.exec("COMMIT");
-console.log(`落地页定规范网址：${fromLanding} 个；找不到作品的 ${unresolved.length} 个（多为导出之后才新建的编号，重新导出后再看）`);
+console.log(`落地页：${landings.length} 个，定为规范网址 ${asCanonical} 个，编号与作品不符、改作别名 ${asAlias} 个；找不到作品的 ${unresolved.length} 个`);
 writeFileSync(join(dir, `unresolved-landings-${day}.json`), JSON.stringify(unresolved, null, 1));
 
 // ---- 7. 快照路由 ---------------------------------------------------------------------------
+// 每个 Search Console 网址当时的结果。最终是作品页的，目标改为认定作品的规范网址（与快照网址相同时不跳转）；
+// 其余（404、跳到非作品页等）原样保留。
 
+const canonicalPath = db.prepare("SELECT slug FROM slugs WHERE title_id = ? AND canonical = 1");
 const insertRoute = db.prepare(`INSERT OR REPLACE INTO legacy_routes (path, status, target_path, hops, page_title, noindex, observed_at)
   VALUES (?, ?, ?, ?, ?, ?, ?)`);
+let retargeted = 0;
 db.exec("BEGIN");
 for (const b of baseline) {
   if (b.error) continue;
   const from = pathOf(b.url);
-  const to = b.final ? pathOf(b.final) : null;
+  let to = b.final ? pathOf(b.final) : null;
+  const tid = landingTitle.get(b.url);
+  if (tid) {
+    const c = canonicalPath.get(tid)?.slug;
+    if (c && `/title/${c}` !== to) retargeted++;
+    if (c) to = `/title/${c}`;
+  }
   insertRoute.run(from, typeof b.status === "number" ? b.status : 0, to !== from ? to : null, (b.chain?.length ?? 1) - 1, b.title ?? null, b.noindex ? 1 : 0, `${day}T00:00:00Z`);
 }
 db.exec("COMMIT");
-console.log(`快照路由：${db.prepare("SELECT COUNT(*) n FROM legacy_routes").get().n} 条`);
+console.log(`快照路由：${db.prepare("SELECT COUNT(*) n FROM legacy_routes").get().n} 条，其中 ${retargeted} 条的目标改为认定作品的规范网址`);
 
 // ---- 8. 影人与演职关系：来自 live 作品的 directors / actors（字符串数组，按原顺序） -----------------
 
