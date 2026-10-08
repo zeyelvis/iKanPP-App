@@ -11,6 +11,7 @@ import {
   getEntityByTmdb,
   saveEntity,
   getTitleDemandLeaderboard,
+  getNextEntitySeq,
 } from '@/lib/services/entity-kv';
 import { saveTopic } from '@/lib/services/topic-service';
 import { calculateSeoScore } from '@/app/api/seo/entity-pipeline/route';
@@ -20,7 +21,7 @@ import keywordMatrixData from '@/lib/data/seo-keyword-matrix.json';
 import { TitleEntity } from '@/lib/types/entity';
 import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
 import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
-import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
+import { formatEntityId, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 import {
   generateAiUniqueReview,
   generateAiFaq,
@@ -770,7 +771,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
         const found = allPrebaked.find(p => p && p.title === title) as any;
         if (found) {
           entity = {
-            entityId: found.entityId || `ik${Math.floor(100000 + Math.random() * 900000)}`,
+            entityId: found.entityId || formatEntityId(await getNextEntitySeq()),
             title: found.title,
             slug: found.slug || found.title,
             type: (found.type as any) || 'tv',

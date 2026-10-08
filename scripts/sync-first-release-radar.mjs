@@ -368,17 +368,6 @@ async function main() {
   const indexAll = rawIndexAll ? JSON.parse(rawIndexAll) : [];
   const indexAllSet = new Set(indexAll);
 
-  // 获取当前最大实体 ID 序号
-  let maxEntitySeq = 20581;
-  for (const id of indexAll) {
-    const m = id.match(/^ik(\d+)$/);
-    if (m) {
-      const num = parseInt(m[1], 10);
-      if (num > maxEntitySeq && num < 900000) maxEntitySeq = num;
-    }
-  }
-
-  console.log(`🔍 [首发雷达] 生产库当前最高实体序列号: ik${String(maxEntitySeq).padStart(6, '0')}`);
 
   for (const [title, item] of uniqueTitles.entries()) {
     // 检查生产库是否已有此实体
@@ -460,8 +449,18 @@ async function main() {
       continue;
     }
 
-    maxEntitySeq += 1;
-    const newEntityId = `ik${String(maxEntitySeq).padStart(6, '0')}`;
+    // 与 lib/services/entity-kv.ts 的 getNextEntitySeq 相同：在 600000–899999 随机取号并确认未被占用。
+    // 不再用「index:all 里 90 万以下的最大值 + 1」：它与网站现场补录的计数器会发出同一个编号。
+    let newEntityId = null;
+    for (let attempt = 0; attempt < 10 && !newEntityId; attempt++) {
+      const seq = 600000 + Math.floor(Math.random() * 300000);
+      const candidate = `ik${String(seq).padStart(6, '0')}`;
+      if (!indexAllSet.has(candidate) && !(await kvGet(`entity:${candidate}`))) newEntityId = candidate;
+    }
+    if (!newEntityId) {
+      console.warn(`   ⚠️ 取号失败，暂缓建档: 《${title}》`);
+      continue;
+    }
     const cleanFinalTitle = tmdbData.title || title;
     const cleanSlugPart = cleanFinalTitle.replace(/[:：\s]+/g, '-').toLowerCase();
     const finalCanonicalSlug = `${newEntityId}-${cleanSlugPart}`;

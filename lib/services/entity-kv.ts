@@ -1373,14 +1373,21 @@ export async function getSitemapCatalog(): Promise<SitemapCatalogEntry[]> {
   return catalog;
 }
 
+/** 新编号的号段：13 万以下与 90 万以上已被历史编号占用，这一段没人用。 */
+export const NEW_ENTITY_SEQ_MIN = 600000;
+export const NEW_ENTITY_SEQ_MAX = 899999;
+
 /**
- * 获取下一个自增序号并更新计数器
+ * 分配新编号。不再用 counter:next_id「读后写」：KV 读取在边缘有约 60 秒缓存，一分钟内的多次建档会拿到
+ * 同一个编号，后建的作品覆盖先建的（2026-10-08 实测 ik129757、ik129766、ik130690 等在几分钟内被改指）。
+ * 改为在 600000–899999 里随机取号，并确认 entity: 键不存在。迁到 D1 后由数据库统一分配。
  */
 export async function getNextEntitySeq(): Promise<number> {
-  const raw = await kvGet('counter:next_id');
-  const current = raw ? parseInt(raw, 10) || 1 : 1;
-  await kvPut('counter:next_id', String(current + 1));
-  return current;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const seq = NEW_ENTITY_SEQ_MIN + Math.floor(Math.random() * (NEW_ENTITY_SEQ_MAX - NEW_ENTITY_SEQ_MIN + 1));
+    if (!(await kvGet(`entity:${formatEntityId(seq)}`))) return seq;
+  }
+  throw new Error('getNextEntitySeq: 连续 10 次随机取号都已被占用');
 }
 
 /**
