@@ -3,7 +3,7 @@
  * 1. 快照路由 legacy_routes：2026-10-08 在 Google 有展示的网址，按导入时认定的结果返回（同一部片）；
  * 2. 网址片段表 slugs：合并的编号走到规范编号；不是规范片段时 308 到规范网址；
  * 3. 片段带「ik + 6 位」编号且作品 live：308 到规范网址；
- * 4. 编号已下架（removed）或片段表里没有：用片段里的片名在 live 作品里找唯一同名的，308 过去；
+ * 4. 编号已下架（removed）或片段表里没有：用片段里的片名在 live 作品里找同名的（多部时取资料最好的），308 过去；
  *    片名带季号（时光代理人第3季）找不到时，去掉季号再找（页面层在季号网址原地显示该季）；
  * 5. 都找不到：404。编号永不复用。
  */
@@ -169,16 +169,20 @@ export async function resolveTitleSegment(db: D1Like, rawSegment: string): Promi
   }
 
   // 4. 按片名找唯一的 live 作品；带季号的去掉季号再找一次
-  const nameText = decodeMangledHexSlug(seg).replace(ID_PREFIX, '').replace(/-/g, ' ');
+  // 旧站的临时编号网址（ik_radar_tv_20-厨娘、ik_pre_%e5%90%…-名侦探柯南）只看片名部分
+  const nameText = decodeMangledHexSlug(seg).replace(/^ik_[a-z]+_[^-]*(?:-[0-9a-f%]*)?-/i, '').replace(ID_PREFIX, '').replace(/-/g, ' ');
   const season = parseSeasonFromTitle(nameText);
   for (const text of season ? [nameText, season.baseTitle] : [nameText]) {
     const key = normalizeTitle(text);
     if (!key || /^[a-z0-9_]+$/.test(key)) continue;
-    const rows = await db
-      .prepare("SELECT id FROM titles WHERE state = 'live' AND name_key = ? LIMIT 2")
+    // 同名多部（片库里同名同年的重复条目很多）取资料最好的一部：有 TMDB、热度高、编号小，与列表关联的规则相同。
+    const best = await db
+      .prepare(
+        "SELECT id FROM titles WHERE state = 'live' AND name_key = ? ORDER BY (tmdb_id IS NOT NULL) DESC, coalesce(popularity, hot, 0) DESC, id LIMIT 1",
+      )
       .bind(key)
-      .all<{ id: number }>();
-    if (rows.results.length === 1) return { type: 'redirect', location: await canonicalPathOf(db, rows.results[0].id) };
+      .first<{ id: number }>();
+    if (best) return { type: 'redirect', location: await canonicalPathOf(db, best.id) };
   }
 
   return { type: 'not-found' };
