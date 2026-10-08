@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { recordTitleDemand, getTitleDemandLeaderboard } from '@/lib/services/entity-kv';
+import { recordTitleDemand, getTitleDemandLeaderboard } from '@/lib/services/title-demand';
 
 
 /**

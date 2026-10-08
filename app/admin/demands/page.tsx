@@ -17,7 +17,7 @@ import {
   Copy,
   Check,
 } from 'lucide-react';
-import type { TitleDemandRecord } from '@/lib/services/entity-kv';
+import type { TitleDemandRecord } from '@/lib/services/title-demand';
 import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export default function AdminDemandsPage() {

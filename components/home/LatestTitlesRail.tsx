@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl, getFallbackProxiedImageUrl } from '@/lib/utils/image-utils';
 import { generateSlug, isCleanChineseTitle, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
-import type { RecentTitleItem } from '@/lib/services/entity-kv';
+import type { LatestPrebakedItem as RecentTitleItem } from '@/lib/types/prebaked';
 import { useLatestTitles } from '@/components/data/PageDataProvider';
 
 interface LatestTitlesRailProps {

@@ -3,7 +3,7 @@
  * 自动写入 Cloudflare KV (key: admin:audit-log:TIMESTAMP)，保留最近 90 天
  */
 
-import { kvGet, kvPut } from '@/lib/services/entity-kv';
+import { kvGet, kvPut } from '@/lib/server/kv';
 
 export interface AuditLogEntry {
   id: string;
@@ -43,7 +43,7 @@ export async function recordAuditLog(entry: {
   try {
     // 写入单独日志键
     const logKey = `admin:audit-log:${now.getTime()}`;
-    await kvPut(logKey, JSON.stringify(logItem));
+    await kvPut(logKey, JSON.stringify(logItem), { expirationTtl: 90 * 86400 });
 
     // 更新索引列表
     const indexRaw = await kvGet(AUDIT_INDEX_KEY);

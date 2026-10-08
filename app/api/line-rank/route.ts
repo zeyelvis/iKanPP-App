@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { kvGet } from '@/lib/services/entity-kv';
+import { kvGet } from '@/lib/server/kv';
 
 
 /**

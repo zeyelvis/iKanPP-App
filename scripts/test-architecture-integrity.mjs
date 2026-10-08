@@ -4,7 +4,7 @@ import path from 'path';
 
 /**
  * 🛡️ iKanPP 全站架构契约与流水线健壮性自动化巡检门禁 (Architecture Integrity Linter)
- * 在代码提交 (pre-commit) 与 CI 构建 (deploy.yml) 中自动拦截任何违规架构回退与契约漂移
+ * 在代码提交（scripts/git-hooks/pre-commit）与 CI（.github/workflows/ci.yml）中自动拦截违规回退与契约漂移
  */
 
 let failed = false;
@@ -21,66 +21,44 @@ console.log('====================================================');
 console.log('🛡️ iKanPP 全站架构契约与健壮性自动化巡检门禁启动');
 console.log('====================================================\n');
 
-// 1. 契约单一真理源 (SSOT) 验证：预烘焙数据必须引用 lib/types/prebaked.ts
-const prebakedDataPath = path.resolve('lib/data/latest-titles-prebaked.ts');
-const prebakedDataContent = fs.readFileSync(prebakedDataPath, 'utf-8');
+// 1. 契约单一真理源：首页、最新上线、频道货架的数据类型只定义在 lib/types/prebaked.ts，
+//    入库 Worker 写 D1 documents 与网站读取共用同一份类型（2026-10-08 起数据不再写成 .ts 文件）。
+const ingestLatestPath = path.resolve('workers/ikanpp-ingest/src/jobs/latest.ts');
 assert(
-  prebakedDataContent.includes("import type { LatestPrebakedItem } from '../types/prebaked'") ||
-  prebakedDataContent.includes("from '../types/prebaked'"),
-  'latest-titles-prebaked.ts 必须从 lib/types/prebaked.ts 引入单一真理源类型契约，严禁手写冗余 interface'
+  fs.existsSync(ingestLatestPath) && fs.readFileSync(ingestLatestPath, 'utf-8').includes("lib/types/prebaked'"),
+  '入库 Worker 的最新上线任务必须从 lib/types/prebaked.ts 引用 LatestPrebakedItem 类型'
 );
-
-// 2. 脚本生成模板验证：防止生成脚本在字符串模板中硬编码 interface 导致覆写擦除字段
-const generatorScripts = [
-  'scripts/sync-release-radar.mjs',
-  'scripts/sync-episode-updates.mjs',
-  'scripts/sync-latest-titles.mjs',
-];
-for (const relPath of generatorScripts) {
-  const fullPath = path.resolve(relPath);
-  if (fs.existsSync(fullPath)) {
-    const content = fs.readFileSync(fullPath, 'utf-8');
-    assert(
-      !content.includes('export interface LatestPrebakedItem {'),
-      `${relPath} 严禁在模板中重复声明 export interface LatestPrebakedItem，必须引用共享契约`
-    );
+function listSources(dir, out = []) {
+  if (!fs.existsSync(dir)) return out;
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (e.name === 'node_modules' || e.name.startsWith('.')) continue;
+    const p = path.join(dir, e.name);
+    if (e.isDirectory()) listSources(p, out);
+    else if (/\.(ts|tsx|mjs|js)$/.test(e.name)) out.push(p);
   }
+  return out;
+}
+const codeFiles = ['app', 'lib', 'components', 'workers'].flatMap((d) => listSources(path.resolve(d)));
+const duplicatedContract = codeFiles.filter(
+  (f) => !f.endsWith(path.join('lib', 'types', 'prebaked.ts')) && /export interface (LatestPrebakedItem|PrebakedSubject|PrebakedCategoryItem)\b/.test(fs.readFileSync(f, 'utf-8'))
+);
+assert(duplicatedContract.length === 0, `严禁在 lib/types/prebaked.ts 之外重复声明首页数据类型${duplicatedContract.length ? '：' + duplicatedContract.join(', ') : ''}`);
+
+// 2. 定时触发接口的口令只能来自环境变量：仓库公开，代码里的默认口令等于没有口令（2026-10-08）
+const defaultSecrets = codeFiles.filter((f) => /'ikanpp-cron-sync-secret'|process\.env\.CRON_SECRET\s*\|\|/.test(fs.readFileSync(f, 'utf-8')));
+assert(defaultSecrets.length === 0, `严禁为 CRON_SECRET 设置写在代码里的默认值（仓库公开），未配置时必须拒绝请求${defaultSecrets.length ? '：' + defaultSecrets.join(', ') : ''}`);
+
+// 3. 入库 Worker 内容安全：新建作品与各列表都必须过 isCleanChineseTitle（AGENTS 准则 12）
+for (const rel of ['workers/ikanpp-ingest/src/titles.ts', 'workers/ikanpp-ingest/src/jobs/latest.ts', 'workers/ikanpp-ingest/src/jobs/rankings.ts', 'workers/ikanpp-ingest/src/jobs/shorts.ts']) {
+  const full = path.resolve(rel);
+  assert(fs.existsSync(full) && fs.readFileSync(full, 'utf-8').includes('isCleanChineseTitle('), `${rel} 必须调用 isCleanChineseTitle 做内容安全过滤`);
 }
 
-// 3. 定时触发接口的口令只能来自环境变量：仓库公开，代码里的默认口令等于没有口令（2026-10-08）
-const apiRoutes = [
-  'app/api/seo/entity-pipeline/route.ts',
-  'app/api/seo/tmdb-changes/route.ts',
-];
-for (const relPath of apiRoutes) {
-  const fullPath = path.resolve(relPath);
-  if (fs.existsSync(fullPath)) {
-    const content = fs.readFileSync(fullPath, 'utf-8');
-    assert(
-      !content.includes("'ikanpp-cron-sync-secret'") && !/process\.env\.CRON_SECRET\s*\|\|/.test(content),
-      `${relPath} 严禁为 CRON_SECRET 设置写在代码里的默认值（仓库公开），未配置时必须拒绝请求`
-    );
-  }
-}
-
-// 4. 流水线辅助脚本优雅降级验证：严禁在 main().catch 中直接 process.exit(1) 阻断大盘上线
-const auxiliaryScripts = [
-  'scripts/sync-first-release-radar.mjs',
-  'scripts/sync-iyf-four-rankings.mjs',
-  'scripts/sync-episode-updates.mjs',
-  'scripts/sync-juliang-short-dramas.mjs',
-  'scripts/sync-seo-entities.mjs',
-];
-for (const relPath of auxiliaryScripts) {
-  const fullPath = path.resolve(relPath);
-  if (fs.existsSync(fullPath)) {
-    const content = fs.readFileSync(fullPath, 'utf-8');
-    const hasExitOneInCatch = /main\(\)\.catch\([\s\S]*?process\.exit\(1\)/.test(content);
-    assert(
-      !hasExitOneInCatch,
-      `${relPath} 辅助流水线任务在 main().catch 中必须保持优雅降级 (process.exit(0))，严禁单点异常杀进程阻断全站大盘发布`
-    );
-  }
+// 4. 入库 Worker 单个任务失败不能拖垮其他任务：每个任务单独 try/catch，结果写 sync_state
+const ingestIndexPath = path.resolve('workers/ikanpp-ingest/src/index.ts');
+if (fs.existsSync(ingestIndexPath)) {
+  const content = fs.readFileSync(ingestIndexPath, 'utf-8');
+  assert(/try\s*{[\s\S]*?}\s*catch/.test(content), '入库 Worker 每个任务必须单独 try/catch，单个数据源出错不影响其他任务');
 }
 
 // 5. 全屏硬件覆盖层与显卡防黑屏规范验证：杜绝跨浏览器伪类逗号合写失效，杜绝全屏组件包含 backdrop-blur 与同步重排死锁
@@ -178,28 +156,6 @@ if (fs.existsSync(faqCompPath)) {
     'AiFaqSection.tsx 必须使用 iKanPP 官方观影指南与答疑，建立第一方品牌权威'
   );
 }
-
-// 12. 品牌纯净度与防投毒门禁：严禁在全站前台预烘焙数据中残留 static.iyf.tv 第三方水印图片
-const watermarkedCheckFiles = [
-  { path: 'lib/data/home-prebaked.ts', desc: '首页大厅焦点轮播与核心推荐预烘焙数据' },
-  { path: 'lib/data/home-prebaked-extra.ts', desc: '全专区深度预烘焙数据' },
-  { path: 'lib/data/latest-titles-prebaked.ts', desc: '最新上线增量流预烘焙数据' },
-  { path: 'lib/data/hero-backdrop.ts', desc: '首页首屏默认宽屏巨幕大图' },
-  { path: 'lib/data/category-prebaked.ts', desc: '全站 7 大专区分类预烘焙数据' },
-  { path: 'lib/data/new-scraped-titles.json', desc: '采集站最新影视增量清单' },
-];
-
-for (const item of watermarkedCheckFiles) {
-  const fullPath = path.resolve(item.path);
-  if (fs.existsSync(fullPath)) {
-    const content = fs.readFileSync(fullPath, 'utf-8');
-    assert(
-      !content.includes('static.iyf.tv') && !content.includes('iyf.tv/upload'),
-      `${item.path} (${item.desc}) 必须 100% 清除 static.iyf.tv 及第三方水印海报与剧照，全面使用 TMDB 官方 4K 纯净物料`
-    );
-  }
-}
-
 
 // 10. 全屏黑屏三层物理防线回归测试
 // 10a. compatibility.css 必须包含全屏容器内 backdrop-filter 强制禁用规则
@@ -456,27 +412,6 @@ if (fs.existsSync(globalErrorPath)) {
   );
 }
 
-// 15. 预烘焙数据与核心物料爱壹帆水印零容忍铁律 (Zero-Tolerance Watermark Spec)
-const prebakedFilesToCheck = [
-  'lib/data/home-prebaked.ts',
-  'lib/data/home-prebaked-extra.ts',
-  'lib/data/latest-titles-prebaked.ts',
-  'lib/data/category-prebaked.ts',
-  'lib/data/hero-backdrop.ts',
-  'lib/data/new-scraped-titles.json',
-];
-
-for (const rel of prebakedFilesToCheck) {
-  const p = path.resolve(rel);
-  if (fs.existsSync(p)) {
-    const raw = fs.readFileSync(p, 'utf-8');
-    const matches = raw.match(/static\.iyf\.tv/g) || [];
-    assert(
-      matches.length === 0,
-      `${rel} 包含 ${matches.length} 处 static.iyf.tv 水印链接，必须保持 0 处纯净，严禁带水印上线！`
-    );
-  }
-}
 if (failed) {
   console.error('🚨 架构契约巡检失败！存在破坏全局稳定性的违规回退，请根据上述报错整改后再行提交！');
   process.exit(1);

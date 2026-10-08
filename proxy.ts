@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
+import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 import { titlePageForPlayerLink } from '@/lib/utils/player-link';
 
 /**

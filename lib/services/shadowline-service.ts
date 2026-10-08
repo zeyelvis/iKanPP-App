@@ -1,4 +1,4 @@
-import { kvGet, kvPut } from '@/lib/services/entity-kv';
+import { kvGet, kvPut } from '@/lib/server/kv';
 
 export interface ShadowLineConfig {
   enabled: boolean;

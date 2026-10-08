@@ -1,0 +1,26 @@
+# 推送与合并请求时的检查：类型检查 + 架构与回归测试（npm run test:arch）。
+# 2026-10-08 起网站由本机 `npm run deploy` 发布到 Workers（ikanpp-web），数据由入库 Worker（ikanpp-ingest）
+# 按 Cloudflare 定时更新，GitHub 不再跑定时任务、也不部署。
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx tsc --noEmit -p workers/ikanpp-ingest
+      - run: npm run test:arch

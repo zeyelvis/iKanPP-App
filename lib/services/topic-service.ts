@@ -7,7 +7,7 @@
  * 2. 覆盖 Google 海量自然语言搜索意图
  */
 
-import { kvGet, kvPut } from '@/lib/services/entity-kv';
+import { kvGet, kvPut } from '@/lib/server/kv';
 import { TopicEntity, PREBAKED_TOPICS } from '@/lib/data/prebaked-topics';
 
 export * from '@/lib/data/prebaked-topics';

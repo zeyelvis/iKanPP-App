@@ -466,3 +466,10 @@ export function sanitizeMediaUrl(url: string | null | undefined, fallbackType: '
   }
   return url.trim();
 }
+
+/** 横版剧照是否无效：缺失、与竖版海报相同，或本身就是竖版海报。 */
+export function isFakeBackdrop(backdrop?: string, cover?: string): boolean {
+  if (!backdrop) return true;
+  if (cover && backdrop === cover) return true;
+  return backdrop.includes('ratio_poster');
+}

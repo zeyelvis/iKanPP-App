@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyCloudflareAccess } from '@/lib/admin/verify-access';
 import { recordAuditLog, getRecentAuditLogs } from '@/lib/admin/audit';
-import { getTitleDemandLeaderboard } from '@/lib/services/entity-kv';
+import { getTitleDemandLeaderboard } from '@/lib/services/title-demand';
 import { normalizeTitle } from '@/lib/data/entities/entity-utils';
 import type { TitleEntity } from '@/lib/types/entity';
 import { getDb } from '@/lib/data/d1/db';

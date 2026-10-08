@@ -15,42 +15,36 @@ function escapeXml(str: string): string {
 }
 
 export async function GET() {
-  const lastModDate = new Date().toISOString().split('T')[0];
   const urlElements: string[] = [];
 
-  // 人物收录门槛：片库里至少有一部 live 作品（D1 演职关系），没有作品的人物页不上站点地图。
+  // 人物收录门槛：片库里至少有一部 live 作品（D1 演职关系），没有作品的人物页不上站点地图；
+  // lastmod 取其作品里最近一次更新的日期，不写当天日期冒充更新。
   const db = getDb();
   const names = [...new Set([...POPULAR_DIRECTORS, ...POPULAR_ACTORS].map((n) => n.trim()).filter(Boolean))];
-  const credited = new Set<string>();
+  const credited = new Map<string, string>();
   if (db && names.length) {
     const rows = await db
       .prepare(
-        `SELECT DISTINCT p.name || '|' || c.role AS k FROM people p JOIN credits c ON c.person_id = p.id JOIN titles t ON t.id = c.title_id
-         WHERE t.state = 'live' AND p.name IN (${names.map(() => '?').join(',')})`,
+        `SELECT p.name || '|' || c.role AS k, max(substr(t.updated_at, 1, 10)) AS lastmod FROM people p
+         JOIN credits c ON c.person_id = p.id JOIN titles t ON t.id = c.title_id
+         WHERE t.state = 'live' AND p.name IN (${names.map(() => '?').join(',')}) GROUP BY 1`,
       )
       .bind(...names)
-      .all<{ k: string }>();
-    for (const r of rows.results) credited.add(r.k);
-  }
-  const validDirectors = POPULAR_DIRECTORS.filter((d) => credited.has(`${d.trim()}|director`));
-  const validActors = POPULAR_ACTORS.filter((a) => credited.has(`${a.trim()}|actor`));
-
-  // 导演专栏
-  for (const director of validDirectors) {
-    const fullUrl = `${BASE_URL}/director/${encodeURIComponent(director)}`;
-    urlElements.push(`  <url>
-    <loc>${escapeXml(fullUrl)}</loc>
-    <lastmod>${lastModDate}</lastmod>
-  </url>`);
+      .all<{ k: string; lastmod: string | null }>();
+    for (const r of rows.results) credited.set(r.k, r.lastmod ?? '');
   }
 
-  // 演员专栏
-  for (const actor of validActors) {
-    const fullUrl = `${BASE_URL}/actor/${encodeURIComponent(actor)}`;
-    urlElements.push(`  <url>
-    <loc>${escapeXml(fullUrl)}</loc>
-    <lastmod>${lastModDate}</lastmod>
+  for (const [role, list] of [['director', POPULAR_DIRECTORS], ['actor', POPULAR_ACTORS]] as const) {
+    for (const name of list) {
+      const key = `${name.trim()}|${role}`;
+      if (!credited.has(key)) continue;
+      const lastmod = credited.get(key);
+      const fullUrl = `${BASE_URL}/${role}/${encodeURIComponent(name.trim())}`;
+      urlElements.push(`  <url>
+    <loc>${escapeXml(fullUrl)}</loc>${lastmod ? `
+    <lastmod>${lastmod}</lastmod>` : ''}
   </url>`);
+    }
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
