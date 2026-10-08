@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DOCUMENTARY_DATASET } from '@/lib/data/documentary-data';
-import { queryEntities } from '@/lib/services/entity-kv';
+import { getDb } from '@/lib/data/d1/db';
+import { browseTitles, type BrowseSort } from '@/lib/data/d1/browse';
 import { getTitleCanonicalHref, isCleanChineseTitle } from '@/lib/data/entities/entity-utils';
 import { getOptimizedImageUrl, isRestrictedRegion } from '@/lib/utils/image-utils';
 
-export const runtime = 'edge';
 
 
 const FETCH_TIMEOUT_MS = 3500;
@@ -443,16 +443,18 @@ export async function GET(req: NextRequest) {
     resolvedSort = 'time_added';
   }
 
-  // ── 1. 优先从 Cloudflare KV 自有结构化实体片库中查询 ───────────────────
+  // ── 1. 优先从自有片库（D1）查询 ───────────────────
   try {
-    const kvResult = await queryEntities({
+    const db = getDb();
+    if (!db) throw new Error('D1 不可用');
+    const kvResult = await browseTitles(db, {
       channel: type,
       genre: cleanGenre,
       region: (area && area !== '全部') ? area : undefined,
       year: (year && year !== '全部') ? year : undefined,
       language: (lang && lang !== '全部') ? lang : undefined,
       status: (status && status !== '全部') ? status : undefined,
-      sort: resolvedSort,
+      sort: resolvedSort as BrowseSort,
       page,
       limit,
     });
@@ -479,14 +481,15 @@ export async function GET(req: NextRequest) {
           id: entity.entityId,
           title: entity.title,
           cover: getOptimizedImageUrl(entity.cover, { isChinaMainland, variant: 'poster' }),
-          rate: entity.rate || entity.score || '8.8',
-          score: entity.score || entity.rate || '8.8',
+          // 没有的数据留空，不写默认值（准则 19.1）
+          rate: entity.rate || entity.score || '',
+          score: entity.score || entity.rate || '',
           popularity: entity.popularity || entity.hot || 0,
           hot: entity.hot || entity.popularity || 0,
-          year: entity.year || '2026',
+          year: entity.year || '',
           types: entity.genres || [],
-          remarks: entity.status || (entity.numberOfEpisodes ? `${entity.numberOfEpisodes}集全` : '全高清'),
-          area: entity.region || '华语',
+          remarks: entity.status || (entity.numberOfEpisodes ? `${entity.numberOfEpisodes}集全` : ''),
+          area: entity.region || '',
           updatedAt: (entity.updatedAt || entity.createdAt || '').split('T')[0],
           url: getTitleCanonicalHref(entity),
         }));
@@ -508,7 +511,7 @@ export async function GET(req: NextRequest) {
       );
     }
   } catch (kvErr) {
-    console.warn('[browse/route.ts] KV query fallback to collector API:', kvErr);
+    console.warn('[browse/route.ts] D1 查询失败，改用采集站接口:', kvErr);
   }
 
   // ── 2. 降级备用：第三方采集站实时代理（双保险兜底）──────────────────────

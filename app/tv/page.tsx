@@ -2,7 +2,8 @@ import { Metadata } from 'next';
 import TvClient from './TvClient';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { JsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { PageDataProvider } from '@/components/data/PageDataProvider';
+import { loadPageData } from '@/lib/data/d1/page-data';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export const metadata: Metadata = {
@@ -19,8 +20,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function TvPage() {
-  const topShows = PREBAKED_HOME_DATA.tv.top10.slice(0, 10).map((t, idx) => ({
+// 首屏数据来自 D1（入库 Worker 每小时更新）；页面缓存 5 分钟。
+export const revalidate = 300;
+
+export default async function TvPage() {
+  const data = await loadPageData({ home: ['tv'], latest: ['tv'], category: ['tv'] });
+  const topShows = (data.home.tv?.top10 ?? []).slice(0, 10).map((t, idx) => ({
     position: idx + 1,
     name: t.title,
     url: `https://www.ikanpp.com${getTitleCanonicalHref(t)}`,
@@ -33,12 +38,12 @@ export default function TvPage() {
   ]);
 
   return (
-    <>
+    <PageDataProvider data={data}>
       <JsonLd data={breadcrumbs} />
       <ItemListJsonLd name="热门热播剧集" items={topShows} />
       <h1 className="sr-only">电视剧频道 - 热门华语陆剧 & 美剧韩剧全集在线观看 | iKanPP 爱看片片</h1>
       <TvClient />
-    </>
+    </PageDataProvider>
   );
 
 }

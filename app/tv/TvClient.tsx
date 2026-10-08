@@ -3,7 +3,7 @@
 import { Suspense } from 'react';
 import { CategoryHub } from '@/components/category/CategoryHub';
 import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { useHomeData } from '@/components/data/PageDataProvider';
 
 const SHELVES = [
   { id: 'tv_cn', title: '2026 华语黄金档热播剧', icon: '🔥', badge: 'HOT', tag: '国产剧' },
@@ -17,6 +17,7 @@ const SHELVES = [
 ];
 
 export default function TvClient() {
+  const home = useHomeData('tv');
   return (
     <Suspense fallback={<CategoryHubSkeleton channelKey="tv" categoryTitle="电视剧集" activeNav="tv" />}>
       <CategoryHub
@@ -26,8 +27,8 @@ export default function TvClient() {
         activeNav="tv"
         shelves={SHELVES}
         defaultTag="热门"
-        heroItems={PREBAKED_HOME_DATA.tv.hero}
-        trendingNav={PREBAKED_HOME_DATA.tv.trendingNav}
+        heroItems={home.hero}
+        trendingNav={home.trendingNav}
       />
     </Suspense>
   );

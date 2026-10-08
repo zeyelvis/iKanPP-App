@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isSafeExternalUrl } from '@/lib/utils/security';
 
-export const runtime = 'edge';
 
 const CORS_HEADERS = {
     'Access-Control-Allow-Origin': '*',

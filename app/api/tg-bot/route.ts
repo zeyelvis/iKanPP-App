@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
-import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
+import { loadHomeDocs } from '@/lib/data/d1/home-docs';
 import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
-export const runtime = 'edge';
 
 /**
  * iKanPP 官方 Telegram 搜片 Webhook 机器人中枢
@@ -15,6 +13,8 @@ export const runtime = 'edge';
  * 4. 每一条搜索结果带精美封面、豆瓣评分、直达 4K 播放链接。
  */
 export async function POST(req: NextRequest) {
+  const { home, latest: PREBAKED_LATEST_TITLES } = await loadHomeDocs();
+  const ALL_HOME_DATA = home.all;
   const token = process.env.TELEGRAM_BOT_TOKEN;
   if (!token) {
     return NextResponse.json({ ok: true, note: 'TELEGRAM_BOT_TOKEN is not configured yet.' });

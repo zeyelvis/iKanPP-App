@@ -18,9 +18,6 @@ import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { Footer } from "@/components/layout/Footer";
 
 import { Suspense } from 'react';
-import { ReferralCapture } from '@/components/auth/ReferralCapture';
-import { FIRST_HERO_BACKDROP } from '@/lib/data/hero-backdrop';
-import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { AddToHomeScreenModal } from '@/components/pwa/AddToHomeScreenModal';
 import { PWA_INSTALL_CAPTURE_SCRIPT } from '@/lib/client/pwa-capture';
 import { InAppBrowserBanner } from '@/components/common/InAppBrowserBanner';
@@ -132,38 +129,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const desktopBackdropUrl = FIRST_HERO_BACKDROP
-    ? getOptimizedImageUrl(FIRST_HERO_BACKDROP, { width: 1280, noFallback: true })
-    : '';
-  const mobileBackdropUrl = FIRST_HERO_BACKDROP
-    ? getOptimizedImageUrl(FIRST_HERO_BACKDROP, { width: 500, noFallback: true })
-    : '';
-
   return (
     <html lang="zh-CN" className="dark" suppressHydrationWarning>
       <head>
         {/* 🌐 Yandex 官方站长所有权验证 */}
         <meta name="yandex-verification" content="ea53fb2514874f51" />
-
-        {/* 🚀 LCP 极速攻坚：首屏巨幕剧照全站最高优先级预加载，彻底消灭 850ms Resource Load Delay */}
-        {desktopBackdropUrl && (
-          <link
-            rel="preload"
-            as="image"
-            href={desktopBackdropUrl}
-            media="(min-width: 641px)"
-            fetchPriority="high"
-          />
-        )}
-        {mobileBackdropUrl && (
-          <link
-            rel="preload"
-            as="image"
-            href={mobileBackdropUrl}
-            media="(max-width: 640px)"
-            fetchPriority="high"
-          />
-        )}
 
         {/* 🚀 外部与自建图片 CDN 预连接 — 消除 DNS+TLS 延迟，双栈对齐普通 img 与 cors 握手 */}
         <link rel="preconnect" href="https://img.ikanpp.com" crossOrigin="anonymous" />
@@ -231,7 +201,6 @@ export default function RootLayout({
           <TVProvider>
             <TVNavigationInitializer />
             <AdKeywordsWrapper />
-            <Suspense><ReferralCapture /></Suspense>
             {children}
             <Footer />
             <BackToTop />

@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { GUOMAN_DATASET } from '@/lib/data/guoman-data';
 import { DOCUMENTARY_DATASET } from '@/lib/data/documentary-data';
 
-export const runtime = 'edge';
 
 // 豆瓣电影合法核心标签
 const VALID_MOVIE_TAGS = new Set([
@@ -15,13 +14,15 @@ const VALID_TV_TAGS = new Set([
   '热门', '国产剧', '美剧', '英剧', '韩剧', '日剧', '港剧', '日本动画', '国产动画', '综艺', '纪录片'
 ]);
 
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
-import { VARIETY_HOME_DATA, ANIME_HOME_DATA } from '@/lib/data/home-prebaked-extra';
+import { loadHomeDocs } from '@/lib/data/d1/home-docs';
 
 /**
  * 抓取豆瓣 API 结果（带 2500ms 快速超时熔断，防止海外边缘节点跨国请求卡死）
  */
 async function fetchDoubanSubjects(type: string, tag: string, pageLimit: number, pageStart: number): Promise<any[]> {
+  const { home: PREBAKED_HOME_DATA } = await loadHomeDocs();
+  const VARIETY_HOME_DATA = PREBAKED_HOME_DATA.variety;
+  const ANIME_HOME_DATA = PREBAKED_HOME_DATA.anime;
   try {
     const url = `https://movie.douban.com/j/search_subjects?type=${type}&tag=${encodeURIComponent(tag)}&sort=recommend&page_limit=${pageLimit}&page_start=${pageStart}`;
     const response = await fetch(url, {
@@ -263,6 +264,9 @@ async function fetchGlobalAndDomesticNowPlaying(pageLimit: number, pageStart: nu
 }
 
 export async function GET(request: Request) {
+  const { home: PREBAKED_HOME_DATA } = await loadHomeDocs();
+  const VARIETY_HOME_DATA = PREBAKED_HOME_DATA.variety;
+  const ANIME_HOME_DATA = PREBAKED_HOME_DATA.anime;
   const { searchParams } = new URL(request.url);
   const channel = (searchParams.get('channel') || '').trim();
   const genre = (searchParams.get('genre') || '').trim();

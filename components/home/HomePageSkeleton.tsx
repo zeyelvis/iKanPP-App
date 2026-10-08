@@ -1,4 +1,6 @@
-import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
+'use client';
+
+import { useAllHomeData } from '@/components/data/PageDataProvider';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 
 /**
@@ -8,6 +10,7 @@ import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
  * 彻底消灭 blank spinner，为全球及受限国家用户提供秒开视觉感知。
  */
 export function HomePageSkeleton() {
+  const ALL_HOME_DATA = useAllHomeData().all;
   const hero = ALL_HOME_DATA.hero[0] || {
     title: '精选大片',
     backdrop: 'https://image.tmdb.org/t/p/w1280/kTp2i00tjARpsI6wTkU4Q8ArGaX.jpg',

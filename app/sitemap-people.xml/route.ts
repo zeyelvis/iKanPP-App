@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getKnownPeople, getEntitiesByDirector, getEntitiesByActor } from '@/lib/services/entity-kv';
+import { getDb } from '@/lib/data/d1/db';
+import { POPULAR_ACTORS, POPULAR_DIRECTORS } from '@/lib/data/popular-people';
 
-export const runtime = 'edge';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 
@@ -16,29 +16,24 @@ function escapeXml(str: string): string {
 
 export async function GET() {
   const lastModDate = new Date().toISOString().split('T')[0];
-  const { directors, actors } = await getKnownPeople();
   const urlElements: string[] = [];
 
-  // 🌟 规范第 7.2 节与第 21.4 节：人物收录门槛（在库影视作品数 >= 1，0 空人物页坚决不上地图）
-  const validDirectors = (
-    await Promise.all(
-      directors.map(async (d) => {
-        if (!d) return null;
-        const works = await getEntitiesByDirector(d, 1);
-        return works.length > 0 ? d : null;
-      })
-    )
-  ).filter((d): d is string => Boolean(d));
-
-  const validActors = (
-    await Promise.all(
-      actors.map(async (a) => {
-        if (!a) return null;
-        const works = await getEntitiesByActor(a, 1);
-        return works.length > 0 ? a : null;
-      })
-    )
-  ).filter((a): a is string => Boolean(a));
+  // 人物收录门槛：片库里至少有一部 live 作品（D1 演职关系），没有作品的人物页不上站点地图。
+  const db = getDb();
+  const names = [...new Set([...POPULAR_DIRECTORS, ...POPULAR_ACTORS].map((n) => n.trim()).filter(Boolean))];
+  const credited = new Set<string>();
+  if (db && names.length) {
+    const rows = await db
+      .prepare(
+        `SELECT DISTINCT p.name || '|' || c.role AS k FROM people p JOIN credits c ON c.person_id = p.id JOIN titles t ON t.id = c.title_id
+         WHERE t.state = 'live' AND p.name IN (${names.map(() => '?').join(',')})`,
+      )
+      .bind(...names)
+      .all<{ k: string }>();
+    for (const r of rows.results) credited.add(r.k);
+  }
+  const validDirectors = POPULAR_DIRECTORS.filter((d) => credited.has(`${d.trim()}|director`));
+  const validActors = POPULAR_ACTORS.filter((a) => credited.has(`${a.trim()}|actor`));
 
   // 导演专栏
   for (const director of validDirectors) {

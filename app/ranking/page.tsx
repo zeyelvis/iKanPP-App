@@ -4,7 +4,8 @@ import RankingClient from './RankingClient';
 import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { JsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { PageDataProvider } from '@/components/data/PageDataProvider';
+import { loadPageData } from '@/lib/data/d1/page-data';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export const metadata: Metadata = {
@@ -21,10 +22,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RankingPage() {
+// 首屏数据来自 D1（入库 Worker 每小时更新）；页面缓存 5 分钟。
+export const revalidate = 300;
+
+export default async function RankingPage() {
+  const data = await loadPageData({ home: ['movie', 'tv'], category: ['movie', 'tv', 'anime', 'variety'] });
   const topRanked = [
-    ...PREBAKED_HOME_DATA.movie.top10.slice(0, 5),
-    ...PREBAKED_HOME_DATA.tv.top10.slice(0, 5),
+    ...(data.home.movie?.top10 ?? []).slice(0, 5),
+    ...(data.home.tv?.top10 ?? []).slice(0, 5),
   ].map((item, idx) => ({
     position: idx + 1,
     name: item.title,
@@ -38,13 +43,13 @@ export default function RankingPage() {
   ]);
 
   return (
-    <>
+    <PageDataProvider data={data}>
       <JsonLd data={breadcrumbs} />
       <ItemListJsonLd name="全网影视风云榜 TOP10" items={topRanked} />
       <Suspense fallback={<CategoryHubSkeleton channelKey="movie" categoryTitle="影视风云榜" activeNav="ranking" />}>
         <RankingClient />
       </Suspense>
-    </>
+    </PageDataProvider>
   );
 }
 

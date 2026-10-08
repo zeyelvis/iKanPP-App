@@ -4,6 +4,19 @@
 
 ---
 
+## 0. 2026-10-08 架构切换说明（优先于下文各条中与之冲突的表述）
+
+2026-10-08 起 www.ikanpp.com 由 Cloudflare Worker `ikanpp-web`（OpenNext + Workers，Worker 区域路由接管，原 Pages 项目保留作回退）提供，数据以 D1 `ikanpp-db` 为唯一权威源。重构方案与进展见 `.plans/ikanpp-refactor.md`（不进仓库）；阶段 4 会按新架构重写本文件，在此之前：
+
+1. **数据**：作品、网址片段、快照路由、影人与演职关系、题材索引都在 D1（`db/d1/`）。首页、频道、最新上线、四大排序等列表是 D1 `documents` 表里的整份数据集。仓库里的预烘焙文件（`lib/data/home-prebaked*.ts`、`latest-titles-prebaked.ts`、`category-prebaked.ts`、`hero-backdrop.ts`）不再更新，页面也不再读取，阶段 4 删除。
+2. **入库**：由入库 Worker `workers/ikanpp-ingest` 用 Cloudflare 定时器完成（每小时第 23 分：轮播与热播标签、最新上线、短剧首屏；第 43 分：爱壹帆四大排序；北京时间 4 点：人气与评分排序、站点地图重算）。GitHub 的 `sync-iyf-channels.yml`、`sync-ikanbot-sources.yml`、`full-site-prewarm.yml`、`deploy.yml`（Pages）已停用。下文第 6.3、8.2、15.2、17.5 条中「GitHub 每小时巡检、自动提交并部署、不可禁用」的要求由入库 Worker 取代。
+3. **编号**：新作品只由入库 Worker 在 D1 里建档发号（13 万以上最小空号，同一 TMDB 作品只有一个 live 编号），编号永不复用、永不改指。网站页面与接口一律不写作品数据、不现场建档（`saveEntity` 在新站不写 KV）。下文第 13.1、15.1 条中「页面现场补录并写回 KV」的做法作废；片库里还没有的横轨作品由作品页按 D1 卡片直出（前台展示即必达不变）。
+4. **网址**：`/title/*` 按 `lib/data/d1/title-route.ts` 解析：快照路由（2026-10-08 在 Google 有展示的 12,173 个网址）→ 片段表 → 编号 → 片名；规范网址以 D1 `slugs` 表的 canonical 为准。改动网址规则后必须运行 `npx tsx scripts/d1/test-title-route.ts` 对照快照（同一部片 ≥ 99.9%，0 错片）。
+5. **部署**：代码改动在本机执行 `npm run deploy`（OpenNext 构建 → `scripts/drop-build-prerenders.mjs` → 部署）。数据更新不需要部署。
+6. **双轨隔离**：午夜特区 iKanX 已是独立项目（私有仓库 ikanx，Worker `ikanx`），主站不再有 `/premium`、`/api/premium`、`/api/proxy`；第 1 条轨道 B 的内容只适用于 ikanx 项目。会员系统（账号、VIP、签到、邀请、Supabase、Turnstile）已删除。
+
+---
+
 ## 1. 核心架构：iKanPP 与 iKanX 双轨绝对隔离 (Dual-Track Streaming)
 
 本项目严格划分为两条业务与网络架构截然不同的轨道，**绝不可混为一谈**：
@@ -86,7 +99,7 @@
 
 ### 3. 全自动闭环巡检铁律
 - **执行频次**：由 `.github/workflows/sync-iyf-channels.yml` **每小时第 23 分全自动巡检与极速同步（`23 * * * *`；避开 GitHub 整点高峰，整点触发常被推迟或丢弃）**，精准捕捉电视剧、热门新番、王牌综艺与院线新片的连载集数角标（如 `[1]`、`[2]`、`[5]`），确保高频更新剧目在 1 小时内全自动感知上线。
-- **自动部署**：数据一旦有变动，机器人自动提交预烘焙数据后，**必须自动触发 Cloudflare Pages 编译部署（`gh workflow run deploy.yml`）**，形成无人值守的 100% 全自动上线闭环。任何人都不可禁用或降级此自动化链条。
+- **自动部署**：（2026-10-08 起由入库 Worker 取代，见第 0 条：数据直接写 D1，页面读 D1，不再需要提交与部署。）
 
 ---
 

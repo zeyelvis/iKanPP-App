@@ -1,0 +1,31 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // iKanPP 主站（重构阶段 3）：OpenNext + Workers。2026-10-08 起用区域路由接管 ikanpp.com 与 www.ikanpp.com
+  // （DNS 仍指向原 Pages 项目，路由在它前面接管全部请求，与 ikanx 相同）。回退：删掉 routes 重新部署，流量回到 Pages。
+  "name": "ikanpp-web",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "ikanpp.com/*", "zone_name": "ikanpp.com" },
+    { "pattern": "www.ikanpp.com/*", "zone_name": "ikanpp.com" }
+  ],
+  "observability": { "enabled": true },
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "ikanpp-web" }],
+  "kv_namespaces": [{ "binding": "KVIDEO_KV", "id": "42311924427747deaf00981d99d58998" }],
+  "d1_databases": [{ "binding": "DB", "database_name": "ikanpp-db", "database_id": "fe23840b-7279-4e77-ba1e-2318d8c1972a" }],
+  "r2_buckets": [
+    { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "ikanpp-next-cache" },
+    // 受限地区的海报镜像（img.ikanpp.com）。
+    { "binding": "IMAGES", "bucket_name": "ikanpp-images" }
+  ],
+  "durable_objects": { "bindings": [{ "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DOQueueHandler"] }],
+  "analytics_engine_datasets": [
+    { "binding": "PLAYBACK", "dataset": "ikanpp_playback" },
+    { "binding": "PAGESPEED", "dataset": "ikanpp_pagespeed" }
+  ]
+  // 密钥（wrangler secret put）：TMDB_API_KEY
+}

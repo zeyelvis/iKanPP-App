@@ -3,7 +3,7 @@
 import { Suspense } from 'react';
 import { CategoryHub } from '@/components/category/CategoryHub';
 import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { useHomeData } from '@/components/data/PageDataProvider';
 
 const SHELVES = [
   { id: 'm_new', title: '院线热映 & 最新上线', icon: '✨', badge: 'NEW', tag: '最新' },
@@ -19,6 +19,7 @@ const SHELVES = [
 ];
 
 export default function MovieClient() {
+  const home = useHomeData('movie');
   return (
     <Suspense fallback={<CategoryHubSkeleton channelKey="movie" categoryTitle="电影大厅" activeNav="movie" />}>
       <CategoryHub
@@ -28,8 +29,8 @@ export default function MovieClient() {
         activeNav="movie"
         shelves={SHELVES}
         defaultTag="热门"
-        heroItems={PREBAKED_HOME_DATA.movie.hero}
-        trendingNav={PREBAKED_HOME_DATA.movie.trendingNav}
+        heroItems={home.hero}
+        trendingNav={home.trendingNav}
       />
     </Suspense>
   );

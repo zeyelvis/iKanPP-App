@@ -1,6 +1,6 @@
+import { cfEnv } from '@/lib/server/cf-env';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const runtime = 'edge';
 
 /**
  * 统一埋点上报中枢路由 (Beacon Hub API)
@@ -84,6 +84,7 @@ export async function POST(
       const durationMs = typeof ms === 'number' && isFinite(ms) && ms >= 0 ? Math.min(60000, ms) : 0;
 
       const analytics =
+        (cfEnv() as AnalyticsEnv | null)?.PLAYBACK ||
         (process.env as unknown as AnalyticsEnv).PLAYBACK ||
         (globalThis as unknown as AnalyticsEnv).PLAYBACK ||
         (request as unknown as { env?: AnalyticsEnv }).env?.PLAYBACK;
@@ -95,7 +96,7 @@ export async function POST(
         });
       } else if (!hasWarnedMissingPlaybackBinding) {
         hasWarnedMissingPlaybackBinding = true;
-        console.warn('[Beacon Play] Workers Analytics Engine PLAYBACK 绑定未生效，请在 Cloudflare Pages 控制台设置中添加绑定。');
+        console.warn('[Beacon Play] Workers Analytics Engine PLAYBACK 绑定未生效，请在 wrangler.jsonc 中添加绑定。');
       }
 
       return new NextResponse(null, { status: 204 });
@@ -125,6 +126,7 @@ export async function POST(
       const validLcp = hasLcp === 1 ? Math.min(60000, Math.max(0, Math.round(lcp!))) : 0;
 
       const analytics =
+        (cfEnv() as AnalyticsEnv | null)?.PAGESPEED ||
         (process.env as unknown as AnalyticsEnv).PAGESPEED ||
         (globalThis as unknown as AnalyticsEnv).PAGESPEED ||
         (request as unknown as { env?: AnalyticsEnv }).env?.PAGESPEED;
@@ -136,7 +138,7 @@ export async function POST(
         });
       } else if (!hasWarnedMissingPagespeedBinding) {
         hasWarnedMissingPagespeedBinding = true;
-        console.warn('[Beacon Page] Workers Analytics Engine PAGESPEED 绑定未生效，请在 Cloudflare Pages 控制台设置中添加绑定。');
+        console.warn('[Beacon Page] Workers Analytics Engine PAGESPEED 绑定未生效，请在 wrangler.jsonc 中添加绑定。');
       }
 
       return new NextResponse(null, { status: 204 });

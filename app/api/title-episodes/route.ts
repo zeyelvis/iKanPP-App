@@ -3,7 +3,6 @@ import { parseSeasonFromTitle, generateSeasonSearchVariants, matchesTargetSeason
 import { safeParseResponse } from '@/lib/utils/safe-json';
 import { cleanEpisodeName } from '@/lib/utils/episode-resolver';
 
-export const runtime = 'edge';
 
 // 选用响应速度最快、更新最及时的骨干线路进行秒级探测（巨量Anycast纯净全网首选，光速全球高可用第二首选，暴风国内第三首选）
 const PROBE_SOURCES = [

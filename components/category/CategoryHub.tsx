@@ -10,10 +10,11 @@ import { ContentRail, RailMovie } from '@/components/home/ContentRail';
 import { MovieGrid } from '@/components/home/MovieGrid';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
-import { getPrebakedCategoryShelves, PREBAKED_CATEGORY_ITEMS } from '@/lib/data/category-prebaked';
+import { getPrebakedCategoryShelves } from '@/lib/data/category-shelves';
+import { useCategoryItems, useLatestTitles } from '@/components/data/PageDataProvider';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 import { HeroSlideshow } from '@/components/home/TmdbSlideshow';
-import type { PrebakedSubject, TrendingNavItem } from '@/lib/data/home-prebaked';
+import type { PrebakedSubject, TrendingNavItem } from '@/lib/types/prebaked';
 import { UniversalFilterMatrix, FilterParams } from '@/components/category/UniversalFilterMatrix';
 
 // 🚀 八层极速秒开架构：次级侧边栏组件按需加载
@@ -90,6 +91,8 @@ export function CategoryHub({
   heroItems,
   trendingNav,
 }: CategoryHubProps) {
+  const categoryItems = useCategoryItems();
+  const latestTitles = useLatestTitles();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -148,8 +151,8 @@ function isSameList(a: any[], b: any[]): boolean {
 
   // 货架数据状态（SWR: 优先从本地/预烘焙数据集瞬间 0ms 展示，永不阻塞白屏）
   const initialPrebaked = useMemo(() => {
-    return getPrebakedCategoryShelves(activeNav, doubanType, shelves);
-  }, [activeNav, doubanType, shelves]);
+    return getPrebakedCategoryShelves(categoryItems, latestTitles, activeNav, doubanType, shelves);
+  }, [categoryItems, latestTitles, activeNav, doubanType, shelves]);
 
   const [shelfData, setShelfData] = useState<Record<string, RailMovie[]>>(() => {
     if (!usePrebakedOnly && typeof window !== 'undefined') {
@@ -316,7 +319,7 @@ function isSameList(a: any[], b: any[]): boolean {
 
         if (usePrebakedOnly) {
           // 纯预烘焙频道：直接使用本地精选池进行内存过滤与分页呈现
-          const pool = PREBAKED_CATEGORY_ITEMS[activeNav] || PREBAKED_CATEGORY_ITEMS.short || [];
+          const pool = categoryItems[activeNav] || categoryItems.short || [];
           let filtered = [...pool];
           if (activeFilters.genre) {
             filtered = filtered.filter((item) =>

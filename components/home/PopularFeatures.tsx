@@ -8,7 +8,7 @@ import { Top10Rail } from './Top10Rail';
 import LatestTitlesRail from './LatestTitlesRail';
 import { ContentRail } from './ContentRail';
 import { ContinueWatchingRail } from './ContinueWatchingRail';
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { useAllHomeData } from '@/components/data/PageDataProvider';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 // 🚀 八层极速秒开架构：非首屏重量级组件按需动态加载，首屏 JS 包体积直降 30%
@@ -131,6 +131,7 @@ function DeferredShelfPlaceholder() {
 }
 
 export function PopularFeatures({ onSearch }: PopularFeaturesProps) {
+  const PREBAKED_HOME_DATA = useAllHomeData();
   const router = useRouter();
 
   // 🚀 TBT 极速攻坚：首屏水合优先执行 Hero 与 Top10，屏下货架在主线程空闲后平滑挂载，释放 500ms 阻塞

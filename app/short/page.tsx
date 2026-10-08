@@ -2,7 +2,8 @@ import { Metadata } from 'next';
 import ShortClient from './ShortClient';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { JsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { PageDataProvider } from '@/components/data/PageDataProvider';
+import { loadPageData } from '@/lib/data/d1/page-data';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export const metadata: Metadata = {
@@ -19,8 +20,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ShortPage() {
-  const topShort = (PREBAKED_HOME_DATA.short?.top10 || []).slice(0, 10).map((a, idx) => ({
+// 首屏数据来自 D1（入库 Worker 每小时更新）；页面缓存 5 分钟。
+export const revalidate = 300;
+
+export default async function ShortPage() {
+  const data = await loadPageData({ home: ['short'], latest: ['all'], category: ['short'] });
+  const topShort = (data.home.short?.top10 ?? []).slice(0, 10).map((a, idx) => ({
     position: idx + 1,
     name: a.title,
     url: `https://www.ikanpp.com${getTitleCanonicalHref(a)}`,
@@ -33,12 +38,12 @@ export default function ShortPage() {
   ]);
 
   return (
-    <>
+    <PageDataProvider data={data}>
       <JsonLd data={breadcrumbs} />
       <ItemListJsonLd name="热门精品短剧精选" items={topShort} />
       <h1 className="sr-only">微短剧专区 - 2026 爆款爽剧全集免费在线看 | iKanPP 爱看片片</h1>
       <ShortClient />
-    </>
+    </PageDataProvider>
   );
 
 }

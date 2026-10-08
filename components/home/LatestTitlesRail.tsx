@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { Icons } from '@/components/ui/Icon';
 import { getOptimizedImageUrl, getFallbackProxiedImageUrl } from '@/lib/utils/image-utils';
 import { generateSlug, isCleanChineseTitle, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
-import { RecentTitleItem } from '@/lib/services/entity-kv';
-import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
+import type { RecentTitleItem } from '@/lib/services/entity-kv';
+import { useLatestTitles } from '@/components/data/PageDataProvider';
 
 interface LatestTitlesRailProps {
   type?: 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | string;
@@ -191,6 +191,7 @@ export default function LatestTitlesRail({
   subtitle = '全网源站自动巡检增量入库',
   className = '',
 }: LatestTitlesRailProps) {
+  const PREBAKED_LATEST_TITLES = useLatestTitles();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);

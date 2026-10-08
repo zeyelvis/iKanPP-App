@@ -3,15 +3,14 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Star, Film, User } from 'lucide-react';
-import { getEntitiesByActor, isPersonEnriched, markPersonEnriched } from '@/lib/services/entity-kv';
-import { searchAndEnrichPersonCredits } from '@/lib/services/entity-enrichment';
+import { getDb } from '@/lib/data/d1/db';
+import { titlesByPerson } from '@/lib/data/d1/related';
 import { getPersonAvatar } from '@/lib/services/person-avatar';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { isInvalidDramaOrMovie, generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { Navbar } from '@/components/layout/Navbar';
 
-export const runtime = 'edge';
 export const revalidate = 86400;
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
@@ -32,7 +31,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   // 1. 获取作品列表，评估内容薄厚门禁
-  const entities = await getEntitiesByActor(actorName, 12);
+  const db = getDb();
+  const entities = db ? await titlesByPerson(db, actorName, 'actor', 12) : [];
   const cleanEntities = entities.filter(e => !isInvalidDramaOrMovie(e));
 
   // 🌟 规范第 7 节与第 18 节：薄内容门禁（Thin Content Guard）
@@ -80,42 +80,11 @@ export default async function ActorPage({ params }: Props) {
     notFound();
   }
 
-  let entities = await getEntitiesByActor(actorName, 48);
-
-  // 1. 严格剔除脱口秀、真人秀等非影视正片
-  const cleanEntities = entities.filter(e => !isInvalidDramaOrMovie(e));
-
-  // 2. 检查是否已对该影人进行过全量代表作深度扩充
-  const alreadyEnriched = await isPersonEnriched('actor', actorName);
-
-  // 3. 高质量 TMDB 代表作自愈：已有作品则 0ms 秒开渲染，后台异步扩充；仅无作品时前台兜底
-  if (cleanEntities.length > 0) {
-    entities = cleanEntities;
-    if (!alreadyEnriched && cleanEntities.length < 8) {
-      (async () => {
-        try {
-          const enriched = await searchAndEnrichPersonCredits(actorName, 'actor', 36);
-          if (enriched.length === 0) {
-            await markPersonEnriched('actor', actorName);
-          }
-        } catch {}
-      })();
-    }
-  } else if (!alreadyEnriched) {
-    try {
-      const enriched = await searchAndEnrichPersonCredits(actorName, 'actor', 36);
-      if (enriched.length > 0) {
-        entities = enriched;
-      } else {
-        entities = cleanEntities;
-        await markPersonEnriched('actor', actorName);
-      }
-    } catch {
-      entities = cleanEntities;
-    }
-  } else {
-    entities = cleanEntities;
-  }
+  // 片库里这位影人参与的作品（D1 演职关系，按热度取前 48 部）。页面访问时不再去 TMDB 补建作品。
+  const db = getDb();
+  const all = db ? await titlesByPerson(db, actorName, 'actor', 48) : [];
+  // 剔除脱口秀、真人秀等非影视正片
+  const entities = all.filter(e => !isInvalidDramaOrMovie(e));
 
   // 3. 权威口碑评分排序（让真正的传世高分神作稳居前排）
   entities.sort((a, b) => {

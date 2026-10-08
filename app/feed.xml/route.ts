@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import { listRecentEntities } from '@/lib/services/entity-kv';
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { loadHomeDocs } from '@/lib/data/d1/home-docs';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
-export const runtime = 'edge';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 
@@ -17,17 +15,18 @@ function escapeXml(str: string): string {
 }
 
 export async function GET() {
+  const { home: PREBAKED_HOME_DATA } = await loadHomeDocs();
   const now = new Date();
   const currentBuildDate = now.toUTCString();
 
   // 1. 优先拉取全自动飞轮增量入库的最新实体（最新 30 部）
-  const recentEntities = await listRecentEntities(30);
+  const recentEntities = ((await loadHomeDocs()).latest.all ?? []).slice(0, 30);
 
   const dynamicItems = recentEntities.map((item) => {
     const itemDate = item.createdAt ? new Date(item.createdAt) : now;
     const typeLabel = item.type === 'movie' ? '院线电影' : '热播剧集';
     const detailUrl = `${BASE_URL}${getTitleCanonicalHref(item)}`;
-    const desc = `iKanPP 今日增量收录《${item.title}》(${item.year || '2026'})，评分 ${item.rate || '8.8'}，类型：${(item.genres || []).join('/') || typeLabel}。支持海外华人免翻墙 4K/1080P 超清秒播。`;
+    const desc = `iKanPP 今日增量收录《${item.title}》${item.year ? `(${item.year})` : ''}${item.rate ? `，评分 ${item.rate}` : ''}，类型：${(item.genres || []).join('/') || typeLabel}。支持海外华人免翻墙在线播放。`;
 
     return {
       title: item.title,

@@ -8,7 +8,6 @@ import { settingsStore } from '@/lib/store/settings-store';
 import { Video } from '@/lib/types';
 import { extractCleanBaseTitle } from '@/lib/utils/search';
 import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
-import { useUserStore } from '@/lib/store/user-store';
 
 // 黄金健康骨干源梯队优先（巨量1 > 光速2 > 暴风3 > 无尽4 > 最大5 > 极速6 > 新浪7 > 魔都8 > 360 9）
 const SOURCE_PRIORITY_ORDER: Record<string, number> = {
@@ -61,7 +60,6 @@ export const VideoGrid = memo(function VideoGrid({
 }: VideoGridProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const user = useUserStore(state => state.user);
 
   const [displayMode, setDisplayMode] = useState<'normal' | 'grouped' | 'flat'>(() => {
     return settingsStore.getSettings().searchDisplayMode;
@@ -81,7 +79,6 @@ export const VideoGrid = memo(function VideoGrid({
     if (typeof window !== 'undefined') {
       const isMobile = window.innerWidth < 768;
       const isTv = (window as any).isTvPlatform ||
-        (user && (user as any).isTvDevice) ||
         (typeof navigator !== 'undefined' && /smart-tv|android tv|googletv|appletv/i.test(navigator.userAgent));
 
       if (isMobile) {

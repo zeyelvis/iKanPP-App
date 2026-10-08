@@ -14,7 +14,7 @@ import {
   getNextEntitySeq,
 } from '@/lib/services/entity-kv';
 import { saveTopic } from '@/lib/services/topic-service';
-import { calculateSeoScore } from '@/app/api/seo/entity-pipeline/route';
+import { calculateSeoScore } from '@/lib/utils/seo-score';
 import { batchPublishGoogleIndexing, publishGoogleIndexingUrl } from '@/lib/services/google-indexing';
 import highPotentialData from '@/lib/data/seo-high-potential.json';
 import keywordMatrixData from '@/lib/data/seo-keyword-matrix.json';
@@ -38,7 +38,6 @@ import {
   runShadowLineAutoSniff,
 } from '@/lib/services/shadowline-service';
 
-export const runtime = 'edge';
 
 const GITHUB_REPO = process.env.GITHUB_REPOSITORY || 'zeyelvis/iKanPP-App';
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_PAT || '';

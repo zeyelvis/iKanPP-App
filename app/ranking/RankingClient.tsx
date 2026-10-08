@@ -8,7 +8,7 @@ import { Icons } from '@/components/ui/Icon';
 import { FavoritesSidebar } from '@/components/favorites/FavoritesSidebar';
 import { WatchHistorySidebar } from '@/components/history/WatchHistorySidebar';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
-import { PREBAKED_CATEGORY_ITEMS } from '@/lib/data/category-prebaked';
+import { useCategoryItems } from '@/components/data/PageDataProvider';
 
 interface RankingItem {
   id: string;
@@ -67,6 +67,7 @@ function isSameList(a: any[], b: any[]): boolean {
 
 export default function RankingClient() {
   const router = useRouter();
+  const PREBAKED_CATEGORY_ITEMS = useCategoryItems();
   const [activeTab, setActiveTab] = useState(RANK_CATEGORIES[0]);
   
   const [items, setItems] = useState<RankingItem[]>(() => {

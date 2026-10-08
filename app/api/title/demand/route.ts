@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { recordTitleDemand, getTitleDemandLeaderboard } from '@/lib/services/entity-kv';
 
-export const runtime = 'edge';
 
 /**
  * 用户求片工单处理端点

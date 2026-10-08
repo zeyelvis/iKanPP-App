@@ -584,3 +584,12 @@ IkanPPPlayerContainer / IkanXPlayerContainer (双轨容器，负责线路调度�
 
 
 
+
+---
+
+## 2026-10-08 架构切换（主站迁到 OpenNext + Workers，数据迁到 D1）
+
+- **主站**：www.ikanpp.com 由 Worker `ikanpp-web` 提供（Worker 区域路由 `ikanpp.com/*`、`www.ikanpp.com/*` 接管；DNS 仍指向原 Pages 项目，删掉路由即回退）。播放链路不变：轨道 A 浏览器直连第三方源站 CDN，不经代理、不重写切片。
+- **轨道 B 已拆出**：午夜特区为独立项目 ikanx（Worker `ikanx`，ikanx.com），主站不再有 `/premium`、`/api/premium`、`/api/proxy`，主站收到 `/premium` 或 `premium=1` 的请求一律 301 到 ikanx.com。
+- **作品与列表数据**：D1 `ikanpp-db` 为唯一权威源，入库 Worker `ikanpp-ingest` 用 Cloudflare 定时器更新；作品页网址解析、规范网址与快照路由见 `lib/data/d1/title-route.ts`。
+- **专线**：`/api/shadowline/resolve`、`/api/ikanpp-line` 仍转发到 `ikanpp-core-worker`，切片仍由浏览器直连。

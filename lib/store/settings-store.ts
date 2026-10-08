@@ -391,23 +391,5 @@ export const settingsStore = {
         });
       }
     }
-  },
-
-  async syncGlobalSources(): Promise<void> {
-    try {
-      const { getGlobalSources, getGlobalPremiumSources } = await import('@/lib/supabase/global-config');
-      const sources = await getGlobalSources();
-      const premiumSources = await getGlobalPremiumSources();
-      if (sources && Array.isArray(sources) && sources.length > 0) {
-        const current = this.getSettings();
-        this.saveSettings({
-          ...current,
-          sources,
-          ...(premiumSources && Array.isArray(premiumSources) && premiumSources.length > 0 ? { premiumSources } : {})
-        });
-      }
-    } catch (e) {
-      console.warn('syncGlobalSources failed:', e);
-    }
   }
 };

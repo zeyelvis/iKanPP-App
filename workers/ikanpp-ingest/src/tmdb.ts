@@ -67,3 +67,36 @@ export async function tmdbSearchStrict(key: string, query: string, type: 'movie'
   }
   return null;
 }
+
+export interface TmdbDetails extends TmdbBrief {
+  originalTitle: string;
+  genres: string[];
+  directors: string[];
+  actors: string[];
+  runtime?: number;
+  seasons?: number;
+  episodes?: number;
+  region: string;
+}
+
+/** 建档用的完整资料：题材、导演、主演前 5、片长或季集数、地区。 */
+export async function tmdbDetails(key: string, id: string, type: 'movie' | 'tv'): Promise<TmdbDetails | null> {
+  const d = await get(key, `/${type}/${id}?append_to_response=credits`);
+  if (!d) return null;
+  const crew: Array<{ job?: string; name?: string }> = d.credits?.crew ?? [];
+  const cast: Array<{ name?: string }> = d.credits?.cast ?? [];
+  const directors = type === 'movie'
+    ? crew.filter((c) => c.job === 'Director').map((c) => c.name!).filter(Boolean)
+    : (d.created_by ?? []).map((c: { name?: string }) => c.name).filter(Boolean);
+  return {
+    ...brief(d, type),
+    originalTitle: d.original_title || d.original_name || '',
+    genres: (d.genres ?? []).map((g: { name?: string }) => g.name).filter(Boolean),
+    directors: [...new Set<string>(directors)].slice(0, 3),
+    actors: [...new Set<string>(cast.map((c) => c.name!).filter(Boolean))].slice(0, 5),
+    runtime: d.runtime || d.episode_run_time?.[0] || undefined,
+    seasons: d.number_of_seasons || undefined,
+    episodes: d.number_of_episodes || undefined,
+    region: (d.production_countries?.[0]?.name || d.origin_country?.[0] || '') as string,
+  };
+}

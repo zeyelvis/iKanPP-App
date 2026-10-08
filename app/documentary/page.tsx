@@ -2,7 +2,8 @@ import { Metadata } from 'next';
 import DocumentaryClient from './DocumentaryClient';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { JsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { PageDataProvider } from '@/components/data/PageDataProvider';
+import { loadPageData } from '@/lib/data/d1/page-data';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export const metadata: Metadata = {
@@ -19,8 +20,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function DocumentaryPage() {
-  const topDocs = (PREBAKED_HOME_DATA.documentary?.top10 || PREBAKED_HOME_DATA.documentary?.hero || []).slice(0, 10).map((m, idx) => ({
+// 首屏数据来自 D1（入库 Worker 每小时更新）；页面缓存 5 分钟。
+export const revalidate = 300;
+
+export default async function DocumentaryPage() {
+  const data = await loadPageData({ home: ['documentary'], latest: ['documentary'], category: ['documentary'] });
+  const topDocs = ((data.home.documentary?.top10 ?? []) || (data.home.documentary?.hero ?? []) || []).slice(0, 10).map((m, idx) => ({
     position: idx + 1,
     name: m.title,
     url: `https://www.ikanpp.com${getTitleCanonicalHref(m)}`,
@@ -33,12 +38,12 @@ export default function DocumentaryPage() {
   ]);
 
   return (
-    <>
+    <PageDataProvider data={data}>
       <JsonLd data={breadcrumbs} />
       <ItemListJsonLd name="高分经典纪录片精选" items={topDocs} />
       <h1 className="sr-only">纪录片大厅 - 豆瓣高分神作 & BBC/国家地理巨制在线观看 | iKanPP 爱看片片</h1>
       <DocumentaryClient />
-    </>
+    </PageDataProvider>
   );
 
 }

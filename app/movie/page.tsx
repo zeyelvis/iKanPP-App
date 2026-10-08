@@ -2,7 +2,8 @@ import { Metadata } from 'next';
 import MovieClient from './MovieClient';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { JsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { PageDataProvider } from '@/components/data/PageDataProvider';
+import { loadPageData } from '@/lib/data/d1/page-data';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export const metadata: Metadata = {
@@ -19,8 +20,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function MoviePage() {
-  const topMovies = PREBAKED_HOME_DATA.movie.top10.slice(0, 10).map((m, idx) => ({
+// 首屏数据来自 D1（入库 Worker 每小时更新）；页面缓存 5 分钟。
+export const revalidate = 300;
+
+export default async function MoviePage() {
+  const data = await loadPageData({ home: ['movie'], latest: ['movie'], category: ['movie'] });
+  const topMovies = (data.home.movie?.top10 ?? []).slice(0, 10).map((m, idx) => ({
     position: idx + 1,
     name: m.title,
     url: `https://www.ikanpp.com${getTitleCanonicalHref(m)}`,
@@ -33,12 +38,12 @@ export default function MoviePage() {
   ]);
 
   return (
-    <>
+    <PageDataProvider data={data}>
       <JsonLd data={breadcrumbs} />
       <ItemListJsonLd name="热门电影精选" items={topMovies} />
       <h1 className="sr-only">电影大厅 - 4K 院线大片 & 豆瓣高分神作在线观看 | iKanPP 爱看片片</h1>
       <MovieClient />
-    </>
+    </PageDataProvider>
   );
 
 }

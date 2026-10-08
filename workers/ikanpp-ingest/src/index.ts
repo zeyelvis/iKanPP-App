@@ -1,8 +1,8 @@
 /**
  * iKanPP 入库 Worker（重构阶段 2）：用 Cloudflare 定时器按时更新 D1 ikanpp-db。
  * - 每小时第 23 分：各频道轮播与热播标签（jobs/hero.ts）、最新上线（jobs/latest.ts）、短剧首屏（jobs/shorts.ts）。
- * - 每小时第 43 分：爱壹帆两个时间排序（jobs/rankings.ts）；北京时间 4 点那次连人气、评分排序一起取。
- * 手动触发：POST /run?job=<名字>（hero、latest、shorts、rankings、rankings-daily），带 Authorization: Bearer <INGEST_SECRET>。
+ * - 每小时第 43 分：爱壹帆两个时间排序（jobs/rankings.ts）；北京时间 4 点那次连人气、评分排序一起取，并重算站点地图（jobs/sitemaps.ts）。
+ * 手动触发：POST /run?job=<名字>（hero、latest、shorts、rankings、rankings-daily、sitemaps），带 Authorization: Bearer <INGEST_SECRET>。
  * 每次运行的结果写进 sync_state（key = job:<名字>）。
  */
 import type { Env } from './env';
@@ -10,18 +10,20 @@ import { syncHero } from './jobs/hero';
 import { syncLatest } from './jobs/latest';
 import { syncRankings } from './jobs/rankings';
 import { syncShorts } from './jobs/shorts';
+import { syncSitemaps } from './jobs/sitemaps';
 
 const JOBS: Record<string, (env: Env) => Promise<string[]>> = {
   hero: syncHero,
   latest: syncLatest,
   shorts: syncShorts,
+  sitemaps: syncSitemaps,
   rankings: (env) => syncRankings(env),
   'rankings-daily': (env) => syncRankings(env, { daily: true }),
 };
 /** 同一个定时器下的任务按顺序执行。 */
 function scheduled(cron: string, at: Date): string[] {
   if (cron === '23 * * * *') return ['hero', 'latest', 'shorts'];
-  if (cron === '43 * * * *') return [at.getUTCHours() === 20 ? 'rankings-daily' : 'rankings'];
+  if (cron === '43 * * * *') return at.getUTCHours() === 20 ? ['rankings-daily', 'sitemaps'] : ['rankings'];
   return [];
 }
 

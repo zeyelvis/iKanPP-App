@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { GENRE_MAP } from '@/lib/data/genres';
-import { getEntitiesByGenre } from '@/lib/services/entity-kv';
+import { getDb } from '@/lib/data/d1/db';
 
-export const runtime = 'edge';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 const FALLBACK_LASTMOD = '2026-09-01';
@@ -19,20 +18,21 @@ function escapeXml(str: string): string {
 export async function GET() {
   const genres = Object.values(GENRE_MAP);
 
-  // 依循规范 21.4 节：检查题材收录门禁（作品数 >= 1），并计算真实 material lastmod
-  const genreResults = await Promise.all(
-    genres.map(async (genre) => {
-      const works = await getEntitiesByGenre(genre.name, 1);
-      if (works.length === 0) return null;
-
-      // 提取实质性变更日期
-      const materialDate = works[0]?.updatedAt?.split('T')[0] || works[0]?.createdAt?.split('T')[0] || FALLBACK_LASTMOD;
-      return {
-        slug: genre.slug,
-        lastmod: materialDate,
-      };
-    })
-  );
+  // 题材收录门槛：至少有一部 live 作品；lastmod 取该题材下最近更新的作品日期（D1 title_genres）。
+  const db = getDb();
+  const names = genres.map((g) => g.name);
+  const latest = new Map<string, string>();
+  if (db && names.length) {
+    const rows = await db
+      .prepare(
+        `SELECT g.genre, max(substr(t.updated_at, 1, 10)) AS lastmod FROM title_genres g JOIN titles t ON t.id = g.title_id
+         WHERE t.state = 'live' AND g.genre IN (${names.map(() => '?').join(',')}) GROUP BY g.genre`,
+      )
+      .bind(...names)
+      .all<{ genre: string; lastmod: string }>();
+    for (const r of rows.results) latest.set(r.genre, r.lastmod);
+  }
+  const genreResults = genres.map((genre) => (latest.has(genre.name) ? { slug: genre.slug, lastmod: latest.get(genre.name) || FALLBACK_LASTMOD } : null));
 
   const validGenres = genreResults.filter((g): g is { slug: string; lastmod: string } => Boolean(g));
   const urlElements: string[] = [];

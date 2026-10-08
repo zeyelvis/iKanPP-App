@@ -3,10 +3,12 @@
  * 1. 快照路由 legacy_routes：2026-10-08 在 Google 有展示的网址，按导入时认定的结果返回（同一部片）；
  * 2. 网址片段表 slugs：合并的编号走到规范编号；不是规范片段时 308 到规范网址；
  * 3. 片段带「ik + 6 位」编号且作品 live：308 到规范网址；
- * 4. 编号已下架（removed）或片段表里没有：用片段里的片名在 live 作品里找唯一同名的，308 过去；
+ * 4. 编号已下架（removed）或片段表里没有：用片段里的片名在 live 作品里找同名的（多部时取资料最好的），308 过去；
+ *    片名带季号（时光代理人第3季）找不到时，去掉季号再找（页面层在季号网址原地显示该季）；
  * 5. 都找不到：404。编号永不复用。
  */
 import { decodeMangledHexSlug, normalizeTitle } from '@/lib/data/entities/entity-utils';
+import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
 
 /** D1Database 里用到的最小接口，便于在本地用 SQLite 文件测试。 */
 export interface D1Like {
@@ -88,11 +90,54 @@ async function render(db: D1Like, row: TitleRow, path: string): Promise<TitleRes
   return canonicalPath === path ? { type: 'title', row, canonicalPath } : { type: 'redirect', location: canonicalPath };
 }
 
+type FastRow = TitleRow & {
+  l_status: number | null;
+  l_target: string | null;
+  s_title_id: number | null;
+  s_canonical: number | null;
+  s_source: string | null;
+  canonical_slug: string | null;
+};
+
+/**
+ * 常见情况一次查询解决（快照路由、片段表、作品与规范片段一起取）：作品页的大多数请求是规范网址或快照网址，
+ * 原来要依次查 4 次 D1，跨地区时每次都是一个来回。查不清楚的情况交给下面的完整流程。
+ */
+async function fastResolve(db: D1Like, seg: string, path: string): Promise<TitleResolution | null> {
+  const row = await db
+    .prepare(
+      `SELECT l.status AS l_status, l.target_path AS l_target, s.title_id AS s_title_id, s.canonical AS s_canonical, s.source AS s_source,
+              t.*, c.slug AS canonical_slug
+       FROM (SELECT ? AS seg) q
+       LEFT JOIN legacy_routes l ON l.path = ?
+       LEFT JOIN slugs s ON s.slug = q.seg
+       LEFT JOIN titles t ON t.id = s.title_id
+       LEFT JOIN slugs c ON c.title_id = t.id AND c.canonical = 1`,
+    )
+    .bind(seg, path)
+    .first<FastRow>();
+  if (!row) return null;
+  if (row.l_status != null) {
+    if (row.l_target && row.l_target !== path) return { type: 'redirect', location: row.l_target };
+    if (row.l_status === 404 || row.l_status === 410) return { type: 'not-found' };
+  }
+  if (row.s_title_id == null || row.state !== 'live' || !row.canonical_slug) return null;
+  const trusted = row.s_canonical === 1 || row.s_source?.startsWith('snapshot-');
+  if (!trusted && !segmentFitsName(seg, row.name)) return null;
+  const canonicalPath = `/title/${row.canonical_slug}`;
+  if (canonicalPath !== path) return { type: 'redirect', location: canonicalPath };
+  const { l_status, l_target, s_title_id, s_canonical, s_source, canonical_slug, ...title } = row;
+  void l_status; void l_target; void s_title_id; void s_canonical; void s_source; void canonical_slug;
+  return { type: 'title', row: title as TitleRow, canonicalPath };
+}
+
 /** 解析 /title/ 之后的片段（原样传入，可以是百分号编码）。 */
 export async function resolveTitleSegment(db: D1Like, rawSegment: string): Promise<TitleResolution> {
   const seg = safeDecode(rawSegment).trim();
   if (!seg) return { type: 'not-found' };
   const path = `/title/${seg}`;
+  const fast = await fastResolve(db, seg, path);
+  if (fast) return fast;
 
   // 1. 快照路由
   const legacy = await db
@@ -123,14 +168,21 @@ export async function resolveTitleSegment(db: D1Like, rawSegment: string): Promi
     if (row && segmentFitsName(seg, row.name)) return render(db, row, path);
   }
 
-  // 4. 按片名找唯一的 live 作品
-  const key = nameKeyOf(decodeMangledHexSlug(seg));
-  if (key && !/^[a-z0-9_]+$/.test(key)) {
-    const rows = await db
-      .prepare("SELECT id FROM titles WHERE state = 'live' AND name_key = ? LIMIT 2")
+  // 4. 按片名找唯一的 live 作品；带季号的去掉季号再找一次
+  // 旧站的临时编号网址（ik_radar_tv_20-厨娘、ik_pre_%e5%90%…-名侦探柯南）只看片名部分
+  const nameText = decodeMangledHexSlug(seg).replace(/^ik_[a-z]+_[^-]*(?:-[0-9a-f%]*)?-/i, '').replace(ID_PREFIX, '').replace(/-/g, ' ');
+  const season = parseSeasonFromTitle(nameText);
+  for (const text of season ? [nameText, season.baseTitle] : [nameText]) {
+    const key = normalizeTitle(text);
+    if (!key || /^[a-z0-9_]+$/.test(key)) continue;
+    // 同名多部（片库里同名同年的重复条目很多）取资料最好的一部：有 TMDB、热度高、编号小，与列表关联的规则相同。
+    const best = await db
+      .prepare(
+        "SELECT id FROM titles WHERE state = 'live' AND name_key = ? ORDER BY (tmdb_id IS NOT NULL) DESC, coalesce(popularity, hot, 0) DESC, id LIMIT 1",
+      )
       .bind(key)
-      .all<{ id: number }>();
-    if (rows.results.length === 1) return { type: 'redirect', location: await canonicalPathOf(db, rows.results[0].id) };
+      .first<{ id: number }>();
+    if (best) return { type: 'redirect', location: await canonicalPathOf(db, best.id) };
   }
 
   return { type: 'not-found' };
