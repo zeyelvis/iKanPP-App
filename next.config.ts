@@ -42,7 +42,7 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Sitemap 动态分卷与暗影专线跨项目 API Rewrite
+  // Sitemap 动态分卷；专线解析接口转发到 ikanpp-core-worker（看片片、夜貓追劇的播放线路实时调用 /api/shadowline/resolve）
   async rewrites() {
     return [
       {
@@ -60,10 +60,6 @@ const nextConfig: NextConfig = {
       {
         source: '/api/ikanpp-line/resolve',
         destination: 'https://ikanpp-core-worker.zeyelvis.workers.dev/api/ikanpp-line/resolve',
-      },
-      {
-        source: '/api/library/browse',
-        destination: 'https://ikanpp-core-worker.zeyelvis.workers.dev/api/library/browse',
       },
     ];
   },
