@@ -38,7 +38,7 @@ if (existsSync(outFile)) rmSync(outFile);
 // 导入期间关闭外键检查：合并的编号要指向规范编号，写入顺序无法保证；导入 D1 时按先 live 后 merged 的顺序。
 const db = new DatabaseSync(outFile, { enableForeignKeyConstraints: false });
 // 只建作品、网址、影人相关的表（documents、tmdb_matches 是入库 Worker 的，不在导入范围）。
-for (const m of ["0001_init.sql", "0004_title_name_key.sql", "0005_title_genres.sql", "0007_browse_indexes.sql"]) db.exec(readFileSync(join(ROOT, "db/d1", m), "utf8"));
+for (const m of ["0001_init.sql", "0004_title_name_key.sql", "0005_title_genres.sql", "0007_browse_indexes.sql", "0008_titles_merged_index.sql"]) db.exec(readFileSync(join(ROOT, "db/d1", m), "utf8"));
 db.exec("PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;");
 
 const ID = /^ik(\d{6})$/i;
@@ -281,20 +281,23 @@ function resolveLanding(b) {
   if (tempUrlName(b.url)) Object.assign(info, { name: tempUrlName(b.url), year: null });
   if (!info.name) return null;
   const ok = (t) => t && nameMatch(t.name, info.name) && (!info.year || !t.year || Math.abs(t.year - info.year) <= 1);
-  // 网址编号或片段表直接指到的作品：片名对得上就认，不卡年份（剧集按季上架，季的年份与整部剧不同）。
+  // 网址编号或片段表直接指到的作品：片名对得上、年份差不超过 1 就认；页面标题带季号的（庆余年 第二季）不卡年份，
+  // 季的年份与整部剧不同。不带季号的同名不同年（泰坦尼克号 1998 / 2012）不能认。
+  const seasonal = /第[一二三四五六七八九十\d]+季/.test(info.name);
+  const fits = (t) => t && nameMatch(t.name, info.name) && (seasonal || !info.year || !t.year || Math.abs(t.year - info.year) <= 1);
   const own = toId((seg.match(/^(ik\d{6})/i) ?? [])[1]);
   const viaId = own ? liveRow(own) : null;
-  if (viaId && nameMatch(viaId.name, info.name)) return viaId;
+  if (fits(viaId)) return viaId;
   const hit = bySlug.get(seg);
   const viaSlug = hit ? liveRow(hit.title_id) : null;
-  if (viaSlug && nameMatch(viaSlug.name, info.name)) return viaSlug;
+  if (fits(viaSlug)) return viaSlug;
   // 页面自己声明的 rel=canonical 指向的作品（季号页声明的是整部剧：野生的大魔王出现了第2季 → ik113578）。
   const declared = b.canonical && pathOf(b.canonical).startsWith("/title/") ? pathOf(b.canonical).slice("/title/".length) : null;
   if (declared && declared !== seg) {
     const declaredId = toId((declared.match(/^(ik\d{6})/i) ?? [])[1]);
     const declaredHit = declaredId ? null : bySlug.get(declared);
     const viaCanonical = declaredId ? liveRow(declaredId) : declaredHit ? liveRow(declaredHit.title_id) : null;
-    if (viaCanonical && nameMatch(viaCanonical.name, info.name)) return viaCanonical;
+    if (fits(viaCanonical)) return viaCanonical;
   }
   const cands = (byNorm.get(normName(info.name)) ?? []).filter(ok);
   cands.sort((a, b) => Number(b.kind === info.kind) - Number(a.kind === info.kind) || (b.popularity ?? 0) - (a.popularity ?? 0) || a.id - b.id);

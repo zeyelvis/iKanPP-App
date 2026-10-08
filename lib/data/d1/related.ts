@@ -6,9 +6,12 @@ import type { TitleEntity } from '@/lib/types/entity';
 import { entityCode, type D1Like, type TitleRow } from './title-route';
 import { rowToEntity } from './titles';
 
-/** 一次查出这些作品的规范片段，再转成 TitleEntity。 */
+/** 查询里已带 canonical_slug（见 CANONICAL）时直接用，否则一次查出这些作品的规范片段，再转成 TitleEntity。 */
 export async function toEntities(db: D1Like, rows: TitleRow[]): Promise<TitleEntity[]> {
   if (!rows.length) return [];
+  if (rows.every((r) => typeof r.canonical_slug === 'string')) {
+    return rows.map((row) => rowToEntity(row, String(row.canonical_slug)));
+  }
   const slugs = await db
     .prepare(`SELECT title_id, slug FROM slugs WHERE canonical = 1 AND title_id IN (${rows.map(() => '?').join(',')})`)
     .bind(...rows.map((r) => r.id))
@@ -17,12 +20,15 @@ export async function toEntities(db: D1Like, rows: TitleRow[]): Promise<TitleEnt
   return rows.map((row) => rowToEntity(row, canonical.get(row.id) ?? entityCode(row.id)));
 }
 
+/** 在同一条查询里带出规范片段，省一次来回。 */
+const CANONICAL = `(SELECT slug FROM slugs WHERE title_id = t.id AND canonical = 1) AS canonical_slug`;
+
 /** 某位导演或演员参与的 live 作品，热度从高到低。 */
 export async function titlesByPerson(db: D1Like, name: string, role: 'director' | 'actor', limit: number): Promise<TitleEntity[]> {
   if (!name.trim()) return [];
   const rows = await db
     .prepare(
-      `SELECT t.* FROM people p JOIN credits c ON c.person_id = p.id JOIN titles t ON t.id = c.title_id
+      `SELECT t.*, ${CANONICAL} FROM people p JOIN credits c ON c.person_id = p.id JOIN titles t ON t.id = c.title_id
        WHERE p.name = ? AND c.role = ? AND t.state = 'live'
        ORDER BY coalesce(t.popularity, t.hot, 0) DESC, t.id LIMIT ?`,
     )
@@ -36,7 +42,7 @@ export async function titlesByGenre(db: D1Like, genre: string, limit: number, ki
   if (!genre.trim()) return [];
   const rows = await db
     .prepare(
-      `SELECT t.* FROM title_genres g JOIN titles t ON t.id = g.title_id
+      `SELECT t.*, ${CANONICAL} FROM title_genres g JOIN titles t ON t.id = g.title_id
        WHERE g.genre = ? ${kind ? 'AND g.kind = ?' : ''} AND t.state = 'live'
        ORDER BY g.popularity DESC LIMIT ?`,
     )

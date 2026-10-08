@@ -61,7 +61,23 @@ if (RESET && !DRY) {
   if (process.env.IKANPP_D1_RESET !== "before-cutover") throw new Error("--reset 需要 IKANPP_D1_RESET=before-cutover");
   const live = JSON.parse(wrangler(["d1", "execute", "ikanpp-db", "--remote", "--json", "--command", "SELECT COUNT(*) AS n FROM sync_state WHERE key = 'site:live'"]))[0].results[0].n;
   if (live) throw new Error("新站已上线（sync_state 有 site:live），不能再重置作品表");
-  // 作品、网址、影人相关的表定义：0001 里 lists 之前的部分（titles、slugs、legacy_routes、people、credits 及触发器）+ 0004 + 0005。
+  // 大表一次 DROP 会超出 D1 的 CPU 限制（整条语句回滚）：先分批删行，再删空表、重建。
+  const exec = (sql) => wrangler(["d1", "execute", "ikanpp-db", "--remote", "--yes", "--command", sql]);
+  const count = (sql) => remoteCount(sql);
+  const drain = (table, where = "1") => {
+    while (count(`SELECT COUNT(*) AS n FROM ${table} WHERE ${where}`) > 0) {
+      exec(`DELETE FROM ${table} WHERE rowid IN (SELECT rowid FROM ${table} WHERE ${where} LIMIT 20000)`);
+    }
+  };
+  for (const t of ["sitemap_titles", "title_genres", "credits", "people", "legacy_routes", "slugs"]) {
+    drain(t);
+    console.log(`已清空 ${t}`);
+  }
+  exec("DROP TRIGGER IF EXISTS titles_no_delete");
+  drain("titles", "state = 'merged'");
+  drain("titles");
+  console.log("已清空 titles");
+  // 作品、网址、影人相关的表定义：0001 里 lists 之前的部分（titles、slugs、legacy_routes、people、credits 及触发器）+ 0004 + 0005 + 0007。
   const init = readFileSync(join(import.meta.dirname, "../../db/d1/0001_init.sql"), "utf8");
   const catalogDdl = init.slice(0, init.indexOf("-- 有序列表"));
   const ddl = [
@@ -75,6 +91,7 @@ if (RESET && !DRY) {
     readFileSync(join(import.meta.dirname, "../../db/d1/0004_title_name_key.sql"), "utf8"),
     readFileSync(join(import.meta.dirname, "../../db/d1/0005_title_genres.sql"), "utf8"),
     readFileSync(join(import.meta.dirname, "../../db/d1/0007_browse_indexes.sql"), "utf8"),
+    readFileSync(join(import.meta.dirname, "../../db/d1/0008_titles_merged_index.sql"), "utf8"),
   ].join("\n");
   const file = join(work, "reset.sql");
   writeFileSync(file, ddl);
@@ -140,7 +157,7 @@ try {
           break;
         } catch (err) {
           const msg = String(err?.stderr ?? err?.message ?? err);
-          if (attempt >= 4 || !/could not be uploaded|InternalError|timed out|ETIMEDOUT|ECONNRESET|503|502/i.test(msg)) throw err;
+          if (attempt >= 4 || !/could not be uploaded|InternalError|timed out|ETIMEDOUT|ECONNRESET|fetch failed|503|502/i.test(msg)) throw err;
           console.log(`  第 ${i + 1}/${files.length} 份上传失败，重试（${attempt}）`);
         }
       }

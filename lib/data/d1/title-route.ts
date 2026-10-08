@@ -90,11 +90,54 @@ async function render(db: D1Like, row: TitleRow, path: string): Promise<TitleRes
   return canonicalPath === path ? { type: 'title', row, canonicalPath } : { type: 'redirect', location: canonicalPath };
 }
 
+type FastRow = TitleRow & {
+  l_status: number | null;
+  l_target: string | null;
+  s_title_id: number | null;
+  s_canonical: number | null;
+  s_source: string | null;
+  canonical_slug: string | null;
+};
+
+/**
+ * 常见情况一次查询解决（快照路由、片段表、作品与规范片段一起取）：作品页的大多数请求是规范网址或快照网址，
+ * 原来要依次查 4 次 D1，跨地区时每次都是一个来回。查不清楚的情况交给下面的完整流程。
+ */
+async function fastResolve(db: D1Like, seg: string, path: string): Promise<TitleResolution | null> {
+  const row = await db
+    .prepare(
+      `SELECT l.status AS l_status, l.target_path AS l_target, s.title_id AS s_title_id, s.canonical AS s_canonical, s.source AS s_source,
+              t.*, c.slug AS canonical_slug
+       FROM (SELECT ? AS seg) q
+       LEFT JOIN legacy_routes l ON l.path = ?
+       LEFT JOIN slugs s ON s.slug = q.seg
+       LEFT JOIN titles t ON t.id = s.title_id
+       LEFT JOIN slugs c ON c.title_id = t.id AND c.canonical = 1`,
+    )
+    .bind(seg, path)
+    .first<FastRow>();
+  if (!row) return null;
+  if (row.l_status != null) {
+    if (row.l_target && row.l_target !== path) return { type: 'redirect', location: row.l_target };
+    if (row.l_status === 404 || row.l_status === 410) return { type: 'not-found' };
+  }
+  if (row.s_title_id == null || row.state !== 'live' || !row.canonical_slug) return null;
+  const trusted = row.s_canonical === 1 || row.s_source?.startsWith('snapshot-');
+  if (!trusted && !segmentFitsName(seg, row.name)) return null;
+  const canonicalPath = `/title/${row.canonical_slug}`;
+  if (canonicalPath !== path) return { type: 'redirect', location: canonicalPath };
+  const { l_status, l_target, s_title_id, s_canonical, s_source, canonical_slug, ...title } = row;
+  void l_status; void l_target; void s_title_id; void s_canonical; void s_source; void canonical_slug;
+  return { type: 'title', row: title as TitleRow, canonicalPath };
+}
+
 /** 解析 /title/ 之后的片段（原样传入，可以是百分号编码）。 */
 export async function resolveTitleSegment(db: D1Like, rawSegment: string): Promise<TitleResolution> {
   const seg = safeDecode(rawSegment).trim();
   if (!seg) return { type: 'not-found' };
   const path = `/title/${seg}`;
+  const fast = await fastResolve(db, seg, path);
+  if (fast) return fast;
 
   // 1. 快照路由
   const legacy = await db

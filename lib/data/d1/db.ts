@@ -1,5 +1,14 @@
+import { cache } from 'react';
 import { cfEnv } from '@/lib/server/cf-env';
 import type { D1Like } from './title-route';
+
+/**
+ * D1 读副本（2026-10-08 开启）：每个请求开一个会话，第一条查询走最近的副本（主库在亚太，Googlebot 多从美国来），
+ * 同一会话里后续查询保持一致。片库只由入库 Worker 写，副本落后几秒不影响页面。
+ */
+const sessionFor = cache((binding: { withSession?: (c: string) => unknown }) =>
+  (binding.withSession ? binding.withSession('first-unconstrained') : binding) as D1Like,
+);
 
 /** `next build` 会预渲染没有参数的页面（首页、频道页）。 */
 export const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
@@ -11,5 +20,6 @@ export const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
  */
 export function getDb(): D1Like | null {
   if (isBuildPhase) return null;
-  return (cfEnv()?.DB as D1Like | undefined) ?? null;
+  const binding = cfEnv()?.DB as { withSession?: (c: string) => unknown } | undefined;
+  return binding ? sessionFor(binding) : null;
 }
