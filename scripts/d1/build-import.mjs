@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * 重构阶段 2：把 2026-10-08 的 KV 基线导入成一个本地 SQLite 文件（表结构同 db/d1/0001_init.sql），
- * 再由 scripts/d1/verify-import.mjs 校验、scripts/d1/push-import.sh 整体导入 D1 ikanpp-db。
+ * 再由 scripts/d1/verify-import.mjs 校验、scripts/d1/push-import.mjs 整体导入 D1 ikanpp-db。
  *
  *   node scripts/d1/build-import.mjs <基线目录> <日期> <输出 sqlite 文件>
  *
@@ -284,6 +284,36 @@ for (const b of baseline) {
 }
 db.exec("COMMIT");
 console.log(`快照路由：${db.prepare("SELECT COUNT(*) n FROM legacy_routes").get().n} 条`);
+
+// ---- 8. 影人与演职关系：来自 live 作品的 directors / actors（字符串数组，按原顺序） -----------------
+
+const personId = new Map();
+const insertPerson = db.prepare("INSERT INTO people (id, name) VALUES (?, ?)");
+const insertCredit = db.prepare("INSERT OR IGNORE INTO credits (title_id, person_id, role, ord) VALUES (?, ?, ?, ?)");
+const names = (json) => {
+  try {
+    const list = JSON.parse(json ?? "[]");
+    return Array.isArray(list) ? list.map((n) => (typeof n === "string" ? n : n?.name)).map((n) => String(n ?? "").trim()).filter(Boolean) : [];
+  } catch {
+    return [];
+  }
+};
+db.exec("BEGIN");
+for (const t of db.prepare("SELECT id, directors, actors FROM titles WHERE state = 'live'").all()) {
+  for (const [role, list] of [["director", names(t.directors)], ["actor", names(t.actors)]]) {
+    list.forEach((name, ord) => {
+      let pid = personId.get(name);
+      if (!pid) {
+        pid = personId.size + 1;
+        personId.set(name, pid);
+        insertPerson.run(pid, name);
+      }
+      insertCredit.run(t.id, pid, role, ord);
+    });
+  }
+}
+db.exec("COMMIT");
+console.log(`影人：${personId.size} 位，演职关系 ${db.prepare("SELECT COUNT(*) n FROM credits").get().n} 条`);
 
 const counts = db.prepare("SELECT state, COUNT(*) n FROM titles GROUP BY state").all();
 console.log("作品状态：", counts.map((r) => `${r.state} ${r.n}`).join("，"));
