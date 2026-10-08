@@ -4,7 +4,9 @@
  *
  *   node scripts/d1/push-import.mjs <sqlite 文件> [--dry-run]
  *
- * - 只在 D1 的 titles 表为空时执行（titles 有禁止删除的触发器，导错了不能简单重来，所以只导一次）；
+ * - 可续跑：每一步先看 D1 里这一步的行数，已等于应导入的行数就跳过，为 0 才导入，其余情况停下等人处理
+ *   （titles 有禁止删除的触发器，导错了不能简单重来）；
+ * - 每个文件约 15 MB 一份上传，上传失败（Cloudflare 偶发 InternalError）自动重试 3 次；
  * - 不动 documents、sync_state、tmdb_matches 等入库 Worker 在用的表；
  * - 按外键顺序分文件导入：live 作品 → removed → merged（指向 live）→ 网址片段 → 快照路由 → 影人 → 演职关系；
  * - 每个文件导入后核对行数。--dry-run 只生成 SQL 文件、打印行数，不连 D1。
@@ -34,37 +36,38 @@ const remoteCount = (sql) => {
   return Number(Object.values(JSON.parse(out)[0].results[0])[0]);
 };
 
+// [说明, 表, 条件, 排序]
 const STEPS = [
-  ["titles（live）", "titles", "state = 'live' ORDER BY id"],
-  ["titles（removed）", "titles", "state = 'removed' ORDER BY id"],
-  ["titles（merged）", "titles", "state = 'merged' ORDER BY id"],
-  ["slugs", "slugs", "1 ORDER BY title_id"],
-  ["legacy_routes", "legacy_routes", "1"],
-  ["people", "people", "1 ORDER BY id"],
-  ["credits", "credits", "1 ORDER BY title_id"],
+  ["titles（live）", "titles", "state = 'live'", "id"],
+  ["titles（removed）", "titles", "state = 'removed'", "id"],
+  ["titles（merged）", "titles", "state = 'merged'", "id"],
+  ["slugs", "slugs", "1", "title_id"],
+  ["legacy_routes", "legacy_routes", "1", "path"],
+  ["people", "people", "1", "id"],
+  ["credits", "credits", "1", "title_id"],
 ];
+const CHUNK_BYTES = 15 << 20;
 
 const db = new DatabaseSync(dbFile, { readOnly: true });
 const quote = (v) => (v === null || v === undefined ? "NULL" : typeof v === "number" || typeof v === "bigint" ? String(v) : `'${String(v).replaceAll("'", "''")}'`);
 
-if (!DRY) {
-  const existing = remoteCount("SELECT COUNT(*) AS n FROM titles");
-  if (existing > 0) {
-    console.error(`D1 的 titles 已有 ${existing} 行，停止：只能向空表导入一次。`);
-    process.exit(1);
-  }
-}
-
 const work = mkdtempSync(join(tmpdir(), "ikanpp-d1-"));
 try {
-  for (const [label, table, where] of STEPS) {
-    const rows = db.prepare(`SELECT * FROM ${table} WHERE ${where}`).all();
+  for (const [label, table, where, order] of STEPS) {
+    const rows = db.prepare(`SELECT * FROM ${table} WHERE ${where} ORDER BY ${order}`).all();
     if (!rows.length) {
       console.log(`${label}：0 行，跳过`);
       continue;
     }
+    if (!DRY) {
+      const already = remoteCount(`SELECT COUNT(*) AS n FROM ${table} WHERE ${where}`);
+      if (already === rows.length) {
+        console.log(`${label}：D1 已有 ${already} 行，跳过`);
+        continue;
+      }
+      if (already !== 0) throw new Error(`${label}：D1 已有 ${already} 行，应为 0 或 ${rows.length}，停止`);
+    }
     const cols = Object.keys(rows[0]);
-    const file = join(work, `${table}-${label.length}.sql`);
     // D1 单条语句上限 100 KB：多行合并成一条 INSERT，按 UTF-8 字节攒到约 80 KB 就换下一条。
     const head = `INSERT INTO ${table} (${cols.join(",")}) VALUES `;
     const lines = [];
@@ -82,17 +85,44 @@ try {
       size += bytes + 1;
     }
     if (batch.length) lines.push(head + batch.join(",") + ";");
-    writeFileSync(file, lines.join("\n") + "\n");
-    const mb = (statSync(file).size / 1048576).toFixed(1);
+    // 按约 15 MB 切成多个文件。
+    const files = [];
+    let part = [], partBytes = 0;
+    for (const line of lines) {
+      const b = Buffer.byteLength(line) + 1;
+      if (part.length && partBytes + b > CHUNK_BYTES) {
+        files.push(part);
+        part = [];
+        partBytes = 0;
+      }
+      part.push(line);
+      partBytes += b;
+    }
+    if (part.length) files.push(part);
+    let totalMb = 0;
+    for (const [i, chunk] of files.entries()) {
+      const file = join(work, `${table}-${i}.sql`);
+      writeFileSync(file, chunk.join("\n") + "\n");
+      totalMb += statSync(file).size / 1048576;
+      if (DRY) continue;
+      for (let attempt = 1; ; attempt++) {
+        try {
+          wrangler(["d1", "execute", "ikanpp-db", "--remote", "--yes", "--file", file]);
+          break;
+        } catch (err) {
+          const msg = String(err?.stderr ?? err?.message ?? err);
+          if (attempt >= 4 || !/could not be uploaded|InternalError|timed out|ETIMEDOUT|ECONNRESET|503|502/i.test(msg)) throw err;
+          console.log(`  第 ${i + 1}/${files.length} 份上传失败，重试（${attempt}）`);
+        }
+      }
+    }
     if (DRY) {
-      console.log(`${label}：${rows.length} 行，${mb} MB（未导入）`);
+      console.log(`${label}：${rows.length} 行，${totalMb.toFixed(1)} MB，${files.length} 份（未导入）`);
       continue;
     }
-    const before = remoteCount(`SELECT COUNT(*) AS n FROM ${table}`);
-    wrangler(["d1", "execute", "ikanpp-db", "--remote", "--yes", "--file", file]);
-    const after = remoteCount(`SELECT COUNT(*) AS n FROM ${table}`);
-    console.log(`${label}：${rows.length} 行，${mb} MB → D1 新增 ${after - before} 行`);
-    if (after - before !== rows.length) throw new Error(`${label} 行数不符，停止`);
+    const after = remoteCount(`SELECT COUNT(*) AS n FROM ${table} WHERE ${where}`);
+    console.log(`${label}：${rows.length} 行，${totalMb.toFixed(1)} MB，${files.length} 份 → D1 现有 ${after} 行`);
+    if (after !== rows.length) throw new Error(`${label} 行数不符，停止`);
   }
 } finally {
   rmSync(work, { recursive: true, force: true });

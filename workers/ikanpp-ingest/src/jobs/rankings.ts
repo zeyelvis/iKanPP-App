@@ -2,13 +2,13 @@
  * 爱壹帆四大排序（AGENTS 准则 17.3）：添加时间、更新时间、人气、评分，6 个频道共 24 个列表，
  * 取代 scripts/sync-iyf-four-rankings.mjs。结果写入 documents 的 rank:<排序>:<频道>。
  * - 两个时间排序每小时取（前 300 / 200 部）；人气、评分变化慢，每天北京时间 4 点取一次（前 900 / 600 部）。
- * - 只按片名 + 年份关联已有作品（D1 titles），关联不上的保留片名与年份，**不分配编号**：
+ * - 只按规范化片名 + 年份关联已有作品（D1 titles.name_key），关联不上的保留片名与年份，**不分配编号**：
  *   旧脚本在这里给关联不上的片名顺手发号却不建档，这些编号后来被别的脚本拿去建了别的作品，
  *   是编号改指的来源之一。新编号只能由数据库在建档时分配（见 .plans 第 10 节）。
  * - 不再置顶写死的「先锋」作品（旧脚本固定把 ik020581 放第一），顺序与爱壹帆一致。
  * 某个列表取到的作品少于 20 部时，保留上一次的结果。
  */
-import { isCleanChineseTitle } from '../../../../lib/data/entities/entity-utils';
+import { isCleanChineseTitle, normalizeTitle } from '../../../../lib/data/entities/entity-utils';
 import type { Env } from '../env';
 import { sortedList, type IyfListItem } from '../iyf';
 
@@ -59,24 +59,41 @@ async function fetchList(cid: string, orderby: 0 | 1 | 2 | 3, pages: number): Pr
   return out;
 }
 
-/** 片名 → 候选作品（live），按片名分批查。 */
+/** 规范化片名（normalizeTitle，与 titles.name_key 相同）→ 候选作品（live），分批查。 */
 async function loadTitles(env: Env, names: string[]) {
-  const byName = new Map<string, Array<{ id: number; year: number | null; kind: string | null }>>();
-  for (let i = 0; i < names.length; i += 90) {
-    const chunk = names.slice(i, i + 90);
-    const rows = await env.DB.prepare(`SELECT id, name, year, kind FROM titles WHERE state = 'live' AND name IN (${chunk.map(() => '?').join(',')})`)
+  const byKey = new Map<string, Cand[]>();
+  const keys = [...new Set(names.map((n) => normalizeTitle(n)).filter(Boolean))];
+  for (let i = 0; i < keys.length; i += 90) {
+    const chunk = keys.slice(i, i + 90);
+    const rows = await env.DB.prepare(
+      `SELECT id, name_key, year, kind, tmdb_id, poster IS NOT NULL AND poster <> '' AS has_poster, popularity FROM titles WHERE state = 'live' AND name_key IN (${chunk.map(() => '?').join(',')})`,
+    )
       .bind(...chunk)
-      .all<{ id: number; name: string; year: number | null; kind: string | null }>();
-    for (const r of rows.results) byName.set(r.name, [...(byName.get(r.name) ?? []), r]);
+      .all<Cand & { name_key: string }>();
+    for (const r of rows.results) byKey.set(r.name_key, [...(byKey.get(r.name_key) ?? []), r]);
   }
-  return byName;
+  return byKey;
 }
 
-/** 同名作品里挑年份差不超过 1、类型相容的唯一一部；对不上或有歧义就不关联。 */
-function pick(cands: Array<{ id: number; year: number | null; kind: string | null }> | undefined, year?: number, kind?: string) {
+interface Cand {
+  id: number;
+  year: number | null;
+  kind: string | null;
+  tmdb_id: string | null;
+  has_poster: number;
+  popularity: number | null;
+}
+
+/**
+ * 同名作品里挑年份差不超过 1、类型相容的。片库里同名同年同类型的重复条目很多（没有 TMDB 编号、没被合并），
+ * 这时取资料最好的那条：有 TMDB 编号、有海报、热度高、编号小。只是决定列表指向哪条，不合并任何作品；
+ * 真正的去重按 AGENTS 10.5 的证据评分另做。
+ */
+function pick(cands: Cand[] | undefined, year?: number, kind?: string) {
   if (!cands?.length) return undefined;
   const fit = cands.filter((c) => (!year || !c.year || Math.abs(c.year - year) <= 1) && (!kind || !c.kind || c.kind === kind || (kind === 'tv' && c.kind !== 'movie')));
-  return fit.length === 1 ? fit[0].id : undefined;
+  fit.sort((a, b) => Number(Boolean(b.tmdb_id)) - Number(Boolean(a.tmdb_id)) || b.has_poster - a.has_poster || (b.popularity ?? 0) - (a.popularity ?? 0) || a.id - b.id);
+  return fit[0]?.id;
 }
 
 export async function syncRankings(env: Env, opts: { daily?: boolean } = {}): Promise<string[]> {
@@ -94,7 +111,7 @@ export async function syncRankings(env: Env, opts: { daily?: boolean } = {}): Pr
     }
   }
   const names = [...new Set(lists.flatMap((l) => l.items.map((it) => it.title)))];
-  const byName = await loadTitles(env, names);
+  const byKey = await loadTitles(env, names);
 
   const stmt = env.DB.prepare(
     "INSERT INTO documents (key, value, source, updated_at) VALUES (?, ?, 'ingest:rankings', strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) ON CONFLICT (key) DO UPDATE SET value = excluded.value, source = excluded.source, updated_at = excluded.updated_at",
@@ -109,7 +126,7 @@ export async function syncRankings(env: Env, opts: { daily?: boolean } = {}): Pr
     const entries: RankEntry[] = l.items.map((it) => {
       const kind = l.channelKind ?? IYF_KIND[it.atypeName ?? ''];
       const year = Number(it.year) || undefined;
-      const id = pick(byName.get(it.title), year, kind);
+      const id = pick(byKey.get(normalizeTitle(it.title)), year, kind);
       if (id) linked++;
       const score = it.score && /^\d+(\.\d+)?$/.test(it.score) ? it.score : undefined;
       return {

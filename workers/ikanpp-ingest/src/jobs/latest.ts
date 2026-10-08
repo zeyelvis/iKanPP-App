@@ -5,7 +5,7 @@
  * - 只收内容安全检查通过的（isCleanChineseTitle）；采集站的电影只要近两年的。
  * - 海报、剧照、简介、评分用 TMDB（片名、年份必须对得上）；TMDB 没有时用采集站海报，爱壹帆的图带水印
  *   不用，找不到可用海报的不上。评分只用 TMDB 的，没有就留空，不写默认值（准则 19.1）。
- * - 能对上片库作品（D1 titles：先按 TMDB 编号，再按片名 + 年份）的，用作品编号与规范网址。
+ * - 能对上片库作品（D1 titles：先按 TMDB 编号，再按规范化片名 name_key + 年份）的，用作品编号与规范网址。
  * 结果写入 documents 的 latest:<频道>。某频道来源全挂或凑不满 12 部时，保留上一次的结果。
  */
 import { generateSlug, isCleanChineseTitle, normalizeTitle } from '../../../../lib/data/entities/entity-utils';
@@ -210,13 +210,22 @@ async function linkTitles(env: Env, items: LatestPrebakedItem[], tmdbTypes: Arra
   }
   const rest = items.map((it, i) => ({ it, i })).filter(({ i }) => !ids.has(i));
   if (rest.length) {
-    const rows = await env.DB.prepare(`SELECT id, name, year FROM titles WHERE state = 'live' AND name IN (${placeholders(rest.length)})`)
-      .bind(...rest.map(({ it }) => it.title))
-      .all<{ id: number; name: string; year: number | null }>();
+    const keys = [...new Set(rest.map(({ it }) => normalizeTitle(it.title)).filter(Boolean))];
+    const rows = keys.length
+      ? await env.DB.prepare(
+          `SELECT id, name_key, year, tmdb_id, poster IS NOT NULL AND poster <> '' AS has_poster, popularity FROM titles WHERE state = 'live' AND name_key IN (${placeholders(keys.length)})`,
+        )
+          .bind(...keys)
+          .all<{ id: number; name_key: string; year: number | null; tmdb_id: string | null; has_poster: number; popularity: number | null }>()
+      : { results: [] };
     for (const { it, i } of rest) {
       const year = Number(it.year) || 0;
-      const same = rows.results.filter((r) => r.name === it.title && (!year || !r.year || Math.abs(r.year - year) <= 1));
-      if (same.length === 1) ids.set(i, same[0].id);
+      const key = normalizeTitle(it.title);
+      // 片库里同名同年的重复条目很多：取资料最好的那条（有 TMDB、有海报、热度高、编号小），不合并。
+      const same = rows.results
+        .filter((r) => r.name_key === key && (!year || !r.year || Math.abs(r.year - year) <= 1))
+        .sort((a, b) => Number(Boolean(b.tmdb_id)) - Number(Boolean(a.tmdb_id)) || b.has_poster - a.has_poster || (b.popularity ?? 0) - (a.popularity ?? 0) || a.id - b.id);
+      if (same[0]) ids.set(i, same[0].id);
     }
   }
   const out = new Map<number, { id: number; slug: string }>();
