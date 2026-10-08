@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { listRecentEntities } from '@/lib/services/entity-kv';
 
-export const runtime = 'edge';
 
 /**
  * GET /api/latest-titles

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSitemapCatalog } from '@/lib/services/entity-kv';
 
-export const runtime = 'edge';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 const TITLES_PER_SITEMAP = 2000;

@@ -3,7 +3,6 @@ import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
 import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
 import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
-export const runtime = 'edge';
 
 /**
  * iKanPP 官方 Telegram 搜片 Webhook 机器人中枢

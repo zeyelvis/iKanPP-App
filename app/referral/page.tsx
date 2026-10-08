@@ -1,15 +1,6 @@
-'use client';
+import { permanentRedirect } from 'next/navigation';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
-/**
- * 旧 Referral 路由重定向到 /profile?tab=referral
- */
+/** 邀请返利已随会员系统去掉（2026-10-08），旧链接回首页。 */
 export default function ReferralRedirect() {
-    const router = useRouter();
-    useEffect(() => {
-        router.replace('/profile?tab=referral');
-    }, [router]);
-    return null;
+  permanentRedirect('/');
 }

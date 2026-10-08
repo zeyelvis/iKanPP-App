@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { batchPublishGoogleIndexing, publishGoogleIndexingUrl } from '@/lib/services/google-indexing';
 
-export const runtime = 'edge';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 

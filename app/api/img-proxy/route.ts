@@ -3,7 +3,6 @@ import { isSafeExternalUrl } from '@/lib/utils/security';
 import { buildDoubanImageCandidates } from '@/lib/server/douban-image';
 import { getR2KeyFromUrl, fetchFromR2, saveToR2Async } from '@/lib/server/r2-cache';
 
-export const runtime = 'edge';
 
 /**
  * 智能图片代理与边缘/持久缓存 API v2.0

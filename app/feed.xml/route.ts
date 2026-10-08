@@ -3,7 +3,6 @@ import { listRecentEntities } from '@/lib/services/entity-kv';
 import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
-export const runtime = 'edge';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 

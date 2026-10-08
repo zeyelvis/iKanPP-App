@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getKnownPeople, getEntitiesByDirector, getEntitiesByActor } from '@/lib/services/entity-kv';
 
-export const runtime = 'edge';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 

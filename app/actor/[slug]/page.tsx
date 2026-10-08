@@ -11,7 +11,6 @@ import { isInvalidDramaOrMovie, generateSlug, getTitleCanonicalHref } from '@/li
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { Navbar } from '@/components/layout/Navbar';
 
-export const runtime = 'edge';
 export const revalidate = 86400;
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge';
 
 // TMDB API 配置
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '';

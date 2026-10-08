@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge';
 
 /**
  * 获取豆瓣影片详情（导演、演员、类型、地区等）

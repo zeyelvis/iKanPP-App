@@ -4,7 +4,6 @@ import { searchMultipleEntitiesFromTMDB, enrichEpisodeCount } from '@/lib/servic
 import { normalizeTitle, hasTitleOverlap, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
 import { TitleEntity } from '@/lib/types/entity';
 
-export const runtime = 'edge';
 
 // L1 边缘节点内存热缓存（0ms 秒级直出）
 const MEMORY_CACHE = new Map<string, { entities: TitleEntity[]; expireAt: number }>();

@@ -5,7 +5,6 @@ import { formatEntityId, generateSlug, isCleanChineseTitle, isStrictSafeEntity }
 import { TitleEntity } from '@/lib/types/entity';
 import { isJuliangExcludedCategory } from '@/lib/api/juliang-category-map';
 
-export const runtime = 'edge';
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';

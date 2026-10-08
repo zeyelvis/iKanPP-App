@@ -76,7 +76,7 @@ for (const sha of shas) {
 }
 
 // 2. 首页与各频道的轮播、货架（当前版本）。
-for (const [channel, data] of Object.entries(PREBAKED_HOME_DATA as Record<string, Record<string, unknown>>)) {
+for (const [channel, data] of Object.entries(PREBAKED_HOME_DATA as unknown as Record<string, Record<string, unknown>>)) {
   for (const [section, list] of Object.entries(data ?? {})) {
     if (!Array.isArray(list)) continue;
     for (const it of list as Array<Record<string, any>>) {

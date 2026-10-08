@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { SIGNED_MOBILECONFIG_BASE64 } from '@/lib/data/pwa/signed-mobileconfig-base64';
 
-export const runtime = 'edge';
 
 /**
  * iOS WebClip 描述文件直装接口 (Apple Configuration Profile)

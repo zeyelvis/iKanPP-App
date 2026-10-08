@@ -38,7 +38,6 @@ import {
   runShadowLineAutoSniff,
 } from '@/lib/services/shadowline-service';
 
-export const runtime = 'edge';
 
 const GITHUB_REPO = process.env.GITHUB_REPOSITORY || 'zeyelvis/iKanPP-App';
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_PAT || '';

@@ -4,7 +4,6 @@ import { fetchTMDBDetails } from '@/lib/services/entity-enrichment';
 import { formatEntityId, generateSlug, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
 import { TitleEntity } from '@/lib/types/entity';
 
-export const runtime = 'edge';
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const TMDB_BASE = 'https://api.themoviedb.org/3';

@@ -13,7 +13,6 @@ import { searchAndEnrichFromTMDB } from '@/lib/services/entity-enrichment';
 import { parseSeasonFromTitle, generateSeasonSearchVariants } from '@/lib/utils/season-resolver';
 import { buildSearchStrategy } from '@/lib/utils/chinese-segmenter';
 
-export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
   const encoder = new TextEncoder();

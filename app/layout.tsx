@@ -18,7 +18,6 @@ import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { Footer } from "@/components/layout/Footer";
 
 import { Suspense } from 'react';
-import { ReferralCapture } from '@/components/auth/ReferralCapture';
 import { FIRST_HERO_BACKDROP } from '@/lib/data/hero-backdrop';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
 import { AddToHomeScreenModal } from '@/components/pwa/AddToHomeScreenModal';
@@ -231,7 +230,6 @@ export default function RootLayout({
           <TVProvider>
             <TVNavigationInitializer />
             <AdKeywordsWrapper />
-            <Suspense><ReferralCapture /></Suspense>
             {children}
             <Footer />
             <BackToTop />

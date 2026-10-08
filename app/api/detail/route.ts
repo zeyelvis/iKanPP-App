@@ -15,7 +15,6 @@ import { parseEpisodes } from '@/lib/api/parsers';
 import { getShadowLineConfig } from '@/lib/services/shadowline-service';
 import { gzProvider, matchBestShadowLineCandidate } from '@/lib/services/providers/gz-provider';
 
-export const runtime = 'edge';
 
 const CORS_HEADERS: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { kvGet } from '@/lib/services/entity-kv';
 
-export const runtime = 'edge';
 
 /**
  * 地区自适应线路质量排行与连通率接口 (Line Rank API)

@@ -4,79 +4,15 @@ import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-
 import { titlePageForPlayerLink } from '@/lib/utils/player-link';
 
 /**
- * Middleware — 多域名智能路由 + SEO 域名物理隔离
- * 1. 域名物理隔离：
- *    - 主站 (www.ikanpp.com): 纯净绿色影视。若直接访问 /premium，301 永久重定向至 https://ikanx.com/
- *    - 副站 (ikanx.com / www.ikanx.com): 午夜专属专区。根路径 / 自动 rewrite 到 /premium，地址栏保持 https://ikanx.com/
- * 2. 规范化 301：
- *    - theone58.com / www.theone58.com → www.ikanpp.com
- *    - ikanpp.com → www.ikanpp.com
- *    - www.ikanx.com → ikanx.com
+ * 网站请求入口（Next 16 起 middleware 改名 proxy）：
+ * - theone58.com → www.ikanpp.com；ikanpp.com → www.ikanpp.com（301）；
+ * - /premium 与 premium=1 的播放请求 → ikanx.com（午夜专区已拆为独立站点）；
+ * - 搜索结果页 noindex；旧 /player 链接 308 到作品页；写入访客国家 Cookie。
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const host = request.headers.get('host') || '';
     const url = request.nextUrl.clone();
     const pathname = url.pathname;
-
-    const isIkanX = host.includes('ikanx.com');
-
-    // ── 1. 副站 ikanx.com 专属路由与绝对反爬/反索引防护 ──
-    if (isIkanX) {
-        // 全面封禁所有爬虫与搜索引擎索引 ikanx.com
-        if (pathname === '/robots.txt') {
-            return new NextResponse('User-agent: *\nDisallow: /\n', {
-                status: 200,
-                headers: {
-                    'Content-Type': 'text/plain; charset=utf-8',
-                    'Cache-Control': 'public, max-age=86400',
-                    'X-Robots-Tag': 'noindex, nofollow',
-                },
-            });
-        }
-
-        // ikanx.com 不提供公开 sitemap，避免搜索引擎收录成人页面
-        if (pathname === '/sitemap.xml') {
-            return new NextResponse('Not Found', { status: 404 });
-        }
-
-        // ikanx.com 不暴露主站 manifest.json
-        if (pathname === '/manifest.json') {
-            return new NextResponse('Not Found', { status: 404 });
-        }
-
-        // www.ikanx.com → ikanx.com 统一 301
-        if (host.startsWith('www.')) {
-            url.host = 'ikanx.com';
-            url.protocol = 'https';
-            return NextResponse.redirect(url, 301);
-        }
-
-        // 访问副站根目录 / 内部重写至 /premium，地址栏保持 https://ikanx.com/
-        if (pathname === '/' || pathname === '') {
-            url.pathname = '/premium';
-            const response = NextResponse.rewrite(url);
-            response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, notranslate, noimageindex');
-            return response;
-        }
-
-        // 若在副站直接输入了 /premium，规范化 301 重定向到 /
-        if (pathname === '/premium') {
-            url.pathname = '/';
-            return NextResponse.redirect(url, 301);
-        }
-
-        // 若在副站访问普通影视大厅或主站特定页面，301 引导到主站，避免内容重复与权重分散
-        const mainstreamPaths = ['/movie', '/tv', '/anime', '/variety', '/ranking', '/iptv', '/download', '/about', '/faq', '/terms', '/privacy'];
-        if (mainstreamPaths.some(p => pathname === p || pathname.startsWith(p + '/'))) {
-            const targetUrl = new URL(pathname, 'https://www.ikanpp.com');
-            targetUrl.search = url.search;
-            return NextResponse.redirect(targetUrl, 301);
-        }
-
-        const response = NextResponse.next();
-        response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, notranslate, noimageindex');
-        return response;
-    }
 
     // ── 2. 主站 www.ikanpp.com 规范化与隔离逻辑 ──
     // 旧域名 theone58.com → 新域名 www.ikanpp.com（301 永久重定向）

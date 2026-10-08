@@ -67,3 +67,7 @@ original_kvideo/
 scratch/
 artifacts/
 /logs/
+
+# OpenNext 构建产物与本地密钥
+.open-next/
+.dev.vars

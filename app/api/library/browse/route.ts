@@ -4,7 +4,6 @@ import { queryEntities } from '@/lib/services/entity-kv';
 import { getTitleCanonicalHref, isCleanChineseTitle } from '@/lib/data/entities/entity-utils';
 import { getOptimizedImageUrl, isRestrictedRegion } from '@/lib/utils/image-utils';
 
-export const runtime = 'edge';
 
 
 const FETCH_TIMEOUT_MS = 3500;

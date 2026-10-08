@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export const runtime = 'edge';
 
 // 常用海外华人国家与大区中文映射字典
 const COUNTRY_MAP: Record<string, { name: string; region: string }> = {

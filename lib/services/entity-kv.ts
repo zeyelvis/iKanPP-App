@@ -1,3 +1,4 @@
+import { cfEnv } from '@/lib/server/cf-env';
 import { TitleEntity } from '@/lib/types/entity';
 import { generateSlug, formatEntityId, normalizeTitle, isInvalidDramaOrMovie, hasTitleOverlap, isCleanChineseTitle, isStrictSafeEntity, decodeMangledHexSlug, sanitizeMediaUrl, isWatermarkedImage } from '@/lib/data/entities/entity-utils';
 
@@ -30,9 +31,11 @@ async function ensurePrebakedSeeded(): Promise<void> {
   return;
 }
 
-// 获取 Cloudflare KV 实例（如果在 Cloudflare Pages / Worker 环境）
+// 获取 Cloudflare KV 实例（Workers 环境里从 OpenNext 的请求上下文取绑定）
 function getCloudflareKV(): any | null {
   try {
+    const bound = cfEnv()?.KVIDEO_KV;
+    if (bound) return bound;
     if (typeof (globalThis as any).KVIDEO_KV !== 'undefined') {
       return (globalThis as any).KVIDEO_KV;
     }

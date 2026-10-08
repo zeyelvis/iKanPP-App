@@ -57,23 +57,6 @@ export function useSettingsPage() {
             sortBy,
             subscriptions,
         });
-        // 管理员修改源时同步到全局配置
-        syncSourcesToGlobal(newSources);
-    };
-
-    // 异步同步到 Supabase（管理员才触发）
-    const syncSourcesToGlobal = async (newSources: VideoSource[]) => {
-        try {
-            const { useUserStore } = await import('@/lib/store/user-store');
-            const user = useUserStore.getState().user;
-            if (user && (user.role === 'admin' || user.role === 'super_admin')) {
-                const { setGlobalSources } = await import('@/lib/supabase/global-config');
-                await setGlobalSources(newSources, user.id);
-                console.log('✅ 普通视频源已同步到全局');
-            }
-        } catch (err) {
-            console.warn('同步全局配置失败:', err);
-        }
     };
 
     const handleAddSource = (source: VideoSource) => {

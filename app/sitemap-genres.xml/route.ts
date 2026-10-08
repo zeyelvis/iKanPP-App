@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { GENRE_MAP } from '@/lib/data/genres';
 import { getEntitiesByGenre } from '@/lib/services/entity-kv';
 
-export const runtime = 'edge';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 const FALLBACK_LASTMOD = '2026-09-01';

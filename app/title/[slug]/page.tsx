@@ -31,7 +31,6 @@ import { TitleSynopsis } from './_components/TitleSynopsis';
 import { RelatedTitles } from './_components/RelatedTitles';
 import { SeoModules } from './_components/SeoModules';
 
-export const runtime = 'edge';
 export const revalidate = 3600;
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';

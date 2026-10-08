@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { GUOMAN_DATASET } from '@/lib/data/guoman-data';
 import { DOCUMENTARY_DATASET } from '@/lib/data/documentary-data';
 
-export const runtime = 'edge';
 
 // 豆瓣电影合法核心标签
 const VALID_MOVIE_TAGS = new Set([

@@ -12,7 +12,6 @@ import {
 } from '@/lib/api/juliang-category-map';
 import { safeParseResponse } from '@/lib/utils/safe-json';
 
-export const runtime = 'edge';
 
 const FETCH_TIMEOUT_MS = 3000;
 

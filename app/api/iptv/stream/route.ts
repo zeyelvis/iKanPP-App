@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isSafeExternalUrl } from '@/lib/utils/security';
 
-export const runtime = 'edge';
 
 const STREAM_TIMEOUT_MS = 20000;
 const REALISTIC_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
