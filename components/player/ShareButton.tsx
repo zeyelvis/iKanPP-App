@@ -7,7 +7,6 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Share2, Copy, Check, X, Link2, MessageCircle, QrCode, Sparkles } from 'lucide-react';
-import { siteConfig } from '@/lib/config/site-config';
 import { AiViralShareModal } from '@/components/share/AiViralShareModal';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
@@ -33,7 +32,8 @@ export function ShareButton({ title, size = 20, poster, episodeName, year, type 
       : `${window.location.origin}${getTitleCanonicalHref({ title })}`
     : '';
 
-  const shareText = `我在 ${siteConfig.name} 免费看《${title}》，无广告高清播放 →`;
+  // 不写「无广告」「高清」这类未经实测的说法（AGENTS 第 6 条）
+  const shareText = `我在 iKanPP 免费看《${title}》 →`;
 
   // 点击外部关闭面板
   useEffect(() => {
@@ -70,7 +70,7 @@ export function ShareButton({ title, size = 20, poster, episodeName, year, type 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${title} - ${siteConfig.name}`,
+          title: `${title} - iKanPP`,
           text: shareText,
           url: shareUrl,
         });

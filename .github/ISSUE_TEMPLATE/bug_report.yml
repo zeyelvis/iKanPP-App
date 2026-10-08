@@ -1,5 +1,5 @@
 name: 🐛 错误报告 (Bug Report)
-description: 创建一个报告以帮助我们改进 KVideo
+description: 报告 www.ikanpp.com 的问题
 title: "[Bug]: "
 labels: ["bug", "triage"]
 body:

@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 提问 / Questions
-    url: https://github.com/KuekHaoYang/KVideo/discussions/new?category=q-a
-    about: 如果你有关于项目的问题，请在这里提问。
   - name: 安全漏洞 / Security Vulnerability
-    url: https://github.com/KuekHaoYang/KVideo/security/advisories/new
-    about: 报告安全漏洞。
+    url: https://github.com/zeyelvis/iKanPP-App/blob/main/SECURITY.md
+    about: 请按 SECURITY.md 发邮件到 contact@ikanpp.com，不要公开提交。
+  - name: 版权投诉与其他联系
+    url: mailto:contact@ikanpp.com
+    about: 发邮件到 contact@ikanpp.com。
