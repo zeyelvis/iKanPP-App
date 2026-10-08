@@ -240,14 +240,16 @@ const landings = baseline
   .sort((a, b) => (clicksByUrl.get(a.url) ?? 0) - (clicksByUrl.get(b.url) ?? 0));
 const KIND = { 电影: "movie", 电视剧: "tv", 动漫: "anime", 综艺: "variety", 纪录片: "documentary", 短剧: "short" };
 const unescape = (t) => String(t ?? "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#x27;|&#39;/g, "'");
-/** 旧站临时编号网址（/title/ik_radar_all_20-夜色将烬）：横轨每小时换位，同一个网址后来会跳到别的片，以网址里的片名为准。 */
+/** 旧站临时编号网址（/title/ik_radar_all_20-夜色将烬、ik_pre_…、ik_latest_…）：横轨每小时换位，同一个网址后来会跳到别的片，以网址里的片名为准。 */
 const tempUrlName = (url) => {
-  const m = pathOf(url).match(/^\/title\/ik_(?:radar|pre)_[^-]*(?:-[0-9a-f%]*)?-(.+)$/i);
+  const m = pathOf(url).match(/^\/title\/ik_[a-z]+_[^-]*(?:-[0-9a-f%]*)?-(.+)$/i);
   return m ? m[1].replace(/-/g, " ").trim() : null;
 };
 const pageInfo = (title) => {
   const m = unescape(title).match(/^(.*?)\s*(?:\((\d{4})\))?\s*在线观看\s*-\s*([^|\s]+)/);
-  return m ? { name: m[1].trim(), year: num(m[2]), kind: KIND[m[3]] ?? null } : { name: null, year: null, kind: null };
+  // 旧站标题会把季号再写一遍：「庆余年 第二季 第2季」→「庆余年 第二季」
+  const name = m?.[1].trim().replace(/(第[一二三四五六七八九十\d]+季)\s*第\d+季$/, "$1");
+  return m ? { name, year: num(m[2]), kind: KIND[m[3]] ?? null } : { name: null, year: null, kind: null };
 };
 const normName = (s) => String(s ?? "").toLowerCase().replace(/[（(][^）)]*[）)]/g, "").replace(/[^\p{L}\p{N}]+/gu, "");
 const nameMatch = (a, b) => {
@@ -279,18 +281,20 @@ function resolveLanding(b) {
   if (tempUrlName(b.url)) Object.assign(info, { name: tempUrlName(b.url), year: null });
   if (!info.name) return null;
   const ok = (t) => t && nameMatch(t.name, info.name) && (!info.year || !t.year || Math.abs(t.year - info.year) <= 1);
+  // 网址编号或片段表直接指到的作品：片名对得上就认，不卡年份（剧集按季上架，季的年份与整部剧不同）。
   const own = toId((seg.match(/^(ik\d{6})/i) ?? [])[1]);
   const viaId = own ? liveRow(own) : null;
-  if (ok(viaId)) return viaId;
+  if (viaId && nameMatch(viaId.name, info.name)) return viaId;
   const hit = bySlug.get(seg);
   const viaSlug = hit ? liveRow(hit.title_id) : null;
-  if (ok(viaSlug)) return viaSlug;
+  if (viaSlug && nameMatch(viaSlug.name, info.name)) return viaSlug;
   const cands = (byNorm.get(normName(info.name)) ?? []).filter(ok);
   cands.sort((a, b) => Number(b.kind === info.kind) - Number(a.kind === info.kind) || (b.popularity ?? 0) - (a.popularity ?? 0) || a.id - b.id);
   if (cands[0]) return cands[0];
   // 片库里没有同名作品，而网址自己的编号是一部译名相近、年份相符的作品：认作同一部（译名改过）。
   const yearOk = (t) => !info.year || !t.year || Math.abs(t.year - info.year) <= 1;
-  return viaId && yearOk(viaId) && similarName(viaId.name, info.name) ? viaId : null;
+  if (viaId && yearOk(viaId) && similarName(viaId.name, info.name)) return viaId;
+  return null;
 }
 // 片库里没有、但旧站用预烘焙卡片直出的落地页（最新上线横轨里的新片等）：按卡片补建作品。
 // 编号取 590000 起（没人用的号段；网站现场补录用 600000–899999），来源记为 prebaked-card。
@@ -320,6 +324,13 @@ function recoverFromCard(b) {
   recovered++;
   return row;
 }
+/** 最后一招：Search Console 网址里的片名（/title/ik002023-联邦调查局 → 联邦调查局）在 live 作品里唯一同名。 */
+function byUrlName(b) {
+  const seg = pathOf(b.url).replace(/^\/title\//, "").replace(/^ik\d{6}-/i, "");
+  if (!seg || /^ik_/i.test(seg)) return null;
+  const cands = byNorm.get(normName(seg.replace(/-/g, " "))) ?? [];
+  return cands.length === 1 ? cands[0] : null;
+}
 const dropSlug = db.prepare("DELETE FROM slugs WHERE slug = ?");
 const demote = db.prepare("UPDATE slugs SET canonical = 0 WHERE title_id = ? AND canonical = 1");
 const addSlug = db.prepare("INSERT INTO slugs (slug, title_id, canonical, source) VALUES (?, ?, ?, ?)");
@@ -336,7 +347,7 @@ const landingTitle = new Map(); // Search Console 网址 → 认定的作品编�
 let asCanonical = 0, asAlias = 0;
 db.exec("BEGIN");
 for (const b of landings) {
-  const t = resolveLanding(b) ?? recoverFromCard(b);
+  const t = resolveLanding(b) ?? recoverFromCard(b) ?? byUrlName(b);
   if (!t) {
     unresolved.push({ url: b.url, final: pathOf(b.final), title: b.title, clicks: clicksByUrl.get(b.url) ?? 0 });
     continue;
