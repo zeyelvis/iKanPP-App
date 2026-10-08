@@ -6,6 +6,8 @@
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
   "observability": { "enabled": true },
+  // db/d1/rebuild-sitemap-titles.sql 以文本导入（jobs/sitemaps.ts）
+  "rules": [{ "type": "Text", "globs": ["**/*.sql"], "fallthrough": true }],
   "d1_databases": [
     { "binding": "DB", "database_name": "ikanpp-db", "database_id": "fe23840b-7279-4e77-ba1e-2318d8c1972a" }
   ],

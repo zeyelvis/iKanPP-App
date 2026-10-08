@@ -13,7 +13,8 @@ import type { LatestPrebakedItem } from '../../../../lib/types/prebaked';
 import { recentVods, type ChannelKey, type Kind, type Vod } from '../collectors';
 import type { Env } from '../env';
 import { lastAdd, type IyfListItem as IyfLatest } from '../iyf';
-import { tmdbSearchStrict, type TmdbBrief } from '../tmdb';
+import { tmdbDetails, tmdbSearchStrict, type TmdbBrief } from '../tmdb';
+import { createTitle, siteIsLive } from '../titles';
 
 const CHANNELS: Array<{ key: ChannelKey; cid: string }> = [
   { key: 'all', cid: '0,1' },
@@ -24,6 +25,8 @@ const CHANNELS: Array<{ key: ChannelKey; cid: string }> = [
   { key: 'documentary', cid: '0,1,7' },
 ];
 const PER_CHANNEL = 24;
+/** 每次运行最多建档几部（新站上线后，横轨里片库没有、TMDB 对得上的作品）。 */
+const MAX_CREATE = 20;
 const MIN_TO_PUBLISH = 12;
 /** 每次运行最多发起的 TMDB 搜索数（缓存命中不算），超出的作品本次只用采集站资料。 */
 const TMDB_BUDGET = 150;
@@ -149,6 +152,7 @@ class TmdbMatcher {
   private cache = new Map<string, { hit: TmdbBrief | null; checkedAt: string }>();
   private writes: Array<[string, string | null, string | null]> = [];
   searches = 0;
+  creates = 0;
   constructor(private env: Env) {}
 
   private keyOf(c: Candidate) {
@@ -242,7 +246,7 @@ async function linkTitles(env: Env, items: LatestPrebakedItem[], tmdbTypes: Arra
   return out;
 }
 
-async function buildChannel(env: Env, matcher: TmdbMatcher, key: ChannelKey, cid: string): Promise<{ items: LatestPrebakedItem[]; note: string }> {
+async function buildChannel(env: Env, matcher: TmdbMatcher, key: ChannelKey, cid: string, live: boolean): Promise<{ items: LatestPrebakedItem[]; note: string }> {
   const [p1, p2, vods] = await Promise.all([
     lastAdd(cid, 1).catch(() => [] as IyfLatest[]),
     lastAdd(cid, 2).catch(() => [] as IyfLatest[]),
@@ -287,16 +291,35 @@ async function buildChannel(env: Env, matcher: TmdbMatcher, key: ChannelKey, cid
     items[i].entityId = `ik${String(id).padStart(6, '0')}`;
     items[i].slug = slug;
   }
+  // 新站上线后：片库没有、TMDB 对得上的，建档后用作品编号（前台展示即必达）
+  let created = 0;
+  if (live) {
+    for (const [i, it] of items.entries()) {
+      if (linked.has(i) || !it.tmdbId || matcher.creates >= MAX_CREATE) continue;
+      const details = await tmdbDetails(env.TMDB_API_KEY, it.tmdbId, tmdbTypes[i]).catch(() => null);
+      if (!details) continue;
+      const made = await createTitle(env, it.type, details, it.title).catch(() => null);
+      if (!made) continue;
+      if (made.created) {
+        matcher.creates++;
+        created++;
+      }
+      items[i].entityId = `ik${String(made.id).padStart(6, '0')}`;
+      items[i].slug = made.slug;
+      linked.set(i, { id: made.id, slug: made.slug });
+    }
+  }
   const withTmdb = items.filter((it) => it.tmdbId).length;
-  return { items, note: `爱壹帆 ${p1.length + p2.length}，采集站 ${vods.length}，候选 ${pool.length} → ${items.length} 部（TMDB ${withTmdb}，对上片库 ${linked.size}）` };
+  return { items, note: `爱壹帆 ${p1.length + p2.length}，采集站 ${vods.length}，候选 ${pool.length} → ${items.length} 部（TMDB ${withTmdb}，对上片库 ${linked.size}${created ? `，新建档 ${created}` : ''}）` };
 }
 
 export async function syncLatest(env: Env): Promise<string[]> {
   const report: string[] = [];
   const matcher = new TmdbMatcher(env);
+  const live = await siteIsLive(env);
   for (const ch of CHANNELS) {
     try {
-      const { items, note } = await buildChannel(env, matcher, ch.key, ch.cid);
+      const { items, note } = await buildChannel(env, matcher, ch.key, ch.cid, live);
       if (items.length < MIN_TO_PUBLISH) {
         report.push(`${ch.key}：只有 ${items.length} 部，保留上次结果（${note}）`);
         continue;

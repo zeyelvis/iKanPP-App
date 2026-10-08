@@ -1,13 +1,17 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  // iKanPP 主站（重构阶段 3）：OpenNext + Workers。切换前只在 workers.dev 上预览；
-  // 切换时加 ikanpp.com / www.ikanpp.com 的区域路由（DNS 仍指向原 Pages 项目，路由在它前面接管）。
+  // iKanPP 主站（重构阶段 3）：OpenNext + Workers。2026-10-08 起用区域路由接管 ikanpp.com 与 www.ikanpp.com
+  // （DNS 仍指向原 Pages 项目，路由在它前面接管全部请求，与 ikanx 相同）。回退：删掉 routes 重新部署，流量回到 Pages。
   "name": "ikanpp-web",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-09-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   "workers_dev": true,
+  "routes": [
+    { "pattern": "ikanpp.com/*", "zone_name": "ikanpp.com" },
+    { "pattern": "www.ikanpp.com/*", "zone_name": "ikanpp.com" }
+  ],
   "observability": { "enabled": true },
   "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "ikanpp-web" }],
   "kv_namespaces": [{ "binding": "KVIDEO_KV", "id": "42311924427747deaf00981d99d58998" }],
