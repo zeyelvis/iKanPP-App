@@ -63,7 +63,9 @@ for (const r of routes) {
     const hit = slugTo.get(finalPath.slice("/title/".length));
     const t = hit ? live(hit.title_id) : null;
     const canon = t ? canonicalOf.get(t.id)?.slug : null;
-    const nameOk = t && (nameMatch(t.name, pageName(r.page_title)) || similarName(t.name, pageName(r.page_title)));
+    const temp = r.path.match(/^\/title\/ik_(?:radar|pre)_[^-]*(?:-[0-9a-f%]*)?-(.+)$/i);
+    const want = temp ? temp[1].replace(/-/g, " ").trim() : pageName(r.page_title);
+    const nameOk = t && (nameMatch(t.name, want) || similarName(t.name, want));
     if (t && t.state === "live" && `/title/${canon}` === finalPath && nameOk) {
       landing.ok++;
       if (r.target_path) landing.redirected++;

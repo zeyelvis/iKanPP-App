@@ -240,6 +240,11 @@ const landings = baseline
   .sort((a, b) => (clicksByUrl.get(a.url) ?? 0) - (clicksByUrl.get(b.url) ?? 0));
 const KIND = { 电影: "movie", 电视剧: "tv", 动漫: "anime", 综艺: "variety", 纪录片: "documentary", 短剧: "short" };
 const unescape = (t) => String(t ?? "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#x27;|&#39;/g, "'");
+/** 旧站临时编号网址（/title/ik_radar_all_20-夜色将烬）：横轨每小时换位，同一个网址后来会跳到别的片，以网址里的片名为准。 */
+const tempUrlName = (url) => {
+  const m = pathOf(url).match(/^\/title\/ik_(?:radar|pre)_[^-]*(?:-[0-9a-f%]*)?-(.+)$/i);
+  return m ? m[1].replace(/-/g, " ").trim() : null;
+};
 const pageInfo = (title) => {
   const m = unescape(title).match(/^(.*?)\s*(?:\((\d{4})\))?\s*在线观看\s*-\s*([^|\s]+)/);
   return m ? { name: m[1].trim(), year: num(m[2]), kind: KIND[m[3]] ?? null } : { name: null, year: null, kind: null };
@@ -271,6 +276,7 @@ const bySlug = db.prepare("SELECT title_id, canonical FROM slugs WHERE slug = ?"
 function resolveLanding(b) {
   const seg = pathOf(b.final).slice("/title/".length);
   const info = pageInfo(b.title);
+  if (tempUrlName(b.url)) Object.assign(info, { name: tempUrlName(b.url), year: null });
   if (!info.name) return null;
   const ok = (t) => t && nameMatch(t.name, info.name) && (!info.year || !t.year || Math.abs(t.year - info.year) <= 1);
   const own = toId((seg.match(/^(ik\d{6})/i) ?? [])[1]);
@@ -285,6 +291,34 @@ function resolveLanding(b) {
   // 片库里没有同名作品，而网址自己的编号是一部译名相近、年份相符的作品：认作同一部（译名改过）。
   const yearOk = (t) => !info.year || !t.year || Math.abs(t.year - info.year) <= 1;
   return viaId && yearOk(viaId) && similarName(viaId.name, info.name) ? viaId : null;
+}
+// 片库里没有、但旧站用预烘焙卡片直出的落地页（最新上线横轨里的新片等）：按卡片补建作品。
+// 编号取 590000 起（没人用的号段；网站现场补录用 600000–899999），来源记为 prebaked-card。
+const cards = existsSync(file("prebaked-cards-<日期>.json")) ? JSON.parse(readFileSync(file("prebaked-cards-<日期>.json"), "utf8")) : [];
+const cardsByKey = new Map();
+for (const c of cards) cardsByKey.set(normName(c.name), [...(cardsByKey.get(normName(c.name)) ?? []), c]);
+let nextRecoveredId = 590000;
+let recovered = 0;
+function recoverFromCard(b) {
+  const info = pageInfo(b.title);
+  if (tempUrlName(b.url)) Object.assign(info, { name: tempUrlName(b.url), year: null });
+  const card = (cardsByKey.get(normName(info.name)) ?? []).find((c) => !info.year || !c.year || Math.abs(c.year - info.year) <= 1);
+  if (!card || !card.cover) return null;
+  while (getTitle.get(nextRecoveredId)) nextRecoveredId++;
+  const id = nextRecoveredId++;
+  const kind = card.kind ?? info.kind ?? null;
+  insertTitle.run(
+    id, "live", null, kind, card.name, null, card.year ?? info.year ?? null,
+    null, null, null, null, card.description ?? null, card.cover, card.backdrop ?? null,
+    json(card.genres), null, null, card.badge ?? null, num(card.rate), null, null,
+    null, null, null, "[]", "[]", "[]", "[]", null, JSON.stringify({ cardTmdbId: card.tmdbId ?? null, cardSource: card.source }),
+    "prebaked-card", new Date().toISOString(), new Date().toISOString(),
+  );
+  db.prepare("UPDATE titles SET name_key = ? WHERE id = ?").run(normalizeTitle(card.name) || null, id);
+  const row = getTitle.get(id);
+  byNorm.set(normName(card.name), [...(byNorm.get(normName(card.name)) ?? []), row]);
+  recovered++;
+  return row;
 }
 const dropSlug = db.prepare("DELETE FROM slugs WHERE slug = ?");
 const demote = db.prepare("UPDATE slugs SET canonical = 0 WHERE title_id = ? AND canonical = 1");
@@ -302,7 +336,7 @@ const landingTitle = new Map(); // Search Console 网址 → 认定的作品编�
 let asCanonical = 0, asAlias = 0;
 db.exec("BEGIN");
 for (const b of landings) {
-  const t = resolveLanding(b);
+  const t = resolveLanding(b) ?? recoverFromCard(b);
   if (!t) {
     unresolved.push({ url: b.url, final: pathOf(b.final), title: b.title, clicks: clicksByUrl.get(b.url) ?? 0 });
     continue;
@@ -313,7 +347,8 @@ for (const b of landings) {
   const declared = b.canonical && pathOf(b.canonical).startsWith("/title/") ? pathOf(b.canonical).slice("/title/".length) : null;
   const want = declared ?? seg;
   const wantId = toId((want.match(/^(ik\d{6})/i) ?? [])[1]);
-  if (!wantId || wantId === t.id) {
+  const temporary = /^ik_/i.test(want); // ik_radar_…、ik_pre_… 是旧站的临时编号，不作规范网址
+  if (!temporary && (!wantId || wantId === t.id)) {
     const cur = bySlug.get(want);
     if (!(cur?.canonical && cur.title_id !== t.id)) {
       dropSlug.run(want);
@@ -330,7 +365,7 @@ for (const b of landings) {
   if (pathOf(b.url).startsWith("/title/") && urlSeg !== seg) pointSlug(urlSeg, t.id, "snapshot-url-alias");
 }
 db.exec("COMMIT");
-console.log(`落地页：${landings.length} 个，定为规范网址 ${asCanonical} 个，编号与作品不符、改作别名 ${asAlias} 个；找不到作品的 ${unresolved.length} 个`);
+console.log(`落地页：${landings.length} 个，定为规范网址 ${asCanonical} 个，编号与作品不符或临时编号、改作别名 ${asAlias} 个；按预烘焙卡片补建 ${recovered} 部；找不到作品的 ${unresolved.length} 个`);
 writeFileSync(join(dir, `unresolved-landings-${day}.json`), JSON.stringify(unresolved, null, 1));
 
 // ---- 6.5 没有规范网址的 live 作品：按线上的生成规则补上 -------------------------------------------

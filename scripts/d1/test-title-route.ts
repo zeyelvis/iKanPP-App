@@ -91,7 +91,9 @@ async function main() {
     if (got.kind === "loop") stats.loops.push({ url: b.url, got });
     const final = b.final ? pathOf(b.final) : null;
     if (b.status === 200 && final?.startsWith("/title/")) {
-      const want = pageName(b.title);
+      // 旧站临时编号网址（横轨每小时换位）以网址里的片名为准，与导入规则一致。
+      const temp = pathOf(b.url).match(/^\/title\/ik_(?:radar|pre)_[^-]*(?:-[0-9a-f%]*)?-(.+)$/i);
+      const want = temp ? temp[1].replace(/-/g, " ").trim() : pageName(b.title);
       if (got.kind !== "title")
         stats.titleMissing.push({ url: pathOf(b.url), want, got });
       else if (want && !segmentFitsName(want, got.name ?? null))
