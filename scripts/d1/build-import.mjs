@@ -24,6 +24,7 @@ import { createReadStream, existsSync, readFileSync, rmSync, writeFileSync } fro
 import { createInterface } from "node:readline";
 import { createGunzip } from "node:zlib";
 import { join, resolve } from "node:path";
+import { getTitleCanonicalHref, normalizeTitle } from "../../lib/data/entities/entity-utils.ts";
 
 const [dir, day, outFile] = process.argv.slice(2);
 if (!dir || !day || !outFile) {
@@ -36,7 +37,8 @@ const ROOT = resolve(import.meta.dirname, "../..");
 if (existsSync(outFile)) rmSync(outFile);
 // 导入期间关闭外键检查：合并的编号要指向规范编号，写入顺序无法保证；导入 D1 时按先 live 后 merged 的顺序。
 const db = new DatabaseSync(outFile, { enableForeignKeyConstraints: false });
-db.exec(readFileSync(join(ROOT, "db/d1/0001_init.sql"), "utf8"));
+// 只建作品、网址、影人相关的表（documents、tmdb_matches 是入库 Worker 的，不在导入范围）。
+for (const m of ["0001_init.sql", "0004_title_name_key.sql"]) db.exec(readFileSync(join(ROOT, "db/d1", m), "utf8"));
 db.exec("PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;");
 
 const ID = /^ik(\d{6})$/i;
@@ -156,6 +158,12 @@ for await (const [id, e] of readEntities()) {
   );
 }
 db.exec("COMMIT");
+{
+  const setKey = db.prepare("UPDATE titles SET name_key = ? WHERE id = ?");
+  db.exec("BEGIN");
+  for (const t of db.prepare("SELECT id, name FROM titles WHERE name IS NOT NULL").all()) setKey.run(normalizeTitle(t.name) || null, t.id);
+  db.exec("COMMIT");
+}
 
 // ---- 4. 历史上出现过、但已无数据的编号：写入为 removed，永不复用 ---------------------------
 
@@ -223,8 +231,8 @@ console.log(`网址片段：规范 ${canon} 个，别名 ${alias} 个（slug:* �
 // 快照里不少跳转目标的编号此刻已是另一部作品。
 // - 依次试：网址里的编号、片段表、片名（规范化后）+ 年份（差 ≤ 1）；必须片名对得上。页面标题里的类型不可靠
 //   （星际穿越标成电视剧、动画电影标成动漫），只在同名多部时用来排序；
-// - 落地页的片段只有在不带编号、或带的正是该作品自己的编号时，才能作为规范网址；同一作品有多个这样的
-//   落地页时点击多的那个作规范网址，其余作别名（308 过去）；
+// - 规范网址取页面自己声明的 rel=canonical（没有就取落地页网址），且只有在不带编号、或带的正是该作品
+//   自己的编号时才采用；同一作品有多个落地页时点击多的那个说了算，其余作别名（308 过去）；
 // - 落地页片段与 Search Console 网址片段都改指到认定的作品（不抢别的作品的规范片段）。
 const clicksByUrl = new Map(gsc.map((r) => [r.url, r.clicks + r.impressions / 100]));
 const landings = baseline
@@ -301,15 +309,19 @@ for (const b of landings) {
   }
   landingTitle.set(b.url, t.id);
   const seg = pathOf(b.final).slice("/title/".length);
-  const segId = toId((seg.match(/^(ik\d{6})/i) ?? [])[1]);
-  if (!segId || segId === t.id) {
-    const cur = bySlug.get(seg);
+  // 页面自己声明的 rel=canonical 是 Google 认的规范网址：落地页声明了别的作品页地址时，用声明的那个。
+  const declared = b.canonical && pathOf(b.canonical).startsWith("/title/") ? pathOf(b.canonical).slice("/title/".length) : null;
+  const want = declared ?? seg;
+  const wantId = toId((want.match(/^(ik\d{6})/i) ?? [])[1]);
+  if (!wantId || wantId === t.id) {
+    const cur = bySlug.get(want);
     if (!(cur?.canonical && cur.title_id !== t.id)) {
-      dropSlug.run(seg);
+      dropSlug.run(want);
       demote.run(t.id);
-      addSlug.run(seg, t.id, 1, "snapshot-landing");
+      addSlug.run(want, t.id, 1, "snapshot-landing");
       asCanonical++;
     }
+    if (want !== seg) pointSlug(seg, t.id, "snapshot-landing-alias");
   } else {
     pointSlug(seg, t.id, "snapshot-landing-alias");
     asAlias++;
@@ -320,6 +332,35 @@ for (const b of landings) {
 db.exec("COMMIT");
 console.log(`落地页：${landings.length} 个，定为规范网址 ${asCanonical} 个，编号与作品不符、改作别名 ${asAlias} 个；找不到作品的 ${unresolved.length} 个`);
 writeFileSync(join(dir, `unresolved-landings-${day}.json`), JSON.stringify(unresolved, null, 1));
+
+// ---- 6.5 没有规范网址的 live 作品：按线上的生成规则补上 -------------------------------------------
+// KV 里约 1.2 万部作品没有 canonicalSlug，线上由 getTitleCanonicalHref 现算：有不带编号的 canonicalSlug 就用它，
+// 否则「编号-片名」。这里照同样的规则补，网址与线上一致；片段已被别的作品占用时退到只有编号。
+{
+  const lacking = db.prepare("SELECT id, name FROM titles t WHERE state = 'live' AND NOT EXISTS (SELECT 1 FROM slugs s WHERE s.title_id = t.id AND s.canonical = 1)").all();
+  const owner = db.prepare("SELECT title_id FROM slugs WHERE slug = ?");
+  const setCanonical = db.prepare("UPDATE slugs SET canonical = 1, source = source || '+canonical' WHERE slug = ?");
+  let filled = 0;
+  db.exec("BEGIN");
+  for (const t of lacking) {
+    const kvCanonical = entities.get(t.id)?.canonicalSlug ? safeDecode(entities.get(t.id).canonicalSlug) : null;
+    const options = [
+      kvCanonical && !/^ik\d{6}/i.test(kvCanonical) ? kvCanonical : null,
+      getTitleCanonicalHref({ entityId: code(t.id), title: t.name ?? "" }).replace(/^\/title\//, ""),
+      code(t.id),
+    ].filter((x) => x && x !== "/");
+    for (const seg of options) {
+      const cur = owner.get(seg);
+      if (cur && cur.title_id !== t.id) continue;
+      if (cur) setCanonical.run(seg);
+      else addSlug.run(seg, t.id, 1, "derived-canonical");
+      filled++;
+      break;
+    }
+  }
+  db.exec("COMMIT");
+  console.log(`补规范网址：${lacking.length} 部没有，补上 ${filled} 部`);
+}
 
 // ---- 7. 快照路由 ---------------------------------------------------------------------------
 // 每个 Search Console 网址当时的结果。最终是作品页的，目标改为认定作品的规范网址（与快照网址相同时不跳转）；
