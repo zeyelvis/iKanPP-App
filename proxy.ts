@@ -7,7 +7,8 @@ import { titlePageForPlayerLink } from '@/lib/utils/player-link';
  * 网站请求入口（Next 16 起 middleware 改名 proxy）：
  * - theone58.com → www.ikanpp.com；ikanpp.com → www.ikanpp.com（301）；
  * - /premium 与 premium=1 的播放请求 → ikanx.com（午夜专区已拆为独立站点）；
- * - 搜索结果页 noindex；旧 /player 链接 308 到作品页；写入访客国家 Cookie。
+ * - 搜索结果页 noindex；旧 /player 链接 308 到作品页；写入访客国家 Cookie；
+ * - workers.dev 预览地址整站 noindex（只用于上线前测试，不能和 www 抢收录）。
  */
 export function proxy(request: NextRequest) {
     const host = request.headers.get('host') || '';
@@ -47,9 +48,9 @@ export function proxy(request: NextRequest) {
     }
 
     // 搜索参数（如 /?q=xxx）页面注入 X-Robots-Tag: noindex, follow，防止动态搜索页稀释抓取预算并被判定为薄内容
-    if (url.searchParams.has('q')) {
+    if (url.searchParams.has('q') || host.endsWith('.workers.dev')) {
         const response = NextResponse.next();
-        response.headers.set('X-Robots-Tag', 'noindex, follow');
+        response.headers.set('X-Robots-Tag', host.endsWith('.workers.dev') ? 'noindex, nofollow' : 'noindex, follow');
         return response;
     }
 
