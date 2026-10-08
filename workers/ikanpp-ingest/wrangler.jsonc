@@ -9,7 +9,7 @@
   "d1_databases": [
     { "binding": "DB", "database_name": "ikanpp-db", "database_id": "fe23840b-7279-4e77-ba1e-2318d8c1972a" }
   ],
-  // 每小时第 23 分：爱壹帆各频道轮播与热播标签（AGENTS 准则 6）。Cloudflare 的定时器准到分钟。
+  // 每小时第 23 分：爱壹帆各频道轮播与热播标签（AGENTS 准则 6），然后是最新上线。Cloudflare 的定时器准到分钟。
   "triggers": { "crons": ["23 * * * *"] }
   // 密钥（wrangler secret put）：TMDB_API_KEY；INGEST_SECRET（手动触发 /run 用）
 }

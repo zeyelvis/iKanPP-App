@@ -1,14 +1,16 @@
 /**
  * iKanPP 入库 Worker（重构阶段 2）：用 Cloudflare 定时器按时更新 D1 ikanpp-db。
- * - 每小时第 23 分：各频道轮播与热播标签（jobs/hero.ts）。
- * 手动触发：POST /run?job=hero，带 Authorization: Bearer <INGEST_SECRET>。
+ * - 每小时第 23 分：各频道轮播与热播标签（jobs/hero.ts），然后是最新上线（jobs/latest.ts）。
+ * 手动触发：POST /run?job=hero（或 latest），带 Authorization: Bearer <INGEST_SECRET>。
  * 每次运行的结果写进 sync_state（key = job:<名字>）。
  */
 import type { Env } from './env';
 import { syncHero } from './jobs/hero';
+import { syncLatest } from './jobs/latest';
 
-const JOBS: Record<string, (env: Env) => Promise<string[]>> = { hero: syncHero };
-const SCHEDULE: Record<string, string> = { '23 * * * *': 'hero' };
+const JOBS: Record<string, (env: Env) => Promise<string[]>> = { hero: syncHero, latest: syncLatest };
+/** 同一个定时器下的任务按顺序执行。 */
+const SCHEDULE: Record<string, string[]> = { '23 * * * *': ['hero', 'latest'] };
 
 async function run(env: Env, job: string) {
   const started = new Date().toISOString();
@@ -29,8 +31,8 @@ async function run(env: Env, job: string) {
 
 export default {
   async scheduled(event: ScheduledController, env: Env, ctx: ExecutionContext) {
-    const job = SCHEDULE[event.cron];
-    if (job) ctx.waitUntil(run(env, job));
+    const jobs = SCHEDULE[event.cron] ?? [];
+    ctx.waitUntil((async () => { for (const job of jobs) await run(env, job); })());
   },
   async fetch(request: Request, env: Env) {
     const url = new URL(request.url);

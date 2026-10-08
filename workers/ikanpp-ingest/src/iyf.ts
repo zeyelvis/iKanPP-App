@@ -1,4 +1,4 @@
-/** 爱壹帆：各频道网页里内嵌的轮播（injectJson 的 slide-list）、轮播接口、热播榜接口。 */
+/** 爱壹帆：各频道网页里内嵌的轮播（injectJson 的 slide-list）、轮播接口、热播榜接口、最近上架。 */
 const BROWSER_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
 
 export interface IyfSlide {
@@ -51,4 +51,58 @@ export async function hotTop(cid: string, count: number): Promise<TrendingItem[]
     if (items.length >= count) break;
   }
   return items;
+}
+
+// ── 最新上线：GetLastAdd 要签名，vv = md5(公钥&小写查询串&私钥)，密钥取自 www.iyf.tv/list 的 pConfig。
+
+let keys: { pub: string; priv: string } | null = null;
+
+/** Workers 的 crypto.subtle.digest 支持 MD5（非标准扩展）。 */
+async function md5(text: string): Promise<string> {
+  const buf = await crypto.subtle.digest('MD5', new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function refreshKeys() {
+  const res = await fetch('https://www.iyf.tv/list', { headers: { 'User-Agent': BROWSER_UA, 'Accept-Language': 'zh-CN,zh;q=0.9' }, signal: AbortSignal.timeout(10_000) });
+  if (!res.ok) throw new Error(`iyf list HTTP ${res.status}`);
+  const m = (await res.text()).match(/"pConfig":\s*(\{[^}]+\})/);
+  if (!m) throw new Error('iyf list 页面里没有 pConfig');
+  const p = JSON.parse(m[1]) as { publicKey?: string; privateKey?: string | string[] };
+  const priv = Array.isArray(p.privateKey) ? p.privateKey[0] : p.privateKey;
+  if (!p.publicKey || !priv) throw new Error('pConfig 缺少密钥');
+  keys = { pub: p.publicKey, priv };
+}
+
+export interface IyfLatest {
+  title: string;
+  year?: number;
+  atypeName?: string;
+  lastName?: string;
+  regional?: string;
+  vipResource?: string;
+  addTime?: string;
+  contxt?: string;
+  isFilm?: boolean;
+}
+
+/** 某频道最近上架的作品（每页 10 部）。 */
+export async function lastAdd(cid: string, page: number): Promise<IyfLatest[]> {
+  const call = async () => {
+    const query = `cinema=1&cid=${cid}&page=${page}&pageSize=10`;
+    const vv = await md5(`${keys!.pub}&${query.toLowerCase()}&${keys!.priv}`);
+    return fetch(`https://m10.iyf.tv/api/list/GetLastAdd?${query}&vv=${vv}&pub=${keys!.pub}`, {
+      headers: { 'User-Agent': BROWSER_UA, Referer: 'https://www.iyf.tv/' },
+      signal: AbortSignal.timeout(8000),
+    });
+  };
+  if (!keys) await refreshKeys();
+  let res = await call();
+  if (res.status === 401 || res.status === 403) {
+    await refreshKeys();
+    res = await call();
+  }
+  if (!res.ok) throw new Error(`GetLastAdd HTTP ${res.status}`);
+  const data = (await res.json()) as { data?: { info?: IyfLatest[] } };
+  return (data.data?.info ?? []).filter((it) => it?.title).map((it) => ({ ...it, title: it.title.trim() }));
 }

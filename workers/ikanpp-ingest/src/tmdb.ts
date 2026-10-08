@@ -1,4 +1,6 @@
 /** TMDB 中文资料：按编号取详情，或按片名搜索（搜不到时去掉副标题再搜一次）。 */
+import { hasTitleOverlap } from '../../../lib/data/entities/entity-utils';
+
 const BASE = 'https://api.themoviedb.org/3';
 
 export interface TmdbBrief {
@@ -43,4 +45,25 @@ export async function tmdbSearch(key: string, query: string, type: 'movie' | 'tv
   if (match) return brief(match, type);
   const shorter = query.split(/[:：\s]/)[0].trim();
   return shorter && shorter !== query ? tmdbSearch(key, shorter, type) : null;
+}
+
+const yearOf = (r: Record<string, any>) => Number((r.release_date || r.first_air_date || '').slice(0, 4)) || 0;
+
+/**
+ * 新片用的搜索：结果片名必须与原片名对得上（hasTitleOverlap），给了年份时年份差不能超过 1，
+ * 宁可不配也不张冠李戴。有年份时，整名搜不到再用主标题（冒号前）搜一次；没有年份不做这一步，
+ * 免得短母题吞掉带副标题的新片（AGENTS 准则 16）。
+ */
+export async function tmdbSearchStrict(key: string, query: string, type: 'movie' | 'tv', year?: number): Promise<TmdbBrief | null> {
+  const main = query.split(/[:：·\s]/)[0].trim();
+  const queries = year && main.length >= 2 && main !== query ? [query, main] : [query];
+  for (const q of queries) {
+    const data = await get(key, `/search/${type}?query=${encodeURIComponent(q)}`);
+    const results: Record<string, any>[] = data?.results ?? [];
+    const fits = results.filter((r) => hasTitleOverlap(query, r.title || r.name || ''));
+    const near = year ? fits.filter((r) => yearOf(r) && Math.abs(yearOf(r) - year) <= 1) : fits;
+    const match = near.find((r) => (r.title || r.name) === query) ?? near[0];
+    if (match) return brief(match, type);
+  }
+  return null;
 }
