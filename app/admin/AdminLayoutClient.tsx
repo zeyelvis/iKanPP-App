@@ -6,10 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   Film,
-  Search,
-  Zap,
   BarChart3,
-  Settings,
   ShieldCheck,
   ExternalLink,
   Menu,
@@ -17,7 +14,6 @@ import {
   ChevronRight,
   Sparkles,
   Inbox,
-  Rocket,
   Radio,
 } from 'lucide-react';
 import './admin.css';
@@ -31,14 +27,10 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { name: '仪表盘总览', href: '/admin/dashboard', icon: LayoutDashboard },
-  { name: '影视实体管理', href: '/admin/entities', icon: Film },
+  { name: '作品管理', href: '/admin/entities', icon: Film },
   { name: '用户求片工单', href: '/admin/demands', icon: Inbox },
-  { name: 'SEO 智能监控', href: '/admin/seo', icon: Search },
-  { name: '促抓控制台', href: '/admin/indexing', icon: Zap },
-  { name: '全域增长中枢', href: '/admin/growth', icon: Rocket, badge: 'HOT' },
   { name: '暗影专线中枢', href: '/admin/shadowline', icon: Radio, badge: 'AUTO' },
-  { name: 'GSC 数据分析', href: '/admin/analytics', icon: BarChart3 },
-  { name: '系统配置与审计', href: '/admin/system', icon: Settings },
+  { name: '各国打开速度', href: '/admin/analytics', icon: BarChart3 },
 ];
 
 export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
@@ -51,13 +43,12 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
     // 异步拉取一次认证身份
     async function checkAuth() {
       try {
-        const res = await fetch('/api/admin/dashboard');
+        const res = await fetch('/api/admin/whoami');
+        const data = await res.json().catch(() => ({}));
         if (res.status === 401 || res.status === 403) {
-          const errData = await res.json().catch(() => ({}));
-          setAuthError(errData.error || '未通过 Cloudflare Access Zero Trust 认证');
+          setAuthError(data.error || '未通过 Cloudflare Access Zero Trust 认证');
         } else if (res.ok) {
-          // 尝试从返回或 cookie/headers 中显示
-          setAdminEmail('zeyelvis@gmail.com');
+          setAdminEmail(data.email || '已登录');
           setAuthError(null);
         }
       } catch (err: any) {

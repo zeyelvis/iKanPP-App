@@ -1,34 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdminAuth, verifyCloudflareAccess } from '@/lib/admin/verify-access';
+import { verifyCloudflareAccess } from '@/lib/admin/verify-access';
 import { recordAuditLog, getRecentAuditLogs } from '@/lib/admin/audit';
-import {
-  kvGet,
-  kvPut,
-  kvDelete,
-  queryEntities,
-  getEntityById,
-  getEntityByTitle,
-  getEntityByTmdb,
-  saveEntity,
-  getTitleDemandLeaderboard,
-  getNextEntitySeq,
-} from '@/lib/services/entity-kv';
-import { saveTopic } from '@/lib/services/topic-service';
-import { calculateSeoScore } from '@/lib/utils/seo-score';
-import { batchPublishGoogleIndexing, publishGoogleIndexingUrl } from '@/lib/services/google-indexing';
-import highPotentialData from '@/lib/data/seo-high-potential.json';
-import keywordMatrixData from '@/lib/data/seo-keyword-matrix.json';
-import { TitleEntity } from '@/lib/types/entity';
-import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
-import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
-import { formatEntityId, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
-import {
-  generateAiUniqueReview,
-  generateAiFaq,
-  generateAiParasiteArticle,
-  generateAiCollectionTopic,
-  generateAiLocalization,
-} from '@/lib/services/ai-seo';
+import { getTitleDemandLeaderboard } from '@/lib/services/entity-kv';
+import { normalizeTitle } from '@/lib/data/entities/entity-utils';
+import type { TitleEntity } from '@/lib/types/entity';
+import { getDb } from '@/lib/data/d1/db';
+import { toEntities } from '@/lib/data/d1/related';
+import type { D1Like, TitleRow } from '@/lib/data/d1/title-route';
 import {
   getShadowLineConfig,
   getShadowLineHealth,
@@ -38,609 +16,177 @@ import {
   runShadowLineAutoSniff,
 } from '@/lib/services/shadowline-service';
 
+/**
+ * 后台接口（/admin，Cloudflare Access 保护；这里再用 Access 令牌校验一次）。
+ * 2026-10-08 重构阶段 4 精简：作品管理改读写 D1；保留求片记录、各国打开速度、审计日志、专线控制、IndexNow。
+ * 去掉：推送 Google（Indexing API 不适用于影视页）、AI 长文、SEO / 部署触发（GitHub 流水线已停）、
+ * 编造的「搜索词分析」（拿展示量乘系数冒充点击）。
+ */
 
-const GITHUB_REPO = process.env.GITHUB_REPOSITORY || 'zeyelvis/iKanPP-App';
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_PAT || '';
-const DAILY_LIMIT = 200;
-const SAFETY_LOCK_THRESHOLD = 180;
-const INDEXNOW_KEY = process.env.INDEXNOW_KEY || '7f2e1b4c9a8d3e5f6a1b2c3d4e5f6071';
 const HOST = 'www.ikanpp.com';
-const KEY_LOCATION = `https://${HOST}/${INDEXNOW_KEY}.txt`;
-
-const ALLOWED_WORKFLOWS = [
-  'deploy.yml',
-  'seo-intelligence.yml',
-  'sync-iyf-channels.yml',
-  'full-site-prewarm.yml',
-  'generate-sitemaps.yml',
-  'ai-seo-autonomous.yml',
-];
+const INDEXNOW_KEY = process.env.INDEXNOW_KEY || '7f2e1b4c9a8d3e5f6a1b2c3d4e5f6071';
+const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '172a13185bd6e694bfefc089b12cad6a';
+const KINDS = ['movie', 'tv', 'anime', 'variety', 'documentary'];
 
 interface RouteContext {
   params: Promise<{ slug?: string[] }>;
 }
 
+const json = (data: unknown, status = 200) => NextResponse.json(data, { status });
+const code = (id: number) => `ik${String(id).padStart(6, '0')}`;
+const parseId = (raw?: string) => {
+  const m = String(raw ?? '').match(/^(?:ik)?(\d{1,6})$/i);
+  return m ? Number(m[1]) : null;
+};
+function db(): D1Like {
+  const d = getDb();
+  if (!d) throw new Error('D1 不可用');
+  return d;
+}
+
+const WITH_CANONICAL = `t.*, (SELECT slug FROM slugs WHERE title_id = t.id AND canonical = 1) AS canonical_slug`;
+
+async function entityById(id: number): Promise<(TitleEntity & { state: string; mergedInto: number | null }) | null> {
+  const row = await db().prepare(`SELECT ${WITH_CANONICAL} FROM titles t WHERE t.id = ?`).bind(id).first<TitleRow>();
+  if (!row) return null;
+  const [entity] = await toEntities(db(), [row]);
+  return { ...entity, state: row.state, mergedInto: row.merged_into };
+}
+
 // ==========================================
-// GET 派发
+// GET
 // ==========================================
 export async function GET(request: NextRequest, { params }: RouteContext) {
-  const authError = await requireAdminAuth(request);
-  if (authError) return authError;
-
+  const auth = await verifyCloudflareAccess(request);
+  if (!auth.authenticated) return json({ success: false, error: auth.error || '未授权访问' }, auth.status);
   const { slug = [] } = await params;
   const path = slug.join('/');
   const { searchParams } = new URL(request.url);
 
   try {
-    // 1. 仪表盘
+    // 后台外框用来显示当前登录邮箱
+    if (path === 'whoami') return json({ success: true, email: auth.email ?? '' });
+
+    // 仪表盘：片库数量、入库任务状态、站点地图、数据集更新时间
     if (path === 'dashboard') {
-      const today = new Date().toISOString().split('T')[0];
-      let entityCount = 0;
-      try {
-        const indexAllRaw = await kvGet('index:all');
-        if (indexAllRaw) {
-          const ids = JSON.parse(indexAllRaw);
-          if (Array.isArray(ids)) entityCount = ids.length;
-        }
-      } catch (e) {
-        console.warn('[Dashboard API] 读取 index:all 失败:', e);
-      }
-
-      let quotaUsed = 0;
-      try {
-        const quotaRaw = await kvGet(`admin:indexing-quota:${today}`);
-        if (quotaRaw) quotaUsed = parseInt(quotaRaw, 10) || 0;
-      } catch (e) {
-        console.warn('[Dashboard API] 读取当日配额失败:', e);
-      }
-
-      let latestReportDate = today;
-      let latestReport: any = null;
-      let indexNowCount = 0;
-      try {
-        const latestDateStr = await kvGet('admin:seo-report:latest');
-        if (latestDateStr) latestReportDate = latestDateStr.trim();
-        const reportRaw = await kvGet(`admin:seo-report:${latestReportDate}`);
-        if (reportRaw) {
-          latestReport = JSON.parse(reportRaw);
-          indexNowCount = latestReport?.indexNowSuccessCount || latestReport?.indexNowPushedCount || 0;
-        }
-      } catch (e) {
-        console.warn('[Dashboard API] 读取最新 SEO 报告失败:', e);
-      }
-
-      const highPotentialCount = (highPotentialData as any)?.keywords?.length || 0;
-      const seoScoreDist = latestReport?.seoScoreDist || {
-        excellent: Math.round(entityCount * 0.72) || 0,
-        good: Math.round(entityCount * 0.21) || 0,
-        needsWork: Math.round(entityCount * 0.07) || 0,
-      };
-
-      const recentLogs = await getRecentAuditLogs(8);
-
-      return NextResponse.json({
-        success: true,
-        data: {
-          entityCount,
-          indexingQuota: {
-            used: quotaUsed,
-            limit: DAILY_LIMIT,
-            remaining: Math.max(0, DAILY_LIMIT - quotaUsed),
-          },
-          indexNowCount,
-          highPotentialCount,
-          seoScoreDist,
-          recentLogs,
-          latestReportDate,
-          latestReportSummary: latestReport
-            ? {
-                sitemapCount: latestReport.sitemaps?.length || 0,
-                googlePushedCount: latestReport.googlePushedCount || 0,
-                autoHealedCount: latestReport.autoHealedUrls?.length || 0,
-                timestamp: latestReport.timestamp || null,
-              }
-            : null,
-        },
-      });
-    }
-
-    // 2. 单个实体详情：/api/admin/entities/:id
-    if (slug[0] === 'entities' && slug[1] && slug[1] !== 'search') {
-      const id = slug[1];
-      const entity = await getEntityById(id);
-      if (!entity) {
-        return NextResponse.json(
-          { success: false, error: `未找到 ID 为 ${id} 的影视实体` },
-          { status: 404 }
-        );
-      }
-      const seoScore = calculateSeoScore(entity);
-      return NextResponse.json({
-        success: true,
-        entity: { ...entity, seoScore },
-      });
-    }
-
-    // 3. 实体列表查询：/api/admin/entities
-    if (path === 'entities') {
-      const channel = searchParams.get('channel') || undefined;
-      const genre = searchParams.get('genre') || undefined;
-      const region = searchParams.get('region') || undefined;
-      const year = searchParams.get('year') || undefined;
-      const sort = searchParams.get('sort') || 'latest';
-      const page = parseInt(searchParams.get('page') || '1', 10);
-      const limit = parseInt(searchParams.get('limit') || '36', 10);
-      const search = (searchParams.get('search') || '').trim();
-      const scoreRange = searchParams.get('scoreRange') || undefined;
-
-      if (/^ik\d{5,7}$/i.test(search)) {
-        const single = await getEntityById(search.toLowerCase());
-        if (single) {
-          const score = calculateSeoScore(single);
-          return NextResponse.json({
-            success: true,
-            items: [{ ...single, seoScore: score }],
-            total: 1,
-            page: 1,
-            pageCount: 1,
-            limit,
-          });
-        }
-      }
-
-      if (/^\d{3,9}$/.test(search)) {
-        const movieMatch = await getEntityByTmdb('movie', search);
-        const tvMatch = !movieMatch ? await getEntityByTmdb('tv', search) : null;
-        const matched = movieMatch || tvMatch;
-        if (matched) {
-          const score = calculateSeoScore(matched);
-          return NextResponse.json({
-            success: true,
-            items: [{ ...matched, seoScore: score }],
-            total: 1,
-            page: 1,
-            pageCount: 1,
-            limit,
-          });
-        }
-      }
-
-      const result = await queryEntities({
-        channel,
-        genre,
-        region,
-        year,
-        sort,
-        page,
-        limit: Math.min(limit, 100),
-      });
-
-      let items = result.items;
-
-      if (search) {
-        const sLower = search.toLowerCase();
-        items = items.filter(
-          (item) =>
-            item.title?.toLowerCase().includes(sLower) ||
-            item.originalTitle?.toLowerCase().includes(sLower) ||
-            item.slug?.toLowerCase().includes(sLower)
-        );
-      }
-
-      const itemsWithScores = items.map((item) => ({
-        ...item,
-        seoScore: calculateSeoScore(item),
-      }));
-
-      let finalItems = itemsWithScores;
-      if (scoreRange === 'excellent') {
-        finalItems = itemsWithScores.filter((i) => (i.seoScore || 0) >= 80);
-      } else if (scoreRange === 'good') {
-        finalItems = itemsWithScores.filter((i) => (i.seoScore || 0) >= 60 && (i.seoScore || 0) < 80);
-      } else if (scoreRange === 'needsWork') {
-        finalItems = itemsWithScores.filter((i) => (i.seoScore || 0) < 60);
-      }
-
-      return NextResponse.json({
-        success: true,
-        items: finalItems,
-        total: result.total,
-        page: result.page,
-        pageCount: result.pageCount,
-        limit: result.limit,
-      });
-    }
-
-    // 3.1 用户求片工单：/api/admin/demands
-    if (slug[0] === 'demands') {
-      const demands = await getTitleDemandLeaderboard(100);
-      return NextResponse.json({
-        success: true,
-        data: demands,
-      });
-    }
-
-    // 3.2 全域增长与外链中枢：/api/admin/growth
-    if (path === 'growth' || slug[0] === 'growth') {
-      const today = new Date().toISOString().slice(0, 10);
-      const isTgConfigured = !!process.env.TELEGRAM_BOT_TOKEN;
-
-      const latestItems = (PREBAKED_LATEST_TITLES.all || []).slice(0, 15);
-      const topBanner = latestItems[0]?.backdrop || latestItems[0]?.cover;
-
-      const parasiteMarkdown = `# 【2026最新片单】海外免翻墙免费看国产剧与院线大片指南（${today}实时更新）
-
-${topBanner ? `![今日热播影视大作速报](${topBanner})\n` : ''}
-> 人在海外（北美、欧洲、澳洲、日韩、东南亚），想看最新的国产热播剧和院线新片，却频频遭遇“由于版权限制，您所在的地区无法播放”？各大平台满屏的充值套路与低俗弹窗更让人不胜其扰。
-> 
-> 本文为您深度盘点 **2026 年最新上线的热门影视大作**，并推荐支持 **海外 4K 直连、0 弹窗广告、秒开不卡顿** 的高分观影途径。
-
----
-
-## 🌟 今日全网院线与连载更新热榜
-
-${latestItems.map((item, index) => {
-  const watchUrl = `https://www.ikanpp.com${getTitleCanonicalHref(item)}`;
-  const posterUrl = item.cover || item.backdrop;
-  return `### ${index + 1}. 《${item.title}》
-${posterUrl ? `\n![《${item.title}》官方高清海报](${posterUrl})\n` : ''}
-- **当前状态**：${item.qualityBadge || '1080P/4K'} · ${item.updateBadge || '全集'}
-- **影视类型**：${item.type === 'tv' ? '精品热播电视剧' : '院线高分电影'}
-- **剧情亮点**：2026 年度备受瞩目的重磅巨作，全网热度持续霸榜，反转不断，口碑极佳。
-- **👉 4K 免翻墙正片直达**：[点击立即在 iKanPP 免费观看完整版](${watchUrl})
-`;
-}).join('\n')}
-
----
-
-## 💡 为什么推荐通过 iKanPP (爱看片片) 追剧？
-
-对于身处海外的华人朋友与留学生来说，寻找一个稳定干净的平台至关重要：
-1. **海外免翻墙极速直连**：全球部署 Anycast 边缘 CDN，无论身在美加还是欧澳，首屏 **0.8 秒神速秒开**，彻底告别缓冲转圈；
-2. **绝对 0 弹窗广告**：真正纯净的影院级体验，坚决杜绝任何诱导点击与低俗悬浮广告；
-3. **海量 4.3 万部正片库**：从当下热播的《凡人修仙传》、《仙逆》，到院线热映大片，甚至 4K 纪录片全覆盖；
-4. **全端适配与 PWA 桌面支持**：手机、平板、电脑、电视浏览器全适配，可直接添加到手机桌面像 App 一样免翻墙一秒看剧。
-
----
-
-> 收藏官方永久发布页：[iKanPP — 海外华人影视聚合平台 (https://www.ikanpp.com)](https://www.ikanpp.com)
-> 祝您观影愉快！
-`;
-
-      const directories = [
-        { id: '1', name: '一亩三分地', region: '北美', category: '留学生第一高知论坛', url: 'https://www.1point3acres.com/bbs/', weight: 'DR 85 (极高)' },
-        { id: '2', name: '文学城 (Wenxuecity)', region: '北美', category: '历史最悠久华人门户', url: 'https://bbs.wenxuecity.com/', weight: 'DR 82 (极高)' },
-        { id: '3', name: '北美微论坛 (MoonBBS)', region: '北美', category: '华人高频生活消费论坛', url: 'https://www.moonbbs.com/', weight: 'DR 76 (高)' },
-        { id: '4', name: '新足迹 (OurSteps)', region: '澳洲', category: '澳洲第一华人社区', url: 'https://www.oursteps.com.au/bbs/', weight: 'DR 78 (高)' },
-        { id: '5', name: '天维网 (Skykiwi)', region: '新西兰', category: '新西兰最大中文门户', url: 'https://bbs.skykiwi.com/', weight: 'DR 74 (高)' },
-        { id: '6', name: '欧洲华人街', region: '欧洲', category: '法意西华人生活枢纽', url: 'https://www.huarenjie.com/', weight: 'DR 72 (高)' },
-        { id: '7', name: 'V2EX (分享创造)', region: '极客', category: '海外程序员独立开发者社区', url: 'https://www.v2ex.com/go/create', weight: 'DR 88 (极高)' },
-        { id: '8', name: 'GitHub Awesome-Lists', region: '开源', category: '开发者顶级信任背书', url: 'https://github.com/', weight: 'DR 96 (神级)' },
-      ];
-
-      return NextResponse.json({
-        success: true,
-        data: {
-          today,
-          tgBot: {
-            isConfigured: isTgConfigured,
-            webhookUrl: 'https://www.ikanpp.com/api/tg-bot',
-            botUsername: '@ikanpp_bot',
-          },
-          geo: {
-            llmsTxtUrl: 'https://www.ikanpp.com/llms.txt',
-            llmsFullTxtUrl: 'https://www.ikanpp.com/llms-full.txt',
-          },
-          parasite: {
-            title: `【2026最新片单】海外免翻墙免费看国产剧与院线大片指南（${today}实时更新）`,
-            itemCount: latestItems.length,
-            markdown: parasiteMarkdown,
-          },
-          directories,
-        },
-      });
-    }
-
-    // 4. 配额查询：/api/admin/indexing/quota
-    if (path === 'indexing/quota') {
-      const today = new Date().toISOString().split('T')[0];
-      const quotaKey = `admin:indexing-quota:${today}`;
-      let used = 0;
-      try {
-        const qVal = await kvGet(quotaKey);
-        if (qVal) used = parseInt(qVal, 10) || 0;
-      } catch {}
-
-      const remaining = Math.max(0, DAILY_LIMIT - used);
-      const isLocked = used >= SAFETY_LOCK_THRESHOLD;
-
-      return NextResponse.json({
-        success: true,
-        date: today,
-        used,
-        limit: DAILY_LIMIT,
-        remaining,
-        safetyLockThreshold: SAFETY_LOCK_THRESHOLD,
-        isLocked,
-        percent: Math.min(100, Math.round((used / DAILY_LIMIT) * 100)),
-      });
-    }
-
-    // 5. 关键词库：/api/admin/keywords
-    if (path === 'keywords') {
-      const data = highPotentialData as any;
-      const matrix = keywordMatrixData as any;
-      return NextResponse.json({
-        success: true,
-        updatedAt: data.updatedAt || new Date().toISOString(),
-        highPotentialKeywords: data.keywords || [],
-        matrix: matrix || {},
-        brandKeywords: matrix.brandKeywords || [],
-        industryHeadKeywords: matrix.industryHeadKeywords || [],
-        categoryKeywords: matrix.categoryKeywords || [],
-        broadIntentModifiers: matrix.broadIntentModifiers || [],
-        geoAndScenarioKeywords: matrix.geoAndScenarioKeywords || [],
-      });
-    }
-
-    // 6. SEO 报告：/api/admin/seo/report
-    if (path === 'seo/report') {
-      let targetDate = searchParams.get('date');
-      if (!targetDate) {
-        const latestDateStr = await kvGet('admin:seo-report:latest');
-        if (latestDateStr) {
-          targetDate = latestDateStr.trim();
-        } else {
-          targetDate = new Date().toISOString().split('T')[0];
-        }
-      }
-
-      const reportRaw = await kvGet(`admin:seo-report:${targetDate}`);
-      if (!reportRaw) {
-        return NextResponse.json({
-          success: true,
-          date: targetDate,
-          isFallback: true,
-          report: {
-            timestamp: new Date().toISOString(),
-            sitemaps: [
-              { path: '/sitemap-index.xml', submitted: 7, errors: 0, warnings: 0, isHealthy: true },
-              { path: '/sitemap.xml', submitted: 1000, errors: 0, warnings: 0, isHealthy: true },
-              { path: '/sitemaps/sitemap-channels.xml', submitted: 7, errors: 0, warnings: 0, isHealthy: true },
-            ],
-            highPotentialKeywords: [],
-            sitemapUrlsCount: 1014,
-            googlePushedCount: 0,
-            autoHealedUrls: [],
-            inspectedUrls: [],
-          },
-        });
-      }
-
-      const report = JSON.parse(reportRaw);
-      return NextResponse.json({
-        success: true,
-        date: targetDate,
-        isFallback: false,
-        report,
-      });
-    }
-
-    // 7. 分析页面：/api/admin/analytics/pages
-    if (path === 'analytics/pages') {
-      const limit = parseInt(searchParams.get('limit') || '30', 10);
-      const data = highPotentialData as any;
-      const hpKeywords: any[] = data.keywords || [];
-
-      // 1. 优先基于 GSC 真实搜索词库提取核心落地页
-      const mappedPages: any[] = [];
-      for (const k of hpKeywords) {
-        if (!k.title) continue;
-        const impressions = Number(k.impressions) || 1;
-        const clicks = Math.max(1, Math.round(impressions * 0.08));
-        const ctr = ((clicks / impressions) * 100).toFixed(1) + '%';
-
-        mappedPages.push({
-          page: `https://www.ikanpp.com/title/${encodeURIComponent(k.title)}`,
-          title: k.title,
-          entityId: k.query,
-          clicks,
-          impressions,
-          ctr,
-          position: Number(k.pos || 15).toFixed(1),
-          source: 'GSC 真实搜索表现',
-          isNeedsCtrOptimization: Number(k.pos) >= 11 && Number(k.pos) <= 30,
-        });
-      }
-
-      // 2. 补全片库中核心高热度条目的真实收录健康度
-      const entitiesResult = await queryEntities({ limit: Math.min(limit, 30), sort: 'hits' });
-      for (const item of entitiesResult.items) {
-        if (mappedPages.some((p) => p.title === item.title)) continue;
-        const pop = Number(item.popularity) || 1;
-        mappedPages.push({
-          page: `https://www.ikanpp.com/title/${item.entityId}-${item.slug}`,
-          title: item.title,
-          entityId: item.entityId,
-          clicks: Math.round(pop * 2),
-          impressions: Math.round(pop * 25),
-          ctr: '8.0%',
-          position: item.rate ? (15 - Math.min(10, parseFloat(item.rate))).toFixed(1) : '12.0',
-          source: '片库收录热度',
-          isNeedsCtrOptimization: false,
-        });
-      }
-
-      return NextResponse.json({
-        success: true,
-        rows: mappedPages.slice(0, limit),
-        total: mappedPages.length,
-      });
-    }
-
-    // 8. 搜索词分析：/api/admin/analytics/queries
-    if (path === 'analytics/queries') {
-      const limit = parseInt(searchParams.get('limit') || '50', 10);
-      const data = highPotentialData as any;
-      const keywords = (data.keywords || []).map((k: any) => ({
-        query: k.query,
-        clicks: Math.round((k.impressions || 1) * 0.08),
-        impressions: k.impressions || 1,
-        ctr: ((Math.round((k.impressions || 1) * 0.08) / (k.impressions || 1)) * 100).toFixed(1) + '%',
-        position: Number(k.pos).toFixed(1),
-        isPotential: k.pos >= 11 && k.pos <= 30,
-        title: k.title,
-      }));
-
-      return NextResponse.json({
-        success: true,
-        updatedAt: data.updatedAt,
-        rows: keywords.slice(0, limit),
-        total: keywords.length,
-      });
-    }
-
-    // 8.5 各国打开速度分析：/api/admin/analytics/speed
-    if (path === 'analytics/speed') {
-      const days = parseInt(searchParams.get('days') || '7', 10);
-      const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CF_ACCOUNT_ID || '14fe742dbeae906ff678ebc64d8a5775';
-      const API_TOKEN = process.env.CLOUDFLARE_API_TOKEN || process.env.CF_API_TOKEN || '';
-      const API_KEY = process.env.CLOUDFLARE_API_KEY || process.env.CF_API_KEY || '';
-      const EMAIL = process.env.CLOUDFLARE_EMAIL || process.env.CF_EMAIL || 'zeyelvis@gmail.com';
-
-      let rows: Array<{
-        country: string;
-        sampleCount: number;
-        ttfbP50: number;
-        ttfbP75: number;
-        lcpP50: number;
-        lcpP75: number;
-      }> = [];
-
-      if (API_TOKEN || API_KEY) {
-        try {
-          const sql = `
-            SELECT
-              blob1 AS country,
-              count() AS sample_count,
-              round(quantileExactWeighted(0.5)(double1, _sample_interval)) AS ttfb_p50,
-              round(quantileExactWeighted(0.75)(double1, _sample_interval)) AS ttfb_p75,
-              round(quantileExactWeighted(0.5)(double2, _sample_interval)) AS lcp_p50,
-              round(quantileExactWeighted(0.75)(double2, _sample_interval)) AS lcp_p75
-            FROM ikanpp_pagespeed
-            WHERE timestamp >= NOW() - INTERVAL '${days}' DAY
-            GROUP BY country
-            ORDER BY sample_count DESC
-          `;
-
-          const headers: Record<string, string> = {
-            'Content-Type': 'text/plain',
-          };
-          if (API_TOKEN) {
-            headers['Authorization'] = `Bearer ${API_TOKEN}`;
-          } else {
-            headers['X-Auth-Key'] = API_KEY;
-            headers['X-Auth-Email'] = EMAIL;
-          }
-
-          const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/analytics_engine/sql`, {
-            method: 'POST',
-            headers,
-            body: sql,
-          });
-
-          if (res.ok) {
-            const data = await res.json();
-            const sqlRows = data?.data || [];
-            rows = sqlRows.map((r: any) => ({
-              country: String(r.country || 'XX').toUpperCase(),
-              sampleCount: Number(r.sample_count || 0),
-              ttfbP50: Number(r.ttfb_p50 || 0),
-              ttfbP75: Number(r.ttfb_p75 || 0),
-              lcpP50: Number(r.lcp_p50 || 0),
-              lcpP75: Number(r.lcp_p75 || 0),
-            }));
-          }
-        } catch (e) {
-          console.warn('[Analytics Speed API] 查询失败:', e);
-        }
-      }
-
-      return NextResponse.json({
-        success: true,
-        rows,
-        total: rows.length,
-      });
-    }
-
-    // 9. 系统健康：/api/admin/system/health
-    if (path === 'system/health') {
-      let kvConnected = false;
-      let totalEntities = 0;
-      let kvLatencyMs = 0;
-
-      const tStart = Date.now();
-      try {
-        const allRaw = await kvGet('index:all');
-        kvLatencyMs = Date.now() - tStart;
-        if (allRaw) {
-          const parsed = JSON.parse(allRaw);
-          if (Array.isArray(parsed)) {
-            totalEntities = parsed.length;
-            kvConnected = true;
-          }
-        }
-      } catch {
-        kvLatencyMs = Date.now() - tStart;
-      }
-
-      const secretsStatus = {
-        CLOUDFLARE_API_KEY: Boolean(process.env.CLOUDFLARE_API_KEY || process.env.CF_API_KEY),
-        GOOGLE_INDEXING_KEY: Boolean(
-          process.env.GOOGLE_INDEXING_KEY || process.env.GOOGLE_SERVICE_ACCOUNT_KEY
-        ),
-        CF_ACCESS_AUD: Boolean(process.env.CF_ACCESS_AUD),
-        CF_ACCESS_TEAM_DOMAIN: Boolean(process.env.CF_ACCESS_TEAM_DOMAIN),
-        GITHUB_TOKEN: Boolean(process.env.GITHUB_TOKEN || process.env.GH_PAT),
-        TELEGRAM_BOT_TOKEN: Boolean(process.env.TELEGRAM_BOT_TOKEN),
-      };
-
-      const healthyCount = Object.values(secretsStatus).filter(Boolean).length;
-      const isOverallHealthy = kvConnected && healthyCount >= 2;
-
-      return NextResponse.json({
-        success: true,
-        timestamp: new Date().toISOString(),
-        isOverallHealthy,
-        kv: {
-          connected: kvConnected,
-          latencyMs: kvLatencyMs,
-          totalEntities,
-        },
-        secrets: secretsStatus,
-      });
-    }
-
-    // 10. 审计日志：/api/admin/audit-log
-    if (path === 'audit-log') {
-      const limit = parseInt(searchParams.get('limit') || '50', 10);
-      const logs = await getRecentAuditLogs(Math.min(limit, 100));
-      return NextResponse.json({
-        success: true,
-        logs,
-        total: logs.length,
-      });
-    }
-
-    // 11. 暗影自愈专线状态：/api/admin/shadowline/status
-    if (path === 'shadowline/status') {
-      const [config, health, logs] = await Promise.all([
-        getShadowLineConfig(),
-        getShadowLineHealth(),
-        getShadowLineLogs(30),
+      const d = db();
+      const [states, kinds, recent, jobs, sitemap, docs] = await Promise.all([
+        d.prepare('SELECT state, COUNT(*) AS n FROM titles GROUP BY state').bind().all<{ state: string; n: number }>(),
+        d.prepare("SELECT kind, COUNT(*) AS n FROM titles WHERE state = 'live' GROUP BY kind").bind().all<{ kind: string | null; n: number }>(),
+        d
+          .prepare(
+            "SELECT SUM(created_at >= strftime('%Y-%m-%dT%H:%M:%fZ', 'now', '-1 day')) AS day, SUM(created_at >= strftime('%Y-%m-%dT%H:%M:%fZ', 'now', '-7 day')) AS week FROM titles WHERE source LIKE 'ingest%'",
+          )
+          .bind()
+          .first<{ day: number | null; week: number | null }>(),
+        d.prepare("SELECT key, value, updated_at FROM sync_state WHERE key LIKE 'job:%' ORDER BY key").bind().all<{ key: string; value: string; updated_at: string }>(),
+        d.prepare('SELECT COUNT(*) AS n FROM sitemap_titles').bind().first<{ n: number }>(),
+        d
+          .prepare("SELECT substr(key, 1, instr(key, ':') - 1) AS kind, COUNT(*) AS n, MAX(updated_at) AS updated FROM documents GROUP BY 1")
+          .bind()
+          .all<{ kind: string; n: number; updated: string }>(),
       ]);
+      return json({
+        success: true,
+        titles: Object.fromEntries(states.results.map((r) => [r.state, r.n])),
+        liveByKind: Object.fromEntries(kinds.results.map((r) => [r.kind ?? 'unknown', r.n])),
+        createdByIngest: { lastDay: recent?.day ?? 0, lastWeek: recent?.week ?? 0 },
+        jobs: jobs.results.map((j) => {
+          let parsed: { ok?: boolean; finished?: string; report?: string[] } = {};
+          try {
+            parsed = JSON.parse(j.value);
+          } catch {}
+          return { job: j.key.slice('job:'.length), ok: parsed.ok ?? null, finished: parsed.finished ?? j.updated_at, report: parsed.report ?? [] };
+        }),
+        sitemapTitles: sitemap?.n ?? 0,
+        documents: docs.results,
+      });
+    }
 
-      return NextResponse.json({
+    // 单部作品
+    if (slug[0] === 'entities' && slug[1]) {
+      const id = parseId(slug[1]);
+      const entity = id ? await entityById(id) : null;
+      if (!entity) return json({ success: false, error: '作品不存在' }, 404);
+      return json({ success: true, entity });
+    }
+
+    // 作品列表：按编号或片名前缀搜索，按频道筛选
+    if (path === 'entities') {
+      const page = Math.max(1, Number(searchParams.get('page')) || 1);
+      const limit = Math.min(60, Math.max(1, Number(searchParams.get('limit')) || 24));
+      const channel = searchParams.get('channel') || '';
+      const search = (searchParams.get('search') || '').trim();
+      const sort = searchParams.get('sort') || 'latest';
+      const where = ["t.state = 'live'"];
+      const args: unknown[] = [];
+      if (KINDS.includes(channel)) {
+        where.push('t.kind = ?');
+        args.push(channel);
+      }
+      if (/^(ik)?\d{1,6}$/i.test(search)) {
+        where.push('t.id = ?');
+        args.push(parseId(search));
+      } else if (search) {
+        const key = normalizeTitle(search);
+        where.push('t.name_key >= ? AND t.name_key < ?');
+        args.push(key, `${key}￿`);
+      }
+      const order = sort === 'popularity' ? 't.popularity DESC, t.id DESC' : sort === 'rating' ? 't.rating DESC, t.id DESC' : 't.created_at DESC, t.id DESC';
+      const d = db();
+      const total = (await d.prepare(`SELECT COUNT(*) AS n FROM titles t WHERE ${where.join(' AND ')}`).bind(...args).first<{ n: number }>())?.n ?? 0;
+      const rows = await d
+        .prepare(`SELECT ${WITH_CANONICAL} FROM titles t WHERE ${where.join(' AND ')} ORDER BY ${order} LIMIT ? OFFSET ?`)
+        .bind(...args, limit, (page - 1) * limit)
+        .all<TitleRow>();
+      return json({ success: true, items: await toEntities(d, rows.results), total, page, pageCount: Math.max(1, Math.ceil(total / limit)) });
+    }
+
+    // 求片记录（KV）
+    if (slug[0] === 'demands') {
+      return json({ success: true, data: await getTitleDemandLeaderboard(100) });
+    }
+
+    // 各国打开速度（Analytics Engine 数据集 ikanpp_pagespeed）。需要密钥 AE_API_TOKEN（Account Analytics 读取权限）。
+    if (path === 'analytics/speed') {
+      const days = Math.min(30, Math.max(1, Number(searchParams.get('days')) || 7));
+      const token = process.env.AE_API_TOKEN || '';
+      if (!token) return json({ success: true, rows: [], total: 0, note: '未配置 AE_API_TOKEN，无法查询 Analytics Engine' });
+      const sql = `
+        SELECT blob1 AS country, count() AS sample_count,
+          round(quantileExactWeighted(0.5)(double1, _sample_interval)) AS ttfb_p50,
+          round(quantileExactWeighted(0.75)(double1, _sample_interval)) AS ttfb_p75,
+          round(quantileExactWeighted(0.5)(double2, _sample_interval)) AS lcp_p50,
+          round(quantileExactWeighted(0.75)(double2, _sample_interval)) AS lcp_p75
+        FROM ikanpp_pagespeed WHERE timestamp >= NOW() - INTERVAL '${days}' DAY
+        GROUP BY country ORDER BY sample_count DESC`;
+      const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/analytics_engine/sql`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'text/plain' },
+        body: sql,
+      });
+      if (!res.ok) return json({ success: false, error: `Analytics Engine HTTP ${res.status}` }, 502);
+      const data = (await res.json()) as { data?: Array<Record<string, unknown>> };
+      const rows = (data.data ?? []).map((r) => ({
+        country: String(r.country || 'XX').toUpperCase(),
+        sampleCount: Number(r.sample_count || 0),
+        ttfbP50: Number(r.ttfb_p50 || 0),
+        ttfbP75: Number(r.ttfb_p75 || 0),
+        lcpP50: Number(r.lcp_p50 || 0),
+        lcpP75: Number(r.lcp_p75 || 0),
+      }));
+      return json({ success: true, rows, total: rows.length });
+    }
+
+    if (path === 'audit-log') {
+      const limit = Math.min(100, Number(searchParams.get('limit')) || 50);
+      const logs = await getRecentAuditLogs(limit);
+      return json({ success: true, logs, total: logs.length });
+    }
+
+    if (path === 'shadowline/status') {
+      const [config, health, logs] = await Promise.all([getShadowLineConfig(), getShadowLineHealth(), getShadowLineLogs(30)]);
+      return json({
         success: true,
         config: {
           ...config,
@@ -652,764 +198,172 @@ ${posterUrl ? `\n![《${item.title}》官方高清海报](${posterUrl})\n` : ''}
       });
     }
 
-    return NextResponse.json(
-      { success: false, error: `未找到请求的 Admin API 接口: ${path}` },
-      { status: 404 }
-    );
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: error.message || 'Admin API 执行异常' },
-      { status: 500 }
-    );
+    return json({ success: false, error: `未找到后台接口: ${path}` }, 404);
+  } catch (error) {
+    return json({ success: false, error: error instanceof Error ? error.message : '后台接口异常' }, 500);
   }
 }
 
 // ==========================================
-// POST 派发
+// POST
 // ==========================================
 export async function POST(request: NextRequest, { params }: RouteContext) {
+  const auth = await verifyCloudflareAccess(request);
+  if (!auth.authenticated) return json({ success: false, error: auth.error || '未授权' }, auth.status);
+  const actor = auth.email || 'Admin';
   const { slug = [] } = await params;
   const path = slug.join('/');
 
-  // 0. AI SEO 5 大全场景生成中枢：/api/admin/ai/execute
-  if (path === 'ai/execute') {
-    const authError = await requireAdminAuth(request);
-    if (authError) return authError;
-
-    try {
-      const body = await request.json();
-      const { scenario, params: p = {} } = body;
-
-      if (scenario === 'review') {
-        const data = await generateAiUniqueReview({
-          title: p.title || '美国人质',
-          type: p.type || 'tv',
-          overview: p.overview,
-          cast: p.cast,
-          genres: p.genres,
-          model: p.model,
-        });
-        return NextResponse.json({ success: true, data });
-      }
-
-      if (scenario === 'faq') {
-        const data = await generateAiFaq({
-          title: p.title || '凡人修仙传',
-          type: p.type || 'tv',
-          overview: p.overview,
-          model: p.model,
-        });
-        return NextResponse.json({ success: true, data });
-      }
-
-      if (scenario === 'article') {
-        const latestItems = (PREBAKED_LATEST_TITLES.all || []).slice(0, 15).map((it) => ({
-          title: it.title,
-          type: it.type,
-          qualityBadge: it.qualityBadge,
-          updateBadge: it.updateBadge,
-          watchUrl: `https://www.ikanpp.com${getTitleCanonicalHref(it)}`,
-          coverUrl: it.cover || it.backdrop,
-        }));
-        const data = await generateAiParasiteArticle(latestItems, {
-          style: p.style || 'review',
-          model: p.model,
-        });
-        return NextResponse.json({ success: true, data });
-      }
-
-      if (scenario === 'collection') {
-        const candidateTitles = (PREBAKED_LATEST_TITLES.all || []).slice(0, 15).map((it) => it.title);
-        const data = await generateAiCollectionTopic({
-          themeKeyword: p.theme || '2026反转烧脑悬疑神剧',
-          candidateTitles,
-          model: p.model,
-        });
-        return NextResponse.json({ success: true, data });
-      }
-
-      if (scenario === 'localize') {
-        const data = await generateAiLocalization({
-          title: p.title || '肖申克的救赎',
-          originalName: p.originalName,
-          year: p.year,
-          model: p.model,
-        });
-        return NextResponse.json({ success: true, data });
-      }
-
-      return NextResponse.json({ success: false, error: '未知的 AI 场景' }, { status: 400 });
-    } catch (err: any) {
-      return NextResponse.json({ success: false, error: err.message || 'AI 执行异常' }, { status: 500 });
-    }
-  }
-
-  // 0.1 将 AI 资产一键保存应用到影视实体：/api/admin/ai/apply-entity
-  if (path === 'ai/apply-entity') {
-    const authError = await requireAdminAuth(request);
-    if (authError) return authError;
-
-    try {
-      const body = await request.json();
-      const { title, entityId, aiContent } = body;
-      if (!title && !entityId) {
-        return NextResponse.json({ success: false, error: '缺少影片名称或 entityId' }, { status: 400 });
-      }
-
-      let entity: TitleEntity | null = null;
-      if (entityId) {
-        entity = await getEntityById(entityId);
-      }
-      if (!entity && title) {
-        entity = await getEntityByTitle(title);
-      }
-
-      if (!entity) {
-        // 如果实体尚未落库，从预烘焙片库查找以完成初始化
-        const allPrebaked = Object.values(PREBAKED_LATEST_TITLES).flat();
-        const found = allPrebaked.find(p => p && p.title === title) as any;
-        if (found) {
-          entity = {
-            entityId: found.entityId || formatEntityId(await getNextEntitySeq()),
-            title: found.title,
-            slug: found.slug || found.title,
-            type: (found.type as any) || 'tv',
-            year: found.year || '2024',
-            description: found.description || '',
-            cover: found.cover || '',
-            backdrop: found.backdrop || '',
-            rate: found.rate || '8.5',
-            genres: found.genres || ['影视'],
-            directors: found.directors || [],
-            actors: found.actors || [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          } as TitleEntity;
-        }
-      }
-
-      if (!entity) {
-        return NextResponse.json({ success: false, error: `未找到影片《${title}》的对应实体` }, { status: 404 });
-      }
-
-      // 深度合并 AI 资产
-      entity.aiContent = {
-        ...(entity.aiContent || {}),
-        ...aiContent,
-        generatedAt: new Date().toISOString(),
-      };
-
-      // 场景 5：若是港台译名，自动同步到别名数组
-      const aliases = new Set(entity.aliases || []);
-      if (aiContent.taiwanTitle) aliases.add(aiContent.taiwanTitle.trim());
-      if (aiContent.hongkongTitle) aliases.add(aiContent.hongkongTitle.trim());
-      entity.aliases = Array.from(aliases);
-
-      entity.updatedAt = new Date().toISOString();
-      await saveEntity(entity);
-
-      await recordAuditLog({
-        actor: 'Admin',
-        action: 'UPDATE_AI_CONTENT',
-        target: entity.entityId,
-        details: { title: entity.title, aiKeys: Object.keys(aiContent) },
-      });
-
-      return NextResponse.json({
-        success: true,
-        message: `已成功将 AI SEO 内容写入《${entity.title}》！前台详情页即刻生效。`,
-        canonicalUrl: `/title/${entity.canonicalSlug || entity.entityId}`,
-      });
-    } catch (err: any) {
-      return NextResponse.json({ success: false, error: err.message || '保存失败' }, { status: 500 });
-    }
-  }
-
-  // 0.2 将 AI 专题一键发布上线：/api/admin/ai/publish-topic
-  if (path === 'ai/publish-topic') {
-    const authError = await requireAdminAuth(request);
-    if (authError) return authError;
-
-    try {
-      const body = await request.json();
-      const { topic } = body;
-      if (!topic || !topic.slug || !topic.topicTitle) {
-        return NextResponse.json({ success: false, error: '专题数据不完整 (缺少 slug 或 topicTitle)' }, { status: 400 });
-      }
-
-      await saveTopic(topic);
-
-      await recordAuditLog({
-        actor: 'Admin',
-        action: 'PUBLISH_AI_TOPIC',
-        target: topic.slug,
-        details: { title: topic.topicTitle, titlesCount: topic.titles?.length },
-      });
-
-      return NextResponse.json({
-        success: true,
-        message: `专题《${topic.topicTitle}》已成功发布上线！`,
-        topicUrl: `/topic/${topic.slug}`,
-      });
-    } catch (err: any) {
-      return NextResponse.json({ success: false, error: err.message || '发布专题失败' }, { status: 500 });
-    }
-  }
-
-  // 1. 实体搜索：/api/admin/entities/search
-  if (path === 'entities/search') {
-    const authError = await requireAdminAuth(request);
-    if (authError) return authError;
-
-    try {
-      const body = await request.json();
-      const { query, tmdbId, type, limit = 20 } = body;
-      const results: TitleEntity[] = [];
-
-      if (tmdbId) {
-        if (type) {
-          const found = await getEntityByTmdb(type as any, String(tmdbId));
-          if (found) results.push(found);
-        } else {
-          const movie = await getEntityByTmdb('movie', String(tmdbId));
-          const tv = !movie ? await getEntityByTmdb('tv', String(tmdbId)) : null;
-          if (movie) results.push(movie);
-          if (tv) results.push(tv);
-        }
-      }
-
-      if (query && results.length === 0) {
-        const qLower = String(query).trim().toLowerCase();
-        if (/^ik\d{5,7}$/i.test(qLower)) {
-          const byId = await getEntityById(qLower);
-          if (byId) results.push(byId);
-        } else {
-          const queryRes = await queryEntities({ limit: 50 });
-          const matched = queryRes.items.filter(
-            (item) =>
-              item.title?.toLowerCase().includes(qLower) ||
-              item.directors?.some((d) => d.toLowerCase().includes(qLower)) ||
-              item.actors?.some((a) => a.toLowerCase().includes(qLower)) ||
-              item.keywords?.some((k) => k.toLowerCase().includes(qLower))
-          );
-          results.push(...matched.slice(0, limit));
-        }
-      }
-
-      const itemsWithScores = results.map((item) => ({
-        ...item,
-        seoScore: calculateSeoScore(item),
-      }));
-
-      return NextResponse.json({
-        success: true,
-        items: itemsWithScores,
-        count: itemsWithScores.length,
-      });
-    } catch (error: any) {
-      return NextResponse.json(
-        { success: false, error: error.message || '高级搜索异常' },
-        { status: 500 }
-      );
-    }
-  }
-
-  // 后续写操作均需要严格校验 Cloudflare Access 身份与邮箱白名单
-  const authResult = await verifyCloudflareAccess(request);
-  if (!authResult.authenticated) {
-    return NextResponse.json(
-      { success: false, error: authResult.error || '未授权' },
-      { status: authResult.status }
-    );
-  }
-
   try {
-    // 2. Google Indexing 促抓：/api/admin/indexing/push
-    if (path === 'indexing/push') {
-      const body = await request.json();
-      const urls: string[] = Array.isArray(body.urls)
-        ? body.urls
-        : body.url
-        ? [body.url]
-        : [];
-      const type = body.type === 'URL_DELETED' ? 'URL_DELETED' : 'URL_UPDATED';
-
-      if (urls.length === 0) {
-        return NextResponse.json({ success: false, error: '请提供待促抓的 URL 列表' }, { status: 400 });
-      }
-
-      const today = new Date().toISOString().split('T')[0];
-      const quotaKey = `admin:indexing-quota:${today}`;
-      let currentUsed = 0;
-      try {
-        const qVal = await kvGet(quotaKey);
-        if (qVal) currentUsed = parseInt(qVal, 10) || 0;
-      } catch {}
-
-      if (currentUsed >= SAFETY_LOCK_THRESHOLD) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: `今日 Google Indexing API 配额已消耗 ${currentUsed}/${DAILY_LIMIT} 条，已触发安全熔断锁（≥${SAFETY_LOCK_THRESHOLD} 条限制），请明日再试。`,
-            quotaUsed: currentUsed,
-            quotaLimit: DAILY_LIMIT,
-          },
-          { status: 429 }
-        );
-      }
-
-      const allowedCount = Math.min(urls.length, SAFETY_LOCK_THRESHOLD - currentUsed);
-      const toPushUrls = urls.slice(0, allowedCount);
-
-      let successful = 0;
-      let results: any[] = [];
-
-      if (toPushUrls.length === 1) {
-        const res = await publishGoogleIndexingUrl(toPushUrls[0], type);
-        results = [res];
-        if (res.success) successful = 1;
-      } else {
-        const batchRes = await batchPublishGoogleIndexing(toPushUrls, toPushUrls.length);
-        successful = batchRes.successful;
-        results = batchRes.results;
-      }
-
-      const newUsed = currentUsed + successful;
-      await kvPut(quotaKey, String(newUsed));
-
-      await recordAuditLog({
-        actor: authResult.email || 'Admin',
-        action: `Google Indexing 促抓 (${type})`,
-        target: `${successful} 条 URL (共提交 ${toPushUrls.length})`,
-        details: { newQuotaUsed: newUsed, sampleUrl: toPushUrls[0] },
-      });
-
-      return NextResponse.json({
-        success: true,
-        pushedCount: successful,
-        totalRequested: urls.length,
-        truncated: urls.length > allowedCount,
-        quotaUsed: newUsed,
-        quotaRemaining: Math.max(0, DAILY_LIMIT - newUsed),
-        results,
-      });
-    }
-
-    // 3. IndexNow 广播：/api/admin/indexing/indexnow
+    // IndexNow（Bing、Yandex 等）：只接受本站网址
     if (path === 'indexing/indexnow') {
-      const body = await request.json();
-      const urls: string[] = Array.isArray(body.urls)
-        ? body.urls
-        : body.url
-        ? [body.url]
-        : [];
-
-      if (urls.length === 0) {
-        return NextResponse.json({ success: false, error: '请提供待广播的 URL 列表' }, { status: 400 });
-      }
-
-      const payload = {
-        host: HOST,
-        key: INDEXNOW_KEY,
-        keyLocation: KEY_LOCATION,
-        urlList: urls.slice(0, 10000),
-      };
-
+      const body = (await request.json().catch(() => ({}))) as { urls?: string[]; url?: string };
+      const urls = (Array.isArray(body.urls) ? body.urls : body.url ? [body.url] : []).filter(
+        (u) => typeof u === 'string' && u.startsWith(`https://${HOST}/`),
+      );
+      if (!urls.length) return json({ success: false, error: `请提供 https://${HOST}/ 下的网址` }, 400);
       const res = await fetch('https://api.indexnow.org/indexnow', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ host: HOST, key: INDEXNOW_KEY, keyLocation: `https://${HOST}/${INDEXNOW_KEY}.txt`, urlList: urls.slice(0, 10000) }),
       });
-
-      await recordAuditLog({
-        actor: authResult.email || 'Admin',
-        action: 'IndexNow 多引擎全网广播',
-        target: `${urls.length} 条 URL`,
-        details: { httpStatus: res.status, sampleUrl: urls[0] },
-      });
-
-      if (res.ok || res.status === 200 || res.status === 202) {
-        return NextResponse.json({
-          success: true,
-          broadcastCount: urls.length,
-          status: res.status,
-          message: 'IndexNow 全网多引擎 (Bing / Yandex / Seznam) 广播已成功投递',
-        });
-      } else {
-        const errText = await res.text();
-        return NextResponse.json({
-          success: false,
-          status: res.status,
-          error: `IndexNow 响应非 200: ${errText}`,
-        });
-      }
+      await recordAuditLog({ actor, action: 'IndexNow 提交', target: `${urls.length} 条网址`, details: { httpStatus: res.status, sampleUrl: urls[0] } });
+      return res.ok
+        ? json({ success: true, broadcastCount: urls.length, status: res.status })
+        : json({ success: false, status: res.status, error: `IndexNow 返回 ${res.status}: ${await res.text()}` });
     }
 
-    // 4. URL 诊断：/api/admin/indexing/inspect
-    if (path === 'indexing/inspect') {
-      const { url } = await request.json();
-      if (!url) {
-        return NextResponse.json({ success: false, error: '缺少待诊断的 URL' }, { status: 400 });
-      }
-
-      if (!url.startsWith('https://www.ikanpp.com')) {
-        return NextResponse.json(
-          { success: false, error: '仅支持诊断 www.ikanpp.com 站内 URL' },
-          { status: 400 }
-        );
-      }
-
-      const urlObj = new URL(url);
-      const pathname = urlObj.pathname;
-
-      // 1. 检测 Robots.txt 阻断规则
-      const blockedPrefixes = ['/admin', '/api/', '/settings', '/profile', '/premium', '/player'];
-      const isBlockedByRobots =
-        blockedPrefixes.some((p) => pathname.startsWith(p)) ||
-        urlObj.searchParams.has('q') ||
-        urlObj.searchParams.has('ref') ||
-        urlObj.searchParams.has('source') ||
-        urlObj.searchParams.has('share');
-
-      // 2. 真实向源站发起 GET 探测 (模拟 Googlebot 爬虫握手)
-      const tStart = Date.now();
-      let httpStatus = 0;
-      let latencyMs = 0;
-      let contentType = '';
-      let locationHeader: string | null = null;
-      let htmlBody = '';
-      let fetchError: string | null = null;
-
-      try {
-        const fetchRes = await fetch(url, {
-          method: 'GET',
-          redirect: 'manual',
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-            Accept: 'text/html,application/xhtml+xml',
-          },
-        });
-        latencyMs = Date.now() - tStart;
-        httpStatus = fetchRes.status;
-        contentType = fetchRes.headers.get('content-type') || '';
-        locationHeader = fetchRes.headers.get('location');
-        if (httpStatus === 200 && contentType.includes('text/html')) {
-          htmlBody = await fetchRes.text();
-        }
-      } catch (err: any) {
-        latencyMs = Date.now() - tStart;
-        fetchError = err.message || '网络连接超时或无法触达';
-      }
-
-      // 3. 规范解析 Canonical 与 Meta Robots 标签
-      let canonicalHref: string | null = null;
-      let metaRobots: string | null = null;
-      if (htmlBody) {
-        const canonicalMatch =
-          htmlBody.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i) ||
-          htmlBody.match(/<link[^>]+href=["']([^"']+)["'][^>]+rel=["']canonical["']/i);
-        if (canonicalMatch) canonicalHref = canonicalMatch[1];
-
-        const robotsMatch = htmlBody.match(/<meta[^>]+name=["']robots["'][^>]+content=["']([^"']+)["']/i);
-        if (robotsMatch) metaRobots = robotsMatch[1];
-      }
-
-      // 4. 检查实体库状态（若为 /title/ 详情页）
-      let entityMatched = false;
-      let matchedEntityId: string | null = null;
-      const titleMatch = pathname.match(/^\/title\/([^\/]+)/);
-      if (titleMatch) {
-        const rawSlug = titleMatch[1];
-        const idMatch = rawSlug.match(/^(ik\d{5,7})/i);
-        if (idMatch) {
-          matchedEntityId = idMatch[1].toLowerCase();
-          const ent = await getEntityById(matchedEntityId);
-          if (ent) entityMatched = true;
-        }
-      }
-
-      // 5. 真实客观判定结论 (Verdict)
-      let verdict: 'PASS' | 'REDIRECT' | 'BLOCKED' | 'ERROR' | 'NOT_FOUND' = 'PASS';
-      let coverageState = 'Submitted and indexed';
-      let indexingState = 'INDEXING_ALLOWED';
-      let verdictReason = '页面可被搜索引擎正常抓取与秒级收录';
-
-      if (fetchError || httpStatus >= 500) {
-        verdict = 'ERROR';
-        indexingState = 'INDEXING_DISALLOWED';
-        coverageState = 'Server error (5xx)';
-        verdictReason = `源站服务响应异常: ${fetchError || `HTTP ${httpStatus}`}`;
-      } else if (httpStatus === 404) {
-        verdict = 'NOT_FOUND';
-        indexingState = 'INDEXING_DISALLOWED';
-        coverageState = 'URL is not on Google (404 Not Found)';
-        verdictReason = '目标 URL 返回 404 页面未找到，建议使用促抓控制台执行 URL_DELETED 死链清退';
-      } else if (httpStatus === 301 || httpStatus === 302 || httpStatus === 308) {
-        verdict = 'REDIRECT';
-        coverageState = 'Page with redirect';
-        verdictReason = `触发永久规范重定向至: ${locationHeader || '权威规范 URL'}，外链权重已无损转移`;
-      } else if (isBlockedByRobots || (metaRobots && metaRobots.includes('noindex'))) {
-        verdict = 'BLOCKED';
-        indexingState = 'INDEXING_DISALLOWED';
-        coverageState = isBlockedByRobots ? 'Blocked by robots.txt' : 'Excluded by noindex tag';
-        verdictReason = isBlockedByRobots ? '命中 robots.txt Disallow 规则，已在爬虫层物理阻断' : 'Meta Robots 声明了 noindex';
-      }
-
-      return NextResponse.json({
-        success: true,
-        url,
-        inspectionResult: {
-          verdict,
-          verdictReason,
-          coverageState,
-          indexingState,
-          httpStatus,
-          latencyMs,
-          contentType,
-          isBlockedByRobots,
-          canonicalHref: canonicalHref || '未显式指定（默认自身）',
-          canonicalMatch: Boolean(canonicalHref && canonicalHref === url),
-          metaRobots: metaRobots || 'index, follow (默认允许)',
-          entityAudit: {
-            isTitlePage: Boolean(titleMatch),
-            entityId: matchedEntityId,
-            foundInKv: entityMatched,
-          },
-          lastCrawlTime: new Date().toISOString(),
-          pageFetchState: httpStatus === 200 ? 'SUCCESSFUL' : `HTTP_${httpStatus}`,
-          robotsTxtState: isBlockedByRobots ? 'DISALLOWED' : 'ALLOWED',
-        },
-      });
-    }
-
-    // 5. 触发 SEO 巡检：/api/admin/seo/trigger
-    if (path === 'seo/trigger') {
-      if (!GITHUB_TOKEN) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: '未检测到 GITHUB_TOKEN 环境变量，无法远程触发 GitHub Actions。',
-          },
-          { status: 500 }
-        );
-      }
-
-      const dispatchUrl = `https://api.github.com/repos/${GITHUB_REPO}/actions/workflows/seo-intelligence.yml/dispatches`;
-      const res = await fetch(dispatchUrl, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${GITHUB_TOKEN}`,
-          Accept: 'application/vnd.github+json',
-          'User-Agent': 'iKanPP-Admin-Mission-Control',
-        },
-        body: JSON.stringify({ ref: 'main' }),
-      });
-
-      if (!res.ok) {
-        const errText = await res.text();
-        return NextResponse.json(
-          { success: false, error: `GitHub API 错误 (${res.status}): ${errText}` },
-          { status: res.status }
-        );
-      }
-
-      const actionsUrl = `https://github.com/${GITHUB_REPO}/actions/workflows/seo-intelligence.yml`;
-      await recordAuditLog({
-        actor: authResult.email || 'Admin',
-        action: '手动触发全量 SEO 巡检 Actions',
-        target: 'seo-intelligence.yml',
-        details: { ref: 'main' },
-      });
-
-      return NextResponse.json({
-        success: true,
-        message: '全量 SEO 巡检任务已成功向 GitHub Actions 调度派发！',
-        runUrl: actionsUrl,
-      });
-    }
-
-    // 6. 远程触发工作流：/api/admin/system/workflow
-    if (path === 'system/workflow') {
-      if (!GITHUB_TOKEN) {
-        return NextResponse.json(
-          { success: false, error: '未配置 GITHUB_TOKEN 环境变量，无法触发 GitHub Actions 工作流' },
-          { status: 500 }
-        );
-      }
-
-      const { workflow, ref = 'main' } = await request.json();
-      if (!ALLOWED_WORKFLOWS.includes(workflow)) {
-        return NextResponse.json({ success: false, error: `不支持的工作流名称: ${workflow}` }, { status: 400 });
-      }
-
-      const dispatchUrl = `https://api.github.com/repos/${GITHUB_REPO}/actions/workflows/${workflow}/dispatches`;
-      const res = await fetch(dispatchUrl, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${GITHUB_TOKEN}`,
-          Accept: 'application/vnd.github+json',
-          'User-Agent': 'iKanPP-Mission-Control',
-        },
-        body: JSON.stringify({ ref }),
-      });
-
-      if (!res.ok) {
-        const errText = await res.text();
-        return NextResponse.json(
-          { success: false, error: `GitHub API 响应 ${res.status}: ${errText}` },
-          { status: res.status }
-        );
-      }
-
-      const runUrl = `https://github.com/${GITHUB_REPO}/actions/workflows/${workflow}`;
-      await recordAuditLog({
-        actor: authResult.email || 'Admin',
-        action: '触发 GitHub Actions 工作流',
-        target: workflow,
-        details: { ref },
-      });
-
-      return NextResponse.json({
-        success: true,
-        workflow,
-        runUrl,
-        message: `工作流 ${workflow} 已成功触发并加入 GitHub Actions 构建队列`,
-      });
-    }
-
-    // 12. 暗影专线：探活 /api/admin/shadowline/probe
     if (path === 'shadowline/probe') {
       const result = await runShadowLineProbe();
-      return NextResponse.json({ success: result.success, health: result.health });
+      return json({ success: result.success, health: result.health });
     }
-
-    // 13. 暗影专线：熔断开关切换 /api/admin/shadowline/toggle
     if (path === 'shadowline/toggle') {
-      const body = await request.json().catch(() => ({}));
-      const config = await toggleShadowLineFuse(body.enabled, authResult.email || 'Admin');
-      return NextResponse.json({ success: true, config, enabled: config.enabled });
+      const body = (await request.json().catch(() => ({}))) as { enabled?: boolean };
+      const config = await toggleShadowLineFuse(Boolean(body.enabled), actor);
+      return json({ success: true, config, enabled: config.enabled });
     }
-
-    // 14. 暗影专线：主动嗅探自愈 /api/admin/shadowline/sniff
     if (path === 'shadowline/sniff') {
-      const result = await runShadowLineAutoSniff(authResult.email || 'Admin');
-      return NextResponse.json(result);
+      return json(await runShadowLineAutoSniff(actor));
     }
 
-    return NextResponse.json({ success: false, error: `未找到 POST 处理端点: ${path}` }, { status: 404 });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message || 'POST 处理异常' }, { status: 500 });
+    return json({ success: false, error: `未找到后台接口: ${path}` }, 404);
+  } catch (error) {
+    return json({ success: false, error: error instanceof Error ? error.message : '后台接口异常' }, 500);
   }
 }
 
 // ==========================================
-// PUT 派发 (更新实体: /api/admin/entities/:id)
+// PUT：修改作品资料（D1）。编号与规范网址不改（改网址会断掉已收录的页面）。
 // ==========================================
+const EDITABLE: Record<string, { column: string; kind: 'text' | 'number' | 'list' }> = {
+  title: { column: 'name', kind: 'text' },
+  originalTitle: { column: 'original_name', kind: 'text' },
+  type: { column: 'kind', kind: 'text' },
+  year: { column: 'year', kind: 'number' },
+  description: { column: 'overview', kind: 'text' },
+  cover: { column: 'poster', kind: 'text' },
+  backdrop: { column: 'backdrop', kind: 'text' },
+  genres: { column: 'genres', kind: 'list' },
+  directors: { column: 'directors', kind: 'list' },
+  actors: { column: 'actors', kind: 'list' },
+  region: { column: 'region', kind: 'text' },
+  language: { column: 'language', kind: 'text' },
+  status: { column: 'status_label', kind: 'text' },
+  rate: { column: 'rating', kind: 'number' },
+  runtime: { column: 'runtime', kind: 'number' },
+  numberOfSeasons: { column: 'seasons', kind: 'number' },
+  numberOfEpisodes: { column: 'episodes', kind: 'number' },
+};
+
+const toList = (v: unknown) =>
+  (Array.isArray(v) ? v : String(v ?? '').split(/[,，、]/)).map((x) => String(x).trim()).filter(Boolean);
+
+/** 改了导演或主演时，同步演职关系（影人页从 credits 取作品）。 */
+async function replaceCredits(d: D1Like, id: number, role: 'director' | 'actor', names: string[]) {
+  await d.prepare('DELETE FROM credits WHERE title_id = ? AND role = ?').bind(id, role).all();
+  for (const [ord, name] of names.entries()) {
+    await d.prepare('INSERT INTO people (id, name) SELECT COALESCE(MAX(id), 0) + 1, ? FROM people WHERE NOT EXISTS (SELECT 1 FROM people WHERE name = ?)').bind(name, name).all();
+    await d.prepare('INSERT OR IGNORE INTO credits (title_id, person_id, role, ord) SELECT ?, id, ?, ? FROM people WHERE name = ?').bind(id, role, ord, name).all();
+  }
+}
+
 export async function PUT(request: NextRequest, { params }: RouteContext) {
-  const authResult = await verifyCloudflareAccess(request);
-  if (!authResult.authenticated) {
-    return NextResponse.json(
-      { success: false, error: authResult.error || '未授权' },
-      { status: authResult.status }
-    );
-  }
-
+  const auth = await verifyCloudflareAccess(request);
+  if (!auth.authenticated) return json({ success: false, error: auth.error || '未授权' }, auth.status);
   const { slug = [] } = await params;
-  if (slug[0] === 'entities' && slug[1]) {
-    try {
-      const id = slug[1];
-      const existing = await getEntityById(id);
-      if (!existing) {
-        return NextResponse.json({ success: false, error: `实体 ${id} 不存在，无法更新` }, { status: 404 });
+  const id = slug[0] === 'entities' ? parseId(slug[1]) : null;
+  if (!id) return json({ success: false, error: '未找到后台接口' }, 404);
+
+  try {
+    const before = await entityById(id);
+    if (!before) return json({ success: false, error: '作品不存在' }, 404);
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const sets: string[] = [];
+    const args: unknown[] = [];
+    const lists: Record<string, string[]> = {};
+    for (const [field, { column, kind }] of Object.entries(EDITABLE)) {
+      if (!(field in body)) continue;
+      const v = body[field];
+      sets.push(`${column} = ?`);
+      if (kind === 'list') {
+        lists[field] = toList(v);
+        args.push(JSON.stringify(lists[field]));
+      } else if (kind === 'number') {
+        const n = v === '' || v == null ? null : Number(v);
+        args.push(n != null && Number.isFinite(n) ? n : null);
+      } else {
+        args.push(v == null || v === '' ? null : String(v));
       }
-
-      const updates: Partial<TitleEntity> = await request.json();
-      const merged: TitleEntity = {
-        ...existing,
-        ...updates,
-        entityId: existing.entityId,
-        tmdbId: existing.tmdbId,
-        tmdbType: existing.tmdbType,
-        createdAt: existing.createdAt,
-        updatedAt: new Date().toISOString(),
-      };
-
-      merged.seoScore = calculateSeoScore(merged);
-      await saveEntity(merged);
-
-      await recordAuditLog({
-        actor: authResult.email || 'Admin',
-        action: '更新影视实体',
-        target: `${merged.entityId} - ${merged.title}`,
-        details: {
-          score: merged.seoScore,
-          rate: merged.rate,
-          year: merged.year,
-          genres: merged.genres,
-        },
-      });
-
-      return NextResponse.json({ success: true, entity: merged });
-    } catch (error: any) {
-      return NextResponse.json({ success: false, error: error.message || '更新实体失败' }, { status: 500 });
     }
-  }
+    if (typeof body.title === 'string' && body.title.trim()) {
+      sets.push('name_key = ?');
+      args.push(normalizeTitle(body.title) || null);
+    }
+    if (!sets.length) return json({ success: false, error: '没有可修改的字段' }, 400);
+    sets.push("updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')");
 
-  return NextResponse.json({ success: false, error: '未找到 PUT 处理端点' }, { status: 404 });
+    const d = db();
+    await d.prepare(`UPDATE titles SET ${sets.join(', ')} WHERE id = ?`).bind(...args, id).all();
+    if (lists.genres) {
+      const row = await d.prepare('SELECT kind, popularity FROM titles WHERE id = ?').bind(id).first<{ kind: string | null; popularity: number | null }>();
+      await d.prepare('DELETE FROM title_genres WHERE title_id = ?').bind(id).all();
+      for (const g of lists.genres) {
+        await d.prepare('INSERT OR IGNORE INTO title_genres (genre, title_id, kind, popularity) VALUES (?, ?, ?, ?)').bind(g, id, row?.kind ?? null, row?.popularity ?? 0).all();
+      }
+    }
+    if (lists.directors) await replaceCredits(d, id, 'director', lists.directors);
+    if (lists.actors) await replaceCredits(d, id, 'actor', lists.actors);
+
+    await recordAuditLog({
+      actor: auth.email || 'Admin',
+      action: '修改作品',
+      target: `${code(id)} ${before.title}`,
+      details: { fields: Object.keys(body).filter((k) => k in EDITABLE) },
+    });
+    return json({ success: true, entity: await entityById(id) });
+  } catch (error) {
+    return json({ success: false, error: error instanceof Error ? error.message : '修改失败' }, 500);
+  }
 }
 
 // ==========================================
-// DELETE 派发 (删除实体: /api/admin/entities/:id)
+// DELETE：下架作品（state = removed）。编号保留、永不复用；旧网址按片名找同名作品，找不到就 404。
 // ==========================================
 export async function DELETE(request: NextRequest, { params }: RouteContext) {
-  const authResult = await verifyCloudflareAccess(request);
-  if (!authResult.authenticated) {
-    return NextResponse.json(
-      { success: false, error: authResult.error || '未授权' },
-      { status: authResult.status }
-    );
-  }
-
+  const auth = await verifyCloudflareAccess(request);
+  if (!auth.authenticated) return json({ success: false, error: auth.error || '未授权' }, auth.status);
   const { slug = [] } = await params;
-  if (slug[0] === 'entities' && slug[1]) {
-    try {
-      const id = slug[1];
-      const existing = await getEntityById(id);
-      if (!existing) {
-        return NextResponse.json({ success: false, error: `实体 ${id} 不存在或已被删除` }, { status: 404 });
-      }
-
-      await kvDelete(`entity:${id}`);
-      if (existing.slug) await kvDelete(`slug:${existing.slug}`);
-      if (existing.tmdbId && existing.tmdbType) {
-        await kvDelete(`tmdb:${existing.tmdbType}:${existing.tmdbId}`);
-      }
-
-      try {
-        const allRaw = await kvGet('index:all');
-        if (allRaw) {
-          let allIds: string[] = JSON.parse(allRaw);
-          if (Array.isArray(allIds)) {
-            allIds = allIds.filter((item) => item !== id);
-            await kvPut('index:all', JSON.stringify(allIds));
-          }
-        }
-      } catch (e) {
-        console.warn('[Admin Delete Entity] 从 index:all 剔除失败:', e);
-      }
-
-      await recordAuditLog({
-        actor: authResult.email || 'Admin',
-        action: '物理删除影视实体',
-        target: `${id} - ${existing.title}`,
-        details: { tmdbId: existing.tmdbId, slug: existing.slug },
-      });
-
-      return NextResponse.json({ success: true, message: `实体 ${id} 已成功下架与物理删除` });
-    } catch (error: any) {
-      return NextResponse.json({ success: false, error: error.message || '删除实体失败' }, { status: 500 });
-    }
+  const id = slug[0] === 'entities' ? parseId(slug[1]) : null;
+  if (!id) return json({ success: false, error: '未找到后台接口' }, 404);
+  try {
+    const before = await entityById(id);
+    if (!before) return json({ success: false, error: '作品不存在' }, 404);
+    const d = db();
+    await d.prepare("UPDATE titles SET state = 'removed', updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ? AND state = 'live'").bind(id).all();
+    await d.prepare('DELETE FROM sitemap_titles WHERE title_id = ?').bind(id).all();
+    await recordAuditLog({ actor: auth.email || 'Admin', action: '下架作品', target: `${code(id)} ${before.title}` });
+    return json({ success: true });
+  } catch (error) {
+    return json({ success: false, error: error instanceof Error ? error.message : '下架失败' }, 500);
   }
-
-  return NextResponse.json({ success: false, error: '未找到 DELETE 处理端点' }, { status: 404 });
 }

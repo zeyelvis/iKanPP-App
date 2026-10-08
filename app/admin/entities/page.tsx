@@ -89,7 +89,7 @@ export default function AdminEntitiesPage() {
 
   // 单条删除
   const handleDelete = async (entity: TitleEntity) => {
-    if (!confirm(`确定要从 KV 中物理删除影视实体《${entity.title}》(${entity.entityId}) 吗？此操作不可撤销！`)) {
+    if (!confirm(`确定要下架《${entity.title}》(${entity.entityId}) 吗？编号保留不复用，网页将不再显示这部作品。`)) {
       return;
     }
     try {
@@ -98,44 +98,13 @@ export default function AdminEntitiesPage() {
       });
       const data = await res.json();
       if (data.success) {
-        setActionMessage({ type: 'success', text: `已成功删除《${entity.title}》` });
+        setActionMessage({ type: 'success', text: `已下架《${entity.title}》` });
         fetchEntities();
       } else {
         setActionMessage({ type: 'error', text: data.error || '删除失败' });
       }
     } catch (err: any) {
       setActionMessage({ type: 'error', text: err.message || '删除请求异常' });
-    }
-  };
-
-  // 批量推送 Google
-  const handleBatchPushGoogle = async () => {
-    if (selectedIds.length === 0) return;
-    setBatchActionLoading(true);
-    try {
-      const selectedEntities = items.filter((i) => selectedIds.includes(i.entityId));
-      const urls = selectedEntities.map(
-        (e) => `https://www.ikanpp.com/title/${e.entityId}-${e.slug}`
-      );
-      const res = await fetch('/api/admin/indexing/push', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ urls, type: 'URL_UPDATED' }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setActionMessage({
-          type: 'success',
-          text: `批量推送成功：${data.pushedCount || urls.length} 条已推至 Google Indexing`,
-        });
-        setSelectedIds([]);
-      } else {
-        setActionMessage({ type: 'error', text: data.error || '推送失败' });
-      }
-    } catch (err: any) {
-      setActionMessage({ type: 'error', text: err.message || '网络异常' });
-    } finally {
-      setBatchActionLoading(false);
     }
   };
 
@@ -146,7 +115,7 @@ export default function AdminEntitiesPage() {
     try {
       const selectedEntities = items.filter((i) => selectedIds.includes(i.entityId));
       const urls = selectedEntities.map(
-        (e) => `https://www.ikanpp.com/title/${e.entityId}-${e.slug}`
+        (e) => `https://www.ikanpp.com/title/${encodeURIComponent(e.canonicalSlug || e.entityId)}`
       );
       const res = await fetch('/api/admin/indexing/indexnow', {
         method: 'POST',
@@ -313,15 +282,6 @@ export default function AdminEntitiesPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <button
-                onClick={handleBatchPushGoogle}
-                disabled={batchActionLoading}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition-colors disabled:opacity-50"
-              >
-                <Zap className="w-3.5 h-3.5" />
-                <span>批量推送 Google</span>
-              </button>
-
               <button
                 onClick={handleBatchIndexNow}
                 disabled={batchActionLoading}

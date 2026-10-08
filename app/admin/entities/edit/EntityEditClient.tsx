@@ -27,7 +27,6 @@ export function EntityEditClient({ id }: { id: string }) {
   const [entity, setEntity] = useState<TitleEntity | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [pushingGoogle, setPushingGoogle] = useState(false);
   const [pushingIndexNow, setPushingIndexNow] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -84,7 +83,7 @@ export function EntityEditClient({ id }: { id: string }) {
       if (data.success) {
         setEntity(data.entity);
         setFormData(data.entity);
-        setMessage({ type: 'success', text: '实体修改已成功保存至 Cloudflare KV 并自动同步全套索引' });
+        setMessage({ type: 'success', text: '已保存到片库（D1）；编号与规范网址不变' });
       } else {
         setMessage({ type: 'error', text: data.error || '保存失败' });
       }
@@ -95,36 +94,12 @@ export function EntityEditClient({ id }: { id: string }) {
     }
   };
 
-  // 单条推送 Google
-  const handlePushGoogle = async () => {
-    if (!entity) return;
-    try {
-      setPushingGoogle(true);
-      const targetUrl = `https://www.ikanpp.com/title/${entity.entityId}-${entity.slug}`;
-      const res = await fetch('/api/admin/indexing/push', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ urls: [targetUrl], type: 'URL_UPDATED' }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setMessage({ type: 'success', text: `Google Indexing 促抓推送成功 (HTTP 200)` });
-      } else {
-        setMessage({ type: 'error', text: data.error || 'Google Indexing 推送失败' });
-      }
-    } catch (err: any) {
-      setMessage({ type: 'error', text: err.message || '网络异常' });
-    } finally {
-      setPushingGoogle(false);
-    }
-  };
-
   // 单条广播 IndexNow
   const handlePushIndexNow = async () => {
     if (!entity) return;
     try {
       setPushingIndexNow(true);
-      const targetUrl = `https://www.ikanpp.com/title/${entity.entityId}-${entity.slug}`;
+      const targetUrl = `https://www.ikanpp.com/title/${encodeURIComponent(entity.canonicalSlug || entity.entityId)}`;
       const res = await fetch('/api/admin/indexing/indexnow', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -143,19 +118,19 @@ export function EntityEditClient({ id }: { id: string }) {
     }
   };
 
-  // 物理删除
+  // 下架
   const handleDelete = async () => {
-    if (!confirm(`确定要物理删除《${entity?.title}》吗？删除后所有反向索引都将清除！`)) {
+    if (!confirm(`确定要下架《${entity?.title}》吗？编号保留不复用，网页将不再显示这部作品。`)) {
       return;
     }
     try {
       const res = await fetch(`/api/admin/entities/${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
-        alert('删除成功');
+        alert('已下架');
         router.push('/admin/entities');
       } else {
-        setMessage({ type: 'error', text: data.error || '删除失败' });
+        setMessage({ type: 'error', text: data.error || '下架失败' });
       }
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message || '网络异常' });
@@ -206,7 +181,7 @@ export function EntityEditClient({ id }: { id: string }) {
               </span>
             </h1>
             <p className="text-xs text-slate-400 mt-0.5">
-              修改后将同步更新 KV 存储、TMDB 别名映射与 14 套反向索引集合
+              修改写入片库（D1），题材与演职员关系一并更新；编号与规范网址不变
             </p>
           </div>
         </div>
@@ -224,16 +199,6 @@ export function EntityEditClient({ id }: { id: string }) {
 
           <button
             type="button"
-            onClick={handlePushGoogle}
-            disabled={pushingGoogle}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-medium transition-colors disabled:opacity-50"
-          >
-            <Zap className="w-3.5 h-3.5" />
-            <span>{pushingGoogle ? '推送中...' : '促抓 Google'}</span>
-          </button>
-
-          <button
-            type="button"
             onClick={handlePushIndexNow}
             disabled={pushingIndexNow}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-medium transition-colors disabled:opacity-50"
@@ -246,7 +211,7 @@ export function EntityEditClient({ id }: { id: string }) {
             type="button"
             onClick={handleDelete}
             className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 transition-colors"
-            title="删除实体"
+            title="下架作品"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -528,7 +493,7 @@ export function EntityEditClient({ id }: { id: string }) {
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-semibold shadow-lg shadow-red-600/30 transition-all active:scale-95 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
-            <span>{saving ? '正在写回 KV 并重建索引...' : '保存实体修改'}</span>
+            <span>{saving ? '正在保存...' : '保存实体修改'}</span>
           </button>
         </div>
       </form>
