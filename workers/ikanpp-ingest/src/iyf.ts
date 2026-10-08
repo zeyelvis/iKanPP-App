@@ -53,7 +53,8 @@ export async function hotTop(cid: string, count: number): Promise<TrendingItem[]
   return items;
 }
 
-// ── 最新上线：GetLastAdd 要签名，vv = md5(公钥&小写查询串&私钥)，密钥取自 www.iyf.tv/list 的 pConfig。
+// ── 带签名的列表接口（最近上架 GetLastAdd、排序列表 Search）：vv = md5(公钥&小写查询串&私钥)，
+//    密钥取自 www.iyf.tv/list 的 pConfig，签名失效（401/403）时重取一次。
 
 let keys: { pub: string; priv: string } | null = null;
 
@@ -74,7 +75,26 @@ async function refreshKeys() {
   keys = { pub: p.publicKey, priv };
 }
 
-export interface IyfLatest {
+async function signedGet<T>(api: string, query: string): Promise<T> {
+  const call = async () => {
+    const vv = await md5(`${keys!.pub}&${query.toLowerCase()}&${keys!.priv}`);
+    return fetch(`https://m10.iyf.tv/api/list/${api}?${query}&vv=${vv}&pub=${keys!.pub}`, {
+      headers: { 'User-Agent': BROWSER_UA, Referer: 'https://www.iyf.tv/list' },
+      signal: AbortSignal.timeout(10_000),
+    });
+  };
+  if (!keys) await refreshKeys();
+  let res = await call();
+  if (res.status === 401 || res.status === 403) {
+    await refreshKeys();
+    res = await call();
+  }
+  if (!res.ok) throw new Error(`${api} HTTP ${res.status}`);
+  return (await res.json()) as T;
+}
+
+/** 列表接口返回的作品（只列用得到的字段）。 */
+export interface IyfListItem {
   title: string;
   year?: number;
   atypeName?: string;
@@ -84,25 +104,21 @@ export interface IyfLatest {
   addTime?: string;
   contxt?: string;
   isFilm?: boolean;
+  score?: string;
+  hot?: number;
 }
 
+const clean = (list: IyfListItem[] | undefined) => (list ?? []).filter((it) => it?.title?.trim()).map((it) => ({ ...it, title: it.title.trim() }));
+
 /** 某频道最近上架的作品（每页 10 部）。 */
-export async function lastAdd(cid: string, page: number): Promise<IyfLatest[]> {
-  const call = async () => {
-    const query = `cinema=1&cid=${cid}&page=${page}&pageSize=10`;
-    const vv = await md5(`${keys!.pub}&${query.toLowerCase()}&${keys!.priv}`);
-    return fetch(`https://m10.iyf.tv/api/list/GetLastAdd?${query}&vv=${vv}&pub=${keys!.pub}`, {
-      headers: { 'User-Agent': BROWSER_UA, Referer: 'https://www.iyf.tv/' },
-      signal: AbortSignal.timeout(8000),
-    });
-  };
-  if (!keys) await refreshKeys();
-  let res = await call();
-  if (res.status === 401 || res.status === 403) {
-    await refreshKeys();
-    res = await call();
-  }
-  if (!res.ok) throw new Error(`GetLastAdd HTTP ${res.status}`);
-  const data = (await res.json()) as { data?: { info?: IyfLatest[] } };
-  return (data.data?.info ?? []).filter((it) => it?.title).map((it) => ({ ...it, title: it.title.trim() }));
+export async function lastAdd(cid: string, page: number): Promise<IyfListItem[]> {
+  const data = await signedGet<{ data?: { info?: IyfListItem[] } }>('GetLastAdd', `cinema=1&cid=${cid}&page=${page}&pageSize=10`);
+  return clean(data.data?.info);
+}
+
+/** 爱壹帆片库排序：0 添加时间、1 更新时间、2 人气、3 评分（与 www.iyf.tv/list 的 orderBy 相同）。每页 50 部。 */
+export async function sortedList(cid: string, orderby: 0 | 1 | 2 | 3, page: number): Promise<IyfListItem[]> {
+  const cidParam = cid ? `&cid=${cid}` : '';
+  const data = await signedGet<{ data?: { info?: Array<{ result?: IyfListItem[] }> } }>('Search', `cinema=1${cidParam}&page=${page}&size=50&orderby=${orderby}&desc=1`);
+  return clean(data.data?.info?.[0]?.result);
 }

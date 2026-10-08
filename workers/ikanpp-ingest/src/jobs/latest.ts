@@ -12,7 +12,7 @@ import { generateSlug, isCleanChineseTitle, normalizeTitle } from '../../../../l
 import type { LatestPrebakedItem } from '../../../../lib/types/prebaked';
 import { recentVods, type ChannelKey, type Kind, type Vod } from '../collectors';
 import type { Env } from '../env';
-import { lastAdd, type IyfLatest } from '../iyf';
+import { lastAdd, type IyfListItem as IyfLatest } from '../iyf';
 import { tmdbSearchStrict, type TmdbBrief } from '../tmdb';
 
 const CHANNELS: Array<{ key: ChannelKey; cid: string }> = [
