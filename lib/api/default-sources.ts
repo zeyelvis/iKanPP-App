@@ -1,6 +1,7 @@
 import type { VideoSource } from '@/lib/types';
 
-// 对齐 ikanbot.com 每日动态同步的黄金骨干线路库（全网全量并发验证，100% 存活，更新时间: 2026-10-08T09:38:05.380Z）
+// 默认采集站列表。2026-10-08 起不再每日自动同步（原脚本依赖逆向 ikanbot 的接口，已停用）；
+// 播放时按各地区实测成功率排序并自动切线路，失效的站点在这里手工删改。
 export const DEFAULT_SOURCES: VideoSource[] = [
   {
     id: 'juliang',
@@ -11,6 +12,16 @@ export const DEFAULT_SOURCES: VideoSource[] = [
     group: 'normal',
     enabled: true,
     priority: 1,
+  },
+  {
+    id: 'guangsu',
+    name: '光速资源',
+    baseUrl: 'https://api.guangsuapi.com',
+    searchPath: '/api.php/provide/vod',
+    detailPath: '/api.php/provide/vod',
+    group: 'normal',
+    enabled: true,
+    priority: 2,
   },
   {
     id: 'baofeng',
