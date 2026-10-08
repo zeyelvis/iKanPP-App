@@ -3,7 +3,7 @@ import { Navbar } from '@/components/layout/Navbar';
 
 export const metadata: Metadata = {
   title: '常见问题与帮助中心 (FAQ) - 海外华人追剧免翻墙答疑 | iKanPP 爱看片片',
-  description: 'iKanPP 帮助中心汇集海外华人常见问题：如何免翻墙看国内剧、播放源切换、设备多端同步、4K 画质优化与网络故障排除指南。',
+  description: 'iKanPP 帮助中心汇集海外华人常见问题：如何免翻墙看国内剧、播放源切换、收藏与观看记录、4K 画质优化与网络故障排除指南。',
   openGraph: {
 
     title: '常见问题与帮助中心 (FAQ) | iKanPP 爱看片片',
@@ -28,7 +28,7 @@ const faqItems = [
     },
     {
         question: '观看是否需要注册账号？',
-        answer: '无需注册，直接搜索观看。如需收藏影片和同步观看记录，可使用邮箱快速注册。',
+        answer: '无需注册，直接搜索观看。收藏和观看记录保存在你当前使用的浏览器里，换设备或清除浏览器数据后不会保留。',
     },
     {
         question: 'iKanPP 和其他影视站有什么区别？',
