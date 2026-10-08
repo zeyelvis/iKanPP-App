@@ -1,11 +1,11 @@
-import { after } from 'next/server';
 import { Metadata } from 'next';
 import { notFound, permanentRedirect, RedirectType } from 'next/navigation';
 import Link from 'next/link';
 import { headers } from 'next/headers';
-import { getEntitiesByGenre, getEntitiesByDirector, getEntitiesByActor, saveEntity } from '@/lib/services/entity-kv';
-import { parseEntitySlug, generateSlug } from '@/lib/data/entities/entity-utils';
-import { searchAndEnrichFromTMDB, isFakeBackdrop } from '@/lib/services/entity-enrichment';
+import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { isFakeBackdrop } from '@/lib/services/entity-enrichment';
+import { getDb } from '@/lib/data/d1/db';
+import { titlesByGenre, titlesByPerson } from '@/lib/data/d1/related';
 import { getFastPersonAvatars } from '@/lib/services/person-avatar';
 import { getOptimizedImageUrl, isRestrictedRegion } from '@/lib/utils/image-utils';
 import { TitleEntity } from '@/lib/types/entity';
@@ -14,17 +14,11 @@ import highPotentialKeywordsData from '@/lib/data/seo-high-potential.json';
 import { EpisodesSelector } from '@/components/title/EpisodesSelector';
 import { WatchStage } from '@/components/title/WatchStage';
 import { Navbar } from '@/components/layout/Navbar';
-import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { loadHomeDocs } from '@/lib/data/d1/home-docs';
 
 // 拆分子模块与库
-import {
-  getCachedEntity,
-  getEntityCanonicalSlug,
-  resolveEntityChannel,
-  healCreditsInBackground,
-  healBackdropInBackground,
-} from './_lib/resolve-entity';
+import { encodePath, loadTitlePage } from './_lib/load-title';
+import { resolveEntityChannel } from './_lib/channel';
 import { generateTitleMetadata } from './_lib/enrich-metadata';
 import { TitleHero } from './_components/TitleHero';
 import { TitleSynopsis } from './_components/TitleSynopsis';
@@ -51,46 +45,15 @@ export default async function TitlePage({ params }: Props) {
   const country = headersList.get('cf-ipcountry') || headersList.get('x-geo-country');
   const isChinaMainland = isRestrictedRegion(country);
 
-  let decodedSlug = slug.trim();
-  try {
-    decodedSlug = decodeURIComponent(decodedSlug).trim();
-  } catch {}
+  const loaded = await loadTitlePage(slug);
+  if (loaded.type === 'redirect') permanentRedirect(encodePath(loaded.location), RedirectType.replace);
+  if (loaded.type === 'not-found') notFound();
+  const { entity, season: seasonInfo } = loaded;
 
-  let entity = await getCachedEntity(slug);
-
-  if (!entity) {
-    notFound();
-  }
-
-  // 标题纯净化守护网：彻底剥离历史残留的纯数字加冒号脏前缀（如 "33：一击3：最后一击" -> "一击3：最后一击"）
-  if (entity.title && /^\d+[:：]\s*/.test(entity.title)) {
-    entity.title = entity.title.replace(/^\d+[:：]\s*/, '').trim();
-    saveEntity(entity).catch(() => {});
-  }
-
-  // 季数智能解析：若 URL / Slug 带有具体季数（如 "时光代理人第3季"），在母条目上精准对齐当季
-  const { entityId: parsedId, slug: innerSlug } = parseEntitySlug(decodedSlug);
-  const rawTitleFromSlug = innerSlug || (parsedId ? '' : decodedSlug);
-  const seasonInfo = parseSeasonFromTitle(rawTitleFromSlug);
-  const seasonTag = seasonInfo ? (seasonInfo.rawSeasonMatch || `第${seasonInfo.seasonNumber}季`) : '';
-  const isSeasonSpecified = Boolean(seasonTag && !entity.title.includes(seasonTag));
+  // 季号网址（时光代理人第3季）原地显示该季，播放器按该季取片源。
+  const isSeasonSpecified = Boolean(seasonInfo);
+  const seasonTag = seasonInfo ? seasonInfo.rawSeasonMatch || `第${seasonInfo.seasonNumber}季` : '';
   const effectiveSearchTitle = isSeasonSpecified ? `${entity.title}${seasonTag}` : entity.title;
-
-  // 🌟 SEO 308 权威规范重定向：若请求的 URL 不是权威规范 Slug（如纯 ID ik000001 或历史非规范别名），
-  // 强制发起 308 永久重定向，将爬虫与外链权重 100% 汇聚于标准规范 URL，彻底根治 GSC 2130+ 备用网页报警
-  const canonicalSlug = getEntityCanonicalSlug(entity);
-  const currentCleanSlug = decodedSlug.toLowerCase();
-  if (canonicalSlug && currentCleanSlug !== canonicalSlug && !isSeasonSpecified) {
-    permanentRedirect(`/title/${encodeURIComponent(canonicalSlug)}`, RedirectType.replace);
-  }
-
-  // 质量自愈保障：若当前实体缺少封面海报（如历史残缺数据），强制在线触发重新丰润
-  if (!entity.cover || entity.cover.trim() === '') {
-    const healed = await searchAndEnrichFromTMDB(entity.title, entity.type, entity.year, true);
-    if (healed && healed.cover) {
-      entity = healed;
-    }
-  }
 
   // 严格过滤占位符假数据
   const filterFakePeople = (list: string[] = []) =>
@@ -98,11 +61,6 @@ export default async function TitlePage({ params }: Props) {
 
   const validDirectors = filterFakePeople(entity.directors);
   const validActors = filterFakePeople(entity.actors);
-
-  // 演职员质量与一致性智能校验（转入非阻塞后台自愈，杜绝阻塞主渲染路径）
-  if (validDirectors.length === 0 || validActors.length === 0) {
-    healCreditsInBackground(entity);
-  }
 
   // 获取同题材、同导演与同主演相关推荐影片（构建站内强内链拓扑）
   const primaryGenre = entity.genres?.[0] || (entity.type === 'tv' ? '电视剧' : '电影');
@@ -113,16 +71,12 @@ export default async function TitlePage({ params }: Props) {
   // 0ms 同步获取预置/内存缓存人物肖像（首屏秒开直出，绝不阻塞网络）
   const peopleAvatars = getFastPersonAvatars(allPeopleNames);
 
-  // 🚀 0ms 秒开守卫：为次级推荐设置 400ms 超时熔断，绝不拖慢主首屏 HTML 吐出
-  const [genreRelated, directorRelated, actorRelated] = await Promise.race([
-    Promise.all([
-      getEntitiesByGenre(primaryGenre, 8),
-      primaryDirector ? getEntitiesByDirector(primaryDirector, 6) : Promise.resolve([]),
-      primaryActor ? getEntitiesByActor(primaryActor, 6) : Promise.resolve([]),
-    ]),
-    new Promise<[TitleEntity[], TitleEntity[], TitleEntity[]]>((resolve) =>
-      setTimeout(() => resolve([[], [], []]), 400)
-    ),
+  // 同题材、同导演、同主演推荐（D1，按热度取前几部，都走索引）
+  const db = getDb()!;
+  const [genreRelated, directorRelated, actorRelated] = await Promise.all([
+    titlesByGenre(db, primaryGenre, 8).catch(() => [] as TitleEntity[]),
+    primaryDirector ? titlesByPerson(db, primaryDirector, 'director', 7).catch(() => [] as TitleEntity[]) : Promise.resolve([] as TitleEntity[]),
+    primaryActor ? titlesByPerson(db, primaryActor, 'actor', 7).catch(() => [] as TitleEntity[]) : Promise.resolve([] as TitleEntity[]),
   ]);
 
   // 过滤自身
@@ -150,7 +104,8 @@ export default async function TitlePage({ params }: Props) {
 
   // 若推荐列表为空（如极端弱网熔断或新入库影视），0ms 预烘焙兜底填充，确保 SEO 内链与推荐货架永不空白
   if (combinedRelated.length === 0) {
-    const fallbackList = (entity.type === 'tv' ? PREBAKED_HOME_DATA.tv?.s1 : PREBAKED_HOME_DATA.movie?.s1) || [];
+    const { home } = await loadHomeDocs();
+    const fallbackList = (entity.type === 'tv' ? home.tv.s1 : home.movie.s1) || [];
     const fallbackItems = fallbackList.filter((item: any) => item.title !== entity.title).slice(0, 6);
     combinedRelated = fallbackItems.map((item: any, idx: number) => ({
       entityId: item.id || `ik_rel_${idx}`,
@@ -177,11 +132,7 @@ export default async function TitlePage({ params }: Props) {
     resolvedChannel.category === 'anime' ||
     resolvedChannel.category === 'tv';
 
-  // 智能识别并自动丰润 TMDB 真实 16:9 横版电影大画幅剧照（转入非阻塞后台自愈）
   const resolvedBackdrop = entity.backdrop;
-  if (isFakeBackdrop(entity.backdrop, entity.cover)) {
-    healBackdropInBackground(entity);
-  }
 
   const isTrueBackdrop = !isFakeBackdrop(resolvedBackdrop, entity.cover);
   const heroBackdrop = getOptimizedImageUrl(resolvedBackdrop || entity.cover, {

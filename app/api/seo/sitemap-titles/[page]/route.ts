@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSitemapCatalog } from '@/lib/services/entity-kv';
-import { generateSlug } from '@/lib/data/entities/entity-utils';
+import { getDb } from '@/lib/data/d1/db';
+import { sitemapTitlePage } from '@/lib/data/d1/sitemaps';
 
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
-const TITLES_PER_SITEMAP = 2000;
 
 function escapeXml(str: string): string {
   return str
@@ -36,19 +35,9 @@ export async function GET(
     return new NextResponse('Invalid sitemap page', { status: 404 });
   }
 
-  const catalog = await getSitemapCatalog();
-  const totalTitles = catalog.length;
-  const pageCount = Math.max(1, Math.ceil(totalTitles / TITLES_PER_SITEMAP));
-
-  // 🌟 规范第 11.3 节：越界或不存在的分片严格返回 404，绝不返回空的 200 XML
-  if (page > pageCount || totalTitles === 0) {
-    return new NextResponse('Sitemap page not found', { status: 404 });
-  }
-
-  const start = (page - 1) * TITLES_PER_SITEMAP;
-  const end = start + TITLES_PER_SITEMAP;
-  const slice = catalog.slice(start, end);
-
+  const db = getDb();
+  const slice = db ? await sitemapTitlePage(db, page) : [];
+  // 越界或不存在的分卷返回 404，不返回空的 200 XML
   if (slice.length === 0) {
     return new NextResponse('Sitemap page not found', { status: 404 });
   }
@@ -57,12 +46,9 @@ export async function GET(
   let latestDate = '';
 
   for (const item of slice) {
-    if (!item || !item.id) continue;
-    // 权威 SEO 规范 URL：与 canonicalSlug 100% 保持一致，杜绝多余 URL 编码或 301 重定向跳跃
-    const baseSlug = (item.slug || item.id).trim();
-    const cleanSlug = generateSlug(baseSlug);
-    const fullUrl = `${BASE_URL}/title/${item.id}-${cleanSlug}`;
-    const lastMod = item.updatedAt || new Date().toISOString().split('T')[0];
+    // 规范网址：与作品页的 rel=canonical 完全一致
+    const fullUrl = `${BASE_URL}/title/${encodeURIComponent(item.slug)}`;
+    const lastMod = item.lastmod;
     if (lastMod > latestDate) {
       latestDate = lastMod;
     }

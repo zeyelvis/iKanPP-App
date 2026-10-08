@@ -3,7 +3,7 @@
 import { Suspense } from 'react';
 import { CategoryHub } from '@/components/category/CategoryHub';
 import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
-import { ANIME_HOME_DATA } from '@/lib/data/home-prebaked-extra';
+import { useHomeData } from '@/components/data/PageDataProvider';
 
 const SHELVES = [
   { id: 'a_season', title: '当季热血新番连载', icon: '⚡', badge: 'SEASON', tag: '新番' },
@@ -14,6 +14,7 @@ const SHELVES = [
 ];
 
 export default function AnimeClient() {
+  const home = useHomeData('anime');
   return (
     <Suspense fallback={<CategoryHubSkeleton channelKey="anime" categoryTitle="动漫专区" activeNav="anime" />}>
       <CategoryHub
@@ -23,8 +24,8 @@ export default function AnimeClient() {
         activeNav="anime"
         shelves={SHELVES}
         defaultTag="日本动画"
-        heroItems={ANIME_HOME_DATA.hero}
-        trendingNav={ANIME_HOME_DATA.trendingNav}
+        heroItems={home.hero}
+        trendingNav={home.trendingNav}
       />
     </Suspense>
   );

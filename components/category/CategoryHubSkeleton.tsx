@@ -1,4 +1,6 @@
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+'use client';
+
+import { useAllHomeData } from '@/components/data/PageDataProvider';
 
 export interface CategoryHubSkeletonProps {
   channelKey?: 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' | 'short';
@@ -16,6 +18,7 @@ export function CategoryHubSkeleton({
   categoryTitle,
   activeNav,
 }: CategoryHubSkeletonProps) {
+  const PREBAKED_HOME_DATA = useAllHomeData();
   const channelData = PREBAKED_HOME_DATA[channelKey] || PREBAKED_HOME_DATA.movie;
   const hero = channelData.hero?.[0] || {
     title: categoryTitle || '精选大片',

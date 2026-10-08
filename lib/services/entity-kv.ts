@@ -346,6 +346,11 @@ export async function getEntityByTitle(title: string): Promise<TitleEntity | nul
  * 保存或更新实体到 KV（并同步更新全套二级反向索引）
  */
 export async function saveEntity(entity: TitleEntity, options?: { syncGlobalIndex?: boolean }): Promise<void> {
+  // 重构阶段 3：新站的作品只由入库 Worker 写进 D1，页面与接口一律不写 KV 作品（以前现场补录会发号、互相覆盖）。
+  if (process.env.NEXT_RUNTIME || typeof window === 'undefined') {
+    console.warn(JSON.stringify({ skipped: 'saveEntity', entityId: entity?.entityId, title: entity?.title }));
+    return;
+  }
   if (!entity || !entity.entityId) return;
 
   // 🌟 终极物理钢铁防线：华语流媒体主站内容安全底线

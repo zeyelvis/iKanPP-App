@@ -1,15 +1,8 @@
 import { Metadata } from 'next';
 import { isEntityIndexable } from '@/lib/data/seo-rules/seo-keyword-system';
-import { parseEntitySlug } from '@/lib/data/entities/entity-utils';
-import { parseSeasonFromTitle } from '@/lib/utils/season-resolver';
-import { isFakeBackdrop } from '@/lib/services/entity-enrichment';
 import { generateFullSpectrumKeywords, isFillerDescription } from '@/lib/utils/seo-keyword-generator';
-import {
-  getCachedEntity,
-  getEntityCanonicalSlug,
-  resolveEntityChannel,
-  healBackdropInBackground,
-} from './resolve-entity';
+import { resolveEntityChannel } from './channel';
+import { loadTitlePage } from './load-title';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
 
@@ -17,7 +10,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
  * 动态 SEO Metadata 生成（含 Google Discover 大图与 AI 摘要授权）
  */
 export async function generateTitleMetadata(slug: string): Promise<Metadata> {
-  const entity = await getCachedEntity(slug);
+  const loaded = await loadTitlePage(slug);
+  const entity = loaded.type === 'title' ? loaded.entity : null;
 
   if (!entity || !isEntityIndexable(entity)) {
     return {
@@ -26,17 +20,11 @@ export async function generateTitleMetadata(slug: string): Promise<Metadata> {
     };
   }
 
-  let decodedSlug = slug.trim();
-  try {
-    decodedSlug = decodeURIComponent(decodedSlug).trim();
-  } catch {}
-  const { entityId: rawEntityId, slug: innerSlug } = parseEntitySlug(decodedSlug);
-  const rawCleanTitle = innerSlug || (rawEntityId ? '' : decodedSlug);
-  const seasonInfo = parseSeasonFromTitle(rawCleanTitle);
+  const seasonInfo = loaded.type === 'title' ? loaded.season : null;
   const seasonTag = seasonInfo ? (seasonInfo.rawSeasonMatch || `第${seasonInfo.seasonNumber}季`) : '';
 
-  // 权威规范 Slug 计算（用于规范 Canonical URL 声明）
-  const canonicalSlug = getEntityCanonicalSlug(entity);
+  // 规范网址：导入时按线上 rel=canonical 定好的规范片段（季号网址也指向整部剧）
+  const canonicalSlug = entity.canonicalSlug || entity.entityId;
 
   // 多分类与真实标题定义
   const cleanTitle = (entity.title || '').replace(/^\d+[:：]\s*/, '').trim();
@@ -45,11 +33,7 @@ export async function generateTitleMetadata(slug: string): Promise<Metadata> {
   const pageTitle = `${displayTitle}${yearSuffix} 在线观看 - ${resolveEntityChannel(entity).name} | iKanPP 爱看片片`;
 
   const canonicalUrl = `${BASE_URL}/title/${encodeURIComponent(canonicalSlug)}`;
-  const resolvedBackdrop = entity.backdrop;
-  if (isFakeBackdrop(entity.backdrop, entity.cover)) {
-    healBackdropInBackground(entity);
-  }
-  const ogImage = resolvedBackdrop || entity.cover;
+  const ogImage = entity.backdrop || entity.cover;
 
   const synopsis = [entity.description, entity.aiContent?.uniqueSynopsis].find((t) => !isFillerDescription(t)) || '';
 

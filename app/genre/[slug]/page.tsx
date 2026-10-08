@@ -4,10 +4,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Star, Film, ArrowLeft } from 'lucide-react';
 import { getGenreBySlug, GENRE_MAP } from '@/lib/data/genres';
-import { getEntitiesByGenre } from '@/lib/services/entity-kv';
+import { getDb } from '@/lib/data/d1/db';
+import { titlesByGenre } from '@/lib/data/d1/related';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { Navbar } from '@/components/layout/Navbar';
+
+// 题材页缓存 1 天（数据来自 D1，构建期不预渲染，见 scripts/drop-build-prerenders.mjs）。
+export const revalidate = 86400;
 
 export function generateStaticParams() {
   return Object.keys(GENRE_MAP).map(slug => ({ slug }));
@@ -31,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   // 检查收录数量，薄内容输出 noindex
-  const entities = await getEntitiesByGenre(genre.name, 12);
+  const entities = await (async () => { const db = getDb(); return db ? titlesByGenre(db, genre.name, 12) : []; })();
   if (entities.length === 0) {
     return {
       title: `${genre.name}片大全 - iKanPP 爱看片片`,
@@ -74,7 +78,7 @@ export default async function GenrePage({ params }: Props) {
     notFound();
   }
 
-  const entities = await getEntitiesByGenre(genre.name, 36);
+  const entities = await (async () => { const db = getDb(); return db ? titlesByGenre(db, genre.name, 36) : []; })();
 
   const itemList = entities.map((e, idx) => ({
     position: idx + 1,

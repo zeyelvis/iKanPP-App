@@ -10,7 +10,7 @@ import { ShortDramaTrendingRail } from '@/components/home/ShortDramaTrendingRail
 import { ShortDramaForYouRail } from '@/components/home/ShortDramaForYouRail';
 import { ShortCollectionsRail } from '@/components/home/ShortCollectionsRail';
 import { getOptimizedImageUrl } from '@/lib/utils/image-utils';
-import { SHORT_HOME_DATA } from '@/lib/data/home-prebaked-extra';
+import { useHomeData } from '@/components/data/PageDataProvider';
 
 const GENRES = [
   { label: '全部短剧', value: '' },
@@ -84,6 +84,7 @@ interface ShortClientProps {
 }
 
 function ShortContent({ topCustomRails }: ShortClientProps) {
+  const SHORT_HOME_DATA = useHomeData('short');
   const router = useRouter();
   const searchParams = useSearchParams();
 

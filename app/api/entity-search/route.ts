@@ -1,223 +1,49 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getEntityByTitle, kvGet, kvPut, kvDelete } from '@/lib/services/entity-kv';
-import { searchMultipleEntitiesFromTMDB, enrichEpisodeCount } from '@/lib/services/entity-enrichment';
 import { normalizeTitle, hasTitleOverlap, isStrictSafeEntity } from '@/lib/data/entities/entity-utils';
-import { TitleEntity } from '@/lib/types/entity';
-
-
-// L1 边缘节点内存热缓存（0ms 秒级直出）
-const MEMORY_CACHE = new Map<string, { entities: TitleEntity[]; expireAt: number }>();
-const MEMORY_TTL_MS = 10 * 60 * 1000; // 10分钟节点内热存
+import type { TitleEntity } from '@/lib/types/entity';
+import { getDb } from '@/lib/data/d1/db';
+import { toEntities } from '@/lib/data/d1/related';
+import type { TitleRow } from '@/lib/data/d1/title-route';
 
 /**
- * 权威影视实体极速搜索接口（四级火箭加速引擎 + 防毒化强一致安全防线）
- * 
- * 加速与安全架构：
- * 1. L1 内存热缓存 (0ms) -> 校验 TitleOverlap 与 isStrictSafeEntity，原地秒出
- * 2. L2 Cloudflare KV 关键词倒排索引 (5~15ms) -> 强一致校验，毒化键自动抹除
- * 3. L3 本站 KV 精准标题索引检索 (5~15ms) -> 命中已收录条目并核验证实
- * 4. L4 TMDB 在线多源发现 + 3500ms 超时熔断守卫 -> 异步透写回填 KV 倒排索引
+ * 搜索结果上方的作品卡片（知识面板）：只查本站片库（D1）。
+ * 先按规范化片名精确匹配，没有再按片名前缀；同名多部时按「有 TMDB、热度、年份接近」排序。
+ * 不再去 TMDB 现场建档（以前每次搜索都可能发新编号写 KV，片库外的作品由入库 Worker 统一建档）。
  */
+const LIMIT = 6;
+
 export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const query = searchParams.get('q')?.trim() ?? '';
+  const year = Number(searchParams.get('year')?.trim()) || 0;
+  const empty = () => NextResponse.json({ entities: [], entity: null }, { headers: { 'Cache-Control': 'public, max-age=600, s-maxage=1800' } });
+
+  const key = normalizeTitle(query);
+  const db = getDb();
+  if (!key || !db) return empty();
+
   try {
-    const { searchParams } = new URL(request.url);
-    const query = searchParams.get('q')?.trim();
-    const actor = searchParams.get('actor')?.trim() || undefined;
-    const year = searchParams.get('year')?.trim() || undefined;
-    const hint = actor || year ? { actor, year } : undefined;
-
-    if (!query || query.length === 0) {
-      return NextResponse.json({ entities: [], entity: null });
+    const order = `(tmdb_id IS NOT NULL) DESC, ${year ? `abs(coalesce(year, 0) - ${year}) ASC,` : ''} coalesce(popularity, hot, 0) DESC, id`;
+    let rows = (await db.prepare(`SELECT * FROM titles WHERE state = 'live' AND name_key = ? ORDER BY ${order} LIMIT ${LIMIT}`).bind(key).all<TitleRow>()).results;
+    if (!rows.length && key.length >= 2) {
+      // 前缀：name_key 在 [key, key + U+FFFF) 区间内，走 name_key 索引
+      rows = (
+        await db
+          .prepare(`SELECT * FROM titles WHERE state = 'live' AND name_key >= ? AND name_key < ? ORDER BY ${order} LIMIT ${LIMIT}`)
+          .bind(key, `${key}￿`)
+          .all<TitleRow>()
+      ).results;
     }
-
-    const normQuery = normalizeTitle(query) || query.toLowerCase();
-
-    // ──────────────────────────────────────────
-    // 1. L1: 边缘实例内存缓存 (0ms)
-    // ──────────────────────────────────────────
-    const mem = MEMORY_CACHE.get(normQuery);
-    if (mem && mem.expireAt > Date.now()) {
-      const validEntities = mem.entities.filter(ent =>
-        ent &&
-        isStrictSafeEntity(ent).safe &&
-        (hasTitleOverlap(query, ent.title) || (ent.originalTitle && hasTitleOverlap(query, ent.originalTitle)))
-      );
-      if (validEntities.length > 0) {
-        return NextResponse.json(
-          {
-            entities: validEntities,
-            entity: validEntities[0],
-          },
-          {
-            headers: {
-              'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
-              'X-Cache': 'HIT-L1-MEMORY',
-            },
-          }
-        );
-      }
-      MEMORY_CACHE.delete(normQuery);
-    }
-
-    // ──────────────────────────────────────────
-    // 2. L2: Cloudflare KV 关键词专属倒排索引 (5~15ms)
-    // ──────────────────────────────────────────
-    const kvCacheKey = `entity-query:${normQuery}`;
-    try {
-      const cachedRaw = await kvGet(kvCacheKey);
-      if (cachedRaw) {
-        const cachedEntities: TitleEntity[] = JSON.parse(cachedRaw);
-        if (Array.isArray(cachedEntities) && cachedEntities.length > 0) {
-          const validEntities = cachedEntities.filter(ent =>
-            ent &&
-            isStrictSafeEntity(ent).safe &&
-            (hasTitleOverlap(query, ent.title) || (ent.originalTitle && hasTitleOverlap(query, ent.originalTitle)))
-          );
-
-          // 🌟 强一致防毒化核验：如果当前精准片名在 KV 中有权威主键，比对缓存首条 entityId 是否一致
-          let isStale = false;
-          try {
-            const directTitleEntity = await getEntityByTitle(query);
-            if (
-              directTitleEntity &&
-              directTitleEntity.entityId &&
-              validEntities[0] &&
-              directTitleEntity.entityId.toLowerCase() !== validEntities[0].entityId.toLowerCase()
-            ) {
-              isStale = true;
-            }
-          } catch {}
-
-          if (validEntities.length > 0 && !isStale) {
-            MEMORY_CACHE.set(normQuery, { entities: validEntities, expireAt: Date.now() + MEMORY_TTL_MS });
-            return NextResponse.json(
-              {
-                entities: validEntities,
-                entity: validEntities[0],
-              },
-              {
-                headers: {
-                  'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
-                  'X-Cache': 'HIT-L2-KV',
-                },
-              }
-            );
-          } else {
-            console.warn(`[Entity Search L2 Purge] Mismatched or stale cache for query "${query}". Purging!`);
-            await kvDelete(kvCacheKey);
-          }
-        }
-      }
-    } catch (kvErr) {
-      console.warn('[Entity Search] KV query cache read fail:', kvErr);
-    }
-
-    // ──────────────────────────────────────────
-    // 3. L3: 本站本地已收录实体精准命中 (5~15ms)
-    // ──────────────────────────────────────────
-    try {
-      const localSingle = await getEntityByTitle(query);
-      if (localSingle && localSingle.cover && isStrictSafeEntity(localSingle).safe) {
-        // 若本地条目是年代久远(<1980)且无主要演员的冷门早期作品，不直接拦截，放行至 L4 TMDB 在线多源检索现代主流大片
-        const isAncientCold = Number(localSingle.year) < 1980 && (!localSingle.actors || localSingle.actors.length === 0);
-        if (!isAncientCold && (hasTitleOverlap(query, localSingle.title) || (localSingle.originalTitle && hasTitleOverlap(query, localSingle.originalTitle)))) {
-          const enriched = await enrichEpisodeCount(localSingle);
-          const entities = [enriched];
-
-          MEMORY_CACHE.set(normQuery, { entities, expireAt: Date.now() + MEMORY_TTL_MS });
-          try {
-            await kvPut(kvCacheKey, JSON.stringify(entities));
-          } catch {}
-
-          return NextResponse.json(
-            {
-              entities,
-              entity: enriched,
-            },
-            {
-              headers: {
-                'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
-                'X-Cache': 'HIT-L3-LOCAL-TITLE',
-              },
-            }
-          );
-        }
-      }
-    } catch (localErr) {
-      console.warn('[Entity Search] Local title lookup fail:', localErr);
-    }
-
-    // ──────────────────────────────────────────
-    // 4. L4: TMDB 在线多源检索 + 5000ms 超时熔断守卫
-    // ──────────────────────────────────────────
-    const tmdbPromise = searchMultipleEntitiesFromTMDB(query, 2, hint);
-    const timeoutPromise = new Promise<TitleEntity[]>((resolve) =>
-      setTimeout(() => resolve([]), 5000)
+    const entities: TitleEntity[] = (await toEntities(db, rows)).filter(
+      (e) => isStrictSafeEntity(e).safe && (hasTitleOverlap(query, e.title) || (e.originalTitle && hasTitleOverlap(query, e.originalTitle))),
     );
-
-    let entities: TitleEntity[] = [];
-    try {
-      entities = await Promise.race([tmdbPromise, timeoutPromise]);
-    } catch (err) {
-      console.warn(`[Entity Search TMDB Race Fail] query=${query}:`, err);
-    }
-
-    // 强一致安全防线：严格过滤未通过 hasTitleOverlap 与 isStrictSafeEntity 校验的条目
-    if (Array.isArray(entities) && entities.length > 0) {
-      entities = entities.filter(ent =>
-        ent &&
-        isStrictSafeEntity(ent).safe &&
-        (hasTitleOverlap(query, ent.title) || (ent.originalTitle && hasTitleOverlap(query, ent.originalTitle)))
-      );
-    }
-
-    // 若 TMDB 熔断超时或未命中，再次宽容尝试本地已收录条目（严格保证标题交集与安全性）
-    if (entities.length === 0) {
-      const fallbackSingle = await getEntityByTitle(query);
-      if (fallbackSingle && fallbackSingle.cover && isStrictSafeEntity(fallbackSingle).safe) {
-        if (hasTitleOverlap(query, fallbackSingle.title) || (fallbackSingle.originalTitle && hasTitleOverlap(query, fallbackSingle.originalTitle))) {
-          const enriched = await enrichEpisodeCount(fallbackSingle);
-          entities = [enriched];
-        }
-      }
-    }
-
-    if (entities.length > 0) {
-      // 写入 L1 内存
-      MEMORY_CACHE.set(normQuery, { entities, expireAt: Date.now() + MEMORY_TTL_MS });
-      
-      // 必须 await 写入 L2 KV，防止 Edge Worker 在 response 返回后被瞬间挂起导致写入丢失
-      try {
-        await kvPut(kvCacheKey, JSON.stringify(entities));
-      } catch (saveErr) {
-        console.warn('[Entity Search] kvPut error:', saveErr);
-      }
-
-      return NextResponse.json(
-        {
-          entities,
-          entity: entities[0] || null,
-        },
-        {
-          headers: {
-            'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
-            'X-Cache': 'MISS-TMDB-POPULATED',
-          },
-        }
-      );
-    }
-
+    if (!entities.length) return empty();
     return NextResponse.json(
-      { entities: [], entity: null },
-      {
-        headers: {
-          'Cache-Control': 'public, max-age=600, s-maxage=1800',
-        },
-      }
+      { entities, entity: entities[0] },
+      { headers: { 'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800' } },
     );
   } catch (error) {
-    console.error('[Entity Search API Fatal Error]:', error);
-    return NextResponse.json({ entities: [], entity: null });
+    console.error('[entity-search]', error);
+    return empty();
   }
 }
-

@@ -24,8 +24,8 @@
     "seo:daemon:logs": "tail -f logs/seo-daemon.log",
     "seo:daemon:run": "node scripts/cron/autonomous-seo-daemon.mjs",
     "seo:dashboard": "node scripts/cron/dashboard.mjs",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "preview": "opennextjs-cloudflare build && node scripts/drop-build-prerenders.mjs && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && node scripts/drop-build-prerenders.mjs && opennextjs-cloudflare deploy",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -5,7 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getOptimizedImageUrl, getFallbackProxiedImageUrl } from '@/lib/utils/image-utils';
-import { PREBAKED_HOME_DATA, type PrebakedSubject, type TrendingNavItem } from '@/lib/data/home-prebaked';
+import type { PrebakedSubject, TrendingNavItem } from '@/lib/types/prebaked';
+import { useAllHomeData } from '@/components/data/PageDataProvider';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 interface PosterImageProps {
@@ -244,6 +245,7 @@ export function HeroSlideshow({
   compact = false,
   trendingNav,
 }: HeroSlideshowProps) {
+  const PREBAKED_HOME_DATA = useAllHomeData();
   const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
   const [backdrops, setBackdrops] = useState<Record<string, string | null>>({});

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { ALL_HOME_DATA } from '@/lib/data/home-prebaked-extra';
-import { PREBAKED_LATEST_TITLES } from '@/lib/data/latest-titles-prebaked';
+import { loadHomeDocs } from '@/lib/data/d1/home-docs';
 import { getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 import { PREBAKED_TOPICS } from '@/lib/data/prebaked-topics';
@@ -9,6 +8,8 @@ export const dynamic = 'force-static';
 export const revalidate = 3600; // 1小时缓存
 
 export async function GET() {
+  const { home, latest: PREBAKED_LATEST_TITLES } = await loadHomeDocs();
+  const ALL_HOME_DATA = home.all;
   const lines: string[] = [
     '# iKanPP (爱看片片) — Full Machine-Readable Knowledge Base & Release Radar',
     '',

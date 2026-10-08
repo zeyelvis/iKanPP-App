@@ -2,7 +2,8 @@ import { Metadata } from 'next';
 import VarietyClient from './VarietyClient';
 import { ItemListJsonLd } from '@/components/seo/ItemListJsonLd';
 import { JsonLd, generateBreadcrumbJsonLd } from '@/components/seo/JsonLd';
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { PageDataProvider } from '@/components/data/PageDataProvider';
+import { loadPageData } from '@/lib/data/d1/page-data';
 import { generateSlug, getTitleCanonicalHref } from '@/lib/data/entities/entity-utils';
 
 export const metadata: Metadata = {
@@ -13,8 +14,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function VarietyPage() {
-  const topShows = PREBAKED_HOME_DATA.tv.s4.slice(0, 10).map((v, idx) => ({
+// 首屏数据来自 D1（入库 Worker 每小时更新）；页面缓存 5 分钟。
+export const revalidate = 300;
+
+export default async function VarietyPage() {
+  const data = await loadPageData({ home: ['variety', 'tv'], latest: ['variety'], category: ['variety'] });
+  const topShows = (data.home.tv?.s4 ?? []).slice(0, 10).map((v, idx) => ({
     position: idx + 1,
     name: v.title,
     url: `https://www.ikanpp.com${getTitleCanonicalHref(v)}`,
@@ -27,12 +32,12 @@ export default function VarietyPage() {
   ]);
 
   return (
-    <>
+    <PageDataProvider data={data}>
       <JsonLd data={breadcrumbs} />
       <ItemListJsonLd name="热门综艺精选" items={topShows} />
       <h1 className="sr-only">综艺大厅 - 2026 最新热门真人秀与脱口秀在线观看 | iKanPP 爱看片片</h1>
       <VarietyClient />
-    </>
+    </PageDataProvider>
   );
 
 }

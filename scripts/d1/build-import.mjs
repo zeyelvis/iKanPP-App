@@ -38,7 +38,7 @@ if (existsSync(outFile)) rmSync(outFile);
 // 导入期间关闭外键检查：合并的编号要指向规范编号，写入顺序无法保证；导入 D1 时按先 live 后 merged 的顺序。
 const db = new DatabaseSync(outFile, { enableForeignKeyConstraints: false });
 // 只建作品、网址、影人相关的表（documents、tmdb_matches 是入库 Worker 的，不在导入范围）。
-for (const m of ["0001_init.sql", "0004_title_name_key.sql"]) db.exec(readFileSync(join(ROOT, "db/d1", m), "utf8"));
+for (const m of ["0001_init.sql", "0004_title_name_key.sql", "0005_title_genres.sql", "0007_browse_indexes.sql"]) db.exec(readFileSync(join(ROOT, "db/d1", m), "utf8"));
 db.exec("PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;");
 
 const ID = /^ik(\d{6})$/i;
@@ -288,6 +288,14 @@ function resolveLanding(b) {
   const hit = bySlug.get(seg);
   const viaSlug = hit ? liveRow(hit.title_id) : null;
   if (viaSlug && nameMatch(viaSlug.name, info.name)) return viaSlug;
+  // 页面自己声明的 rel=canonical 指向的作品（季号页声明的是整部剧：野生的大魔王出现了第2季 → ik113578）。
+  const declared = b.canonical && pathOf(b.canonical).startsWith("/title/") ? pathOf(b.canonical).slice("/title/".length) : null;
+  if (declared && declared !== seg) {
+    const declaredId = toId((declared.match(/^(ik\d{6})/i) ?? [])[1]);
+    const declaredHit = declaredId ? null : bySlug.get(declared);
+    const viaCanonical = declaredId ? liveRow(declaredId) : declaredHit ? liveRow(declaredHit.title_id) : null;
+    if (viaCanonical && nameMatch(viaCanonical.name, info.name)) return viaCanonical;
+  }
   const cands = (byNorm.get(normName(info.name)) ?? []).filter(ok);
   cands.sort((a, b) => Number(b.kind === info.kind) - Number(a.kind === info.kind) || (b.popularity ?? 0) - (a.popularity ?? 0) || a.id - b.id);
   if (cands[0]) return cands[0];
@@ -311,16 +319,18 @@ function recoverFromCard(b) {
   while (getTitle.get(nextRecoveredId)) nextRecoveredId++;
   const id = nextRecoveredId++;
   const kind = card.kind ?? info.kind ?? null;
+  // 电影片名末尾粘连的年份不要（准则 16.1：战无不胜2026 → 战无不胜）；综艺的「2026」是季名，保留。
+  const name = kind === "movie" ? card.name.replace(/(?<=.{2})(19|20)\d\d$/, "") : card.name;
   insertTitle.run(
-    id, "live", null, kind, card.name, null, card.year ?? info.year ?? null,
+    id, "live", null, kind, name, null, card.year ?? info.year ?? null,
     null, null, null, null, card.description ?? null, card.cover, card.backdrop ?? null,
     json(card.genres), null, null, card.badge ?? null, num(card.rate), null, null,
     null, null, null, "[]", "[]", "[]", "[]", null, JSON.stringify({ cardTmdbId: card.tmdbId ?? null, cardSource: card.source }),
     "prebaked-card", new Date().toISOString(), new Date().toISOString(),
   );
-  db.prepare("UPDATE titles SET name_key = ? WHERE id = ?").run(normalizeTitle(card.name) || null, id);
+  db.prepare("UPDATE titles SET name_key = ? WHERE id = ?").run(normalizeTitle(name) || null, id);
   const row = getTitle.get(id);
-  byNorm.set(normName(card.name), [...(byNorm.get(normName(card.name)) ?? []), row]);
+  byNorm.set(normName(name), [...(byNorm.get(normName(name)) ?? []), row]);
   recovered++;
   return row;
 }
@@ -461,6 +471,12 @@ for (const t of db.prepare("SELECT id, directors, actors FROM titles WHERE state
 }
 db.exec("COMMIT");
 console.log(`影人：${personId.size} 位，演职关系 ${db.prepare("SELECT COUNT(*) n FROM credits").get().n} 条`);
+
+// ---- 9. 题材索引（同题材推荐按热度取前几部，不扫整张表） ----------------------------------------
+db.exec(`INSERT OR IGNORE INTO title_genres (genre, title_id, kind, popularity)
+  SELECT trim(j.value), t.id, t.kind, coalesce(t.popularity, t.hot, 0) FROM titles t, json_each(t.genres) j
+  WHERE t.state = 'live' AND json_valid(t.genres) AND trim(j.value) <> ''`);
+console.log(`题材索引：${db.prepare("SELECT COUNT(*) n FROM title_genres").get().n} 条`);
 
 const counts = db.prepare("SELECT state, COUNT(*) n FROM titles GROUP BY state").all();
 console.log("作品状态：", counts.map((r) => `${r.state} ${r.n}`).join("，"));

@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getSitemapCatalog } from '@/lib/services/entity-kv';
+import { getDb } from '@/lib/data/d1/db';
+import { sitemapTitleVolumes } from '@/lib/data/d1/sitemaps';
 
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ikanpp.com';
-const TITLES_PER_SITEMAP = 2000;
 
 function escapeXml(str: string): string {
   return str
@@ -17,11 +17,6 @@ function escapeXml(str: string): string {
 export async function GET() {
   const todayStr = new Date().toISOString().split('T')[0];
 
-  // 获取全量实体数量，计算所需分卷数并计算各分卷真实最后更新时间
-  const catalog = await getSitemapCatalog();
-  const totalTitles = catalog.length;
-  const pageCount = Math.max(1, Math.ceil(totalTitles / TITLES_PER_SITEMAP));
-
   const subSitemaps: { url: string; lastmod: string }[] = [
     { url: `${BASE_URL}/sitemap.xml`, lastmod: todayStr },
     { url: `${BASE_URL}/sitemap-topics.xml`, lastmod: todayStr },
@@ -29,24 +24,11 @@ export async function GET() {
     { url: `${BASE_URL}/sitemap-people.xml`, lastmod: todayStr },
   ];
 
-  for (let p = 1; p <= pageCount; p++) {
-    const start = (p - 1) * TITLES_PER_SITEMAP;
-    const end = start + TITLES_PER_SITEMAP;
-    const slice = catalog.slice(start, end);
-
-    // 真实增量感知 (Truthful Lastmod)：从分卷切片中提取最大更新时间，历史分卷不虚标更新
-    let maxDate = '';
-    for (const item of slice) {
-      if (item.updatedAt && item.updatedAt > maxDate) {
-        maxDate = item.updatedAt;
-      }
-    }
-    const chunkLastMod = maxDate ? maxDate.split('T')[0] : todayStr;
-
-    subSitemaps.push({
-      url: `${BASE_URL}/sitemap-titles-${p}.xml`,
-      lastmod: chunkLastMod,
-    });
+  // 作品分卷：每卷的 lastmod 取卷内作品最晚的更新日期（不虚标）
+  const db = getDb();
+  const volumes = db ? await sitemapTitleVolumes(db) : [];
+  for (const v of volumes) {
+    subSitemaps.push({ url: `${BASE_URL}/sitemap-titles-${v.page}.xml`, lastmod: v.lastmod || todayStr });
   }
 
   const sitemapElements = subSitemaps.map(item => `  <sitemap>

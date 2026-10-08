@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTrendingStore } from '@/lib/store/trending-store';
 
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { useAllHomeData } from '@/components/data/PageDataProvider';
+import type { HomeChannel, PrebakedHomeCategory } from '@/lib/types/prebaked';
 
 interface RankingMovie {
     id: string;
@@ -59,14 +60,14 @@ function fetchWithTimeout(url: string, timeoutMs: number = 2500): Promise<Respon
 /**
  * 转换预置数据为 RankingMovie 格式
  */
-function getPrebakedRanking(type: 'movie' | 'tv'): RankingMovie[] {
-    const prebaked = PREBAKED_HOME_DATA[type];
+function getPrebakedRanking(home: Record<HomeChannel, PrebakedHomeCategory>, type: 'movie' | 'tv'): RankingMovie[] {
+    const prebaked = home[type];
     const list = prebaked.top10 && prebaked.top10.length > 0 ? prebaked.top10 : prebaked.s1;
     return list.map(item => ({
         id: item.id,
         title: item.title,
         cover: item.cover,
-        rate: item.rate || '9.0',
+        rate: item.rate || '', // 没有评分留空，不写默认值（准则 19.1）
         url: `/player?title=${encodeURIComponent(item.title)}`,
         year: item.year,
         types: item.types,
@@ -79,13 +80,14 @@ function getPrebakedRanking(type: 'movie' | 'tv'): RankingMovie[] {
  * Detail 信息按需加载（仅 active 项），不再批量请求。
  */
 export function useRankingData({ limit = 10 }: UseRankingDataOptions = {}) {
+    const home = useAllHomeData();
     const [movieRanking, setMovieRanking] = useState<RankingMovie[]>(() => {
         const cached = typeof window !== 'undefined' ? getRankingCache('movie') : null;
-        return cached && cached.length > 0 ? cached : getPrebakedRanking('movie').slice(0, limit);
+        return cached && cached.length > 0 ? cached : getPrebakedRanking(home, 'movie').slice(0, limit);
     });
     const [tvRanking, setTvRanking] = useState<RankingMovie[]>(() => {
         const cached = typeof window !== 'undefined' ? getRankingCache('tv') : null;
-        return cached && cached.length > 0 ? cached : getPrebakedRanking('tv').slice(0, limit);
+        return cached && cached.length > 0 ? cached : getPrebakedRanking(home, 'tv').slice(0, limit);
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

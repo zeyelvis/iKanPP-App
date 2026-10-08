@@ -3,7 +3,7 @@
 import { Suspense } from 'react';
 import { CategoryHub } from '@/components/category/CategoryHub';
 import { CategoryHubSkeleton } from '@/components/category/CategoryHubSkeleton';
-import { PREBAKED_HOME_DATA } from '@/lib/data/home-prebaked';
+import { useHomeData } from '@/components/data/PageDataProvider';
 
 const SHELVES = [
   { id: 'doc_nature', title: '🌍 BBC 史诗级自然与浩瀚宇宙', icon: '🌍', badge: 'BBC 4K', tag: '自然', doubanType: 'tv' as const },
@@ -16,6 +16,7 @@ const SHELVES = [
 ];
 
 export default function DocumentaryClient() {
+  const home = useHomeData('documentary');
   return (
     <Suspense
       fallback={
@@ -29,8 +30,8 @@ export default function DocumentaryClient() {
         activeNav="documentary"
         shelves={SHELVES}
         defaultTag="纪录片"
-        heroItems={PREBAKED_HOME_DATA.documentary?.hero}
-        trendingNav={PREBAKED_HOME_DATA.documentary?.trendingNav}
+        heroItems={home.hero}
+        trendingNav={home.trendingNav}
       />
     </Suspense>
   );

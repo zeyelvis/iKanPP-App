@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { listRecentEntities } from '@/lib/services/entity-kv';
+import { loadHomeDocs } from '@/lib/data/d1/home-docs';
 
 
 /**
  * GET /api/latest-titles
- * 供首页及各频道大厅「最新上线」货架与外部爬虫 0ms 秒级获取全站最新增量收录影视
+ * 首页及各频道大厅「最新上线」货架的数据：入库 Worker 每小时写进 D1 documents 的 latest:<频道>。
  *
  * Query Params:
  * - type?: 'all' | 'movie' | 'tv' | 'anime' | 'variety' | 'documentary' (可选，指定专区或内容类型)
@@ -17,7 +17,9 @@ export async function GET(req: NextRequest) {
     const limitParam = parseInt(searchParams.get('limit') || '20', 10);
     const limit = Math.min(Math.max(isNaN(limitParam) ? 20 : limitParam, 1), 60);
 
-    const data = await listRecentEntities(limit, typeParam);
+    const channel = typeParam && ['all', 'movie', 'tv', 'anime', 'variety', 'documentary'].includes(typeParam) ? typeParam : 'all';
+    const { latest } = await loadHomeDocs();
+    const data = (latest[channel] ?? []).slice(0, limit);
 
     return NextResponse.json(
       {
