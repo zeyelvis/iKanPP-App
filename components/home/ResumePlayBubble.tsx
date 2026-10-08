@@ -70,17 +70,15 @@ export function ResumePlayBubble() {
     let activeSource = latestItem.source;
     let activeId = latestItem.videoId;
 
-    // 非午夜特区下，老用户历史记录优先无缝升级为巨量资源
-    if (!latestItem.isPremium) {
-      if (latestItem.sourceMap && latestItem.sourceMap['juliang']) {
+    // 老用户历史记录优先无缝升级为巨量资源
+    if (latestItem.sourceMap && latestItem.sourceMap['juliang']) {
+      activeSource = 'juliang';
+      activeId = latestItem.sourceMap['juliang'];
+    } else {
+      const cached = getCachedTitleProbe(latestItem.title);
+      if (cached?.source === 'juliang' && cached.id) {
         activeSource = 'juliang';
-        activeId = latestItem.sourceMap['juliang'];
-      } else {
-        const cached = getCachedTitleProbe(latestItem.title);
-        if (cached?.source === 'juliang' && cached.id) {
-          activeSource = 'juliang';
-          activeId = cached.id;
-        }
+        activeId = cached.id;
       }
     }
 
@@ -108,9 +106,6 @@ export function ResumePlayBubble() {
     if (latestItem.type_name) {
       const isTv = latestItem.type_name.includes('剧') || latestItem.type_name.includes('动漫') || (latestItem.episodeIndex !== undefined && latestItem.episodeIndex > 0);
       query.set('type', isTv ? 'tv' : 'movie');
-    }
-    if (latestItem.isPremium) {
-      query.set('premium', '1');
     }
     router.push(`/player?${query.toString()}`);
   };

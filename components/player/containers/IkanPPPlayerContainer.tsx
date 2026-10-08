@@ -590,7 +590,7 @@ export const IkanPPPlayer = memo(function IkanPPPlayer({ params: searchParams, r
         0,
         videoData.vod_pic,
         mappedEpisodes,
-        { vod_actor: videoData.vod_actor, type_name: videoData.type_name, vod_area: videoData.vod_area, isPremium: false }
+        { vod_actor: videoData.vod_actor, type_name: videoData.type_name, vod_area: videoData.vod_area }
       );
     }
   }, [videoData, playUrl, videoId, currentEpisode, source, title, addToHistory]);
@@ -777,7 +777,7 @@ export const IkanPPPlayer = memo(function IkanPPPlayer({ params: searchParams, r
   if (needsTitleSearch && titleSearchError) {
     return (
       <div className="min-h-screen bg-(--bg-color)">
-        <Navbar variant="player" isPremiumMode={false} />
+        <Navbar variant="player" />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
           <ClassicNoSourceState
             title={title || '经典影视'}
@@ -803,7 +803,7 @@ export const IkanPPPlayer = memo(function IkanPPPlayer({ params: searchParams, r
     if (title) {
       return (
         <div className="min-h-screen bg-(--bg-color)">
-          <Navbar variant="player" isPremiumMode={false} />
+          <Navbar variant="player" />
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
               <div className="relative w-14 h-14">
@@ -819,7 +819,7 @@ export const IkanPPPlayer = memo(function IkanPPPlayer({ params: searchParams, r
 
     return (
       <div className="min-h-screen bg-(--bg-color)">
-        <Navbar variant="player" isPremiumMode={false} />
+        <Navbar variant="player" />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
           <PlayerError
             error={videoError}
@@ -848,7 +848,6 @@ export const IkanPPPlayer = memo(function IkanPPPlayer({ params: searchParams, r
               totalEpisodes={videoData?.episodes?.length || 0}
               onNextEpisode={handleNextEpisode}
               isReversed={isReversed}
-              isPremium={false}
               videoTitle={videoData?.vod_name || title || ''}
               episodeName={videoData?.episodes?.[currentEpisode]?.name || ''}
               externalTimeRef={playerTimeRef}
@@ -931,7 +930,6 @@ export const IkanPPPlayer = memo(function IkanPPPlayer({ params: searchParams, r
                         type={videoData.type_name}
                         year={videoData.vod_year}
                         size={16}
-                        isPremium={false}
                       />
                     </div>
                   )}
@@ -1070,7 +1068,7 @@ export const IkanPPPlayer = memo(function IkanPPPlayer({ params: searchParams, r
   return (
     <div className="min-h-screen bg-(--bg-color)">
       <JsonLd data={jsonLdData} />
-      <Navbar variant="player" isPremiumMode={false} />
+      <Navbar variant="player" />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-18 pb-16">
         {stage}
@@ -1211,7 +1209,7 @@ export const IkanPPPlayer = memo(function IkanPPPlayer({ params: searchParams, r
         </div>
       </main>
 
-      <FavoritesSidebar isPremium={false} />
+      <FavoritesSidebar />
 
       {miniPlayer}
     </div>

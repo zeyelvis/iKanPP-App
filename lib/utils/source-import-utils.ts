@@ -11,6 +11,7 @@ export interface ImportSourceFormat {
     id: string;
     name: string;
     baseUrl: string;
+    /** 旧格式里的分组；'premium'（午夜特区）的片源在主站一律跳过 */
     group?: 'normal' | 'premium';
     enabled?: boolean;
     priority?: number;
@@ -21,7 +22,6 @@ export interface ImportSourceFormat {
  */
 export interface ImportResult {
     normalSources: VideoSource[];
-    premiumSources: VideoSource[];
     totalCount: number;
 }
 
@@ -37,7 +37,6 @@ export function convertToVideoSource(source: ImportSourceFormat): VideoSource {
         detailPath: '',
         enabled: source.enabled !== false,
         priority: source.priority || 1,
-        group: source.group || 'normal',
     };
 }
 
@@ -78,24 +77,15 @@ export function parseSourcesFromJson(jsonString: string): ImportResult {
     }
 
     const normalSources: VideoSource[] = [];
-    const premiumSources: VideoSource[] = [];
 
     for (const item of sourcesArray) {
-        if (!isValidSourceFormat(item)) continue;
-
-        const source = convertToVideoSource(item);
-
-        if (item.group === 'premium') {
-            premiumSources.push(source);
-        } else {
-            normalSources.push(source);
-        }
+        if (!isValidSourceFormat(item) || item.group === 'premium') continue;
+        normalSources.push(convertToVideoSource(item));
     }
 
     return {
         normalSources,
-        premiumSources,
-        totalCount: normalSources.length + premiumSources.length,
+        totalCount: normalSources.length,
     };
 }
 
@@ -103,24 +93,8 @@ export function parseSourcesFromJson(jsonString: string): ImportResult {
  * Fetch and parse sources from a URL
  */
 export async function fetchSourcesFromUrl(url: string): Promise<ImportResult> {
-    const headers = {
-        'Accept': 'application/json',
-    };
-    const isExternal = url.startsWith('http') && (typeof window !== 'undefined' && !url.includes(window.location.host));
-
-    let response: Response;
-
-    try {
-        response = await fetch(url, { headers });
-    } catch (directError) {
-        if (!isExternal) {
-            throw directError;
-        }
-
-        response = await fetch(`/api/proxy?url=${encodeURIComponent(url)}`, {
-            headers,
-        });
-    }
+    // 浏览器直接请求订阅地址；主站没有代理接口（AGENTS 第 1、8 条）
+    const response = await fetch(url, { headers: { Accept: 'application/json' } });
 
     if (!response.ok) {
         throw new Error(`获取失败: ${response.status} ${response.statusText}`);

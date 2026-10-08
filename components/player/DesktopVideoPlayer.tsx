@@ -14,7 +14,6 @@ import { PlayerBrandLogo } from './PlayerBrandLogo';
 import { useIsIOS, useIsMobile } from '@/lib/hooks/mobile/useDeviceDetection';
 import { useDoubleTap } from '@/lib/hooks/mobile/useDoubleTap';
 import { settingsStore, DEFAULT_SEEK_STEP_SECONDS } from '@/lib/store/settings-store';
-import { premiumModeSettingsStore } from '@/lib/store/premium-mode-settings';
 import { shouldHidePlayerCursor } from '@/lib/player/cursor-visibility';
 import { ChevronLeft } from 'lucide-react';
 import './web-fullscreen.css';
@@ -79,7 +78,6 @@ interface DesktopVideoPlayerProps {
   // Danmaku props
   videoTitle?: string;
   episodeName?: string;
-  isPremium?: boolean;
   onBack?: () => void;
   // Resolution callback
   onResolutionDetected?: (info: import('./hooks/useVideoResolution').VideoResolutionInfo) => void;
@@ -104,7 +102,6 @@ export const DesktopVideoPlayer = React.memo(function DesktopVideoPlayer({
   isReversed = false,
   videoTitle = '',
   episodeName = '',
-  isPremium = false,
   onBack,
   onResolutionDetected,
   episodes,
@@ -114,7 +111,7 @@ export const DesktopVideoPlayer = React.memo(function DesktopVideoPlayer({
   onSelectSource,
 }: DesktopVideoPlayerProps) {
   const { refs, data, actions } = useDesktopPlayerState();
-  const { fullscreenType: settingsFullscreenType } = usePlayerSettings(isPremium);
+  const { fullscreenType: settingsFullscreenType } = usePlayerSettings();
   const isIOS = useIsIOS();
   const isMobile = useIsMobile();
   const [viewportMetrics, setViewportMetrics] = React.useState<ViewportMetrics>(() => readViewportMetrics());
@@ -199,16 +196,14 @@ export const DesktopVideoPlayer = React.memo(function DesktopVideoPlayer({
   }, [webFullscreenSize]);
 
   React.useEffect(() => {
-    const store = isPremium ? premiumModeSettingsStore : settingsStore;
-
     const syncSeekStep = () => {
-      setSeekStepSeconds(store.getSettings().seekStepSeconds ?? DEFAULT_SEEK_STEP_SECONDS);
+      setSeekStepSeconds(settingsStore.getSettings().seekStepSeconds ?? DEFAULT_SEEK_STEP_SECONDS);
     };
 
     syncSeekStep();
-    const unsubscribe = store.subscribe(syncSeekStep);
+    const unsubscribe = settingsStore.subscribe(syncSeekStep);
     return () => unsubscribe();
-  }, [isPremium]);
+  }, []);
 
   React.useEffect(() => {
     if (!data.isFullscreen) {
@@ -235,7 +230,6 @@ export const DesktopVideoPlayer = React.memo(function DesktopVideoPlayer({
   useHlsPlayer({
     videoRef: refs.videoRef,
     src,
-    isPremium,
     autoPlay: shouldAutoPlay,
     onError,
   });
@@ -369,7 +363,6 @@ export const DesktopVideoPlayer = React.memo(function DesktopVideoPlayer({
     currentTime,
     duration,
     isPlaying,
-    isPremium,
     totalEpisodes,
     currentEpisodeIndex,
     onNextEpisode,
@@ -600,11 +593,10 @@ export const DesktopVideoPlayer = React.memo(function DesktopVideoPlayer({
 
 
 
-          {/* 专属 iKanPP 4K VIP 尊享品牌台标（智能边界追踪，100% 严丝合缝死死遮盖 Jable 水印） */}
+          {/* iKanPP 品牌台标（跟随画面边界定位） */}
           <PlayerBrandLogo
             videoRef={refs.videoRef}
             containerRef={containerRef}
-            isPremium={isPremium}
             showControls={data.showControls}
           />
 
@@ -628,15 +620,13 @@ export const DesktopVideoPlayer = React.memo(function DesktopVideoPlayer({
               className={`absolute top-4 left-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#141416]/85 hover:bg-black/95 border border-white/20 text-white/90 hover:text-white transition-all cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.6)] hover:scale-105 active:scale-95 text-xs font-bold ${
                 data.showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
               }`}
-              title={isPremium ? '返回午夜版' : '返回'}
+              title="返回"
             >
               <ChevronLeft size={16} />
               <span>
-                {isPremium
-                  ? '午夜版'
-                  : (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('from')
-                      ? ({ movie: '电影', tv: '剧集', anime: '动漫', variety: '综艺', ranking: '榜单', iptv: '直播' } as Record<string, string>)[new URLSearchParams(window.location.search).get('from')!] || '返回'
-                      : '返回')}
+                {typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('from')
+                  ? ({ movie: '电影', tv: '剧集', anime: '动漫', variety: '综艺', ranking: '榜单', iptv: '直播' } as Record<string, string>)[new URLSearchParams(window.location.search).get('from')!] || '返回'
+                  : '返回'}
               </span>
             </button>
           )}
@@ -653,8 +643,6 @@ export const DesktopVideoPlayer = React.memo(function DesktopVideoPlayer({
             isTransitioningToNextEpisode={isTransitioningToNextEpisode}
             // More Menu Props
             showMoreMenu={data.showMoreMenu}
-            isPremium={isPremium}
-            isProxied={src.includes('/api/proxy')}
             onToggleMoreMenu={() => actions.setShowMoreMenu(!data.showMoreMenu)}
             onMoreMenuMouseEnter={() => {
               if (moreMenuTimeoutRef.current) {

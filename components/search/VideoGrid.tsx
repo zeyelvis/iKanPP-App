@@ -46,7 +46,6 @@ function getGroupingKey(vodName: string): string {
 interface VideoGridProps {
   videos: Video[];
   className?: string;
-  isPremium?: boolean;
   latencies?: Record<string, number>;
   onCardClick?: (videoId: string, videoUrl: string) => void;
 }
@@ -54,7 +53,6 @@ interface VideoGridProps {
 export const VideoGrid = memo(function VideoGrid({
   videos,
   className = '',
-  isPremium = false,
   latencies = {},
   onCardClick: externalCardClick,
 }: VideoGridProps) {
@@ -274,17 +272,13 @@ export const VideoGrid = memo(function VideoGrid({
         title: video.vod_name,
       };
 
-      if (isPremium) {
-        params.premium = '1';
-      }
-
       const videoUrl = `/player?${new URLSearchParams(params).toString()}`;
 
       const cardId = `${video.vod_id}-${index}`;
 
       return { video, videoUrl, cardId };
     });
-  }, [deduplicatedVideos, displayMode, isPremium]);
+  }, [deduplicatedVideos, displayMode]);
 
   // Grouped mode items
   const groupItems = useMemo(() => {
@@ -317,7 +311,6 @@ export const VideoGrid = memo(function VideoGrid({
                 cardId={cardId}
                 isActive={isActive}
                 onCardClick={handleCardClick}
-                isPremium={isPremium}
                 latencies={latencies}
               />
             );
@@ -334,7 +327,6 @@ export const VideoGrid = memo(function VideoGrid({
                 cardId={cardId}
                 isActive={isActive}
                 onCardClick={handleCardClick}
-                isPremium={isPremium}
                 latencies={latencies}
               />
             );

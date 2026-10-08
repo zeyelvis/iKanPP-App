@@ -18,7 +18,6 @@ interface VideoCardProps {
   cardId: string;
   isActive: boolean;
   onCardClick: (e: React.MouseEvent, cardId: string, videoUrl: string) => void;
-  isPremium?: boolean;
   latencies?: Record<string, number>;
 }
 
@@ -28,7 +27,6 @@ export const VideoCard = memo<VideoCardProps>(({
   cardId,
   isActive,
   onCardClick,
-  isPremium = false,
   latencies = {},
 }) => {
   const [imgError, setImgError] = useState(false);
@@ -77,7 +75,7 @@ export const VideoCard = memo<VideoCardProps>(({
                 <div className="absolute -top-8 -right-8 w-20 h-20 bg-red-600/10 rounded-full blur-lg pointer-events-none" />
                 <div className="w-full flex items-center justify-between z-10">
                   <span className="text-[9px] font-black tracking-widest text-white/30 uppercase">
-                    {isPremium ? 'iKanX' : 'iKanPP'}
+                    iKanPP
                   </span>
                 </div>
                 <div className="flex flex-col items-center gap-1.5 my-auto z-10 px-1">
@@ -119,7 +117,6 @@ export const VideoCard = memo<VideoCardProps>(({
                   type={video.type_name}
                   year={video.vod_year}
                   remarks={video.vod_remarks}
-                  isPremium={isPremium}
                   size={14}
                   className="w-7 h-7 bg-black/60 backdrop-blur-md border border-white/10 hover:bg-black/90 text-white rounded-full flex items-center justify-center shadow-md"
                 />

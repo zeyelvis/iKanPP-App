@@ -6,10 +6,9 @@ import { keepRenderableHistory } from '@/lib/utils/sync-records';
 interface HistoryListProps {
     history: VideoHistoryItem[];
     onRemove: (showIdentifier: string) => void;
-    isPremium?: boolean;
 }
 
-export function HistoryList({ history, onRemove, isPremium = false }: HistoryListProps) {
+export function HistoryList({ history, onRemove }: HistoryListProps) {
     const validHistory = keepRenderableHistory(history);
 
     return (
@@ -26,7 +25,6 @@ export function HistoryList({ history, onRemove, isPremium = false }: HistoryLis
                             key={item.showIdentifier}
                             item={item}
                             onRemove={() => onRemove(item.showIdentifier)}
-                            isPremium={isPremium}
                         />
                     ))}
                 </div>

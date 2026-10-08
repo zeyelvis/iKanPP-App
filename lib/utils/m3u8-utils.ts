@@ -96,16 +96,8 @@ export function filterM3u8Ad(
     // Use keywords passed from AdKeywordsWrapper (already loaded from env/file)
     const normalizedKeywords = normalizeKeywords(customKeywords);
 
-    // Unwrap baseUrl if it's a proxy URL to get correct basePath and origin
-    let effectiveBaseUrl = sanitizeStreamUrl(baseUrl);
-    if (effectiveBaseUrl.includes('/api/proxy?url=')) {
-        try {
-            const urlMatch = effectiveBaseUrl.match(/[?&]url=([^&]+)/);
-            if (urlMatch && urlMatch[1]) {
-                effectiveBaseUrl = sanitizeStreamUrl(decodeURIComponent(urlMatch[1]));
-            }
-        } catch { /* ignore */ }
-    }
+    // 主站直连源站，地址里不会有代理前缀
+    const effectiveBaseUrl = sanitizeStreamUrl(baseUrl);
 
     const basePath = effectiveBaseUrl.substring(0, effectiveBaseUrl.lastIndexOf('/') + 1);
     let origin = '';

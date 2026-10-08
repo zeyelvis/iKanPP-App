@@ -23,8 +23,7 @@ interface UseSearchHistoryReturn {
 }
 
 export function useSearchHistory(
-  onSelectHistory?: (query: string) => void,
-  isPremium: boolean = false
+  onSelectHistory?: (query: string) => void
 ): UseSearchHistoryReturn {
   const {
     searchHistory,
@@ -32,7 +31,7 @@ export function useSearchHistory(
     removeFromSearchHistory,
     clearSearchHistory,
     getRecentSearches,
-  } = useSearchHistoryStoreSelector(isPremium);
+  } = useSearchHistoryStoreSelector();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);

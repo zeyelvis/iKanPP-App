@@ -20,7 +20,6 @@ interface MobileSearchOverlayProps {
     onClose: () => void;
     onSearch: (query: string) => void;
     initialQuery?: string;
-    isPremium?: boolean;
 }
 
 export function MobileSearchOverlay({
@@ -28,7 +27,6 @@ export function MobileSearchOverlay({
     onClose,
     onSearch,
     initialQuery = '',
-    isPremium = false,
 }: MobileSearchOverlayProps) {
     const [query, setQuery] = useState(initialQuery);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -42,7 +40,7 @@ export function MobileSearchOverlay({
     } = useSearchHistory((selectedQuery) => {
         setQuery(selectedQuery);
         handleSubmitQuery(selectedQuery);
-    }, isPremium);
+    });
 
     const trendingKeywords = useTrendingStore(s => s.getKeywords)(10);
 

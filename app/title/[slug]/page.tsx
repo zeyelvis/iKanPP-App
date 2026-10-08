@@ -170,9 +170,7 @@ export default async function TitlePage({ params }: Props) {
             prerender: [
               {
                 source: 'document',
-                where: {
-                  and: [{ href_matches: '/title/*' }, { not: { href_matches: '/premium*' } }],
-                },
+                where: { href_matches: '/title/*' },
                 eagerness: 'moderate',
               },
             ],

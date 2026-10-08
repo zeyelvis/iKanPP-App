@@ -4,7 +4,6 @@
 
 import type { VideoSource, SourceSubscription } from '@/lib/types';
 import { DEFAULT_SOURCES } from '@/lib/api/default-sources';
-import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
 import { createSubscription } from '@/lib/utils/source-import-utils';
 
 export type LocaleOption = 'zh-CN' | 'zh-TW';
@@ -21,7 +20,6 @@ export type SortOption =
 
 export type SearchDisplayMode = 'normal' | 'grouped';
 export type AdFilterMode = 'off' | 'keyword' | 'heuristic' | 'aggressive';
-export type ProxyMode = 'retry' | 'none' | 'always';
 
 export const DEFAULT_SEEK_STEP_SECONDS = 10;
 export const MIN_SEEK_STEP_SECONDS = 1;
@@ -37,7 +35,6 @@ export function normalizeSeekStepSeconds(value: unknown): number {
 
 export interface AppSettings {
   sources: VideoSource[];
-  premiumSources: VideoSource[];
   subscriptions: SourceSubscription[]; // Source subscriptions for auto-update
   sortBy: SortOption;
   searchHistory: boolean;
@@ -58,7 +55,6 @@ export interface AppSettings {
   searchDisplayMode: SearchDisplayMode; // 'normal' = individual cards, 'grouped' = group same-name videos
   episodeReverseOrder: boolean; // Persist episode list reverse state
   fullscreenType: 'auto' | 'native' | 'window'; // Fullscreen mode preference: 'auto' (native on desktop, window on mobile) | 'native' | 'window'
-  proxyMode: ProxyMode; // Proxy behavior: 'retry' | 'none' | 'always'
   rememberScrollPosition: boolean; // Remember scroll position when navigating back or refreshing
   personalizedRecommendations: boolean; // Show personalized recommendations based on watch history
   videoTogetherEnabled: boolean; // Show VideoTogether entry on supported player pages
@@ -78,7 +74,6 @@ import { exportSettings, importSettings, SEARCH_HISTORY_KEY, WATCH_HISTORY_KEY }
 const SETTINGS_KEY = 'kvideo-settings';
 
 export const getDefaultSources = (): VideoSource[] => DEFAULT_SOURCES;
-export const getDefaultPremiumSources = (): VideoSource[] => PREMIUM_SOURCES;
 
 
 
@@ -123,7 +118,6 @@ function getEnvSubscriptions(customValue?: string): SourceSubscription[] {
 function getDefaultAppSettings(): AppSettings {
   return {
     sources: getDefaultSources(),
-    premiumSources: getDefaultPremiumSources(),
     subscriptions: getEnvSubscriptions(),
     sortBy: 'default',
     searchHistory: true,
@@ -142,7 +136,6 @@ function getDefaultAppSettings(): AppSettings {
     searchDisplayMode: 'normal',
     episodeReverseOrder: false,
     fullscreenType: 'auto',
-    proxyMode: 'none',
     rememberScrollPosition: true,
     personalizedRecommendations: true,
     videoTogetherEnabled: false,
@@ -256,21 +249,9 @@ export const settingsStore = {
         } catch { /* ignore */ }
       }
 
-      const defaultPremSrcs = getDefaultPremiumSources();
-      const localPremSources: VideoSource[] = Array.isArray(parsed.premiumSources) ? parsed.premiumSources : defaultPremSrcs;
-      const validPremMap = new Map<string, VideoSource>(localPremSources.filter((s: any) => s && s.id && s.name && s.baseUrl).map((s: any) => [s.id, s]));
-      // Auto-append any newly added premium sources from PREMIUM_SOURCES
-      defaultPremSrcs.forEach(ps => {
-        if (!validPremMap.has(ps.id)) {
-          validPremMap.set(ps.id, ps);
-        }
-      });
-      const validPremiumSources = Array.from(validPremMap.values());
-
       // Validate that parsed data has all required properties
       return {
         sources: validSources,
-        premiumSources: validPremiumSources,
         subscriptions: mergedSubscriptions.filter((s: any) => s && s.id && s.name && s.url),
         sortBy: parsed.sortBy || 'default',
         searchHistory: parsed.searchHistory !== undefined ? parsed.searchHistory : true,
@@ -289,7 +270,6 @@ export const settingsStore = {
         searchDisplayMode: parsed.searchDisplayMode === 'grouped' ? 'grouped' : 'normal',
         episodeReverseOrder: parsed.episodeReverseOrder !== undefined ? parsed.episodeReverseOrder : false,
         fullscreenType: (parsed.fullscreenType === 'window' || parsed.fullscreenType === 'native' || parsed.fullscreenType === 'auto') ? parsed.fullscreenType : 'auto',
-        proxyMode: (parsed.proxyMode === 'retry' || parsed.proxyMode === 'none' || parsed.proxyMode === 'always') ? parsed.proxyMode : 'retry',
         rememberScrollPosition: parsed.rememberScrollPosition !== undefined ? parsed.rememberScrollPosition : true,
         personalizedRecommendations: parsed.personalizedRecommendations !== undefined ? parsed.personalizedRecommendations : true,
         videoTogetherEnabled: parsed.videoTogetherEnabled !== undefined ? parsed.videoTogetherEnabled : false,

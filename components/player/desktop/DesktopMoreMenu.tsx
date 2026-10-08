@@ -9,12 +9,10 @@ import { createPortal } from 'react-dom';
 
 interface DesktopMoreMenuProps {
     showMoreMenu: boolean;
-    isPremium?: boolean;
-    isProxied?: boolean;
     onToggleMoreMenu: () => void;
     onMouseEnter: () => void;
     onMouseLeave: () => void;
-    onCopyLink: (type?: 'original' | 'proxy') => void;
+    onCopyLink: () => void;
     webFullscreenSize: 'full' | 'large' | 'focused';
     onCycleWebFullscreenSize: () => void;
     containerRef: React.RefObject<HTMLDivElement | null>;
@@ -23,8 +21,6 @@ interface DesktopMoreMenuProps {
 
 export function DesktopMoreMenu({
     showMoreMenu,
-    isPremium = false,
-    isProxied = false,
     onToggleMoreMenu,
     onMouseEnter,
     onMouseLeave,
@@ -53,7 +49,7 @@ export function DesktopMoreMenu({
         setAdFilterMode,
         fullscreenType,
         setFullscreenType,
-    } = usePlayerSettings(isPremium);
+    } = usePlayerSettings();
 
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const menuRef = React.useRef<HTMLDivElement>(null);
@@ -295,32 +291,13 @@ export function DesktopMoreMenu({
             onTouchStart={(e) => e.stopPropagation()}
         >
             {/* Copy Link Options */}
-            {isProxied ? (
-                <>
-                    <button
-                        onClick={() => onCopyLink('original')}
-                        className={`w-full ${isRotated ? 'px-2 py-1.5 text-[11px]' : 'px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm'} text-left text-[var(--text-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_15%,transparent)] rounded-[var(--radius-2xl)] transition-colors flex items-center gap-2 group-hover:gap-3 cursor-pointer`}
-                    >
-                        <Icons.Link size={isRotated ? 14 : 16} className="sm:w-[18px] sm:h-[18px]" />
-                        <span>复制原链接</span>
-                    </button>
-                    <button
-                        onClick={() => onCopyLink('proxy')}
-                        className={`w-full ${isRotated ? 'px-2 py-1.5 text-[11px]' : 'px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm'} text-left text-[var(--text-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_15%,transparent)] rounded-[var(--radius-2xl)] transition-colors flex items-center gap-2 mt-0.5 cursor-pointer`}
-                    >
-                        <Icons.Link size={isRotated ? 14 : 16} className="sm:w-[18px] sm:h-[18px]" />
-                        <span>复制代理链接</span>
-                    </button>
-                </>
-            ) : (
-                <button
-                    onClick={() => onCopyLink('original')}
-                    className={`w-full ${isRotated ? 'px-2 py-1.5 text-[11px]' : 'px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm'} text-left text-[var(--text-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_15%,transparent)] rounded-[var(--radius-2xl)] transition-colors flex items-center gap-2 group-hover:gap-3 cursor-pointer`}
-                >
-                    <Icons.Link size={isRotated ? 14 : 16} className="sm:w-[18px] sm:h-[18px]" />
-                    <span>复制链接</span>
-                </button>
-            )}
+            <button
+                onClick={() => onCopyLink()}
+                className={`w-full ${isRotated ? 'px-2 py-1.5 text-[11px]' : 'px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm'} text-left text-[var(--text-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_15%,transparent)] rounded-[var(--radius-2xl)] transition-colors flex items-center gap-2 group-hover:gap-3 cursor-pointer`}
+            >
+                <Icons.Link size={isRotated ? 14 : 16} className="sm:w-[18px] sm:h-[18px]" />
+                <span>复制链接</span>
+            </button>
 
             {/* Divider */}
             <div className="h-px bg-[var(--glass-border)] my-1.5 sm:my-2" />

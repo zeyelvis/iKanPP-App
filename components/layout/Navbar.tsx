@@ -12,7 +12,6 @@ import { MobileSearchOverlay } from '@/components/search/MobileSearchOverlay';
 interface NavbarProps {
   variant?: 'home' | 'player';
   onReset?: () => void;
-  isPremiumMode?: boolean;
   onSearch?: (query: string) => void;
   onClearSearch?: () => void;
   initialQuery?: string;
@@ -25,7 +24,6 @@ interface NavbarProps {
 function NavbarInner({
   variant = 'home',
   onReset,
-  isPremiumMode = false,
   onSearch,
   onClearSearch,
   initialQuery = '',
@@ -50,25 +48,8 @@ function NavbarInner({
     iptv: { label: '返回直播', href: '/iptv' },
   };
 
-  const [isIkanX, setIsIkanX] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setIsIkanX(window.location.hostname.includes('ikanx.com'));
-    }
-  }, []);
-
-  const homeHref = isIkanX
-    ? '/'
-    : isPremiumMode
-    ? '/premium'
-    : (fromChannel && channelMap[fromChannel] ? channelMap[fromChannel].href : '/');
-
-  const returnLabel = isIkanX
-    ? '返回午夜专区'
-    : isPremiumMode
-    ? '返回午夜版'
-    : (fromChannel && channelMap[fromChannel] ? channelMap[fromChannel].label : '返回');
+  const homeHref = fromChannel && channelMap[fromChannel] ? channelMap[fromChannel].href : '/';
+  const returnLabel = fromChannel && channelMap[fromChannel] ? channelMap[fromChannel].label : '返回';
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -90,11 +71,7 @@ function NavbarInner({
       onSearch(trimmed);
     } else {
       // 全局兜底搜索跳转：跨页从详情页/播放页直接唤起全网聚合秒播
-      if (isIkanX || isPremiumMode) {
-        window.location.href = `https://ikanx.com/?q=${encodeURIComponent(trimmed)}`;
-      } else {
-        router.push(`/?q=${encodeURIComponent(trimmed)}`);
-      }
+      router.push(`/?q=${encodeURIComponent(trimmed)}`);
     }
     setMobileSearchOpen(false);
   };
@@ -105,23 +82,19 @@ function NavbarInner({
 
   const isPlayer = variant === 'player';
 
-  const navCategories = isIkanX
-    ? [
-        { id: 'premium', label: '午夜大厅', href: '/', isExternal: false },
-        { id: 'return_main', label: '返回主站 (大众影视)', href: 'https://www.ikanpp.com', isExternal: true },
-      ]
-    : [
-        { id: 'home', label: '首页', href: '/', isExternal: false },
-        { id: 'movie', label: '电影', href: '/movie', isExternal: false },
-        { id: 'tv', label: '电视剧', href: '/tv', isExternal: false },
-        { id: 'anime', label: '动漫', href: '/anime', isExternal: false },
-        { id: 'variety', label: '综艺', href: '/variety', isExternal: false },
-        { id: 'documentary', label: '纪录片', href: '/documentary', isExternal: false },
-        { id: 'short', label: '短剧', href: '/short', isExternal: false },
-        { id: 'ranking', label: '风云榜', href: '/ranking', isExternal: false },
-        { id: 'iptv', label: '电视直播', href: '/iptv', isExternal: false },
-        { id: 'premium', label: '午夜版', href: 'https://ikanx.com', isExternal: true },
-      ];
+  // 「午夜版」是独立站 ikanx.com 的入口：用按钮在新窗口打开，不输出可被抓取的链接
+  const navCategories = [
+    { id: 'home', label: '首页', href: '/', isExternal: false },
+    { id: 'movie', label: '电影', href: '/movie', isExternal: false },
+    { id: 'tv', label: '电视剧', href: '/tv', isExternal: false },
+    { id: 'anime', label: '动漫', href: '/anime', isExternal: false },
+    { id: 'variety', label: '综艺', href: '/variety', isExternal: false },
+    { id: 'documentary', label: '纪录片', href: '/documentary', isExternal: false },
+    { id: 'short', label: '短剧', href: '/short', isExternal: false },
+    { id: 'ranking', label: '风云榜', href: '/ranking', isExternal: false },
+    { id: 'iptv', label: '电视直播', href: '/iptv', isExternal: false },
+    { id: 'premium', label: '午夜版', href: 'https://ikanx.com', isExternal: true },
+  ];
 
   return (
     <nav
@@ -155,7 +128,7 @@ function NavbarInner({
               >
                 <LogoIcon size={32} />
                 <span className="font-black text-xl tracking-tight text-white hidden sm:inline">
-                  {isIkanX ? 'iKanX' : 'iKanPP'}
+                  iKanPP
                 </span>
               </button>
             </div>
@@ -170,17 +143,15 @@ function NavbarInner({
                 <span
                   className="text-xl font-black tracking-tight"
                   style={{
-                    background: isIkanX
-                      ? 'linear-gradient(135deg, #EC4899 0%, #A855F7 50%, #6366F1 100%)'
-                      : 'linear-gradient(135deg, #FF4D4D 0%, #F59E0B 50%, #FFD700 100%)',
+                    background: 'linear-gradient(135deg, #FF4D4D 0%, #F59E0B 50%, #FFD700 100%)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                   }}
                 >
-                  {isIkanX ? 'iKanX' : 'iKanPP'}
+                  iKanPP
                 </span>
                 <span className="text-[9px] text-white/50 tracking-widest font-semibold hidden md:inline -mt-1">
-                  {isIkanX ? '午夜专区 · 4K 极速秒播' : '爱看片片 · 全免流媒体'}
+                  爱看片片 · 全免流媒体
                 </span>
               </div>
             </Link>
@@ -242,7 +213,6 @@ function NavbarInner({
               onSearch={handleSearch}
               onClear={handleClear}
               initialQuery={initialQuery}
-              isPremium={isPremiumMode}
             />
           </div>
 
@@ -311,7 +281,6 @@ function NavbarInner({
                     {cat.id === 'ranking' && '🏆'}
                     {cat.id === 'iptv' && '📡'}
                     {cat.id === 'premium' && '🌙'}
-                    {cat.id === 'return_main' && '🌐'}
                   </span>
                   <span>{cat.label}</span>
                 </button>
@@ -347,7 +316,6 @@ function NavbarInner({
         onClose={() => setMobileSearchOpen(false)}
         onSearch={handleSearch}
         initialQuery={initialQuery}
-        isPremium={isPremiumMode}
       />
     </nav>
   );

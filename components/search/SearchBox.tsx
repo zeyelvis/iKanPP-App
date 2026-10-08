@@ -11,10 +11,9 @@ interface SearchBoxProps {
     onClear?: () => void;
     initialQuery?: string;
     placeholder?: string;
-    isPremium?: boolean;
 }
 
-export function SearchBox({ onSearch, onClear, initialQuery = '', placeholder = '搜索电影、电视剧、综艺...', isPremium = false }: SearchBoxProps) {
+export function SearchBox({ onSearch, onClear, initialQuery = '', placeholder = '搜索电影、电视剧、综艺...' }: SearchBoxProps) {
     const [query, setQuery] = useState(initialQuery);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -36,7 +35,7 @@ export function SearchBox({ onSearch, onClear, initialQuery = '', placeholder = 
         onSearch(selectedQuery);
         // Blur the input after selecting from history
         inputRef.current?.blur();
-    }, isPremium);
+    });
 
     // Update query when initialQuery changes
     useEffect(() => {

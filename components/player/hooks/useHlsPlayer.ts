@@ -3,13 +3,11 @@ import Hls from 'hls.js';
 import { usePlayerSettings } from './usePlayerSettings';
 import { filterM3u8Ad } from '@/lib/utils/m3u8-utils';
 import { sanitizeStreamUrl } from '@/lib/utils/stream-sanitizer';
-import { useRuntimeFeatures } from '@/components/RuntimeFeaturesProvider';
 import { checkIsIPadOS } from '@/lib/hooks/mobile/useDeviceDetection';
 
 interface UseHlsPlayerProps {
     videoRef: React.RefObject<HTMLVideoElement | null>;
     src: string;
-    isPremium?: boolean;
     autoPlay?: boolean;
     preloadMode?: boolean;
     onAutoPlayPrevented?: (error: Error) => void;
@@ -19,15 +17,13 @@ interface UseHlsPlayerProps {
 export function useHlsPlayer({
     videoRef,
     src,
-    isPremium = false,
     autoPlay = false,
     preloadMode = false,
     onAutoPlayPrevented,
     onError
 }: UseHlsPlayerProps) {
     const hlsRef = useRef<Hls | null>(null);
-    const { adFilterMode, adKeywords } = usePlayerSettings(isPremium);
-    const { mediaProxyEnabled } = useRuntimeFeatures();
+    const { adFilterMode, adKeywords } = usePlayerSettings();
     const isAdFilterEnabled = adFilterMode !== 'off';
 
     // 核心保护：使用 Ref 牢牢锁定回调与动态配置，彻底切断因父组件重渲染导致的 HLS 实例误销毁重建！
@@ -41,8 +37,6 @@ export function useHlsPlayer({
     adKeywordsRef.current = adKeywords;
     const isAdFilterEnabledRef = useRef(isAdFilterEnabled);
     isAdFilterEnabledRef.current = isAdFilterEnabled;
-    const mediaProxyEnabledRef = useRef(mediaProxyEnabled);
-    mediaProxyEnabledRef.current = mediaProxyEnabled;
 
     useEffect(() => {
         const video = videoRef.current;
@@ -76,12 +70,9 @@ export function useHlsPlayer({
         );
 
         // 核心架构决策：
-        // 1. 在真实 iOS / iPadOS 触控设备上，普通影视（!isPremium）直连公网源，走原生硬件级 AVPlayer；
-        // 2. 在桌面端（包含 MacBook、Windows、Linux）或午夜专区，100% 启用高性能 Hls.js，享受大缓冲区平滑防抖能力！
-        const shouldUseHlsJs = isMSESupported && (
-            (!isIOSOrIPad && (!isNativeHlsSupported || isAdFilterEnabled || isPremium || !isMobileClient)) ||
-            (isIOSOrIPad && isPremium)
-        );
+        // 1. 在真实 iOS / iPadOS 触控设备上直连公网源，走原生硬件级 AVPlayer；
+        // 2. 在桌面端（包含 MacBook、Windows、Linux）100% 启用高性能 Hls.js，享受大缓冲区平滑防抖能力！
+        const shouldUseHlsJs = isMSESupported && !isIOSOrIPad && (!isNativeHlsSupported || isAdFilterEnabled || !isMobileClient);
 
         if (shouldUseHlsJs) {
             // Define custom loader class to intercept manifest loading
@@ -295,19 +286,11 @@ export function useHlsPlayer({
             const handleCanPlay = () => {
                 directFailed = false;
             };
+            // 主站只直连源站（AGENTS 第 8 条）：直连也失败就提示换浏览器，不经代理重试
             const handleError = () => {
                 if (directFailed) return;
                 directFailed = true;
-                if (!mediaProxyEnabledRef.current) {
-                    onErrorRef.current?.('当前浏览器不支持 HLS 视频播放。建议使用 Chrome、Edge 或 Safari 浏览器。');
-                    return;
-                }
-                // Try proxied URL as final attempt
-                const proxiedUrl = `/api/proxy?url=${encodeURIComponent(effectiveSrc)}`;
-                video.src = proxiedUrl;
-                video.addEventListener('error', () => {
-                    onErrorRef.current?.('当前浏览器不支持 HLS 视频播放。建议使用 Chrome、Edge 或 Safari 浏览器。');
-                }, { once: true });
+                onErrorRef.current?.('当前浏览器不支持 HLS 视频播放。建议使用 Chrome、Edge 或 Safari 浏览器。');
             };
 
             video.addEventListener('canplay', handleCanPlay, { once: true });
@@ -328,5 +311,5 @@ export function useHlsPlayer({
                 nativeCleanup();
             }
         };
-    }, [src, autoPlay, isPremium, preloadMode]);
+    }, [src, autoPlay, preloadMode]);
 }

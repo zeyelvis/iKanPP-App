@@ -16,7 +16,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useHistoryStore, usePremiumHistoryStore } from '@/lib/store/history-store';
+import { useHistoryStore } from '@/lib/store/history-store';
 import { useInfiniteScroll } from '@/lib/hooks/useInfiniteScroll';
 import {
   generateRecommendations,
@@ -41,10 +41,8 @@ const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
 const ITEMS_PER_PAGE = 18; // How many to fetch per query per page
 const MAX_ROUNDS = 8; // Max times to regenerate queries before giving up
 
-export function usePersonalizedRecommendations(isPremium = false) {
-  const normalHistory = useHistoryStore();
-  const premiumHistory = usePremiumHistoryStore();
-  const { viewingHistory } = isPremium ? premiumHistory : normalHistory;
+export function usePersonalizedRecommendations() {
+  const viewingHistory = useHistoryStore((s) => s.viewingHistory);
 
   const [movies, setMovies] = useState<InterleavedMovie[]>([]);
   const [loading, setLoading] = useState(false);

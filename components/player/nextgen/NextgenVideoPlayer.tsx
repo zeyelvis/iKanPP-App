@@ -15,7 +15,6 @@ import { COVER, watermarkCover } from './watermark';
 import { InPlayerSourceDrawer } from '../desktop/InPlayerSourceDrawer';
 import { InPlayerEpisodesDrawer } from '../desktop/InPlayerEpisodesDrawer';
 import { NextEpisodeOverlay } from '../desktop/NextEpisodeOverlay';
-import { PlayerBrandLogo } from '../PlayerBrandLogo';
 
 import { sanitizeStreamUrl } from '@/lib/utils/stream-sanitizer';
 import { usePlayerSettings } from '../hooks/usePlayerSettings';
@@ -72,7 +71,6 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     onNextEpisode,
     videoTitle = '',
     episodeName = '',
-    isPremium = false,
     onBack,
     onResolutionDetected,
     episodes = [],
@@ -109,8 +107,7 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
     outroTriggeredRef.current = false;
   }, [src, currentEpisodeIndex]);
 
-  // 存储隔离：主站与午夜特区严格分库存储倍速偏好
-  const rateKey = isPremium ? 'ng-rate-premium' : 'ng-rate';
+  const rateKey = 'ng-rate';
   const [rate, setRate] = useState<number>(() => {
     if (typeof window === 'undefined') return 1;
     try {
@@ -122,7 +119,7 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
   });
 
   // 广告过滤与播放设置（通过统一的 usePlayerSettings 快照获取）
-  const playerSettings = usePlayerSettings(isPremium);
+  const playerSettings = usePlayerSettings();
 
   // 上下集状态
   const hasPrev = currentEpisodeIndex > 0;
@@ -171,7 +168,7 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
 
   const reportBeacon = useCallback((ok: boolean) => {
     const sourceName = currentSourceRef.current;
-    if (isPremium || !sourceName || reportedBeaconRef.current) return;
+    if (!sourceName || reportedBeaconRef.current) return;
     reportedBeaconRef.current = true;
     const ms = Math.round(performance.now() - (loadStartTimeRef.current || performance.now()));
     if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
@@ -179,7 +176,7 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
         navigator.sendBeacon('/api/beacon/play', JSON.stringify({ source: sourceName, ok, ms }));
       } catch {}
     }
-  }, [isPremium]);
+  }, []);
 
   const reportBeaconRef = useRef(reportBeacon);
   useEffect(() => {
@@ -485,7 +482,7 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
 
   // 6. 专线右上角品牌覆盖角标 (Watermark Cover Placement)
   const isSpecialLine = currentSource === 'shadowline';
-  const shouldShowBadge = isSpecialLine && !isPremium;
+  const shouldShowBadge = isSpecialLine;
 
   useEffect(() => {
     const video = videoRef.current;
@@ -606,7 +603,7 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
 
     session.metadata = new MediaMetadata({
       title: titleBarText || 'iKanPP 视频播放',
-      artist: isPremium ? 'iKanX' : 'iKanPP',
+      artist: 'iKanPP',
       artwork,
     });
 
@@ -634,7 +631,7 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
       }
       session.metadata = null;
     };
-  }, [layer, titleBarText, poster, isPremium, hasPrev, hasNext, handlePrev]);
+  }, [layer, titleBarText, poster, hasPrev, hasNext, handlePrev]);
 
   // 10. iPhone 网页全屏旋转尺寸校准 (准则 14 决策 D1)
   useEffect(() => {
@@ -763,30 +760,19 @@ export const NextgenVideoPlayer = React.memo(function NextgenVideoPlayer(props: 
             onBack();
           }}
           className="absolute top-4 left-4 z-40 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#141416]/90 hover:bg-black/95 border border-white/20 text-white/90 hover:text-white transition-all cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.6)] hover:scale-105 active:scale-95 text-xs font-bold"
-          title={isPremium ? '返回午夜版' : '返回'}
+          title="返回"
         >
           <ChevronLeft size={16} />
           <span>
-            {isPremium
-              ? '午夜版'
-              : (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('from')
-                  ? ({ movie: '电影', tv: '剧集', anime: '动漫', variety: '综艺', ranking: '榜单', iptv: '直播' } as Record<string, string>)[new URLSearchParams(window.location.search).get('from')!] || '返回'
-                  : '返回')}
+            {typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('from')
+              ? ({ movie: '电影', tv: '剧集', anime: '动漫', variety: '综艺', ranking: '榜单', iptv: '直播' } as Record<string, string>)[new URLSearchParams(window.location.search).get('from')!] || '返回'
+              : '返回'}
           </span>
         </button>
       )}
 
       {/* 专线右上角品牌覆盖角标渲染 */}
       {badge && shouldShowBadge && createPortal(<BrandBadge />, badge)}
-
-      {/* 午夜特区台标消融 */}
-      {isPremium && (
-        <PlayerBrandLogo
-          videoRef={videoRef}
-          containerRef={hostRef}
-          isPremium={isPremium}
-        />
-      )}
 
       {/* 全屏内部覆盖层图层 (通过 React Portal 渲染到 xgplayer 根容器内) */}
       {layer &&

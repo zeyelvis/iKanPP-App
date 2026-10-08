@@ -72,10 +72,6 @@ export function importSettings(
                         newSettings.sources = mergeSources(newSettings.sources, result.normalSources);
                     }
 
-                    if (result.premiumSources.length > 0) {
-                        newSettings.premiumSources = mergeSources(newSettings.premiumSources, result.premiumSources);
-                    }
-
                     saveSettings(newSettings);
                     return true;
                 }

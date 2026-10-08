@@ -17,27 +17,24 @@ import type { VideoHistoryItem } from '@/lib/types';
 interface HistoryItemProps {
   item: VideoHistoryItem;
   onRemove: () => void;
-  isPremium?: boolean;
 }
 
-export function HistoryItem({ item, onRemove, isPremium = false }: HistoryItemProps) {
+export function HistoryItem({ item, onRemove }: HistoryItemProps) {
   const displayInfo = getEpisodeDisplayInfo(item.episodes, item.episodeIndex);
 
   const getVideoUrl = (): string => {
     let activeSource = item.source;
     let activeId = item.videoId;
 
-    // 非午夜特区下，老用户历史记录优先无缝升级为巨量资源
-    if (!isPremium && !item.isPremium) {
-      if (item.sourceMap && item.sourceMap['juliang']) {
+    // 老用户历史记录优先无缝升级为巨量资源
+    if (item.sourceMap && item.sourceMap['juliang']) {
+      activeSource = 'juliang';
+      activeId = item.sourceMap['juliang'];
+    } else {
+      const cached = getCachedTitleProbe(item.title);
+      if (cached?.source === 'juliang' && cached.id) {
         activeSource = 'juliang';
-        activeId = item.sourceMap['juliang'];
-      } else {
-        const cached = getCachedTitleProbe(item.title);
-        if (cached?.source === 'juliang' && cached.id) {
-          activeSource = 'juliang';
-          activeId = cached.id;
-        }
+        activeId = cached.id;
       }
     }
 
@@ -58,9 +55,6 @@ export function HistoryItem({ item, onRemove, isPremium = false }: HistoryItemPr
       if (gsKey) {
         params.set('gsKey', gsKey);
       }
-    }
-    if (isPremium || item.isPremium) {
-      params.set('premium', '1');
     }
     return `/player?${params.toString()}`;
   };
@@ -125,7 +119,6 @@ export function HistoryItem({ item, onRemove, isPremium = false }: HistoryItemPr
               size={14}
               className="p-1.5! bg-transparent! border-0! shadow-none! hover:bg-(--glass-bg)!"
               showTooltip={false}
-              isPremium={isPremium}
             />
 
             {/* Delete button */}

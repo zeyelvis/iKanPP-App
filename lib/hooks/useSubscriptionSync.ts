@@ -37,7 +37,6 @@ export function useSubscriptionSync() {
 
                 let anyChanged = false;
                 let currentSources = [...settings.sources];
-                let currentPremiumSources = [...settings.premiumSources];
                 let updatedSubscriptions = [...settings.subscriptions];
                 const now = Date.now();
 
@@ -67,11 +66,6 @@ export function useSubscriptionSync() {
                             anyChanged = true;
                         }
 
-                        if (fetchResult.premiumSources.length > 0) {
-                            currentPremiumSources = mergeSources(currentPremiumSources, fetchResult.premiumSources);
-                            anyChanged = true;
-                        }
-
                         // Update timestamp for successful sync
                         const subIdx = updatedSubscriptions.findIndex(s => s.id === sub.id);
                         if (subIdx !== -1) {
@@ -90,7 +84,6 @@ export function useSubscriptionSync() {
                     settingsStore.saveSettings({
                         ...settings,
                         sources: currentSources,
-                        premiumSources: currentPremiumSources,
                         subscriptions: updatedSubscriptions
                     });
                 }

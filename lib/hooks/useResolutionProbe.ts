@@ -33,9 +33,9 @@ function getSourceConfigsForProbe(videos: VideoToProbe[]): VideoSource[] {
   }
 
   const configuredSources = new Map<string, VideoSource>();
-  const { sources, premiumSources } = settingsStore.getSettings();
+  const { sources } = settingsStore.getSettings();
 
-  [...sources, ...premiumSources].forEach((source) => {
+  sources.forEach((source) => {
     if (source?.id) {
       configuredSources.set(source.id, source);
     }

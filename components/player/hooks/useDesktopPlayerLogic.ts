@@ -8,7 +8,6 @@ import { useControlsVisibility } from './desktop/useControlsVisibility';
 import { useUtilities } from './desktop/useUtilities';
 import { useDesktopShortcuts } from './desktop/useDesktopShortcuts';
 import { useDesktopPlayerState } from './useDesktopPlayerState';
-import { getCopyUrl } from '../utils/urlUtils';
 import { useCastControls } from './desktop/useCastControls';
 import { DEFAULT_SEEK_STEP_SECONDS } from '@/lib/store/settings-store';
 
@@ -187,10 +186,7 @@ export function useDesktopPlayerLogic({
         skipForward: skipControls.skipForward,
         skipBackward: skipControls.skipBackward,
         changePlaybackSpeed: playbackControls.changePlaybackSpeed,
-        handleCopyLink: (type: 'original' | 'proxy' = 'original') => {
-            const urlToCopy = getCopyUrl(src, type);
-            utilities.handleCopyLink(urlToCopy);
-        },
+        handleCopyLink: () => utilities.handleCopyLink(src),
         startSpeedMenuTimeout: controlsVisibility.startSpeedMenuTimeout,
         clearSpeedMenuTimeout: controlsVisibility.clearSpeedMenuTimeout,
         formatTime: playbackControls.formatTime

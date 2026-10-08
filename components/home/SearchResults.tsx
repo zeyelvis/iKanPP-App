@@ -17,7 +17,6 @@ interface SearchResultsProps {
     results: Video[];
     availableSources: SourceBadge[];
     loading: boolean;
-    isPremium?: boolean;
     latencies?: Record<string, number>;
     query?: string;
     onSearch?: (query: string) => void;
@@ -28,7 +27,6 @@ export function SearchResults({
     results,
     availableSources,
     loading,
-    isPremium = false,
     latencies = {},
     query = '',
     onSearch,
@@ -160,7 +158,6 @@ export function SearchResults({
             {finalFilteredVideos.length > 0 && (
                 <VideoGrid
                     videos={finalFilteredVideos}
-                    isPremium={isPremium}
                     latencies={latencies}
                 />
             )}

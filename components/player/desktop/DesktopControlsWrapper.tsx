@@ -64,8 +64,6 @@ export function DesktopControlsWrapper({
         volumeBarRef,
     } = refs;
 
-    const isProxied = src.includes('/api/proxy');
-
     return (
         <DesktopControls
             showControls={showControls}
@@ -82,7 +80,6 @@ export function DesktopControlsWrapper({
             isPiPSupported={isPiPSupported}
             isAirPlaySupported={isAirPlaySupported}
             isCastAvailable={isCastAvailable}
-            isProxied={isProxied}
             progressBarRef={progressBarRef}
             volumeBarRef={volumeBarRef}
             onTogglePlay={togglePlay}

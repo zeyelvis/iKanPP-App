@@ -20,7 +20,6 @@ interface DesktopControlsProps {
     isPiPSupported: boolean;
     isAirPlaySupported: boolean;
     isCastAvailable: boolean;
-    isProxied?: boolean;
     progressBarRef: React.RefObject<HTMLDivElement | null>;
     volumeBarRef: React.RefObject<HTMLDivElement | null>;
     onTogglePlay: () => void;

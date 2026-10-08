@@ -101,15 +101,9 @@ export function LinkImportTab({ onImport }: LinkImportTabProps) {
                             解析成功
                         </h4>
 
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                            <div className="bg-[color-mix(in_srgb,var(--bg-color)_50%,transparent)] p-3 rounded-[var(--radius-2xl)]">
-                                <span className="text-xs text-[var(--text-color-secondary)] block">普通源</span>
-                                <span className="text-xl font-bold text-[var(--text-color)]">{preview.normalSources.length}</span>
-                            </div>
-                            <div className="bg-[color-mix(in_srgb,var(--bg-color)_50%,transparent)] p-3 rounded-[var(--radius-2xl)]">
-                                <span className="text-xs text-[var(--text-color-secondary)] block">成人源</span>
-                                <span className="text-xl font-bold text-[var(--text-color)]">{preview.premiumSources.length}</span>
-                            </div>
+                        <div className="mb-4 bg-[color-mix(in_srgb,var(--bg-color)_50%,transparent)] p-3 rounded-[var(--radius-2xl)]">
+                            <span className="text-xs text-[var(--text-color-secondary)] block">视频源</span>
+                            <span className="text-xl font-bold text-[var(--text-color)]">{preview.normalSources.length}</span>
                         </div>
 
                         <button

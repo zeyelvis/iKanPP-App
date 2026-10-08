@@ -73,8 +73,6 @@ function SettingsContent() {
                             <PlayerSettings
                                 fullscreenType={settings.fullscreenType}
                                 onFullscreenTypeChange={settings.handleFullscreenTypeChange}
-                                proxyMode={settings.proxyMode}
-                                onProxyModeChange={settings.handleProxyModeChange}
                                 danmakuApiUrl={settings.danmakuApiUrl}
                                 onDanmakuApiUrlChange={settings.handleDanmakuApiUrlChange}
                                 danmakuOpacity={settings.danmakuOpacity}

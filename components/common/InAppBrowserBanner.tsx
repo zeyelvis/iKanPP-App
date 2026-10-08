@@ -53,8 +53,7 @@ export function InAppBrowserBanner() {
   // 3. 计算底部间距：普通页面存在 MobileBottomNav（约 58px），播放页无底部导航
   const isPlayerPage =
     pathname?.startsWith('/player') ||
-    pathname?.startsWith('/short/player') ||
-    pathname?.startsWith('/premium/player');
+    pathname?.startsWith('/short/player');
 
   const bottomClass = isPlayerPage
     ? 'bottom-0 pb-[max(8px,env(safe-area-inset-bottom))]'

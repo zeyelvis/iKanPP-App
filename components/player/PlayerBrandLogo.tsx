@@ -6,24 +6,16 @@ import { Crown } from 'lucide-react';
 interface PlayerBrandLogoProps {
   videoRef?: React.RefObject<HTMLVideoElement | null>;
   containerRef?: React.RefObject<HTMLDivElement | null>;
-  isPremium?: boolean;
   className?: string;
   showControls?: boolean;
 }
 
 /**
- * 苹果/好莱坞 56px 超强双通道高斯消融台标（Ultra-Deep Frost Glass Delogo）
- * 
- * 核心升级：
- * 1. 【56px 双通道超强高斯核】：核半径从 32px 飙升至 56px，彻底揉碎打散任何高亮白字轮廓
- * 2. 【高反差像素中和 (Contrast Neutralizer)】：brightness(0.9) + saturate(130%)，彻底抹平高反差字迹亮斑
- * 3. 【0 黑底 100% 动态透色】：仍然保持通透纯净无黑底，视频是红色即透红，是蓝色即透蓝
- * 4. 【边缘平滑无痕径向羽化】：Mask Image 边缘平滑淡出，完全无硬边
+ * 播放器左上角的 iKanPP 台标（legacy 引擎使用）：根据视频实际画面位置定位，跟随画面边界。
  */
 export function PlayerBrandLogo({
   videoRef,
   containerRef,
-  isPremium = true,
   className = '',
 }: PlayerBrandLogoProps) {
   // 真实画面偏移量
@@ -114,28 +106,7 @@ export function PlayerBrandLogo({
       }}
       aria-hidden="true"
     >
-      {/* 仅在午夜特区 (isPremium) 且需要消融水印时，开启高级微晶消融渐变，彻底消除 GPU 显存回读死锁 */}
-      {isPremium && (
-        <>
-          {/* 1. 【第一道强力消融渐变底座】：高级暗夜纯色渐变遮盖原站水印，100% 消除显卡硬件直通回读死锁 */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: 'radial-gradient(ellipse 100% 100% at 0% 0%, rgba(18, 18, 22, 0.96) 0%, rgba(18, 18, 22, 0.75) 65%, transparent 100%)',
-            }}
-          />
-
-          {/* 2. 【第二道微晶光雾中和层】：柔化高反差边缘 */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: 'radial-gradient(ellipse 90% 90% at 0% 0%, rgba(255,255,255,0.03) 0%, transparent 80%)',
-            }}
-          />
-        </>
-      )}
-
-      {/* 3. 【极简纯净原厂台标】：无黑框，通透悬浮 */}
+      {/* 极简台标：无黑框，通透悬浮 */}
       <div className="relative h-full flex items-start pt-2.5 pl-3.5 gap-2.5 z-10">
         {/* 通透微晶皇冠底座 */}
         <div className="w-6 h-6 rounded-xl bg-black/40 border border-white/25 flex items-center justify-center shadow-md shadow-black/40 mt-0.5 shrink-0">
@@ -144,16 +115,9 @@ export function PlayerBrandLogo({
 
         {/* 右侧白字高光排版 */}
         <div className="flex flex-col">
-          <div className="flex items-center gap-1.5 leading-none">
-            <span className="text-[13px] font-black tracking-wider text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] font-sans">
-              {isPremium ? 'iKanX' : 'iKanPP'}
-            </span>
-            <span className="px-1.5 py-0.2 rounded-full text-[8px] font-black bg-amber-400/25 text-amber-300 border border-amber-300/40 uppercase tracking-tighter drop-shadow-md">
-              4K MAX
-            </span>
-          </div>
-          <span className="text-[8px] font-bold text-white/80 tracking-[0.2em] uppercase mt-1 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-            {isPremium ? 'VIP CINEMA PRO' : 'ULTRA HD'}
+          {/* 不标画质：未经实测不得宣称 4K / 超清（AGENTS 第 6 条） */}
+          <span className="text-[13px] font-black tracking-wider text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] font-sans leading-none">
+            iKanPP
           </span>
         </div>
       </div>

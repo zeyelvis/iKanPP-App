@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams, type ReadonlyURLSearchParams } from 'next/navigation';
-import { useHistoryStore, usePremiumHistoryStore } from '@/lib/store/history-store';
+import { useHistoryStore } from '@/lib/store/history-store';
 import { CustomVideoPlayer } from './CustomVideoPlayer';
 import { VideoPlayerError } from './VideoPlayerError';
 import { VideoPlayerEmpty } from './VideoPlayerEmpty';
@@ -22,7 +22,6 @@ interface VideoPlayerProps {
   totalEpisodes?: number;
   onNextEpisode?: () => void;
   isReversed?: boolean;
-  isPremium?: boolean;
   // Danmaku props
   videoTitle?: string;
   episodeName?: string;
@@ -56,7 +55,6 @@ export const VideoPlayer = React.memo(function VideoPlayer({
   totalEpisodes,
   onNextEpisode,
   isReversed = false,
-  isPremium = false,
   videoTitle,
   episodeName,
   externalTimeRef,
@@ -73,7 +71,6 @@ export const VideoPlayer = React.memo(function VideoPlayer({
   skipMarkers,
 }: VideoPlayerProps) {
   const [videoError, setVideoError] = useState<string>('');
-  const [useProxy, setUseProxy] = useState(false);
   const [shouldAutoPlay, setShouldAutoPlay] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
   const MAX_MANUAL_RETRIES = 20;
@@ -88,16 +85,11 @@ export const VideoPlayer = React.memo(function VideoPlayer({
     () => null
   );
 
-  const { showModeIndicator, proxyMode } = usePlayerSettings(isPremium);
-  // 普通模式 (iKanPP) 100% 纯前端直连各大主流 CDN，绝不代理也不重写切片；仅 iKanX (isPremium) 允许代理
-  const effectiveUseProxy = isPremium
-    ? (proxyMode === 'always' ? true : proxyMode === 'none' ? false : useProxy)
-    : false;
+  // 主站 100% 纯前端直连各大主流 CDN，绝不代理也不重写切片（AGENTS 第 8 条）
+  const { showModeIndicator } = usePlayerSettings();
 
   // 使用 Selector 单独订阅 addToHistory 动作，彻底切断每 5 秒保存进度导致的播放器子树无端重渲染与卡顿！
-  const addToHistory = isPremium
-    ? usePremiumHistoryStore((s) => s.addToHistory)
-    : useHistoryStore((s) => s.addToHistory);
+  const addToHistory = useHistoryStore((s) => s.addToHistory);
   // Embedded in a title page the state is not in the query string: the container passes it.
   const pageParams = useSearchParams();
   const searchParams = params ?? pageParams;
@@ -116,7 +108,7 @@ export const VideoPlayer = React.memo(function VideoPlayer({
 
     if (!videoId) return 0;
 
-    const history = (isPremium ? usePremiumHistoryStore : useHistoryStore).getState().viewingHistory;
+    const history = useHistoryStore.getState().viewingHistory;
     const normalizedTitle = title.toLowerCase().trim();
     const historyItem = history.find(item =>
       item.title.toLowerCase().trim() === normalizedTitle &&
@@ -124,7 +116,7 @@ export const VideoPlayer = React.memo(function VideoPlayer({
     );
 
     return historyItem ? historyItem.playbackPosition : 0;
-  }, [videoId, currentEpisode, searchParams, title, isPremium]);
+  }, [videoId, currentEpisode, searchParams, title]);
 
   // Save progress function (used by throttle and beforeunload)
   const saveProgress = useCallback((currentTime: number, duration: number) => {
@@ -192,20 +184,8 @@ export const VideoPlayer = React.memo(function VideoPlayer({
       return;
     }
 
-    // Auto-retry with proxy ONLY for iKanX (premium mode):
-    // 1. isPremium is true
-    // 2. Not already using proxy
-    // 3. Proxy mode is 'retry'
-    if (isPremium && !effectiveUseProxy && proxyMode === 'retry') {
-      lastAutoSwitchTimeRef.current = now;
-      setUseProxy(true);
-      setShouldAutoPlay(true); // Force autoplay after proxy retry
-      setVideoError('');
-      return;
-    }
-
     setVideoError(error);
-  }, [isPremium, effectiveUseProxy, proxyMode, onPlaybackError]);
+  }, [onPlaybackError]);
 
   const handleRetry = () => {
     if (retryCount >= MAX_MANUAL_RETRIES) return;
@@ -213,13 +193,7 @@ export const VideoPlayer = React.memo(function VideoPlayer({
     setRetryCount(prev => prev + 1);
     setVideoError('');
     setShouldAutoPlay(true);
-    // 普通主站永远直连重试，仅 iKanX 允许在直连和代理之间切换
-    setUseProxy(prev => (!isPremium || proxyMode === 'none') ? false : !prev);
   };
-
-  const finalPlayUrl = effectiveUseProxy
-    ? `/api/proxy?url=${encodeURIComponent(playUrl)}&retry=${retryCount}` // Add retry param to force fresh request
-    : playUrl;
 
   if (takeoverBrowser) {
     return (
@@ -261,7 +235,7 @@ export const VideoPlayer = React.memo(function VideoPlayer({
       );
     }
 
-    return <VideoPlayerEmpty videoTitle={videoTitle} isPremium={isPremium} />;
+    return <VideoPlayerEmpty videoTitle={videoTitle} />;
   }
 
   return (
@@ -275,11 +249,8 @@ export const VideoPlayer = React.memo(function VideoPlayer({
       {/* Mode Indicator Badge - controlled by settings */}
       {showModeIndicator && (
         <div className="absolute top-3 right-3 z-30">
-          <span className={`px-2 py-1 text-xs font-medium rounded-full shadow-md transition-all duration-300 ${effectiveUseProxy
-            ? 'bg-orange-500/80 text-white'
-            : 'bg-green-500/80 text-white'
-            }`}>
-            {effectiveUseProxy ? '代理模式' : '直连模式'}
+          <span className="px-2 py-1 text-xs font-medium rounded-full shadow-md transition-all duration-300 bg-green-500/80 text-white">
+            直连模式
           </span>
         </div>
       )}
@@ -295,8 +266,8 @@ export const VideoPlayer = React.memo(function VideoPlayer({
         />
       ) : (
         <CustomVideoPlayer
-          key={`${effectiveUseProxy ? 'proxy' : 'direct'}-${retryCount}-${source}`} // Remount when switching sources, modes, or retrying
-          src={finalPlayUrl}
+          key={`direct-${retryCount}-${source}`} // Remount when switching sources or retrying
+          src={playUrl}
           onError={handleVideoError}
           onTimeUpdate={handleTimeUpdate}
           initialTime={initialTime}
@@ -307,7 +278,6 @@ export const VideoPlayer = React.memo(function VideoPlayer({
           isReversed={isReversed}
           videoTitle={videoTitle}
           episodeName={episodeName}
-          isPremium={isPremium}
           onBack={onBack}
           onResolutionDetected={onResolutionDetected}
           episodes={episodes}

@@ -6,11 +6,6 @@ import {
     type AppSettings,
     type AdFilterMode,
 } from '@/lib/store/settings-store';
-import {
-    premiumModeSettingsStore,
-    type ModeSettings,
-} from '@/lib/store/premium-mode-settings';
-import { useRuntimeFeatures } from '@/components/RuntimeFeaturesProvider';
 
 interface PlayerSettingsSnapshot {
     autoNextEpisode: boolean;
@@ -23,7 +18,6 @@ interface PlayerSettingsSnapshot {
     adFilterMode: AdFilterMode;
     adKeywords: string[];
     fullscreenType: 'auto' | 'native' | 'window';
-    proxyMode: 'retry' | 'none' | 'always';
     danmakuEnabled: boolean;
     danmakuApiUrl: string;
     danmakuOpacity: number;
@@ -31,27 +25,26 @@ interface PlayerSettingsSnapshot {
     danmakuDisplayArea: number;
 }
 
-function getPlayerSettingsSnapshot(isPremium: boolean, mediaProxyEnabled: boolean): PlayerSettingsSnapshot {
+// 主站播放一律直连源站，不经代理（AGENTS 第 8 条），所以这里没有代理相关设置。
+function getPlayerSettingsSnapshot(): PlayerSettingsSnapshot {
     const globalSettings = settingsStore.getSettings();
-    const modeSettings = isPremium ? premiumModeSettingsStore.getSettings() : globalSettings;
 
     return {
-        autoNextEpisode: modeSettings.autoNextEpisode,
-        autoSkipIntro: modeSettings.autoSkipIntro,
-        skipIntroSeconds: modeSettings.skipIntroSeconds,
-        autoSkipOutro: modeSettings.autoSkipOutro,
-        skipOutroSeconds: modeSettings.skipOutroSeconds,
-        showModeIndicator: modeSettings.showModeIndicator,
+        autoNextEpisode: globalSettings.autoNextEpisode,
+        autoSkipIntro: globalSettings.autoSkipIntro,
+        skipIntroSeconds: globalSettings.skipIntroSeconds,
+        autoSkipOutro: globalSettings.autoSkipOutro,
+        skipOutroSeconds: globalSettings.skipOutroSeconds,
+        showModeIndicator: globalSettings.showModeIndicator,
         adFilter: globalSettings.adFilter,
-        adFilterMode: modeSettings.adFilterMode,
+        adFilterMode: globalSettings.adFilterMode,
         adKeywords: globalSettings.adKeywords,
-        fullscreenType: modeSettings.fullscreenType,
-        proxyMode: (isPremium && mediaProxyEnabled) ? modeSettings.proxyMode : 'none',
-        danmakuEnabled: modeSettings.danmakuEnabled,
-        danmakuApiUrl: modeSettings.danmakuApiUrl,
-        danmakuOpacity: modeSettings.danmakuOpacity,
-        danmakuFontSize: modeSettings.danmakuFontSize,
-        danmakuDisplayArea: modeSettings.danmakuDisplayArea,
+        fullscreenType: globalSettings.fullscreenType,
+        danmakuEnabled: globalSettings.danmakuEnabled,
+        danmakuApiUrl: globalSettings.danmakuApiUrl,
+        danmakuOpacity: globalSettings.danmakuOpacity,
+        danmakuFontSize: globalSettings.danmakuFontSize,
+        danmakuDisplayArea: globalSettings.danmakuDisplayArea,
     };
 }
 
@@ -67,7 +60,6 @@ function playerSettingsEqual(a: PlayerSettingsSnapshot, b: PlayerSettingsSnapsho
         a.adFilterMode === b.adFilterMode &&
         a.adKeywords === b.adKeywords &&
         a.fullscreenType === b.fullscreenType &&
-        a.proxyMode === b.proxyMode &&
         a.danmakuEnabled === b.danmakuEnabled &&
         a.danmakuApiUrl === b.danmakuApiUrl &&
         a.danmakuOpacity === b.danmakuOpacity &&
@@ -80,46 +72,28 @@ function playerSettingsEqual(a: PlayerSettingsSnapshot, b: PlayerSettingsSnapsho
  * Hook to access and update player settings from the settings store
  * Provides reactive updates when settings change
  */
-export function usePlayerSettings(isPremium: boolean = false) {
-    const { mediaProxyEnabled } = useRuntimeFeatures();
-    const [settings, setSettings] = useState(() => getPlayerSettingsSnapshot(isPremium, mediaProxyEnabled));
+export function usePlayerSettings() {
+    const [settings, setSettings] = useState(getPlayerSettingsSnapshot);
 
     // Subscribe to settings changes. Reuse the previous snapshot when
     // non-player fields change (e.g. episodeReverseOrder) so HLS is not rebuilt.
     useEffect(() => {
         const syncSettings = () => {
-            const next = getPlayerSettingsSnapshot(isPremium, mediaProxyEnabled);
+            const next = getPlayerSettingsSnapshot();
             setSettings((prev) => (playerSettingsEqual(prev, next) ? prev : next));
         };
-
-        const modeStore = isPremium ? premiumModeSettingsStore : settingsStore;
-        const unsubscribeModeStore = modeStore.subscribe(syncSettings);
-        const unsubscribeGlobalStore = isPremium ? settingsStore.subscribe(syncSettings) : null;
-
+        const unsubscribe = settingsStore.subscribe(syncSettings);
         syncSettings();
+        return unsubscribe;
+    }, []);
 
-        return () => {
-            unsubscribeModeStore();
-            unsubscribeGlobalStore?.();
-        };
-    }, [isPremium, mediaProxyEnabled]);
-
-    const updateModeSettings = useCallback((partial: Partial<ModeSettings>) => {
-        if (isPremium) {
-            const currentSettings = premiumModeSettingsStore.getSettings();
-            premiumModeSettingsStore.saveSettings({
-                ...currentSettings,
-                ...partial,
-            });
-            return;
-        }
-
+    const updateModeSettings = useCallback((partial: Partial<AppSettings>) => {
         const currentSettings = settingsStore.getSettings();
         settingsStore.saveSettings({
             ...currentSettings,
             ...partial,
         });
-    }, [isPremium]);
+    }, []);
 
     const updateGlobalSettings = useCallback((partial: Partial<AppSettings>) => {
         const currentSettings = settingsStore.getSettings();
@@ -169,10 +143,6 @@ export function usePlayerSettings(isPremium: boolean = false) {
         updateModeSettings({ fullscreenType: value });
     }, [updateModeSettings]);
 
-    const setProxyMode = useCallback((value: 'retry' | 'none' | 'always') => {
-        updateModeSettings({ proxyMode: mediaProxyEnabled ? value : 'none' });
-    }, [mediaProxyEnabled, updateModeSettings]);
-
     const setDanmakuEnabled = useCallback((value: boolean) => {
         updateModeSettings({ danmakuEnabled: value });
     }, [updateModeSettings]);
@@ -205,7 +175,6 @@ export function usePlayerSettings(isPremium: boolean = false) {
         setAdFilterMode,
         setAdKeywords,
         setFullscreenType,
-        setProxyMode,
         setDanmakuEnabled,
         setDanmakuApiUrl,
         setDanmakuOpacity,

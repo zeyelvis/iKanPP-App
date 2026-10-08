@@ -115,13 +115,7 @@ const createSearchHistoryStore = (name: string) =>
   );
 
 export const useSearchHistoryStore = createSearchHistoryStore(profiledKey('kvideo-search-history'));
-export const usePremiumSearchHistoryStore = createSearchHistoryStore(profiledKey('kvideo-premium-search-history'));
 
-/**
- * Helper hook to get the appropriate search history store
- */
-export function useSearchHistoryStoreSelector(isPremium = false) {
-  const normalStore = useSearchHistoryStore();
-  const premiumStore = usePremiumSearchHistoryStore();
-  return isPremium ? premiumStore : normalStore;
+export function useSearchHistoryStoreSelector() {
+  return useSearchHistoryStore();
 }

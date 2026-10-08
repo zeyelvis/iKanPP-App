@@ -22,6 +22,8 @@ function hasIdentity(value: unknown): boolean {
  */
 export function isRenderableHistoryItem(value: unknown): value is VideoHistoryItem {
   if (!hasIdentity(value)) return false;
+  // 午夜特区 2026-10-08 已拆到 ikanx.com，主站记录里留下的旧条目在这里打不开，不再显示
+  if ((value as { isPremium?: unknown }).isPremium === true) return false;
   const episodeIndex = (value as { episodeIndex?: unknown }).episodeIndex;
   return typeof episodeIndex === 'number' && Number.isInteger(episodeIndex) && episodeIndex >= 0;
 }

@@ -104,7 +104,7 @@ function ContinueWatchingCard({
 
 export function ContinueWatchingRail() {
   const router = useRouter();
-  const { viewingHistory } = useHistory(false);
+  const { viewingHistory } = useHistory();
 
   if (!viewingHistory || viewingHistory.length === 0) return null;
 
@@ -142,7 +142,6 @@ export function ContinueWatchingRail() {
       const isTv = item.type_name.includes('剧') || item.type_name.includes('动漫') || (item.episodeIndex && item.episodeIndex > 0);
       params.set('type', isTv ? 'tv' : 'movie');
     }
-    if (item.isPremium) params.set('premium', '1');
     router.push(`/player?${params.toString()}`);
   };
 

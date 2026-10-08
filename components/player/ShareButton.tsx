@@ -18,22 +18,19 @@ interface ShareButtonProps {
   episodeName?: string;
   year?: string;
   type?: string;
-  isPremium?: boolean;
 }
 
-export function ShareButton({ title, size = 20, poster, episodeName, year, type, isPremium }: ShareButtonProps) {
+export function ShareButton({ title, size = 20, poster, episodeName, year, type }: ShareButtonProps) {
   const [showPanel, setShowPanel] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
   const [copied, setCopied] = useState<'link' | 'text' | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // 构建分享链接：普通影视生成权威详情页 /title/ 地址，午夜版保持独立专区
+  // 分享链接：在作品页就分享当前地址，其他地方生成作品页规范网址
   const shareUrl = typeof window !== 'undefined'
-    ? isPremium || window.location.search.includes('premium=1')
-      ? `${window.location.origin}/player?title=${encodeURIComponent(title)}&premium=1`
-      : window.location.pathname.startsWith('/title/')
-        ? window.location.href
-        : `${window.location.origin}${getTitleCanonicalHref({ title })}`
+    ? window.location.pathname.startsWith('/title/')
+      ? window.location.href
+      : `${window.location.origin}${getTitleCanonicalHref({ title })}`
     : '';
 
   const shareText = `我在 ${siteConfig.name} 免费看《${title}》，无广告高清播放 →`;

@@ -219,12 +219,11 @@ export default function ShortPlayerClient() {
   const currentEpisode = episodes[currentEpIndex - 1] || episodes[0];
   const currentUrl = currentEpisode?.url || rawUrlParam || '';
 
-  // 2. 挂接核心 Hls.js 播放器（严格遵守轨道 A 直连铁律，isPremium 恒为 false，绝无代理）
+  // 2. 挂接核心 Hls.js 播放器（主站直连源站，不经代理）
   useHlsPlayer({
     videoRef,
     src: currentUrl,
     autoPlay: true,
-    isPremium: false,
     onError: (msg) => {
       console.warn('[ShortPlayer] HLS Warning/Error:', msg);
       setIsLoading(false);
@@ -267,7 +266,7 @@ export default function ShortPlayerClient() {
           video.duration,
           poster,
           episodes.map((ep, i) => ({ name: ep.name, url: ep.url, index: i })),
-          { type_name: '微短剧', isPremium: false }
+          { type_name: '微短剧' }
         );
       }
     };

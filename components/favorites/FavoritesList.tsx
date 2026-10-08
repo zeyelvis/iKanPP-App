@@ -10,10 +10,9 @@ import { keepRenderableFavorites } from '@/lib/utils/sync-records';
 interface FavoritesListProps {
     favorites: FavoriteItem[];
     onRemove: (videoId: string | number, source: string) => void;
-    isPremium?: boolean;
 }
 
-export function FavoritesList({ favorites, onRemove, isPremium = false }: FavoritesListProps) {
+export function FavoritesList({ favorites, onRemove }: FavoritesListProps) {
     const validFavorites = keepRenderableFavorites(favorites);
 
     if (validFavorites.length === 0) {
@@ -27,7 +26,6 @@ export function FavoritesList({ favorites, onRemove, isPremium = false }: Favori
                     key={`${item.source}:${item.videoId}`}
                     item={item}
                     onRemove={() => onRemove(item.videoId, item.source)}
-                    isPremium={isPremium}
                 />
             ))}
         </div>

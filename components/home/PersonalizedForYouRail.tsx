@@ -11,7 +11,7 @@ interface PersonalizedForYouRailProps {
 }
 
 export function PersonalizedForYouRail({ onMovieClick, contentType = 'movie', excludeTitles }: PersonalizedForYouRailProps) {
-  const { movies: personalizedMovies, loading: personalizedLoading } = usePersonalizedRecommendations(false);
+  const { movies: personalizedMovies, loading: personalizedLoading } = usePersonalizedRecommendations();
   const [fallbackMovies, setFallbackMovies] = useState<RailMovie[]>([]);
   const [loadingFallback, setLoadingFallback] = useState(false);
 

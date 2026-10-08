@@ -27,7 +27,7 @@ interface HistoryActions {
     duration: number,
     poster?: string,
     episodes?: Episode[],
-    metadata?: { vod_actor?: string; type_name?: string; vod_area?: string; isPremium?: boolean }
+    metadata?: { vod_actor?: string; type_name?: string; vod_area?: string }
   ) => void;
 
   removeFromHistory: (showIdentifier: string) => void;
@@ -142,7 +142,6 @@ const createHistoryStore = (name: string) =>
                 vod_actor: metadata?.vod_actor ?? existing.vod_actor,
                 type_name: metadata?.type_name ?? existing.type_name,
                 vod_area: metadata?.vod_area ?? existing.vod_area,
-                isPremium: metadata?.isPremium ?? existing.isPremium,
               };
 
               newHistory = [
@@ -167,7 +166,6 @@ const createHistoryStore = (name: string) =>
                 vod_actor: metadata?.vod_actor,
                 type_name: metadata?.type_name,
                 vod_area: metadata?.vod_area,
-                isPremium: metadata?.isPremium,
               };
 
               newHistory = [newItem, ...state.viewingHistory];
@@ -212,7 +210,8 @@ const createHistoryStore = (name: string) =>
       }),
       {
         name,
-        version: 2,
+        // v3（2026-10-08）：加载时经 keepRenderableHistory 去掉午夜特区的旧条目
+        version: 3,
         migrate: (persistedState: any, version: number) => {
           if (version < 2) {
             // Migrate from v1: merge entries with same normalized title
@@ -232,29 +231,19 @@ const createHistoryStore = (name: string) =>
   );
 
 export const useHistoryStore = createHistoryStore(profiledKey('kvideo-history-store'));
-export const usePremiumHistoryStore = createHistoryStore(profiledKey('kvideo-premium-history-store'));
 
 /**
- * Helper hook to get the appropriate history store.
+ * 读取观看记录。
  *
  * ⚠️ 架构铁律警告：
- * 严禁在播放器容器（IkanPPPlayerContainer / IkanXPlayerContainer）等高频渲染组件中
- * 不传 selector 直接解构使用（如 const { addToHistory } = useHistory()）！
- * 否则每 5 秒保存播放进度更新 viewingHistory 时，会强制触发整个父容器及其子树全量级联重渲染，
- * 引发音视频 MSE 解码管线掉帧与周期性卡顿！
- * 播放器容器必须直接使用：
- * - 主站: useHistoryStore((s) => s.addToHistory)
- * - 午夜: usePremiumHistoryStore((s) => s.addToHistory)
+ * 严禁在播放器容器（IkanPPPlayerContainer）等高频渲染组件中不传 selector 直接解构使用
+ * （如 const { addToHistory } = useHistory()）！否则每 5 秒保存播放进度更新 viewingHistory 时，
+ * 会强制触发整个父容器及其子树全量级联重渲染，引发音视频 MSE 解码管线掉帧与周期性卡顿！
+ * 播放器容器必须直接使用：useHistoryStore((s) => s.addToHistory)
  */
-export function useHistory(isPremium?: boolean): HistoryStore;
-export function useHistory<T>(selector: (state: HistoryStore) => T, isPremium?: boolean): T;
-export function useHistory<T = HistoryStore>(
-  arg1?: boolean | ((state: HistoryStore) => T),
-  arg2: boolean = false
-): T | HistoryStore {
-  const isPremium = typeof arg1 === 'boolean' ? arg1 : arg2;
-  const selector = typeof arg1 === 'function' ? arg1 : ((s: HistoryStore) => s as unknown as T);
-  const store = isPremium ? usePremiumHistoryStore : useHistoryStore;
-  return store(selector);
+export function useHistory(): HistoryStore;
+export function useHistory<T>(selector: (state: HistoryStore) => T): T;
+export function useHistory<T = HistoryStore>(selector?: (state: HistoryStore) => T): T | HistoryStore {
+  return useHistoryStore(selector ?? ((s: HistoryStore) => s as unknown as T));
 }
 

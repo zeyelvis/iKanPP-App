@@ -7,20 +7,18 @@ import { Search } from 'lucide-react';
 
 interface VideoPlayerEmptyProps {
   videoTitle?: string;
-  isPremium?: boolean;
 }
 
-export function VideoPlayerEmpty({ videoTitle, isPremium }: VideoPlayerEmptyProps = {}) {
+export function VideoPlayerEmpty({ videoTitle }: VideoPlayerEmptyProps = {}) {
   const router = useRouter();
 
   const handleAutoSearch = () => {
     if (!videoTitle) {
-      router.push(isPremium ? '/premium' : '/');
+      router.push('/');
       return;
     }
     const params = new URLSearchParams();
     params.set('title', videoTitle);
-    if (isPremium) params.set('premium', '1');
     router.replace(`/player?${params.toString()}`);
   };
 
@@ -46,7 +44,7 @@ export function VideoPlayerEmpty({ videoTitle, isPremium }: VideoPlayerEmptyProp
               </button>
             )}
             <button
-              onClick={() => router.push(isPremium ? '/premium' : '/')}
+              onClick={() => router.push('/')}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white/70 hover:text-white text-xs font-medium transition-all cursor-pointer"
             >
               返回大厅

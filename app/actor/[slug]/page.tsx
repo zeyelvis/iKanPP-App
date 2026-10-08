@@ -341,7 +341,6 @@ export default async function ActorPage({ params }: Props) {
                   and: [
                     { href_matches: '/title/*' },
                     { not: { href_matches: '/player*' } },
-                    { not: { href_matches: '/premium*' } },
                   ],
                 },
                 eagerness: 'moderate',

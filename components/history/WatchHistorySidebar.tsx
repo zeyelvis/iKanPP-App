@@ -15,14 +15,14 @@ import { HistoryList } from './HistoryList';
 import { HistoryFooter } from './HistoryFooter';
 import { trapFocus } from '@/lib/accessibility/focus-management';
 
-export function WatchHistorySidebar({ isPremium = false }: { isPremium?: boolean }) {
+export function WatchHistorySidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<{
     isOpen: boolean;
     showIdentifier?: string;
     isClearAll?: boolean;
   }>({ isOpen: false });
-  const { viewingHistory, removeFromHistory, clearHistory } = useHistory(isPremium);
+  const { viewingHistory, removeFromHistory, clearHistory } = useHistory();
   const sidebarRef = useRef<HTMLElement>(null);
   const cleanupFocusTrapRef = useRef<(() => void) | null>(null);
 

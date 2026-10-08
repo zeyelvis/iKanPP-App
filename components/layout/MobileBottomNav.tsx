@@ -32,20 +32,6 @@ export function MobileBottomNav() {
     return null;
   }
 
-  // 严密隔离：凡是午夜专区 (ikanx.com 域名、/premium 路径或带有 premium=1 的播放页)，100% 严禁渲染主站移动端底部导航
-  if (typeof window !== 'undefined') {
-    const isIkanXHost = window.location.hostname.includes('ikanx.com');
-    const isPremiumSearch = window.location.search.includes('premium=1');
-    const isPremiumPath = window.location.pathname.startsWith('/premium');
-    if (isIkanXHost || isPremiumSearch || isPremiumPath) {
-      return null;
-    }
-  }
-
-  if (pathname?.startsWith('/premium')) {
-    return null;
-  }
-
   // 播放页与管理后台隐藏底部导航，避免挡住页面与控制条
   if (pathname?.startsWith('/player') || pathname?.startsWith('/short/player') || pathname?.startsWith('/admin')) {
     return null;

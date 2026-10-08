@@ -61,6 +61,11 @@ if (fs.existsSync(ingestIndexPath)) {
   assert(/try\s*{[\s\S]*?}\s*catch/.test(content), '入库 Worker 每个任务必须单独 try/catch，单个数据源出错不影响其他任务');
 }
 
+// 4b. 主站与午夜特区彻底分离（2026-10-08 iKanX 拆到独立仓库）：主站代码不得请求 /api/proxy、不得改写切片，
+//     不得再出现午夜特区的分库存储、片源与番号解析
+const proxyHits = codeFiles.filter((f) => /['"`]\/api\/proxy|processM3u8Content|usePremium(History|Favorites|SearchHistory)Store|premiumModeSettingsStore|PREMIUM_SOURCES|fetchJableVideoDetail/.test(fs.readFileSync(f, 'utf-8')));
+assert(proxyHits.length === 0, `主站代码严禁出现代理播放与午夜特区残留（/api/proxy、processM3u8Content、premium 分库存储与片源）${proxyHits.length ? '：' + proxyHits.join(', ') : ''}`);
+
 // 5. 全屏硬件覆盖层与显卡防黑屏规范验证：杜绝跨浏览器伪类逗号合写失效，杜绝全屏组件包含 backdrop-blur 与同步重排死锁
 const videoCssPath = path.resolve('app/styles/video-player.css');
 if (fs.existsSync(videoCssPath)) {
@@ -252,14 +257,6 @@ if (fs.existsSync(ppContainerPath)) {
   );
 }
 
-const xContainerPath = path.resolve('components/player/containers/IkanXPlayerContainer.tsx');
-if (fs.existsSync(xContainerPath)) {
-  const xContent = fs.readFileSync(xContainerPath, 'utf-8');
-  assert(
-    !xContent.includes('useHistory(') && xContent.includes('usePremiumHistoryStore((s) => s.addToHistory)'),
-    'IkanXPlayerContainer 严禁直接使用无 selector 的 useHistory() 订阅，必须使用 usePremiumHistoryStore((s) => s.addToHistory)'
-  );
-}
 
 // 11c. 播放器核心组件必须使用 React.memo 物理阻断外部渲染波及
 const videoPlayerPath = path.resolve('components/player/VideoPlayer.tsx');

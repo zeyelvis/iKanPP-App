@@ -37,7 +37,6 @@ export interface XgVideoPlayerProps {
   isReversed?: boolean;
   videoTitle?: string;
   episodeName?: string;
-  isPremium?: boolean;
   onBack?: () => void;
   onResolutionDetected?: (info: import('../hooks/useVideoResolution').VideoResolutionInfo) => void;
   episodes?: Array<{ name?: string; url: string }>;
@@ -60,7 +59,6 @@ export function XgVideoPlayer({
   onNextEpisode,
   videoTitle = '',
   episodeName = '',
-  isPremium = false,
   onBack,
   onResolutionDetected,
   episodes = [],

@@ -11,21 +11,18 @@ import { getCachedTitleProbe } from '@/lib/utils/title-probe';
 interface FavoritesItemProps {
     item: FavoriteItem;
     onRemove: () => void;
-    isPremium?: boolean;
 }
 
-export function FavoritesItem({ item, onRemove, isPremium = false }: FavoritesItemProps) {
+export function FavoritesItem({ item, onRemove }: FavoritesItemProps) {
     const getVideoUrl = (): string => {
         let activeSource = item.source;
         let activeId = item.videoId;
 
-        // 非午夜特区下，老用户收藏夹优先无缝升级为巨量资源
-        if (!isPremium) {
-            const cached = getCachedTitleProbe(item.title);
-            if (cached?.source === 'juliang' && cached.id) {
-                activeSource = 'juliang';
-                activeId = cached.id;
-            }
+        // 老用户收藏夹优先无缝升级为巨量资源
+        const cached = getCachedTitleProbe(item.title);
+        if (cached?.source === 'juliang' && cached.id) {
+            activeSource = 'juliang';
+            activeId = cached.id;
         }
 
         const params = new URLSearchParams({
@@ -33,9 +30,6 @@ export function FavoritesItem({ item, onRemove, isPremium = false }: FavoritesIt
             source: activeSource,
             title: item.title,
         });
-        if (isPremium) {
-            params.set('premium', '1');
-        }
         return `/player?${params.toString()}`;
     };
 

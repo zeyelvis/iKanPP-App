@@ -13,18 +13,8 @@ export function Footer() {
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
 
-  // 严密隔离：凡是午夜专区 (ikanx.com 域名、/premium 路径或带有 premium=1 的播放页)，100% 严禁渲染主站页脚
-  if (typeof window !== 'undefined') {
-    const isIkanXHost = window.location.hostname.includes('ikanx.com');
-    const isPremiumSearch = window.location.search.includes('premium=1');
-    const isPremiumPath = window.location.pathname.startsWith('/premium');
-    if (isIkanXHost || isPremiumSearch || isPremiumPath) {
-      return null;
-    }
-  }
-
-  // 服务端预渲染 (SSR) 阶段与客户端识别 /premium、短剧播放器 /short/player 及管理后台 /admin 路由
-  if (pathname?.startsWith('/premium') || pathname?.startsWith('/short/player') || pathname?.startsWith('/admin')) {
+  // 短剧播放器与管理后台不显示页脚
+  if (pathname?.startsWith('/short/player') || pathname?.startsWith('/admin')) {
     return null;
   }
 

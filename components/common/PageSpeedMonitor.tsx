@@ -11,15 +11,15 @@ import { usePathname } from 'next/navigation';
  * 2. 用 PerformanceObserver 监听 largest-contentful-paint (Safari/Firefox 不支持则不报)；
  * 3. 页面打开时就在后台 (visibilityState === 'hidden') 则不报 LCP；
  * 4. 在页面隐藏、pagehide 或 20 秒后，通过 sendBeacon('/api/beacon/page') 发送一次；
- * 5. 午夜特区 (/premium) 与管理后台 (/admin) 静默不上报，遵循隔离铁律。
+ * 5. 管理后台 (/admin) 不上报。
  */
 export function PageSpeedMonitor() {
   const pathname = usePathname();
   const hasReportedRef = useRef(false);
 
   useEffect(() => {
-    // 1. 忽略管理后台与午夜特区
-    if (!pathname || pathname.startsWith('/admin') || pathname.startsWith('/premium')) {
+    // 1. 忽略管理后台
+    if (!pathname || pathname.startsWith('/admin')) {
       return;
     }
 

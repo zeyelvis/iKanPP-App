@@ -17,12 +17,10 @@ interface DesktopOverlayWrapperProps {
     onSkipBackward: () => void;
     isTransitioningToNextEpisode?: boolean;
     showMoreMenu: boolean;
-    isPremium?: boolean;
-    isProxied: boolean;
     onToggleMoreMenu: () => void;
     onMoreMenuMouseEnter: () => void;
     onMoreMenuMouseLeave: () => void;
-    onCopyLink: (type?: 'original' | 'proxy') => void;
+    onCopyLink: () => void;
     seekStepSeconds: number;
     // Speed Menu Props
     playbackRate: number;
@@ -66,8 +64,6 @@ export function DesktopOverlayWrapper({
     onSkipBackward,
     isTransitioningToNextEpisode = false,
     showMoreMenu,
-    isPremium = false,
-    isProxied,
     onToggleMoreMenu,
     onMoreMenuMouseEnter,
     onMoreMenuMouseLeave,
@@ -136,8 +132,6 @@ export function DesktopOverlayWrapper({
                 onSkipForward={onSkipForward}
                 onSkipBackward={onSkipBackward}
                 showMoreMenu={showMoreMenu}
-                isPremium={isPremium}
-                isProxied={isProxied}
                 onToggleMoreMenu={onToggleMoreMenu}
                 onMoreMenuMouseEnter={onMoreMenuMouseEnter}
                 onMoreMenuMouseLeave={onMoreMenuMouseLeave}

@@ -12,6 +12,7 @@
 | 权威数据 | D1 `ikanpp-db`（表结构见 `db/d1/`）：作品、网址片段、快照路由、影人与演职关系、题材索引、站点地图清单、首页与列表数据集（`documents`）。 |
 | KV `KVIDEO_KV` | 只放小数据：求片记录、后台审计日志、专线配置与探活、专题、线路排序。读写统一走 `lib/server/kv.ts`，不存作品。 |
 | R2 | `ikanpp-next-cache`：页面增量缓存（ISR）；`ikanpp-images`：图片镜像 `img.ikanpp.com`。 |
+| 专线 Worker | `workers/ikanpp-core`（`ikanpp-core-worker`）：只提供专线解析 `/api/shadowline/resolve`、`/api/ikanpp-line`，主站 `next.config.ts` 把这两个地址转发过去；看片片、夜貓追劇的播放线路会实时调用 `www.ikanpp.com/api/shadowline/resolve`，**不能下线或改返回格式**。没有定时任务。部署：`wrangler deploy --config workers/ikanpp-core/wrangler.toml`。 |
 | 入库 | Worker `workers/ikanpp-ingest`，Cloudflare 定时器：每小时第 23 分（轮播与热播标签、最新上线、短剧首屏），第 43 分（四大排序的两个时间排序；北京时间 4 点另跑人气与评分排序和站点地图重算）。手动触发：`POST /run?job=<任务>`，带 `INGEST_SECRET`。 |
 | 部署 | 本机 `npm run deploy`（OpenNext 构建 → `scripts/drop-build-prerenders.mjs` → 部署）。数据更新不需要部署。GitHub 只跑检查（`.github/workflows/ci.yml`），不部署、不跑定时任务。 |
 
@@ -91,9 +92,9 @@
 
 ## 8. 播放：直连、换源与专线
 
-1. **主站 100% 直连**：浏览器直接从第三方源站 CDN 拉 m3u8 与切片。`proxyMode` 恒为 `'none'`，`effectiveUseProxy` 恒为 `false`，不得调用 `processM3u8Content` 改写切片地址，不得经任何代理抢救死链。某个源超时或死链时，唯一做法是前端自动换到下一条可用线路（按各地区实测成功率排序，`lib/api/default-sources.ts` 为默认采集站列表，手工维护）。
+1. **主站 100% 直连**：浏览器直接从第三方源站 CDN 拉 m3u8 与切片。主站播放器没有代理模式（2026-10-08 已删除 `proxyMode`、`useProxy` 与「复制代理链接」），不得请求 `/api/proxy`，不得调用 `processM3u8Content` 改写切片地址，不得经任何代理抢救死链；架构门禁检查 4b 拦截。某个源超时或死链时，唯一做法是前端自动换到下一条可用线路（按各地区实测成功率排序，`lib/api/default-sources.ts` 为默认采集站列表，手工维护）。
 2. **术语**：本站不转码、不存储、不切片。「切片」指源站 m3u8 里的 `.ts` 片段（HLS 的 segment），不得说成本站在切片。
-3. **存储隔离**：主站观看记录与设置用 `useHistoryStore`、`settingsStore`。
+3. **存储**：观看记录、收藏、搜索记录、设置只有主站一套（`useHistoryStore`、`useFavoritesStore`、`useSearchHistoryStore`、`settingsStore`）。午夜特区的分库存储与片源已删除；旧版本留在主站记录里的午夜条目在加载时去掉（观看记录存储 v3），导入片源时跳过 `group: 'premium'`。
 4. **防串台**：标题分析先去掉片尾粘连的 4 位年份（`/(19\d\d|20\d\d)$/`）；目标带副标题时候选也必须带同一副标题，不得因 `target.includes(cand)` 就给高分（短母题不得吞掉长子题）；期待电影时，类型为连续剧、电视剧、动漫或集数大于 2 的候选一律否决；播放器发现加载的是剧集而期待电影且缺副标题时，静默拉黑该线路并重新选线。
 5. **暗影专线 (ShadowLine)**：作为冷门首发的第二层，同样由浏览器直连对端 CDN，请求带 `referrerPolicy="no-referrer"`；只在单集被点播时解析（结合缓存），不批量预抓；巡检加随机抖动；服务端握手带完整浏览器请求头；对端阻断时静默熔断并在前台隐藏，不得暴力重试。控制台 `/admin/shadowline`，密钥在前台脱敏显示，操作写审计日志。
 

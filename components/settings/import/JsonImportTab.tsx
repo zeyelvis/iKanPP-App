@@ -33,6 +33,8 @@ export function JsonImportTab() {
           setError(`第 ${i + 1} 项缺少 name 或 baseUrl`);
           return;
         }
+        // 午夜特区（group: 'premium'）的片源不导入主站
+        if (item.group === 'premium') continue;
         sources.push({
           id: item.id || `json-${item.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${i}`,
           name: item.name,
@@ -42,7 +44,6 @@ export function JsonImportTab() {
           enabled: item.enabled !== false,
           headers: item.headers,
           priority: item.priority,
-          group: item.group,
         });
       }
 

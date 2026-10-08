@@ -31,7 +31,6 @@ interface VideoGroupCardProps {
     cardId: string;
     isActive: boolean;
     onCardClick: (e: React.MouseEvent, cardId: string, videoUrl: string) => void;
-    isPremium?: boolean;
     latencies?: Record<string, number>;
 }
 
@@ -40,7 +39,6 @@ export const VideoGroupCard = memo<VideoGroupCardProps>(({
     cardId,
     isActive,
     onCardClick,
-    isPremium = false,
     latencies = {}
 }) => {
     const { representative, videos, name } = group;
@@ -75,12 +73,8 @@ export const VideoGroupCard = memo<VideoGroupCardProps>(({
             }
         }
 
-        if (isPremium) {
-            params.set('premium', '1');
-        }
-
         return `/player?${params.toString()}`;
-    }, [representative, videos, isPremium]);
+    }, [representative, videos]);
 
     return (
         <div
@@ -160,7 +154,6 @@ export const VideoGroupCard = memo<VideoGroupCardProps>(({
                                 remarks={representative.vod_remarks}
                                 size={16}
                                 className="shadow-md"
-                                isPremium={isPremium}
                             />
                         </div>
 

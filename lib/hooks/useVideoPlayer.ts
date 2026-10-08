@@ -104,7 +104,6 @@ export function useVideoPlayer(
       const settings = settingsStore.getSettings();
       const allSources = [
         ...settings.sources,
-        ...settings.premiumSources,
         ...settings.subscriptions,
       ];
 
@@ -224,12 +223,11 @@ export function useVideoPlayer(
       const settings = settingsStore.getSettings();
       const allSources = [
         ...settings.sources,
-        ...settings.premiumSources,
         ...settings.subscriptions, // note: subscription items aren't usually video sources directly but let's check broadly
       ];
 
       // We really need to check if the specific source ID is now available
-      // But since 'subscriptions' in store expands into 'sources'/'premiumSources',
+      // But since 'subscriptions' in store expands into 'sources',
       // we just check if any sources exist now.
       if (allSources.length > 0) {
         console.log("Settings updated, retrying video fetch...");

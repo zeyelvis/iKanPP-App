@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { settingsStore, getDefaultSources, type SortOption, type SearchDisplayMode, type ProxyMode } from '@/lib/store/settings-store';
+import { settingsStore, getDefaultSources, type SortOption, type SearchDisplayMode } from '@/lib/store/settings-store';
 import type { VideoSource, SourceSubscription } from '@/lib/types';
 import {
     type ImportResult,
@@ -23,7 +23,6 @@ export function useSettingsPage() {
     const [realtimeLatency, setRealtimeLatency] = useState(false);
     const [searchDisplayMode, setSearchDisplayMode] = useState<SearchDisplayMode>('normal');
     const [fullscreenType, setFullscreenType] = useState<'auto' | 'native' | 'window'>('auto');
-    const [proxyMode, setProxyMode] = useState<ProxyMode>('retry');
     const [rememberScrollPosition, setRememberScrollPosition] = useState(true);
 
     // Danmaku settings
@@ -40,7 +39,6 @@ export function useSettingsPage() {
         setRealtimeLatency(settings.realtimeLatency);
         setSearchDisplayMode(settings.searchDisplayMode);
         setFullscreenType(settings.fullscreenType);
-        setProxyMode(settings.proxyMode);
         setRememberScrollPosition(settings.rememberScrollPosition);
         setDanmakuApiUrl(settings.danmakuApiUrl);
         setDanmakuOpacity(settings.danmakuOpacity);
@@ -124,18 +122,11 @@ export function useSettingsPage() {
 
     const handleImportLink = (result: ImportResult, isSync: boolean = false): boolean => {
         try {
-            // Merge normal sources
-            let updatedSources = mergeSources(sources, result.normalSources);
-
-            // Merge premium sources if needed
+            const updatedSources = mergeSources(sources, result.normalSources);
             const currentSettings = settingsStore.getSettings();
-            let updatedPremiumSources = mergeSources(currentSettings.premiumSources, result.premiumSources);
-
-            // Save everything
             settingsStore.saveSettings({
                 ...currentSettings,
                 sources: updatedSources,
-                premiumSources: updatedPremiumSources,
             });
 
             setSources(updatedSources); // Update local state
@@ -238,15 +229,6 @@ export function useSettingsPage() {
         });
     };
 
-    const handleProxyModeChange = (mode: ProxyMode) => {
-        setProxyMode(mode);
-        const currentSettings = settingsStore.getSettings();
-        settingsStore.saveSettings({
-            ...currentSettings,
-            proxyMode: mode,
-        });
-    };
-
     const handleRememberScrollPositionChange = (enabled: boolean) => {
         setRememberScrollPosition(enabled);
         const currentSettings = settingsStore.getSettings();
@@ -339,8 +321,6 @@ export function useSettingsPage() {
         handleSearchDisplayModeChange,
         fullscreenType,
         handleFullscreenTypeChange,
-        proxyMode,
-        handleProxyModeChange,
         rememberScrollPosition,
         handleRememberScrollPositionChange,
         danmakuApiUrl,
