@@ -593,3 +593,10 @@ IkanPPPlayerContainer / IkanXPlayerContainer (双轨容器，负责线路调度�
 - **轨道 B 已拆出**：午夜特区为独立项目 ikanx（Worker `ikanx`，ikanx.com），主站不再有 `/premium`、`/api/premium`、`/api/proxy`，主站收到 `/premium` 或 `premium=1` 的请求一律 301 到 ikanx.com。
 - **作品与列表数据**：D1 `ikanpp-db` 为唯一权威源，入库 Worker `ikanpp-ingest` 用 Cloudflare 定时器更新；作品页网址解析、规范网址与快照路由见 `lib/data/d1/title-route.ts`。
 - **专线**：`/api/shadowline/resolve`、`/api/ikanpp-line` 仍转发到 `ikanpp-core-worker`，切片仍由浏览器直连。
+
+## 2026-10-09 专线上游接口变更
+
+- 上游撤掉了搜索接口 `/H5/Resource/GetVodSearch`（返回「不存在的路由」），专线搜索因此对所有片名返回空列表。现改用网页搜索页的 `/H5/Search/GetConditionList`（参数 `keywords`、`page`、`pageSize`，加密方式不变）。
+- 上游的 `GetVodInfo` 现在只返回第一集；完整分集改用播放页的 `/H5/Resource/GetOnePlayList`（`vod_id`，`pageSize: 0` 表示全部），失败时再退回 `GetVodInfo`。
+- 专线 Worker 返回的字段保持不变，候选里新增 `tags`、`episodesCount`、`actors`、`director`，供调用方区分同名作品（动画版、真人剧版、不同年份）。解析结果的 KV 缓存键改为 `ikanpp:stream_cache:v2:…`。
+- 排查方法：照 `workers/ikanpp-core/src/shadowline.ts` 的加解密方式请求上游，`code: -1` 且提示「不存在的路由」说明路径改了；新路径从上游网页前端脚本里 `apiPath + "/…"` 的调用处查。

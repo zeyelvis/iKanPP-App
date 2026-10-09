@@ -131,7 +131,8 @@ async function handleLineResolve(
   const targetEpisodeIndex = !isNaN(epNum) && epNum > 0 ? epNum - 1 : 0;
 
   // 1. 优先查询 KV 高速缓存（1 小时缓存，秒级命中）
-  const cacheKey = `ikanpp:stream_cache:${encodeURIComponent(cleanTitle || targetId)}:${targetEpisodeIndex + 1}`;
+  // v2（2026-10-09）：分集改从 GetOnePlayList 取完整列表，旧缓存里只有第一集
+  const cacheKey = `ikanpp:stream_cache:v2:${encodeURIComponent(cleanTitle || targetId)}:${targetEpisodeIndex + 1}`;
   if (!params.onlyCandidates) {
     try {
       const cached = await env.KVIDEO_KV.get(cacheKey);

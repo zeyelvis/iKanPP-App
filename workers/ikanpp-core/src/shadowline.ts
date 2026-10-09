@@ -84,6 +84,12 @@ export async function getShadowLineConfig(env: Env): Promise<ShadowLineConfig> {
   return DEFAULT_CONFIG;
 }
 
+/**
+ * 按片名搜索候选。上游 2026-10 前后撤掉了 /H5/Resource/GetVodSearch（返回「不存在的路由」），
+ * 网页搜索改用 /H5/Search/GetConditionList（参数 keywords / page / pageSize，加密方式不变）。
+ * 返回的字段保持原样（vod_id、title、year、category、total_episodes、pic），另加调用方区分同名作品
+ * 用的 tags、episodesCount、actors、director。
+ */
 export async function searchShadowLine(
   keyword: string,
   config: ShadowLineConfig
@@ -93,13 +99,13 @@ export async function searchShadowLine(
 
   try {
     const payload = JSON.stringify({
-      keyword: clean,
+      keywords: clean,
       page: 1,
-      pagesize: 20,
+      pageSize: 20,
     });
     const enc = await encrypt(payload, config.key, config.iv);
 
-    const res = await fetch(`${config.baseUrl}/H5/Resource/GetVodSearch`, {
+    const res = await fetch(`${config.baseUrl}/H5/Search/GetConditionList`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -110,30 +116,77 @@ export async function searchShadowLine(
 
     if (!res.ok) return [];
     const json: any = await res.json();
-    if (!json.data || typeof json.data !== 'string') return [];
+    if (!json.data || typeof json.data !== 'string') {
+      if (json.code !== undefined && json.code !== 200) console.warn('[ShadowLine Worker] 搜索接口返回', json.code, json.message);
+      return [];
+    }
 
     const decrypted = await decrypt<any>(json.data, config.key, config.iv);
     const list = decrypted?.list || [];
 
-    return list.map((item: any) => ({
-      vod_id: String(item.vod_id),
-      title: item.vod_name || '',
-      year: String(item.vod_year || ''),
-      category: item.type_name || '',
-      total_episodes: item.vod_total || 0,
-      pic: item.vod_pic || '',
-    }));
+    return list.map((item: any) => {
+      const tags: string[] = Array.isArray(item.tags) ? item.tags.map((t: unknown) => String(t)) : [];
+      const episodes = Number(item.vod_continu) || (Array.isArray(item.vurlList) ? item.vurlList.length : 0);
+      return {
+        vod_id: String(item.vod_id),
+        title: String(item.vod_name || '').trim(),
+        year: String(item.vod_year || ''),
+        category: tags[0] || '',
+        total_episodes: episodes,
+        pic: item.vod_pic || '',
+        tags,
+        episodesCount: episodes,
+        actors: item.vod_actor || '',
+        director: item.vod_directed || '',
+      };
+    });
   } catch (err) {
     console.warn('[ShadowLine Worker] 搜索失败:', err);
     return [];
   }
 }
 
+/**
+ * 一部作品的全部分集。上游的 GetVodInfo 现在只给第一集，完整列表改由网页播放页用的
+ * /H5/Resource/GetOnePlayList（vod_id、pageSize 0 表示全部、page 1）提供；它失败时退回 GetVodInfo。
+ */
 export async function getShadowLinePlayList(
   vodId: string,
   config: ShadowLineConfig
 ): Promise<Array<{ episode: string; url: string }>> {
   if (!vodId) return [];
+  const full = await getFullPlayList(vodId, config);
+  if (full.length > 0) return full;
+  return getPlayListFromVodInfo(vodId, config);
+}
+
+async function getFullPlayList(vodId: string, config: ShadowLineConfig): Promise<Array<{ episode: string; url: string }>> {
+  try {
+    const enc = await encrypt(JSON.stringify({ vod_id: vodId, pageSize: 0, page: 1 }), config.key, config.iv);
+    const res = await fetch(`${config.baseUrl}/H5/Resource/GetOnePlayList`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...BROWSER_HEADERS,
+      },
+      body: JSON.stringify({ params: enc }),
+    });
+    if (!res.ok) return [];
+    const json: any = await res.json();
+    if (!json.data || typeof json.data !== 'string') return [];
+    const decrypted = await decrypt<any>(json.data, config.key, config.iv);
+    const urls: any[] = Array.isArray(decrypted?.urls) ? decrypted.urls : [];
+    return urls
+      .filter((u) => typeof u?.url === 'string' && u.url.startsWith('http'))
+      .sort((a, b) => (Number(a.sort) || 0) - (Number(b.sort) || 0))
+      .map((u, i) => ({ episode: String(u.name ?? '').trim() || `第${i + 1}集`, url: u.url.trim() }));
+  } catch (err) {
+    console.warn('[ShadowLine Worker] 获取完整分集失败:', err);
+    return [];
+  }
+}
+
+async function getPlayListFromVodInfo(vodId: string, config: ShadowLineConfig): Promise<Array<{ episode: string; url: string }>> {
 
   try {
     const payload = JSON.stringify({ vod_id: vodId });
