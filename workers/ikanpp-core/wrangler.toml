@@ -16,7 +16,7 @@ id = "42311924427747deaf00981d99d58998"
 ENVIRONMENT = "production"
 VERSION = "1.0.0"
 
-# 2026-10-08：只保留专线解析接口（看片片、夜貓追劇的 /api/lines 实时调用 www.ikanpp.com/api/shadowline/resolve，
+# 2026-10-08：只保留专线解析接口（外部站点的播放线路会实时调用 www.ikanpp.com/api/shadowline/resolve，
 # 由主站 next.config.ts 转发到这里）。原每小时「边缘入库」定时任务什么也不写，已去掉。
 [triggers]
 crons = []

@@ -42,7 +42,7 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Sitemap 动态分卷；专线解析接口转发到 ikanpp-core-worker（看片片、夜貓追劇的播放线路实时调用 /api/shadowline/resolve）
+  // Sitemap 动态分卷；专线解析接口转发到 ikanpp-core-worker（外部站点的播放线路也会实时调用 /api/shadowline/resolve，不能下线）
   async rewrites() {
     return [
       {

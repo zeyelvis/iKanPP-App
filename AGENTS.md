@@ -12,7 +12,7 @@
 | 权威数据 | D1 `ikanpp-db`（表结构见 `db/d1/`）：作品、网址片段、快照路由、影人与演职关系、题材索引、站点地图清单、首页与列表数据集（`documents`）。 |
 | KV `KVIDEO_KV` | 只放小数据：求片记录、后台审计日志、专线配置与探活、专题、线路排序。读写统一走 `lib/server/kv.ts`，不存作品。 |
 | R2 | `ikanpp-next-cache`：页面增量缓存（ISR）；`ikanpp-images`：图片镜像 `img.ikanpp.com`。 |
-| 专线 Worker | `workers/ikanpp-core`（`ikanpp-core-worker`）：只提供专线解析 `/api/shadowline/resolve`、`/api/ikanpp-line`，主站 `next.config.ts` 把这两个地址转发过去；看片片、夜貓追劇的播放线路会实时调用 `www.ikanpp.com/api/shadowline/resolve`，**不能下线或改返回格式**。没有定时任务。部署：`wrangler deploy --config workers/ikanpp-core/wrangler.toml`。 |
+| 专线 Worker | `workers/ikanpp-core`（`ikanpp-core-worker`）：只提供专线解析 `/api/shadowline/resolve`、`/api/ikanpp-line`，主站 `next.config.ts` 把这两个地址转发过去；其他站点的播放线路也会实时调用 `www.ikanpp.com/api/shadowline/resolve`，**不能下线或改返回格式**。没有定时任务。部署：`wrangler deploy --config workers/ikanpp-core/wrangler.toml`。 |
 | 入库 | Worker `workers/ikanpp-ingest`，Cloudflare 定时器：每小时第 23 分（轮播与热播标签、最新上线、短剧首屏），第 43 分（四大排序的两个时间排序；北京时间 4 点另跑人气与评分排序和站点地图重算）。手动触发：`POST /run?job=<任务>`，带 `INGEST_SECRET`。 |
 | 部署 | 本机 `npm run deploy`（OpenNext 构建 → `scripts/drop-build-prerenders.mjs` → 部署）。数据更新不需要部署。GitHub 只跑检查（`.github/workflows/ci.yml`），不部署、不跑定时任务。 |
 

@@ -33,8 +33,10 @@ if (!dbFile) {
 const env = { ...process.env };
 delete env.CF_API_TOKEN;
 delete env.CLOUDFLARE_API_TOKEN;
+// 用本仓库安装的 wrangler，但在仓库外的临时目录运行，避免读到仓库里 .env.local 的旧令牌
+const WRANGLER = join(import.meta.dirname, "../../node_modules/.bin/wrangler");
 const wrangler = (args) =>
-  execFileSync("npx", ["--prefix", "/Users/zeyelvis/kanpp", "wrangler", ...args], { cwd: tmpdir(), env, encoding: "utf8", maxBuffer: 64 << 20, stdio: ["ignore", "pipe", "pipe"] });
+  execFileSync(WRANGLER, args, { cwd: tmpdir(), env, encoding: "utf8", maxBuffer: 64 << 20, stdio: ["ignore", "pipe", "pipe"] });
 const remoteCount = (sql) => {
   const out = wrangler(["d1", "execute", "ikanpp-db", "--remote", "--json", "--command", sql]);
   return Number(Object.values(JSON.parse(out)[0].results[0])[0]);

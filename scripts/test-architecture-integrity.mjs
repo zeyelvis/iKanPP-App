@@ -66,6 +66,25 @@ if (fs.existsSync(ingestIndexPath)) {
 const proxyHits = codeFiles.filter((f) => /['"`]\/api\/proxy|processM3u8Content|usePremium(History|Favorites|SearchHistory)Store|premiumModeSettingsStore|PREMIUM_SOURCES|fetchJableVideoDetail/.test(fs.readFileSync(f, 'utf-8')));
 assert(proxyHits.length === 0, `主站代码严禁出现代理播放与午夜特区残留（/api/proxy、processM3u8Content、premium 分库存储与片源）${proxyHits.length ? '：' + proxyHits.join(', ') : ''}`);
 
+// 4c. 本仓库是公开的独立项目：代码、文档与配置里不得点名其他站点（「爱看片片」是本站品牌名，不在此列）
+const OTHER_SITES = /(?<!爱)看片片|夜貓追劇|夜猫追剧|owldrama|(?<![iI])kanpp/;
+const docFiles = ['AGENTS.md', 'README.md', 'CONTRIBUTING.md', 'SECURITY.md', 'next.config.ts', 'proxy.ts', 'wrangler.jsonc']
+  .map((f) => path.resolve(f))
+  .concat(listSources(path.resolve('scripts')))
+  .concat((function md(dir, out = []) {
+    if (!fs.existsSync(dir)) return out;
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) md(p, out);
+      else if (/\.(md|ya?ml)$/.test(e.name)) out.push(p);
+    }
+    return out;
+  })(path.resolve('docs')))
+  .filter((f) => fs.existsSync(f) && !f.endsWith('test-architecture-integrity.mjs'));
+const tomlFiles = fs.existsSync(path.resolve('workers')) ? fs.readdirSync(path.resolve('workers')).map((w) => path.resolve('workers', w, 'wrangler.toml')).filter((f) => fs.existsSync(f)) : [];
+const otherSiteHits = [...codeFiles, ...docFiles, ...tomlFiles].filter((f) => OTHER_SITES.test(fs.readFileSync(f, 'utf-8')));
+assert(otherSiteHits.length === 0, `代码与文档里严禁点名其他站点${otherSiteHits.length ? '：' + otherSiteHits.join(', ') : ''}`);
+
 // 5. 全屏硬件覆盖层与显卡防黑屏规范验证：杜绝跨浏览器伪类逗号合写失效，杜绝全屏组件包含 backdrop-blur 与同步重排死锁
 const videoCssPath = path.resolve('app/styles/video-player.css');
 if (fs.existsSync(videoCssPath)) {

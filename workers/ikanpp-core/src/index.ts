@@ -1,6 +1,6 @@
 /**
  * iKanPP 专线 Worker（ikanpp-core-worker）
- * 只提供专线解析：/api/shadowline/resolve、/api/ikanpp-line（主站 next.config.ts 转发；看片片、夜貓追劇的播放线路实时调用）。
+ * 只提供专线解析：/api/shadowline/resolve、/api/ikanpp-line（主站 next.config.ts 转发；外部站点的播放线路也会实时调用）。
  * 2026-10-08 去掉了片库检索与每小时「边缘入库」（主站片库在 D1，由 ikanpp-ingest 负责）。
  *
  * 架构规范遵守：
